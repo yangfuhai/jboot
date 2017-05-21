@@ -18,9 +18,7 @@ package io.jboot.db;
 import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.utils.StringUtils;
 
-/**
- * Created by michael on 2017/5/10.
- */
+
 @PropertieConfig(prefix = "jboot.datasource")
 public class DatasourceConfig {
     public static final String TYPE_MYSQL = "mysql";

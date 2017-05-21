@@ -15,8 +15,25 @@
  */
 package io.jboot.server.tomcat;
 
-/**
- * Created by michael on 2017/5/12.
- */
-public class TomcatServer {
+
+import io.jboot.exception.JbootException;
+import io.jboot.server.JbootServer;
+import io.jboot.server.JbootServerConfig;
+
+public class TomcatServer extends JbootServer {
+
+    public TomcatServer(JbootServerConfig config) {
+        super(config);
+    }
+
+    @Override
+    public boolean start() {
+        new JbootException("tomcat server not finish!!!");
+        return false;
+    }
+
+    @Override
+    public boolean stop() {
+        return false;
+    }
 }

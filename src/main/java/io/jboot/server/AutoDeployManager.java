@@ -21,9 +21,7 @@ import com.jfinal.server.Scanner;
 
 import java.io.File;
 
-/**
- * Created by michael on 2017/5/9.
- */
+
 public class AutoDeployManager {
 
     private static AutoDeployManager manager = new AutoDeployManager();

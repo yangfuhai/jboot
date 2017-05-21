@@ -16,9 +16,7 @@
 package io.jboot.cache;
 
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public abstract class JbootCacheBase implements JbootCache {
 
 }

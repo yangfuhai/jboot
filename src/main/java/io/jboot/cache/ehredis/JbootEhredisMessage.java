@@ -17,9 +17,7 @@ package io.jboot.cache.ehredis;
 
 import java.io.Serializable;
 
-/**
- * Created by michael on 2017/5/15.
- */
+
 public class JbootEhredisMessage implements Serializable {
 
     public static final int ACTION_PUT = 1;

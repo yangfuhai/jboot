@@ -18,9 +18,7 @@ package io.jboot.mq.hornetq;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
 
-/**
- * Created by michael on 2017/5/11.
- */
+
 public class JbootHornetq <M> extends JbootmqBase<M> implements Jbootmq<M> {
 
     @Override

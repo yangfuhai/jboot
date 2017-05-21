@@ -17,9 +17,7 @@ package io.jboot.mq.redismq;
 
 import io.jboot.config.annotation.PropertieConfig;
 
-/**
- * Created by michael on 2017/5/15.
- */
+
 @PropertieConfig(prefix = "jboot.mq.redis")
 public class JbootmqRedisConfig {
 

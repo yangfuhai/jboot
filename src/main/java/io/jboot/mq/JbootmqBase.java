@@ -18,9 +18,7 @@ package io.jboot.mq;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public abstract class JbootmqBase<M> implements Jbootmq<M> {
 
     private List<JbootmqMessageListener<M>> listeners = new CopyOnWriteArrayList<>();

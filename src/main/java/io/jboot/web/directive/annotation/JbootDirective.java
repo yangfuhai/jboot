@@ -17,9 +17,7 @@ package io.jboot.web.directive.annotation;
 
 import java.lang.annotation.*;
 
-/**
- * Created by michael on 16/10/29.
- */
+
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })

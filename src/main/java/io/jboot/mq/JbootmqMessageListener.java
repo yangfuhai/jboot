@@ -15,9 +15,7 @@
  */
 package io.jboot.mq;
 
-/**
- * Created by michael on 2017/5/11.
- */
+
 public interface JbootmqMessageListener<M> {
 
     /**

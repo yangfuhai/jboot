@@ -17,9 +17,7 @@ package io.jboot.mq;
 
 import io.jboot.config.annotation.PropertieConfig;
 
-/**
- * Created by michael on 2017/5/12.
- */
+
 @PropertieConfig(prefix = "jboot.mq")
 public class JbootmqConfig {
     public static final String TYPE_REDIS = "redis";

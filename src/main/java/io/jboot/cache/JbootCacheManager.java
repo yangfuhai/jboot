@@ -20,9 +20,7 @@ import io.jboot.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.cache.redis.JbootRedisCacheImpl;
 
-/**
- * Created by michael on 16/10/27.
- */
+
 public class JbootCacheManager {
 
     private static JbootCacheManager me = new JbootCacheManager();

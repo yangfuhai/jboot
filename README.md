@@ -1,8 +1,10 @@
 # jboot
-jboot is a similar springboot project base on jfinal,we have using in product environment.
+jboot is a similar springboot project base on jfinal and undertow,we have using in product environment.
 
 # jboot 中文描述
-jboot是一个基于jfinal、undertow开发的一个类似springboot的开源框架，我们已经在正式的商业上线项目中使用。内部集成了代码生成，微服务，MQ，RPC，监控等功能，开发者使用及其简单。
+jboot是一个基于jfinal、undertow开发的一个类似springboot的开源框架，
+我们已经在正式的商业上线项目中使用。她集成了代码生成，微服务，MQ，RPC，监控等功能，
+开发者使用及其简单。
 
 
 #example

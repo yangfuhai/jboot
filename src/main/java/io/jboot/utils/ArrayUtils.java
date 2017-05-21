@@ -18,9 +18,7 @@ package io.jboot.utils;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by michael on 16/11/6.
- */
+
 public class ArrayUtils {
 
     public static boolean isNotEmpty(List list) {

@@ -28,9 +28,7 @@ import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
 
-/**
- * Created by michael on 2017/5/11.
- */
+
 public class JbootRedismqImpl<M> extends JbootmqBase<M> implements Jbootmq<M>, MessageListener<M> {
 
     RedissonClient redissonClient;

@@ -27,9 +27,7 @@ import io.jboot.utils.ClassScanner;
 
 import java.util.List;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public class JbootrpcManager {
     private static JbootrpcManager manager;
 

@@ -17,9 +17,7 @@ package io.jboot.rpc;
 
 import io.jboot.config.annotation.PropertieConfig;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 @PropertieConfig(prefix = "jboot.rpc")
 public class JbootrpcConfig {
 

@@ -19,9 +19,7 @@ import com.jfinal.plugin.ehcache.IDataLoader;
 
 import java.util.List;
 
-/**
- * Created by michael on 2017/5/18.
- */
+
 public class NoCacheImpl extends JbootCacheBase {
     @Override
     public List getKeys(String cacheName) {

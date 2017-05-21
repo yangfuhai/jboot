@@ -19,9 +19,7 @@ import com.jfinal.plugin.ehcache.IDataLoader;
 
 import java.util.List;
 
-/**
- * Created by michael on 16/10/27.
- */
+
 public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache {
 
     public List getKeys(String cacheName);

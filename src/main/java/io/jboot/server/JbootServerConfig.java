@@ -17,9 +17,7 @@ package io.jboot.server;
 
 import io.jboot.config.annotation.PropertieConfig;
 
-/**
- * Created by michael on 2017/4/19.
- */
+
 @PropertieConfig(prefix = "jboot.server")
 public class JbootServerConfig {
 

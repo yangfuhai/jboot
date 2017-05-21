@@ -18,9 +18,7 @@ package io.jboot.cache;
 
 import io.jboot.config.annotation.PropertieConfig;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 @PropertieConfig(prefix = "jboot.cache")
 public class JbootCacheConfig {
 

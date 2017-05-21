@@ -18,9 +18,7 @@ package io.jboot.mq.activemq;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
 
-/**
- * Created by michael on 2017/5/11.
- */
+
 public class JbootActivemq<M> extends JbootmqBase<M> implements Jbootmq<M> {
     @Override
     public void publish(M message) {

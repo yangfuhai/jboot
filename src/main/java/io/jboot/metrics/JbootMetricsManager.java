@@ -17,9 +17,7 @@ package io.jboot.metrics;
 
 import io.jboot.utils.ClassNewer;
 
-/**
- * Created by michael on 2017/5/21.
- */
+
 public class JbootMetricsManager {
 
     private static JbootMetricsManager me;

@@ -21,9 +21,7 @@ import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.rpc.JbootrpcConfig;
 import io.jboot.rpc.JbootrpcBase;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public class JbootMotanrpc extends JbootrpcBase {
 
 

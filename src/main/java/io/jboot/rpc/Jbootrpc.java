@@ -15,9 +15,7 @@
  */
 package io.jboot.rpc;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public interface Jbootrpc {
 
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version);

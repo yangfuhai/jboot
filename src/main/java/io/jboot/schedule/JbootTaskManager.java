@@ -26,9 +26,7 @@ import io.jboot.utils.ClassScanner;
 
 import java.util.List;
 
-/**
- * Created by michael on 2017/5/12.
- */
+
 public class JbootTaskManager {
 
     private static JbootTaskManager manager;

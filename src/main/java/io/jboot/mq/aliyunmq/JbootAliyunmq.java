@@ -18,9 +18,7 @@ package io.jboot.mq.aliyunmq;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
 
-/**
- * Created by michael on 2017/5/11.
- */
+
 public class JbootAliyunmq <M> extends JbootmqBase<M> implements Jbootmq<M> {
     @Override
     public void publish(M message) {

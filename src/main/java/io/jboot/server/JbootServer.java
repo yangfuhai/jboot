@@ -15,9 +15,7 @@
  */
 package io.jboot.server;
 
-/**
- * Created by michael on 2017/4/19.
- */
+
 public abstract class JbootServer {
 
     private JbootServerConfig config;

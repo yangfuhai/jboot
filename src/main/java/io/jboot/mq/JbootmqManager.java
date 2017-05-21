@@ -22,9 +22,7 @@ import io.jboot.utils.ClassNewer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by michael on 2017/5/11.
- */
+
 public class JbootmqManager {
 
     private static JbootmqManager manager;

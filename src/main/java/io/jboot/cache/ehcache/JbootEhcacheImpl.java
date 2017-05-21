@@ -21,9 +21,7 @@ import io.jboot.cache.JbootCacheBase;
 
 import java.util.List;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public class JbootEhcacheImpl extends JbootCacheBase {
 
     @Override

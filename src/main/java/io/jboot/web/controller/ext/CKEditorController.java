@@ -18,6 +18,9 @@ package io.jboot.web.controller.ext;
 import com.jfinal.upload.UploadFile;
 import io.jboot.web.controller.JbootController;
 
+/**
+ * 专为 CKEditor 编辑器写的controller
+ */
 public abstract class CKEditorController extends JbootController {
 
 
@@ -45,6 +48,9 @@ public abstract class CKEditorController extends JbootController {
     }
 
 
+    /**
+     * 开始上传
+     */
     public void upload() {
         if (!isMultipartRequest()) {
             renderError(404);

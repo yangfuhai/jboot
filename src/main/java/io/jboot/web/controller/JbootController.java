@@ -26,9 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by michael on 17/3/21.
- */
+
 public class JbootController extends Controller {
 
     /**
@@ -58,42 +56,78 @@ public class JbootController extends Controller {
         return RequestUtils.isIEBrowser(getRequest());
     }
 
+    /**
+     * 是否是ajax请求
+     *
+     * @return
+     */
     public boolean isAjaxRequest() {
         return RequestUtils.isAjaxRequest(getRequest());
     }
 
+    /**
+     * 是否是multpart的请求（带有文件上传的请求）
+     *
+     * @return
+     */
     public boolean isMultipartRequest() {
         return RequestUtils.isMultipartRequest(getRequest());
     }
 
 
+    /**
+     * 获取ip地址
+     *
+     * @return
+     */
     @Before(NotAction.class)
     public String getIPAddress() {
         return RequestUtils.getIpAddress(getRequest());
     }
 
+    /**
+     * 获取 referer
+     *
+     * @return
+     */
     @Before(NotAction.class)
     public String getReferer() {
         return RequestUtils.getReferer(getRequest());
     }
 
 
+    /**
+     * 获取ua
+     *
+     * @return
+     */
     @Before(NotAction.class)
     public String getUserAgent() {
         return RequestUtils.getUserAgent(getRequest());
     }
 
+    /**
+     * 获取当前网址
+     *
+     * @return
+     */
     @Before(NotAction.class)
     public String getBaseUrl() {
         HttpServletRequest req = getRequest();
         int port = req.getServerPort();
 
-        return port == 80 ? String.format("%s://%s%s", req.getScheme(), req.getServerName(), req.getContextPath())
+        return port == 80
+                ? String.format("%s://%s%s", req.getScheme(), req.getServerName(), req.getContextPath())
                 : String.format("%s://%s%s%s", req.getScheme(), req.getServerName(), ":" + port, req.getContextPath());
 
     }
 
 
+    /**
+     * 获取所有上传的文件
+     *
+     * @return
+     */
     public HashMap<String, UploadFile> getUploadFilesMap() {
         if (!isMultipartRequest()) {
             return null;

@@ -16,11 +16,10 @@
 package io.jboot.server;
 
 import io.jboot.Jboot;
+import io.jboot.server.tomcat.TomcatServer;
 import io.jboot.server.undertow.UnderTowServer;
 
-/**
- * Created by michael on 2017/4/19.
- */
+
 public class JbootServerFactory {
 
 
@@ -39,7 +38,7 @@ public class JbootServerFactory {
             case "undertow":
                 return new UnderTowServer(jbootServerConfig);
             case "tomcat":
-                throw new RuntimeException("not finished!!!");
+                return new TomcatServer(jbootServerConfig);
             default:
                 return new UnderTowServer(jbootServerConfig);
         }

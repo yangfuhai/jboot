@@ -30,9 +30,7 @@ import org.redisson.config.SingleServerConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public class JbootRedisCacheImpl extends JbootCacheBase {
 
 

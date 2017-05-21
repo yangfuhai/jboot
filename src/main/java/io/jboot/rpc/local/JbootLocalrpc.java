@@ -21,9 +21,7 @@ import io.jboot.rpc.JbootrpcConfig;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public class JbootLocalrpc extends JbootrpcBase {
 
     Map<Class, Object> objectMap = new ConcurrentHashMap<>();

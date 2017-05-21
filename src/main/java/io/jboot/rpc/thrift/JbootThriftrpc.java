@@ -18,9 +18,7 @@ package io.jboot.rpc.thrift;
 import io.jboot.rpc.JbootrpcConfig;
 import io.jboot.rpc.JbootrpcBase;
 
-/**
- * Created by michael on 2017/5/13.
- */
+
 public class JbootThriftrpc extends JbootrpcBase {
 
 

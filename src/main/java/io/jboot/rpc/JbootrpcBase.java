@@ -15,9 +15,7 @@
  */
 package io.jboot.rpc;
 
-/**
- * Created by michael on 2017/5/5.
- */
+
 public abstract class JbootrpcBase implements Jbootrpc {
 
     private final JbootrpcConfig config;

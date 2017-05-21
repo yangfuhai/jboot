@@ -17,9 +17,7 @@ package io.jboot.mq;
 
 import java.util.List;
 
-/**
- * Created by michael on 2017/5/11.
- */
+
 public interface Jbootmq<M> {
 
     public void publish(M message);

@@ -16,37 +16,56 @@
 package io.jboot.web.directive.base;
 
 import com.jfinal.template.Directive;
+import com.jfinal.template.Env;
 import com.jfinal.template.stat.Scope;
 
+import java.io.Writer;
 import java.util.Map;
 
-
+/**
+ * Jfinal 指令的基类
+ */
 public abstract class JbootDirectiveBase extends Directive {
 
-    public <T> T getMapParam(String key, T defaultValue, Scope s) {
+    protected Env env;
+    protected Scope scope;
+    protected Writer writer;
+
+    @Override
+    public void exec(Env env, Scope scope, Writer writer) {
+        this.env = env;
+        this.scope = scope;
+        this.writer = writer;
+
+        onExec();
+    }
+
+    public abstract void onExec();
+
+    public <T> T getParam(String key, T defaultValue) {
         if (exprList == null || exprList.length() == 0) {
             return defaultValue;
         }
 
-        Map map = (Map) exprList.getExprArray()[0].eval(s);
+        Map map = (Map) exprList.getExprArray()[0].eval(scope);
         Object data = map.get(key);
         return (T) (data == null ? defaultValue : data);
     }
 
 
-    public <T> T getMapParam(String key, Scope s) {
-        return getMapParam(key, null, s);
+    public <T> T getParam(String key) {
+        return getParam(key, null);
     }
 
 
-    public <T> T getParam(int index, T defaultValue, Scope s) {
-        Object data = exprList.getExprArray()[index].eval(s);
+    public <T> T getParam(int index, T defaultValue) {
+        Object data = exprList.getExprArray()[index].eval(scope);
         return (T) (data == null ? defaultValue : data);
     }
 
 
-    public <T> T getParam(int index, Scope s) {
-        return getParam(index, null, s);
+    public <T> T getParam(int index) {
+        return getParam(index, null);
     }
 
 }
