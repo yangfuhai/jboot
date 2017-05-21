@@ -1,0 +1,10 @@
+target/
+.idea/
+*.iml
+*.log
+*.ipr
+*.iws
+*.classpath
+.DS_Store
+*.patch
+~$*
