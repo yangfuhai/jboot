@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: de.ruedigermoeller:fst:2.50">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/ruedigermoeller/fst/2.50/fst-2.50.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/de/ruedigermoeller/fst/2.50/fst-2.50-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/ruedigermoeller/fst/2.50/fst-2.50-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

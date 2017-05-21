@@ -1,0 +1,113 @@
+/**
+ * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * <p>
+ * Licensed under the GNU Lesser General Public License (LGPL) ,Version 3.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.gnu.org/licenses/lgpl-3.0.txt
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.jboot.server.undertow;
+
+import com.jfinal.core.JFinalFilter;
+import io.jboot.Jboot;
+import io.jboot.server.JbootServer;
+import io.jboot.server.JbootServerConfig;
+import io.undertow.Handlers;
+import io.undertow.Undertow;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.server.handlers.resource.ClassPathResourceManager;
+import io.undertow.servlet.Servlets;
+import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.DeploymentManager;
+
+import javax.servlet.DispatcherType;
+
+/**
+ * Created by michael on 2017/5/4.
+ */
+public class UnderTowServer extends JbootServer {
+
+    private DeploymentManager mDeploymentManager;
+    private PathHandler mHandler;
+    private Undertow mServer;
+
+
+    public UnderTowServer(JbootServerConfig config) {
+        super(config);
+        initUndertowServer();
+    }
+
+    public void initUndertowServer() {
+        DeploymentInfo deploymentInfo = Servlets.deployment()
+                .setClassLoader(UnderTowServer.class.getClassLoader())
+                .setResourceManager(new ClassPathResourceManager(UnderTowServer.class.getClassLoader()))
+                .setContextPath(getConfig().getContextPath())
+                .setDeploymentName("jboot")
+                .setEagerFilterInit(true); //设置启动的时候，初始化servlet或filter（好吧，跟了很久的源代码...）
+
+
+        deploymentInfo.addFilter(
+                Servlets.filter("jboot", JFinalFilter.class)
+                        .addInitParam("configClass", Jboot.getJbootConfig().getJfinalConfig()))
+                .addFilterUrlMapping("jboot", "/*", DispatcherType.REQUEST);
+
+
+        deploymentInfo.addServlets(
+                Servlets.servlet("ResourceServlet", JbootResourceServlet.class)
+                        .addMapping("/*"));
+
+        mDeploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
+        mDeploymentManager.deploy();
+
+
+        HttpHandler httpHandler = null;
+        try {
+            /**
+             * 启动并初始化servlet和filter
+             */
+            httpHandler = mDeploymentManager.start();
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
+
+
+        mHandler = Handlers.path(
+                Handlers.resource(new ClassPathResourceManager(UnderTowServer.class.getClassLoader(), "webRoot")))
+                .addPrefixPath(getConfig().getContextPath(), httpHandler);
+
+        mServer = Undertow.builder()
+                .addHttpListener(getConfig().getPortAsInt(), getConfig().getHost())
+                .setHandler(mHandler)
+                .build();
+    }
+
+    @Override
+    public boolean start() {
+        try {
+            System.out.println("undertow server starting ....");
+            mServer.start();
+            System.out.println("undertow server started !");
+        } catch (Throwable ex) {
+            stop();
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean stop() {
+        mServer.stop();
+        System.out.println("undertow server stoped !");
+        return true;
+    }
+
+}

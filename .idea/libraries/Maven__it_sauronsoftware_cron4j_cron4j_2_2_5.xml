@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: it.sauronsoftware.cron4j:cron4j:2.2.5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/it/sauronsoftware/cron4j/cron4j/2.2.5/cron4j-2.2.5.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/it/sauronsoftware/cron4j/cron4j/2.2.5/cron4j-2.2.5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/it/sauronsoftware/cron4j/cron4j/2.2.5/cron4j-2.2.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
