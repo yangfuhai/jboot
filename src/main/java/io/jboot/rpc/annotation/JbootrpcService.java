@@ -23,9 +23,9 @@ import java.lang.annotation.*;
 public @interface JbootrpcService {
     Class export();
 
-    String group() default "NULL";
+    String group() default "";
 
-    String version() default "NULL";
+    String version() default "";
 
     int port() default 0;
 }

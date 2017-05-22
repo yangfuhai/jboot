@@ -24,6 +24,7 @@ import io.jboot.rpc.thrift.JbootThriftrpc;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
+import io.jboot.utils.StringUtils;
 
 import java.util.List;
 
@@ -64,8 +65,8 @@ public class JbootrpcManager {
             JbootrpcService rpcService = (JbootrpcService) clazz.getAnnotation(JbootrpcService.class);
             if (rpcService == null) continue;
 
-            String group = "NULL".equals(rpcService.group()) ? config.getDefaultGroup() : rpcService.group();
-            String version = "NULL".equals(rpcService.version()) ? config.getDefaultVersion() : rpcService.version();
+            String group = StringUtils.isBlank(rpcService.group()) ? config.getDefaultGroup() : rpcService.group();
+            String version = StringUtils.isBlank(rpcService.version()) ? config.getDefaultVersion() : rpcService.version();
             int port = rpcService.port() <= 0 ? Integer.valueOf(config.getDefaultPort()) : rpcService.port();
 
             getJbootrpc().serviceExport(rpcService.export(), ClassNewer.newInstance(clazz), group, version, port);
