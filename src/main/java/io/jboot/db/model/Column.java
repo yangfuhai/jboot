@@ -15,21 +15,20 @@
  */
 package io.jboot.db.model;
 
-/**
- * Created by michael on 16/11/14.
- */
+
 public class Column {
-
-    private String name;
-    private Object value;
-    private String logic = LOGIC_EQUALS;
-
     public static final String LOGIC_LIKE = " LIKE ";
     public static final String LOGIC_GT = " > ";
     public static final String LOGIC_GE = " >= ";
     public static final String LOGIC_LT = " < ";
     public static final String LOGIC_LE = " <= ";
     public static final String LOGIC_EQUALS = " = ";
+    public static final String LOGIC_NOT_EQUALS = " != ";
+
+
+    private String name;
+    private Object value;
+    private String logic = LOGIC_EQUALS;
 
 
     public static Column create(String name, Object value) {
@@ -39,7 +38,7 @@ public class Column {
         return column;
     }
 
-    public static Column create(String name, Object value,String logic) {
+    public static Column create(String name, Object value, String logic) {
         Column column = new Column();
         column.setName(name);
         column.setValue(value);
@@ -47,7 +46,7 @@ public class Column {
         return column;
     }
 
-    public Column logic(String logic){
+    public Column logic(String logic) {
         this.setLogic(logic);
         return this;
     }
@@ -76,7 +75,7 @@ public class Column {
         this.logic = logic;
     }
 
-    public String sql(){
-        return String.format(" `%s` %s ? ",name,logic);
+    public String sql() {
+        return String.format(" `%s` %s ? ", name, logic);
     }
 }

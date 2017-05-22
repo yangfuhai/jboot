@@ -130,8 +130,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
         boolean update = super.update();
         if (update) {
-            removeCache(get(getPrimaryKey()));
-            Jboot.sendEvent(updateAction(), findById(get(getPrimaryKey())));
+            Object id = get(getPrimaryKey());
+            removeCache(id);
+            Jboot.sendEvent(updateAction(), findById(id));
         }
         return update;
     }
@@ -246,6 +247,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return findListByColumns(columns, null, count);
     }
 
+
     public List<M> findListByColumns(List<Column> columnList, String orderBy, Integer count) {
         StringBuilder sqlBuilder = new StringBuilder("select * from `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
@@ -265,6 +267,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return params.isEmpty() ? find(sqlBuilder.toString()) : find(sqlBuilder.toString(), params.toArray());
     }
 
+
+    public List<M> findListByColumns(Columns columns) {
+        return findListByColumns(columns.getCols());
+    }
+
+    public List<M> findListByColumns(Columns columns, String orderBy) {
+        return findListByColumns(columns.getCols(), orderBy);
+    }
+
+    public List<M> findListByColumns(Columns columns, Integer count) {
+        return findListByColumns(columns.getCols(), count);
+    }
+
+
+    public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
+        return findListByColumns(columns.getCols(), orderBy, count);
+    }
 
     private void buildSqlByList(List<Column> columns, StringBuilder sqlBuilder, LinkedList<Object> params) {
         int index = 0;
@@ -410,7 +429,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected String[] getPrimaryKeys() {
         Table t = TableMapping.me().getTable(getUsefulClass());
         if (t == null) {
-            throw new RuntimeException("can't get table of " + getUsefulClass() + " , maybe jpress install incorrect");
+            throw new RuntimeException("can't get table of " + getUsefulClass() + " , maybe jboot install incorrect");
         }
         return t.getPrimaryKey();
     }
