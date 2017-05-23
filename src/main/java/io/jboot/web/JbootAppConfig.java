@@ -33,6 +33,7 @@ import io.jboot.schedule.JbootTaskManager;
 import io.jboot.web.controller.annotation.UrlMapping;
 import io.jboot.web.directive.annotation.JbootDirective;
 import io.jboot.web.handler.JbootHandler;
+import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 
@@ -110,8 +111,8 @@ public class JbootAppConfig extends JFinalConfig {
 
 
     @Override
-    public void configInterceptor(Interceptors me) {
-
+    public void configInterceptor(Interceptors interceptors) {
+        interceptors.add(new ParaValidateInterceptor());
     }
 
     @Override
