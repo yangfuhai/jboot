@@ -60,9 +60,9 @@ public class JbootResourceServlet extends HttpServlet {
     private ResourceManager resourceManager;
     private boolean directoryListingEnabled = false;
 
-    private boolean defaultAllowed = false;
+    private boolean defaultAllowed = true;
     private Set<String> allowed = DEFAULT_ALLOWED_EXTENSIONS;
-    private Set<String> disallowed = new HashSet<>(Arrays.asList("class", "jar", "war", "zip", "xml", "properties", "yml"));
+    private Set<String> disallowed = new HashSet<>(Arrays.asList("class", "jar", "war", "xml", "properties", "yml"));
     private boolean resolveAgainstContextRoot;
 
     @Override
