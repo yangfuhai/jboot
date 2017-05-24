@@ -23,6 +23,7 @@ maven dependency
 new a controller
 
 ```java
+@UrlMapping(url="/")
 public class MyController extend JbootController{
    public void index(){
         renderText("hello jboot");
@@ -39,3 +40,6 @@ public class MyStarter{
    }
 }
 ```
+
+visit: http://127.0.0.1:8088
+
