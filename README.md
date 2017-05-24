@@ -6,7 +6,7 @@ jboot是一个基于jfinal、undertow开发的一个类似springboot的开源框
 我们已经在正式的商业上线项目中使用。她集成了代码生成，微服务，MQ，RPC，监控等功能，
 开发者使用及其简单。
 
-#maven dependency
+# maven dependency
 not yet upload to maven center,you can clone source and deploy to you private warehouse.
 
 ```xml
@@ -17,7 +17,7 @@ not yet upload to maven center,you can clone source and deploy to you private wa
 </dependency>
 
 ```
-#controller example
+# controller example
 
 
 
@@ -45,7 +45,7 @@ public class MyStarter{
 visit: http://127.0.0.1:8088
 
 
-#mq example
+# mq example
 config jboot.properties
 ```java
 #type default redis (support: redis,activemq,rabbitmq,hornetq,aliyunmq )
@@ -70,7 +70,7 @@ Jboot.getJbootmq().addMessageListener(new JbootmqMessageListener(){
 }, channel);
 ```
 
-#rpc example
+# rpc example
 config jboot.properties
 ```java
 #type default motan (support:local,motan,grpc,thrift)
@@ -108,7 +108,7 @@ server b call
  service.hello("michael");
 ```
 
-#cache example
+# cache example
 config jboot.properties
 ```java
 #type default ehcache (support:ehcache,redis,ehredis (ehredis:tow level cache,ehcache level one and redis level tow))
@@ -123,7 +123,7 @@ use cache
 Jboot.getJbootCache().put("cacheName", "key", "value");
 ```
 
-#database access example
+# database access example
 config jboot.properties
 ```java
 #type default mysql (support:mysql,oracle,db2...)
@@ -161,7 +161,7 @@ public class UserDao {
 }
 ```
 
-#event example
+# event example
 
 send event
 ```java
@@ -186,7 +186,7 @@ public class MyEventListener implements JbootEventListener {
 }
 ```
 
-#read config
+# read config
 config jboot.properties
 ```java
 jboot.myconfig.user = aaa
@@ -226,7 +226,7 @@ get config model
     }
 ```
 
-#build
+# build
 
 config pom.xml
 ```xml
@@ -310,7 +310,7 @@ cd yourProjectPath/target/app/bin
 use jboot-dev.proerties replace jboot.properties and set jboot.server.port=8080
 
 
-#thanks
+# thanks
 rpc framework: 
 * motan(https://github.com/weibocom/motan)
 * grpc(http://grpc.io)
