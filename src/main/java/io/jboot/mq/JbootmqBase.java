@@ -15,22 +15,40 @@
  */
 package io.jboot.mq;
 
+import io.jboot.utils.ArrayUtils;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public abstract class JbootmqBase<M> implements Jbootmq<M> {
+public abstract class JbootmqBase implements Jbootmq {
 
-    private List<JbootmqMessageListener<M>> listeners = new CopyOnWriteArrayList<>();
+    private List<JbootmqMessageListener> listeners = new CopyOnWriteArrayList<>();
+    private Map<String, List<JbootmqMessageListener>> listenerMap = new ConcurrentHashMap<>();
 
 
     @Override
-    public void addMessageListener(JbootmqMessageListener<M> listener) {
+    public void addMessageListener(JbootmqMessageListener listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void removeListener(JbootmqMessageListener<M> listener) {
+    public void addMessageListener(JbootmqMessageListener listener, String forChannel) {
+        synchronized (listenerMap) {
+            List<JbootmqMessageListener> list = listenerMap.get(forChannel);
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+            list.add(listener);
+            listenerMap.put(forChannel, list);
+        }
+    }
+
+    @Override
+    public void removeListener(JbootmqMessageListener listener) {
         listeners.remove(listener);
     }
 
@@ -40,16 +58,25 @@ public abstract class JbootmqBase<M> implements Jbootmq<M> {
     }
 
     @Override
-    public List<JbootmqMessageListener<M>> getListeners() {
+    public List<JbootmqMessageListener> getListeners() {
         return listeners;
     }
 
-    public void notifyListeners(String channel, M message) {
+    public void notifyListeners(String channel, Object message) {
         if (listeners == null || listeners.size() == 0) {
             return;
         }
 
         for (JbootmqMessageListener listener : listeners) {
+            listener.onMessage(channel, message);
+        }
+
+        List<JbootmqMessageListener> list = listenerMap.get(channel);
+        if (ArrayUtils.isNullOrEmpty(list)) {
+            return;
+        }
+
+        for (JbootmqMessageListener listener : list) {
             listener.onMessage(channel, message);
         }
     }

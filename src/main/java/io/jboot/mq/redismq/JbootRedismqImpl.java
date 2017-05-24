@@ -28,11 +28,14 @@ import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class JbootRedismqImpl<M> extends JbootmqBase<M> implements Jbootmq<M>, MessageListener<M> {
+
+public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, MessageListener {
 
     RedissonClient redissonClient;
-    RTopic<M> topic;
+    public Map<String, RTopic> topicMap = new ConcurrentHashMap<>();
 
     public JbootRedismqImpl() {
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
@@ -56,18 +59,28 @@ public class JbootRedismqImpl<M> extends JbootmqBase<M> implements Jbootmq<M>, M
         }
 
         redissonClient = Redisson.create(redissionConfig);
-        topic = redissonClient.getTopic(JbootRedismqImpl.class.getName());
-        topic.addListener(this);
-    }
-
-    @Override
-    public void publish(M message) {
-        topic.publish(message);
     }
 
 
+    public RTopic getTopic(String toChannel) {
+        RTopic topic = topicMap.get(toChannel);
+        if (topic == null) {
+            topic = redissonClient.getTopic(toChannel);
+            topic.addListener(this);
+            topicMap.put(toChannel, topic);
+        }
+        return topic;
+    }
+
+
     @Override
-    public void onMessage(String channel, M message) {
+    public void onMessage(String channel, Object message) {
         notifyListeners(channel, message);
+    }
+
+    @Override
+    public void publish(Object message, String toChannel) {
+        RTopic topic = getTopic(toChannel);
+        topic.publish(message);
     }
 }

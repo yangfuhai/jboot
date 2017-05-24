@@ -230,8 +230,8 @@ public class Jboot {
         sendEvent(new JbootEvent(action, data));
     }
 
-    public static <T> Jbootmq<T> getJbootmq(Class<T> clazz) {
-        return JbootmqManager.me().getJbootmq(clazz);
+    public static Jbootmq getJbootmq() {
+        return JbootmqManager.me().getJbootmq();
     }
 
     /**

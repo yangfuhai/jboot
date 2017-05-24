@@ -20,7 +20,6 @@ import io.jboot.Jboot;
 import io.jboot.cache.JbootCacheBase;
 import io.jboot.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.cache.redis.JbootRedisCacheImpl;
-import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqMessageListener;
 import io.jboot.utils.StringUtils;
 
@@ -30,18 +29,19 @@ import java.util.List;
  * 基于 ehcache和redis做的二级缓存
  * 优点是：减少高并发下redis的io瓶颈
  */
-public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMessageListener<JbootEhredisMessage> {
+public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMessageListener {
+
+    public static final String DEFAULT_NOTIFY_CHANNEL = "jboot_ehredis_channel";
 
     JbootEhcacheImpl ehcache;
     JbootRedisCacheImpl redisCache;
-    Jbootmq<JbootEhredisMessage> jbootmq;
 
+    private String channel = DEFAULT_NOTIFY_CHANNEL;
     private String uuid;
 
 
     public JbootEhredisCacheImpl() {
-        jbootmq = Jboot.getJbootmq(JbootEhredisMessage.class);
-        jbootmq.addMessageListener(this);
+        Jboot.getJbootmq().addMessageListener(this, channel);
         uuid = StringUtils.uuid();
     }
 
@@ -70,7 +70,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.put(cacheName, key, value);
             redisCache.put(cacheName, key, value);
         } finally {
-            jbootmq.publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_PUT, cacheName, key));
+            Jboot.getJbootmq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_PUT, cacheName, key), channel);
         }
     }
 
@@ -80,7 +80,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.remove(cacheName, key);
             redisCache.remove(cacheName, key);
         } finally {
-            jbootmq.publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE, cacheName, key));
+            Jboot.getJbootmq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE, cacheName, key), channel);
         }
     }
 
@@ -90,7 +90,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.removeAll(cacheName);
             redisCache.removeAll(cacheName);
         } finally {
-            jbootmq.publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null));
+            Jboot.getJbootmq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null), channel);
         }
     }
 
@@ -110,7 +110,9 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
 
     @Override
-    public void onMessage(String channel, JbootEhredisMessage message) {
+    public void onMessage(String channel, Object obj) {
+
+        JbootEhredisMessage message = (JbootEhredisMessage) obj;
         /**
          * 不处理自己发送的消息
          */

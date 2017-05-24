@@ -16,11 +16,9 @@
 package io.jboot.mq;
 
 import io.jboot.Jboot;
+import io.jboot.mq.aliyunmq.JbootAliyunmqImpl;
 import io.jboot.mq.redismq.JbootRedismqImpl;
 import io.jboot.utils.ClassNewer;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public class JbootmqManager {
@@ -38,30 +36,31 @@ public class JbootmqManager {
     }
 
 
-    private Map<Class, Jbootmq> jbootmqMap = new ConcurrentHashMap<>();
+//    private Map<Class, Jbootmq> jbootmqMap = new ConcurrentHashMap<>();
 
-    public <T> Jbootmq<T> getJbootmq(Class<T> clazz) {
-        Jbootmq<T> jbootmq = jbootmqMap.get(clazz);
+    private Jbootmq jbootmq;
+
+    public Jbootmq getJbootmq() {
         if (jbootmq == null) {
-            jbootmq = buildJbootmq(clazz);
-            jbootmqMap.put(clazz, jbootmq);
+            jbootmq = buildJbootmq();
         }
         return jbootmq;
     }
 
-    private <T> Jbootmq<T> buildJbootmq(Class<T> clazz) {
+    private Jbootmq buildJbootmq() {
         JbootmqConfig config = Jboot.config(JbootmqConfig.class);
 
         switch (config.getType()) {
             case JbootmqConfig.TYPE_REDIS:
-                return new JbootRedismqImpl<T>();
-            case JbootmqConfig.TYPE_ACTIVEMQ:
+                return new JbootRedismqImpl();
             case JbootmqConfig.TYPE_ALIYUNMQ:
+                return new JbootAliyunmqImpl();
+            case JbootmqConfig.TYPE_ACTIVEMQ:
             case JbootmqConfig.TYPE_HORNETQ:
             case JbootmqConfig.TYPE_RABBITMQ:
                 throw new RuntimeException("not finished!!!!");
             default:
-                return new JbootRedismqImpl<T>();
+                return new JbootRedismqImpl();
         }
 
     }

@@ -16,11 +16,11 @@
 package io.jboot.mq;
 
 
-public interface JbootmqMessageListener<M> {
+public interface JbootmqMessageListener {
 
     /**
      * @param channel of topic
-     * @param message     topic message
+     * @param message topic message
      */
-    void onMessage(String channel, M message);
+    void onMessage(String channel, Object message);
 }

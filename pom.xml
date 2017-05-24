@@ -138,6 +138,13 @@
             <version>1.10.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.aliyun.openservices</groupId>
+            <artifactId>ons-client</artifactId>
+            <version>1.2.7.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
 
     </dependencies>
 

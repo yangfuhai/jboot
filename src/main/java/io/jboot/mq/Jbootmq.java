@@ -18,16 +18,18 @@ package io.jboot.mq;
 import java.util.List;
 
 
-public interface Jbootmq<M> {
+public interface Jbootmq {
 
-    public void publish(M message);
+    public void publish(Object message, String toChannel);
 
-    public void addMessageListener(JbootmqMessageListener<M> listener);
+    public void addMessageListener(JbootmqMessageListener listener);
 
-    public void removeListener(JbootmqMessageListener<M> listener);
+    public void addMessageListener(JbootmqMessageListener listener, String forChannel);
+
+    public void removeListener(JbootmqMessageListener listener);
 
     public void removeAllListeners();
 
-    public List<JbootmqMessageListener<M>> getListeners();
+    public List<JbootmqMessageListener> getListeners();
 
 }

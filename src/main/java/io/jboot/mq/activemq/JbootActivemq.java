@@ -19,9 +19,10 @@ import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
 
 
-public class JbootActivemq<M> extends JbootmqBase<M> implements Jbootmq<M> {
+public class JbootActivemq extends JbootmqBase implements Jbootmq {
+    
     @Override
-    public void publish(M message) {
+    public void publish(Object message, String toChannel) {
 
     }
 }
