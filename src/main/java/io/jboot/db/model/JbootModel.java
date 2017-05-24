@@ -125,9 +125,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public boolean update() {
+        Boolean fromCopier = getBoolean(ModelCopier.MODEL_FROM_COPIER);
+        if (fromCopier != null && fromCopier) {
+            keepCopier();
+        }
+
         if (hasColumn(COLUMN_MODIFIED)) {
             set(COLUMN_MODIFIED, new Date());
         }
+
         boolean update = super.update();
         if (update) {
             Object id = get(getPrimaryKey());
@@ -512,6 +518,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public Map<String, Object> _getAttrsAsMap() {
         return getAttrs();
+    }
+
+    /**
+     * 通过调用 keepCopier ，才能把从modelCopier复制过来的数据保存到数据库
+     */
+    public void keepCopier() {
+        Table table = TableMapping.me().getTable(getUsefulClass());
+        if (table == null) {
+            throw new RuntimeException("can't get table of " + getUsefulClass() + " , maybe jboot install incorrect");
+        }
+        Map<String, Class<?>> map = table.getColumnTypeMap();
+        for (Map.Entry<String, Class<?>> entry : map.entrySet()) {
+            Object o = get(entry.getKey());
+            if (o != null) {
+                set(entry.getKey(), o);
+            }
+        }
     }
 
 

@@ -36,11 +36,12 @@ public class ParaValidateInterceptor implements Interceptor {
 
         for (String param : paraKeys) {
             String value = inv.getController().getPara(param);
-            if (value != null && value.trim().length() != 0) {
+            if (value == null || value.trim().length() == 0) {
                 renderError(inv, param, emptyParaValidate.errorRedirect());
                 return;
             }
         }
+
         inv.invoke();
     }
 

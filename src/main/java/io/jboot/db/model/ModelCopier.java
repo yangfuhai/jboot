@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class ModelCopier {
 
+    public static final String MODEL_FROM_COPIER = "__from_copier__";
+
 
     public static <M extends JbootVoModel> Page<M> convertToVo(Page<? extends JbootModel> page, Class<M> clazz) {
         if (page == null) {
@@ -64,6 +66,7 @@ public class ModelCopier {
     public static JbootVoModel copyToVo(JbootModel model, JbootVoModel toObject) {
         if (model == null) return toObject;
         toObject.putAll(model._getAttrsAsMap());
+        toObject.remove(MODEL_FROM_COPIER);
         return toObject;
     }
 
@@ -105,6 +108,7 @@ public class ModelCopier {
     public static Model copyToModel(JbootVoModel voModel, Model toModel) {
         if (voModel == null) return toModel;
         toModel.put(voModel);
+        toModel.put(MODEL_FROM_COPIER, true);
         return toModel;
     }
 
