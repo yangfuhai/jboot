@@ -45,7 +45,7 @@ public class JbootrpcManager {
 
 
     private Jbootrpc jbootrpc;
-    JbootrpcConfig config;
+    private JbootrpcConfig config;
 
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {

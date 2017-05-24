@@ -29,6 +29,7 @@ import io.jboot.rpc.Jbootrpc;
 import io.jboot.rpc.JbootrpcManager;
 import io.jboot.server.AutoDeployManager;
 import io.jboot.server.JbootServer;
+import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerFactory;
 import io.jboot.utils.FileUtils;
 import io.jboot.utils.StringUtils;
@@ -48,6 +49,7 @@ public class Jboot {
 
     private static Jbootrpc jbootrpc;
     private static JbootCache jbootCache;
+    private static JbootHttp jbootHttp;
 
 
     /**
@@ -105,23 +107,29 @@ public class Jboot {
     public static void start() {
 
         printBannerInfo();
+        printJbootConfigInfo();
+        printServerConfigInfo();
 
         JbootServerFactory factory = JbootServerFactory.me();
-        JbootServer jBootServer = factory.buildServer();
-        if (jBootServer.start()) {
-            System.out.println(jBootServer.getConfig());
-            JbootrpcManager.me().autoExport();
+        JbootServer jbootServer = factory.buildServer();
 
-            if (isDevMode()) {
-                AutoDeployManager.me().run();
-            }
 
-        } else {
-            System.out.println(jBootServer.getConfig());
+        boolean startSuccess = jbootServer.start();
+
+        if (!startSuccess) {
             System.err.println("jboot start fail!!!");
+            return;
         }
 
-        printJbootConfigInfo();
+
+        System.err.println("jboot start success!!!");
+
+        JbootrpcManager.me().autoExport();
+
+        if (isDevMode()) {
+            AutoDeployManager.me().run();
+        }
+
     }
 
     private static void printBannerInfo() {
@@ -153,6 +161,10 @@ public class Jboot {
 
     private static void printJbootConfigInfo() {
         System.out.println(getJbootConfig());
+    }
+
+    private static void printServerConfigInfo() {
+        System.out.println(config(JbootServerConfig.class));
     }
 
 
@@ -222,6 +234,11 @@ public class Jboot {
         return JbootmqManager.me().getJbootmq(clazz);
     }
 
+    /**
+     * 获取 缓存
+     *
+     * @return
+     */
     public static JbootCache getJbootCache() {
         if (jbootCache == null) {
             jbootCache = JbootCacheManager.me().getCache();
@@ -229,8 +246,16 @@ public class Jboot {
         return jbootCache;
     }
 
+    /**
+     * 获取 jbootHttp 工具类，方便操作http请求
+     *
+     * @return
+     */
     public static JbootHttp getJbootHttp() {
-        return JbootHttpManager.me().getJbootHttp();
+        if (jbootHttp == null) {
+            jbootHttp = JbootHttpManager.me().getJbootHttp();
+        }
+        return jbootHttp;
     }
 
     /**

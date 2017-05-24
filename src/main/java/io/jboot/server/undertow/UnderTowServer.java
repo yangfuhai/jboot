@@ -16,6 +16,7 @@
 package io.jboot.server.undertow;
 
 import com.jfinal.core.JFinalFilter;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
@@ -32,6 +33,8 @@ import javax.servlet.DispatcherType;
 
 
 public class UnderTowServer extends JbootServer {
+
+    static Log log = Log.getLog(UnderTowServer.class);
 
     private DeploymentManager mDeploymentManager;
     private PathHandler mHandler;
@@ -90,10 +93,9 @@ public class UnderTowServer extends JbootServer {
     @Override
     public boolean start() {
         try {
-            System.out.println("undertow server starting ....");
             mServer.start();
-            System.out.println("undertow server started !");
         } catch (Throwable ex) {
+            log.error(ex.toString(), ex);
             stop();
             return false;
         }
@@ -104,7 +106,6 @@ public class UnderTowServer extends JbootServer {
     @Override
     public boolean stop() {
         mServer.stop();
-        System.out.println("undertow server stoped !");
         return true;
     }
 
