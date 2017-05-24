@@ -1,4 +1,3 @@
-/Users/michael/work/idea/jboot/src/main/java/io/jboot/codegen/vomodel/test/OperationRecordVo.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/server/AutoDeployManager.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/utils/ArrayUtils.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/cache/JbootCacheManager.java
@@ -8,6 +7,7 @@
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/cache/NoCacheImpl.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/schedule/JbootTaskManager.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/test/ctr/TestController.java
+/Users/michael/work/idea/jboot/src/main/java/io/jboot/web/controller/annotation/EmptyParaValidate.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/codegen/model/JbootModelnfoGenerator.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/cache/JbootCacheBase.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/mq/annotation/JbootmqConfig.java
@@ -81,6 +81,7 @@
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/mq/activemq/JbootActivemq.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/service/JbootService.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/http/JbootMultipartReader.java
+/Users/michael/work/idea/jboot/src/main/java/io/jboot/db/model/Columns.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/db/model/Column.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/http/HttpRequest.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/rpc/local/JbootLocalrpc.java
@@ -104,3 +105,4 @@
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/web/directive/base/JbootDirectiveBase.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/rpc/JbootrpcManager.java
 /Users/michael/work/idea/jboot/src/main/java/io/jboot/test/rpc/TestRpcService.java
+/Users/michael/work/idea/jboot/src/main/java/io/jboot/web/controller/interceptor/ParaValidateInterceptor.java
