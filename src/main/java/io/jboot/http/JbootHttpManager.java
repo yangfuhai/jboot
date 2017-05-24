@@ -15,13 +15,30 @@
  */
 package io.jboot.http;
 
-import java.io.File;
+import io.jboot.http.jboot.JbootHttpImpl;
+import io.jboot.utils.ClassNewer;
 
-public interface IHttpHandler {
+public class JbootHttpManager {
 
-    public HttpResponse handle(HttpRequest request);
+    private static JbootHttpManager manager;
 
-    public HttpResponse handle(HttpRequest request, File downloadToFile);
+
+    public static JbootHttpManager me() {
+        if (manager == null) {
+            manager = ClassNewer.singleton(JbootHttpManager.class);
+        }
+        return manager;
+    }
+
+
+    private JbootHttp jbootHttp;
+
+    public JbootHttp getJbootHttp() {
+        if (jbootHttp == null) {
+            jbootHttp = new JbootHttpImpl();
+        }
+        return jbootHttp;
+    }
 
 
 }

@@ -18,19 +18,24 @@ package io.jboot.http;
 import com.jfinal.log.Log;
 
 import java.io.*;
+import java.util.List;
+import java.util.Map;
 
-public class HttpResponse {
-    private static final Log log = Log.getLog(HttpResponse.class);
+public class JbootHttpResponse {
+    private static final Log log = Log.getLog(JbootHttpResponse.class);
 
     private OutputStream outputStream;
     private File file;
     private Throwable error;
+    private Map<String, List<String>> headers;
+    private int responseCode;
+    private String contentType;
 
-    public HttpResponse() {
+    public JbootHttpResponse() {
         this.outputStream = new ByteArrayOutputStream();
     }
 
-    public HttpResponse(File file) {
+    public JbootHttpResponse(File file) {
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdir();
         }
@@ -75,6 +80,7 @@ public class HttpResponse {
             }
         } catch (Throwable throwable) {
             log.error(throwable.toString(), throwable);
+            setError(throwable);
         }
     }
 
@@ -92,6 +98,10 @@ public class HttpResponse {
         }
     }
 
+    public boolean isNotError() {
+        return !isError();
+    }
+
     public boolean isError() {
         return error != null;
     }
@@ -102,5 +112,37 @@ public class HttpResponse {
 
     public void setError(Throwable error) {
         this.error = error;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, List<String>> headers) {
+        this.headers = headers;
+    }
+
+    public int getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }

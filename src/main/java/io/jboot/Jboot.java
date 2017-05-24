@@ -21,6 +21,8 @@ import io.jboot.cache.JbootCacheManager;
 import io.jboot.config.JbootProperties;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
+import io.jboot.http.JbootHttp;
+import io.jboot.http.JbootHttpManager;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqManager;
 import io.jboot.rpc.Jbootrpc;
@@ -225,6 +227,10 @@ public class Jboot {
             jbootCache = JbootCacheManager.me().getCache();
         }
         return jbootCache;
+    }
+
+    public static JbootHttp getJbootHttp() {
+        return JbootHttpManager.me().getJbootHttp();
     }
 
     /**
