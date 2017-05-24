@@ -59,7 +59,7 @@ public class JbootHttpResponse {
      *
      * @return
      */
-    public String getContentAsString() {
+    public String getContent() {
         if (outputStream != null && outputStream instanceof ByteArrayOutputStream) {
             return new String(((ByteArrayOutputStream) outputStream).toByteArray());
         }
