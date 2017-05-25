@@ -47,7 +47,7 @@ public class MqTest {
         }
 
 
-        sleep(1000 * 213);
+        sleep(1000 * 3);
     }
 
 
