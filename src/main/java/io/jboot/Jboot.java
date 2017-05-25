@@ -78,15 +78,21 @@ public class Jboot {
             return;
         }
 
-        argMap = new HashMap<>();
         for (String arg : args) {
             int indexOf = arg.indexOf("=");
             if (arg.startsWith("--") && indexOf > 0) {
                 String key = arg.substring(2, indexOf);
                 String value = arg.substring(indexOf + 1);
-                argMap.put(key, value);
+                setBootArg(key, value);
             }
         }
+    }
+
+    public static void setBootArg(String key, String value) {
+        if (argMap == null) {
+            argMap = new HashMap<>();
+        }
+        argMap.put(key, value);
     }
 
     /**
@@ -206,20 +212,12 @@ public class Jboot {
     }
 
 
-    public static Jbootrpc getJbootrpc() {
-        if (jbootrpc == null) {
-            jbootrpc = JbootrpcManager.me().getJbootrpc();
-        }
-        return jbootrpc;
-    }
-
-
     public static <T> T service(Class<T> clazz) {
         return service(clazz, "jboot", "1.0");
     }
 
     public static <T> T service(Class<T> clazz, String group, String version) {
-        return getJbootrpc().serviceObtain(clazz, "jboot", "1.0");
+        return getRpc().serviceObtain(clazz, "jboot", "1.0");
     }
 
     public static void sendEvent(JbootEvent event) {
@@ -230,7 +228,16 @@ public class Jboot {
         sendEvent(new JbootEvent(action, data));
     }
 
-    public static Jbootmq getJbootmq() {
+
+    public static Jbootrpc getRpc() {
+        if (jbootrpc == null) {
+            jbootrpc = JbootrpcManager.me().getJbootrpc();
+        }
+        return jbootrpc;
+    }
+
+
+    public static Jbootmq getMq() {
         return JbootmqManager.me().getJbootmq();
     }
 
@@ -239,7 +246,7 @@ public class Jboot {
      *
      * @return
      */
-    public static JbootCache getJbootCache() {
+    public static JbootCache getCache() {
         if (jbootCache == null) {
             jbootCache = JbootCacheManager.me().getCache();
         }
@@ -251,7 +258,7 @@ public class Jboot {
      *
      * @return
      */
-    public static JbootHttp getJbootHttp() {
+    public static JbootHttp getHttp() {
         if (jbootHttp == null) {
             jbootHttp = JbootHttpManager.me().getJbootHttp();
         }

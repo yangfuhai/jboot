@@ -10,10 +10,13 @@ public class MqTest {
          * jboot.properties
          *
          * jboot.mq.type= redis
-         * jboot.mq.redis.address = 127.0.0.1:6379
+         * jboot.mq.redis.address= 127.0.0.1:6379
          */
 
-        Jboot.getJbootmq().addMessageListener(new JbootmqMessageListener() {
+        Jboot.setBootArg("jboot.mq.type","redis");
+        Jboot.setBootArg("jboot.mq.redis.address","127.0.0.1:6379");
+
+        Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
             @Override
             public void onMessage(String channel, Object message) {
                 System.out.println("message:" + message + "     channel:" + channel);
@@ -21,7 +24,7 @@ public class MqTest {
         });
 
         for (int i = 0; i < 10; i++) {
-            Jboot.getJbootmq().publish("hello" + i, "myChannel");
+            Jboot.getMq().publish("hello" + i, "myChannel");
         }
 
 

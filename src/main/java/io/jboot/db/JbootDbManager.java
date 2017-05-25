@@ -57,7 +57,7 @@ public class JbootDbManager {
             DataSourceBuilder dsBuilder = new DataSourceBuilder(datasourceConfig);
             activeRecordPlugin = createRecordPlugin(null, dsBuilder.build());
             activeRecordPlugin.setShowSql(Jboot.isDevMode());
-            activeRecordPlugin.setCache(Jboot.getJbootCache());
+            activeRecordPlugin.setCache(Jboot.getCache());
             initActiveRecordPluginDialect(activeRecordPlugin, datasourceConfig);
         }
 
@@ -67,7 +67,7 @@ public class JbootDbManager {
             DataSourceBuilder dsBuilder = new DataSourceBuilder(masterDatasourceConfig);
             masterActiveRecordPlugin = createRecordPlugin("master", dsBuilder.build());
             masterActiveRecordPlugin.setShowSql(Jboot.isDevMode());
-            masterActiveRecordPlugin.setCache(Jboot.getJbootCache());
+            masterActiveRecordPlugin.setCache(Jboot.getCache());
             initActiveRecordPluginDialect(masterActiveRecordPlugin, masterDatasourceConfig);
         }
     }

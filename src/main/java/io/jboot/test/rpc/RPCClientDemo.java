@@ -26,7 +26,7 @@ public class RPCClientDemo {
 
     public static void main(String[] args) throws InterruptedException {
 
-        Jbootrpc factory = Jboot.getJbootrpc();
+        Jbootrpc factory = Jboot.getRpc();
 
         long time = System.currentTimeMillis();
         ITestRpcService service = factory.serviceObtain(ITestRpcService.class, "jboot", "1.0");

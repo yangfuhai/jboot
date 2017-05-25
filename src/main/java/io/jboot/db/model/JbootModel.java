@@ -37,23 +37,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public void removeCache(Object key) {
         if (key == null) return;
-        Jboot.getJbootCache().remove(tableName(), key);
+        Jboot.getCache().remove(tableName(), key);
     }
 
     public void putCache(Object key, Object value) {
-        Jboot.getJbootCache().put(tableName(), key, value);
+        Jboot.getCache().put(tableName(), key, value);
     }
 
     public M getCache(Object key) {
-        return Jboot.getJbootCache().get(tableName(), key);
+        return Jboot.getCache().get(tableName(), key);
     }
 
     public M getCache(Object key, IDataLoader dataloader) {
-        return Jboot.getJbootCache().get(tableName(), key, dataloader);
+        return Jboot.getCache().get(tableName(), key, dataloader);
     }
 
     public List<M> getListCache(Object key, IDataLoader dataloader) {
-        return Jboot.getJbootCache().get(tableName(), key, dataloader);
+        return Jboot.getCache().get(tableName(), key, dataloader);
     }
 
     public String buildCacheKey(String column, String value) {

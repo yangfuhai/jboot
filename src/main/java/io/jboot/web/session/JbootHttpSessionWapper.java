@@ -70,12 +70,12 @@ public class JbootHttpSessionWapper implements HttpSession {
 
     @Override
     public Object getAttribute(String name) {
-        return Jboot.getJbootCache().get(SESSION_CACHE_NAME, buildKey(name));
+        return Jboot.getCache().get(SESSION_CACHE_NAME, buildKey(name));
     }
 
     @Override
     public Object getValue(String name) {
-        return Jboot.getJbootCache().get(SESSION_CACHE_NAME, buildKey(name));
+        return Jboot.getCache().get(SESSION_CACHE_NAME, buildKey(name));
     }
 
     @Override
@@ -90,18 +90,18 @@ public class JbootHttpSessionWapper implements HttpSession {
 
     @Override
     public void setAttribute(String name, Object value) {
-        Jboot.getJbootCache().put(SESSION_CACHE_NAME, buildKey(name), value);
+        Jboot.getCache().put(SESSION_CACHE_NAME, buildKey(name), value);
     }
 
     @Override
     public void putValue(String name, Object value) {
-        Jboot.getJbootCache().put(SESSION_CACHE_NAME, buildKey(name), value);
+        Jboot.getCache().put(SESSION_CACHE_NAME, buildKey(name), value);
     }
 
 
     @Override
     public void removeAttribute(String name) {
-        Jboot.getJbootCache().remove(SESSION_CACHE_NAME, buildKey(name));
+        Jboot.getCache().remove(SESSION_CACHE_NAME, buildKey(name));
     }
 
     @Override

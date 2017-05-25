@@ -26,7 +26,7 @@ public class RPCServerDemo {
 
     public static void main(String[] args) throws InterruptedException {
 
-        Jbootrpc factory = Jboot.getJbootrpc();
+        Jbootrpc factory = Jboot.getRpc();
 
         System.out.println(factory);
 
