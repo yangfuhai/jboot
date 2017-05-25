@@ -17,16 +17,18 @@ package io.jboot.mq.rabbitmq;
 
 import com.rabbitmq.client.*;
 import io.jboot.Jboot;
+import io.jboot.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.exception.JbootException;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
+import io.jboot.utils.StringUtils;
 import org.nustaq.serialization.FSTConfiguration;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-
+/**
+ * doc : http://www.rabbitmq.com/api-guide.html
+ */
 public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
 
@@ -39,11 +41,23 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(config.getHost());
-        factory.setVirtualHost(config.getVirtualHost());
         factory.setPort(config.getPortAsInt());
-        factory.setUsername(config.getUsername());
-        factory.setPassword(config.getPassword());
 
+        if (StringUtils.isNotBlank(config.getVirtualHost())) {
+            factory.setVirtualHost(config.getVirtualHost());
+        }
+        if (StringUtils.isNotBlank(config.getUsername())) {
+            factory.setUsername(config.getUsername());
+        }
+
+        if (StringUtils.isNotBlank(config.getPassword())) {
+            factory.setPassword(config.getPassword());
+        }
+
+        String channelString = config.getChannel();
+        if (StringUtils.isBlank(channelString)) {
+            throw new JbootException("jboot.mq.rabbitmq.channel config cannot empty in jboot.properties");
+        }
 
         try {
             connection = factory.newConnection();
@@ -51,27 +65,44 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             throw new JbootException("can not connection rabbitmq server", e);
         }
 
+        String[] channels = channelString.split(",");
+        for (String toChannel : channels) {
+            registerListner(getChannel(toChannel));
+        }
+
+        /**
+         * 阿里云需要提前注册缓存通知使用的通道
+         */
+        registerListner(getChannel(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL));
     }
 
-    private Map<String, Channel> channelMap = new ConcurrentHashMap<>();
+    private void registerListner(final Channel channel) {
+        if (channel == null) {
+            return;
+        }
+        try {
+            channel.basicConsume("", true, new DefaultConsumer(channel) {
+                @Override
+                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                    Object o = fst.asObject(body);
+                    notifyListeners(envelope.getExchange(), o);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private Channel getChannel(String toChannel) {
-        Channel channel = channelMap.get(toChannel);
-        if (channel == null) {
-            try {
-                channel = connection.createChannel();
-                channel.queueDeclare(toChannel, false, false, false, null);
-                channel.basicConsume(toChannel, new DefaultConsumer(channel) {
-                    @Override
-                    public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                        Object o = fst.asObject(body);
-                        notifyListeners(toChannel, o);
-                    }
-                });
-                channelMap.put(toChannel, channel);
-            } catch (IOException e) {
-                throw new JbootException("can not createChannel", e);
-            }
+        Channel channel = null;
+        try {
+            channel = connection.createChannel();
+            channel.exchangeDeclare(toChannel, BuiltinExchangeType.FANOUT);
+            String queueName = channel.queueDeclare().getQueue();
+            channel.queueBind(queueName, toChannel, "");
+        } catch (IOException e) {
+            throw new JbootException("can not createChannel", e);
         }
 
         return channel;
@@ -79,9 +110,16 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void publish(Object message, String toChannel) {
+
+        Channel channel = getChannel(toChannel);
+
+        if (channel == null) {
+            return;
+        }
+
         byte[] bytes = fst.asByteArray(message);
         try {
-            getChannel(toChannel).basicPublish("", toChannel, null, bytes);
+            channel.basicPublish(toChannel, "", MessageProperties.BASIC, bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }

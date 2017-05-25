@@ -22,12 +22,13 @@ import io.jboot.config.annotation.PropertieConfig;
 public class JbootmqRabbitmqConfig {
 
 
-    private String username;
-    private String password;
+    private String username = "guest";
+    private String password = "guest";
 
-    private String host;
-    private String port;
+    private String host = "127.0.0.1";
+    private String port = "5672";
     private String virtualHost;
+    private String channel;
 
 
     public String getUsername() {
@@ -72,5 +73,13 @@ public class JbootmqRabbitmqConfig {
 
     public void setVirtualHost(String virtualHost) {
         this.virtualHost = virtualHost;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 }

@@ -13,9 +13,28 @@ public class MqTest {
          * jboot.mq.redis.address= 127.0.0.1:6379
          */
 
-        Jboot.setBootArg("jboot.mq.type","redis");
-        Jboot.setBootArg("jboot.mq.redis.address","127.0.0.1:6379");
+        Jboot.setBootArg("jboot.mq.type", "redis");
+        Jboot.setBootArg("jboot.mq.redis.address", "127.0.0.1:6379");
 
+        doTest();
+
+    }
+
+
+    @Test
+    public void testRabbitmqSend() {
+
+        Jboot.setBootArg("jboot.mq.type", "rabbitmq");
+        Jboot.setBootArg("jboot.mq.rabbitmq.host", "127.0.0.1");
+        Jboot.setBootArg("jboot.mq.rabbitmq.username", "guest");
+        Jboot.setBootArg("jboot.mq.rabbitmq.password", "guest");
+        Jboot.setBootArg("jboot.mq.rabbitmq.channel", "myChannel");
+
+        doTest();
+
+    }
+
+    private void doTest() {
         Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
             @Override
             public void onMessage(String channel, Object message) {
@@ -28,8 +47,7 @@ public class MqTest {
         }
 
 
-        sleep(2000);
-
+        sleep(1000 * 213);
     }
 
 
@@ -40,4 +58,6 @@ public class MqTest {
             e.printStackTrace();
         }
     }
+
+
 }
