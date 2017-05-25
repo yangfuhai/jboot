@@ -10,7 +10,7 @@ public class HttpTest {
 
     @Test
     public void testHttp() {
-        JbootHttpResponse response = Jboot.getJbootHttp().handle(JbootHttpRequest.create("http://www.lezhibo.com"));
+        JbootHttpResponse response = Jboot.getJbootHttp().handle(JbootHttpRequest.create("https://www.baidu.com"));
 
         System.out.println(response.getContentType());
         System.out.println(response.getHeaders());

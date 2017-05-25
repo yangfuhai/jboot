@@ -15,13 +15,8 @@
  */
 package io.jboot.http;
 
-import java.io.File;
-
 public interface JbootHttp {
 
     public JbootHttpResponse handle(JbootHttpRequest request);
-
-    public JbootHttpResponse download(JbootHttpRequest request, File toFile);
-
 
 }

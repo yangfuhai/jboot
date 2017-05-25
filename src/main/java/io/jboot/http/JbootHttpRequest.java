@@ -15,6 +15,7 @@
  */
 package io.jboot.http;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,8 @@ public class JbootHttpRequest {
     private String charset = CHAR_SET;
 
     private boolean multipartFormData = false;
+
+    private File downloadFile;
 
 
     public static JbootHttpRequest create(String url) {
@@ -176,5 +179,13 @@ public class JbootHttpRequest {
 
     public void setMultipartFormData(boolean multipartFormData) {
         this.multipartFormData = multipartFormData;
+    }
+
+    public File getDownloadFile() {
+        return downloadFile;
+    }
+
+    public void setDownloadFile(File downloadFile) {
+        this.downloadFile = downloadFile;
     }
 }

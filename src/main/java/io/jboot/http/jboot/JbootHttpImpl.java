@@ -24,6 +24,7 @@ import io.jboot.utils.StringUtils;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyStore;
@@ -38,15 +39,9 @@ public class JbootHttpImpl implements JbootHttp {
     @Override
     public JbootHttpResponse handle(JbootHttpRequest request) {
 
-        JbootHttpResponse response = new JbootHttpResponse();
-        doProcess(request, response);
-        return response;
-    }
-
-
-    @Override
-    public JbootHttpResponse download(JbootHttpRequest request, File toFile) {
-        JbootHttpResponse response = new JbootHttpResponse(toFile);
+        JbootHttpResponse response = request.getDownloadFile() == null
+                ? new JbootHttpResponse()
+                : new JbootHttpResponse(request.getDownloadFile());
         doProcess(request, response);
         return response;
     }
@@ -186,11 +181,13 @@ public class JbootHttpImpl implements JbootHttp {
     }
 
 
-    private static void configConnection(HttpURLConnection connection, JbootHttpRequest request) {
+    private static void configConnection(HttpURLConnection connection, JbootHttpRequest request) throws ProtocolException {
         if (connection == null)
             return;
         connection.setReadTimeout(request.getReadTimeOut());
         connection.setConnectTimeout(request.getConnectTimeOut());
+        connection.setRequestMethod(request.getMethod());
+
 
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.146 Safari/537.36");
