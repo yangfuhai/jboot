@@ -16,8 +16,11 @@
 package io.jboot.web.directive.base;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.template.Env;
+import com.jfinal.template.stat.Scope;
 import io.jboot.web.RequestManager;
 
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,17 +36,17 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     private boolean onlyShowPreviousAndNext = false;
 
     @Override
-    public void onExec() {
+    public void exec(Env env, Scope scope, Writer writer) {
 
-        previousClass = getParam("previousClass", "previous");
-        nextClass = getParam("nextClass", "next");
-        activeClass = getParam("activeClass", "active");
-        disabledClass = getParam("disabledClass", "disabled");
-        anchor = getParam("anchor", null);
-        onlyShowPreviousAndNext = getParam("onlyShowPreviousAndNext", false);
+        previousClass = getParam("previousClass", "previous", scope);
+        nextClass = getParam("nextClass", "next", scope);
+        activeClass = getParam("activeClass", "active", scope);
+        disabledClass = getParam("disabledClass", "disabled", scope);
+        anchor = getParam("anchor", null, scope);
+        onlyShowPreviousAndNext = getParam("onlyShowPreviousAndNext", false, scope);
 
-        String previousText = getParam("previousText", "上一页");
-        String nextText = getParam("nextText", "下一页");
+        String previousText = getParam("previousText", "上一页", scope);
+        String nextText = getParam("nextText", "下一页", scope);
 
         Page<?> page = RequestManager.me().getRequestAttr("pageData");
 

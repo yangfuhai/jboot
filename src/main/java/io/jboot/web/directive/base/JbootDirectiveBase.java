@@ -16,10 +16,8 @@
 package io.jboot.web.directive.base;
 
 import com.jfinal.template.Directive;
-import com.jfinal.template.Env;
 import com.jfinal.template.stat.Scope;
 
-import java.io.Writer;
 import java.util.Map;
 
 /**
@@ -27,22 +25,8 @@ import java.util.Map;
  */
 public abstract class JbootDirectiveBase extends Directive {
 
-    protected Env env;
-    protected Scope scope;
-    protected Writer writer;
 
-    @Override
-    public void exec(Env env, Scope scope, Writer writer) {
-        this.env = env;
-        this.scope = scope;
-        this.writer = writer;
-
-        onExec();
-    }
-
-    public abstract void onExec();
-
-    public <T> T getParam(String key, T defaultValue) {
+    public <T> T getParam(String key, T defaultValue, Scope scope) {
         if (exprList == null || exprList.length() == 0) {
             return defaultValue;
         }
@@ -53,19 +37,20 @@ public abstract class JbootDirectiveBase extends Directive {
     }
 
 
-    public <T> T getParam(String key) {
-        return getParam(key, null);
+    public <T> T getParam(String key, Scope scope) {
+        return getParam(key, null, scope);
     }
 
 
-    public <T> T getParam(int index, T defaultValue) {
+    public <T> T getParam(int index, T defaultValue, Scope scope) {
         Object data = exprList.getExprArray()[index].eval(scope);
         return (T) (data == null ? defaultValue : data);
     }
 
 
-    public <T> T getParam(int index) {
-        return getParam(index, null);
+    public <T> T getParam(int index, Scope scope) {
+        return getParam(index, null, scope);
     }
+
 
 }
