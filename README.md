@@ -291,7 +291,7 @@ maven build
 mvn package appassembler:assemble
 ```
 
-start app
+# start app
 ```java
 cd yourProjectPath/target/app/bin
 ./jboot
