@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.test.rpc;
+package rpc;
 
 /**
  * Created by michael on 2017/5/5.
  */
-public interface ITest1RpcService {
+public interface ITestRpcService {
 
 
     public String hello(String hello);

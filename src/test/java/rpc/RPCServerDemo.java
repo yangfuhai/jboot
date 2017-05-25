@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.test.ctr;
+package rpc;
 
-import io.jboot.web.controller.annotation.UrlMapping;
-import io.jboot.web.controller.JbootController;
+import io.jboot.Jboot;
+import io.jboot.rpc.Jbootrpc;
 
 /**
- * Created by michael on 2017/5/9.
+ * Created by michael on 2017/5/5.
  */
-@UrlMapping(url = "/jboottest")
-public class TestController extends JbootController {
+public class RPCServerDemo {
 
-    public void index() {
 
-        renderText("hello jboot!");
+    public static void main(String[] args) throws InterruptedException {
+
+        Jbootrpc factory = Jboot.getRpc();
+
+        System.out.println(factory);
+
+        factory.serviceExport(ITestRpcService.class, new TestRpcService(), "jboot", "1.0", 8002);
+        factory.serviceExport(ITest1RpcService.class, new Test1RpcService(), "jboot", "1.0", 8002);
+
+        System.out.println("server start...");
+
+
     }
 }

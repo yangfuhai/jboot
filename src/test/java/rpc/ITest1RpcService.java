@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.mq.rabbitmq;
+package rpc;
 
-import io.jboot.mq.Jbootmq;
-import io.jboot.mq.JbootmqBase;
+/**
+ * Created by michael on 2017/5/5.
+ */
+public interface ITest1RpcService {
 
 
-public class JbootRabbitmq extends JbootmqBase implements Jbootmq {
+    public String hello(String hello);
 
-    @Override
-    public void publish(Object message, String toChannel) {
-
-    }
+    public String findUserById(String userId);
 }

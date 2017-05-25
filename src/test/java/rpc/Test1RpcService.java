@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.test.rpc;
-
-import io.jboot.Jboot;
-import io.jboot.rpc.Jbootrpc;
+package rpc;
 
 /**
  * Created by michael on 2017/5/5.
  */
-public class RPCServerDemo {
+public class Test1RpcService implements ITest1RpcService {
+    @Override
+    public String hello(String name) {
+        return "hello11 " + name;
+    }
 
 
-    public static void main(String[] args) throws InterruptedException {
 
-        Jbootrpc factory = Jboot.getRpc();
-
-        System.out.println(factory);
-
-        factory.serviceExport(ITestRpcService.class, new TestRpcService(), "jboot", "1.0", 8002);
-        factory.serviceExport(ITest1RpcService.class, new Test1RpcService(), "jboot", "1.0", 8002);
-
-        System.out.println("server start...");
-
-
+    @Override
+    public String findUserById(String userId) {
+        return "USER11";
     }
 }

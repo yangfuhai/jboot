@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.test.rpc;
+package rpc;
 
 /**
  * Created by michael on 2017/5/5.
  */
-public interface ITestRpcService {
+public class TestRpcService implements ITestRpcService {
+    @Override
+    public String hello(String name) {
+        return "hello " + name;
+    }
 
 
-    public String hello(String hello);
 
-    public String findUserById(String userId);
+    @Override
+    public String findUserById(String userId) {
+        return "USER";
+    }
 }

@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.test.rpc;
+package ctr;
+
+import io.jboot.web.controller.annotation.UrlMapping;
+import io.jboot.web.controller.JbootController;
 
 /**
- * Created by michael on 2017/5/5.
+ * Created by michael on 2017/5/9.
  */
-public class TestRpcService implements ITestRpcService {
-    @Override
-    public String hello(String name) {
-        return "hello " + name;
-    }
+@UrlMapping(url = "/jboottest")
+public class TestController extends JbootController {
 
+    public void index() {
 
-
-    @Override
-    public String findUserById(String userId) {
-        return "USER";
+        renderText("hello jboot!");
     }
 }

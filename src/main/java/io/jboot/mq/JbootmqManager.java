@@ -17,6 +17,7 @@ package io.jboot.mq;
 
 import io.jboot.Jboot;
 import io.jboot.mq.aliyunmq.JbootAliyunmqImpl;
+import io.jboot.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.mq.redismq.JbootRedismqImpl;
 import io.jboot.utils.ClassNewer;
 
@@ -36,8 +37,6 @@ public class JbootmqManager {
     }
 
 
-//    private Map<Class, Jbootmq> jbootmqMap = new ConcurrentHashMap<>();
-
     private Jbootmq jbootmq;
 
     public Jbootmq getJbootmq() {
@@ -55,9 +54,10 @@ public class JbootmqManager {
                 return new JbootRedismqImpl();
             case JbootmqConfig.TYPE_ALIYUNMQ:
                 return new JbootAliyunmqImpl();
+            case JbootmqConfig.TYPE_RABBITMQ:
+                return new JbootRabbitmqImpl();
             case JbootmqConfig.TYPE_ACTIVEMQ:
             case JbootmqConfig.TYPE_HORNETQ:
-            case JbootmqConfig.TYPE_RABBITMQ:
                 throw new RuntimeException("not finished!!!!");
             default:
                 return new JbootRedismqImpl();
