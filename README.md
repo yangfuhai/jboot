@@ -57,12 +57,12 @@ jboot.mq.redis.database =
 
 server a sendMqMessage
 ```java
- Jboot.getJbootmq().publish(yourObject, toChannel);
+ Jboot.getMq().publish(yourObject, toChannel);
 ```
 
 server b message listener
 ```java
-Jboot.getJbootmq().addMessageListener(new JbootmqMessageListener(){
+Jboot.getMq().addMessageListener(new JbootmqMessageListener(){
         @Override
         public void onMessage(String channel, Object obj) {
            System.out.println(obj);
@@ -120,7 +120,7 @@ jboot.cache.redis.database =
 
 use cache
 ```java
-Jboot.getJbootCache().put("cacheName", "key", "value");
+Jboot.getCache().put("cacheName", "key", "value");
 ```
 
 # database access example
