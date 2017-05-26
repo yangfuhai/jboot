@@ -15,6 +15,9 @@
  */
 package io.jboot.web.session;
 
+import io.jboot.Jboot;
+import io.jboot.cache.NoCacheImpl;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
@@ -23,7 +26,7 @@ import javax.servlet.http.HttpSession;
 public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     HttpServletRequest originHttpServletRequest;
-    JbootHttpSessionWapper httpSessionWapper;
+    HttpSession httpSession;
 
     public JbootServletRequestWrapper(HttpServletRequest request) {
         super(request);
@@ -32,19 +35,27 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public HttpSession getSession() {
-        if (httpSessionWapper == null) {
-            httpSessionWapper = new JbootHttpSessionWapper();
-        }
-        return httpSessionWapper;
+        return getSession(true);
     }
 
 
     @Override
     public HttpSession getSession(boolean create) {
-        if (httpSessionWapper == null) {
-            httpSessionWapper = new JbootHttpSessionWapper();
+
+        if (httpSession == null) {
+            /**
+             * 没有启用缓存的话，就用系统自带的session
+             */
+            if (!(Jboot.getCache() instanceof NoCacheImpl)) {
+                httpSession = new JbootHttpSessionWapper();
+            } else {
+                httpSession = super.getSession(create);
+            }
         }
-        return httpSessionWapper;
+
+        return httpSession;
+
+
     }
 
 
