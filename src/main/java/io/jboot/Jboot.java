@@ -19,6 +19,7 @@ import com.jfinal.kit.PathKit;
 import io.jboot.cache.JbootCache;
 import io.jboot.cache.JbootCacheManager;
 import io.jboot.config.JbootProperties;
+import io.jboot.core.redis.JbootRedis;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
 import io.jboot.http.JbootHttp;
@@ -52,6 +53,7 @@ public class Jboot {
     private static Jbootrpc jbootrpc;
     private static JbootCache jbootCache;
     private static JbootHttp jbootHttp;
+    private static JbootRedis jbootRedis;
 
 
     /**
@@ -286,6 +288,20 @@ public class Jboot {
         JbootHttpResponse response = getHttp().handle(request);
         return response.isError() ? null : response.getContent();
     }
+
+
+    /**
+     * 获取 JbootRedis 工具类，方便操作Redis请求
+     *
+     * @return
+     */
+    public static JbootRedis getRedis() {
+        if (jbootRedis == null) {
+            jbootRedis = new JbootRedis();
+        }
+        return jbootRedis;
+    }
+
 
     /**
      * 产品模式：开发、测试、产品

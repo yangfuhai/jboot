@@ -19,7 +19,7 @@ package io.jboot.cache.redis;
 import io.jboot.config.annotation.PropertieConfig;
 
 /**
- * Redis 缓存的配置文件
+ * JbootRedis 缓存的配置文件
  */
 @PropertieConfig(prefix = "jboot.cache.redis")
 public class JbootRedisCacheConfig {
