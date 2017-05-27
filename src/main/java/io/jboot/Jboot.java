@@ -23,6 +23,8 @@ import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
 import io.jboot.http.JbootHttp;
 import io.jboot.http.JbootHttpManager;
+import io.jboot.http.JbootHttpRequest;
+import io.jboot.http.JbootHttpResponse;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqManager;
 import io.jboot.rpc.Jbootrpc;
@@ -263,6 +265,26 @@ public class Jboot {
             jbootHttp = JbootHttpManager.me().getJbootHttp();
         }
         return jbootHttp;
+    }
+
+    public static String httpGet(String url) {
+        return httpGet(url, null);
+    }
+
+    public static String httpGet(String url, Map<String, Object> params) {
+        JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_GET);
+        JbootHttpResponse response = getHttp().handle(request);
+        return response.isError() ? null : response.getContent();
+    }
+
+    public static String httpPost(String url) {
+        return httpPost(url, null);
+    }
+
+    public static String httpPost(String url, Map<String, Object> params) {
+        JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_POST);
+        JbootHttpResponse response = getHttp().handle(request);
+        return response.isError() ? null : response.getContent();
     }
 
     /**
