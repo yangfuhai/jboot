@@ -23,21 +23,9 @@ public class JbootServerConfig {
 
     private String type = "undertow";
     private String host = "0.0.0.0";
-    private String port = "8088";
+    private int port = 8088;
     private String contextPath = "/";
 
-
-    public String getPort() {
-        return port;
-    }
-
-    public int getPortAsInt() {
-        return Integer.valueOf(port);
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
 
     public String getType() {
         return type;
@@ -53,6 +41,14 @@ public class JbootServerConfig {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public String getContextPath() {

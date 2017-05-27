@@ -85,7 +85,7 @@ public class UnderTowServer extends JbootServer {
                 .addPrefixPath(getConfig().getContextPath(), httpHandler);
 
         mServer = Undertow.builder()
-                .addHttpListener(getConfig().getPortAsInt(), getConfig().getHost())
+                .addHttpListener(getConfig().getPort(), getConfig().getHost())
                 .setHandler(mHandler)
                 .build();
     }
