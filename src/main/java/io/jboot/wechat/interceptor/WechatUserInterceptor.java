@@ -90,32 +90,32 @@ public abstract class WechatUserInterceptor implements Interceptor {
 
         if (isFromBaseScope) {
 
-            String openid = inv.getController().getSessionAttr("WECHAT_OPEN_ID");
+            String openid = inv.getController().getSessionAttr(JbootWechatController.ATTR_WECHAT_OPEN_ID);
             Object user = controller.doGetUserByOpenId(openid);
             if (user != null) {
-                controller.setAttr("_USER_", user);
+                controller.setAttr(JbootWechatController.ATTR_USER_OBJECT, user);
                 inv.invoke();
                 return;
             }
         }
 
-        String wechatUserJson = controller.getSessionAttr("WECHAT_USER_JSON");
+        String wechatUserJson = controller.getSessionAttr(JbootWechatController.ATTR_WECHAT_USER_JSON);
         if (validateUserJson(wechatUserJson)) {
             Object user = controller.doSaveOrUpdateUserByApiResult(ApiResult.create(wechatUserJson));
             if (user == null) {
                 controller.renderText("can not save or update user where get user from wechat");
                 return;
             }
-            controller.setAttr("_USER_", user);
+            controller.setAttr(JbootWechatController.ATTR_USER_OBJECT, user);
             inv.invoke();
             return;
         }
 
 
-        //移除脏数据
-        inv.getController().removeSessionAttr("WECHAT_OPEN_ID");
-        inv.getController().removeSessionAttr("WECHAT_ACCESS_TOKEN");
-        inv.getController().removeSessionAttr("WECHAT_USER_JSON");
+        //移除脏数据后，再次进入授权页面
+        inv.getController().removeSessionAttr(JbootWechatController.ATTR_WECHAT_OPEN_ID);
+        inv.getController().removeSessionAttr(JbootWechatController.ATTR_WECHAT_ACCESS_TOKEN);
+        inv.getController().removeSessionAttr(JbootWechatController.ATTR_WECHAT_USER_JSON);
 
 
         String appid = ApiConfigKit.getAppId();
@@ -141,11 +141,8 @@ public abstract class WechatUserInterceptor implements Interceptor {
         String redirectUrl = controller.getBaseUrl() + callbackControllerKey + "?goto=" + StringUtils.urlEncode(toUrl);
 
         redirectUrl = StringUtils.urlEncode(redirectUrl);
-
         String authUrl = isFromBaseScope ? AUTHORIZE_URL : BASE_AUTHORIZE_URL;
-
         String url = authUrl.replace("{redirecturi}", redirectUrl).replace("{appid}", appid.trim());
-
         controller.redirect(url);
     }
 

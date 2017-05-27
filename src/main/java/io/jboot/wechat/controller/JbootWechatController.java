@@ -19,7 +19,6 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.ext.interceptor.NotAction;
 import com.jfinal.kit.HashKit;
-import com.jfinal.kit.PropKit;
 import com.jfinal.weixin.sdk.api.*;
 import io.jboot.Jboot;
 import io.jboot.utils.RequestUtils;
@@ -33,10 +32,15 @@ import io.jboot.wechat.interceptor.WechatUserInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 
 @Before({WechatApiConfigInterceptor.class, WechatUserInterceptor.class})
 public abstract class JbootWechatController extends JbootController {
+
+    public static final String ATTR_WECHAT_OPEN_ID = "_jboot_wechat_open_id_";
+    public static final String ATTR_WECHAT_ACCESS_TOKEN = "_jboot_wechat_access_token_";
+    public static final String ATTR_WECHAT_SCOPE = "_jboot_wechat_scope_";
+    public static final String ATTR_WECHAT_USER_JSON = "_jboot_wechat_scope_";
+    public static final String ATTR_USER_OBJECT = "_jboot_user_object_";
 
 
     public ApiConfig getApiConfig() {
@@ -44,7 +48,7 @@ public abstract class JbootWechatController extends JbootController {
     }
 
 
-    @Clear
+    @Clear(WechatUserInterceptor.class)
     public void wechatCallback() {
 
         String gotoUrl = getPara("goto");
@@ -57,23 +61,15 @@ public abstract class JbootWechatController extends JbootController {
         }
 
 
-        String appId = PropKit.get("wechat.appid");
-        String appSecret = PropKit.get("wechat.appsecret");
-
-        if (StringUtils.isBlank(appId) || StringUtils.isBlank(appSecret)) {
-            renderText("wechat.appid 或 wechat.appsecret配置错误");
-            return;
-        }
-
-
         /**
          * 在某些情况下，相同的callback会执行两次，code相同。
          */
-        String wechatOpenId = getSessionAttr("WECHAT_OPEN_ID");
-        String access_token = getSessionAttr("WECHAT_ACCESS_TOKEN");
+        String wechatOpenId = getSessionAttr(ATTR_WECHAT_OPEN_ID);
+        String accessToken = getSessionAttr(ATTR_WECHAT_ACCESS_TOKEN);
 
-        if (StringUtils.isNotBlank(wechatOpenId) && StringUtils.isNotBlank(access_token)) {
-            doRedirect(gotoUrl, wechatOpenId, access_token);
+        if (StringUtils.isNotBlank(wechatOpenId)
+                && StringUtils.isNotBlank(accessToken)) {
+            doRedirect(gotoUrl, wechatOpenId, accessToken);
             return;
         }
 
@@ -84,26 +80,23 @@ public abstract class JbootWechatController extends JbootController {
             return;
         }
 
+        /**
+         * 成功获取到 accesstoken 和 openid
+         */
+        if (result.isSucceed()) {
+            wechatOpenId = result.getStr("openid");
+            accessToken = result.getStr("access_token");
+            setSessionAttr(ATTR_WECHAT_OPEN_ID, wechatOpenId);
+            setSessionAttr(ATTR_WECHAT_ACCESS_TOKEN, accessToken);
+            setSessionAttr(ATTR_WECHAT_SCOPE, result.getStr("scope"));
+        } else {
+            wechatOpenId = getSessionAttr(ATTR_WECHAT_OPEN_ID);
+            accessToken = getSessionAttr(ATTR_WECHAT_ACCESS_TOKEN);
 
-        if (!result.isSucceed()) {
-            //微信在某些情况下，会执行callback两次，返回两次相同的code，导致result不成功（备注：code只能用一次）
-            //在不成功的情况下，有可能是因为已经执行过一次了，已经获得了 WECHAT_OPEN_ID
-            wechatOpenId = getSessionAttr("WECHAT_OPEN_ID");
-            access_token = getSessionAttr("WECHAT_ACCESS_TOKEN");
-            if (StringUtils.isBlank(wechatOpenId) || StringUtils.isBlank(access_token)) {
+            if (StringUtils.isBlank(wechatOpenId) || StringUtils.isBlank(accessToken)) {
                 renderText("错误：" + result.getErrorMsg());
                 return;
             }
-        }
-        /**
-         * 成功获取openId
-         */
-        else {
-            wechatOpenId = result.getStr("openid");
-            access_token = result.getStr("access_token");
-            setSessionAttr("WECHAT_OPEN_ID", wechatOpenId);
-            setSessionAttr("WECHAT_ACCESS_TOKEN", access_token);
-            setSessionAttr("WECHAT_SCOPE", result.getStr("scope"));
         }
 
         if ("snsapi_base".equalsIgnoreCase(result.getStr("scope"))) {
@@ -111,23 +104,23 @@ public abstract class JbootWechatController extends JbootController {
             return;
         }
 
-        doRedirect(gotoUrl, wechatOpenId, access_token);
+        doRedirect(gotoUrl, wechatOpenId, accessToken);
     }
 
-    private void doRedirect(String gotoUrl, String wechatOpenId, String access_token) {
+    private void doRedirect(String gotoUrl, String wechatOpenId, String accessToken) {
 
         /**
-         * 由于 wechatOpenId 或者 access_token 是可能从session读取的，
+         * 由于 wechatOpenId 或者 accessToken 是可能从session读取的，
          * 从而导致失效等问题
          */
-        ApiResult apiResult = WechatApis.getUserInfo(access_token, wechatOpenId);
+        ApiResult apiResult = WechatApis.getUserInfo(accessToken, wechatOpenId);
 
         if (!apiResult.isSucceed()) {
             redirect(gotoUrl);
             return;
         }
 
-        setSessionAttr("WECHAT_USER_JSON", apiResult.getJson());
+        setSessionAttr(ATTR_WECHAT_USER_JSON, apiResult.getJson());
         redirect(gotoUrl);
     }
 
@@ -149,7 +142,7 @@ public abstract class JbootWechatController extends JbootController {
         JsTicket jsTicket = JsTicketApi.getTicket(JsTicketApi.JsApiType.jsapi);
         String _wxJsApiTicket = jsTicket.getTicket();
 
-        String noncestr = UUID.randomUUID().toString().replace("-", "");
+        String noncestr = StringUtils.uuid();
         String timestamp = (System.currentTimeMillis() / 1000) + "";
 
         Map<String, String> _wxMap = new TreeMap<String, String>();
@@ -187,8 +180,14 @@ public abstract class JbootWechatController extends JbootController {
     public void doNotAlloVisitRedirect() {
         /**
          * 一般情况下，此方法是为了调整到其他页面，比如让用户扫描二维码之类的
+         * 由子类去实现
          */
         renderText("不能访问");
+    }
+
+
+    public <T> T getCurrentUser() {
+        return getAttr(ATTR_USER_OBJECT);
     }
 
 
