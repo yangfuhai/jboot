@@ -23,6 +23,7 @@ import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
+import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.cache.JbootCacheConfig;
@@ -36,6 +37,7 @@ import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
+import io.jboot.wechat.JbootWechatConfig;
 
 import java.util.List;
 
@@ -47,6 +49,14 @@ public class JbootAppConfig extends JFinalConfig {
 
         PropKit.use("jboot.properties");
         constants.setRenderFactory(new JbootRenderFactory());
+        constants.setDevMode(Jboot.isDevMode());
+        ApiConfigKit.setDevMode(Jboot.isDevMode());
+
+        JbootWechatConfig config = Jboot.config(JbootWechatConfig.class);
+        ApiConfig apiConfig = config.getApiConfig();
+        if (apiConfig != null) {
+            ApiConfigKit.putApiConfig(apiConfig);
+        }
 
     }
 
