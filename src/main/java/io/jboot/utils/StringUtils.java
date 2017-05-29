@@ -88,7 +88,7 @@ public class StringUtils {
     }
 
     public static boolean isNotBlank(Object o) {
-        return o == null ? true : isNotBlank(o.toString());
+        return o == null ? false : isNotBlank(o.toString());
     }
 
     public static boolean isNotBlank(String string) {
