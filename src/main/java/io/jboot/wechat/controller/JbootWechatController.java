@@ -39,7 +39,7 @@ public abstract class JbootWechatController extends JbootController {
     public static final String ATTR_WECHAT_OPEN_ID = "_jboot_wechat_open_id_";
     public static final String ATTR_WECHAT_ACCESS_TOKEN = "_jboot_wechat_access_token_";
     public static final String ATTR_WECHAT_SCOPE = "_jboot_wechat_scope_";
-    public static final String ATTR_WECHAT_USER_JSON = "_jboot_wechat_scope_";
+    public static final String ATTR_WECHAT_USER_JSON = "_jboot_wechat_json_";
     public static final String ATTR_USER_OBJECT = "_jboot_user_object_";
 
 
