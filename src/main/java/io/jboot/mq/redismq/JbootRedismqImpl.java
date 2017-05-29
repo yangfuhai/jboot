@@ -16,71 +16,58 @@
 package io.jboot.mq.redismq;
 
 import io.jboot.Jboot;
+import io.jboot.cache.ehredis.JbootEhredisCacheImpl;
+import io.jboot.core.redis.JbootRedis;
+import io.jboot.exception.JbootException;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
 import io.jboot.utils.StringUtils;
-import org.redisson.Redisson;
-import org.redisson.api.RTopic;
-import org.redisson.api.RedissonClient;
-import org.redisson.api.listener.MessageListener;
-import org.redisson.codec.FstCodec;
-import org.redisson.config.ClusterServersConfig;
-import org.redisson.config.Config;
-import org.redisson.config.SingleServerConfig;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.nustaq.serialization.FSTConfiguration;
+import redis.clients.jedis.BinaryJedisPubSub;
 
 
-public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, MessageListener {
+public class JbootRedismqImpl extends JbootmqBase implements Jbootmq {
 
-    RedissonClient redissonClient;
-    public Map<String, RTopic> topicMap = new ConcurrentHashMap<>();
+    JbootRedis redis;
+    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
 
     public JbootRedismqImpl() {
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
-
-
-        Config redissionConfig = new Config();
-        redissionConfig.setCodec(new FstCodec());
-
-        if (redisConfig.isCluster()) {
-            ClusterServersConfig clusterServersConfig = redissionConfig.useClusterServers();
-            clusterServersConfig.addNodeAddress(redisConfig.getAddress().split(","));
-            if (StringUtils.isNotBlank(redisConfig.getPassword())) {
-                clusterServersConfig.setPassword(redisConfig.getPassword());
-            }
+        if (redisConfig.isConfigOk()) {
+            redis = new JbootRedis(redisConfig);
         } else {
-            SingleServerConfig singleServerConfig = redissionConfig.useSingleServer();
-            singleServerConfig.setAddress(redisConfig.getAddress());
-            if (StringUtils.isNotBlank(redisConfig.getPassword())) {
-                singleServerConfig.setPassword(redisConfig.getPassword());
+            redis = Jboot.getRedis();
+        }
+
+        if (redis == null) {
+            throw new JbootException("can not get redis,please check your jboot.properties");
+        }
+
+        String channelString = redisConfig.getChannel();
+        if (StringUtils.isBlank(channelString)) {
+            throw new JbootException("channel config cannot empty in jboot.properties");
+        }
+
+        if (channelString.endsWith(",")) {
+            channelString += JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL;
+        } else {
+            channelString += "," + JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL;
+        }
+
+
+        String[] channels = channelString.split(",");
+        redis.subscribe(new BinaryJedisPubSub() {
+            @Override
+            public void onMessage(byte[] channel, byte[] message) {
+                notifyListeners(redis.bytesToKey(channel), fst.asObject(message));
             }
-        }
+        }, redis.keysToBytesArray(channels));
 
-        redissonClient = Redisson.create(redissionConfig);
     }
 
-
-    public RTopic getTopic(String toChannel) {
-        RTopic topic = topicMap.get(toChannel);
-        if (topic == null) {
-            topic = redissonClient.getTopic(toChannel);
-            topic.addListener(this);
-            topicMap.put(toChannel, topic);
-        }
-        return topic;
-    }
-
-
-    @Override
-    public void onMessage(String channel, Object message) {
-        notifyListeners(channel, message);
-    }
 
     @Override
     public void publish(Object message, String toChannel) {
-        RTopic topic = getTopic(toChannel);
-        topic.publish(message);
+        redis.publish(redis.keyToBytes(toChannel), fst.asByteArray(message));
     }
 }

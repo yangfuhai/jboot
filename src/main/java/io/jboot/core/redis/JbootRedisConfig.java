@@ -15,6 +15,8 @@
  */
 package io.jboot.core.redis;
 
+import io.jboot.utils.StringUtils;
+
 public class JbootRedisConfig {
 
     private String host;
@@ -30,6 +32,8 @@ public class JbootRedisConfig {
     private Long minEvictableIdleTimeMillis;
     private Long timeBetweenEvictionRunsMillis;
     private Integer numTestsPerEvictionRun;
+    private String channel;
+
 
     public String getHost() {
         return host;
@@ -133,5 +137,21 @@ public class JbootRedisConfig {
 
     public void setNumTestsPerEvictionRun(Integer numTestsPerEvictionRun) {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public boolean isCluster() {
+        return host != null && host.indexOf(",") > 0;
+    }
+
+    public boolean isConfigOk() {
+        return StringUtils.isNotBlank(host);
     }
 }

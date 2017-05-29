@@ -10,11 +10,12 @@ public class MqTest {
          * jboot.properties
          *
          * jboot.mq.type= redis
-         * jboot.mq.redis.address= 127.0.0.1:6379
+         * jboot.mq.redis.address= 127.0.0.1
          */
 
         Jboot.setBootArg("jboot.mq.type", "redis");
-        Jboot.setBootArg("jboot.mq.redis.address", "127.0.0.1:6379");
+        Jboot.setBootArg("jboot.mq.redis.host", "127.0.0.1");
+        Jboot.setBootArg("jboot.mq.redis.channel", "myChannel,myChannel1,myChannel2");
 
         doTest();
 

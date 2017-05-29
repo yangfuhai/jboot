@@ -34,8 +34,10 @@ public class JbootRedis {
 
 
     public JbootRedis() {
-        JbootRedisConfig config = Jboot.config(JbootRedisConfig.class);
+        this(Jboot.config(JbootRedisConfig.class));
+    }
 
+    public JbootRedis(JbootRedisConfig config) {
 
         String host = config.getHost();
         Integer port = config.getPort();
@@ -1330,6 +1332,21 @@ public class JbootRedis {
         }
     }
 
+    /**
+     * 发布
+     *
+     * @param channel
+     * @param message
+     */
+    public void publish(byte[] channel, byte[] message) {
+        Jedis jedis = getJedis();
+        try {
+            jedis.publish(channel, message);
+        } finally {
+            returnResource(jedis);
+        }
+    }
+
 
     /**
      * 订阅
@@ -1359,12 +1376,44 @@ public class JbootRedis {
         }.start();
     }
 
+    /**
+     * 订阅
+     *
+     * @param binaryListener
+     * @param channels
+     */
+    public void subscribe(BinaryJedisPubSub binaryListener, final byte[]... channels) {
+        /**
+         * https://github.com/xetorthio/jedis/wiki/AdvancedUsage
+         * Note that subscribe is a blocking operation because it will poll JbootRedis for responses on the thread that calls subscribe.
+         * A single JedisPubSub instance can be used to subscribe to multiple channels.
+         * You can call subscribe or psubscribe on an existing JedisPubSub instance to change your subscriptions.
+         */
+        new Thread() {
+            @Override
+            public void run() {
+                Jedis jedis = getJedis();
+                try {
+                    jedis.subscribe(binaryListener, channels);
+                } finally {
+                    returnResource(jedis);
+                }
 
-    protected byte[] keyToBytes(Object key) {
+
+            }
+        }.start();
+    }
+
+
+    public byte[] keyToBytes(Object key) {
         return key.toString().getBytes();
     }
 
-    protected byte[][] keysToBytesArray(Object... keys) {
+    public String bytesToKey(byte[] bytes) {
+        return new String(bytes);
+    }
+
+    public byte[][] keysToBytesArray(Object... keys) {
         byte[][] result = new byte[keys.length][];
         for (int i = 0; i < result.length; i++)
             result[i] = keyToBytes(keys[i]);
@@ -1372,38 +1421,38 @@ public class JbootRedis {
     }
 
 
-    protected void fieldSetFromBytesSet(Set<byte[]> data, Set<Object> result) {
+    public void fieldSetFromBytesSet(Set<byte[]> data, Set<Object> result) {
         for (byte[] fieldBytes : data) {
             result.add(valueFromBytes(fieldBytes));
         }
     }
 
-    protected byte[] valueToBytes(Object value) {
+    public byte[] valueToBytes(Object value) {
         return fst.asByteArray(value);
     }
 
-    protected Object valueFromBytes(byte[] bytes) {
+    public Object valueFromBytes(byte[] bytes) {
         if (bytes == null || bytes.length == 0) {
             return null;
         }
         return fst.asObject(bytes);
     }
 
-    protected byte[][] valuesToBytesArray(Object... valuesArray) {
+    public byte[][] valuesToBytesArray(Object... valuesArray) {
         byte[][] data = new byte[valuesArray.length][];
         for (int i = 0; i < data.length; i++)
             data[i] = valueToBytes(valuesArray[i]);
         return data;
     }
 
-    protected void valueSetFromBytesSet(Set<byte[]> data, Set<Object> result) {
+    public void valueSetFromBytesSet(Set<byte[]> data, Set<Object> result) {
         for (byte[] valueBytes : data) {
             result.add(valueFromBytes(valueBytes));
         }
     }
 
     @SuppressWarnings("rawtypes")
-    protected List valueListFromBytesList(List<byte[]> data) {
+    public List valueListFromBytesList(List<byte[]> data) {
         List<Object> result = new ArrayList<Object>();
         for (byte[] d : data)
             result.add(valueFromBytes(d));

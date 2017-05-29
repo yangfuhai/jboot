@@ -16,16 +16,10 @@
 package io.jboot.cache.redis;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
-import com.jfinal.plugin.redis.Redis;
 import io.jboot.Jboot;
 import io.jboot.cache.JbootCacheBase;
-import io.jboot.utils.StringUtils;
-import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
-import org.redisson.codec.FstCodec;
-import org.redisson.config.ClusterServersConfig;
-import org.redisson.config.Config;
-import org.redisson.config.SingleServerConfig;
+import io.jboot.core.redis.JbootRedis;
+import io.jboot.exception.JbootException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,50 +28,36 @@ import java.util.List;
 public class JbootRedisCacheImpl extends JbootCacheBase {
 
 
-    RedissonClient redissonClient;
+    JbootRedis redis;
 
     public JbootRedisCacheImpl() {
         JbootRedisCacheConfig redisConfig = Jboot.config(JbootRedisCacheConfig.class);
-
-
-        Config redissionConfig = new Config();
-        redissionConfig.setCodec(new FstCodec());
-
-        if (redisConfig.isCluster()) {
-            ClusterServersConfig clusterServersConfig = redissionConfig.useClusterServers();
-            clusterServersConfig.addNodeAddress(redisConfig.getAddress().split(","));
-            if (StringUtils.isNotBlank(redisConfig.getPassword())) {
-                clusterServersConfig.setPassword(redisConfig.getPassword());
-            }
+        if (redisConfig.isConfigOk()) {
+            redis = new JbootRedis(redisConfig);
         } else {
-            SingleServerConfig singleServerConfig = redissionConfig.useSingleServer();
-            singleServerConfig.setAddress(redisConfig.getAddress());
-            if (StringUtils.isNotBlank(redisConfig.getPassword())) {
-                singleServerConfig.setPassword(redisConfig.getPassword());
-            }
+            redis = Jboot.getRedis();
         }
 
-        redissonClient = Redisson.create(redissionConfig);
-
-//        redissonClient.get
+        if (redis == null) {
+            throw new JbootException("can not get redis,please check your jboot.properties");
+        }
     }
-
 
 
     @Override
     public <T> T get(String cacheName, Object key) {
-        return Redis.use().get(buildKey(cacheName, key));
+        return redis.get(buildKey(cacheName, key));
     }
 
     @Override
     public void put(String cacheName, Object key, Object value) {
-        Redis.use().set(buildKey(cacheName, key), value);
+        redis.set(buildKey(cacheName, key), value);
     }
 
     @Override
     public List getKeys(String cacheName) {
         List<String> keys = new ArrayList<String>();
-        keys.addAll(Redis.use().keys(cacheName + ":*"));
+        keys.addAll(redis.keys(cacheName + ":*"));
         for (int i = 0; i < keys.size(); i++) {
             keys.set(i, keys.get(i).substring(cacheName.length() + 3));
         }
@@ -87,15 +67,15 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     @Override
     public void remove(String cacheName, Object key) {
-        Redis.use().del(buildKey(cacheName, key));
+        redis.del(buildKey(cacheName, key));
     }
 
 
     @Override
     public void removeAll(String cacheName) {
         String[] keys = new String[]{};
-        keys = Redis.use().keys(cacheName + ":*").toArray(keys);
-        Redis.use().del(keys);
+        keys = redis.keys(cacheName + ":*").toArray(keys);
+        redis.del(keys);
     }
 
 
