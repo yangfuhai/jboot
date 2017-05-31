@@ -92,7 +92,7 @@ public class JbootVoModel extends HashMap {
     }
 
     /**
-     * Get attribute of mysql type: int, integer, tinyint(n) n > 1, smallint, mediumint
+     * Get attribute of mysql type: int, integer, tinyint(n) n than 1, smallint, mediumint
      */
     public Integer getInt(String attr) {
         return (Integer) super.get(attr);

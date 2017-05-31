@@ -73,7 +73,7 @@ public class Columns {
     }
 
     /**
-     * > great than
+     * 大于 great than
      *
      * @param name
      * @param value
@@ -85,7 +85,7 @@ public class Columns {
     }
 
     /**
-     * >=  great or equal
+     * 大于等于 great or equal
      *
      * @param name
      * @param value
@@ -97,7 +97,7 @@ public class Columns {
     }
 
     /**
-     * < less than
+     * 小于 less than
      *
      * @param name
      * @param value
@@ -109,7 +109,7 @@ public class Columns {
     }
 
     /**
-     * <= less or equal
+     * 小于等于 less or equal
      *
      * @param name
      * @param value

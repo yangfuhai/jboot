@@ -804,9 +804,9 @@ public class JbootRedis {
     /**
      * 根据参数 count 的值，移除列表中与参数 value 相等的元素。
      * count 的值可以是以下几种：
-     * count > 0 : 从表头开始向表尾搜索，移除与 value 相等的元素，数量为 count 。
-     * count < 0 : 从表尾开始向表头搜索，移除与 value 相等的元素，数量为 count 的绝对值。
-     * count = 0 : 移除表中所有与 value 相等的值。
+     * count 大于 0 : 从表头开始向表尾搜索，移除与 value 相等的元素，数量为 count 。
+     * count 小于 0 : 从表尾开始向表头搜索，移除与 value 相等的元素，数量为 count 的绝对值。
+     * count 等于 0 : 移除表中所有与 value 相等的值。
      */
     public Long lrem(Object key, long count, Object value) {
         Jedis jedis = getJedis();

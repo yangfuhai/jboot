@@ -6,8 +6,42 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.0</version>
+    <version>1.0-alphpa1</version>
     <packaging>jar</packaging>
+
+    <name>jboot</name>
+    <url>http:/jboot.io</url>
+    <description>jboot is a similar springboot project base on jfinal and undertow.</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <issueManagement>
+        <system>Github Issue</system>
+        <url>https://github.com/yangfuhai/jboot/issues</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>yangfuhai</name>
+            <email>fuhai999@gmail.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/yangfuhai/jboot.git</connection>
+        <developerConnection>scm:git:https://github.com/yangfuhai/jboot.git</developerConnection>
+        <url>https://github.com/yangfuhai/jboot</url>
+    </scm>
 
 
     <dependencies>
@@ -265,20 +299,96 @@
             </plugin>
 
 
+
         </plugins>
 
     </build>
 
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+    <!--<distributionManagement>-->
+    <!--<repository>-->
+    <!--<id>nexus</id>-->
+    <!--<url>http://maven-server:8081/repository/maven-releases/</url>-->
+    <!--</repository>-->
+    <!--&lt;!&ndash;snapshot仓库配置&ndash;&gt;-->
+    <!--<snapshotRepository>-->
+    <!--<id>nexus</id>-->
+    <!--<url>http://maven-server:8081/repository/maven-snapshots/</url>-->
+    <!--</snapshotRepository>-->
+    <!--</distributionManagement>-->
+
     <distributionManagement>
-        <repository>
-            <id>nexus</id>
-            <url>http://maven-server:8081/repository/maven-releases/</url>
-        </repository>
-        <!--snapshot仓库配置-->
         <snapshotRepository>
-            <id>nexus</id>
-            <url>http://maven-server:8081/repository/maven-snapshots/</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>Maven Central Staging Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
 
