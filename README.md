@@ -7,7 +7,6 @@ jboot是一个基于jfinal、undertow开发的一个类似springboot的开源框
 开发者使用及其简单。
 
 # maven dependency
-not yet upload to maven center,you can clone source and deploy to you private warehouse.
 
 ```xml
 <dependency>
