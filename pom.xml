@@ -367,29 +367,18 @@
         </profile>
     </profiles>
 
-    <!--<distributionManagement>-->
-    <!--<repository>-->
-    <!--<id>nexus</id>-->
-    <!--<url>http://maven-server:8081/repository/maven-releases/</url>-->
-    <!--</repository>-->
-    <!--&lt;!&ndash;snapshot仓库配置&ndash;&gt;-->
-    <!--<snapshotRepository>-->
-    <!--<id>nexus</id>-->
-    <!--<url>http://maven-server:8081/repository/maven-snapshots/</url>-->
-    <!--</snapshotRepository>-->
-    <!--</distributionManagement>-->
-
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <name>Maven Central Staging Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>nexus</id>
+            <url>http://maven-server:8081/repository/maven-releases/</url>
         </repository>
+        <!--snapshot仓库配置-->
+        <snapshotRepository>
+            <id>nexus</id>
+            <url>http://maven-server:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
+
 
 
 </project>

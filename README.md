@@ -13,7 +13,7 @@ not yet upload to maven center,you can clone source and deploy to you private wa
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.0</version>
+    <version>1.0-alphpa1</version>
 </dependency>
 
 ```
