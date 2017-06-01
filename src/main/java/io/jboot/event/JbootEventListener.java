@@ -17,6 +17,6 @@ package io.jboot.event;
 
 public interface JbootEventListener {
 
-	public  void onMessage(JbootEvent event);
+	public  void onEvent(JbootEvent event);
 
 }

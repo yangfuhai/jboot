@@ -101,7 +101,7 @@ public class JbootEventManager {
 
         String[] actions = listenerAnnotation.action();
         if (actions == null || actions.length == 0) {
-            log.warn("listenerClass[" + listenerAnnotation + "] resigter fail,because action is null or blank.");
+            log.warn("listenerClass[" + listenerAnnotation + "] resigter fail, because action is null or blank.");
             return;
         }
 
@@ -190,11 +190,11 @@ public class JbootEventManager {
         for (final JbootEventListener listener : syncListeners) {
             try {
                 if (Jboot.isDevMode()) {
-                    System.out.println(String.format("listener[%s]-->>onMessage(%s)", listener, event));
+                    System.out.println(String.format("listener[%s]-->>onEvent(%s)", listener, event));
                 }
-                listener.onMessage(event);
+                listener.onEvent(event);
             } catch (Throwable e) {
-                log.error(String.format("listener[%s] onMessage is erro! ", listener.getClass()), e);
+                log.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
             }
         }
     }
@@ -206,11 +206,11 @@ public class JbootEventManager {
                 public void run() {
                     try {
                         if (Jboot.isDevMode()) {
-                            System.out.println(String.format("listener[%s]-->>onMessage(%s) in async", listener, event));
+                            System.out.println(String.format("listener[%s]-->>onEvent(%s) in async", listener, event));
                         }
-                        listener.onMessage(event);
+                        listener.onEvent(event);
                     } catch (Throwable e) {
-                        log.error(String.format("listener[%s] onMessage is erro! ", listener.getClass()), e);
+                        log.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
                     }
                 }
             });
