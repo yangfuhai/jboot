@@ -166,6 +166,7 @@ public abstract class JbootWechatController extends JbootController {
         setAttr("wechatNoncestr", noncestr);
         setAttr("wechatTimestamp", timestamp);
         setAttr("wechatSignature", signature);
+
     }
 
     public boolean isAllowVisit() {
@@ -191,7 +192,44 @@ public abstract class JbootWechatController extends JbootController {
     }
 
 
+    /**
+     * 进行用户查找，找到返回该用户，找不到返回 null
+     * 返回的object（用户）通过 getCurrentUser 可以得到。
+     *
+     * @param openid
+     * @return
+     */
     public abstract Object doGetUserByOpenId(String openid);
+
+    /**
+     * 根据 apiResult 数据来保存或更新用户信息
+     * <p>
+     * 用户第一次访问的时候
+     * <p>
+     * <p>
+     * <p>
+     * apiResult内如如下：
+     * {
+     *      "subscribe": 1,
+     *      "openid": "o6_bmjrPTlm6_2sgVt7hMZOPfL2M",
+     *      "nickname": "Band",
+     *      "sex": 1,
+     *      "language": "zh_CN",
+     *      "city": "广州",
+     *      "province": "广东",
+     *      "country": "中国",
+     *      "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4
+     *      eMsv84eavHiaiceqxibJxCfHe/0",
+     *      "subscribe_time": 1382694957,
+     *      "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL"
+     *      "remark": "",
+     *      "groupid": 0,
+     *      "tagid_list":[128,2]
+     * }
+     *
+     * @param apiResult
+     * @return
+     */
 
     public abstract Object doSaveOrUpdateUserByApiResult(ApiResult apiResult);
 }
