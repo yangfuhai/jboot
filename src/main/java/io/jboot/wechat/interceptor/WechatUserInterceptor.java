@@ -70,7 +70,6 @@ public class WechatUserInterceptor implements Interceptor {
         JbootWechatController controller = (JbootWechatController) inv.getController();
 
 
-
         /**
          * isFromBaseScope 表示 静默授权过来的
          * 静默授权过来是无法获取用户的基本信息的，只能获得openid，
@@ -82,7 +81,7 @@ public class WechatUserInterceptor implements Interceptor {
 
         if (isFromBaseScope) {
 
-            String openid = inv.getController().getSessionAttr(JbootWechatController.ATTR_WECHAT_OPEN_ID);
+            String openid = inv.getController().getSessionAttr(JbootWechatController.SESSION_WECHAT_OPEN_ID);
             Object user = controller.doGetUserByOpenId(openid);
             if (user != null) {
                 controller.setAttr(JbootWechatController.ATTR_USER_OBJECT, user);
@@ -91,7 +90,7 @@ public class WechatUserInterceptor implements Interceptor {
             }
         }
 
-        String wechatUserJson = controller.getSessionAttr(JbootWechatController.ATTR_WECHAT_USER_JSON);
+        String wechatUserJson = controller.getSessionAttr(JbootWechatController.SESSION_WECHAT_USER_JSON);
         if (validateUserJson(wechatUserJson)) {
             Object user = controller.doSaveOrUpdateUserByApiResult(ApiResult.create(wechatUserJson));
             if (user == null) {
@@ -105,9 +104,7 @@ public class WechatUserInterceptor implements Interceptor {
 
 
         //移除脏数据后，再次进入授权页面
-        inv.getController().removeSessionAttr(JbootWechatController.ATTR_WECHAT_OPEN_ID);
-        inv.getController().removeSessionAttr(JbootWechatController.ATTR_WECHAT_ACCESS_TOKEN);
-        inv.getController().removeSessionAttr(JbootWechatController.ATTR_WECHAT_USER_JSON);
+        controller.clearWechatSession();
 
 
         String appid = ApiConfigKit.getAppId();
@@ -152,7 +149,7 @@ public class WechatUserInterceptor implements Interceptor {
     }
 
     protected boolean isFromBaseScope(Invocation inv) {
-        String scope = inv.getController().getSessionAttr("WECHAT_SCOPE");
+        String scope = inv.getController().getSessionAttr(JbootWechatController.SESSION_WECHAT_SCOPE);
         return scope != null && "snsapi_base".equalsIgnoreCase(scope);
     }
 

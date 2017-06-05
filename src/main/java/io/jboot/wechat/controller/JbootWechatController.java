@@ -36,10 +36,10 @@ import java.util.TreeMap;
 @Before({WechatApiConfigInterceptor.class, WechatUserInterceptor.class})
 public abstract class JbootWechatController extends JbootController {
 
-    public static final String ATTR_WECHAT_OPEN_ID = "_jboot_wechat_open_id_";
-    public static final String ATTR_WECHAT_ACCESS_TOKEN = "_jboot_wechat_access_token_";
-    public static final String ATTR_WECHAT_SCOPE = "_jboot_wechat_scope_";
-    public static final String ATTR_WECHAT_USER_JSON = "_jboot_wechat_json_";
+    public static final String SESSION_WECHAT_OPEN_ID = "_jboot_wechat_open_id_";
+    public static final String SESSION_WECHAT_ACCESS_TOKEN = "_jboot_wechat_access_token_";
+    public static final String SESSION_WECHAT_SCOPE = "_jboot_wechat_scope_";
+    public static final String SESSION_WECHAT_USER_JSON = "_jboot_wechat_json_";
     public static final String ATTR_USER_OBJECT = "_jboot_user_object_";
 
 
@@ -64,8 +64,8 @@ public abstract class JbootWechatController extends JbootController {
         /**
          * 在某些情况下，相同的callback会执行两次，code相同。
          */
-        String wechatOpenId = getSessionAttr(ATTR_WECHAT_OPEN_ID);
-        String accessToken = getSessionAttr(ATTR_WECHAT_ACCESS_TOKEN);
+        String wechatOpenId = getSessionAttr(SESSION_WECHAT_OPEN_ID);
+        String accessToken = getSessionAttr(SESSION_WECHAT_ACCESS_TOKEN);
 
         if (StringUtils.isNotBlank(wechatOpenId)
                 && StringUtils.isNotBlank(accessToken)) {
@@ -86,12 +86,12 @@ public abstract class JbootWechatController extends JbootController {
         if (result.isSucceed()) {
             wechatOpenId = result.getStr("openid");
             accessToken = result.getStr("access_token");
-            setSessionAttr(ATTR_WECHAT_OPEN_ID, wechatOpenId);
-            setSessionAttr(ATTR_WECHAT_ACCESS_TOKEN, accessToken);
-            setSessionAttr(ATTR_WECHAT_SCOPE, result.getStr("scope"));
+            setSessionAttr(SESSION_WECHAT_OPEN_ID, wechatOpenId);
+            setSessionAttr(SESSION_WECHAT_ACCESS_TOKEN, accessToken);
+            setSessionAttr(SESSION_WECHAT_SCOPE, result.getStr("scope"));
         } else {
-            wechatOpenId = getSessionAttr(ATTR_WECHAT_OPEN_ID);
-            accessToken = getSessionAttr(ATTR_WECHAT_ACCESS_TOKEN);
+            wechatOpenId = getSessionAttr(SESSION_WECHAT_OPEN_ID);
+            accessToken = getSessionAttr(SESSION_WECHAT_ACCESS_TOKEN);
 
             if (StringUtils.isBlank(wechatOpenId) || StringUtils.isBlank(accessToken)) {
                 renderText("错误：" + result.getErrorMsg());
@@ -120,8 +120,16 @@ public abstract class JbootWechatController extends JbootController {
             return;
         }
 
-        setSessionAttr(ATTR_WECHAT_USER_JSON, apiResult.getJson());
+        setSessionAttr(SESSION_WECHAT_USER_JSON, apiResult.getJson());
         redirect(gotoUrl);
+    }
+
+    @Before(NotAction.class)
+    public void clearWechatSession() {
+        //移除脏数据后，再次进入授权页面
+        removeSessionAttr(SESSION_WECHAT_OPEN_ID);
+        removeSessionAttr(SESSION_WECHAT_ACCESS_TOKEN);
+        removeSessionAttr(SESSION_WECHAT_USER_JSON);
     }
 
 
@@ -210,21 +218,21 @@ public abstract class JbootWechatController extends JbootController {
      * <p>
      * apiResult内如如下：
      * {
-     *      "subscribe": 1,
-     *      "openid": "o6_bmjrPTlm6_2sgVt7hMZOPfL2M",
-     *      "nickname": "Band",
-     *      "sex": 1,
-     *      "language": "zh_CN",
-     *      "city": "广州",
-     *      "province": "广东",
-     *      "country": "中国",
-     *      "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4
-     *      eMsv84eavHiaiceqxibJxCfHe/0",
-     *      "subscribe_time": 1382694957,
-     *      "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL"
-     *      "remark": "",
-     *      "groupid": 0,
-     *      "tagid_list":[128,2]
+     * "subscribe": 1,
+     * "openid": "o6_bmjrPTlm6_2sgVt7hMZOPfL2M",
+     * "nickname": "Band",
+     * "sex": 1,
+     * "language": "zh_CN",
+     * "city": "广州",
+     * "province": "广东",
+     * "country": "中国",
+     * "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4
+     * eMsv84eavHiaiceqxibJxCfHe/0",
+     * "subscribe_time": 1382694957,
+     * "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL"
+     * "remark": "",
+     * "groupid": 0,
+     * "tagid_list":[128,2]
      * }
      *
      * @param apiResult
