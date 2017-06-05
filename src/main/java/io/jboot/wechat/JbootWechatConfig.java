@@ -99,13 +99,15 @@ public class JbootWechatConfig {
     }
 
     public ApiConfig getApiConfig() {
-        if (isConfigOk()) {
-            ApiConfig config = new ApiConfig();
-            config.setAppId(appId);
-            config.setAppSecret(appSecret);
-            config.setToken(token);
-            return config;
+
+        if (!isConfigOk()) {
+            return null;
         }
-        return null;
+
+        ApiConfig config = new ApiConfig();
+        config.setAppId(appId);
+        config.setAppSecret(appSecret);
+        config.setToken(token);
+        return config;
     }
 }
