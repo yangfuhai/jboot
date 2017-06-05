@@ -147,7 +147,9 @@ public abstract class JbootWechatController extends JbootController {
         }
 
 
-        JsTicket jsTicket = JsTicketApi.getTicket(JsTicketApi.JsApiType.jsapi);
+//        JsTicket jsTicket = JsTicketApi.getTicket(JsTicketApi.JsApiType.jsapi);
+        JsTicket jsTicket = WechatApis.getTicket(WechatApis.JsApiType.jsapi);
+
         String _wxJsApiTicket = jsTicket.getTicket();
 
         String noncestr = StringUtils.uuid();
