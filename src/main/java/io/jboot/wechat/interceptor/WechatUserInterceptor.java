@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
  * 获取用户信息的连接器。
  * 相关文档：https://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
  */
-public abstract class WechatUserInterceptor implements Interceptor {
+public class WechatUserInterceptor implements Interceptor {
 
 
     public static final String AUTHORIZE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize"
@@ -69,14 +69,6 @@ public abstract class WechatUserInterceptor implements Interceptor {
 
         JbootWechatController controller = (JbootWechatController) inv.getController();
 
-        /**
-         * 检查之前是否已经获得用户信息了
-         */
-        Boolean getUserBefor = controller.getSessionAttr("_get_user_befor_");
-        if (getUserBefor != null && getUserBefor) {
-            inv.invoke();
-            return;
-        }
 
 
         /**
@@ -103,7 +95,7 @@ public abstract class WechatUserInterceptor implements Interceptor {
         if (validateUserJson(wechatUserJson)) {
             Object user = controller.doSaveOrUpdateUserByApiResult(ApiResult.create(wechatUserJson));
             if (user == null) {
-                controller.renderText("can not save or update user where get user from wechat");
+                controller.renderText("can not save or update user when get user from wechat");
                 return;
             }
             controller.setAttr(JbootWechatController.ATTR_USER_OBJECT, user);
