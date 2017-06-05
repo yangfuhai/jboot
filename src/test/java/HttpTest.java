@@ -14,6 +14,6 @@ public class HttpTest {
 
         System.out.println(response.getContentType());
         System.out.println(response.getHeaders());
-//        System.out.println(response.getContent());
+
     }
 }
