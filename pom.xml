@@ -7,7 +7,6 @@
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
     <version>1.0-alphpa1</version>
-    <!--<version>1.0</version>-->
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -56,7 +55,7 @@
         <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>cos</artifactId>
-            <version>26Dec2008</version>
+            <version>2017.5</version>
         </dependency>
 
         <dependency>
