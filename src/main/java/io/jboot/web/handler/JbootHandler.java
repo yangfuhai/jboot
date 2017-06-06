@@ -16,6 +16,7 @@
 package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import io.jboot.web.RequestManager;
 import io.jboot.web.session.JbootServletRequestWrapper;
 
@@ -27,11 +28,25 @@ public class JbootHandler extends Handler {
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
+
+        if (target.indexOf('.') != -1) {
+            return;
+        }
+
         RequestManager.me().handle(request, response);
+        HystrixRequestContext context = HystrixRequestContext.initializeContext();
         try {
             doHandle(target, request, response, isHandled);
         } finally {
-            RequestManager.me().release();
+            try {
+                context.shutdown();
+            } catch (Throwable ex) {
+            }
+
+            try {
+                RequestManager.me().release();
+            } catch (Throwable ex) {
+            }
         }
 
     }

@@ -17,9 +17,12 @@ package io.jboot.server.undertow;
 
 import com.jfinal.core.JFinalFilter;
 import com.jfinal.log.Log;
+import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import io.jboot.Jboot;
+import io.jboot.core.hystrix.JbootHystrixConfig;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
+import io.jboot.utils.StringUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
@@ -59,6 +62,14 @@ public class UnderTowServer extends JbootServer {
                 Servlets.filter("jboot", JFinalFilter.class)
                         .addInitParam("configClass", Jboot.getJbootConfig().getJfinalConfig()))
                 .addFilterUrlMapping("jboot", "/*", DispatcherType.REQUEST);
+
+
+        JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
+        if (StringUtils.isNotBlank(hystrixConfig.getStreamUrl())) {
+            deploymentInfo.addServlets(
+                    Servlets.servlet("HystrixMetricsStreamServlet", HystrixMetricsStreamServlet.class)
+                            .addMapping(hystrixConfig.getStreamUrl()));
+        }
 
 
         deploymentInfo.addServlets(
