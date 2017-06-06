@@ -29,4 +29,6 @@ public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache 
     public void removeAll(String cacheName);
 
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader);
+
+    public boolean isNoneCache();
 }

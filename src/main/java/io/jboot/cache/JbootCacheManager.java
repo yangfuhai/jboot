@@ -53,8 +53,8 @@ public class JbootCacheManager {
             case JbootCacheConfig.TYPE_EHREDIS:
                 jbootCache = new JbootEhredisCacheImpl();
                 break;
-            case JbootCacheConfig.TYPE_NO_CACHE:
-                jbootCache = new NoCacheImpl();
+            case JbootCacheConfig.TYPE_NONE_CACHE:
+                jbootCache = new NoneCacheImpl();
         }
     }
 }

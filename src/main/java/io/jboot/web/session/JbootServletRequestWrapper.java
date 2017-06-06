@@ -16,7 +16,6 @@
 package io.jboot.web.session;
 
 import io.jboot.Jboot;
-import io.jboot.cache.NoCacheImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -46,10 +45,10 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
             /**
              * 没有启用缓存的话，就用系统自带的session
              */
-            if (!(Jboot.getCache() instanceof NoCacheImpl)) {
-                httpSession = new JbootHttpSessionWapper();
-            } else {
+            if (Jboot.getCache().isNoneCache()) {
                 httpSession = super.getSession(create);
+            } else {
+                httpSession = new JbootHttpSessionWapper();
             }
         }
 

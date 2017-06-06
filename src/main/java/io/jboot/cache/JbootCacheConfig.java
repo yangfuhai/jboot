@@ -25,10 +25,10 @@ public class JbootCacheConfig {
     public static final String TYPE_EHCACHE = "ehcache";
     public static final String TYPE_REDIS = "redis";
     public static final String TYPE_EHREDIS = "ehredis";
-    public static final String TYPE_NO_CACHE = "nocache";
+    public static final String TYPE_NONE_CACHE = "nonecache";
 
 
-    private String type = TYPE_NO_CACHE;
+    private String type = TYPE_NONE_CACHE;
 
     public String getType() {
         return type;

@@ -19,4 +19,8 @@ package io.jboot.cache;
 
 public abstract class JbootCacheBase implements JbootCache {
 
+    @Override
+    public boolean isNoneCache() {
+        return false;
+    }
 }

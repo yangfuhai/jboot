@@ -20,7 +20,7 @@ import com.jfinal.plugin.ehcache.IDataLoader;
 import java.util.List;
 
 
-public class NoCacheImpl extends JbootCacheBase {
+public class NoneCacheImpl extends JbootCacheBase {
     @Override
     public List getKeys(String cacheName) {
         return null;
@@ -49,5 +49,10 @@ public class NoCacheImpl extends JbootCacheBase {
     @Override
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader) {
         return (T) dataLoader.load();
+    }
+
+    @Override
+    public boolean isNoneCache() {
+        return true;
     }
 }
