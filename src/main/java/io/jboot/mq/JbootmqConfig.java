@@ -26,7 +26,7 @@ public class JbootmqConfig {
     public static final String TYPE_HORNETQ = "hornetq";
     public static final String TYPE_RABBITMQ = "rabbitmq";
 
-    public String type;
+    public String type = TYPE_REDIS;
 
     public String getType() {
         return type;
