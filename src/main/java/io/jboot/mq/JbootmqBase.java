@@ -38,12 +38,15 @@ public abstract class JbootmqBase implements Jbootmq {
     @Override
     public void addMessageListener(JbootmqMessageListener listener, String forChannel) {
         synchronized (listenerMap) {
-            List<JbootmqMessageListener> list = listenerMap.get(forChannel);
-            if (list == null) {
-                list = new ArrayList<>();
+            String[] forChannels = forChannel.split(",");
+            for (String channel : forChannels) {
+                List<JbootmqMessageListener> list = listenerMap.get(channel);
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                list.add(listener);
+                listenerMap.put(channel, list);
             }
-            list.add(listener);
-            listenerMap.put(forChannel, list);
         }
     }
 
