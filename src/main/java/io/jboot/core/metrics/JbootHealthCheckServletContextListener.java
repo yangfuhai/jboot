@@ -13,33 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.hystrix;
+package io.jboot.core.metrics;
 
-import io.jboot.config.annotation.PropertieConfig;
-
-@PropertieConfig(prefix = "jboot.hystrix")
-public class JbootHystrixConfig {
-
-    private String url;
-    private String propertie;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.servlets.HealthCheckServlet;
 
 
-    public String getUrl() {
-        return url;
+public class JbootHealthCheckServletContextListener extends HealthCheckServlet.ContextListener {
+
+    public static final HealthCheckRegistry HEALTH_CHECK_REGISTRY = new HealthCheckRegistry();
+
+    @Override
+    protected HealthCheckRegistry getHealthCheckRegistry() {
+        return HEALTH_CHECK_REGISTRY;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getPropertie() {
-        return propertie;
-    }
-
-    public void setPropertie(String propertie) {
-        this.propertie = propertie;
-    }
 }
-
-
-

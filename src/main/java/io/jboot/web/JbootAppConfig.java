@@ -27,14 +27,15 @@ import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.cache.JbootCacheConfig;
-import io.jboot.utils.ClassNewer;
-import io.jboot.utils.ClassScanner;
+import io.jboot.core.metrics.JbootMetricsManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootTaskManager;
+import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.UrlMapping;
+import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
 import io.jboot.web.directive.annotation.JbootDirective;
 import io.jboot.web.handler.JbootHandler;
-import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
@@ -135,5 +136,11 @@ public class JbootAppConfig extends JFinalConfig {
         super.afterJFinalStart();
         ApiConfigKit.setAccessTokenCache(new JbootAccessTokenCache());
         JsonManager.me().setDefaultDatePattern("yyyy-MM-dd HH:mm:ss");
+
+        /**
+         * 初始化
+         */
+        JbootMetricsManager.me();
+
     }
 }

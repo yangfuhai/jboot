@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.hystrix;
+package io.jboot.core.metrics;
 
 import io.jboot.config.annotation.PropertieConfig;
 
-@PropertieConfig(prefix = "jboot.hystrix")
-public class JbootHystrixConfig {
+@PropertieConfig(prefix = "jboot.metrics")
+public class JbootMetricsConfig {
 
     private String url;
-    private String propertie;
-
+    private boolean jmxReporter = false;
 
     public String getUrl() {
         return url;
@@ -32,12 +31,12 @@ public class JbootHystrixConfig {
         this.url = url;
     }
 
-    public String getPropertie() {
-        return propertie;
+    public boolean isJmxReporter() {
+        return jmxReporter;
     }
 
-    public void setPropertie(String propertie) {
-        this.propertie = propertie;
+    public void setJmxReporter(boolean jmxReporter) {
+        this.jmxReporter = jmxReporter;
     }
 }
 

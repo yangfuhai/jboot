@@ -15,11 +15,15 @@
  */
 package io.jboot.server.undertow;
 
+import com.codahale.metrics.servlets.AdminServlet;
 import com.jfinal.core.JFinalFilter;
 import com.jfinal.log.Log;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import io.jboot.Jboot;
 import io.jboot.core.hystrix.JbootHystrixConfig;
+import io.jboot.core.metrics.JbootHealthCheckServletContextListener;
+import io.jboot.core.metrics.JbootMetricsConfig;
+import io.jboot.core.metrics.JbootMetricsServletContextListener;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.utils.StringUtils;
@@ -65,15 +69,26 @@ public class UnderTowServer extends JbootServer {
 
 
         JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
-        if (StringUtils.isNotBlank(hystrixConfig.getStreamUrl())) {
+        if (StringUtils.isNotBlank(hystrixConfig.getUrl())) {
             deploymentInfo.addServlets(
                     Servlets.servlet("HystrixMetricsStreamServlet", HystrixMetricsStreamServlet.class)
-                            .addMapping(hystrixConfig.getStreamUrl()));
+                            .addMapping(hystrixConfig.getUrl()));
+        }
+
+
+        JbootMetricsConfig metricsConfig = Jboot.config(JbootMetricsConfig.class);
+        if (StringUtils.isNotBlank(metricsConfig.getUrl())) {
+            deploymentInfo.addServlets(
+                    Servlets.servlet("MetricsAdminServlet", AdminServlet.class)
+                            .addMapping(metricsConfig.getUrl()));
+
+            deploymentInfo.addListeners(Servlets.listener(JbootMetricsServletContextListener.class));
+            deploymentInfo.addListeners(Servlets.listener(JbootHealthCheckServletContextListener.class));
         }
 
 
         deploymentInfo.addServlets(
-                Servlets.servlet("ResourceServlet", JbootResourceServlet.class)
+                Servlets.servlet("JbootResourceServlet", JbootResourceServlet.class)
                         .addMapping("/*"));
 
         mDeploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);

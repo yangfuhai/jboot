@@ -15,6 +15,9 @@
  */
 package io.jboot.core.metrics;
 
+import com.codahale.metrics.JmxReporter;
+import com.codahale.metrics.MetricRegistry;
+import io.jboot.Jboot;
 import io.jboot.utils.ClassNewer;
 
 
@@ -28,5 +31,27 @@ public class JbootMetricsManager {
         }
         return me;
     }
+
+
+    private MetricRegistry metricRegistry;
+    private JbootMetricsConfig metricsConfig;
+
+    private JbootMetricsManager() {
+        metricRegistry = new MetricRegistry();
+        metricsConfig = Jboot.config(JbootMetricsConfig.class);
+
+        /**
+         * JMX报表,方便JConsole或者VisualVM查看查看
+         */
+        if (metricsConfig.isJmxReporter()) {
+            JmxReporter.forRegistry(metricRegistry).build().start();
+        }
+    }
+
+
+    public MetricRegistry metric() {
+        return metricRegistry;
+    }
+
 
 }

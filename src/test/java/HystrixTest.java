@@ -15,7 +15,7 @@ public class HystrixTest {
      * @param args
      */
     public static void main(String[] args) {
-        Jboot.setBootArg("jboot.hystrix.streamUrl", "/hystrix.stream");
+        Jboot.setBootArg("jboot.hystrix.url", "/hystrix.stream");
         Jboot.run(args);
 
 

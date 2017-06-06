@@ -15,10 +15,12 @@
  */
 package io.jboot;
 
+import com.codahale.metrics.MetricRegistry;
 import com.jfinal.kit.PathKit;
 import io.jboot.cache.JbootCache;
 import io.jboot.cache.JbootCacheManager;
 import io.jboot.config.JbootProperties;
+import io.jboot.core.metrics.JbootMetricsManager;
 import io.jboot.core.redis.JbootRedis;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
@@ -92,11 +94,11 @@ public class Jboot {
         }
     }
 
-    public static void setBootArg(String key, String value) {
+    public static void setBootArg(String key, Object value) {
         if (argMap == null) {
             argMap = new HashMap<>();
         }
-        argMap.put(key, value);
+        argMap.put(key, value.toString());
     }
 
     /**
@@ -300,6 +302,16 @@ public class Jboot {
             jbootRedis = new JbootRedis();
         }
         return jbootRedis;
+    }
+
+
+    /**
+     * 获取 MetricRegistry
+     *
+     * @return
+     */
+    public static MetricRegistry getMetric() {
+        return JbootMetricsManager.me().metric();
     }
 
 

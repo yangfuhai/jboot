@@ -206,10 +206,23 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>com.netflix.hystrix</groupId>-->
-            <!--<artifactId>hystrix-javanica</artifactId>-->
-            <!--<version>1.5.12</version>-->
+        <!--<groupId>com.netflix.hystrix</groupId>-->
+        <!--<artifactId>hystrix-javanica</artifactId>-->
+        <!--<version>1.5.12</version>-->
         <!--</dependency>-->
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-servlets</artifactId>
+            <version>3.2.2</version>
+        </dependency>
 
 
     </dependencies>
@@ -324,7 +337,6 @@
             </plugin>
 
 
-
         </plugins>
 
     </build>
@@ -404,7 +416,6 @@
             <url>http://maven-server:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
 
 
 </project>
