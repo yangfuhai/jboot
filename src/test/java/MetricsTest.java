@@ -7,6 +7,8 @@ public class MetricsTest {
         Jboot.setBootArg("jboot.metrics.url", "/metrics.html/*");
         Jboot.setBootArg("jboot.metrics.jmxReporter", true);
         Jboot.run(args);
+
+
     }
 
 

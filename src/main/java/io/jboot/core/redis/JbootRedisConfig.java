@@ -15,8 +15,10 @@
  */
 package io.jboot.core.redis;
 
+import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.utils.StringUtils;
 
+@PropertieConfig(prefix = "jboot.redis")
 public class JbootRedisConfig {
 
     private String host;
