@@ -33,6 +33,7 @@ import io.jboot.schedule.JbootTaskManager;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.UrlMapping;
+import io.jboot.web.controller.interceptor.GuiceInterceptor;
 import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
 import io.jboot.web.directive.annotation.JbootDirective;
 import io.jboot.web.handler.JbootHandler;
@@ -123,6 +124,7 @@ public class JbootAppConfig extends JFinalConfig {
 
     @Override
     public void configInterceptor(Interceptors interceptors) {
+        interceptors.add(new GuiceInterceptor());
         interceptors.add(new ParaValidateInterceptor());
     }
 
