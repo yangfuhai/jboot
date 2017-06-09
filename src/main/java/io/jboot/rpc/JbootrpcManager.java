@@ -16,6 +16,7 @@
 package io.jboot.rpc;
 
 import io.jboot.Jboot;
+import io.jboot.exception.JbootAssert;
 import io.jboot.rpc.annotation.JbootrpcService;
 import io.jboot.rpc.grpc.JbootGrpc;
 import io.jboot.rpc.local.JbootLocalrpc;
@@ -69,7 +70,15 @@ public class JbootrpcManager {
             String version = StringUtils.isBlank(rpcService.version()) ? config.getDefaultVersion() : rpcService.version();
             int port = rpcService.port() <= 0 ? Integer.valueOf(config.getDefaultPort()) : rpcService.port();
 
-            getJbootrpc().serviceExport(rpcService.export(), ClassNewer.newInstance(clazz), group, version, port);
+            Class export = rpcService.export();
+            if (export == Object.class) {
+                Class[] inters = export.getInterfaces();
+                JbootAssert.assertTrue(inters != null && inters.length == 1,
+                        String.format("class[%s] has multi interface, please use export to defind rpc interface", clazz));
+                export = inters[0];
+            }
+
+            getJbootrpc().serviceExport(export, ClassNewer.newInstance(clazz), group, version, port);
         }
     }
 

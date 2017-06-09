@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface JbootrpcService {
-    Class export();
+    Class export() default Object.class;
 
     String group() default "";
 
