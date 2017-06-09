@@ -27,6 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ClassNewer {
 
+    public static Log log = Log.getLog(ClassNewer.class);
+
     private static final Map<Class, Object> singletons = new ConcurrentHashMap<>();
 
     /**
@@ -69,7 +71,7 @@ public class ClassNewer {
             constructor.setAccessible(true);
             return (T) constructor.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("can not newInstance class:" + clazz + "\n" + e.toString(), e);
         }
 
         return null;
