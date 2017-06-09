@@ -16,7 +16,9 @@
 package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
+import com.google.inject.Injector;
 import com.jfinal.kit.PathKit;
+import io.jboot.aop.JbootInjectManager;
 import io.jboot.cache.JbootCache;
 import io.jboot.cache.JbootCacheManager;
 import io.jboot.config.JbootProperties;
@@ -312,6 +314,16 @@ public class Jboot {
      */
     public static MetricRegistry getMetric() {
         return JbootMetricsManager.me().metric();
+    }
+
+    
+    /**
+     * 获取 injector
+     *
+     * @return
+     */
+    public static Injector getInjector() {
+        return JbootInjectManager.me().getInjector();
     }
 
 

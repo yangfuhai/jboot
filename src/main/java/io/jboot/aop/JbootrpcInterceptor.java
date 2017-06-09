@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.rpc.annotation;
+package io.jboot.aop;
 
-import com.google.inject.BindingAnnotation;
 
-import java.lang.annotation.*;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 
-@Inherited
-@BindingAnnotation
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
-public @interface JbootrpcService {
-    Class export() default Object.class;
+/**
+ * RPC拦截器，用于拦截调用者 和  被调用者
+ */
+public class JbootrpcInterceptor implements MethodInterceptor {
 
-    String group() default "";
-
-    String version() default "";
-
-    int port() default 0;
+    @Override
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        return methodInvocation.proceed();
+    }
 }

@@ -1,5 +1,6 @@
 import io.jboot.Jboot;
 import io.jboot.db.model.JbootModel;
+import io.jboot.rpc.annotation.JbootrpcService;
 import io.jboot.service.JbootService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.UrlMapping;
@@ -19,13 +20,17 @@ public class ControllerTest extends JbootController {
     }
 
 
-    @Inject()
+    @Inject
     ServiceTest serviceTest;
+
+    @JbootrpcService
+    ServiceInter serviceInter;
 
 
     public void index() {
-        System.out.println(serviceTest);
+        System.out.println("index .... ");
         renderText("hello " + serviceTest.getName());
+//        renderText("hello " + serviceInter.hello());
 
     }
 
@@ -48,6 +53,11 @@ public class ControllerTest extends JbootController {
         public boolean deleteById(Object id) {
             return false;
         }
+    }
+
+
+    public static interface ServiceInter {
+        public String hello();
     }
 
 

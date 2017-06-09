@@ -78,7 +78,8 @@ public class JbootrpcManager {
                 export = inters[0];
             }
 
-            getJbootrpc().serviceExport(export, ClassNewer.newInstance(clazz), group, version, port);
+//            getJbootrpc().serviceExport(export, ClassNewer.newInstance(clazz), group, version, port);
+            getJbootrpc().serviceExport(export, Jboot.getInjector().getInstance(clazz), group, version, port);
         }
     }
 
