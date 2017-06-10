@@ -42,6 +42,23 @@ public class JbootHystrixInjector implements MembersInjector {
 
     @Override
     public void injectMembers(Object instance) {
+        /**
+         * 给带注解的field强行添加某个拦截器，必须通过自定义的Injector来初始化field实例
+         * 否则只能给field的类添加注释，然后通过bind 和 annotation去找到
+         *
+         * 例如：
+         *
+         * controller{
+         *
+         *      @useAAA
+         *      Service server1;
+         * }
+         *
+         * 如果service类本身没有任何注解，同时想给server1添加注释，让service1实现监听或其他行为，
+         * 需自己来给service1进行初始化（自定义Injectro），而不能用默认，同时在初始化的过程中添加上监听器
+         *
+         *
+         */
         Object o = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {

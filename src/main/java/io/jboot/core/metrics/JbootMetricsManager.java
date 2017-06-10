@@ -46,6 +46,7 @@ public class JbootMetricsManager {
         if (metricsConfig.isJmxReporter()) {
             JmxReporter.forRegistry(metricRegistry).build().start();
         }
+
     }
 
 

@@ -16,6 +16,8 @@
 package io.jboot.aop;
 
 
+import com.codahale.metrics.Counter;
+import io.jboot.Jboot;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -24,8 +26,18 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public class JbootrpcInterceptor implements MethodInterceptor {
 
+
+    public JbootrpcInterceptor() {
+
+    }
+
+
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+
+        Counter counter = Jboot.getMetric().counter(methodInvocation.getThis().getClass() + "##" + methodInvocation.getMethod().getName());
+        counter.inc();
+
         return methodInvocation.proceed();
     }
 }

@@ -54,7 +54,6 @@ public class JbootInjectManager {
         public void configure(Binder binder) {
             binder.bindListener(Matchers.any(), rpcListener);
             binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(JbootrpcService.class), new JbootrpcInterceptor());
-//            binder.bindInterceptor(Matchers.any(), Matchers.any(), new JbootHystrixCommandInterceptor());
         }
     };
 
