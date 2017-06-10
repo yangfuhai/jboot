@@ -3,8 +3,8 @@ jboot is a similar springboot project base on jfinal and undertow,we have using 
 
 # jboot 中文描述
 jboot是一个基于jfinal、undertow开发的一个类似springboot的开源框架，
-我们已经在正式的商业上线项目中使用。她集成了代码生成，微服务，MQ，RPC，监控(使用了Hystrix和
-Metrics)等功能，开发者使用及其简单。
+我们已经在正式的商业上线项目中使用。她集成了微服务，MQ，RPC，监控(使用了Hystrix和
+Metrics)、访问隔离、容错隔离、延迟隔离、 熔断、代码生成等功能，开发者使用及其简单，同时保证分布系统的高效和稳定。
 
 # maven dependency
 
