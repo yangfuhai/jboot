@@ -1,6 +1,6 @@
 import io.jboot.Jboot;
+import io.jboot.core.hystrix.annotation.UseHystrixCommand;
 import io.jboot.db.model.JbootModel;
-import io.jboot.rpc.annotation.JbootrpcService;
 import io.jboot.service.JbootService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.UrlMapping;
@@ -16,14 +16,17 @@ public class ControllerTest extends JbootController {
 
 
     public static void main(String[] args) {
+
+        Jboot.setBootArg("jboot.hystrix.url", "/hystrix.stream");
         Jboot.run(args);
     }
 
 
     @Inject
+    @UseHystrixCommand
     ServiceTest serviceTest;
 
-    @JbootrpcService
+//    @JbootrpcService
     ServiceInter serviceInter;
 
 

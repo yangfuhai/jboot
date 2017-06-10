@@ -15,44 +15,50 @@
  */
 package io.jboot.aop;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 import com.google.inject.MembersInjector;
+import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matchers;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 import com.jfinal.log.Log;
-import io.jboot.Jboot;
+import io.jboot.core.hystrix.annotation.UseHystrixCommand;
 
 import java.lang.reflect.Field;
 
 /**
  * RPC 的注入器，用来初始化RPC对象
  */
-public class JbootrpcMembersInjector implements MembersInjector {
+public class JbootHystrixInjector implements MembersInjector {
 
     private static Log log = Log.getLog(JbootrpcMembersInjector.class);
 
     private Field field;
 
-    public JbootrpcMembersInjector(Field field) {
+    public JbootHystrixInjector(Field field) {
         this.field = field;
     }
 
     @Override
     public void injectMembers(Object instance) {
-        Object rpcImpl = null;
-
-        try {
-            rpcImpl = Jboot.service(field.getType());
-        } catch (Throwable e) {
-            log.error(e.toString(), e);
-        }
-
-        if (rpcImpl == null) {
-            return;
-        }
+        Object o = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bindListener(Matchers.any(), new TypeListener() {
+                    @Override
+                    public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
+                        encounter.bindInterceptor(Matchers.any(), new JbootHystrixCommandInterceptor(field.getAnnotation(UseHystrixCommand.class)));
+                    }
+                });
+            }
+        }).getInstance(field.getType());
 
         try {
             field.setAccessible(true);
-            field.set(instance, rpcImpl);
-        } catch (Throwable e) {
-            log.error(e.toString(), e);
+            field.set(instance, o);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 }

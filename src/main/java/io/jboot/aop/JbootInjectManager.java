@@ -20,12 +20,13 @@ import com.google.inject.*;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+import io.jboot.core.hystrix.annotation.UseHystrixCommand;
 import io.jboot.rpc.annotation.JbootrpcService;
 
 import java.lang.reflect.Field;
 
 /**
- * RPC管理器
+ * Inject管理器
  */
 public class JbootInjectManager {
 
@@ -53,6 +54,7 @@ public class JbootInjectManager {
         public void configure(Binder binder) {
             binder.bindListener(Matchers.any(), rpcListener);
             binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(JbootrpcService.class), new JbootrpcInterceptor());
+//            binder.bindInterceptor(Matchers.any(), Matchers.any(), new JbootHystrixCommandInterceptor());
         }
     };
 
@@ -66,6 +68,10 @@ public class JbootInjectManager {
             for (Field field : clazz.getDeclaredFields()) {
                 if (field.isAnnotationPresent(JbootrpcService.class)) {
                     encounter.register(new JbootrpcMembersInjector(field));
+                }
+
+                if (field.isAnnotationPresent(UseHystrixCommand.class)) {
+                    encounter.register(new JbootHystrixInjector(field));
                 }
             }
         }
