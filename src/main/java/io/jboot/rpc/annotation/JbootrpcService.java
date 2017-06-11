@@ -22,7 +22,7 @@ import java.lang.annotation.*;
 @Inherited
 @BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
 public @interface JbootrpcService {
     Class export() default Object.class;
 
