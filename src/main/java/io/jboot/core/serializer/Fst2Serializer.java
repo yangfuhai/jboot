@@ -31,7 +31,7 @@ public class Fst2Serializer implements ISerializer {
     @Override
     public Object deserialize(byte[] bytes) {
         if (bytes == null || bytes.length == 0) return null;
-        return fst.asByteArray(bytes);
+        return fst.asObject(bytes);
     }
 
 
