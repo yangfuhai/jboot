@@ -1,0 +1,15 @@
+jboot-1.0-alphpa2:
+修复：jbootrpcService 无法在类上进行注解的bug
+修复：在某些情况下无法实例化jbootredis的bug
+修复：jfinal-weixin在集群模式下获取ticket错误的问题
+
+新增：添加rpc服务调用统计
+新增：@UseHystrixCommand注解，用于controller调用使用Hystrix进行管理（访问隔离、容错隔离、延迟隔离、 熔断）
+新增：基于guice的aop功能
+新增：jbootmqConfig的默认配置（之前没有配置会出现异常）
+新增：mq监听器的多渠监听功能（multiChannel）
+
+优化：jbootrpcService注解的使用
+优化：ClassNewer的错误信息
+优化：更新jfinal-cos到最新版本"2017.5"
+优化：修改JbootEventListner的onMessage为onEvent，防止和mq的onMessage冲突。
