@@ -12,7 +12,7 @@ Metrics)、访问隔离、容错隔离、延迟隔离、 熔断、代码生成�
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.0-alphpa1</version>
+    <version>1.0-alpha2</version>
 </dependency>
 
 ```

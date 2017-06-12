@@ -5,7 +5,6 @@ import io.jboot.http.JbootHttpResponse;
 import io.jboot.service.JbootService;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.EventListener;
 
 /**
@@ -23,10 +22,6 @@ public class HttpTest extends JbootService implements EventListener{
     }
 
 
-    @Test
-    public void testS(){
-        System.out.println(Arrays.toString(HttpTest.class.getInterfaces()));
-    }
 
     @Override
     public JbootModel findById(Object id) {
