@@ -16,17 +16,19 @@
 package io.jboot;
 
 import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.core.serializer.SerializerManager;
 import io.jboot.web.JbootAppConfig;
 
 @PropertieConfig(prefix = "jboot")
 public class JbootConfig {
 
-    private String mode ;
+    private String mode;
     private String bannerEnable = "true";
     private String bannerFile = "banner.txt";
     private String cron4jEnable = "true";
     private String cron4jFile = "cron4j.properties";
     private String jfinalConfig = JbootAppConfig.class.getName();
+    private String serializer = SerializerManager.fst2;
 
 
     public String getMode() {
@@ -83,6 +85,14 @@ public class JbootConfig {
 
     public void setJfinalConfig(String jfinalConfig) {
         this.jfinalConfig = jfinalConfig;
+    }
+
+    public String getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(String serializer) {
+        this.serializer = serializer;
     }
 
     @Override

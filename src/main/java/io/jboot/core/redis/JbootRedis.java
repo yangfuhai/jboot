@@ -17,7 +17,6 @@ package io.jboot.core.redis;
 
 import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
-import org.nustaq.serialization.FSTConfiguration;
 import redis.clients.jedis.*;
 
 import java.util.*;
@@ -30,7 +29,6 @@ import java.util.Map.Entry;
 public class JbootRedis {
 
     protected JedisPool jedisPool;
-    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
 
 
     public JbootRedis() {
@@ -1428,14 +1426,14 @@ public class JbootRedis {
     }
 
     public byte[] valueToBytes(Object value) {
-        return fst.asByteArray(value);
+        return Jboot.getSerializer().serialize(value);
     }
 
     public Object valueFromBytes(byte[] bytes) {
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-        return fst.asObject(bytes);
+        return Jboot.getSerializer().serialize(bytes);
     }
 
     public byte[][] valuesToBytesArray(Object... valuesArray) {

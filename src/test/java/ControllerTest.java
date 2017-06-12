@@ -1,6 +1,7 @@
 import io.jboot.Jboot;
 import io.jboot.core.hystrix.annotation.UseHystrixCommand;
 import io.jboot.db.model.JbootModel;
+import io.jboot.rpc.annotation.JbootrpcService;
 import io.jboot.service.JbootService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.UrlMapping;
@@ -22,17 +23,25 @@ public class ControllerTest extends JbootController {
     }
 
 
+
+
+
     @Inject
     @UseHystrixCommand
-    ServiceTest serviceTest;
+    ServiceTest serviceTest ;
 
-//    @JbootrpcService
+    @JbootrpcService
     ServiceInter serviceInter;
 
 
     public void index() {
         System.out.println("index .... ");
         renderText("hello " + serviceTest.getName());
+
+
+//        Jboot.service()
+
+//        String aaa = serviceTest.getName();
 //        renderText("hello " + serviceInter.hello());
 
     }

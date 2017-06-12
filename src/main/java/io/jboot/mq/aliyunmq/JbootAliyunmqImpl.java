@@ -22,7 +22,6 @@ import io.jboot.exception.JbootException;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
 import io.jboot.utils.StringUtils;
-import org.nustaq.serialization.FSTConfiguration;
 
 import java.util.Properties;
 
@@ -31,7 +30,6 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
 
     private Producer producer;
     private Consumer consumer;
-    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
 
     public void JbootAliyunmq() {
 
@@ -68,7 +66,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
 
     @Override
     public void publish(Object message, String toChannel) {
-        byte[] bytes = fst.asByteArray(message);
+        byte[] bytes = Jboot.getSerializer().serialize(message);
         Message onsMessage = new Message(toChannel, "*", bytes);
         producer.send(onsMessage);
     }
@@ -76,7 +74,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
     @Override
     public Action consume(Message message, ConsumeContext context) {
         byte[] bytes = message.getBody();
-        Object object = fst.asObject(bytes);
+        Object object = Jboot.getSerializer().deserialize(bytes);
         notifyListeners(message.getTopic(), object);
         return Action.CommitMessage;
     }

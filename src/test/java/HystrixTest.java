@@ -21,9 +21,22 @@ public class HystrixTest {
 
         while (true) {
             try {
-                new CommandHelloWorld1("World").execute();
+             String hello = new CommandHelloWorld1("World").execute();
             }catch (Throwable ex){}
         }
+
+
+//        while (true){
+//            String helloString = new HystrixTest().getHello();
+//            System.out.println(helloString);
+//        }
+
+    }
+
+
+
+    public String getHello(){
+        return "hello";
     }
 
 
@@ -75,12 +88,12 @@ public class HystrixTest {
                 // do nothing
             }
 
-        /* fail 5% of the time to show how fallback works */
+        /* fail 20% of the time to show how fallback works */
             if (Math.random() > 0.80) {
                 throw new RuntimeException("random failure processing UserAccount network response");
             }
 
-        /* latency spike 5% of the time so timeouts can be triggered occasionally */
+        /* latency spike 20% of the time so timeouts can be triggered occasionally */
             if (Math.random() > 0.80) {
                 // random latency spike
                 try {
@@ -93,6 +106,7 @@ public class HystrixTest {
 
             return "Hello " + name + "!";
         }
+
     }
 }
 

@@ -22,14 +22,12 @@ import io.jboot.exception.JbootException;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
 import io.jboot.utils.StringUtils;
-import org.nustaq.serialization.FSTConfiguration;
 import redis.clients.jedis.BinaryJedisPubSub;
 
 
 public class JbootRedismqImpl extends JbootmqBase implements Jbootmq {
 
     JbootRedis redis;
-    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
 
     public JbootRedismqImpl() {
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
@@ -59,7 +57,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq {
         redis.subscribe(new BinaryJedisPubSub() {
             @Override
             public void onMessage(byte[] channel, byte[] message) {
-                notifyListeners(redis.bytesToKey(channel), fst.asObject(message));
+                notifyListeners(redis.bytesToKey(channel), Jboot.getSerializer().deserialize(message));
             }
         }, redis.keysToBytesArray(channels));
 
@@ -68,6 +66,6 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void publish(Object message, String toChannel) {
-        redis.publish(redis.keyToBytes(toChannel), fst.asByteArray(message));
+        redis.publish(redis.keyToBytes(toChannel), Jboot.getSerializer().serialize(message));
     }
 }

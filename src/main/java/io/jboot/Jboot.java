@@ -24,6 +24,8 @@ import io.jboot.cache.JbootCacheManager;
 import io.jboot.config.JbootProperties;
 import io.jboot.core.metrics.JbootMetricsManager;
 import io.jboot.core.redis.JbootRedis;
+import io.jboot.core.serializer.ISerializer;
+import io.jboot.core.serializer.SerializerManager;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
 import io.jboot.http.JbootHttp;
@@ -316,7 +318,7 @@ public class Jboot {
         return JbootMetricsManager.me().metric();
     }
 
-    
+
     /**
      * 获取 injector
      *
@@ -324,6 +326,11 @@ public class Jboot {
      */
     public static Injector getInjector() {
         return JbootInjectManager.me().getInjector();
+    }
+
+
+    public static ISerializer getSerializer() {
+        return SerializerManager.me().getSerializer();
     }
 
 

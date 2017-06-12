@@ -22,7 +22,6 @@ import io.jboot.exception.JbootException;
 import io.jboot.mq.Jbootmq;
 import io.jboot.mq.JbootmqBase;
 import io.jboot.utils.StringUtils;
-import org.nustaq.serialization.FSTConfiguration;
 
 import java.io.IOException;
 
@@ -33,7 +32,6 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
 
     Connection connection;
-    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
 
     public JbootRabbitmqImpl() {
 
@@ -84,7 +82,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             channel.basicConsume("", true, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    Object o = fst.asObject(body);
+                    Object o = Jboot.getSerializer().deserialize(body);
                     notifyListeners(envelope.getExchange(), o);
                 }
             });
@@ -117,8 +115,8 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             return;
         }
 
-        byte[] bytes = fst.asByteArray(message);
         try {
+            byte[] bytes = Jboot.getSerializer().serialize(message);
             channel.basicPublish(toChannel, "", MessageProperties.BASIC, bytes);
         } catch (IOException e) {
             e.printStackTrace();
