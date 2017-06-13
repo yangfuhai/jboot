@@ -104,6 +104,7 @@ public class JbootConfig {
                 ", cron4jEnable='" + cron4jEnable + '\'' +
                 ", cron4jFile='" + cron4jFile + '\'' +
                 ", jfinalConfig='" + jfinalConfig + '\'' +
+                ", serializer='" + serializer + '\'' +
                 '}';
     }
 }

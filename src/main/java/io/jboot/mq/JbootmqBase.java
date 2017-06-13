@@ -15,7 +15,7 @@
  */
 package io.jboot.mq;
 
-import io.jboot.utils.ArrayUtils;
+import com.jfinal.log.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +25,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public abstract class JbootmqBase implements Jbootmq {
+
+    private static final Log log = Log.getLog(JbootmqBase.class);
 
     private List<JbootmqMessageListener> listeners = new CopyOnWriteArrayList<>();
     private Map<String, List<JbootmqMessageListener>> listenerMap = new ConcurrentHashMap<>();
@@ -66,21 +68,22 @@ public abstract class JbootmqBase implements Jbootmq {
     }
 
     public void notifyListeners(String channel, Object message) {
+        notifyAll(channel, message, listeners);
+        notifyAll(channel, message, listenerMap.get(channel));
+    }
+
+
+    private void notifyAll(String channel, Object message, List<JbootmqMessageListener> listeners) {
         if (listeners == null || listeners.size() == 0) {
             return;
         }
 
         for (JbootmqMessageListener listener : listeners) {
-            listener.onMessage(channel, message);
-        }
-
-        List<JbootmqMessageListener> list = listenerMap.get(channel);
-        if (ArrayUtils.isNullOrEmpty(list)) {
-            return;
-        }
-
-        for (JbootmqMessageListener listener : list) {
-            listener.onMessage(channel, message);
+            try {
+                listener.onMessage(channel, message);
+            } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
+            }
         }
     }
 }
