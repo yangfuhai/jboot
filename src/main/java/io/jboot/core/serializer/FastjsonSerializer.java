@@ -13,19 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ctr;
+package io.jboot.core.serializer;
 
-import io.jboot.web.controller.annotation.UrlMapping;
-import io.jboot.web.controller.JbootController;
+import org.nustaq.serialization.FSTConfiguration;
 
-/**
- * Created by michael on 2017/5/9.
- */
-@UrlMapping(url = "/jboottest")
-public class TestController extends JbootController {
 
-    public void index() {
+public class FastjsonSerializer implements ISerializer {
 
-        renderText("hello jboot!");
+    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
+
+    @Override
+    public byte[] serialize(Object obj) {
+        if (obj == null) return null;
+        return fst.asByteArray(obj);
     }
+
+    @Override
+    public Object deserialize(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) return null;
+        return fst.asObject(bytes);
+    }
+
+
 }

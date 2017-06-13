@@ -4,7 +4,7 @@ import io.jboot.db.model.JbootModel;
 import io.jboot.rpc.annotation.JbootrpcService;
 import io.jboot.service.JbootService;
 import io.jboot.web.controller.JbootController;
-import io.jboot.web.controller.annotation.UrlMapping;
+import io.jboot.web.controller.annotation.RequestMapping;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 /**
  * Created by michael on 2017/6/8.
  */
-@UrlMapping(url = "/test")
+@RequestMapping("/test")
 public class ControllerTest extends JbootController {
 
 
@@ -23,12 +23,9 @@ public class ControllerTest extends JbootController {
     }
 
 
-
-
-
     @Inject
     @UseHystrixCommand
-    ServiceTest serviceTest ;
+    ServiceTest serviceTest;
 
     @JbootrpcService
     ServiceInter serviceInter;

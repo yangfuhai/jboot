@@ -23,6 +23,7 @@ import io.jboot.utils.ClassNewer;
 public class SerializerManager {
 
     public static final String fst2 = "fst2";
+    public static final String fastjson = "fastjson";
 
     private static SerializerManager me;
 
@@ -50,6 +51,8 @@ public class SerializerManager {
 
         if (fst2.equals(config.getSerializer())) {
             serializer = new Fst2Serializer();
+        } else if (fastjson.equals(config.getSerializer())) {
+            serializer = new FastjsonSerializer();
         }
 
         return serializer;

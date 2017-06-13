@@ -32,7 +32,7 @@ import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootTaskManager;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
-import io.jboot.web.controller.annotation.UrlMapping;
+import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.controller.interceptor.GuiceInterceptor;
 import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
 import io.jboot.web.directive.annotation.JbootDirective;
@@ -70,15 +70,15 @@ public class JbootAppConfig extends JFinalConfig {
         }
 
         for (Class<Controller> clazz : controllerClassList) {
-            UrlMapping urlMapping = clazz.getAnnotation(UrlMapping.class);
-            if (urlMapping == null || urlMapping.url() == null) {
+            RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
+            if (mapping == null || mapping.value() == null) {
                 continue;
             }
 
-            if (StrKit.notBlank(urlMapping.viewPath())) {
-                routes.add(urlMapping.url(), clazz, urlMapping.viewPath());
+            if (StrKit.notBlank(mapping.viewPath())) {
+                routes.add(mapping.value(), clazz, mapping.viewPath());
             } else {
-                routes.add(urlMapping.url(), clazz);
+                routes.add(mapping.value(), clazz);
             }
         }
     }
@@ -97,6 +97,7 @@ public class JbootAppConfig extends JFinalConfig {
             }
         }
     }
+
 
     @Override
     public void configPlugin(Plugins plugins) {
@@ -143,6 +144,11 @@ public class JbootAppConfig extends JFinalConfig {
          * 初始化
          */
         JbootMetricsManager.me();
+
+        /**
+         * 发送启动完成通知
+         */
+        Jboot.sendEvent(Jboot.EVENT_STARTED, null);
 
     }
 }

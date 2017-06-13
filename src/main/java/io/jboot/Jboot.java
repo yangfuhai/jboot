@@ -52,6 +52,8 @@ import java.util.Map;
  */
 public class Jboot {
 
+    public static final String EVENT_STARTED = "jboot:started";
+
     private static JbootConfig jbootConfig;
     private static Boolean devMode;
     private static Map<String, String> argMap;

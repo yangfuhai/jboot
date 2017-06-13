@@ -10,7 +10,7 @@ public class MqTest {
          * jboot.properties
          *
          * jboot.mq.type= redis
-         * jboot.mq.redis.address= 127.0.0.1
+         * jboot.mq.redis.host= 127.0.0.1
          */
 
         Jboot.setBootArg("jboot.mq.type", "redis");
@@ -44,7 +44,7 @@ public class MqTest {
         });
 
         for (int i = 0; i < 10; i++) {
-            Jboot.getMq().publish("hello" + i, "myChannel");
+            Jboot.getMq().publish("hello" + i, "myChannel1");
         }
 
 
