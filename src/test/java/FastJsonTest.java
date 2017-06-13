@@ -1,9 +1,6 @@
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 
-/**
- * Created by michael on 2017/5/9.
- */
 public class FastJsonTest {
 
     @Test

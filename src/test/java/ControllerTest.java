@@ -9,9 +9,7 @@ import io.jboot.web.controller.annotation.RequestMapping;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-/**
- * Created by michael on 2017/6/8.
- */
+
 @RequestMapping("/test")
 public class ControllerTest extends JbootController {
 
@@ -34,12 +32,6 @@ public class ControllerTest extends JbootController {
     public void index() {
         System.out.println("index .... ");
         renderText("hello " + serviceTest.getName());
-
-
-//        Jboot.service()
-
-//        String aaa = serviceTest.getName();
-//        renderText("hello " + serviceInter.hello());
 
     }
 

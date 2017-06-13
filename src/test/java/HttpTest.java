@@ -7,9 +7,7 @@ import org.junit.Test;
 
 import java.util.EventListener;
 
-/**
- * Created by michael on 2017/5/12.
- */
+
 public class HttpTest extends JbootService implements EventListener{
 
     @Test
