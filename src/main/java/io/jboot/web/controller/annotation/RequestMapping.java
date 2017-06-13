@@ -19,8 +19,9 @@ import java.lang.annotation.*;
 
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
-public @interface UrlMapping {
-	String url();
-	String viewPath() default "";
+@Target({ElementType.TYPE})
+public @interface RequestMapping {
+    String value();
+
+    String viewPath() default "";
 }
