@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop;
+package io.jboot.aop.injector;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -23,7 +23,8 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.jfinal.log.Log;
-import io.jboot.core.hystrix.annotation.UseHystrixCommand;
+import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
+import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
 
 import java.lang.reflect.Field;
 
@@ -65,7 +66,7 @@ public class JbootHystrixInjector implements MembersInjector {
                 bindListener(Matchers.any(), new TypeListener() {
                     @Override
                     public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
-                        encounter.bindInterceptor(Matchers.any(), new JbootHystrixCommandInterceptor(field.getAnnotation(UseHystrixCommand.class)));
+                        encounter.bindInterceptor(Matchers.any(), new JbootHystrixCommandInterceptor(field.getAnnotation(EnableHystrixCommand.class)));
                     }
                 });
             }

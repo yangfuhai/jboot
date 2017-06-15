@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop;
+package io.jboot.aop.interceptor;
 
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
-import io.jboot.core.hystrix.annotation.UseHystrixCommand;
+import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -27,14 +27,22 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public class JbootHystrixCommandInterceptor implements MethodInterceptor {
 
-    UseHystrixCommand hystrixCommand;
+    EnableHystrixCommand enableHystrixCommand;
 
-    public JbootHystrixCommandInterceptor(UseHystrixCommand hystrixCommand) {
-        this.hystrixCommand = hystrixCommand;
+    public JbootHystrixCommandInterceptor(EnableHystrixCommand hystrixCommand) {
+        this.enableHystrixCommand = hystrixCommand;
+    }
+
+    public JbootHystrixCommandInterceptor() {
+
     }
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        if (enableHystrixCommand == null) {
+            enableHystrixCommand = methodInvocation.getThis().getClass().getAnnotation(EnableHystrixCommand.class);
+        }
+
         JbootHystrixCommand command = new JbootHystrixCommand(new HystrixRunnable() {
             @Override
             public Object run() {
@@ -45,7 +53,8 @@ public class JbootHystrixCommandInterceptor implements MethodInterceptor {
                 }
                 return null;
             }
-        }, hystrixCommand.value());
+        }, enableHystrixCommand.key());
+
 
         return command.execute();
     }

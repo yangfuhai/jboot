@@ -20,7 +20,11 @@ import com.google.inject.*;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
-import io.jboot.core.hystrix.annotation.UseHystrixCommand;
+import io.jboot.aop.injector.JbootHystrixInjector;
+import io.jboot.aop.injector.JbootrpcMembersInjector;
+import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
+import io.jboot.aop.interceptor.JbootrpcInterceptor;
+import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.rpc.annotation.JbootrpcService;
 
 import java.lang.reflect.Field;
@@ -54,6 +58,7 @@ public class JbootInjectManager {
         public void configure(Binder binder) {
             binder.bindListener(Matchers.any(), rpcListener);
             binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(JbootrpcService.class), new JbootrpcInterceptor());
+            binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
         }
     };
 
@@ -69,7 +74,7 @@ public class JbootInjectManager {
                     encounter.register(new JbootrpcMembersInjector(field));
                 }
 
-                if (field.isAnnotationPresent(UseHystrixCommand.class)) {
+                if (field.isAnnotationPresent(EnableHystrixCommand.class)) {
                     encounter.register(new JbootHystrixInjector(field));
                 }
             }

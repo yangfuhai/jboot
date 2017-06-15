@@ -1,5 +1,5 @@
 import io.jboot.Jboot;
-import io.jboot.core.hystrix.annotation.UseHystrixCommand;
+import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.db.model.JbootModel;
 import io.jboot.rpc.annotation.JbootrpcService;
 import io.jboot.service.JbootService;
@@ -22,7 +22,7 @@ public class ControllerTest extends JbootController {
 
 
     @Inject
-    @UseHystrixCommand
+    @EnableHystrixCommand
     ServiceTest serviceTest;
 
     @JbootrpcService

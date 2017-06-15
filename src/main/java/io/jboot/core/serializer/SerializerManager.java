@@ -22,8 +22,8 @@ import io.jboot.utils.ClassNewer;
 
 public class SerializerManager {
 
-    public static final String fst2 = "fst2";
-    public static final String fastjson = "fastjson";
+    public static final String FST2 = "fst2";
+    public static final String FASTJSON = "fastjson";
 
     private static SerializerManager me;
 
@@ -49,9 +49,9 @@ public class SerializerManager {
 
         JbootConfig config = Jboot.getJbootConfig();
 
-        if (fst2.equals(config.getSerializer())) {
+        if (FST2.equals(config.getSerializer())) {
             serializer = new Fst2Serializer();
-        } else if (fastjson.equals(config.getSerializer())) {
+        } else if (FASTJSON.equals(config.getSerializer())) {
             serializer = new FastjsonSerializer();
         }
 

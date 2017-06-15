@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop;
+package io.jboot.aop.injector;
 
 import com.google.inject.MembersInjector;
 import com.jfinal.log.Log;

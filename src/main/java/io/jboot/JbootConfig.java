@@ -28,7 +28,7 @@ public class JbootConfig {
     private String cron4jEnable = "true";
     private String cron4jFile = "cron4j.properties";
     private String jfinalConfig = JbootAppConfig.class.getName();
-    private String serializer = SerializerManager.fst2;
+    private String serializer = SerializerManager.FST2;
 
 
     public String getMode() {
