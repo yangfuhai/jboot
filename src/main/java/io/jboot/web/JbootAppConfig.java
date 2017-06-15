@@ -27,6 +27,7 @@ import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.cache.JbootCacheConfig;
+import io.jboot.core.log.Slf4jLogFactory;
 import io.jboot.core.metrics.JbootMetricsManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootTaskManager;
@@ -60,6 +61,7 @@ public class JbootAppConfig extends JFinalConfig {
             ApiConfigKit.putApiConfig(apiConfig);
         }
 
+        constants.setLogFactory(new Slf4jLogFactory());
     }
 
     @Override
