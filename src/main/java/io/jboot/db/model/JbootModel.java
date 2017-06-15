@@ -94,7 +94,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (hasColumn(COLUMN_CREATED) && get(COLUMN_CREATED) == null) {
             set(COLUMN_CREATED, new Date());
         }
-        if (null == get(getPrimaryKey())) {
+        if (null == get(getPrimaryKey()) && String.class == getPrimaryType()) {
             set(getPrimaryKey(), StringUtils.uuid());
         }
         boolean saved = super.save();
@@ -424,12 +424,26 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return table.getName();
     }
 
+    private String primaryKey;
+
     protected String getPrimaryKey() {
+        if (primaryKey != null) {
+            return primaryKey;
+        }
         String[] primaryKeys = getPrimaryKeys();
         if (null != primaryKeys && primaryKeys.length == 1) {
-            return primaryKeys[0];
+            primaryKey = primaryKeys[0];
         }
         throw new RuntimeException(String.format("get PrimaryKey is error in[%s]", getClass()));
+    }
+
+    private Class<?> primaryType;
+
+    public Class<?> getPrimaryType() {
+        if (primaryType == null) {
+            primaryType = TableMapping.me().getTable(getUsefulClass()).getColumnType(getPrimaryKey());
+        }
+        return primaryType;
     }
 
     protected String[] getPrimaryKeys() {
