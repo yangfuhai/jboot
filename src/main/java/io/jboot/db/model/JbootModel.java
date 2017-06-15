@@ -95,7 +95,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(COLUMN_CREATED, new Date());
         }
         if (null == get(getPrimaryKey())) {
-            set("id", StringUtils.uuid());
+            set(getPrimaryKey(), StringUtils.uuid());
         }
         boolean saved = super.save();
         if (saved) {
@@ -538,4 +538,22 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+
+        if (!(o instanceof JbootModel)) {
+            return false;
+        }
+
+        JbootModel model = (JbootModel) o;
+        Object id = model.get(getPrimaryKey());
+        if (id == null) {
+            return false;
+        }
+
+        return id.equals(get(getPrimaryKey()));
+    }
 }

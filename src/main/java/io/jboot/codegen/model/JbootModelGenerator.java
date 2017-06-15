@@ -30,7 +30,7 @@ public class JbootModelGenerator {
         String modelPackage = "io.jboot.codegen.test";
 
         String dbHost = "127.0.0.1";
-        String dbName = "motan";
+        String dbName = "jbootdemo";
         String dbUser = "root";
         String dbPassword = "";
 

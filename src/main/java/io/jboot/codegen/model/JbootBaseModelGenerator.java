@@ -54,15 +54,6 @@ public class JbootBaseModelGenerator extends BaseModelGenerator {
                 + "\t}%n%n"
 
 
-                + "\t@Override%n"
-                + "\tpublic boolean equals(Object o) {%n"
-                + "\t\tif(o == null){ return false; }%n"
-                + "\t\tif(!(o instanceof %s<?>)){return false;}%n%n"
-                + "\t\t%s<?> m = (%s<?>) o;%n"
-                + "\t\tif(m.getId() == null){return false;}%n%n"
-                + "\t\treturn m.getId().equals(getId());%n"
-                + "\t}%n%n"
-
         ;
 
 
