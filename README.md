@@ -95,7 +95,7 @@ public interface HelloService {
 
 server a export serviceImpl
 ```java
-@JbootrpcService(export = HelloService.class)
+@JbootrpcService
 public class myHelloServiceImpl extends JbootService implements HelloService {
     public String hello(String name){
          System.out.println("hello" + name);
@@ -108,6 +108,21 @@ server b call
 ```java
  HelloService service = Jboot.service(HelloService.class);
  service.hello("michael");
+```
+
+or server b controller
+```java
+public class MyController extends bootController{
+    
+    @JbootrpcService
+    HelloService service ;
+    
+    public void index(){
+        service.hello();
+        renderText("");
+    }
+    
+}
 ```
 
 # cache example
