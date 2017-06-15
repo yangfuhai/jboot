@@ -32,7 +32,7 @@ import java.lang.reflect.Field;
 /**
  * Inject管理器
  */
-public class JbootInjectManager {
+public class JbootInjectManager implements Module, TypeListener {
 
     static JbootInjectManager me = new JbootInjectManager();
 
@@ -44,7 +44,7 @@ public class JbootInjectManager {
     private Injector injector;
 
     private JbootInjectManager() {
-        injector = Guice.createInjector(appModule);
+        injector = Guice.createInjector(this);
     }
 
 
@@ -53,33 +53,38 @@ public class JbootInjectManager {
     }
 
 
-    private Module appModule = new Module() {
-        @Override
-        public void configure(Binder binder) {
-            binder.bindListener(Matchers.any(), rpcListener);
-            binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(JbootrpcService.class), new JbootrpcInterceptor());
-            binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
-        }
-    };
+    /**
+     * module implements
+     *
+     * @param binder
+     */
+    @Override
+    public void configure(Binder binder) {
+        binder.bindListener(Matchers.any(), this);
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(JbootrpcService.class), new JbootrpcInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
+    }
 
+    /**
+     * TypeListener  implements
+     *
+     * @param type
+     * @param encounter
+     * @param <I>
+     */
+    @Override
+    public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
+        Class clazz = type.getRawType();
+        if (clazz == null) return;
 
-    private TypeListener rpcListener = new TypeListener() {
-        @Override
-        public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
-            Class clazz = type.getRawType();
-            if (clazz == null) return;
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(JbootrpcService.class)) {
+                encounter.register(new JbootrpcMembersInjector(field));
+            }
 
-            for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(JbootrpcService.class)) {
-                    encounter.register(new JbootrpcMembersInjector(field));
-                }
-
-                if (field.isAnnotationPresent(EnableHystrixCommand.class)) {
-                    encounter.register(new JbootHystrixInjector(field));
-                }
+            if (field.isAnnotationPresent(EnableHystrixCommand.class)) {
+                encounter.register(new JbootHystrixInjector(field));
             }
         }
-    };
-
-
+    }
 }
