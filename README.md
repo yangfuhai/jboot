@@ -104,6 +104,11 @@ public class myHelloServiceImpl extends JbootService implements HelloService {
 }
 ```
 
+download consul and start (consul:https://www.consul.io/)
+```java
+consul -agent dev
+```
+
 server b call
 ```java
  HelloService service = Jboot.service(HelloService.class);
@@ -118,8 +123,8 @@ public class MyController extends bootController{
     HelloService service ;
     
     public void index(){
-        service.hello();
-        renderText("");
+        
+        renderText("hello " + service.hello());
     }
     
 }
@@ -173,7 +178,12 @@ public class UserDao {
     }
     
     public List<User> findByNameAndAge(String name,int age){
-        return DAO.findListByColums(Columns.create().like("name","%"+name+"%").gt("age",age));
+        
+       Columns columns = Columns.create()
+                        .like("name","%"+name+"%")
+                        .gt("age",age);
+        
+        return DAO.findListByColums(columns);
     }
 }
 ```
