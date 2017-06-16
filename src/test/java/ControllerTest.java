@@ -1,7 +1,6 @@
 import io.jboot.Jboot;
 import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.db.model.JbootModel;
-import io.jboot.rpc.annotation.JbootrpcService;
 import io.jboot.service.JbootService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
@@ -17,6 +16,8 @@ public class ControllerTest extends JbootController {
     public static void main(String[] args) {
 
         Jboot.setBootArg("jboot.hystrix.url", "/hystrix.stream");
+        Jboot.setBootArg("jboot.cache.type", "redis");
+        Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
         Jboot.run(args);
     }
 
@@ -25,12 +26,19 @@ public class ControllerTest extends JbootController {
     @EnableHystrixCommand
     ServiceTest serviceTest;
 
-    @JbootrpcService
-    ServiceInter serviceInter;
+//    @JbootrpcService
+//    ServiceInter serviceInter;
 
 
     public void index() {
         System.out.println("index .... ");
+
+        Jboot.getCache().put("test","test","valueeeeeeeeee");
+        String value = Jboot.getCache().get("test","test");
+
+        System.out.println("value:"+value);
+
+
         renderText("hello " + serviceTest.getName());
 
     }
