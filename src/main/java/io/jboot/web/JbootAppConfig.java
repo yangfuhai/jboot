@@ -21,6 +21,7 @@ import com.jfinal.json.JsonManager;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
+import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
@@ -50,10 +51,16 @@ import net.sf.ehcache.config.ConfigurationFactory;
 import net.sf.ehcache.config.DiskStoreConfiguration;
 
 import java.io.File;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.util.Enumeration;
 import java.util.List;
 
 
 public class JbootAppConfig extends JFinalConfig {
+
+    static final Log log = Log.getLog(JbootAppConfig.class);
+
 
     @Override
     public void configConstant(Constants constants) {
@@ -189,4 +196,21 @@ public class JbootAppConfig extends JFinalConfig {
         Jboot.sendEvent(Jboot.EVENT_STARTED, null);
 
     }
+
+    @Override
+    public void beforeJFinalStop() {
+        Enumeration<Driver> drivers = DriverManager.getDrivers();
+        if (drivers != null) {
+            while (drivers.hasMoreElements()) {
+                try {
+                    Driver driver = drivers.nextElement();
+                    DriverManager.deregisterDriver(driver);
+                } catch (Exception e) {
+                    log.error(e.toString(), e);
+                }
+            }
+        }
+    }
+
+
 }

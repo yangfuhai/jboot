@@ -28,8 +28,9 @@ import io.jboot.utils.StringUtils;
 import javax.sql.DataSource;
 import java.util.List;
 
+
 /**
- * Created by michael on 2017/5/11.
+ * 数据库 管理
  */
 public class JbootDbManager {
     private static JbootDbManager manager;

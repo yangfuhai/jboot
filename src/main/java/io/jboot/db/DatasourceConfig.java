@@ -34,9 +34,10 @@ public class DatasourceConfig {
     private String password;
     private String driverClassName = "com.mysql.jdbc.Driver";
     private String connectionInitSql;
-    private String cachePrepStmts = "true";
-    private String prepStmtCacheSize = "500";
-    private String prepStmtCacheSqlLimit = "2048";
+    private boolean cachePrepStmts = true;
+    private int prepStmtCacheSize = 500;
+    private int prepStmtCacheSqlLimit = 2048;
+    private int maximumPoolSize = 100;
 
 
     public String getType() {
@@ -87,28 +88,36 @@ public class DatasourceConfig {
         this.connectionInitSql = connectionInitSql;
     }
 
-    public String getCachePrepStmts() {
+    public boolean isCachePrepStmts() {
         return cachePrepStmts;
     }
 
-    public void setCachePrepStmts(String cachePrepStmts) {
+    public void setCachePrepStmts(boolean cachePrepStmts) {
         this.cachePrepStmts = cachePrepStmts;
     }
 
-    public String getPrepStmtCacheSize() {
+    public int getPrepStmtCacheSize() {
         return prepStmtCacheSize;
     }
 
-    public void setPrepStmtCacheSize(String prepStmtCacheSize) {
+    public void setPrepStmtCacheSize(int prepStmtCacheSize) {
         this.prepStmtCacheSize = prepStmtCacheSize;
     }
 
-    public String getPrepStmtCacheSqlLimit() {
+    public int getPrepStmtCacheSqlLimit() {
         return prepStmtCacheSqlLimit;
     }
 
-    public void setPrepStmtCacheSqlLimit(String prepStmtCacheSqlLimit) {
+    public void setPrepStmtCacheSqlLimit(int prepStmtCacheSqlLimit) {
         this.prepStmtCacheSqlLimit = prepStmtCacheSqlLimit;
+    }
+
+    public int getMaximumPoolSize() {
+        return maximumPoolSize;
+    }
+
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
     }
 
     public boolean isConfigOk() {

@@ -32,16 +32,12 @@ public class DataSourceBuilder {
     }
 
     public DataSource build() {
-        String db_url = datasourceConfig.getUrl();
-        String db_user = datasourceConfig.getUser();
-        String db_password = datasourceConfig.getPassword();
-
 
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(db_url);
-        hikariConfig.setUsername(db_user);
-        hikariConfig.setPassword(db_password);
-        hikariConfig.addDataSourceProperty("cachePrepStmts", datasourceConfig.getCachePrepStmts());
+        hikariConfig.setJdbcUrl(datasourceConfig.getUrl());
+        hikariConfig.setUsername(datasourceConfig.getUser());
+        hikariConfig.setPassword(datasourceConfig.getPassword());
+        hikariConfig.addDataSourceProperty("cachePrepStmts", datasourceConfig.isCachePrepStmts());
         hikariConfig.addDataSourceProperty("prepStmtCacheSize", datasourceConfig.getPrepStmtCacheSize());
         hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", datasourceConfig.getPrepStmtCacheSqlLimit());
 
@@ -49,12 +45,11 @@ public class DataSourceBuilder {
 
 
         if (hikariConfig.getConnectionInitSql() != null) {
-//            config.setConnectionInitSql("SET NAMES utf8mb4");
             hikariConfig.setConnectionInitSql(datasourceConfig.getConnectionInitSql());
         }
 
 
-        hikariConfig.setMaximumPoolSize(100);//默认10
+        hikariConfig.setMaximumPoolSize(datasourceConfig.getMaximumPoolSize());
 
         return new HikariDataSource(hikariConfig);
     }
