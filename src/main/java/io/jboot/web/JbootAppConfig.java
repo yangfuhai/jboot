@@ -36,7 +36,7 @@ import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.controller.interceptor.GuiceInterceptor;
 import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
-import io.jboot.web.directive.annotation.JbootDirective;
+import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
@@ -87,10 +87,16 @@ public class JbootAppConfig extends JFinalConfig {
 
     @Override
     public void configEngine(Engine engine) {
-        engine.addDirective("dateFormat", new com.jfinal.template.ext.directive.DateDirective());
+
+        /**
+         * now 并没有被添加到默认的指令当中
+         * 查看：EngineConfig
+         */
+        engine.addDirective("now", new com.jfinal.template.ext.directive.NowDirective());
+
         List<Class<Directive>> directiveClasses = ClassScanner.scanSubClass(Directive.class);
         for (Class<Directive> clazz : directiveClasses) {
-            JbootDirective jDirective = clazz.getAnnotation(JbootDirective.class);
+            JFinalDirective jDirective = clazz.getAnnotation(JFinalDirective.class);
             if (jDirective == null) continue;
 
             Directive directive = ClassNewer.newInstance(clazz);

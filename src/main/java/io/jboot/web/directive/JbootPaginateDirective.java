@@ -17,12 +17,12 @@ package io.jboot.web.directive;
 
 import io.jboot.utils.StringUtils;
 import io.jboot.web.RequestManager;
-import io.jboot.web.directive.annotation.JbootDirective;
+import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.base.PaginateDirectiveBase;
 
 import javax.servlet.http.HttpServletRequest;
 
-@JbootDirective("JbootPaginateDirective")
+@JFinalDirective("JbootPaginateDirective")
 public class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
