@@ -37,6 +37,9 @@ import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.controller.interceptor.GuiceInterceptor;
 import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
 import io.jboot.web.directive.annotation.JFinalDirective;
+import io.jboot.web.directive.annotation.JFinalSharedMethod;
+import io.jboot.web.directive.annotation.JFinalSharedObject;
+import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
@@ -94,15 +97,31 @@ public class JbootAppConfig extends JFinalConfig {
          */
         engine.addDirective("now", new com.jfinal.template.ext.directive.NowDirective());
 
-        List<Class<Directive>> directiveClasses = ClassScanner.scanSubClass(Directive.class);
-        for (Class<Directive> clazz : directiveClasses) {
-            JFinalDirective jDirective = clazz.getAnnotation(JFinalDirective.class);
-            if (jDirective == null) continue;
-
-            Directive directive = ClassNewer.newInstance(clazz);
-            if (directive != null) {
-                engine.addDirective(jDirective.value(), directive);
+        List<Class> directiveClasses = ClassScanner.scanClass();
+        for (Class clazz : directiveClasses) {
+            JFinalDirective jDirective = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
+            if (jDirective != null) {
+                Directive directive = ClassNewer.newInstance((Class<Directive>) clazz);
+                if (directive != null) {
+                    engine.addDirective(jDirective.value(), directive);
+                }
             }
+
+            JFinalSharedMethod sharedMethod = (JFinalSharedMethod) clazz.getAnnotation(JFinalSharedMethod.class);
+            if (sharedMethod != null) {
+                engine.addSharedMethod(ClassNewer.newInstance(clazz));
+            }
+
+            JFinalSharedStaticMethod sharedStaticMethod = (JFinalSharedStaticMethod) clazz.getAnnotation(JFinalSharedStaticMethod.class);
+            if (sharedStaticMethod != null) {
+                engine.addSharedStaticMethod(clazz);
+            }
+
+            JFinalSharedObject sharedObject = (JFinalSharedObject) clazz.getAnnotation(JFinalSharedObject.class);
+            if (sharedObject != null) {
+                engine.addSharedObject(sharedObject.value(), ClassNewer.newInstance(clazz));
+            }
+
         }
     }
 
