@@ -18,6 +18,7 @@ package io.jboot.web;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
+import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
@@ -44,7 +45,11 @@ import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
+import net.sf.ehcache.config.Configuration;
+import net.sf.ehcache.config.ConfigurationFactory;
+import net.sf.ehcache.config.DiskStoreConfiguration;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -144,7 +149,13 @@ public class JbootAppConfig extends JFinalConfig {
         JbootCacheConfig cacheConfig = Jboot.config(JbootCacheConfig.class);
         if (JbootCacheConfig.TYPE_EHCACHE.equals(cacheConfig.getType())
                 || JbootCacheConfig.TYPE_EHREDIS.equals(cacheConfig.getType())) {
-            plugins.add(new EhCachePlugin());
+
+            String ehcacheDiskStorePath = PathKit.getRootClassPath();
+            File pathFile = new File(ehcacheDiskStorePath, ".ehcache");
+
+            Configuration cfg = ConfigurationFactory.parseConfiguration();
+            cfg.addDiskStore(new DiskStoreConfiguration().path(pathFile.getAbsolutePath()));
+            plugins.add(new EhCachePlugin(cfg));
         }
 
     }
