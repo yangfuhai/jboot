@@ -77,7 +77,11 @@ public class JbootAppConfig extends JFinalConfig {
         }
 
         constants.setLogFactory(new Slf4jLogFactory());
+        constants.setMaxPostSize(1024 * 1024 * 2000);
+        constants.setReportAfterInvocation(false);
     }
+
+
 
     @Override
     public void configRoute(Routes routes) {
