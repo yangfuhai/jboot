@@ -15,23 +15,20 @@
  */
 package io.jboot.core.serializer;
 
-import org.nustaq.serialization.FSTConfiguration;
+import io.jboot.exception.JbootException;
 
 
 public class FastjsonSerializer implements ISerializer {
 
-    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
 
     @Override
     public byte[] serialize(Object obj) {
-        if (obj == null) return null;
-        return fst.asByteArray(obj);
+        throw new JbootException("not finished");
     }
 
     @Override
     public Object deserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
-        return fst.asObject(bytes);
+        throw new JbootException("not finished");
     }
 
 

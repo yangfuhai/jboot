@@ -1,3 +1,4 @@
+import com.jfinal.kit.LogKit;
 import io.jboot.Jboot;
 import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.db.model.JbootModel;
@@ -33,6 +34,8 @@ public class ControllerTest extends JbootController {
     public void index() {
         System.out.println("index .... ");
 
+        LogKit.error("xxxxxxx");
+
         Jboot.getCache().put("test","test","valueeeeeeeeee");
         String value = Jboot.getCache().get("test","test");
 
@@ -40,6 +43,11 @@ public class ControllerTest extends JbootController {
 
 
         renderText("hello " + serviceTest.getName());
+
+//        render();
+
+
+
 
     }
 
