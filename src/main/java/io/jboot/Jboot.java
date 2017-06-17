@@ -128,6 +128,7 @@ public class Jboot {
         printJbootConfigInfo();
         printServerConfigInfo();
 
+
         JbootServerFactory factory = JbootServerFactory.me();
         JbootServer jbootServer = factory.buildServer();
 
@@ -139,7 +140,7 @@ public class Jboot {
             return;
         }
 
-
+        printServerPath();
         System.err.println("jboot start success!!!");
 
         JbootrpcManager.me().autoExport();
@@ -183,6 +184,11 @@ public class Jboot {
 
     private static void printServerConfigInfo() {
         System.out.println(config(JbootServerConfig.class));
+    }
+
+    private static void printServerPath() {
+        System.out.println("server webRoot      : " + PathKit.getWebRootPath());
+        System.out.println("server classPath    : " + PathKit.getRootClassPath());
     }
 
 
