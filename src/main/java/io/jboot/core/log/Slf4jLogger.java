@@ -17,6 +17,7 @@ package io.jboot.core.log;
 
 import com.jfinal.log.Log;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLogger;
 
 public class Slf4jLogger extends Log {
 
@@ -31,10 +32,13 @@ public class Slf4jLogger extends Log {
     }
 
 
+    public boolean isOk() {
+        return logger.getClass() != NOPLogger.class;
+    }
+
     @Override
     public void debug(String message) {
         logger.debug(message);
-
     }
 
     @Override

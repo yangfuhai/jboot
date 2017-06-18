@@ -16,18 +16,32 @@
 package io.jboot.core.log;
 
 import com.jfinal.log.ILogFactory;
+import com.jfinal.log.JdkLog;
 import com.jfinal.log.Log;
 
 public class Slf4jLogFactory implements ILogFactory {
 
 
+    private static Slf4jLogFactory factory;
+
+    public static Slf4jLogFactory me() {
+        if (factory == null) {
+            factory = new Slf4jLogFactory();
+            factory.slf4jIsOk = new Slf4jLogger("").isOk();
+        }
+        return factory;
+    }
+
+    private boolean slf4jIsOk;
+
+
     @Override
     public Log getLog(Class<?> clazz) {
-        return new Slf4jLogger(clazz);
+        return slf4jIsOk ? new Slf4jLogger(clazz) : JdkLog.getLog(clazz);
     }
 
     @Override
     public Log getLog(String name) {
-        return new Slf4jLogger(name);
+        return slf4jIsOk ? new Slf4jLogger(name) : JdkLog.getLog(name);
     }
 }

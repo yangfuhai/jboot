@@ -63,7 +63,6 @@ public class Jboot {
     private static JbootHttp jbootHttp;
     private static JbootRedis jbootRedis;
 
-
     /**
      * main 入口方法
      *
@@ -141,7 +140,7 @@ public class Jboot {
         }
 
         printServerPath();
-        System.err.println("jboot start success!!!");
+        printServerUrl();
 
         JbootrpcManager.me().autoExport();
 
@@ -189,6 +188,19 @@ public class Jboot {
     private static void printServerPath() {
         System.out.println("server webRoot      : " + PathKit.getWebRootPath());
         System.out.println("server classPath    : " + PathKit.getRootClassPath());
+    }
+
+
+    private static void printServerUrl() {
+        JbootServerConfig serverConfig = config(JbootServerConfig.class);
+
+        String host = "0.0.0.0".equals(serverConfig.getHost()) ? "127.0.0.1" : serverConfig.getHost();
+        String port = "80".equals(serverConfig.getPort()) ? "" : ":" + serverConfig.getPort();
+
+        String url = String.format("http://%s%s", host, port);
+
+        System.out.println();
+        System.out.println("server started success , url : " + url);
     }
 
 
