@@ -13,23 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.serializer;
+package io.jboot.core.serializer;
 
-import io.jboot.exception.JbootException;
+public interface ISerializer {
 
+    public byte[] serialize(Object obj);
 
-public class FastjsonSerializer implements ISerializer {
-
-
-    @Override
-    public byte[] serialize(Object obj) {
-        throw new JbootException("not finished");
-    }
-
-    @Override
-    public Object deserialize(byte[] bytes) {
-        throw new JbootException("not finished");
-    }
-
-
+    public Object deserialize(byte[] bytes);
 }

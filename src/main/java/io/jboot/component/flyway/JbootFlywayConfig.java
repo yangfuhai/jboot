@@ -13,26 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.serializer;
+package io.jboot.component.flyway;
 
-import org.nustaq.serialization.FSTConfiguration;
+import io.jboot.config.annotation.PropertieConfig;
 
+@PropertieConfig(prefix = "jboot.flyway")
+public class JbootFlywayConfig {
 
-public class Fst2Serializer implements ISerializer {
-
-    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
-
-    @Override
-    public byte[] serialize(Object obj) {
-        if (obj == null) return null;
-        return fst.asByteArray(obj);
-    }
-
-    @Override
-    public Object deserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
-        return fst.asObject(bytes);
-    }
-
-
+    
 }
+
+
+

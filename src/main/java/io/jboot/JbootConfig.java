@@ -16,7 +16,7 @@
 package io.jboot;
 
 import io.jboot.config.annotation.PropertieConfig;
-import io.jboot.component.serializer.SerializerManager;
+import io.jboot.core.serializer.SerializerManager;
 import io.jboot.web.JbootAppConfig;
 
 @PropertieConfig(prefix = "jboot")

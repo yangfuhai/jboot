@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.serializer;
+package io.jboot.component.zuul;
 
-public interface ISerializer {
+import io.jboot.config.annotation.PropertieConfig;
 
-    public byte[] serialize(Object obj);
+@PropertieConfig(prefix = "jboot.zuul")
+public class JbootZuulConfig {
 
-    public Object deserialize(byte[] bytes);
+    
 }
+
+
+

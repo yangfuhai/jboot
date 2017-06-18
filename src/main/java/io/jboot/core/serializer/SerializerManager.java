@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.serializer;
+package io.jboot.core.serializer;
 
 import io.jboot.Jboot;
 import io.jboot.JbootConfig;
