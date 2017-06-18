@@ -18,7 +18,7 @@ package io.jboot.aop.interceptor;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
-import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 

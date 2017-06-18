@@ -1,5 +1,5 @@
 import io.jboot.Jboot;
-import io.jboot.mq.JbootmqMessageListener;
+import io.jboot.core.mq.JbootmqMessageListener;
 import org.junit.Test;
 
 public class MqTest {

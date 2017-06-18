@@ -16,7 +16,7 @@
 package rpc;
 
 import io.jboot.Jboot;
-import io.jboot.rpc.Jbootrpc;
+import io.jboot.core.rpc.Jbootrpc;
 
 /**
  * Created by michael on 2017/5/5.

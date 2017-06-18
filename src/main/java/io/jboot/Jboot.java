@@ -19,23 +19,23 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Injector;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
-import io.jboot.cache.JbootCache;
-import io.jboot.cache.JbootCacheManager;
+import io.jboot.core.cache.JbootCache;
+import io.jboot.core.cache.JbootCacheManager;
 import io.jboot.config.JbootProperties;
-import io.jboot.core.metrics.JbootMetricsManager;
-import io.jboot.core.redis.JbootRedis;
-import io.jboot.core.serializer.ISerializer;
-import io.jboot.core.serializer.SerializerManager;
+import io.jboot.component.metrics.JbootMetricsManager;
+import io.jboot.component.redis.JbootRedis;
+import io.jboot.component.serializer.ISerializer;
+import io.jboot.component.serializer.SerializerManager;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
-import io.jboot.http.JbootHttp;
-import io.jboot.http.JbootHttpManager;
-import io.jboot.http.JbootHttpRequest;
-import io.jboot.http.JbootHttpResponse;
-import io.jboot.mq.Jbootmq;
-import io.jboot.mq.JbootmqManager;
-import io.jboot.rpc.Jbootrpc;
-import io.jboot.rpc.JbootrpcManager;
+import io.jboot.core.http.JbootHttp;
+import io.jboot.core.http.JbootHttpManager;
+import io.jboot.core.http.JbootHttpRequest;
+import io.jboot.core.http.JbootHttpResponse;
+import io.jboot.core.mq.Jbootmq;
+import io.jboot.core.mq.JbootmqManager;
+import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.server.AutoDeployManager;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
@@ -196,8 +196,9 @@ public class Jboot {
 
         String host = "0.0.0.0".equals(serverConfig.getHost()) ? "127.0.0.1" : serverConfig.getHost();
         String port = "80".equals(serverConfig.getPort()) ? "" : ":" + serverConfig.getPort();
+        String path = serverConfig.getContextPath();
 
-        String url = String.format("http://%s%s", host, port);
+        String url = String.format("http://%s%s%s", host, port, path);
 
         System.out.println();
         System.out.println("server started success , url : " + url);

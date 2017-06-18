@@ -1,14 +1,14 @@
 import io.jboot.Jboot;
 import io.jboot.db.model.JbootModel;
-import io.jboot.http.JbootHttpRequest;
-import io.jboot.http.JbootHttpResponse;
-import io.jboot.service.JbootService;
+import io.jboot.core.http.JbootHttpRequest;
+import io.jboot.core.http.JbootHttpResponse;
+import io.jboot.db.dao.JbootDaoBase;
 import org.junit.Test;
 
 import java.util.EventListener;
 
 
-public class HttpTest extends JbootService implements EventListener{
+public class HttpTest extends JbootDaoBase implements EventListener{
 
     @Test
     public void testHttp() {

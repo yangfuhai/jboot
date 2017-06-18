@@ -19,7 +19,7 @@ https://github.com/yangfuhai/jbootdemo
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.0-alpha2.1</version>
+    <version>1.0-alpha3</version>
 </dependency>
 
 ```
@@ -100,7 +100,7 @@ public interface HelloService {
 server a export serviceImpl
 ```java
 @JbootrpcService
-public class myHelloServiceImpl extends JbootService implements HelloService {
+public class myHelloServiceImpl  implements HelloService {
     public String hello(String name){
          System.out.println("hello" + name);
          return "hello ok";
@@ -174,7 +174,7 @@ public class User extends JbootModel<User> {
 
 dao query
 ```java
-public class UserDao {
+public class UserDao extends JbootDaoBase {
     public static find User DAO = new User();
     
     public User findById(String id){

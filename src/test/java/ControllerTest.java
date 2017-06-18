@@ -1,8 +1,8 @@
 import com.jfinal.kit.LogKit;
 import io.jboot.Jboot;
-import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.db.dao.JbootDaoBase;
 import io.jboot.db.model.JbootModel;
-import io.jboot.service.JbootService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -53,7 +53,7 @@ public class ControllerTest extends JbootController {
 
 
     @Singleton
-    public static class ServiceTest extends JbootService {
+    public static class ServiceTest extends JbootDaoBase {
 
 
         public String getName() {

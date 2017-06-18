@@ -24,8 +24,8 @@ import io.jboot.aop.injector.JbootHystrixInjector;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
 import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
 import io.jboot.aop.interceptor.JbootrpcInterceptor;
-import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
-import io.jboot.rpc.annotation.JbootrpcService;
+import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.core.rpc.annotation.JbootrpcService;
 
 import java.lang.reflect.Field;
 

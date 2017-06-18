@@ -24,7 +24,7 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.jfinal.log.Log;
 import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
-import io.jboot.core.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
 
 import java.lang.reflect.Field;
 

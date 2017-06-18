@@ -19,6 +19,7 @@ package io.jboot.config;
 import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.exception.JbootException;
@@ -39,7 +40,7 @@ public class JbootProperties {
 
 
     public static ConcurrentHashMap<Class, Object> configs = new ConcurrentHashMap<>();
-
+    public static final Log log = Log.getLog(JbootProperties.class);
 
     public static <T> T get(Class<T> clazz) {
 
@@ -94,7 +95,7 @@ public class JbootProperties {
                     method.invoke(obj, val);
                 }
             } catch (Throwable ex) {
-//                ex.printStackTrace();
+                log.error(ex.toString(), ex);
             }
         }
 
