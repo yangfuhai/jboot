@@ -41,6 +41,9 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
 
     public JbootEhredisCacheImpl() {
+        ehcache = new JbootEhcacheImpl();
+        redisCache = new JbootRedisCacheImpl();
+
         Jboot.getMq().addMessageListener(this, channel);
         uuid = StringUtils.uuid();
     }
