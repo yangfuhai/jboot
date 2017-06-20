@@ -299,13 +299,6 @@ config pom.xml
                                 <platform>windows</platform>
                                 <platform>unix</platform>
                             </platforms>
-                            <jvmSettings>
-                                <extraArguments>
-                                    <extraArgument>-server</extraArgument>
-                                    <extraArgument>-Xmx2G</extraArgument>
-                                    <extraArgument>-Xms2G</extraArgument>
-                                </extraArguments>
-                            </jvmSettings>
                         </program>
                     </programs>
                 </configuration>
