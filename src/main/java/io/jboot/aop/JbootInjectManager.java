@@ -20,8 +20,10 @@ import com.google.inject.*;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+import com.jfinal.aop.Before;
 import io.jboot.aop.injector.JbootHystrixInjector;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
+import io.jboot.aop.interceptor.JFinalBeforeInterceptor;
 import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
 import io.jboot.aop.interceptor.JbootrpcInterceptor;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
@@ -63,6 +65,7 @@ public class JbootInjectManager implements Module, TypeListener {
         binder.bindListener(Matchers.any(), this);
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(JbootrpcService.class), new JbootrpcInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new JFinalBeforeInterceptor());
     }
 
     /**

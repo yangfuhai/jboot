@@ -562,8 +562,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return false;
         }
 
-        JbootModel model = (JbootModel) o;
-        Object id = model.get(getPrimaryKey());
+        Object id = ((JbootModel) o).get(getPrimaryKey());
         if (id == null) {
             return false;
         }
