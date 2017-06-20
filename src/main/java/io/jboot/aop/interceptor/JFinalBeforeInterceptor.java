@@ -18,6 +18,7 @@ package io.jboot.aop.interceptor;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.InterceptorManager;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -28,7 +29,7 @@ import java.lang.reflect.Method;
  */
 public class JFinalBeforeInterceptor implements MethodInterceptor {
 
-    JFinalInterceptorManager manger = JFinalInterceptorManager.me();
+    InterceptorManager manger = InterceptorManager.me();
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
