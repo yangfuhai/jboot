@@ -18,7 +18,6 @@ package io.jboot.aop.interceptor;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.InterceptorManager;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -29,16 +28,17 @@ import java.lang.reflect.Method;
  */
 public class JFinalBeforeInterceptor implements MethodInterceptor {
 
+    JFinalInterceptorManager manger = JFinalInterceptorManager.me();
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
         Before before = methodInvocation.getThis().getClass().getAnnotation(Before.class);
-        Interceptor[] injectInters = InterceptorManager.me().createInterceptor(before);
+        Interceptor[] injectInters = manger.createInterceptor(before);
         Class targetClass = methodInvocation.getThis().getClass();
         Method method = methodInvocation.getMethod();
 
-        Interceptor[] finalInters = InterceptorManager.me().buildServiceMethodInterceptor(injectInters, targetClass, method);
+        Interceptor[] finalInters = manger.buildServiceMethodInterceptor(injectInters, targetClass, method);
         JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, finalInters);
         invocation.invoke();
         return invocation.getReturnValue();
