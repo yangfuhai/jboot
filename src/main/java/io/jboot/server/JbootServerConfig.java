@@ -23,7 +23,7 @@ public class JbootServerConfig {
 
     private String type = "undertow";
     private String host = "0.0.0.0";
-    private int port = 8088;
+    private int port = 8080;
     private String contextPath = "/";
 
 
