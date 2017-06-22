@@ -207,7 +207,7 @@ public class ClassScanner {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             return Class.forName(className, false, cl);
         } catch (Throwable ex) {
-            //log.warn("class load error，class name : " + className);
+            //ignore
         }
         return null;
     }

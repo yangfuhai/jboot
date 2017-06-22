@@ -70,16 +70,19 @@ public class JbootrpcManager {
             String version = StringUtils.isBlank(rpcService.version()) ? config.getDefaultVersion() : rpcService.version();
             int port = rpcService.port() <= 0 ? Integer.valueOf(config.getDefaultPort()) : rpcService.port();
 
-            Class export = rpcService.export();
-            if (export == Object.class) {
-                Class[] inters = export.getInterfaces();
-                JbootAssert.assertTrue(inters != null && inters.length == 1,
-                        String.format("class[%s] has multi interface, please use export to defind rpc interface", clazz));
-                export = inters[0];
-            }
+            Class[] inters = clazz.getInterfaces();
+            JbootAssert.assertFalse(inters == null || inters.length == 0,
+                    String.format("class[%s] has no interface, can not use @JbootrpcService", clazz));
 
-//            getJbootrpc().serviceExport(export, ClassNewer.newInstance(clazz), group, version, port);
-            getJbootrpc().serviceExport(export, Jboot.getInjector().getInstance(clazz), group, version, port);
+            Class[] excludes = rpcService.exclude();
+            for (Class inter : inters) {
+                boolean exclude = false;
+                for (Class ex : excludes) {
+                    if (ex == inter) exclude = true;
+                }
+                if (exclude) continue;
+                getJbootrpc().serviceExport(inter, Jboot.getInjector().getInstance(clazz), group, version, port);
+            }
         }
     }
 

@@ -1,4 +1,6 @@
 import com.jfinal.kit.LogKit;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.db.dao.JbootDaoBase;
@@ -8,6 +10,7 @@ import io.jboot.web.controller.annotation.RequestMapping;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 
 
 @RequestMapping("/test")
@@ -32,6 +35,11 @@ public class ControllerTest extends JbootController {
 
 
     public void index() {
+
+
+
+        List<Record> records = Db.find("select * from `user`");
+
         System.out.println("index .... ");
 
         LogKit.error("xxxxxxx");
