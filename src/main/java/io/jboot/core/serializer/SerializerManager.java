@@ -15,13 +15,16 @@
  */
 package io.jboot.core.serializer;
 
+import com.jfinal.kit.LogKit;
 import io.jboot.Jboot;
 import io.jboot.JbootConfig;
+import io.jboot.exception.JbootAssert;
 import io.jboot.utils.ClassNewer;
 
 
 public class SerializerManager {
 
+    public static final String FST = "fst";
     public static final String FST2 = "fst2";
     public static final String FASTJSON = "fastjson";
 
@@ -49,11 +52,26 @@ public class SerializerManager {
 
         JbootConfig config = Jboot.getJbootConfig();
 
-        if (FST2.equals(config.getSerializer())) {
-            serializer = new Fst2Serializer();
-        } else if (FASTJSON.equals(config.getSerializer())) {
-            serializer = new FastjsonSerializer();
+        JbootAssert.assertTrue(config.getSerializer() != null, "can not get serializer config, please set jboot.serializer value to jboot.proerties");
+
+        switch (config.getSerializer()) {
+//            case FST:
+//                serializer = new FstSerializer();
+//                break;
+            case FST2:
+                serializer = new Fst2Serializer();
+                break;
+            case FASTJSON:
+                serializer = new FastjsonSerializer();
+                break;
+            default:
+                try {
+                    serializer = ClassNewer.newInstance((Class<ISerializer>) Class.forName(config.getSerializer()));
+                } catch (Exception e) {
+                    LogKit.error(e.toString(), e);
+                }
         }
+
 
         return serializer;
 

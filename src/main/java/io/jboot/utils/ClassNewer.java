@@ -61,8 +61,8 @@ public class ClassNewer {
     /**
      * 创建新的实例
      *
-     * @param clazz
      * @param <T>
+     * @param clazz
      * @return
      */
     public static <T> T newInstance(Class<T> clazz) {
