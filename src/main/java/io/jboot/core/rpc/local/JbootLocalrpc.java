@@ -16,7 +16,6 @@
 package io.jboot.core.rpc.local;
 
 import io.jboot.core.rpc.JbootrpcBase;
-import io.jboot.core.rpc.JbootrpcConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,10 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JbootLocalrpc extends JbootrpcBase {
 
     Map<Class, Object> objectMap = new ConcurrentHashMap<>();
-
-    public JbootLocalrpc(JbootrpcConfig config) {
-        super(config);
-    }
 
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {

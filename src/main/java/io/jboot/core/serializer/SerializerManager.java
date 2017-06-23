@@ -15,16 +15,15 @@
  */
 package io.jboot.core.serializer;
 
-import com.jfinal.kit.LogKit;
 import io.jboot.Jboot;
 import io.jboot.JbootConfig;
+import io.jboot.core.spi.JbootSpiManager;
 import io.jboot.exception.JbootAssert;
 import io.jboot.utils.ClassNewer;
 
 
 public class SerializerManager {
 
-    public static final String FST = "fst";
     public static final String FST2 = "fst2";
     public static final String FASTJSON = "fastjson";
 
@@ -46,35 +45,34 @@ public class SerializerManager {
 
     public ISerializer getSerializer() {
 
-        if (serializer != null) {
-            return serializer;
+        if (serializer == null) {
+            serializer = buildSerializer();
         }
 
+        return serializer;
+    }
+
+    private ISerializer buildSerializer() {
         JbootConfig config = Jboot.getJbootConfig();
 
         JbootAssert.assertTrue(config.getSerializer() != null, "can not get serializer config, please set jboot.serializer value to jboot.proerties");
 
-        switch (config.getSerializer()) {
-//            case FST:
-//                serializer = new FstSerializer();
-//                break;
-            case FST2:
-                serializer = new Fst2Serializer();
-                break;
-            case FASTJSON:
-                serializer = new FastjsonSerializer();
-                break;
-            default:
-                try {
-                    serializer = ClassNewer.newInstance((Class<ISerializer>) Class.forName(config.getSerializer()));
-                } catch (Exception e) {
-                    LogKit.error(e.toString(), e);
-                }
+        if (config.getSerializer() != null && config.getSerializer().contains(".")) {
+            serializer = ClassNewer.newInstance(config.getSerializer());
         }
 
+        if (serializer != null) {
+            return serializer;
+        }
 
-        return serializer;
-
+        switch (config.getSerializer()) {
+            case FST2:
+                return new Fst2Serializer();
+            case FASTJSON:
+                return new FastjsonSerializer();
+            default:
+                return JbootSpiManager.me().spi(ISerializer.class, config.getSerializer());
+        }
     }
 
 

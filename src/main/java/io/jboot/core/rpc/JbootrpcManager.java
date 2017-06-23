@@ -16,6 +16,7 @@
 package io.jboot.core.rpc;
 
 import io.jboot.Jboot;
+import io.jboot.core.spi.JbootSpiManager;
 import io.jboot.exception.JbootAssert;
 import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.core.rpc.grpc.JbootGrpc;
@@ -91,15 +92,15 @@ public class JbootrpcManager {
 
         switch (config.getType()) {
             case JbootrpcConfig.TYPE_MOTAN:
-                return new JbootMotanrpc(config);
+                return new JbootMotanrpc();
             case JbootrpcConfig.TYPE_GRPC:
-                return new JbootGrpc(config);
+                return new JbootGrpc();
             case JbootrpcConfig.TYPE_THRIFT:
-                return new JbootThriftrpc(config);
+                return new JbootThriftrpc();
             case JbootrpcConfig.TYPE_LOCAL:
-                return new JbootLocalrpc(config);
+                return new JbootLocalrpc();
             default:
-                return new JbootLocalrpc(config);
+                return JbootSpiManager.me().spi(Jbootrpc.class, config.getType());
         }
     }
 }

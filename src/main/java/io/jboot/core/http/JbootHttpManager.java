@@ -15,7 +15,10 @@
  */
 package io.jboot.core.http;
 
+import io.jboot.Jboot;
 import io.jboot.core.http.jboot.JbootHttpImpl;
+import io.jboot.core.mq.JbootmqConfig;
+import io.jboot.core.spi.JbootSpiManager;
 import io.jboot.utils.ClassNewer;
 
 public class JbootHttpManager {
@@ -35,9 +38,25 @@ public class JbootHttpManager {
 
     public JbootHttp getJbootHttp() {
         if (jbootHttp == null) {
-            jbootHttp = new JbootHttpImpl();
+            jbootHttp = buildJbootHttp();
         }
         return jbootHttp;
+    }
+
+
+    private JbootHttp buildJbootHttp() {
+        JbootmqConfig config = Jboot.config(JbootmqConfig.class);
+
+        switch (config.getType()) {
+            case JbootHttpConfig.TYPE_DEFAULT:
+                return new JbootHttpImpl();
+            case JbootHttpConfig.TYPE_HTTPCLIENT:
+            case JbootHttpConfig.TYPE_OKHTTP:
+                throw new RuntimeException("not finished!!!!");
+            default:
+                return JbootSpiManager.me().spi(JbootHttp.class, config.getType());
+        }
+
     }
 
 

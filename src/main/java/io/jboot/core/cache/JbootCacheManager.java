@@ -19,6 +19,7 @@ import io.jboot.Jboot;
 import io.jboot.core.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.cache.redis.JbootRedisCacheImpl;
+import io.jboot.core.spi.JbootSpiManager;
 
 
 public class JbootCacheManager {
@@ -36,25 +37,24 @@ public class JbootCacheManager {
 
     public JbootCache getCache() {
         if (jbootCache == null) {
-            initCache();
+            jbootCache = buildCache();
         }
         return jbootCache;
     }
 
-    private void initCache() {
+    private JbootCache buildCache() {
         JbootCacheConfig config = Jboot.config(JbootCacheConfig.class);
         switch (config.getType()) {
             case JbootCacheConfig.TYPE_EHCACHE:
-                jbootCache = new JbootEhcacheImpl();
-                break;
+                return new JbootEhcacheImpl();
             case JbootCacheConfig.TYPE_REDIS:
-                jbootCache = new JbootRedisCacheImpl();
-                break;
+                return new JbootRedisCacheImpl();
             case JbootCacheConfig.TYPE_EHREDIS:
-                jbootCache = new JbootEhredisCacheImpl();
-                break;
+                return new JbootEhredisCacheImpl();
             case JbootCacheConfig.TYPE_NONE_CACHE:
                 jbootCache = new NoneCacheImpl();
+            default:
+                return JbootSpiManager.me().spi(JbootCache.class, config.getType());
         }
     }
 }

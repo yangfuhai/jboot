@@ -18,6 +18,7 @@ package io.jboot.core.rpc.motan;
 import com.weibo.api.motan.common.MotanConstants;
 import com.weibo.api.motan.config.*;
 import com.weibo.api.motan.util.MotanSwitcherUtil;
+import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcBase;
 
@@ -27,11 +28,13 @@ public class JbootMotanrpc extends JbootrpcBase {
 
     private RegistryConfig registryConfig;
     private ProtocolConfig protocolConfig;
+    private JbootrpcConfig jbootrpcConfig;
 
-    public JbootMotanrpc(JbootrpcConfig config) {
-        super(config);
+    public JbootMotanrpc() {
         initRegistryConfig();
         initProtocolConfig();
+
+        jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
     }
 
     private void initProtocolConfig() {
@@ -42,9 +45,9 @@ public class JbootMotanrpc extends JbootrpcBase {
 
     private void initRegistryConfig() {
         registryConfig = new RegistryConfig();
-        registryConfig.setRegProtocol(getConfig().getRegistryType());
-        registryConfig.setAddress(getConfig().getRegistryAddress());
-        registryConfig.setName(getConfig().getRegistryName());
+        registryConfig.setRegProtocol(jbootrpcConfig.getRegistryType());
+        registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
+        registryConfig.setName(jbootrpcConfig.getRegistryName());
     }
 
     @Override
@@ -57,7 +60,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         // 配置服务的group以及版本号
         refererConfig.setGroup(group);
         refererConfig.setVersion(version);
-        refererConfig.setRequestTimeout(getConfig().getRequestTimeOutAsInt());
+        refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOutAsInt());
         initConfig(refererConfig);
 
         return refererConfig.getRef();

@@ -15,16 +15,11 @@
  */
 package io.jboot.core.rpc.thrift;
 
-import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcBase;
 
 
 public class JbootThriftrpc extends JbootrpcBase {
 
-
-    public JbootThriftrpc(JbootrpcConfig config) {
-        super(config);
-    }
 
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {

@@ -15,14 +15,10 @@
  */
 package io.jboot.core.rpc.grpc;
 
-import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcBase;
 
 
 public class JbootGrpc extends JbootrpcBase {
-    public JbootGrpc(JbootrpcConfig config) {
-        super(config);
-    }
 
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {

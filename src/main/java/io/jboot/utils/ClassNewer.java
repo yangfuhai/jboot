@@ -77,5 +77,25 @@ public class ClassNewer {
         return null;
     }
 
+    /**
+     * 创建新的实例
+     *
+     * @param <T>
+     * @param clazzName
+     * @return
+     */
+    public static <T> T newInstance(String clazzName) {
+        try {
+            Class<T> clazz = (Class<T>) Class.forName(clazzName, false, Thread.currentThread().getContextClassLoader());
+            Constructor constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return (T) constructor.newInstance();
+        } catch (Exception e) {
+            log.error("can not newInstance class:" + clazzName + "\n" + e.toString(), e);
+        }
+
+        return null;
+    }
+
 
 }

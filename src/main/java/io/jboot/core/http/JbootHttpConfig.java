@@ -13,11 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.rpc;
+package io.jboot.core.http;
+
+import io.jboot.config.annotation.PropertieConfig;
 
 
-public abstract class JbootrpcBase implements Jbootrpc {
+@PropertieConfig(prefix = "jboot.http")
+public class JbootHttpConfig {
+    public static final String TYPE_DEFAULT = "default";
+    public static final String TYPE_HTTPCLIENT = "httpclient";
+    public static final String TYPE_OKHTTP = "okhttp";
 
+    public String type = TYPE_DEFAULT;
 
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
 }
