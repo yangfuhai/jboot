@@ -1,4 +1,14 @@
-
+jboot-1.0-alphpa4:
+1、添加SPI扩展方法，方便对Jboot内置模块的扩展实现。
+2、新增自定义序列化的支持，开发者可以选择现有系统已经支持的序列化方法（默认：fst2）。
+3、修复在某些情况下服务无法暴露的问题。
+4、设置jboot的端口号为8080。
+5、新增拦截器的AOP功能。
+6、移除ehcache的scope：provided，也就是说jboot默认内置ehcache。
+7、新增JFinal AOP的兼容，在JBoot通过注入的方式实例化对象的时候，一样可以使用Jfinal的AOP功能。
+8、移除appassembler打包对jvmSettings的默认配置。
+9、修复在某些情况下使用JbootEhredis缓存错误的问题。
+10、更正readme文档，修复其他若干bug，增强稳定性。
 
 
 jboot-1.0-alphpa3:
