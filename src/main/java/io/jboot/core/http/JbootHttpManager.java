@@ -17,7 +17,6 @@ package io.jboot.core.http;
 
 import io.jboot.Jboot;
 import io.jboot.core.http.jboot.JbootHttpImpl;
-import io.jboot.core.mq.JbootmqConfig;
 import io.jboot.core.spi.JbootSpiManager;
 import io.jboot.utils.ClassNewer;
 
@@ -45,7 +44,7 @@ public class JbootHttpManager {
 
 
     private JbootHttp buildJbootHttp() {
-        JbootmqConfig config = Jboot.config(JbootmqConfig.class);
+        JbootHttpConfig config = Jboot.config(JbootHttpConfig.class);
 
         switch (config.getType()) {
             case JbootHttpConfig.TYPE_DEFAULT:
