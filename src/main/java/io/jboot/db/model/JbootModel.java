@@ -22,6 +22,7 @@ import com.jfinal.plugin.activerecord.Table;
 import com.jfinal.plugin.activerecord.TableMapping;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
@@ -434,7 +435,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (null != primaryKeys && primaryKeys.length == 1) {
             primaryKey = primaryKeys[0];
         }
-        throw new RuntimeException(String.format("get PrimaryKey is error in[%s]", getClass()));
+
+        JbootAssert.assertTrue(primaryKey != null, String.format("get PrimaryKey is error in[%s]", getClass()));
+        return primaryKey;
     }
 
     private Class<?> primaryType;
