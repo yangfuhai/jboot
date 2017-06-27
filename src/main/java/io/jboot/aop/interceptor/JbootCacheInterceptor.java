@@ -16,6 +16,7 @@
 package io.jboot.aop.interceptor;
 
 
+import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import com.jfinal.render.RenderManager;
 import io.jboot.Jboot;
@@ -36,6 +37,7 @@ import java.util.Map;
  */
 public class JbootCacheInterceptor implements MethodInterceptor {
 
+    static final Log LOG = Log.getLog(JbootCacheInterceptor.class);
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
@@ -54,20 +56,24 @@ public class JbootCacheInterceptor implements MethodInterceptor {
 
         String cacheKey = buildCacheKey(cacheable.key(), targetClass, method, methodInvocation.getArguments());
 
-        Object ret = Jboot.getCache().get(cacheName, cacheKey, new IDataLoader() {
+        return Jboot.getCache().get(cacheName, cacheKey, new IDataLoader() {
             @Override
             public Object load() {
                 Object r = null;
                 try {
                     r = methodInvocation.proceed();
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
+                } catch (Throwable e) {
+                    LOG.error(e.toString(), e);
                 }
-                return r == null ? cacheable.nullValue() : r;
+
+                if (r != null) {
+                    return r;
+                }
+
+                return Cacheable.DEFAULT_NULL_VALUE.equals(cacheable.nullValue()) ? null : cacheable.nullValue();
             }
         });
 
-        return Cacheable.DEFAULT_NULL_VALUE.equals(ret) ? null : ret;
     }
 
 
