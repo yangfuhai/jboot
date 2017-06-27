@@ -16,7 +16,9 @@
 package io.jboot.core.rpc;
 
 import io.jboot.Jboot;
+import io.jboot.core.mq.JbootmqMessageListener;
 import io.jboot.core.spi.JbootSpiManager;
+import io.jboot.event.JbootEventListener;
 import io.jboot.exception.JbootAssert;
 import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.core.rpc.grpc.JbootGrpc;
@@ -56,6 +58,8 @@ public class JbootrpcManager {
         return jbootrpc;
     }
 
+    static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class};
+
 
     public void autoExport() {
         List<Class> classes = ClassScanner.scanClass(true);
@@ -75,7 +79,7 @@ public class JbootrpcManager {
             JbootAssert.assertFalse(inters == null || inters.length == 0,
                     String.format("class[%s] has no interface, can not use @JbootrpcService", clazz));
 
-            Class[] excludes = rpcService.exclude();
+            Class[] excludes = ArrayUtils.concat(default_excludes, rpcService.exclude());
             for (Class inter : inters) {
                 boolean exclude = false;
                 for (Class ex : excludes) {
