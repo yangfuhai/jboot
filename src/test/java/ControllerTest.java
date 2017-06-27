@@ -1,16 +1,13 @@
-import com.jfinal.kit.LogKit;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.db.dao.JbootDaoBase;
 import io.jboot.db.model.JbootModel;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
-import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.List;
 
 
 @RequestMapping("/test")
@@ -26,7 +23,7 @@ public class ControllerTest extends JbootController {
     }
 
 
-    @Inject
+//    @Inject
     @EnableHystrixCommand
     ServiceTest serviceTest;
 
@@ -38,21 +35,8 @@ public class ControllerTest extends JbootController {
 
 
 
-        List<Record> records = Db.find("select * from `user`");
 
-        System.out.println("index .... ");
-
-        LogKit.error("xxxxxxx");
-
-        Jboot.getCache().put("test","test","valueeeeeeeeee");
-        String value = Jboot.getCache().get("test","test");
-
-        System.out.println("value:"+value);
-
-
-        renderText("hello " + serviceTest.getName());
-
-//        render();
+        renderText("hello " + serviceTest.getName("aaa"));
 
 
 
@@ -64,8 +48,16 @@ public class ControllerTest extends JbootController {
     public static class ServiceTest extends JbootDaoBase {
 
 
+        @Cacheable(name = "test")
         public String getName() {
+            System.out.println("getName invoke!!!!!!");
             return "michael";
+        }
+
+        @Cacheable(name = "test",key = "#(id)")
+        public String getName(@Named("id") String id) {
+            System.out.println("getName invoke!!!!!!");
+            return id;
         }
 
 

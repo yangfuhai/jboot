@@ -15,21 +15,14 @@
  */
 package io.jboot.aop.injector;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.MembersInjector;
-import com.google.inject.TypeLiteral;
-import com.google.inject.matcher.Matchers;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
 import com.jfinal.log.Log;
-import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
-import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.Jboot;
 
 import java.lang.reflect.Field;
 
 /**
- * RPC 的注入器，用来初始化RPC对象
+ * Hystrix 的注入器，用来初始化使用@EnableHystrixCommand注解的对象
  */
 public class JbootHystrixInjector implements MembersInjector {
 
@@ -60,17 +53,7 @@ public class JbootHystrixInjector implements MembersInjector {
          *
          *
          */
-        Object o = Guice.createInjector(new AbstractModule() {
-            @Override
-            protected void configure() {
-                bindListener(Matchers.any(), new TypeListener() {
-                    @Override
-                    public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
-                        encounter.bindInterceptor(Matchers.any(), new JbootHystrixCommandInterceptor(field.getAnnotation(EnableHystrixCommand.class)));
-                    }
-                });
-            }
-        }).getInstance(field.getType());
+        Object o = Jboot.getInjector().getInstance(field.getType());
 
         try {
             field.setAccessible(true);
