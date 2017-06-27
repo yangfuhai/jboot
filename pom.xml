@@ -188,7 +188,8 @@
             <groupId>de.ruedigermoeller</groupId>
             <artifactId>fst</artifactId>
             <version>2.50</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
+            <!--如果使用其他序列化组件，和fst冲突，请使用exclusions排除 fst 依赖-->
         </dependency>
 
         <dependency>
