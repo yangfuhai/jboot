@@ -31,10 +31,12 @@ public class JbootMotanrpc extends JbootrpcBase {
     private JbootrpcConfig jbootrpcConfig;
 
     public JbootMotanrpc() {
-        initRegistryConfig();
-        initProtocolConfig();
 
         jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
+
+        initProtocolConfig();
+        initRegistryConfig();
+
     }
 
     private void initProtocolConfig() {
