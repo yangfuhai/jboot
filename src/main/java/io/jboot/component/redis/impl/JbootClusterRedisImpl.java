@@ -1161,19 +1161,6 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     }
 
 
-    public JedisCluster getJedis() {
-        return jedis;
-    }
-
-    public void returnResource(Jedis jedis) {
-        if (jedis != null) {
-            /**
-             * close 实际上是 returnResource，查看源码
-             */
-            jedis.close();
-        }
-    }
-
 
 }
 
