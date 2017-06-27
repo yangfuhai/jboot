@@ -52,7 +52,7 @@ public class JbootCacheManager {
             case JbootCacheConfig.TYPE_EHREDIS:
                 return new JbootEhredisCacheImpl();
             case JbootCacheConfig.TYPE_NONE_CACHE:
-                jbootCache = new NoneCacheImpl();
+                return new NoneCacheImpl();
             default:
                 return JbootSpiManager.me().spi(JbootCache.class, config.getType());
         }
