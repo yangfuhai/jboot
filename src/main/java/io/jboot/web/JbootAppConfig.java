@@ -18,7 +18,6 @@ package io.jboot.web;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
-import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
@@ -28,9 +27,9 @@ import com.jfinal.template.Engine;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
-import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.metrics.JbootMetricsManager;
+import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootTaskManager;
 import io.jboot.utils.ClassNewer;
@@ -46,11 +45,7 @@ import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
-import net.sf.ehcache.config.Configuration;
-import net.sf.ehcache.config.ConfigurationFactory;
-import net.sf.ehcache.config.DiskStoreConfiguration;
 
-import java.io.File;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Enumeration;
@@ -160,12 +155,12 @@ public class JbootAppConfig extends JFinalConfig {
         if (JbootCacheConfig.TYPE_EHCACHE.equals(cacheConfig.getType())
                 || JbootCacheConfig.TYPE_EHREDIS.equals(cacheConfig.getType())) {
 
-            String ehcacheDiskStorePath = PathKit.getRootClassPath();
-            File pathFile = new File(ehcacheDiskStorePath, ".ehcache");
-
-            Configuration cfg = ConfigurationFactory.parseConfiguration();
-            cfg.addDiskStore(new DiskStoreConfiguration().path(pathFile.getAbsolutePath()));
-            plugins.add(new EhCachePlugin(cfg));
+//            String ehcacheDiskStorePath = PathKit.getRootClassPath();
+//            File pathFile = new File(ehcacheDiskStorePath, ".ehcache");
+//
+//            Configuration cfg = ConfigurationFactory.parseConfiguration();
+//            cfg.addDiskStore(new DiskStoreConfiguration().path(pathFile.getAbsolutePath()));
+            plugins.add(new EhCachePlugin());
         }
 
     }
