@@ -24,9 +24,11 @@ import com.jfinal.aop.Before;
 import io.jboot.aop.injector.JbootHystrixInjector;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
 import io.jboot.aop.interceptor.JFinalBeforeInterceptor;
+import io.jboot.aop.interceptor.JbootCacheInterceptor;
 import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
 import io.jboot.aop.interceptor.JbootrpcInterceptor;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.core.rpc.annotation.JbootrpcService;
 
 import java.lang.reflect.Field;
@@ -66,6 +68,7 @@ public class JbootInjectManager implements Module, TypeListener {
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(JbootrpcService.class), new JbootrpcInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new JFinalBeforeInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Cacheable.class), new JbootCacheInterceptor());
     }
 
     /**
