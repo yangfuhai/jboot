@@ -33,8 +33,8 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     public static final String DEFAULT_NOTIFY_CHANNEL = "jboot_ehredis_channel";
 
-    JbootEhcacheImpl ehcache;
-    JbootRedisCacheImpl redisCache;
+    private JbootEhcacheImpl ehcache;
+    private JbootRedisCacheImpl redisCache;
 
     private String channel = DEFAULT_NOTIFY_CHANNEL;
     private String uuid;
