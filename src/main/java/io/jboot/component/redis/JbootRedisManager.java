@@ -47,6 +47,9 @@ public class JbootRedisManager {
     }
 
     public JbootRedis getReidis(JbootRedisConfig config) {
+        if (config == null || !config.isConfigOk()) {
+            return null;
+        }
         if (config.isCluster()) {
             return new JbootClusterRedisImpl(config);
         } else {
