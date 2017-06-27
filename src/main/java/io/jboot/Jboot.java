@@ -19,6 +19,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Injector;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
+import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
 import io.jboot.config.JbootProperties;
@@ -324,7 +325,7 @@ public class Jboot {
      */
     public static JbootRedis getRedis() {
         if (jbootRedis == null) {
-            jbootRedis = new JbootRedis();
+            jbootRedis = JbootRedisManager.me().getReidis();
         }
         return jbootRedis;
     }

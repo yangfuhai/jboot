@@ -17,6 +17,10 @@ package io.jboot.component.redis;
 
 import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.utils.StringUtils;
+import redis.clients.jedis.HostAndPort;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @PropertieConfig(prefix = "jboot.redis")
 public class JbootRedisConfig {
@@ -35,6 +39,7 @@ public class JbootRedisConfig {
     private Long timeBetweenEvictionRunsMillis;
     private Integer numTestsPerEvictionRun;
     private String channel;
+    private Integer maxAttempts;
 
 
     public String getHost() {
@@ -149,11 +154,36 @@ public class JbootRedisConfig {
         this.channel = channel;
     }
 
+    public Integer getMaxAttempts() {
+        return maxAttempts;
+    }
+
+    public void setMaxAttempts(Integer maxAttempts) {
+        this.maxAttempts = maxAttempts;
+    }
+
     public boolean isCluster() {
         return host != null && host.indexOf(",") > 0;
     }
 
     public boolean isConfigOk() {
         return StringUtils.isNotBlank(host);
+    }
+
+    public boolean isClusterConfig() {
+        return isConfigOk() && host.contains(",");
+    }
+
+    public Set<HostAndPort> getHostAndPorts() {
+        Set<HostAndPort> haps = new HashSet<>();
+        String[] hostAndPortStrings = host.split(",");
+        for (String hostAndPortString : hostAndPortStrings) {
+            String[] hostAndPorts = hostAndPortString.split(":");
+
+            HostAndPort hap = new HostAndPort(hostAndPorts[0], Integer.valueOf(hostAndPorts[1]));
+            haps.add(hap);
+        }
+
+        return haps;
     }
 }

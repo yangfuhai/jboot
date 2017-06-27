@@ -16,6 +16,7 @@
 package io.jboot.core.mq.redismq;
 
 import io.jboot.Jboot;
+import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.component.redis.JbootRedis;
 import io.jboot.exception.JbootException;
@@ -32,7 +33,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq {
     public JbootRedismqImpl() {
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
         if (redisConfig.isConfigOk()) {
-            redis = new JbootRedis(redisConfig);
+            redis = JbootRedisManager.me().getReidis(redisConfig);
         } else {
             redis = Jboot.getRedis();
         }

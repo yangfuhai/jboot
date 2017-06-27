@@ -17,6 +17,7 @@ package io.jboot.core.cache.redis;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.cache.JbootCacheBase;
 import io.jboot.component.redis.JbootRedis;
 import io.jboot.exception.JbootException;
@@ -33,7 +34,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
     public JbootRedisCacheImpl() {
         JbootRedisCacheConfig redisConfig = Jboot.config(JbootRedisCacheConfig.class);
         if (redisConfig.isConfigOk()) {
-            redis = new JbootRedis(redisConfig);
+            redis = JbootRedisManager.me().getReidis(redisConfig);
         } else {
             redis = Jboot.getRedis();
         }
