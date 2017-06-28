@@ -28,4 +28,6 @@ public @interface Cacheable {
     String key() default "";
 
     String nullValue() default DEFAULT_NULL_VALUE;
+
+    String unless() default "";
 }

@@ -18,7 +18,7 @@ package io.jboot.aop.interceptor;
 
 import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
-import com.jfinal.render.RenderManager;
+import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.exception.JbootAssert;
@@ -38,6 +38,7 @@ import java.util.Map;
 public class JbootCacheInterceptor implements MethodInterceptor {
 
     static final Log LOG = Log.getLog(JbootCacheInterceptor.class);
+    static final Engine ENGINE = new Engine("JbootCacheRender");
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
@@ -50,11 +51,22 @@ public class JbootCacheInterceptor implements MethodInterceptor {
             return methodInvocation.proceed();
         }
 
+        String unlessString = cacheable.unless();
+        if (StringUtils.isNotBlank(unlessString)) {
+            unlessString = String.format("#(%s)", unlessString);
+            String unlessBoolString = engineRender(unlessString, method, methodInvocation.getArguments());
+            if ("true".equals(unlessBoolString)) {
+                return methodInvocation.proceed();
+            }
+        }
+
+
         String cacheName = cacheable.name();
         JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
                 String.format("Cacheable.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
 
         String cacheKey = buildCacheKey(cacheable.key(), targetClass, method, methodInvocation.getArguments());
+
 
         return Jboot.getCache().get(cacheName, cacheKey, new IDataLoader() {
             @Override
@@ -86,6 +98,19 @@ public class JbootCacheInterceptor implements MethodInterceptor {
             return key;
         }
 
+        return engineRender(key, method, arguments);
+    }
+
+    /**
+     * use jfinal engine render text
+     *
+     * @param template
+     * @param method
+     * @param arguments
+     * @return
+     */
+    public String engineRender(String template, Method method, Object[] arguments) {
+
         Annotation[][] annotationss = method.getParameterAnnotations();
         Map<String, Object> datas = new HashMap();
         for (int i = 0; i < annotationss.length; i++) {
@@ -101,6 +126,6 @@ public class JbootCacheInterceptor implements MethodInterceptor {
             }
         }
 
-        return RenderManager.me().getEngine().getTemplateByString(key).renderToString(datas);
+        return ENGINE.getTemplateByString(template).renderToString(datas);
     }
 }
