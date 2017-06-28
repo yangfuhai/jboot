@@ -54,7 +54,7 @@ public class ControllerTest extends JbootController {
             return "michael";
         }
 
-        @Cacheable(name = "",key = "#(id)")
+        @Cacheable(name = "test",key = "#(id)")
         public String getName(@Named("id") String id) {
             System.out.println("getName invoke!!!!!!");
             return id;
