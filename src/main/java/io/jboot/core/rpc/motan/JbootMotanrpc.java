@@ -19,8 +19,8 @@ import com.weibo.api.motan.common.MotanConstants;
 import com.weibo.api.motan.config.*;
 import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.Jboot;
-import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcBase;
+import io.jboot.core.rpc.JbootrpcConfig;
 
 
 public class JbootMotanrpc extends JbootrpcBase {
@@ -43,6 +43,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         protocolConfig = new ProtocolConfig();
         protocolConfig.setId("motan");
         protocolConfig.setName("motan");
+        protocolConfig.setSerialization("jboot");
     }
 
     private void initRegistryConfig() {
