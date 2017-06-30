@@ -20,7 +20,78 @@ import io.jboot.config.annotation.PropertieConfig;
 @PropertieConfig(prefix = "jboot.shiro")
 public class JbootShiroConfig {
 
-    
+    private String loginUrl;
+    private String successUrl;
+    private String unauthorizedUrl;
+    private String realm;
+    private String authenticator;
+    private String authorizer;
+    private String subjectDAO;
+    private String sessionManager;
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    public String getSuccessUrl() {
+        return successUrl;
+    }
+
+    public void setSuccessUrl(String successUrl) {
+        this.successUrl = successUrl;
+    }
+
+    public String getUnauthorizedUrl() {
+        return unauthorizedUrl;
+    }
+
+    public void setUnauthorizedUrl(String unauthorizedUrl) {
+        this.unauthorizedUrl = unauthorizedUrl;
+    }
+
+    public String getRealm() {
+        return realm;
+    }
+
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
+    public String getAuthenticator() {
+        return authenticator;
+    }
+
+    public void setAuthenticator(String authenticator) {
+        this.authenticator = authenticator;
+    }
+
+    public String getAuthorizer() {
+        return authorizer;
+    }
+
+    public void setAuthorizer(String authorizer) {
+        this.authorizer = authorizer;
+    }
+
+    public String getSubjectDAO() {
+        return subjectDAO;
+    }
+
+    public void setSubjectDAO(String subjectDAO) {
+        this.subjectDAO = subjectDAO;
+    }
+
+    public String getSessionManager() {
+        return sessionManager;
+    }
+
+    public void setSessionManager(String sessionManager) {
+        this.sessionManager = sessionManager;
+    }
 }
 
 

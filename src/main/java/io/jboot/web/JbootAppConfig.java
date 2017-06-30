@@ -29,6 +29,8 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.metrics.JbootMetricsManager;
+import io.jboot.component.shiro.JbootShiroInterceptor;
+import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootTaskManager;
@@ -169,6 +171,7 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configInterceptor(Interceptors interceptors) {
         interceptors.add(new GuiceInterceptor());
+        interceptors.add(new JbootShiroInterceptor());
         interceptors.add(new ParaValidateInterceptor());
     }
 
@@ -186,7 +189,8 @@ public class JbootAppConfig extends JFinalConfig {
         /**
          * 初始化
          */
-        JbootMetricsManager.me();
+        JbootMetricsManager.me().init();
+        JbootShiroManager.me().init();
 
         /**
          * 发送启动完成通知

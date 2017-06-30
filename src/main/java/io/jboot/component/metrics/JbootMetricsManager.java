@@ -32,11 +32,16 @@ public class JbootMetricsManager {
         return me;
     }
 
+    private JbootMetricsManager() {
+    }
+
 
     private MetricRegistry metricRegistry;
     private JbootMetricsConfig metricsConfig;
 
-    private JbootMetricsManager() {
+
+
+    public void init(){
         metricRegistry = new MetricRegistry();
         metricsConfig = Jboot.config(JbootMetricsConfig.class);
 
@@ -46,7 +51,6 @@ public class JbootMetricsManager {
         if (metricsConfig.isJmxReporter()) {
             JmxReporter.forRegistry(metricRegistry).build().start();
         }
-
     }
 
 
