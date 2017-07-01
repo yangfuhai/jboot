@@ -79,6 +79,24 @@ public class ClassScanner {
     }
 
 
+    public static List<Class> scanInterfaceClass() {
+
+        if (appClasses.isEmpty()) {
+            initAppClasses();
+        }
+
+        List<Class> list = new ArrayList<>();
+
+        for (Class clazz : appClasses) {
+            if (clazz.isInterface()) {
+                list.add(clazz);
+            }
+        }
+
+        return list;
+    }
+
+
     /**
      * 开发环境下，用于热加载后重新清空所有的类
      */

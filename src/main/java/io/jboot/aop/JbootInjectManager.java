@@ -30,8 +30,10 @@ import io.jboot.aop.interceptor.JbootrpcInterceptor;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.core.rpc.annotation.JbootrpcService;
+import io.jboot.utils.ClassScanner;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * Inject管理器
@@ -69,6 +71,25 @@ public class JbootInjectManager implements Module, TypeListener {
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new JFinalBeforeInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Cacheable.class), new JbootCacheInterceptor());
+
+
+        autoBind(binder);
+    }
+
+    /**
+     * auto bind interface impl
+     *
+     * @param binder
+     */
+    private void autoBind(Binder binder) {
+        List<Class> classes = ClassScanner.scanInterfaceClass();
+        for (Class interfaceClass : classes) {
+            List<Class> interfaceImpls = ClassScanner.scanSubClass(interfaceClass, true);
+            if (interfaceImpls == null || interfaceImpls.size() != 1) {
+                continue;
+            }
+            binder.bind(interfaceClass).to(interfaceImpls.get(0));
+        }
     }
 
     /**
