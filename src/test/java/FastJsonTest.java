@@ -4,13 +4,13 @@ import org.junit.Test;
 public class FastJsonTest {
 
     @Test
-    public void testString(){
+    public void testString() {
         System.out.println(JSON.toJSON("aa"));
     }
 
 
     @Test
-    public void testString1(){
-        System.out.println(JSON.parseObject("[\"aaa\"]",String.class));
+    public void testString1() {
+        System.out.println(JSON.parseObject("[\"aaa\"]", String.class));
     }
 }
