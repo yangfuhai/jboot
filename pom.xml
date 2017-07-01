@@ -124,6 +124,10 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.caucho</groupId>
+                    <artifactId>hessian</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
