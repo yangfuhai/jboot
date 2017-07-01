@@ -23,6 +23,7 @@ import org.apache.shiro.subject.Subject;
 
 
 public class ShiroRequiresPermissionsProcesser implements IShiroAuthorizeProcesser {
+    
     private final RequiresPermissions requiresPermissions;
 
     public ShiroRequiresPermissionsProcesser(RequiresPermissions requiresPermissions) {
