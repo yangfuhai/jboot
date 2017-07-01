@@ -156,6 +156,10 @@ public class JbootShiroInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
+        if (!config.isConfigOK()) {
+            inv.invoke();
+            return;
+        }
         try {
             doIntercept(inv);
         } finally {

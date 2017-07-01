@@ -92,6 +92,25 @@ public class JbootShiroConfig {
     public void setSessionManager(String sessionManager) {
         this.sessionManager = sessionManager;
     }
+
+
+    private Boolean config;
+
+    public boolean isConfigOK() {
+        if (config != null) {
+            return config;
+        }
+
+        config = false;
+
+        try {
+            Class.forName(realm);
+            config = true;
+        } catch (Throwable e) {
+        }
+
+        return config;
+    }
 }
 
 

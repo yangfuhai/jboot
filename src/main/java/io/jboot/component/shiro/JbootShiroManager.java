@@ -28,9 +28,6 @@ import org.apache.shiro.mgt.SubjectDAO;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * shiro 管理器
  */
@@ -48,17 +45,17 @@ public class JbootShiroManager {
 
 
     public void init() {
+        if (!config.isConfigOK()) {
+            // do nothing
+            return;
+        }
+
         SecurityManager securityManager = buildSecurityManager();
         SecurityUtils.setSecurityManager(securityManager);
 
         SecurityUtils.getSubject();
     }
 
-
-    List<ShiroAuthorizeProcesserInvoker> getInvokers() {
-        List<ShiroAuthorizeProcesserInvoker> invokers = new ArrayList<>();
-        return invokers;
-    }
 
     /**
      * 构建 SecurityManager
@@ -110,7 +107,7 @@ public class JbootShiroManager {
      * @return
      */
     private Authenticator buildAuthenticator() {
-        Authenticator authenticator = ClassNewer.newInstance(config.getRealm());
+        Authenticator authenticator = ClassNewer.newInstance(config.getAuthenticator());
         return authenticator;
     }
 
@@ -121,7 +118,7 @@ public class JbootShiroManager {
      * @return
      */
     private Authorizer buildAuthorizer() {
-        Authorizer authorizer = ClassNewer.newInstance(config.getRealm());
+        Authorizer authorizer = ClassNewer.newInstance(config.getAuthorizer());
         return authorizer;
     }
 
