@@ -6,12 +6,12 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <!--<version>1.0-alpha4.1</version>-->
-    <version>1.0</version>
+    <version>1.0-alpha4.2</version>
+    <!--<version>1.0</version>-->
     <packaging>jar</packaging>
 
     <name>jboot</name>
-    <url>http:/jboot.io</url>
+    <url>http://jboot.io</url>
     <description>jboot is a similar springboot project base on jfinal and undertow.</description>
 
     <properties>
