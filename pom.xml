@@ -364,15 +364,6 @@
                                     </configuration>
                                 </generatorConfiguration>
                             </generatorConfigurations>
-                            <jvmSettings>
-                                <!-- jvm参数 -->
-                                <systemProperties>
-                                    <systemProperty>com.sun.management.jmxremote</systemProperty>
-                                    <systemProperty>com.sun.management.jmxremote.port=1984</systemProperty>
-                                    <systemProperty>com.sun.management.jmxremote.authenticate=false</systemProperty>
-                                    <systemProperty>com.sun.management.jmxremote.ssl=false</systemProperty>
-                                </systemProperties>
-                            </jvmSettings>
                         </daemon>
                     </daemons>
 
