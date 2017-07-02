@@ -21,6 +21,7 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.jfinal.aop.Before;
+import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.injector.JbootHystrixInjector;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
 import io.jboot.aop.interceptor.JFinalBeforeInterceptor;
@@ -30,8 +31,10 @@ import io.jboot.aop.interceptor.JbootrpcInterceptor;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.core.rpc.annotation.JbootrpcService;
+import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -40,10 +43,13 @@ import java.util.List;
  */
 public class JbootInjectManager implements Module, TypeListener {
 
-    static JbootInjectManager me = new JbootInjectManager();
+    private static JbootInjectManager manager;
 
     public static JbootInjectManager me() {
-        return me;
+        if (manager == null) {
+            manager = ClassNewer.newInstance(JbootInjectManager.class);
+        }
+        return manager;
     }
 
 
@@ -82,13 +88,19 @@ public class JbootInjectManager implements Module, TypeListener {
      * @param binder
      */
     private void autoBind(Binder binder) {
-        List<Class> classes = ClassScanner.scanInterfaceClass();
-        for (Class interfaceClass : classes) {
-            List<Class> interfaceImpls = ClassScanner.scanSubClass(interfaceClass, true);
-            if (interfaceImpls == null || interfaceImpls.size() != 1) {
-                continue;
+        List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
+        for (Class beanClass : classes) {
+            Class<?>[] interfaceClasses = beanClass.getInterfaces();
+            for (Class interfaceClass : interfaceClasses) {
+                if (interfaceClass == Serializable.class) {
+                    continue;
+                }
+                try {
+                    binder.bind(interfaceClass).to(beanClass);
+                } catch (Throwable ex) {
+                    System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, beanClass));
+                }
             }
-            binder.bind(interfaceClass).to(interfaceImpls.get(0));
         }
     }
 

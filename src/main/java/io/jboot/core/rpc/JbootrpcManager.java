@@ -30,6 +30,7 @@ import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -58,7 +59,7 @@ public class JbootrpcManager {
         return jbootrpc;
     }
 
-    static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class};
+    static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
 
 
     public void autoExport() {
