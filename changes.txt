@@ -1,3 +1,21 @@
+jboot-1.0-alphpa5:
+1、修复AOP接口自动绑定时不成功的bug，新增了@Bean注解，方便对接口绑定的配置；
+2、移除默认的jvm对jmx的设置，因为在docker环境下，设置网络为host模式时可能会产生端口冲突的问题。
+3、移除motan的rpc序列化框架hessian，因为hessian在对bigdecimal序列化出错。
+4、修复在macos下，jboot程序无法在后台启动的问题；
+5、添加shiro框架的支持，用于对jboot的安全控制。
+6、添加 @Cacheable 注解，方便对Service进行缓存管理。
+7、修复 使用 @EnableHystrixCommand 使用Hystrix对某些服务进行管理时，某些参数无法注入的问题。
+8、修复 在某些情况下，初始化JbootMotanrpc可能会出现空指针的问题。
+9、移除 ehcache 缓存文件路径的默认设置。
+10.Jbootredis新增对集群环境的支持，Jboot.getRedis() 可以快乐的在集群和非集群环境下使用了。
+11、修复在某些情况下，通过model.getPrimaryKey() 获取不到数据的问题。
+12、依赖框架的升级：HikariCP升级到最新版本2.6.3，undertow升级到最新版本1.4.16.Final，fastjson升级到1.2.33，jsoup升级到1.10.3，shiro升级到最新版本1.4.0...
+13、更正readme文档，修复其他若干bug，增强稳定性。
+
+
+
+
 jboot-1.0-alphpa4:
 1、添加SPI扩展方法，方便对Jboot内置模块的扩展实现。
 2、新增自定义序列化的支持，开发者可以选择现有系统已经支持的序列化方法（默认：fst2）。
