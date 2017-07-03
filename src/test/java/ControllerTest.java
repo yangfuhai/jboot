@@ -1,12 +1,9 @@
 import io.jboot.Jboot;
-import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
-import io.jboot.core.cache.annotation.Cacheable;
-import io.jboot.db.dao.JbootDaoBase;
-import io.jboot.db.model.JbootModel;
+import io.jboot.aop.annotation.Bean;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
-import javax.inject.Named;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 
@@ -23,52 +20,26 @@ public class ControllerTest extends JbootController {
     }
 
 
-//    @Inject
-    @EnableHystrixCommand
-    ServiceTest serviceTest;
-
-//    @JbootrpcService
-//    ServiceInter serviceInter;
-
+    @Inject
+    ServiceInter serviceTest;
 
     public void index() {
 
 
-
-
-        renderText("hello " + serviceTest.getName("aaa"));
-
-
+        renderText("hello " + serviceTest.hello());
 
 
     }
 
 
     @Singleton
-    public static class ServiceTest extends JbootDaoBase {
-
-
-        @Cacheable(name = "test")
-        public String getName() {
-            System.out.println("getName invoke!!!!!!");
-            return "michael";
-        }
-
-        @Cacheable(name = "test",key = "#(id)")
-        public String getName(@Named("id") String id) {
-            System.out.println("getName invoke!!!!!!");
-            return id;
-        }
+    @Bean
+    public static class ServiceTest implements ServiceInter {
 
 
         @Override
-        public JbootModel findById(Object id) {
-            return null;
-        }
-
-        @Override
-        public boolean deleteById(Object id) {
-            return false;
+        public String hello() {
+            return "aaa";
         }
     }
 
