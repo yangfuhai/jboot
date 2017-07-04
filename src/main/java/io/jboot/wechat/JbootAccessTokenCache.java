@@ -21,7 +21,7 @@ import io.jboot.Jboot;
 
 public class JbootAccessTokenCache implements IAccessTokenCache {
 
-    static final String cache_name = "wechat_access_tokens";
+    static final String cache_name = "__jboot_wechat_access_tokens";
 
     @Override
     public String get(String key) {
