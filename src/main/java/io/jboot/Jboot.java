@@ -63,6 +63,7 @@ public class Jboot {
     private static JbootCache jbootCache;
     private static JbootHttp jbootHttp;
     private static JbootRedis jbootRedis;
+    private static JbootServer jbootServer;
 
     /**
      * main 入口方法
@@ -129,13 +130,7 @@ public class Jboot {
         printServerConfigInfo();
 
 
-        JbootServerFactory factory = JbootServerFactory.me();
-        JbootServer jbootServer = factory.buildServer();
-
-
-        boolean startSuccess = jbootServer.start();
-
-        if (!startSuccess) {
+        if (!startServer()) {
             System.err.println("jboot start fail!!!");
             return;
         }
@@ -149,6 +144,20 @@ public class Jboot {
             AutoDeployManager.me().run();
         }
 
+    }
+
+
+    private static boolean startServer() {
+        ensureServerCreated();
+        return jbootServer.start();
+    }
+
+
+    private static void ensureServerCreated() {
+        if (jbootServer == null) {
+            JbootServerFactory factory = JbootServerFactory.me();
+            jbootServer = factory.buildServer();
+        }
     }
 
     private static void printBannerInfo() {
@@ -328,6 +337,11 @@ public class Jboot {
             jbootRedis = JbootRedisManager.me().getReidis();
         }
         return jbootRedis;
+    }
+
+
+    public static JbootServer getServer() {
+        return jbootServer;
     }
 
 

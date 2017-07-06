@@ -13,32 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.server.tomcat;
+package io.jboot.server.undertow;
 
+public class UnderTowClassloader extends ClassLoader {
 
-import io.jboot.exception.JbootException;
-import io.jboot.server.JbootServer;
-import io.jboot.server.JbootServerConfig;
-
-public class TomcatServer extends JbootServer {
-
-    public TomcatServer(JbootServerConfig config) {
-        super(config);
+    public UnderTowClassloader(ClassLoader parent) {
+        super(parent);
     }
 
-    @Override
-    public boolean start() {
-        new JbootException("tomcat server not finish!!!");
-        return false;
-    }
 
     @Override
-    public boolean reStart() {
-        return false;
-    }
-
-    @Override
-    public boolean stop() {
-        return false;
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return super.loadClass(name, false);
     }
 }

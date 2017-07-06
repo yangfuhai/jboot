@@ -81,6 +81,11 @@ public class JbootAppConfig extends JFinalConfig {
 
     @Override
     public void configRoute(Routes routes) {
+
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        System.out.println("current classloader : " + classLoader + "    current thread id: " + Thread.currentThread().getId());
+
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (controllerClassList == null) {
             return;
@@ -97,6 +102,7 @@ public class JbootAppConfig extends JFinalConfig {
             } else {
                 routes.add(mapping.value(), clazz);
             }
+
         }
     }
 

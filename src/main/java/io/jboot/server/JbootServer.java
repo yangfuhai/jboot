@@ -30,6 +30,8 @@ public abstract class JbootServer {
 
     public abstract boolean start();
 
+    public abstract boolean reStart();
+
     public abstract boolean stop();
 
 

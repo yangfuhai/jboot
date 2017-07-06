@@ -44,6 +44,7 @@ public class UnderTowServer extends JbootServer {
     static Log log = Log.getLog(UnderTowServer.class);
 
     private DeploymentManager mDeploymentManager;
+    private DeploymentInfo mDeploymentInfo;
     private PathHandler mHandler;
     private Undertow mServer;
 
@@ -54,15 +55,18 @@ public class UnderTowServer extends JbootServer {
     }
 
     public void initUndertowServer() {
-        DeploymentInfo deploymentInfo = Servlets.deployment()
-                .setClassLoader(UnderTowServer.class.getClassLoader())
-                .setResourceManager(new ClassPathResourceManager(UnderTowServer.class.getClassLoader()))
+
+        UnderTowClassloader classloader = new UnderTowClassloader(UnderTowServer.class.getClassLoader());
+
+        mDeploymentInfo = Servlets.deployment()
+                .setClassLoader(classloader)
+                .setResourceManager(new ClassPathResourceManager(classloader))
                 .setContextPath(getConfig().getContextPath())
                 .setDeploymentName("jboot")
                 .setEagerFilterInit(true); //设置启动的时候，初始化servlet或filter（好吧，跟了很久的源代码...）
 
 
-        deploymentInfo.addFilter(
+        mDeploymentInfo.addFilter(
                 Servlets.filter("jboot", JFinalFilter.class)
                         .addInitParam("configClass", Jboot.getJbootConfig().getJfinalConfig()))
                 .addFilterUrlMapping("jboot", "/*", DispatcherType.REQUEST);
@@ -70,7 +74,7 @@ public class UnderTowServer extends JbootServer {
 
         JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
         if (StringUtils.isNotBlank(hystrixConfig.getUrl())) {
-            deploymentInfo.addServlets(
+            mDeploymentInfo.addServlets(
                     Servlets.servlet("HystrixMetricsStreamServlet", HystrixMetricsStreamServlet.class)
                             .addMapping(hystrixConfig.getUrl()));
         }
@@ -78,20 +82,20 @@ public class UnderTowServer extends JbootServer {
 
         JbootMetricsConfig metricsConfig = Jboot.config(JbootMetricsConfig.class);
         if (StringUtils.isNotBlank(metricsConfig.getUrl())) {
-            deploymentInfo.addServlets(
+            mDeploymentInfo.addServlets(
                     Servlets.servlet("MetricsAdminServlet", AdminServlet.class)
                             .addMapping(metricsConfig.getUrl()));
 
-            deploymentInfo.addListeners(Servlets.listener(JbootMetricsServletContextListener.class));
-            deploymentInfo.addListeners(Servlets.listener(JbootHealthCheckServletContextListener.class));
+            mDeploymentInfo.addListeners(Servlets.listener(JbootMetricsServletContextListener.class));
+            mDeploymentInfo.addListeners(Servlets.listener(JbootHealthCheckServletContextListener.class));
         }
 
 
-        deploymentInfo.addServlets(
+        mDeploymentInfo.addServlets(
                 Servlets.servlet("JbootResourceServlet", JbootResourceServlet.class)
                         .addMapping("/*"));
 
-        mDeploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
+        mDeploymentManager = Servlets.defaultContainer().addDeployment(mDeploymentInfo);
         mDeploymentManager.deploy();
 
 
@@ -107,7 +111,7 @@ public class UnderTowServer extends JbootServer {
 
 
         mHandler = Handlers.path(
-                Handlers.resource(new ClassPathResourceManager(UnderTowServer.class.getClassLoader(), "webRoot")))
+                Handlers.resource(new ClassPathResourceManager(classloader, "webRoot")))
                 .addPrefixPath(getConfig().getContextPath(), httpHandler);
 
         mServer = Undertow.builder()
@@ -130,7 +134,24 @@ public class UnderTowServer extends JbootServer {
     }
 
     @Override
+    public boolean reStart() {
+        try {
+            mDeploymentManager.undeploy();
+            Servlets.defaultContainer().removeDeployment(mDeploymentInfo);
+            initUndertowServer();
+            start();
+        } catch (Throwable ex) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    @Override
     public boolean stop() {
+        mDeploymentManager.undeploy();
+        Servlets.defaultContainer().removeDeployment(mDeploymentInfo);
         mServer.stop();
         return true;
     }
