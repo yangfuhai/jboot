@@ -17,9 +17,11 @@ package io.jboot.web.render;
 
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import io.jboot.exception.JbootExceptionHolder;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * JbootErrorRender.
@@ -36,7 +38,9 @@ public class JbootErrorRender extends Render {
 
     protected static final String html500 = "<html><head><title>500 Internal Server Error</title></head>" +
             "<body bgcolor='white'><center><h1>500 Internal Server Error</h1></center>" +
-            "<hr>" + poweredBy + "" +
+            "<hr>" +
+            "%s" +
+            "<hr>" + poweredBy +
             "</body></html>";
 
     protected int errorCode;
@@ -81,7 +85,21 @@ public class JbootErrorRender extends Render {
 
 
     public String build500ErrorInfo() {
-        return html500;
+        List<Throwable> throwables = JbootExceptionHolder.throwables();
+        if (throwables == null || throwables.size() == 0) {
+            return String.format(html500, "");
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Throwable throwable : throwables) {
+            stringBuilder.append(throwable.getClass().getName() + " : " + throwable.getMessage() + "<br />");
+            StackTraceElement[] elems = throwable.getStackTrace();
+            for (StackTraceElement element : elems) {
+                stringBuilder.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at " + element + "<br />");
+            }
+        }
+
+        return String.format(html500, stringBuilder.toString());
     }
 }
 

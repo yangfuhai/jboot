@@ -13,34 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.log;
+package io.jboot.exception;
 
-import com.jfinal.log.ILogFactory;
-import com.jfinal.log.Log;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Slf4jLogFactory implements ILogFactory {
+/**
+ * Created by michael on 2017/7/6.
+ */
+public class JbootExceptionHolder {
 
+    static ThreadLocal<List<Throwable>> throwables = new ThreadLocal<>();
 
-    private static Slf4jLogFactory factory;
+    public static void init() {
+        throwables.set(new ArrayList<>());
+    }
 
-    public static Slf4jLogFactory me() {
-        if (factory == null) {
-            factory = new Slf4jLogFactory();
-            factory.slf4jIsOk = new Slf4jLogger("").isOk();
+    public static void release() {
+        throwables.get().clear();
+        throwables.remove();
+    }
+
+    public static void hold(Throwable ex) {
+        List<Throwable> list = throwables.get();
+        if (list != null) {
+            list.add(ex);
         }
-        return factory;
     }
 
-    private boolean slf4jIsOk;
-
-
-    @Override
-    public Log getLog(Class<?> clazz) {
-        return slf4jIsOk ? new Slf4jLogger(clazz) : new JdkLogger(clazz);
+    public static List<Throwable> throwables() {
+        return throwables.get();
     }
 
-    @Override
-    public Log getLog(String name) {
-        return slf4jIsOk ? new Slf4jLogger(name) : new JdkLogger(name);
-    }
+
 }

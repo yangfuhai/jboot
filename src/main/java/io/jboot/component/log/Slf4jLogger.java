@@ -16,6 +16,7 @@
 package io.jboot.component.log;
 
 import com.jfinal.log.Log;
+import io.jboot.exception.JbootExceptionHolder;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.NOPLogger;
 
@@ -43,6 +44,7 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void debug(String message, Throwable t) {
+        JbootExceptionHolder.hold(t);
         logger.debug(message, t);
     }
 
@@ -53,6 +55,7 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void info(String message, Throwable t) {
+        JbootExceptionHolder.hold(t);
         logger.info(message, t);
     }
 
@@ -63,6 +66,7 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void warn(String message, Throwable t) {
+        JbootExceptionHolder.hold(t);
         logger.warn(message, t);
     }
 
@@ -73,6 +77,7 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void error(String message, Throwable t) {
+        JbootExceptionHolder.hold(t);
         logger.error(message, t);
     }
 
@@ -83,6 +88,7 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void fatal(String message, Throwable t) {
+        JbootExceptionHolder.hold(t);
         logger.error(message, t);
     }
 
