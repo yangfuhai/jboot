@@ -25,7 +25,14 @@ public class ControllerTest extends JbootController {
 
     public void index() {
 
+        System.out.println("asdb");
+
+//        if (true){
+//            throw new NullPointerException("abctest");
+//        }
+
         renderText("hello aaa : " + serviceTest.hello());
+
 
     }
 
