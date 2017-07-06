@@ -25,9 +25,7 @@ public class ControllerTest extends JbootController {
 
     public void index() {
 
-
-        renderText("hello " + serviceTest.hello());
-
+        renderText("hello aaa : " + serviceTest.hello());
 
     }
 
