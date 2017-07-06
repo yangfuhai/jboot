@@ -22,7 +22,7 @@ import io.jboot.web.JbootAppConfig;
 @PropertieConfig(prefix = "jboot")
 public class JbootConfig {
 
-    private String mode;
+    private String mode = Jboot.MODE.DEV.getValue();
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
     private boolean cron4jEnable = true;
