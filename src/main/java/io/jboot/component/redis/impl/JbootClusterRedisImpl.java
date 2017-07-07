@@ -32,7 +32,7 @@ import java.util.Map.Entry;
  */
 public class JbootClusterRedisImpl extends JbootRedisBase {
 
-    protected JedisCluster jedis;
+    protected JedisCluster jedisCluster;
     private int timeout = 2000;
 
     static final Log LOG = Log.getLog(JbootClusterRedisImpl.class);
@@ -79,7 +79,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
             poolConfig.setNumTestsPerEvictionRun(config.getNumTestsPerEvictionRun());
         }
 
-        this.jedis = newJedisCluster(config.getHostAndPorts(), timeout, maxAttempts, password, poolConfig);
+        this.jedisCluster = newJedisCluster(config.getHostAndPorts(), timeout, maxAttempts, password, poolConfig);
 
     }
 
@@ -104,7 +104,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     }
 
     public JbootClusterRedisImpl(JedisCluster jedisCluster) {
-        this.jedis = jedisCluster;
+        this.jedisCluster = jedisCluster;
     }
 
     /**
@@ -113,7 +113,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 对于某个原本带有生存时间（TTL）的键来说， 当 SET 命令成功在这个键上执行时， 这个键原有的 TTL 将被清除。
      */
     public String set(Object key, Object value) {
-        return jedis.set(keyToBytes(key), valueToBytes(value));
+        return jedisCluster.set(keyToBytes(key), valueToBytes(value));
     }
 
     /**
@@ -122,7 +122,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 此方法用了修改 incr 等的值
      */
     public String setWithoutSerialize(Object key, Object value) {
-        return jedis.set(keyToBytes(key), value.toString().getBytes());
+        return jedisCluster.set(keyToBytes(key), value.toString().getBytes());
     }
 
 
@@ -132,7 +132,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public String setex(Object key, int seconds, Object value) {
 
-        return jedis.setex(keyToBytes(key), seconds, valueToBytes(value));
+        return jedisCluster.setex(keyToBytes(key), seconds, valueToBytes(value));
 
     }
 
@@ -143,7 +143,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("unchecked")
     public <T> T get(Object key) {
 
-        return (T) valueFromBytes(jedis.get(keyToBytes(key)));
+        return (T) valueFromBytes(jedisCluster.get(keyToBytes(key)));
 
     }
 
@@ -153,7 +153,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long del(Object key) {
 
-        return jedis.del(keyToBytes(key));
+        return jedisCluster.del(keyToBytes(key));
 
     }
 
@@ -163,7 +163,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long del(Object... keys) {
 
-        return jedis.del(keysToBytesArray(keys));
+        return jedisCluster.del(keysToBytesArray(keys));
 
     }
 
@@ -177,7 +177,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Set<String> keys(String pattern) {
         HashSet<String> keys = new HashSet<>();
-        Map<String, JedisPool> clusterNodes = jedis.getClusterNodes();
+        Map<String, JedisPool> clusterNodes = jedisCluster.getClusterNodes();
         for (String k : clusterNodes.keySet()) {
             JedisPool jp = clusterNodes.get(k);
             Jedis jedis = jp.getResource();
@@ -215,7 +215,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
             else
                 kv[i] = valueToBytes(keysValues[i]);
         }
-        return jedis.mset(kv);
+        return jedisCluster.mset(kv);
 
     }
 
@@ -227,7 +227,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     public List mget(Object... keys) {
 
         byte[][] keysBytesArray = keysToBytesArray(keys);
-        List<byte[]> data = jedis.mget(keysBytesArray);
+        List<byte[]> data = jedisCluster.mget(keysBytesArray);
         return valueListFromBytesList(data);
 
     }
@@ -241,7 +241,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long decr(Object key) {
 
-        return jedis.decr(keyToBytes(key));
+        return jedisCluster.decr(keyToBytes(key));
 
     }
 
@@ -254,7 +254,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long decrBy(Object key, long longValue) {
 
-        return jedis.decrBy(keyToBytes(key), longValue);
+        return jedisCluster.decrBy(keyToBytes(key), longValue);
 
     }
 
@@ -266,7 +266,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long incr(Object key) {
 
-        return jedis.incr(keyToBytes(key));
+        return jedisCluster.incr(keyToBytes(key));
 
     }
 
@@ -278,7 +278,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 关于递增(increment) / 递减(decrement)操作的更多信息，参见 INCR 命令。
      */
     public Long incrBy(Object key, long longValue) {
-        return jedis.incrBy(keyToBytes(key), longValue);
+        return jedisCluster.incrBy(keyToBytes(key), longValue);
 
     }
 
@@ -287,7 +287,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public boolean exists(Object key) {
 
-        return jedis.exists(keyToBytes(key));
+        return jedisCluster.exists(keyToBytes(key));
 
     }
 
@@ -307,7 +307,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public String rename(Object oldkey, Object newkey) {
 
-        return jedis.rename(keyToBytes(oldkey), keyToBytes(newkey));
+        return jedisCluster.rename(keyToBytes(oldkey), keyToBytes(newkey));
 
     }
 
@@ -318,7 +318,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long move(Object key, int dbIndex) {
 
-//        return jedis.move(keyToBytes(key), dbIndex);
+//        return jedisCluster.move(keyToBytes(key), dbIndex);
         throw new JbootException("not support move commmand in redis cluster.");
 
     }
@@ -343,7 +343,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public String select(int databaseIndex) {
 
-        return jedis.select(databaseIndex);
+        return jedisCluster.select(databaseIndex);
 
     }
 
@@ -353,7 +353,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long expire(Object key, int seconds) {
 
-        return jedis.expire(keyToBytes(key), seconds);
+        return jedisCluster.expire(keyToBytes(key), seconds);
 
     }
 
@@ -362,7 +362,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long expireAt(Object key, long unixTime) {
 
-        return jedis.expireAt(keyToBytes(key), unixTime);
+        return jedisCluster.expireAt(keyToBytes(key), unixTime);
 
     }
 
@@ -371,7 +371,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long pexpire(Object key, long milliseconds) {
 
-        return jedis.pexpire(keyToBytes(key), milliseconds);
+        return jedisCluster.pexpire(keyToBytes(key), milliseconds);
 
     }
 
@@ -380,7 +380,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long pexpireAt(Object key, long millisecondsTimestamp) {
 
-        return jedis.pexpireAt(keyToBytes(key), millisecondsTimestamp);
+        return jedisCluster.pexpireAt(keyToBytes(key), millisecondsTimestamp);
 
     }
 
@@ -391,7 +391,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("unchecked")
     public <T> T getSet(Object key, Object value) {
 
-        return (T) valueFromBytes(jedis.getSet(keyToBytes(key), valueToBytes(value)));
+        return (T) valueFromBytes(jedisCluster.getSet(keyToBytes(key), valueToBytes(value)));
 
     }
 
@@ -400,7 +400,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long persist(Object key) {
 
-        return jedis.persist(keyToBytes(key));
+        return jedisCluster.persist(keyToBytes(key));
 
     }
 
@@ -409,7 +409,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public String type(Object key) {
 
-        return jedis.type(keyToBytes(key));
+        return jedisCluster.type(keyToBytes(key));
 
     }
 
@@ -418,7 +418,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long ttl(Object key) {
 
-        return jedis.ttl(keyToBytes(key));
+        return jedisCluster.ttl(keyToBytes(key));
 
     }
 
@@ -427,7 +427,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long pttl(Object key) {
 
-        return jedis.pttl(key.toString());
+        return jedisCluster.pttl(key.toString());
 
     }
 
@@ -436,7 +436,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long objectRefcount(Object key) {
 
-//        return jedis.objectRefcount(keyToBytes(key));
+//        return jedisCluster.objectRefcount(keyToBytes(key));
         throw new JbootException("not support move objectRefcount in redis cluster.");
     }
 
@@ -445,7 +445,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long objectIdletime(Object key) {
 
-//        return jedis.objectIdletime(keyToBytes(key));
+//        return jedisCluster.objectIdletime(keyToBytes(key));
         throw new JbootException("not support move objectIdletime in redis cluster.");
 
     }
@@ -457,7 +457,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long hset(Object key, Object field, Object value) {
 
-        return jedis.hset(keyToBytes(key), valueToBytes(field), valueToBytes(value));
+        return jedisCluster.hset(keyToBytes(key), valueToBytes(field), valueToBytes(value));
 
     }
 
@@ -471,7 +471,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
         Map<byte[], byte[]> para = new HashMap<byte[], byte[]>();
         for (Entry<Object, Object> e : hash.entrySet())
             para.put(valueToBytes(e.getKey()), valueToBytes(e.getValue()));
-        return jedis.hmset(keyToBytes(key), para);
+        return jedisCluster.hmset(keyToBytes(key), para);
 
     }
 
@@ -481,7 +481,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("unchecked")
     public <T> T hget(Object key, Object field) {
 
-        return (T) valueFromBytes(jedis.hget(keyToBytes(key), valueToBytes(field)));
+        return (T) valueFromBytes(jedisCluster.hget(keyToBytes(key), valueToBytes(field)));
 
     }
 
@@ -493,7 +493,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public List hmget(Object key, Object... fields) {
 
-        List<byte[]> data = jedis.hmget(keyToBytes(key), valuesToBytesArray(fields));
+        List<byte[]> data = jedisCluster.hmget(keyToBytes(key), valuesToBytesArray(fields));
         return valueListFromBytesList(data);
 
     }
@@ -503,7 +503,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long hdel(Object key, Object... fields) {
 
-        return jedis.hdel(keyToBytes(key), valuesToBytesArray(fields));
+        return jedisCluster.hdel(keyToBytes(key), valuesToBytesArray(fields));
 
     }
 
@@ -512,7 +512,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public boolean hexists(Object key, Object field) {
 
-        return jedis.hexists(keyToBytes(key), valueToBytes(field));
+        return jedisCluster.hexists(keyToBytes(key), valueToBytes(field));
 
     }
 
@@ -523,7 +523,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public Map hgetAll(Object key) {
 
-        Map<byte[], byte[]> data = jedis.hgetAll(keyToBytes(key));
+        Map<byte[], byte[]> data = jedisCluster.hgetAll(keyToBytes(key));
         Map<Object, Object> result = new HashMap<Object, Object>();
         for (Entry<byte[], byte[]> e : data.entrySet())
             result.put(valueFromBytes(e.getKey()), valueFromBytes(e.getValue()));
@@ -537,7 +537,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public List hvals(Object key) {
 
-        Collection<byte[]> data = jedis.hvals(keyToBytes(key));
+        Collection<byte[]> data = jedisCluster.hvals(keyToBytes(key));
         return valueListFromBytesList(data);
 
     }
@@ -548,7 +548,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Set<Object> hkeys(Object key) {
 
-        Set<byte[]> fieldSet = jedis.hkeys(keyToBytes(key));
+        Set<byte[]> fieldSet = jedisCluster.hkeys(keyToBytes(key));
         Set<Object> result = new HashSet<Object>();
         fieldSetFromBytesSet(fieldSet, result);
         return result;
@@ -560,7 +560,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long hlen(Object key) {
 
-        return jedis.hlen(keyToBytes(key));
+        return jedisCluster.hlen(keyToBytes(key));
 
     }
 
@@ -574,7 +574,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long hincrBy(Object key, Object field, long value) {
 
-        return jedis.hincrBy(keyToBytes(key), valueToBytes(field), value);
+        return jedisCluster.hincrBy(keyToBytes(key), valueToBytes(field), value);
 
     }
 
@@ -589,7 +589,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Double hincrByFloat(Object key, Object field, double value) {
 
-        return jedis.hincrByFloat(keyToBytes(key), valueToBytes(field), value);
+        return jedisCluster.hincrByFloat(keyToBytes(key), valueToBytes(field), value);
 
     }
 
@@ -610,7 +610,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public <T> T lindex(Object key, long index) {
 
-        return (T) valueFromBytes(jedis.lindex(keyToBytes(key), index));
+        return (T) valueFromBytes(jedisCluster.lindex(keyToBytes(key), index));
 
     }
 
@@ -619,7 +619,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long getCounter(Object key) {
 
-        String value = jedis.get(key.toString());
+        String value = jedisCluster.get(key.toString());
         return StringUtils.isNotBlank(value) ? Long.parseLong(value) : null;
 
     }
@@ -631,7 +631,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long llen(Object key) {
 
-        return jedis.llen(keyToBytes(key));
+        return jedisCluster.llen(keyToBytes(key));
 
     }
 
@@ -641,7 +641,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("unchecked")
     public <T> T lpop(Object key) {
 
-        return (T) valueFromBytes(jedis.lpop(keyToBytes(key)));
+        return (T) valueFromBytes(jedisCluster.lpop(keyToBytes(key)));
 
     }
 
@@ -655,7 +655,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long lpush(Object key, Object... values) {
 
-        return jedis.lpush(keyToBytes(key), valuesToBytesArray(values));
+        return jedisCluster.lpush(keyToBytes(key), valuesToBytesArray(values));
 
     }
 
@@ -666,7 +666,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public String lset(Object key, long index, Object value) {
 
-        return jedis.lset(keyToBytes(key), index, valueToBytes(value));
+        return jedisCluster.lset(keyToBytes(key), index, valueToBytes(value));
 
     }
 
@@ -679,7 +679,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long lrem(Object key, long count, Object value) {
 
-        return jedis.lrem(keyToBytes(key), count, valueToBytes(value));
+        return jedisCluster.lrem(keyToBytes(key), count, valueToBytes(value));
 
     }
 
@@ -696,7 +696,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public List lrange(Object key, long start, long end) {
 
-        List<byte[]> data = jedis.lrange(keyToBytes(key), start, end);
+        List<byte[]> data = jedisCluster.lrange(keyToBytes(key), start, end);
         if (data != null) {
             return valueListFromBytesList(data);
         } else {
@@ -714,7 +714,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public String ltrim(Object key, long start, long end) {
 
-        return jedis.ltrim(keyToBytes(key), start, end);
+        return jedisCluster.ltrim(keyToBytes(key), start, end);
 
     }
 
@@ -724,7 +724,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("unchecked")
     public <T> T rpop(Object key) {
 
-        return (T) valueFromBytes(jedis.rpop(keyToBytes(key)));
+        return (T) valueFromBytes(jedisCluster.rpop(keyToBytes(key)));
 
     }
 
@@ -736,7 +736,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("unchecked")
     public <T> T rpoplpush(Object srcKey, Object dstKey) {
 
-        return (T) valueFromBytes(jedis.rpoplpush(keyToBytes(srcKey), keyToBytes(dstKey)));
+        return (T) valueFromBytes(jedisCluster.rpoplpush(keyToBytes(srcKey), keyToBytes(dstKey)));
 
     }
 
@@ -750,7 +750,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long rpush(Object key, Object... values) {
 
-        return jedis.rpush(keyToBytes(key), valuesToBytesArray(values));
+        return jedisCluster.rpush(keyToBytes(key), valuesToBytesArray(values));
 
     }
 
@@ -765,7 +765,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
 //        for (int i = 0; i < keys.length; i++) {
 //            keysStrings[i] = keys[i].toString();
 //        }
-        List<byte[]> data = jedis.blpop(timeout, keysToBytesArray(keys));
+        List<byte[]> data = jedisCluster.blpop(timeout, keysToBytesArray(keys));
         return valueListFromBytesList(data);
 
     }
@@ -776,9 +776,9 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 当给定多个 key 参数时，按参数 key 的先后顺序依次检查各个列表，弹出第一个非空列表的头元素。
      */
     @SuppressWarnings("rawtypes")
-    public List blpop(int timeout, Object... keys) {
+    public List blpop(Integer timeout, Object... keys) {
 
-        List<byte[]> data = jedis.blpop(timeout, keysToBytesArray(keys));
+        List<byte[]> data = jedisCluster.blpop(timeout, keysToBytesArray(keys));
         return valueListFromBytesList(data);
 
     }
@@ -792,7 +792,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public List brpop(Object... keys) {
 
-        List<byte[]> data = jedis.brpop(timeout, keysToBytesArray(keys));
+        List<byte[]> data = jedisCluster.brpop(timeout, keysToBytesArray(keys));
         return valueListFromBytesList(data);
 
     }
@@ -804,9 +804,9 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 关于阻塞操作的更多信息，请查看 BLPOP 命令， BRPOP 除了弹出元素的位置和 BLPOP 不同之外，其他表现一致。
      */
     @SuppressWarnings("rawtypes")
-    public List brpop(int timeout, Object... keys) {
+    public List brpop(Integer timeout, Object... keys) {
 
-        List<byte[]> data = jedis.brpop(timeout, keysToBytesArray(keys));
+        List<byte[]> data = jedisCluster.brpop(timeout, keysToBytesArray(keys));
         return valueListFromBytesList(data);
 
     }
@@ -817,7 +817,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public String ping() {
 
-        return jedis.ping();
+        return jedisCluster.ping();
 
     }
 
@@ -828,7 +828,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long sadd(Object key, Object... members) {
 
-        return jedis.sadd(keyToBytes(key), valuesToBytesArray(members));
+        return jedisCluster.sadd(keyToBytes(key), valuesToBytesArray(members));
 
     }
 
@@ -837,7 +837,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long scard(Object key) {
 
-        return jedis.scard(keyToBytes(key));
+        return jedisCluster.scard(keyToBytes(key));
 
     }
 
@@ -848,7 +848,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("unchecked")
     public <T> T spop(Object key) {
 
-        return (T) valueFromBytes(jedis.spop(keyToBytes(key)));
+        return (T) valueFromBytes(jedisCluster.spop(keyToBytes(key)));
 
     }
 
@@ -859,7 +859,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public Set smembers(Object key) {
 
-        Set<byte[]> data = jedis.smembers(keyToBytes(key));
+        Set<byte[]> data = jedisCluster.smembers(keyToBytes(key));
         Set<Object> result = new HashSet<Object>();
         valueSetFromBytesSet(data, result);
         return result;
@@ -871,7 +871,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public boolean sismember(Object key, Object member) {
 
-        return jedis.sismember(keyToBytes(key), valueToBytes(member));
+        return jedisCluster.sismember(keyToBytes(key), valueToBytes(member));
 
     }
 
@@ -881,7 +881,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public Set sinter(Object... keys) {
 
-        Set<byte[]> data = jedis.sinter(keysToBytesArray(keys));
+        Set<byte[]> data = jedisCluster.sinter(keysToBytesArray(keys));
         Set<Object> result = new HashSet<Object>();
         valueSetFromBytesSet(data, result);
         return result;
@@ -894,7 +894,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("unchecked")
     public <T> T srandmember(Object key) {
 
-        return (T) valueFromBytes(jedis.srandmember(keyToBytes(key)));
+        return (T) valueFromBytes(jedisCluster.srandmember(keyToBytes(key)));
 
     }
 
@@ -909,7 +909,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public List srandmember(Object key, int count) {
 
-        List<byte[]> data = jedis.srandmember(keyToBytes(key), count);
+        List<byte[]> data = jedisCluster.srandmember(keyToBytes(key), count);
         return valueListFromBytesList(data);
 
     }
@@ -919,7 +919,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long srem(Object key, Object... members) {
 
-        return jedis.srem(keyToBytes(key), valuesToBytesArray(members));
+        return jedisCluster.srem(keyToBytes(key), valuesToBytesArray(members));
 
     }
 
@@ -930,7 +930,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public Set sunion(Object... keys) {
 
-        Set<byte[]> data = jedis.sunion(keysToBytesArray(keys));
+        Set<byte[]> data = jedisCluster.sunion(keysToBytesArray(keys));
         Set<Object> result = new HashSet<Object>();
         valueSetFromBytesSet(data, result);
         return result;
@@ -944,7 +944,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public Set sdiff(Object... keys) {
 
-        Set<byte[]> data = jedis.sdiff(keysToBytesArray(keys));
+        Set<byte[]> data = jedisCluster.sdiff(keysToBytesArray(keys));
         Set<Object> result = new HashSet<Object>();
         valueSetFromBytesSet(data, result);
         return result;
@@ -958,7 +958,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long zadd(Object key, double score, Object member) {
 
-        return jedis.zadd(keyToBytes(key), score, valueToBytes(member));
+        return jedisCluster.zadd(keyToBytes(key), score, valueToBytes(member));
 
     }
 
@@ -967,7 +967,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
         Map<byte[], Double> para = new HashMap<byte[], Double>();
         for (Entry<Object, Double> e : scoreMembers.entrySet())
             para.put(valueToBytes(e.getKey()), e.getValue());    // valueToBytes is important
-        return jedis.zadd(keyToBytes(key), para);
+        return jedisCluster.zadd(keyToBytes(key), para);
 
     }
 
@@ -976,7 +976,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long zcard(Object key) {
 
-        return jedis.zcard(keyToBytes(key));
+        return jedisCluster.zcard(keyToBytes(key));
 
     }
 
@@ -986,7 +986,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long zcount(Object key, double min, double max) {
 
-        return jedis.zcount(keyToBytes(key), min, max);
+        return jedisCluster.zcount(keyToBytes(key), min, max);
 
     }
 
@@ -995,7 +995,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Double zincrby(Object key, double score, Object member) {
 
-        return jedis.zincrby(keyToBytes(key), score, valueToBytes(member));
+        return jedisCluster.zincrby(keyToBytes(key), score, valueToBytes(member));
 
     }
 
@@ -1008,7 +1008,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public Set zrange(Object key, long start, long end) {
 
-        Set<byte[]> data = jedis.zrange(keyToBytes(key), start, end);
+        Set<byte[]> data = jedisCluster.zrange(keyToBytes(key), start, end);
         Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
         valueSetFromBytesSet(data, result);
         return result;
@@ -1024,7 +1024,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public Set zrevrange(Object key, long start, long end) {
 
-        Set<byte[]> data = jedis.zrevrange(keyToBytes(key), start, end);
+        Set<byte[]> data = jedisCluster.zrevrange(keyToBytes(key), start, end);
         Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
         valueSetFromBytesSet(data, result);
         return result;
@@ -1038,7 +1038,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     @SuppressWarnings("rawtypes")
     public Set zrangeByScore(Object key, double min, double max) {
 
-        Set<byte[]> data = jedis.zrangeByScore(keyToBytes(key), min, max);
+        Set<byte[]> data = jedisCluster.zrangeByScore(keyToBytes(key), min, max);
         Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
         valueSetFromBytesSet(data, result);
         return result;
@@ -1052,7 +1052,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long zrank(Object key, Object member) {
 
-        return jedis.zrank(keyToBytes(key), valueToBytes(member));
+        return jedisCluster.zrank(keyToBytes(key), valueToBytes(member));
 
     }
 
@@ -1063,7 +1063,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long zrevrank(Object key, Object member) {
 
-        return jedis.zrevrank(keyToBytes(key), valueToBytes(member));
+        return jedisCluster.zrevrank(keyToBytes(key), valueToBytes(member));
 
     }
 
@@ -1073,7 +1073,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Long zrem(Object key, Object... members) {
 
-        return jedis.zrem(keyToBytes(key), valuesToBytesArray(members));
+        return jedisCluster.zrem(keyToBytes(key), valuesToBytesArray(members));
 
     }
 
@@ -1083,7 +1083,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public Double zscore(Object key, Object member) {
 
-        return jedis.zscore(keyToBytes(key), valueToBytes(member));
+        return jedisCluster.zscore(keyToBytes(key), valueToBytes(member));
 
     }
 
@@ -1095,7 +1095,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public void publish(String channel, String message) {
 
-        jedis.publish(channel, message);
+        jedisCluster.publish(channel, message);
 
     }
 
@@ -1107,7 +1107,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     public void publish(byte[] channel, byte[] message) {
 
-        jedis.publish(channel, message);
+        jedisCluster.publish(channel, message);
 
     }
 
@@ -1129,7 +1129,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
             @Override
             public void run() {
 
-                jedis.subscribe(listener, channels);
+                jedisCluster.subscribe(listener, channels);
 
 
             }
@@ -1153,13 +1153,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
             @Override
             public void run() {
 
-                jedis.subscribe(binaryListener, channels);
+                jedisCluster.subscribe(binaryListener, channels);
 
 
             }
         }.start();
     }
-
 
 
 }

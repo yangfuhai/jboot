@@ -923,7 +923,7 @@ public class JbootRedisImpl extends JbootRedisBase {
      * 当给定多个 key 参数时，按参数 key 的先后顺序依次检查各个列表，弹出第一个非空列表的头元素。
      */
     @SuppressWarnings("rawtypes")
-    public List blpop(int timeout, Object... keys) {
+    public List blpop(Integer timeout, Object... keys) {
         Jedis jedis = getJedis();
         try {
             List<byte[]> data = jedis.blpop(timeout, keysToBytesArray(keys));
@@ -957,7 +957,7 @@ public class JbootRedisImpl extends JbootRedisBase {
      * 关于阻塞操作的更多信息，请查看 BLPOP 命令， BRPOP 除了弹出元素的位置和 BLPOP 不同之外，其他表现一致。
      */
     @SuppressWarnings("rawtypes")
-    public List brpop(int timeout, Object... keys) {
+    public List brpop(Integer timeout, Object... keys) {
         Jedis jedis = getJedis();
         try {
             List<byte[]> data = jedis.brpop(timeout, keysToBytesArray(keys));

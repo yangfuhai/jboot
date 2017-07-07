@@ -428,7 +428,7 @@ public interface JbootRedis {
      * 它是 LPOP 命令的阻塞版本，当给定列表内没有任何元素可供弹出的时候，连接将被 BLPOP 命令阻塞，直到等待超时或发现可弹出元素为止。
      * 当给定多个 key 参数时，按参数 key 的先后顺序依次检查各个列表，弹出第一个非空列表的头元素。
      */
-    public List blpop(int timeout, Object... keys);
+    public List blpop(Integer timeout, Object... keys);
 
     /**
      * BRPOP 是列表的阻塞式(blocking)弹出原语。
@@ -444,7 +444,7 @@ public interface JbootRedis {
      * 当给定多个 key 参数时，按参数 key 的先后顺序依次检查各个列表，弹出第一个非空列表的尾部元素。
      * 关于阻塞操作的更多信息，请查看 BLPOP 命令， BRPOP 除了弹出元素的位置和 BLPOP 不同之外，其他表现一致。
      */
-    public List brpop(int timeout, Object... keys);
+    public List brpop(Integer timeout, Object... keys);
 
     /**
      * 使用客户端向 JbootRedis 服务器发送一个 PING ，如果服务器运作正常的话，会返回一个 PONG 。
@@ -641,8 +641,6 @@ public interface JbootRedis {
     public byte[][] valuesToBytesArray(Object... valuesArray);
 
     public void valueSetFromBytesSet(Set<byte[]> data, Set<Object> result);
-
-    public List valueListFromBytesList(List<byte[]> data);
 
     public List valueListFromBytesList(Collection<byte[]> data);
 
