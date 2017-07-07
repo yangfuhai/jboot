@@ -258,7 +258,7 @@ public class Jboot {
     }
 
     public static <T> T service(Class<T> clazz, String group, String version) {
-        return getRpc().serviceObtain(clazz, "jboot", "1.0");
+        return getRpc().serviceObtain(clazz, group, version);
     }
 
     public static void sendEvent(JbootEvent event) {

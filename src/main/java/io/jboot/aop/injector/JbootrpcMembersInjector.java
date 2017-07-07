@@ -18,6 +18,7 @@ package io.jboot.aop.injector;
 import com.google.inject.MembersInjector;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.core.rpc.annotation.JbootrpcService;
 
 import java.lang.reflect.Field;
 
@@ -37,9 +38,9 @@ public class JbootrpcMembersInjector implements MembersInjector {
     @Override
     public void injectMembers(Object instance) {
         Object rpcImpl = null;
-
+        JbootrpcService jbootrpcService = field.getAnnotation(JbootrpcService.class);
         try {
-            rpcImpl = Jboot.service(field.getType());
+            rpcImpl = Jboot.service(field.getType(), jbootrpcService.group(), jbootrpcService.version());
         } catch (Throwable e) {
             log.error(e.toString(), e);
         }
