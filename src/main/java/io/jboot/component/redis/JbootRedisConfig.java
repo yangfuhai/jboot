@@ -26,8 +26,8 @@ import java.util.Set;
 public class JbootRedisConfig {
 
     private String host;
-    private Integer port;
-    private Integer timeout;
+    private Integer port = 6379;
+    private Integer timeout = 2000;
     private String password;
     private Integer database;
     private String clientName;
