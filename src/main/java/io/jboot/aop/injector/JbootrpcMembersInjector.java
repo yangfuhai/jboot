@@ -40,7 +40,7 @@ public class JbootrpcMembersInjector implements MembersInjector {
         Object rpcImpl = null;
         JbootrpcService jbootrpcService = field.getAnnotation(JbootrpcService.class);
         try {
-            rpcImpl = Jboot.service(field.getType(), jbootrpcService.group(), jbootrpcService.version());
+            rpcImpl = Jboot.me().service(field.getType(), jbootrpcService.group(), jbootrpcService.version());
         } catch (Throwable e) {
             log.error(e.toString(), e);
         }

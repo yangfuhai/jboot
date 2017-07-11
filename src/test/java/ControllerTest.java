@@ -17,6 +17,8 @@ public class ControllerTest extends JbootController {
         Jboot.setBootArg("jboot.cache.type", "redis");
         Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
         Jboot.run(args);
+
+
     }
 
 
@@ -25,13 +27,9 @@ public class ControllerTest extends JbootController {
 
     public void index() {
 
-        System.out.println("asdb");
+        System.out.println("aabbcc");
 
-//        if (true){
-//            throw new NullPointerException("abctest");
-//        }
-
-        renderText("hello aaa : " + serviceTest.hello());
+        renderText("hello ddd : " + serviceTest.hello());
 
 
     }

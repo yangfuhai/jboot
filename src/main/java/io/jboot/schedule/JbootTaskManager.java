@@ -53,7 +53,7 @@ public class JbootTaskManager {
 
         Prop prop = null;
         try {
-            prop = PropKit.use(Jboot.getJbootConfig().getCron4jFile());
+            prop = PropKit.use(Jboot.me().getJbootConfig().getCron4jFile());
         } catch (Throwable ex) {
         }
 
@@ -76,7 +76,7 @@ public class JbootTaskManager {
     }
 
     public boolean isCron4jEnable() {
-        return Jboot.getJbootConfig().isCron4jEnable();
+        return Jboot.me().getJbootConfig().isCron4jEnable();
     }
 
 

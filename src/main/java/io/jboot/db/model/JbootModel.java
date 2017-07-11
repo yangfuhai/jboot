@@ -38,23 +38,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public void removeCache(Object key) {
         if (key == null) return;
-        Jboot.getCache().remove(tableName(), key);
+        Jboot.me().getCache().remove(tableName(), key);
     }
 
     public void putCache(Object key, Object value) {
-        Jboot.getCache().put(tableName(), key, value);
+        Jboot.me().getCache().put(tableName(), key, value);
     }
 
     public M getCache(Object key) {
-        return Jboot.getCache().get(tableName(), key);
+        return Jboot.me().getCache().get(tableName(), key);
     }
 
     public M getCache(Object key, IDataLoader dataloader) {
-        return Jboot.getCache().get(tableName(), key, dataloader);
+        return Jboot.me().getCache().get(tableName(), key, dataloader);
     }
 
     public List<M> getListCache(Object key, IDataLoader dataloader) {
-        return Jboot.getCache().get(tableName(), key, dataloader);
+        return Jboot.me().getCache().get(tableName(), key, dataloader);
     }
 
     public String buildCacheKey(String column, String value) {
@@ -100,7 +100,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
         boolean saved = super.save();
         if (saved) {
-            Jboot.sendEvent(addAction(), this);
+            Jboot.me().sendEvent(addAction(), this);
         }
         return saved;
     }
@@ -111,7 +111,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         boolean deleted = super.delete();
         if (deleted) {
             removeCache(get(getPrimaryKey()));
-            Jboot.sendEvent(deleteAction(), this);
+            Jboot.me().sendEvent(deleteAction(), this);
         }
         return deleted;
     }
@@ -139,7 +139,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (update) {
             Object id = get(getPrimaryKey());
             removeCache(id);
-            Jboot.sendEvent(updateAction(), findById(id));
+            Jboot.me().sendEvent(updateAction(), findById(id));
         }
         return update;
     }

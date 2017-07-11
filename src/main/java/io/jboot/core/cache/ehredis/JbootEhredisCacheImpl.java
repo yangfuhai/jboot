@@ -44,7 +44,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         ehcache = new JbootEhcacheImpl();
         redisCache = new JbootRedisCacheImpl();
 
-        Jboot.getMq().addMessageListener(this, channel);
+        Jboot.me().getMq().addMessageListener(this, channel);
         uuid = StringUtils.uuid();
     }
 
@@ -73,7 +73,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.put(cacheName, key, value);
             redisCache.put(cacheName, key, value);
         } finally {
-            Jboot.getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_PUT, cacheName, key), channel);
+            Jboot.me().getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_PUT, cacheName, key), channel);
         }
     }
 
@@ -83,7 +83,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.remove(cacheName, key);
             redisCache.remove(cacheName, key);
         } finally {
-            Jboot.getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE, cacheName, key), channel);
+            Jboot.me().getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE, cacheName, key), channel);
         }
     }
 
@@ -93,7 +93,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.removeAll(cacheName);
             redisCache.removeAll(cacheName);
         } finally {
-            Jboot.getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null), channel);
+            Jboot.me().getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null), channel);
         }
     }
 

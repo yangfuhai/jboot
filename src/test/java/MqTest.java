@@ -36,7 +36,7 @@ public class MqTest {
     }
 
     private void doTest() {
-        Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
+        Jboot.me().getMq().addMessageListener(new JbootmqMessageListener() {
             @Override
             public void onMessage(String channel, Object message) {
                 System.out.println("message:" + message + "     channel:" + channel);
@@ -44,7 +44,7 @@ public class MqTest {
         });
 
         for (int i = 0; i < 10; i++) {
-            Jboot.getMq().publish("hello" + i, "myChannel1");
+            Jboot.me().getMq().publish("hello" + i, "myChannel1");
         }
 
 

@@ -13,7 +13,7 @@ public class GuiceInterceptor implements Interceptor {
     private Injector injector;
 
     public GuiceInterceptor() {
-        injector = Jboot.getInjector();
+        injector = Jboot.me().getInjector();
     }
 
 

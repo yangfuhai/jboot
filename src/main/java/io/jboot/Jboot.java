@@ -17,18 +17,13 @@ package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Injector;
-import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
-import io.jboot.component.redis.JbootRedisManager;
-import io.jboot.core.cache.JbootCache;
-import io.jboot.core.cache.JbootCacheManager;
-import io.jboot.config.JbootProperties;
 import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.redis.JbootRedis;
-import io.jboot.core.serializer.ISerializer;
-import io.jboot.core.serializer.SerializerManager;
-import io.jboot.event.JbootEvent;
-import io.jboot.event.JbootEventManager;
+import io.jboot.component.redis.JbootRedisManager;
+import io.jboot.config.JbootProperties;
+import io.jboot.core.cache.JbootCache;
+import io.jboot.core.cache.JbootCacheManager;
 import io.jboot.core.http.JbootHttp;
 import io.jboot.core.http.JbootHttpManager;
 import io.jboot.core.http.JbootHttpRequest;
@@ -37,6 +32,10 @@ import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqManager;
 import io.jboot.core.rpc.Jbootrpc;
 import io.jboot.core.rpc.JbootrpcManager;
+import io.jboot.core.serializer.ISerializer;
+import io.jboot.core.serializer.SerializerManager;
+import io.jboot.event.JbootEvent;
+import io.jboot.event.JbootEventManager;
 import io.jboot.server.AutoDeployManager;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
@@ -45,6 +44,7 @@ import io.jboot.utils.FileUtils;
 import io.jboot.utils.StringUtils;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,16 +54,23 @@ import java.util.Map;
 public class Jboot {
 
     public static final String EVENT_STARTED = "jboot:started";
-
-    private static JbootConfig jbootConfig;
-    private static Boolean devMode;
     private static Map<String, String> argMap;
 
-    private static Jbootrpc jbootrpc;
-    private static JbootCache jbootCache;
-    private static JbootHttp jbootHttp;
-    private static JbootRedis jbootRedis;
-    private static JbootServer jbootServer;
+
+    private JbootConfig jbootConfig;
+    private Boolean devMode;
+    private Jbootrpc jbootrpc;
+    private JbootCache jbootCache;
+    private JbootHttp jbootHttp;
+    private JbootRedis jbootRedis;
+    private JbootServer jbootServer;
+
+
+    private static Jboot jboot = new Jboot();
+
+    public static Jboot me() {
+        return jboot;
+    }
 
     /**
      * main 入口方法
@@ -77,7 +84,12 @@ public class Jboot {
 
     public static void run(String[] args) {
         parseArgs(args);
-        start();
+        jboot.start();
+//        try {
+//            Thread.sleep(Long.MAX_VALUE);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -123,12 +135,14 @@ public class Jboot {
     /**
      * 开始启动
      */
-    public static void start() {
+    public void start() {
+
 
         printBannerInfo();
         printJbootConfigInfo();
         printServerConfigInfo();
 
+        ensureServerCreated();
 
         if (!startServer()) {
             System.err.println("jboot start fail!!!");
@@ -138,8 +152,6 @@ public class Jboot {
         printServerPath();
         printServerUrl();
 
-        JbootrpcManager.me().autoExport();
-
         if (isDevMode()) {
             AutoDeployManager.me().run();
         }
@@ -147,27 +159,26 @@ public class Jboot {
     }
 
 
-    private static boolean startServer() {
-        ensureServerCreated();
+    private boolean startServer() {
         return jbootServer.start();
     }
 
 
-    private static void ensureServerCreated() {
+    private void ensureServerCreated() {
         if (jbootServer == null) {
             JbootServerFactory factory = JbootServerFactory.me();
             jbootServer = factory.buildServer();
         }
     }
 
-    private static void printBannerInfo() {
+    private void printBannerInfo() {
         JbootConfig config = getJbootConfig();
 
         if (!config.isBannerEnable()) {
             return;
         }
 
-        File bannerFile = new File(PathKit.getRootClassPath(), config.getBannerFile());
+        File bannerFile = new File(getRootClassPath(), config.getBannerFile());
 
         String bannerText = "  ____  ____    ___    ___   ______ \n" +
                 " |    ||    \\  /   \\  /   \\ |      |\n" +
@@ -187,21 +198,20 @@ public class Jboot {
 
     }
 
-    private static void printJbootConfigInfo() {
+    private void printJbootConfigInfo() {
         System.out.println(getJbootConfig());
     }
 
-    private static void printServerConfigInfo() {
+    private void printServerConfigInfo() {
         System.out.println(config(JbootServerConfig.class));
     }
 
-    private static void printServerPath() {
-        System.out.println("server webRoot      : " + PathKit.getWebRootPath());
-        System.out.println("server classPath    : " + PathKit.getRootClassPath());
+    private void printServerPath() {
+        System.out.println("server classPath    : " + getRootClassPath());
     }
 
 
-    private static void printServerUrl() {
+    private void printServerUrl() {
         JbootServerConfig serverConfig = config(JbootServerConfig.class);
 
         String host = "0.0.0.0".equals(serverConfig.getHost()) ? "127.0.0.1" : serverConfig.getHost();
@@ -232,7 +242,7 @@ public class Jboot {
      *
      * @return
      */
-    public static boolean isDevMode() {
+    public boolean isDevMode() {
         if (devMode == null) {
             JbootConfig config = getJbootConfig();
             devMode = MODE.DEV.getValue().equals(config.getMode());
@@ -245,7 +255,7 @@ public class Jboot {
      *
      * @return
      */
-    public static JbootConfig getJbootConfig() {
+    public JbootConfig getJbootConfig() {
         if (jbootConfig == null) {
             jbootConfig = config(JbootConfig.class);
         }
@@ -253,24 +263,24 @@ public class Jboot {
     }
 
 
-    public static <T> T service(Class<T> clazz) {
+    public <T> T service(Class<T> clazz) {
         return service(clazz, "jboot", "1.0");
     }
 
-    public static <T> T service(Class<T> clazz, String group, String version) {
+    public <T> T service(Class<T> clazz, String group, String version) {
         return getRpc().serviceObtain(clazz, group, version);
     }
 
-    public static void sendEvent(JbootEvent event) {
+    public void sendEvent(JbootEvent event) {
         JbootEventManager.me().pulish(event);
     }
 
-    public static void sendEvent(String action, Object data) {
+    public void sendEvent(String action, Object data) {
         sendEvent(new JbootEvent(action, data));
     }
 
 
-    public static Jbootrpc getRpc() {
+    public Jbootrpc getRpc() {
         if (jbootrpc == null) {
             jbootrpc = JbootrpcManager.me().getJbootrpc();
         }
@@ -278,7 +288,7 @@ public class Jboot {
     }
 
 
-    public static Jbootmq getMq() {
+    public Jbootmq getMq() {
         return JbootmqManager.me().getJbootmq();
     }
 
@@ -287,7 +297,7 @@ public class Jboot {
      *
      * @return
      */
-    public static JbootCache getCache() {
+    public JbootCache getCache() {
         if (jbootCache == null) {
             jbootCache = JbootCacheManager.me().getCache();
         }
@@ -299,28 +309,28 @@ public class Jboot {
      *
      * @return
      */
-    public static JbootHttp getHttp() {
+    public JbootHttp getHttp() {
         if (jbootHttp == null) {
             jbootHttp = JbootHttpManager.me().getJbootHttp();
         }
         return jbootHttp;
     }
 
-    public static String httpGet(String url) {
+    public String httpGet(String url) {
         return httpGet(url, null);
     }
 
-    public static String httpGet(String url, Map<String, Object> params) {
+    public String httpGet(String url, Map<String, Object> params) {
         JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_GET);
         JbootHttpResponse response = getHttp().handle(request);
         return response.isError() ? null : response.getContent();
     }
 
-    public static String httpPost(String url) {
+    public String httpPost(String url) {
         return httpPost(url, null);
     }
 
-    public static String httpPost(String url, Map<String, Object> params) {
+    public String httpPost(String url, Map<String, Object> params) {
         JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_POST);
         JbootHttpResponse response = getHttp().handle(request);
         return response.isError() ? null : response.getContent();
@@ -332,7 +342,7 @@ public class Jboot {
      *
      * @return
      */
-    public static JbootRedis getRedis() {
+    public JbootRedis getRedis() {
         if (jbootRedis == null) {
             jbootRedis = JbootRedisManager.me().getReidis();
         }
@@ -340,7 +350,7 @@ public class Jboot {
     }
 
 
-    public static JbootServer getServer() {
+    public JbootServer getServer() {
         return jbootServer;
     }
 
@@ -350,7 +360,7 @@ public class Jboot {
      *
      * @return
      */
-    public static MetricRegistry getMetric() {
+    public MetricRegistry getMetric() {
         return JbootMetricsManager.me().metric();
     }
 
@@ -360,13 +370,25 @@ public class Jboot {
      *
      * @return
      */
-    public static Injector getInjector() {
+    public Injector getInjector() {
         return JbootInjectManager.me().getInjector();
     }
 
 
-    public static ISerializer getSerializer() {
+    public ISerializer getSerializer() {
         return SerializerManager.me().getSerializer();
+    }
+
+
+    private static String getRootClassPath() {
+        String path = null;
+        try {
+            path = Jboot.class.getClassLoader().getResource("").toURI().getPath();
+            return new File(path).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return path;
     }
 
 

@@ -67,7 +67,7 @@ public class JbootEventManager {
         deleteListner(listenerMap, listenerClass);
         deleteListner(asyncListenerMap, listenerClass);
 
-        if (Jboot.isDevMode()) {
+        if (Jboot.me().isDevMode()) {
             System.out.println(String.format("listener[%s]-->>unRegisterListener.", listenerClass));
         }
 
@@ -145,7 +145,7 @@ public class JbootEventManager {
             }
         }
 
-        if (Jboot.isDevMode()) {
+        if (Jboot.me().isDevMode()) {
             System.out.println(String.format("listener[%s]-->>registered.", listener));
         }
 
@@ -189,7 +189,7 @@ public class JbootEventManager {
     private void invokeListeners(final JbootEvent event, List<JbootEventListener> syncListeners) {
         for (final JbootEventListener listener : syncListeners) {
             try {
-                if (Jboot.isDevMode()) {
+                if (Jboot.me().isDevMode()) {
                     System.out.println(String.format("listener[%s]-->>onEvent(%s)", listener, event));
                 }
                 listener.onEvent(event);
@@ -205,7 +205,7 @@ public class JbootEventManager {
                 @Override
                 public void run() {
                     try {
-                        if (Jboot.isDevMode()) {
+                        if (Jboot.me().isDevMode()) {
                             System.out.println(String.format("listener[%s]-->>onEvent(%s) in async", listener, event));
                         }
                         listener.onEvent(event);

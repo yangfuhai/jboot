@@ -9,8 +9,9 @@ public class RedisTest {
     public void testRedis() {
 
         Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
+        Jboot.setBootArg("jboot.redis.password", "123456");
 
-        JbootRedis redis = Jboot.getRedis();
+        JbootRedis redis = Jboot.me().getRedis();
         redis.set("mykey", "myvalue");
 
         redis.lpush("list", 1,2,3,4,5);

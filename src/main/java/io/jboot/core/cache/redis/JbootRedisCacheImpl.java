@@ -36,7 +36,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         if (redisConfig.isConfigOk()) {
             redis = JbootRedisManager.me().getReidis(redisConfig);
         } else {
-            redis = Jboot.getRedis();
+            redis = Jboot.me().getRedis();
         }
 
         if (redis == null) {

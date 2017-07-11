@@ -45,7 +45,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
             /**
              * 没有启用缓存的话，就用系统自带的session
              */
-            if (Jboot.getCache().isNoneCache()) {
+            if (Jboot.me().getCache().isNoneCache()) {
                 httpSession = super.getSession(create);
             } else {
                 httpSession = new JbootHttpSessionWapper();

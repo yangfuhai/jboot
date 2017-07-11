@@ -35,7 +35,7 @@ public class JbootrpcInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
-        Counter counter = Jboot.getMetric().counter(methodInvocation.getThis().getClass() + "##" + methodInvocation.getMethod().getName());
+        Counter counter = Jboot.me().getMetric().counter(methodInvocation.getThis().getClass() + "##" + methodInvocation.getMethod().getName());
         counter.inc();
 
         return methodInvocation.proceed();

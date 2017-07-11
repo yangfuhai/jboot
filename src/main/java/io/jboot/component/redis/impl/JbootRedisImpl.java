@@ -94,6 +94,8 @@ public class JbootRedisImpl extends JbootRedisBase {
         else
             jedisPool = new JedisPool(jedisPoolConfig, host);
 
+
+
         return jedisPool;
     }
 

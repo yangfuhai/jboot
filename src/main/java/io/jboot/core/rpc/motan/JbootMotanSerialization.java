@@ -26,11 +26,11 @@ import java.io.IOException;
 public class JbootMotanSerialization implements Serialization {
     @Override
     public byte[] serialize(Object obj) throws IOException {
-        return Jboot.getSerializer().serialize(obj);
+        return Jboot.me().getSerializer().serialize(obj);
     }
 
     @Override
     public <T> T deserialize(byte[] bytes, Class<T> clz) throws IOException {
-        return (T) Jboot.getSerializer().deserialize(bytes);
+        return (T) Jboot.me().getSerializer().deserialize(bytes);
     }
 }

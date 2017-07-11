@@ -49,14 +49,14 @@ public abstract class JbootRedisBase implements JbootRedis {
     }
 
     public byte[] valueToBytes(Object value) {
-        return Jboot.getSerializer().serialize(value);
+        return Jboot.me().getSerializer().serialize(value);
     }
 
     public Object valueFromBytes(byte[] bytes) {
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-        return Jboot.getSerializer().deserialize(bytes);
+        return Jboot.me().getSerializer().deserialize(bytes);
     }
 
     public byte[][] valuesToBytesArray(Object... valuesArray) {

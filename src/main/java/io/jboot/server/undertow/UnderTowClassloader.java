@@ -24,6 +24,7 @@ public class UnderTowClassloader extends ClassLoader {
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return super.loadClass(name, false);
+        return loadClass(name, false);
     }
+
 }

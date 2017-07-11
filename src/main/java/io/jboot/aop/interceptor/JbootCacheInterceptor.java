@@ -68,7 +68,7 @@ public class JbootCacheInterceptor implements MethodInterceptor {
         String cacheKey = buildCacheKey(cacheable.key(), targetClass, method, methodInvocation.getArguments());
 
 
-        return Jboot.getCache().get(cacheName, cacheKey, new IDataLoader() {
+        return Jboot.me().getCache().get(cacheName, cacheKey, new IDataLoader() {
             @Override
             public Object load() {
                 Object r = null;

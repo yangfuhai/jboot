@@ -82,7 +82,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             channel.basicConsume("", true, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    Object o = Jboot.getSerializer().deserialize(body);
+                    Object o = Jboot.me().getSerializer().deserialize(body);
                     notifyListeners(envelope.getExchange(), o);
                 }
             });
@@ -116,7 +116,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
         }
 
         try {
-            byte[] bytes = Jboot.getSerializer().serialize(message);
+            byte[] bytes = Jboot.me().getSerializer().serialize(message);
             channel.basicPublish(toChannel, "", MessageProperties.BASIC, bytes);
         } catch (IOException e) {
             e.printStackTrace();
