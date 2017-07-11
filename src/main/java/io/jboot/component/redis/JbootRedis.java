@@ -37,6 +37,8 @@ public interface JbootRedis {
      */
     public String set(Object key, Object value);
 
+    public Long setnx(Object key, Object value);
+
     /**
      * 存放 key value 对到 redis
      * 如果 key 已经持有其他值， SET 就覆写旧值，无视类型。

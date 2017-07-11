@@ -33,7 +33,7 @@ public class TomcatServer extends JbootServer {
     }
 
     @Override
-    public boolean reStart() {
+    public boolean restart() {
         return false;
     }
 

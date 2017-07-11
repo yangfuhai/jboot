@@ -95,7 +95,6 @@ public class JbootRedisImpl extends JbootRedisBase {
             jedisPool = new JedisPool(jedisPoolConfig, host);
 
 
-
         return jedisPool;
     }
 
@@ -112,6 +111,16 @@ public class JbootRedisImpl extends JbootRedisBase {
         Jedis jedis = getJedis();
         try {
             return jedis.set(keyToBytes(key), valueToBytes(value));
+        } finally {
+            returnResource(jedis);
+        }
+    }
+
+    @Override
+    public Long setnx(Object key, Object value) {
+        Jedis jedis = getJedis();
+        try {
+            return jedis.setnx(keyToBytes(key), valueToBytes(value));
         } finally {
             returnResource(jedis);
         }

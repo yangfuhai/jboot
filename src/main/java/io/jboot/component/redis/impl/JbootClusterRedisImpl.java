@@ -116,6 +116,11 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
         return jedisCluster.set(keyToBytes(key), valueToBytes(value));
     }
 
+    @Override
+    public Long setnx(Object key, Object value) {
+        return jedisCluster.setnx(keyToBytes(key), valueToBytes(value));
+    }
+
     /**
      * 存放 key value 对到 redis
      * 如果 key 已经持有其他值， SET 就覆写旧值，无视类型。
