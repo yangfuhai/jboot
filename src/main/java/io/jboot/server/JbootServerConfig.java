@@ -21,7 +21,11 @@ import io.jboot.config.annotation.PropertieConfig;
 @PropertieConfig(prefix = "jboot.server")
 public class JbootServerConfig {
 
-    private String type = "undertow";
+    public static final String TYPE_UNDERTOW = "undertow";
+    public static final String TYPE_TOMCAT = "tomcat";
+    public static final String TYPE_JETTY = "jetty";
+
+    private String type = TYPE_UNDERTOW;
     private String host = "0.0.0.0";
     private int port = 8080;
     private String contextPath = "/";

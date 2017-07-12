@@ -111,7 +111,6 @@ public class JbootAppConfig extends JFinalConfig {
          * 先添加，后移除，防止在热加载的时候重复添加而产生异常。
          * 查看：EngineConfig
          */
-        engine.removeDirective("now");
         engine.addDirective("now", new com.jfinal.template.ext.directive.NowDirective());
 
         List<Class> directiveClasses = ClassScanner.scanClass();

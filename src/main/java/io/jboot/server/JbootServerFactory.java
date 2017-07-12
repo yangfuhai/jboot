@@ -16,6 +16,7 @@
 package io.jboot.server;
 
 import io.jboot.Jboot;
+import io.jboot.server.jetty.JettyServer;
 import io.jboot.server.tomcat.TomcatServer;
 import io.jboot.server.undertow.UnderTowServer;
 
@@ -34,13 +35,16 @@ public class JbootServerFactory {
 
         JbootServerConfig jbootServerConfig = Jboot.config(JbootServerConfig.class);
 
+
         switch (jbootServerConfig.getType()) {
-            case "undertow":
-                return new UnderTowServer(jbootServerConfig);
-            case "tomcat":
-                return new TomcatServer(jbootServerConfig);
+            case JbootServerConfig.TYPE_UNDERTOW:
+                return new UnderTowServer();
+            case JbootServerConfig.TYPE_TOMCAT:
+                return new TomcatServer();
+            case JbootServerConfig.TYPE_JETTY:
+                return new JettyServer();
             default:
-                return new UnderTowServer(jbootServerConfig);
+                return new UnderTowServer();
         }
     }
 

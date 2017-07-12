@@ -35,9 +35,7 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.DeploymentManager;
-import io.undertow.servlet.api.ServletContainer;
+import io.undertow.servlet.api.*;
 
 import javax.servlet.DispatcherType;
 import java.lang.reflect.Field;
@@ -55,16 +53,20 @@ public class UnderTowServer extends JbootServer {
     private PathHandler mHandler;
     private Undertow mServer;
     private ServletContainer mServletContainer;
+    private JbootServerConfig config;
 
 
-    public UnderTowServer(JbootServerConfig config) {
-        super(config);
-        initUndertowServer();
+
+    public UnderTowServer() {
+        config = Jboot.config(JbootServerConfig.class);
+
     }
 
     public void initUndertowServer() {
 
+
         UnderTowClassloader classloader = new UnderTowClassloader(UnderTowServer.class.getClassLoader());
+        classloader.setDefaultAssertionStatus(false);
 
         initJfinalConfig();
 
@@ -88,23 +90,24 @@ public class UnderTowServer extends JbootServer {
 
         mHandler = Handlers.path(
                 Handlers.resource(new ClassPathResourceManager(classloader, "webRoot")))
-                .addPrefixPath(getConfig().getContextPath(), httpHandler);
+                .addPrefixPath(config.getContextPath(), httpHandler);
 
 
         mServer = Undertow.builder()
-                .addHttpListener(getConfig().getPort(), getConfig().getHost())
+                .addHttpListener(config.getPort(), config.getHost())
                 .setHandler(mHandler)
                 .build();
+
     }
 
     private DeploymentInfo buildDeploymentInfo(UnderTowClassloader classloader) {
         DeploymentInfo deploymentInfo = Servlets.deployment()
                 .setClassLoader(classloader)
                 .setResourceManager(new ClassPathResourceManager(classloader))
-                .setContextPath(getConfig().getContextPath())
-                .setDeploymentName("jboot")
-                //设置启动的时候，初始化servlet或filter（好吧，跟了很久的源代码...）
-                .setEagerFilterInit(true);
+                .setContextPath(config.getContextPath())
+                .setDeploymentName("jboot"+StringUtils.uuid())
+                .setEagerFilterInit(true); //设置启动的时候，初始化servlet或filter
+
 
 
         deploymentInfo.addFilter(
@@ -183,6 +186,7 @@ public class UnderTowServer extends JbootServer {
     @Override
     public boolean start() {
         try {
+            initUndertowServer();
             mServer.start();
         } catch (Throwable ex) {
             log.error(ex.toString(), ex);
@@ -196,7 +200,6 @@ public class UnderTowServer extends JbootServer {
     public boolean restart() {
         try {
             stop();
-            initUndertowServer();
             start();
             System.err.println("undertow restarted!!!");
         } catch (Throwable ex) {
@@ -209,6 +212,7 @@ public class UnderTowServer extends JbootServer {
 
     @Override
     public boolean stop() {
+        mHandler.clearPaths();
         mDeploymentManager.undeploy();
         mServletContainer.removeDeployment(mDeploymentInfo);
         mServer.stop();

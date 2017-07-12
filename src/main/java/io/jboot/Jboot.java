@@ -85,11 +85,6 @@ public class Jboot {
     public static void run(String[] args) {
         parseArgs(args);
         jboot.start();
-//        try {
-//            Thread.sleep(Long.MAX_VALUE);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
     }
 
 
@@ -156,6 +151,15 @@ public class Jboot {
             AutoDeployManager.me().run();
         }
 
+        tryToHoldApplication();
+    }
+
+    private void tryToHoldApplication() {
+        try {
+            Thread.sleep(Long.MAX_VALUE);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 

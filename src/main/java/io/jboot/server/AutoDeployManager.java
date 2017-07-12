@@ -42,6 +42,7 @@ public class AutoDeployManager {
                 try {
                     System.err.println("file changes ......");
 //                    Jboot.me().getServer().restart();
+//                    JbootServerFactory.me().buildServer().start();
 //                    System.err.println("Loading complete.");
                 } catch (Exception e) {
                     System.err.println("Error reconfiguring/restarting webapp after change in watched files");

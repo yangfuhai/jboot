@@ -13,17 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.server.undertow;
+package io.jboot.server.jetty;
 
-public class UnderTowClassloader extends ClassLoader {
 
-    public UnderTowClassloader(ClassLoader parent) {
-        super(parent);
-    }
+import io.jboot.exception.JbootException;
+import io.jboot.server.JbootServer;
+
+public class JettyServer extends JbootServer {
 
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return loadClass(name, false);
+    public boolean start() {
+        new JbootException("jetty server not finish!!!");
+        return false;
+    }
+
+    @Override
+    public boolean restart() {
+        return false;
+    }
+
+    @Override
+    public boolean stop() {
+        return false;
     }
 }

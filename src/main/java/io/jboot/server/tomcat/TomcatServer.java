@@ -18,13 +18,9 @@ package io.jboot.server.tomcat;
 
 import io.jboot.exception.JbootException;
 import io.jboot.server.JbootServer;
-import io.jboot.server.JbootServerConfig;
 
 public class TomcatServer extends JbootServer {
 
-    public TomcatServer(JbootServerConfig config) {
-        super(config);
-    }
 
     @Override
     public boolean start() {
