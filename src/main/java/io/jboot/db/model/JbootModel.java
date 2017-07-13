@@ -73,12 +73,20 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    public M master() {
-        M master = copy().use("master");
-        if (master.getConfig() == null) {
-            master.use(null);
+    public M useProxy() {
+        M proxy = get("__proxy__");
+        if (proxy != null) {
+            return proxy;
         }
-        return master;
+
+        proxy = copy().use("proxy");
+
+        if (proxy.getConfig() == null) {
+            proxy.use(null);
+        }
+
+        set("__proxy__", proxy);
+        return proxy;
     }
 
 

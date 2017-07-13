@@ -22,7 +22,7 @@ import io.jboot.Jboot;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DatasourceConfig;
-import io.jboot.db.datasource.MasterDatasourceConfig;
+import io.jboot.db.datasource.ProxyDatasourceConfig;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
@@ -40,10 +40,10 @@ public class JbootDbManager {
 
 
     private DatasourceConfig datasourceConfig;
-    private MasterDatasourceConfig masterDatasourceConfig;
+    private ProxyDatasourceConfig proxyDatasourceConfig;
 
     private ActiveRecordPlugin activeRecordPlugin;
-    private ActiveRecordPlugin masterActiveRecordPlugin;
+    private ActiveRecordPlugin proxyActiveRecordPlugin;
 
 
     public static JbootDbManager me() {
@@ -66,13 +66,13 @@ public class JbootDbManager {
         }
 
 
-        masterDatasourceConfig = Jboot.config(MasterDatasourceConfig.class);
-        if (masterDatasourceConfig.isConfigOk()) {
-            DataSourceBuilder dsBuilder = new DataSourceBuilder(masterDatasourceConfig);
-            masterActiveRecordPlugin = createRecordPlugin("master", dsBuilder.build());
-            masterActiveRecordPlugin.setShowSql(Jboot.me().isDevMode());
-            masterActiveRecordPlugin.setCache(Jboot.me().getCache());
-            initActiveRecordPluginDialect(masterActiveRecordPlugin, masterDatasourceConfig);
+        proxyDatasourceConfig = Jboot.config(ProxyDatasourceConfig.class);
+        if (proxyDatasourceConfig.isConfigOk()) {
+            DataSourceBuilder dsBuilder = new DataSourceBuilder(proxyDatasourceConfig);
+            proxyActiveRecordPlugin = createRecordPlugin("proxy", dsBuilder.build());
+            proxyActiveRecordPlugin.setShowSql(Jboot.me().isDevMode());
+            proxyActiveRecordPlugin.setCache(Jboot.me().getCache());
+            initActiveRecordPluginDialect(proxyActiveRecordPlugin, proxyDatasourceConfig);
         }
     }
 
@@ -105,9 +105,9 @@ public class JbootDbManager {
         return activeRecordPlugin != null;
     }
 
-    public boolean isMasterConfigOk() {
+    public boolean isProxyConfigOk() {
         //return datasourceConfig.isConfigOk();
-        return masterActiveRecordPlugin != null;
+        return proxyActiveRecordPlugin != null;
     }
 
     /**
@@ -119,8 +119,8 @@ public class JbootDbManager {
         return activeRecordPlugin;
     }
 
-    public ActiveRecordPlugin getMasterActiveRecordPlugin() {
-        return masterActiveRecordPlugin;
+    public ActiveRecordPlugin getProxyActiveRecordPlugin() {
+        return proxyActiveRecordPlugin;
     }
 
     /**

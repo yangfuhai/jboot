@@ -18,10 +18,10 @@ package io.jboot.db.datasource;
 import io.jboot.config.annotation.PropertieConfig;
 
 /**
- * MasterDatasourceConfig
+ * ProxyDatasourceConfig
  */
-@PropertieConfig(prefix = "jboot.datasource.master")
-public class MasterDatasourceConfig extends DatasourceConfig {
+@PropertieConfig(prefix = "jboot.datasource.proxy")
+public class ProxyDatasourceConfig extends DatasourceConfig {
 
 
 }

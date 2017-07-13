@@ -148,8 +148,8 @@ public class JbootAppConfig extends JFinalConfig {
             plugins.add(JbootDbManager.me().getActiveRecordPlugin());
         }
 
-        if (JbootDbManager.me().isMasterConfigOk()) {
-            plugins.add(JbootDbManager.me().getMasterActiveRecordPlugin());
+        if (JbootDbManager.me().isProxyConfigOk()) {
+            plugins.add(JbootDbManager.me().getProxyActiveRecordPlugin());
         }
 
         if (JbootTaskManager.me().isCron4jEnable()) {

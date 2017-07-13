@@ -224,8 +224,7 @@ public class Jboot {
 
         String url = String.format("http://%s%s%s", host, port, path);
 
-        System.out.println();
-        System.out.println("server started success , url : " + url);
+        System.out.println("\nserver started success , url : " + url);
     }
 
 
@@ -284,6 +283,11 @@ public class Jboot {
     }
 
 
+    /**
+     * 获取 Jbootrpc，进行服务获取和发布
+     *
+     * @return
+     */
     public Jbootrpc getRpc() {
         if (jbootrpc == null) {
             jbootrpc = JbootrpcManager.me().getJbootrpc();
@@ -292,6 +296,11 @@ public class Jboot {
     }
 
 
+    /**
+     * 获取 MQ，进行消息发送
+     *
+     * @return
+     */
     public Jbootmq getMq() {
         return JbootmqManager.me().getJbootmq();
     }
