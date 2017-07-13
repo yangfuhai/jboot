@@ -191,7 +191,7 @@ public class JbootShiroInterceptor implements Interceptor {
                 doProcessuUnauthorization(inv.getController());
                 break;
             default:
-                inv.invoke();
+                inv.getController().renderError(404);
         }
     }
 

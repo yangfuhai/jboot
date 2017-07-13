@@ -26,6 +26,7 @@ import io.jboot.component.hystrix.JbootHystrixConfig;
 import io.jboot.component.metrics.JbootHealthCheckServletContextListener;
 import io.jboot.component.metrics.JbootMetricsConfig;
 import io.jboot.component.metrics.JbootMetricsServletContextListener;
+import io.jboot.component.shiro.JbootShiroConfig;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.utils.StringUtils;
@@ -35,7 +36,11 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.*;
+import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.DeploymentManager;
+import io.undertow.servlet.api.ServletContainer;
+import org.apache.shiro.web.env.EnvironmentLoaderListener;
+import org.apache.shiro.web.servlet.ShiroFilter;
 
 import javax.servlet.DispatcherType;
 import java.lang.reflect.Field;
@@ -54,7 +59,6 @@ public class UnderTowServer extends JbootServer {
     private Undertow mServer;
     private ServletContainer mServletContainer;
     private JbootServerConfig config;
-
 
 
     public UnderTowServer() {
@@ -105,9 +109,8 @@ public class UnderTowServer extends JbootServer {
                 .setClassLoader(classloader)
                 .setResourceManager(new ClassPathResourceManager(classloader))
                 .setContextPath(config.getContextPath())
-                .setDeploymentName("jboot"+StringUtils.uuid())
+                .setDeploymentName("jboot" + StringUtils.uuid())
                 .setEagerFilterInit(true); //设置启动的时候，初始化servlet或filter
-
 
 
         deploymentInfo.addFilter(
@@ -132,6 +135,15 @@ public class UnderTowServer extends JbootServer {
 
             deploymentInfo.addListeners(Servlets.listener(JbootMetricsServletContextListener.class));
             deploymentInfo.addListeners(Servlets.listener(JbootHealthCheckServletContextListener.class));
+        }
+
+
+        JbootShiroConfig shiroConfig = Jboot.config(JbootShiroConfig.class);
+        if (shiroConfig.isConfigOK()) {
+            deploymentInfo.addListeners(Servlets.listener(EnvironmentLoaderListener.class));
+            deploymentInfo.addFilter(
+                    Servlets.filter("shiro", ShiroFilter.class))
+                    .addFilterUrlMapping("shiro", "/*", DispatcherType.REQUEST);
         }
 
         deploymentInfo.addServlets(

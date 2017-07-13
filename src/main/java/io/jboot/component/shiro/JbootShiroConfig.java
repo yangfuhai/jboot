@@ -15,7 +15,10 @@
  */
 package io.jboot.component.shiro;
 
+import com.jfinal.kit.PathKit;
 import io.jboot.config.annotation.PropertieConfig;
+
+import java.io.File;
 
 @PropertieConfig(prefix = "jboot.shiro")
 public class JbootShiroConfig {
@@ -23,11 +26,8 @@ public class JbootShiroConfig {
     private String loginUrl;
     private String successUrl;
     private String unauthorizedUrl;
-    private String realm;
-    private String authenticator;
-    private String authorizer;
-    private String subjectDAO;
-    private String sessionManager;
+    private String shiroIniFile = "shiro.ini";
+
 
     public String getLoginUrl() {
         return loginUrl;
@@ -53,62 +53,21 @@ public class JbootShiroConfig {
         this.unauthorizedUrl = unauthorizedUrl;
     }
 
-    public String getRealm() {
-        return realm;
+    public String getShiroIniFile() {
+        return shiroIniFile;
     }
 
-    public void setRealm(String realm) {
-        this.realm = realm;
-    }
-
-    public String getAuthenticator() {
-        return authenticator;
-    }
-
-    public void setAuthenticator(String authenticator) {
-        this.authenticator = authenticator;
-    }
-
-    public String getAuthorizer() {
-        return authorizer;
-    }
-
-    public void setAuthorizer(String authorizer) {
-        this.authorizer = authorizer;
-    }
-
-    public String getSubjectDAO() {
-        return subjectDAO;
-    }
-
-    public void setSubjectDAO(String subjectDAO) {
-        this.subjectDAO = subjectDAO;
-    }
-
-    public String getSessionManager() {
-        return sessionManager;
-    }
-
-    public void setSessionManager(String sessionManager) {
-        this.sessionManager = sessionManager;
+    public void setShiroIniFile(String shiroIniFile) {
+        this.shiroIniFile = shiroIniFile;
     }
 
 
     private Boolean config;
 
     public boolean isConfigOK() {
-        if (config != null) {
-            return config;
+        if (config == null) {
+            config = new File(PathKit.getRootClassPath(), shiroIniFile).exists();
         }
-
-        config = false;
-
-        try {
-            Class.forName(realm);
-            config = true;
-        } catch (Throwable e) {
-        }
-
         return config;
     }
 }
