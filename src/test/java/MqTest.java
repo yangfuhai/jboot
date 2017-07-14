@@ -15,6 +15,7 @@ public class MqTest {
 
         Jboot.setBootArg("jboot.mq.type", "redis");
         Jboot.setBootArg("jboot.mq.redis.host", "127.0.0.1");
+        Jboot.setBootArg("jboot.mq.redis.password", "123456");
         Jboot.setBootArg("jboot.mq.redis.channel", "myChannel,myChannel1,myChannel2");
 
         doTest();
