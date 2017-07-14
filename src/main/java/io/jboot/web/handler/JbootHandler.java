@@ -16,6 +16,7 @@
 package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
+import com.jfinal.log.Log;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.web.RequestManager;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public class JbootHandler extends Handler {
+    static Log log = Log.getLog(JbootHandler.class);
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
@@ -43,16 +45,19 @@ public class JbootHandler extends Handler {
             try {
                 context.shutdown();
             } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
             }
 
             try {
                 RequestManager.me().release();
             } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
             }
 
             try {
                 JbootExceptionHolder.release();
             } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
             }
         }
 
