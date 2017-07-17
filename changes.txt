@@ -1,4 +1,20 @@
-jboot-1.0-alphpa5:
+jboot-1.0-beta1:
+1、重构shiro模块，使其支持shiro.ini配置，方便其他项目迁移。
+2、新增JbootRedisLock基于redis的分布式锁。
+3、重构jboot.java 不再支持静态调用，而是通过Jboot.me().xxx这样去调用，方便后续的热加载功能。
+4、新增JbootServer的restart方法，方便后续的热加载。
+5、修复redis密码配置，在没有超时时间配置的时候无效的问题。
+6、修复：redis不能使用blpop命令和brpop命令的bug。
+7、修复：@JbootrpcService注解无法指定远程rpc分组和版本的问题。
+8、完善 jboot 的错误输出，在500错误的时候能够在页面清晰看到错误信息，方便开发排查。
+9、升级 fastjson 到最新版本 1.2.3
+10、完善jboot开发模式设置，新增jboot默认设置为dev，方便日志输出。
+11、修复：motan rpc模块在spi加载的错误问题。
+12、修复：jboot微信模块的access token cache的可能导致的缓存冲突的问题。
+13、更正readme文档，修复其他若干bug，增强稳定性。
+
+
+jboot-1.0-alpha5:
 1、修复AOP接口自动绑定时不成功的bug，新增了@Bean注解，方便对接口绑定的配置；
 2、移除默认的jvm对jmx的设置，因为在docker环境下，设置网络为host模式时可能会产生端口冲突的问题。
 3、移除motan的rpc序列化框架hessian，因为hessian在对bigdecimal序列化出错。
@@ -16,7 +32,7 @@ jboot-1.0-alphpa5:
 
 
 
-jboot-1.0-alphpa4:
+jboot-1.0-alpha4:
 1、添加SPI扩展方法，方便对Jboot内置模块的扩展实现。
 2、新增自定义序列化的支持，开发者可以选择现有系统已经支持的序列化方法（默认：fst2）。
 3、修复在某些情况下服务无法暴露的问题。
@@ -29,7 +45,7 @@ jboot-1.0-alphpa4:
 10、更正readme文档，修复其他若干bug，增强稳定性。
 
 
-jboot-1.0-alphpa3:
+jboot-1.0-alpha3:
 1、对jboot代码进行重构，添加component模块，引入flyway、hystrix、metrics、redis、shiro、zuul等开源软件，方便对jboot的监控和管理。
 2、新增：JbootDaoBase，方便jion操作
 3、新增：Jboot启动的服务器信息输出，比如webroot路径，当前服务地址等
@@ -55,7 +71,7 @@ jboot-1.0-alphpa3:
 
 
 
-jboot-1.0-alphpa2:
+jboot-1.0-alpha2:
 修复：jbootrpcService 无法在类上进行注解的bug
 修复：在某些情况下无法实例化jbootredis的bug
 修复：jfinal-weixin在集群模式下获取ticket错误的问题
