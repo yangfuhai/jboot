@@ -39,6 +39,9 @@ public class DatasourceConfig {
     private int prepStmtCacheSqlLimit = 2048;
     private int maximumPoolSize = 100;
 
+    private String sqlTemplatePath;
+    private String sqlTemplate;
+
 
     public String getType() {
         return type;
@@ -144,5 +147,19 @@ public class DatasourceConfig {
         return TYPE_ANSISQL.equals(getType());
     }
 
+    public String getSqlTemplatePath() {
+        return sqlTemplatePath;
+    }
 
+    public void setSqlTemplatePath(String sqlTemplatePath) {
+        this.sqlTemplatePath = sqlTemplatePath;
+    }
+
+    public String getSqlTemplate() {
+        return sqlTemplate;
+    }
+
+    public void setSqlTemplate(String sqlTemplate) {
+        this.sqlTemplate = sqlTemplate;
+    }
 }

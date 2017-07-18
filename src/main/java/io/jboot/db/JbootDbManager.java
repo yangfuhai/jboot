@@ -15,6 +15,7 @@
  */
 package io.jboot.db;
 
+import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.dialect.*;
@@ -97,6 +98,25 @@ public class JbootDbManager {
                 activeRecordPlugin.setDialect(new PostgreSqlDialect());
                 break;
         }
+
+        String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
+        if (sqlTemplatePath != null) {
+            if (sqlTemplatePath.startsWith("/")) {
+                activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
+            } else {
+                activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
+            }
+        }
+
+        String sqlTemplateString = datasourceConfig.getSqlTemplate();
+        if (sqlTemplateString != null) {
+            String[] sqlTemplateFiles = sqlTemplateString.split(",");
+            for (String sql : sqlTemplateFiles) {
+                activeRecordPlugin.addSqlTemplate(sql);
+            }
+        }
+
+
     }
 
 
