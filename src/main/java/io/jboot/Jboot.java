@@ -40,6 +40,7 @@ import io.jboot.server.AutoDeployManager;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerFactory;
+import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.FileUtils;
 import io.jboot.utils.StringUtils;
 
@@ -150,6 +151,9 @@ public class Jboot {
         if (isDevMode()) {
             AutoDeployManager.me().run();
         }
+
+
+        JbootAppListenerManager.me().onJbootStarted();
 
         tryToHoldApplication();
     }

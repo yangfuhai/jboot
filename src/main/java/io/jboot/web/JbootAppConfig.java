@@ -34,6 +34,7 @@ import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootTaskManager;
+import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.RequestMapping;
@@ -76,6 +77,8 @@ public class JbootAppConfig extends JFinalConfig {
         constants.setLogFactory(Slf4jLogFactory.me());
         constants.setMaxPostSize(1024 * 1024 * 2000);
         constants.setReportAfterInvocation(false);
+
+        JbootAppListenerManager.me().onJfinalConstantConfig(constants);
     }
 
 
@@ -100,6 +103,8 @@ public class JbootAppConfig extends JFinalConfig {
             }
 
         }
+
+        JbootAppListenerManager.me().onJfinalRouteConfig(routes);
     }
 
     @Override
@@ -138,6 +143,8 @@ public class JbootAppConfig extends JFinalConfig {
                 engine.addSharedObject(sharedObject.value(), ClassNewer.newInstance(clazz));
             }
         }
+
+        JbootAppListenerManager.me().onJfinalEngineConfig(engine);
     }
 
 
@@ -163,6 +170,8 @@ public class JbootAppConfig extends JFinalConfig {
             plugins.add(new EhCachePlugin());
         }
 
+        JbootAppListenerManager.me().onJfinalPluginConfig(plugins);
+
     }
 
 
@@ -173,11 +182,15 @@ public class JbootAppConfig extends JFinalConfig {
         interceptors.add(new GuiceInterceptor());
         interceptors.add(new JbootShiroInterceptor());
         interceptors.add(new ParaValidateInterceptor());
+
+        JbootAppListenerManager.me().onInterceptorConfig(interceptors);
     }
 
     @Override
     public void configHandler(Handlers handlers) {
         handlers.add(new JbootHandler());
+
+        JbootAppListenerManager.me().onHandlerConfig(handlers);
     }
 
     @Override
@@ -197,6 +210,8 @@ public class JbootAppConfig extends JFinalConfig {
          */
         Jboot.me().sendEvent(Jboot.EVENT_STARTED, null);
 
+        JbootAppListenerManager.me().onJbootStarted();
+
     }
 
     @Override
@@ -212,6 +227,8 @@ public class JbootAppConfig extends JFinalConfig {
                 }
             }
         }
+
+        JbootAppListenerManager.me().onJFinalStop();
     }
 
 
