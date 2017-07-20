@@ -21,6 +21,7 @@ import com.jfinal.json.JsonManager;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
+import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
@@ -151,12 +152,9 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configPlugin(Plugins plugins) {
 
-        if (JbootDbManager.me().isConfigOk()) {
-            plugins.add(JbootDbManager.me().getActiveRecordPlugin());
-        }
-
-        if (JbootDbManager.me().isProxyConfigOk()) {
-            plugins.add(JbootDbManager.me().getProxyActiveRecordPlugin());
+        List<ActiveRecordPlugin> arps = JbootDbManager.me().getActiveRecordPlugins();
+        for (ActiveRecordPlugin arp : arps) {
+            plugins.add(arp);
         }
 
         if (JbootTaskManager.me().isCron4jEnable()) {

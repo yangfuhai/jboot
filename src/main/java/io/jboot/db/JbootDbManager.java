@@ -23,14 +23,17 @@ import io.jboot.Jboot;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DatasourceConfig;
-import io.jboot.db.datasource.ProxyDatasourceConfig;
+import io.jboot.db.datasource.DatasourceConfigManager;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -40,11 +43,7 @@ public class JbootDbManager {
     private static JbootDbManager manager;
 
 
-    private DatasourceConfig datasourceConfig;
-    private ProxyDatasourceConfig proxyDatasourceConfig;
-
-    private ActiveRecordPlugin activeRecordPlugin;
-    private ActiveRecordPlugin proxyActiveRecordPlugin;
+    private List<ActiveRecordPlugin> activeRecordPlugins = new ArrayList<>();
 
 
     public static JbootDbManager me() {
@@ -56,25 +55,19 @@ public class JbootDbManager {
 
     private JbootDbManager() {
 
-        datasourceConfig = Jboot.config(DatasourceConfig.class);
+        List<DatasourceConfig> datasourceConfigs = DatasourceConfigManager.me().getDatasourceConfigs();
+        for (DatasourceConfig datasourceConfig : datasourceConfigs) {
+            if (datasourceConfig.isConfigOk()) {
+                DataSourceBuilder dsBuilder = new DataSourceBuilder(datasourceConfig);
+                ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig.getName(), datasourceConfig.getTable(), dsBuilder.build());
+                activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
+                activeRecordPlugin.setCache(Jboot.me().getCache());
+                initActiveRecordPluginDialect(activeRecordPlugin, datasourceConfig);
 
-        if (datasourceConfig.isConfigOk()) {
-            DataSourceBuilder dsBuilder = new DataSourceBuilder(datasourceConfig);
-            activeRecordPlugin = createRecordPlugin(null, dsBuilder.build());
-            activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
-            activeRecordPlugin.setCache(Jboot.me().getCache());
-            initActiveRecordPluginDialect(activeRecordPlugin, datasourceConfig);
+                activeRecordPlugins.add(activeRecordPlugin);
+            }
         }
 
-
-        proxyDatasourceConfig = Jboot.config(ProxyDatasourceConfig.class);
-        if (proxyDatasourceConfig.isConfigOk()) {
-            DataSourceBuilder dsBuilder = new DataSourceBuilder(proxyDatasourceConfig);
-            proxyActiveRecordPlugin = createRecordPlugin("proxy", dsBuilder.build());
-            proxyActiveRecordPlugin.setShowSql(Jboot.me().isDevMode());
-            proxyActiveRecordPlugin.setCache(Jboot.me().getCache());
-            initActiveRecordPluginDialect(proxyActiveRecordPlugin, proxyDatasourceConfig);
-        }
     }
 
     private void initActiveRecordPluginDialect(ActiveRecordPlugin activeRecordPlugin, DatasourceConfig datasourceConfig) {
@@ -120,37 +113,14 @@ public class JbootDbManager {
     }
 
 
-    public boolean isConfigOk() {
-        //return datasourceConfig.isConfigOk();
-        return activeRecordPlugin != null;
-    }
-
-    public boolean isProxyConfigOk() {
-        //return datasourceConfig.isConfigOk();
-        return proxyActiveRecordPlugin != null;
-    }
-
-    /**
-     * 获取 数据库插件 ActiveRecordPlugin
-     *
-     * @return
-     */
-    public ActiveRecordPlugin getActiveRecordPlugin() {
-        return activeRecordPlugin;
-    }
-
-    public ActiveRecordPlugin getProxyActiveRecordPlugin() {
-        return proxyActiveRecordPlugin;
-    }
-
     /**
      * 创建 ActiveRecordPlugin 插件，用于数据库读写
      *
      * @param configName
-     * @param dataSource
+     * @param configTable 指定只做哪些表的映射关系
      * @return
      */
-    private ActiveRecordPlugin createRecordPlugin(String configName, DataSource dataSource) {
+    private ActiveRecordPlugin createRecordPlugin(String configName, String configTable, DataSource dataSource) {
 
         List<Class<Model>> modelClassList = ClassScanner.scanSubClass(Model.class);
 
@@ -162,10 +132,22 @@ public class JbootDbManager {
                 ? new ActiveRecordPlugin(configName, dataSource)
                 : new ActiveRecordPlugin(dataSource);
 
+        Set<String> tables = configTable == null ? null : buildTables(configTable);
+
         for (Class<?> clazz : modelClassList) {
             Table tb = clazz.getAnnotation(Table.class);
             if (tb == null)
                 continue;
+
+            //说明该数据源只允许部分表
+            if (tables != null && !tables.isEmpty()) {
+
+                //如果该数据源的表配置不包含该表，过滤掉
+                if (!tables.contains(tb.tableName())) {
+                    continue;
+                }
+            }
+
             if (StringUtils.isNotBlank(tb.primaryKey())) {
                 activeRecordPlugin.addMapping(tb.tableName(), tb.primaryKey(), (Class<? extends Model<?>>) clazz);
             } else {
@@ -175,4 +157,22 @@ public class JbootDbManager {
 
         return activeRecordPlugin;
     }
+
+    private Set<String> buildTables(String configTable) {
+        String[] tables = configTable.split(",");
+
+        Set<String> tableset = new HashSet<>();
+        for (String table : tables) {
+            if (StringUtils.isBlank(table)) {
+                continue;
+            }
+            tableset.add(table.trim());
+        }
+        return tableset;
+    }
+
+    public List<ActiveRecordPlugin> getActiveRecordPlugins() {
+        return activeRecordPlugins;
+    }
+
 }

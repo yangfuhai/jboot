@@ -24,5 +24,5 @@ import java.lang.annotation.*;
 public @interface PropertieConfig {
     String prefix();
 
-    String file() default "jboot.properties";
+    String file() default "";
 }

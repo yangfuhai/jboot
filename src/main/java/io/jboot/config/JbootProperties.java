@@ -39,10 +39,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JbootProperties {
 
 
-    public static ConcurrentHashMap<Class, Object> configs = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Class, Object> configs = new ConcurrentHashMap<>();
+    private static Prop jbootProp;
     public static final Log log = Log.getLog(JbootProperties.class);
 
     public static <T> T get(Class<T> clazz) {
+        return get(null, clazz);
+    }
+
+    public static <T> T get(String prefix, Class<T> clazz) {
 
         Object obj = configs.get(clazz);
         if (obj != null) {
@@ -51,17 +56,17 @@ public class JbootProperties {
 
         obj = ClassNewer.newInstance(clazz);
 
-        String prefix = null;
         PropertieConfig propertieConfig = clazz.getAnnotation(PropertieConfig.class);
 
         if (propertieConfig != null && StringUtils.isNotBlank(propertieConfig.prefix())) {
             prefix = propertieConfig.prefix();
         }
 
-        String propertieFile = propertieConfig.file();
-
-        Prop prop = PropKit.use(propertieFile);
-        initModeProp(prop, propertieFile);
+        Prop prop = getJbootProp();
+        if (StringUtils.isNotBlank(propertieConfig.file())) {
+            Prop configProp = PropKit.use(propertieConfig.file());
+            prop.getProperties().putAll(configProp.getProperties());
+        }
 
         List<Method> setMethods = new ArrayList<>();
 
@@ -102,6 +107,20 @@ public class JbootProperties {
         configs.put(clazz, obj);
 
         return (T) obj;
+    }
+
+    public static Prop getJbootProp() {
+        if (jbootProp == null) {
+            jbootProp = initProp();
+        }
+
+        return jbootProp;
+    }
+
+    private static Prop initProp() {
+        Prop prop = PropKit.use("jboot.properties");
+        initModeProp(prop, "jboot.properties");
+        return prop;
     }
 
 

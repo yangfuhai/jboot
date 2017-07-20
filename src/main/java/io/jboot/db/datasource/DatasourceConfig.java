@@ -15,11 +15,9 @@
  */
 package io.jboot.db.datasource;
 
-import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.utils.StringUtils;
 
 
-@PropertieConfig(prefix = "jboot.datasource")
 public class DatasourceConfig {
     public static final String TYPE_MYSQL = "mysql";
     public static final String TYPE_ORACLE = "oracle";
@@ -28,6 +26,7 @@ public class DatasourceConfig {
     public static final String TYPE_ANSISQL = "ansisql";
     public static final String TYPE_POSTGRESQL = "postgresql";
 
+    private String name;
     private String type = TYPE_MYSQL;
     private String url;
     private String user;
@@ -41,7 +40,15 @@ public class DatasourceConfig {
 
     private String sqlTemplatePath;
     private String sqlTemplate;
+    private String table;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getType() {
         return type;
@@ -161,5 +168,13 @@ public class DatasourceConfig {
 
     public void setSqlTemplate(String sqlTemplate) {
         this.sqlTemplate = sqlTemplate;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
     }
 }
