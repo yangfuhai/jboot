@@ -36,6 +36,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private static final String COLUMN_CREATED = "created";
     private static final String COLUMN_MODIFIED = "modified";
 
+    private boolean autoCache = true;
+
     public void removeCache(Object key) {
         if (key == null) return;
         Jboot.me().getCache().remove(tableName(), key);
@@ -45,21 +47,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         Jboot.me().getCache().put(tableName(), key, value);
     }
 
-    public M getCache(Object key) {
+    public <T> T getCache(Object key) {
         return Jboot.me().getCache().get(tableName(), key);
     }
 
-    public M getCache(Object key, IDataLoader dataloader) {
-        return Jboot.me().getCache().get(tableName(), key, dataloader);
-    }
-
-    public List<M> getListCache(Object key, IDataLoader dataloader) {
+    public <T> T getCache(Object key, IDataLoader dataloader) {
         return Jboot.me().getCache().get(tableName(), key, dataloader);
     }
 
     public String buildCacheKey(String column, String value) {
         return String.format("%s:%s", column, value);
     }
+
 
     public M copy() {
         M m = null;
@@ -79,7 +78,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return proxy;
         }
 
-        proxy = copy().use("proxy");
+        proxy = copy().use("proxy").autoCache(this.autoCache);
 
         if (proxy.getConfig() == null) {
             proxy.use(null);
@@ -87,6 +86,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
         set("__proxy__", proxy);
         return proxy;
+    }
+
+    public M autoCache(boolean autoCache) {
+        this.autoCache = autoCache;
+        return (M) this;
     }
 
 
@@ -118,7 +122,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public boolean delete() {
         boolean deleted = super.delete();
         if (deleted) {
-            removeCache(get(getPrimaryKey()));
+            if (autoCache) {
+                removeCache(get(getPrimaryKey()));
+            }
             Jboot.me().sendEvent(deleteAction(), this);
         }
         return deleted;
@@ -146,7 +152,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         boolean update = super.update();
         if (update) {
             Object id = get(getPrimaryKey());
-            removeCache(id);
+            if (autoCache) {
+                removeCache(id);
+            }
             Jboot.me().sendEvent(updateAction(), findById(id));
         }
         return update;
@@ -166,12 +174,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public M findById(final Object idValue) {
-        return getCache(idValue, new IDataLoader() {
+        return autoCache ? getCache(idValue, new IDataLoader() {
             @Override
             public Object load() {
                 return findByIdWithoutCache(idValue);
             }
-        });
+        }) : findByIdWithoutCache(idValue);
     }
 
 
