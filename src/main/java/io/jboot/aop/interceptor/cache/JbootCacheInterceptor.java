@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop.interceptor;
+package io.jboot.aop.interceptor.cache;
 
 
 import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
-import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.exception.JbootAssert;
@@ -26,11 +25,7 @@ import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-import javax.inject.Named;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 缓存操作的拦截器
@@ -38,7 +33,7 @@ import java.util.Map;
 public class JbootCacheInterceptor implements MethodInterceptor {
 
     static final Log LOG = Log.getLog(JbootCacheInterceptor.class);
-    static final Engine ENGINE = new Engine("JbootCacheRender");
+
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
@@ -54,7 +49,7 @@ public class JbootCacheInterceptor implements MethodInterceptor {
         String unlessString = cacheable.unless();
         if (StringUtils.isNotBlank(unlessString)) {
             unlessString = String.format("#(%s)", unlessString);
-            String unlessBoolString = engineRender(unlessString, method, methodInvocation.getArguments());
+            String unlessBoolString = Kits.engineRender(unlessString, method, methodInvocation.getArguments());
             if ("true".equals(unlessBoolString)) {
                 return methodInvocation.proceed();
             }
@@ -65,7 +60,7 @@ public class JbootCacheInterceptor implements MethodInterceptor {
         JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
                 String.format("Cacheable.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
 
-        String cacheKey = buildCacheKey(cacheable.key(), targetClass, method, methodInvocation.getArguments());
+        String cacheKey = Kits.buildCacheKey(cacheable.key(), targetClass, method, methodInvocation.getArguments());
 
 
         return Jboot.me().getCache().get(cacheName, cacheKey, new IDataLoader() {
@@ -89,43 +84,4 @@ public class JbootCacheInterceptor implements MethodInterceptor {
     }
 
 
-    public String buildCacheKey(String key, Class clazz, Method method, Object[] arguments) {
-        if (StringUtils.isBlank(key)) {
-            return String.format("%s#%s", clazz.getName(), method.getName());
-        }
-
-        if (!key.contains("#(") || !key.contains(")")) {
-            return key;
-        }
-
-        return engineRender(key, method, arguments);
-    }
-
-    /**
-     * use jfinal engine render text
-     *
-     * @param template
-     * @param method
-     * @param arguments
-     * @return
-     */
-    public String engineRender(String template, Method method, Object[] arguments) {
-
-        Annotation[][] annotationss = method.getParameterAnnotations();
-        Map<String, Object> datas = new HashMap();
-        for (int i = 0; i < annotationss.length; i++) {
-            for (int j = 0; j < annotationss[i].length; j++) {
-                Annotation annotation = annotationss[i][j];
-                if (annotation.annotationType() == Named.class) {
-                    Named named = (Named) annotation;
-                    datas.put(named.value(), arguments[i]);
-                } else if (annotation.annotationType() == com.google.inject.name.Named.class) {
-                    com.google.inject.name.Named named = (com.google.inject.name.Named) annotation;
-                    datas.put(named.value(), arguments[i]);
-                }
-            }
-        }
-
-        return ENGINE.getTemplateByString(template).renderToString(datas);
-    }
 }
