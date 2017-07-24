@@ -15,7 +15,17 @@
  */
 package io.jboot.web;
 
-import com.jfinal.config.*;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.util.Enumeration;
+import java.util.List;
+
+import com.jfinal.config.Constants;
+import com.jfinal.config.Handlers;
+import com.jfinal.config.Interceptors;
+import com.jfinal.config.JFinalConfig;
+import com.jfinal.config.Plugins;
+import com.jfinal.config.Routes;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.PropKit;
@@ -27,6 +37,7 @@ import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
+
 import io.jboot.Jboot;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.metrics.JbootMetricsManager;
@@ -50,13 +61,11 @@ import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
 
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.util.Enumeration;
-import java.util.List;
-
 
 public class JbootAppConfig extends JFinalConfig {
+	
+	// 提供配置的路由对象供其他地方调用
+	public static Routes routes;
 
     static final Log log = Log.getLog(JbootAppConfig.class);
 
@@ -104,8 +113,8 @@ public class JbootAppConfig extends JFinalConfig {
             }
 
         }
-
         JbootAppListenerManager.me().onJfinalRouteConfig(routes);
+        JbootAppConfig.routes = routes;
     }
 
     @Override
