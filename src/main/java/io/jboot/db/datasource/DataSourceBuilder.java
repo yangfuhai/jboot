@@ -42,6 +42,7 @@ public class DataSourceBuilder {
         hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", datasourceConfig.getPrepStmtCacheSqlLimit());
 
         hikariConfig.setDriverClassName(datasourceConfig.getDriverClassName());
+        hikariConfig.setPoolName(datasourceConfig.getPoolName());
 
 
         if (hikariConfig.getConnectionInitSql() != null) {

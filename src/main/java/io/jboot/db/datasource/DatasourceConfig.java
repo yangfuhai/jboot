@@ -33,6 +33,7 @@ public class DatasourceConfig {
     private String password;
     private String driverClassName = "com.mysql.jdbc.Driver";
     private String connectionInitSql;
+    private String poolName;
     private boolean cachePrepStmts = true;
     private int prepStmtCacheSize = 500;
     private int prepStmtCacheSqlLimit = 2048;
@@ -176,5 +177,13 @@ public class DatasourceConfig {
 
     public void setTable(String table) {
         this.table = table;
+    }
+
+    public String getPoolName() {
+        return poolName;
+    }
+
+    public void setPoolName(String poolName) {
+        this.poolName = poolName;
     }
 }
