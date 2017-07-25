@@ -21,8 +21,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface CacheEvict {
-    public static final String DEFAULT_NULL_VALUE = "_nv_";
-
     String name();
 
     String key() default "";

@@ -83,7 +83,10 @@ public class JbootInjectManager implements Module, TypeListener {
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CachePut.class), new JbootCachePutInterceptor());
 
 
-        autoBind(binder);
+        /**
+         * Bean 注解
+         */
+        beanBind(binder);
     }
 
     /**
@@ -91,7 +94,7 @@ public class JbootInjectManager implements Module, TypeListener {
      *
      * @param binder
      */
-    private void autoBind(Binder binder) {
+    private void beanBind(Binder binder) {
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class beanClass : classes) {
             Class<?>[] interfaceClasses = beanClass.getInterfaces();
