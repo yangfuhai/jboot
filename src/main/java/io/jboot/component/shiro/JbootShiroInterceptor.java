@@ -1,37 +1,35 @@
-/**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
- * <p>
- * Licensed under the GNU Lesser General Public License (LGPL) ,Version 3.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.gnu.org/licenses/lgpl-3.0.txt
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.jboot.component.shiro;
-
-import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
-import com.jfinal.config.Routes;
-import com.jfinal.core.ActionKey;
-import com.jfinal.core.Controller;
-import io.jboot.Jboot;
-import io.jboot.component.shiro.processer.*;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StringUtils;
-import org.apache.shiro.authz.annotation.*;
-import org.apache.shiro.util.ThreadContext;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresGuest;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.util.ThreadContext;
+
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
+import com.jfinal.config.Routes;
+import com.jfinal.core.ActionKey;
+import com.jfinal.core.Controller;
+
+import io.jboot.Jboot;
+import io.jboot.component.shiro.processer.AuthorizeResult;
+import io.jboot.component.shiro.processer.ShiroClear;
+import io.jboot.component.shiro.processer.ShiroRequiresAuthenticationProcesser;
+import io.jboot.component.shiro.processer.ShiroRequiresGuestProcesser;
+import io.jboot.component.shiro.processer.ShiroRequiresPermissionsProcesser;
+import io.jboot.component.shiro.processer.ShiroRequiresRolesProcesser;
+import io.jboot.component.shiro.processer.ShiroRequiresUserProcesser;
+import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.StringUtils;
+import io.jboot.web.JbootAppConfig;
 
 /**
  * Shiro 拦截器
@@ -58,54 +56,52 @@ public class JbootShiroInterceptor implements Interceptor {
     private void initInvokers() {
         Set<String> excludedMethodName = buildExcludedMethodName();
 
-        for (Routes routes : Routes.getRoutesList()) {
-            for (Routes.Route route : routes.getRouteItemList()) {
-                Class<? extends Controller> controllerClass = route.getControllerClass();
+        for (Routes.Route route : JbootAppConfig.routes.getRouteItemList()) {
+            Class<? extends Controller> controllerClass = route.getControllerClass();
 
-                String controllerKey = route.getControllerKey();
+            String controllerKey = route.getControllerKey();
 
-                Annotation[] controllerAnnotations = controllerClass.getAnnotations();
+            Annotation[] controllerAnnotations = controllerClass.getAnnotations();
 
-                Method[] methods = controllerClass.getMethods();
-                for (Method method : methods) {
-                    if (excludedMethodName.contains(method.getName()) || method.getParameterTypes().length != 0) {
-                        continue;
-                    }
-
-                    if (method.getAnnotation(ShiroClear.class) != null) {
-                        continue;
-                    }
-
-
-                    Annotation[] methodAnnotations = method.getAnnotations();
-                    Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
-
-
-                    String actionKey = createActionKey(controllerClass, method, controllerKey);
-                    ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
-
-
-                    for (Annotation annotation : allAnnotations) {
-                        if (annotation.annotationType() == RequiresPermissions.class) {
-                            ShiroRequiresPermissionsProcesser processer = new ShiroRequiresPermissionsProcesser((RequiresPermissions) annotation);
-                            invoker.addProcesser(processer);
-                        } else if (annotation.annotationType() == RequiresRoles.class) {
-                            ShiroRequiresRolesProcesser processer = new ShiroRequiresRolesProcesser((RequiresRoles) annotation);
-                            invoker.addProcesser(processer);
-                        } else if (annotation.annotationType() == RequiresUser.class) {
-                            invoker.addProcesser(requiresUserProcesser);
-                        } else if (annotation.annotationType() == RequiresAuthentication.class) {
-                            invoker.addProcesser(requiresAuthenticationProcesser);
-                        } else if (annotation.annotationType() == RequiresGuest.class) {
-                            invoker.addProcesser(requiresGuestProcesser);
-                        }
-                    }
-
-                    if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
-                        invokers.put(actionKey, invoker);
-                    }
-
+            Method[] methods = controllerClass.getMethods();
+            for (Method method : methods) {
+                if (excludedMethodName.contains(method.getName()) || method.getParameterTypes().length != 0) {
+                    continue;
                 }
+
+                if (method.getAnnotation(ShiroClear.class) != null) {
+                    continue;
+                }
+
+
+                Annotation[] methodAnnotations = method.getAnnotations();
+                Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
+
+
+                String actionKey = createActionKey(controllerClass, method, controllerKey);
+                ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
+
+
+                for (Annotation annotation : allAnnotations) {
+                    if (annotation.annotationType() == RequiresPermissions.class) {
+                        ShiroRequiresPermissionsProcesser processer = new ShiroRequiresPermissionsProcesser((RequiresPermissions) annotation);
+                        invoker.addProcesser(processer);
+                    } else if (annotation.annotationType() == RequiresRoles.class) {
+                        ShiroRequiresRolesProcesser processer = new ShiroRequiresRolesProcesser((RequiresRoles) annotation);
+                        invoker.addProcesser(processer);
+                    } else if (annotation.annotationType() == RequiresUser.class) {
+                        invoker.addProcesser(requiresUserProcesser);
+                    } else if (annotation.annotationType() == RequiresAuthentication.class) {
+                        invoker.addProcesser(requiresAuthenticationProcesser);
+                    } else if (annotation.annotationType() == RequiresGuest.class) {
+                        invoker.addProcesser(requiresGuestProcesser);
+                    }
+                }
+
+                if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
+                    invokers.put(actionKey, invoker);
+                }
+
             }
         }
     }
@@ -162,7 +158,7 @@ public class JbootShiroInterceptor implements Interceptor {
         }
         try {
             doIntercept(inv);
-        } finally {
+        } catch (Exception e) {
             ThreadContext.unbindSubject();
         }
 
