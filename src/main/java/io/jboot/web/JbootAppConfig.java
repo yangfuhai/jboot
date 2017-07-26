@@ -31,6 +31,7 @@ import io.jboot.Jboot;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.shiro.JbootShiroInterceptor;
+import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
@@ -202,6 +203,7 @@ public class JbootAppConfig extends JFinalConfig {
          */
         JbootMetricsManager.me().init();
         JbootrpcManager.me().init();
+        JbootShiroManager.me().init();
 
         /**
          * 发送启动完成通知

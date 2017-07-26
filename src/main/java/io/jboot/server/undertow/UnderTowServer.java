@@ -113,6 +113,15 @@ public class UnderTowServer extends JbootServer {
                 .setEagerFilterInit(true); //设置启动的时候，初始化servlet或filter
 
 
+        JbootShiroConfig shiroConfig = Jboot.config(JbootShiroConfig.class);
+        if (shiroConfig.isConfigOK()) {
+            deploymentInfo.addListeners(Servlets.listener(EnvironmentLoaderListener.class));
+            deploymentInfo.addFilter(
+                    Servlets.filter("shiro", ShiroFilter.class))
+                    .addFilterUrlMapping("shiro", "/*", DispatcherType.REQUEST);
+        }
+
+
         deploymentInfo.addFilter(
                 Servlets.filter("jboot", JFinalFilter.class)
                         .addInitParam("configClass", Jboot.me().getJbootConfig().getJfinalConfig()))
@@ -137,14 +146,6 @@ public class UnderTowServer extends JbootServer {
             deploymentInfo.addListeners(Servlets.listener(JbootHealthCheckServletContextListener.class));
         }
 
-
-        JbootShiroConfig shiroConfig = Jboot.config(JbootShiroConfig.class);
-        if (shiroConfig.isConfigOK()) {
-            deploymentInfo.addListeners(Servlets.listener(EnvironmentLoaderListener.class));
-            deploymentInfo.addFilter(
-                    Servlets.filter("shiro", ShiroFilter.class))
-                    .addFilterUrlMapping("shiro", "/*", DispatcherType.REQUEST);
-        }
 
         deploymentInfo.addServlets(
                 Servlets.servlet("JbootResourceServlet", JbootResourceServlet.class)

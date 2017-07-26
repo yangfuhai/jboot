@@ -17,21 +17,11 @@ package io.jboot.component.shiro;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.config.Routes;
-import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
-import io.jboot.component.shiro.processer.*;
-import io.jboot.utils.ArrayUtils;
+import io.jboot.component.shiro.processer.AuthorizeResult;
 import io.jboot.utils.StringUtils;
-import org.apache.shiro.authz.annotation.*;
 import org.apache.shiro.util.ThreadContext;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Shiro 拦截器
@@ -39,119 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JbootShiroInterceptor implements Interceptor {
 
 
-    private ConcurrentHashMap<String, ShiroAuthorizeProcesserInvoker> invokers = new ConcurrentHashMap<>();
     private JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
-
-
-    private ShiroRequiresAuthenticationProcesser requiresAuthenticationProcesser = new ShiroRequiresAuthenticationProcesser();
-    private ShiroRequiresUserProcesser requiresUserProcesser = new ShiroRequiresUserProcesser();
-    private ShiroRequiresGuestProcesser requiresGuestProcesser = new ShiroRequiresGuestProcesser();
-
-
-    public JbootShiroInterceptor() {
-        initInvokers();
-    }
-
-    /**
-     * 初始化 invokers 变量
-     */
-    private void initInvokers() {
-        Set<String> excludedMethodName = buildExcludedMethodName();
-
-        for (Routes routes : Routes.getRoutesList()) {
-            for (Routes.Route route : routes.getRouteItemList()) {
-                Class<? extends Controller> controllerClass = route.getControllerClass();
-
-                String controllerKey = route.getControllerKey();
-
-                Annotation[] controllerAnnotations = controllerClass.getAnnotations();
-
-                Method[] methods = controllerClass.getMethods();
-                for (Method method : methods) {
-                    if (excludedMethodName.contains(method.getName()) || method.getParameterTypes().length != 0) {
-                        continue;
-                    }
-
-                    if (method.getAnnotation(ShiroClear.class) != null) {
-                        continue;
-                    }
-
-
-                    Annotation[] methodAnnotations = method.getAnnotations();
-                    Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
-
-
-                    String actionKey = createActionKey(controllerClass, method, controllerKey);
-                    ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
-
-
-                    for (Annotation annotation : allAnnotations) {
-                        if (annotation.annotationType() == RequiresPermissions.class) {
-                            ShiroRequiresPermissionsProcesser processer = new ShiroRequiresPermissionsProcesser((RequiresPermissions) annotation);
-                            invoker.addProcesser(processer);
-                        } else if (annotation.annotationType() == RequiresRoles.class) {
-                            ShiroRequiresRolesProcesser processer = new ShiroRequiresRolesProcesser((RequiresRoles) annotation);
-                            invoker.addProcesser(processer);
-                        } else if (annotation.annotationType() == RequiresUser.class) {
-                            invoker.addProcesser(requiresUserProcesser);
-                        } else if (annotation.annotationType() == RequiresAuthentication.class) {
-                            invoker.addProcesser(requiresAuthenticationProcesser);
-                        } else if (annotation.annotationType() == RequiresGuest.class) {
-                            invoker.addProcesser(requiresGuestProcesser);
-                        }
-                    }
-
-                    if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
-                        invokers.put(actionKey, invoker);
-                    }
-
-                }
-            }
-        }
-    }
-
-
-    private static String SLASH = "/";
-
-    /**
-     * 参考ActionMapping中的实现。
-     *
-     * @param controllerClass
-     * @param method
-     * @param controllerKey
-     * @return
-     */
-
-    private String createActionKey(Class<? extends Controller> controllerClass,
-                                   Method method, String controllerKey) {
-        String methodName = method.getName();
-        String actionKey;
-
-        ActionKey ak = method.getAnnotation(ActionKey.class);
-        if (ak != null) {
-            actionKey = ak.value().trim();
-            if ("".equals(actionKey))
-                throw new IllegalArgumentException(controllerClass.getName() + "." + methodName + "(): The argument of ActionKey can not be blank.");
-            if (!actionKey.startsWith(SLASH))
-                actionKey = SLASH + actionKey;
-        } else if (methodName.equals("index")) {
-            actionKey = controllerKey;
-        } else {
-            actionKey = controllerKey.equals(SLASH) ? SLASH + methodName : controllerKey + SLASH + methodName;
-        }
-        return actionKey;
-    }
-
-
-    private Set<String> buildExcludedMethodName() {
-        Set<String> excludedMethodName = new HashSet<String>();
-        Method[] methods = Controller.class.getMethods();
-        for (Method m : methods) {
-            if (m.getParameterTypes().length == 0)
-                excludedMethodName.add(m.getName());
-        }
-        return excludedMethodName;
-    }
 
 
     @Override
@@ -169,13 +47,8 @@ public class JbootShiroInterceptor implements Interceptor {
     }
 
     private void doIntercept(Invocation inv) {
-        ShiroAuthorizeProcesserInvoker invoker = invokers.get(inv.getActionKey());
-        if (invoker == null) {
-            inv.invoke();
-            return;
-        }
 
-        AuthorizeResult result = invoker.invoke();
+        AuthorizeResult result = JbootShiroManager.me().invoke(inv.getActionKey());
 
         if (result.isOk()) {
             inv.invoke();

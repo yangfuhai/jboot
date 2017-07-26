@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Shiro 认证处理器 执行者，用于对
+ * Shiro 认证处理器 执行者
+ * <p>
+ * 它是对 IShiroAuthorizeProcesser 的几个集合处理
  */
 public class ShiroAuthorizeProcesserInvoker {
 
