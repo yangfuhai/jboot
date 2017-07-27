@@ -63,7 +63,7 @@ public class JbootProperties {
         }
 
         Prop prop = getJbootProp();
-        if (StringUtils.isNotBlank(propertieConfig.file())) {
+        if (propertieConfig != null && StringUtils.isNotBlank(propertieConfig.file())) {
             Prop configProp = PropKit.use(propertieConfig.file());
             prop.getProperties().putAll(configProp.getProperties());
         }
