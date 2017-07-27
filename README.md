@@ -63,12 +63,12 @@ jboot.mq.redis.database =
 
 server a sendMqMessage
 ```java
- Jboot.getMq().publish(yourObject, toChannel);
+ Jboot.me().getMq().publish(yourObject, toChannel);
 ```
 
 server b message listener
 ```java
-Jboot.getMq().addMessageListener(new JbootmqMessageListener(){
+Jboot.me().getMq().addMessageListener(new JbootmqMessageListener(){
         @Override
         public void onMessage(String channel, Object obj) {
            System.out.println(obj);
@@ -196,7 +196,7 @@ public class UserDao extends JbootDaoBase {
 
 send event
 ```java
-Jboot.sendEvent(actionStr,  dataObj)
+Jboot.me().sendEvent(actionStr,  dataObj)
 ```
 
 event listener
