@@ -53,6 +53,7 @@ import io.jboot.wechat.JbootWechatConfig;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -60,7 +61,7 @@ import java.util.List;
 public class JbootAppConfig extends JFinalConfig {
 
     static final Log log = Log.getLog(JbootAppConfig.class);
-    private Routes routes;
+    private List<Routes.Route> routeList = new ArrayList<>();
 
 
     @Override
@@ -107,7 +108,8 @@ public class JbootAppConfig extends JFinalConfig {
         }
 
         JbootAppListenerManager.me().onJfinalRouteConfig(routes);
-        this.routes = routes;
+
+        routeList.addAll(routes.getRouteItemList());
     }
 
     @Override
@@ -204,7 +206,7 @@ public class JbootAppConfig extends JFinalConfig {
          */
         JbootMetricsManager.me().init();
         JbootrpcManager.me().init();
-        JbootShiroManager.me().init(routes);
+        JbootShiroManager.me().init(routeList);
 
         /**
          * 发送启动完成通知

@@ -25,6 +25,7 @@ import org.apache.shiro.authz.annotation.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,21 +50,18 @@ public class JbootShiroManager {
     private ShiroRequiresUserProcesser requiresUserProcesser = new ShiroRequiresUserProcesser();
     private ShiroRequiresGuestProcesser requiresGuestProcesser = new ShiroRequiresGuestProcesser();
 
-    private Routes routes;
 
-
-    public void init(Routes routes) {
-        this.routes = routes;
-        initInvokers();
+    public void init(List<Routes.Route> routes) {
+        initInvokers(routes);
     }
 
     /**
      * 初始化 invokers 变量
      */
-    private void initInvokers() {
+    private void initInvokers(List<Routes.Route> routes) {
         Set<String> excludedMethodName = buildExcludedMethodName();
 
-        for (Routes.Route route : routes.getRouteItemList()) {
+        for (Routes.Route route : routes) {
             Class<? extends Controller> controllerClass = route.getControllerClass();
 
             String controllerKey = route.getControllerKey();
