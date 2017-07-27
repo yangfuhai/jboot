@@ -115,7 +115,7 @@ consul -agent dev
 
 server b call
 ```java
- HelloService service = Jboot.service(HelloService.class);
+ HelloService service = Jboot.me().service(HelloService.class);
  service.hello("michael");
 ```
 
@@ -146,7 +146,7 @@ jboot.cache.redis.database =
 
 use cache
 ```java
-Jboot.getCache().put("cacheName", "key", "value");
+Jboot.me().getCache().put("cacheName", "key", "value");
 ```
 
 # database access example
@@ -237,7 +237,7 @@ public class MyConfig {
 
 get config model
 ```java
-    MyConfig config = Jboot.config(MyConfig.class);
+    MyConfig config = Jboot.me().config(MyConfig.class);
     System.out.println(config.getName());
 ```
 
