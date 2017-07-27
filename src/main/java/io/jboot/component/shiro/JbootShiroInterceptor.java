@@ -21,7 +21,6 @@ import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.component.shiro.processer.AuthorizeResult;
 import io.jboot.utils.StringUtils;
-import org.apache.shiro.util.ThreadContext;
 
 /**
  * Shiro 拦截器
@@ -38,19 +37,10 @@ public class JbootShiroInterceptor implements Interceptor {
             inv.invoke();
             return;
         }
-        try {
-            doIntercept(inv);
-        } finally {
-            ThreadContext.unbindSubject();
-        }
-
-    }
-
-    private void doIntercept(Invocation inv) {
 
         AuthorizeResult result = JbootShiroManager.me().invoke(inv.getActionKey());
 
-        if (result.isOk()) {
+        if (result == null || result.isOk()) {
             inv.invoke();
             return;
         }
