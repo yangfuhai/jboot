@@ -15,13 +15,33 @@
  */
 package io.jboot.component.redis;
 
-import com.jfinal.plugin.redis.Redis;
 import io.jboot.Jboot;
 
 /**
  * Created by michael.
  * <p>
  * Redis 分布式锁
+ * <p>
+ * 使用方法：
+ * <p>
+ * JbootRedisLock lock = new JbootRedisLock("lockName");
+ * try{
+ * boolean acquire = lock.acquire();
+ * if(acquire){
+ * // do your something
+ * }
+ * }finally {
+ * lock.release();
+ * }
+ * <p>
+ * 使用方法2：
+ * JbootRedisLock lock = new JbootRedisLock("lockName");
+ * lock.runIfAcquired(new Runnable(){
+ *
+ * @Override public void run() {
+ * //do your something
+ * }
+ * });
  */
 public class JbootRedisLock {
 
@@ -44,6 +64,20 @@ public class JbootRedisLock {
         }
         this.lockName = lockName;
         this.timeoutMsecs = timeoutMsecs;
+    }
+
+
+    public void runIfAcquired(Runnable runnable) {
+        if (runnable == null) {
+            throw new NullPointerException("runnable must not null!");
+        }
+        try {
+            if (acquire()) {
+                runnable.run();
+            }
+        } finally {
+            release();
+        }
     }
 
 
@@ -92,7 +126,6 @@ public class JbootRedisLock {
             }
 
         } while (timeout > 0);
-
         return false;
     }
 
@@ -110,7 +143,10 @@ public class JbootRedisLock {
      * 释放 锁
      */
     public void release() {
-        if (Redis.use().del(lockName) > 0) {
+        if (!isLocked()) {
+            return;
+        }
+        if (Jboot.me().getRedis().del(lockName) > 0) {
             locked = false;
         }
     }
