@@ -44,13 +44,16 @@ public class JbootShiroManager {
 
     private static final String SLASH = "/";
     private ConcurrentHashMap<String, ShiroAuthorizeProcesserInvoker> invokers = new ConcurrentHashMap<>();
-    
+
     private ShiroRequiresAuthenticationProcesser requiresAuthenticationProcesser = new ShiroRequiresAuthenticationProcesser();
     private ShiroRequiresUserProcesser requiresUserProcesser = new ShiroRequiresUserProcesser();
     private ShiroRequiresGuestProcesser requiresGuestProcesser = new ShiroRequiresGuestProcesser();
 
+    private Routes routes;
 
-    public void init() {
+
+    public void init(Routes routes) {
+        this.routes = routes;
         initInvokers();
     }
 
@@ -60,54 +63,52 @@ public class JbootShiroManager {
     private void initInvokers() {
         Set<String> excludedMethodName = buildExcludedMethodName();
 
-        for (Routes routes : Routes.getRoutesList()) {
-            for (Routes.Route route : routes.getRouteItemList()) {
-                Class<? extends Controller> controllerClass = route.getControllerClass();
+        for (Routes.Route route : routes.getRouteItemList()) {
+            Class<? extends Controller> controllerClass = route.getControllerClass();
 
-                String controllerKey = route.getControllerKey();
+            String controllerKey = route.getControllerKey();
 
-                Annotation[] controllerAnnotations = controllerClass.getAnnotations();
+            Annotation[] controllerAnnotations = controllerClass.getAnnotations();
 
-                Method[] methods = controllerClass.getMethods();
-                for (Method method : methods) {
-                    if (excludedMethodName.contains(method.getName()) || method.getParameterTypes().length != 0) {
-                        continue;
-                    }
-
-                    if (method.getAnnotation(ShiroClear.class) != null) {
-                        continue;
-                    }
-
-
-                    Annotation[] methodAnnotations = method.getAnnotations();
-                    Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
-
-
-                    String actionKey = createActionKey(controllerClass, method, controllerKey);
-                    ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
-
-
-                    for (Annotation annotation : allAnnotations) {
-                        if (annotation.annotationType() == RequiresPermissions.class) {
-                            ShiroRequiresPermissionsProcesser processer = new ShiroRequiresPermissionsProcesser((RequiresPermissions) annotation);
-                            invoker.addProcesser(processer);
-                        } else if (annotation.annotationType() == RequiresRoles.class) {
-                            ShiroRequiresRolesProcesser processer = new ShiroRequiresRolesProcesser((RequiresRoles) annotation);
-                            invoker.addProcesser(processer);
-                        } else if (annotation.annotationType() == RequiresUser.class) {
-                            invoker.addProcesser(requiresUserProcesser);
-                        } else if (annotation.annotationType() == RequiresAuthentication.class) {
-                            invoker.addProcesser(requiresAuthenticationProcesser);
-                        } else if (annotation.annotationType() == RequiresGuest.class) {
-                            invoker.addProcesser(requiresGuestProcesser);
-                        }
-                    }
-
-                    if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
-                        invokers.put(actionKey, invoker);
-                    }
-
+            Method[] methods = controllerClass.getMethods();
+            for (Method method : methods) {
+                if (excludedMethodName.contains(method.getName()) || method.getParameterTypes().length != 0) {
+                    continue;
                 }
+
+                if (method.getAnnotation(ShiroClear.class) != null) {
+                    continue;
+                }
+
+
+                Annotation[] methodAnnotations = method.getAnnotations();
+                Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
+
+
+                String actionKey = createActionKey(controllerClass, method, controllerKey);
+                ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
+
+
+                for (Annotation annotation : allAnnotations) {
+                    if (annotation.annotationType() == RequiresPermissions.class) {
+                        ShiroRequiresPermissionsProcesser processer = new ShiroRequiresPermissionsProcesser((RequiresPermissions) annotation);
+                        invoker.addProcesser(processer);
+                    } else if (annotation.annotationType() == RequiresRoles.class) {
+                        ShiroRequiresRolesProcesser processer = new ShiroRequiresRolesProcesser((RequiresRoles) annotation);
+                        invoker.addProcesser(processer);
+                    } else if (annotation.annotationType() == RequiresUser.class) {
+                        invoker.addProcesser(requiresUserProcesser);
+                    } else if (annotation.annotationType() == RequiresAuthentication.class) {
+                        invoker.addProcesser(requiresAuthenticationProcesser);
+                    } else if (annotation.annotationType() == RequiresGuest.class) {
+                        invoker.addProcesser(requiresGuestProcesser);
+                    }
+                }
+
+                if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
+                    invokers.put(actionKey, invoker);
+                }
+
             }
         }
     }

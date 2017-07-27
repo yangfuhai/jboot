@@ -60,6 +60,7 @@ import java.util.List;
 public class JbootAppConfig extends JFinalConfig {
 
     static final Log log = Log.getLog(JbootAppConfig.class);
+    private Routes routes;
 
 
     @Override
@@ -103,10 +104,10 @@ public class JbootAppConfig extends JFinalConfig {
             } else {
                 routes.add(mapping.value(), clazz);
             }
-
         }
 
         JbootAppListenerManager.me().onJfinalRouteConfig(routes);
+        this.routes = routes;
     }
 
     @Override
@@ -203,7 +204,7 @@ public class JbootAppConfig extends JFinalConfig {
          */
         JbootMetricsManager.me().init();
         JbootrpcManager.me().init();
-        JbootShiroManager.me().init();
+        JbootShiroManager.me().init(routes);
 
         /**
          * 发送启动完成通知
