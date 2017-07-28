@@ -38,7 +38,7 @@ import io.jboot.Jboot;
  * JbootRedisLock lock = new JbootRedisLock("lockName");
  * lock.runIfAcquired(new Runnable(){
  *
- * @Override public void run() {
+ * public void run() {
  * //do your something
  * }
  * });
