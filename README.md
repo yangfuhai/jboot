@@ -19,7 +19,7 @@ https://github.com/yangfuhai/jbootdemo
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.0-beta1</version>
+    <version>1.0-beta2</version>
 </dependency>
 
 ```
@@ -56,7 +56,7 @@ config jboot.properties
 ```java
 #type default redis (support: redis,activemq,rabbitmq,hornetq,aliyunmq )
 jboot.mq.type = redis
-jboot.mq.redis.address = 127.0.0.1
+jboot.mq.redis.host = 127.0.0.1
 jboot.mq.redis.password =
 jboot.mq.redis.database =
 ```
@@ -139,7 +139,7 @@ config jboot.properties
 ```java
 #type default ehcache (support:ehcache,redis,ehredis (ehredis:tow level cache,ehcache level one and redis level tow))
 jboot.cache.type = redis
-jboot.cache.redis.address =
+jboot.cache.redis.host =
 jboot.cache.redis.password =
 jboot.cache.redis.database =
 ```

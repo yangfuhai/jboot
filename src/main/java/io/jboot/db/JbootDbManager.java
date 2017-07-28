@@ -62,6 +62,7 @@ public class JbootDbManager {
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig.getName(), datasourceConfig.getTable(), dsBuilder.build());
                 activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
                 activeRecordPlugin.setCache(Jboot.me().getCache());
+
                 initActiveRecordPluginDialect(activeRecordPlugin, datasourceConfig);
 
                 activeRecordPlugins.add(activeRecordPlugin);
