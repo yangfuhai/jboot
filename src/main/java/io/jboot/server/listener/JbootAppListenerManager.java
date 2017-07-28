@@ -43,12 +43,12 @@ public class JbootAppListenerManager implements JbootAppListener {
             return;
         }
 
-        for (Class clazz : allListeners) {
+        for (Class<? extends JbootAppListener> clazz : allListeners) {
             if (JbootAppListenerManager.class == clazz || JbootAppListenerBase.class == clazz) {
                 continue;
             }
 
-            JbootAppListener listener = ClassNewer.newInstance(JbootAppListener.class);
+            JbootAppListener listener = ClassNewer.newInstance(clazz);
             if (listener != null) {
                 listeners.add(listener);
             }
