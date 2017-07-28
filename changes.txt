@@ -1,3 +1,15 @@
+jboot-1.0-beta2:
+1、修复jboot shiro模块的相关bug，可以愉快的在项目中使用shiro了，而且可能是jfinal的shiro支持中最好用的一个。感谢@zhoujh
+2、修复无法实例化JbootDbManager的bug。
+3、修复JbootRedisLock基于Redis的分布式锁release出错的bug。
+
+4、新增datasource poolName的配置支持。
+5、新增多数据源的支持，非常非常简单的在Jfinal中使用多数据源。
+6、新增CacheEvict和CachePut两个注解，方便通过配置设置缓存。
+7、新增JbootAppListener监听器，方便监听Jboot和Jfinal的启动状态，对自己的程序进行初始化等工作。
+8、新增Jfinal sql template 配置的支持，只需在jboot.properties进行配置，无需一行代码。
+
+
 jboot-1.0-beta1:
 1、重构shiro模块，使其支持shiro.ini配置，方便其他项目迁移。
 2、新增JbootRedisLock基于redis的分布式锁。
