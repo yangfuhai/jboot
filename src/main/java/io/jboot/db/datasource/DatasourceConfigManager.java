@@ -45,7 +45,7 @@ public class DatasourceConfigManager {
         for (Map.Entry<Object, Object> entry : prop.getProperties().entrySet()) {
             String key = entry.getKey().toString();
             if (key.startsWith("jboot.datasource.") && entry.getValue() != null) {
-                String[] keySplits = key.split(".");
+                String[] keySplits = key.split("\\.");
                 if (keySplits.length == 4) {
                     datasourceNames.add(keySplits[2]);
                 }
