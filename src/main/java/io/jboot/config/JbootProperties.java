@@ -39,32 +39,48 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JbootProperties {
 
 
-    private static ConcurrentHashMap<Class, Object> configs = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, Object> configs = new ConcurrentHashMap<>();
     private static Prop jbootProp;
     public static final Log log = Log.getLog(JbootProperties.class);
 
     public static <T> T get(Class<T> clazz) {
-        return get(null, clazz);
+        PropertieConfig propertieConfig = clazz.getAnnotation(PropertieConfig.class);
+        if (propertieConfig == null) {
+            throw new JbootException("PropertieConfig annotation must not be null in class : " + clazz);
+        }
+
+        return get(propertieConfig.prefix(), propertieConfig.file(), clazz);
     }
 
     public static <T> T get(String prefix, Class<T> clazz) {
+        return get(prefix, null, clazz);
+    }
 
-        Object obj = configs.get(clazz);
+    /**
+     * 获取配置信息，并创建和赋值clazz实例
+     *
+     * @param prefix      配置文件前缀
+     * @param extPropFile 除了jboot.properties文件以外的扩展文件，并优先读取扩展文件
+     * @param clazz       指定的类
+     * @param <T>
+     * @return 返回对于类的实例
+     **/
+    public static <T> T get(String prefix, String extPropFile, Class<T> clazz) {
+        if (StringUtils.isBlank(prefix)) {
+            throw new JbootException("prefix must not be null");
+        }
+
+        Object obj = configs.get(prefix);
         if (obj != null) {
             return (T) obj;
         }
 
         obj = ClassNewer.newInstance(clazz);
 
-        PropertieConfig propertieConfig = clazz.getAnnotation(PropertieConfig.class);
-
-        if (propertieConfig != null && StringUtils.isNotBlank(propertieConfig.prefix())) {
-            prefix = propertieConfig.prefix();
-        }
 
         Prop prop = getJbootProp();
-        if (propertieConfig != null && StringUtils.isNotBlank(propertieConfig.file())) {
-            Prop configProp = PropKit.use(propertieConfig.file());
+        if (extPropFile != null) {
+            Prop configProp = PropKit.use(extPropFile);
             prop.getProperties().putAll(configProp.getProperties());
         }
 
@@ -95,7 +111,6 @@ public class JbootProperties {
                 }
 
                 if (StringUtils.isNotBlank(value)) {
-
                     Object val = convert(method.getParameterTypes()[0], value);
                     method.invoke(obj, val);
                 }
@@ -104,7 +119,7 @@ public class JbootProperties {
             }
         }
 
-        configs.put(clazz, obj);
+        configs.put(prefix, obj);
 
         return (T) obj;
     }
