@@ -20,6 +20,8 @@ import com.jfinal.aop.Invocation;
 import io.jboot.exception.JbootException;
 import org.aopalliance.intercept.MethodInvocation;
 
+import java.lang.reflect.Method;
+
 
 public class JFinalBeforeInvocation extends Invocation {
 
@@ -48,5 +50,22 @@ public class JFinalBeforeInvocation extends Invocation {
             }
         }
     }
+
+
+    @Override
+    public Method getMethod() {
+        return methodInvocation.getMethod();
+    }
+
+    @Override
+    public String getMethodName() {
+        return getMethod().getName();
+    }
+
+    @Override
+    public <T> T getTarget() {
+        return (T) methodInvocation.getThis();
+    }
+
 
 }
