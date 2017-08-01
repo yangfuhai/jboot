@@ -22,6 +22,9 @@ import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
 import io.jboot.core.rpc.JbootrpcConfig;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 public class JbootMotanrpc extends JbootrpcBase {
 
@@ -29,6 +32,8 @@ public class JbootMotanrpc extends JbootrpcBase {
     private RegistryConfig registryConfig;
     private ProtocolConfig protocolConfig;
     private JbootrpcConfig jbootrpcConfig;
+
+    private static final Map<String, Object> singletons = new ConcurrentHashMap<>();
 
     public JbootMotanrpc() {
 
@@ -55,6 +60,14 @@ public class JbootMotanrpc extends JbootrpcBase {
 
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
+
+        String key = String.format("%s:%s", serviceClass.getName(), version);
+
+        T object = (T) singletons.get(key);
+        if (object != null) {
+            return object;
+        }
+
         RefererConfig<T> refererConfig = new RefererConfig<T>();
 
         // 设置接口及实现类
@@ -66,7 +79,12 @@ public class JbootMotanrpc extends JbootrpcBase {
         refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOutAsInt());
         initConfig(refererConfig);
 
-        return refererConfig.getRef();
+        object = refererConfig.getRef();
+
+        if (object != null) {
+            singletons.put(key, object);
+        }
+        return object;
     }
 
 
