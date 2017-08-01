@@ -246,13 +246,7 @@ get config model
   public static void main(String[] args) {
 
         String modelPackage = "io.jboot.test";
-
-        String dbHost = "127.0.0.1";
-        String dbName = "yourDbName";
-        String dbUser = "root";
-        String dbPassword = "";
-
-        JbootModelGenerator.run(modelPackage, dbHost, dbName, dbUser, dbPassword);
+        JbootModelGenerator.run(modelPackage);
 
     }
 ```
