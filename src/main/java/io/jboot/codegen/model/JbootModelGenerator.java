@@ -18,7 +18,11 @@ package io.jboot.codegen.model;
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
-import io.jboot.codegen.GenDatasourceBuilder;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import io.jboot.Jboot;
+import io.jboot.config.JbootProperties;
+import io.jboot.db.datasource.DatasourceConfig;
 
 import java.util.List;
 
@@ -27,38 +31,25 @@ public class JbootModelGenerator {
 
     public static void main(String[] args) {
 
+        Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
+        Jboot.setBootArg("jboot.datasource.user", "root");
+
+
         String modelPackage = "io.jboot.codegen.test";
-
-        String dbHost = "127.0.0.1";
-        String dbName = "jbootdemo";
-        String dbUser = "root";
-        String dbPassword = "";
-
-        run(modelPackage, dbHost, dbName, dbUser, dbPassword);
-
+        run(modelPackage);
     }
 
 
-    public static void run(String modelPackage, String dbHost, String dbName, String dbUser, String dbPassword) {
-        new JbootModelGenerator(modelPackage, dbHost, dbName, dbUser, dbPassword).doGenerate();
+    public static void run(String modelPackage) {
+        new JbootModelGenerator(modelPackage).doGenerate();
     }
 
 
     private final String basePackage;
-    private final String dbHost;
-    private final String dbName;
-    private final String dbUser;
-    private final String dbPassword;
 
 
-    public JbootModelGenerator(String basePackage, String dbHost, String dbName,
-                               String dbUser, String dbPassword) {
-
+    public JbootModelGenerator(String basePackage) {
         this.basePackage = basePackage;
-        this.dbHost = dbHost;
-        this.dbName = dbName;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
     }
 
 
@@ -73,8 +64,21 @@ public class JbootModelGenerator {
         System.out.println("start generate...");
         System.out.println("generate dir:" + modelDir);
 
+        DatasourceConfig datasourceConfig = JbootProperties.get("jboot.datasource", DatasourceConfig.class);
 
-        List<TableMeta> tableMetaList = new MetaBuilder(new GenDatasourceBuilder(dbHost,dbName,dbUser,dbPassword).build()).build();
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(datasourceConfig.getUrl());
+        config.setUsername(datasourceConfig.getUser());
+        config.setPassword(datasourceConfig.getPassword());
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.setDriverClassName("com.mysql.jdbc.Driver");
+
+        HikariDataSource dataSource = new HikariDataSource(config);
+
+
+        List<TableMeta> tableMetaList = new MetaBuilder(dataSource).build();
 
         new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
         new JbootModelnfoGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
@@ -82,7 +86,6 @@ public class JbootModelGenerator {
         System.out.println("generate finished !!!");
 
     }
-
 
 
 }

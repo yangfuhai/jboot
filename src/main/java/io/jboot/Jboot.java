@@ -133,7 +133,6 @@ public class Jboot {
      */
     public void start() {
 
-
         printBannerInfo();
         printJbootConfigInfo();
         printServerConfigInfo();

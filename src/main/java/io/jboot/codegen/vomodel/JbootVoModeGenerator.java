@@ -19,7 +19,11 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.generator.BaseModelGenerator;
 import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
-import io.jboot.codegen.GenDatasourceBuilder;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import io.jboot.Jboot;
+import io.jboot.config.JbootProperties;
+import io.jboot.db.datasource.DatasourceConfig;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,58 +35,22 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
 
     public static void main(String[] args) {
 
+        Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
+        Jboot.setBootArg("jboot.datasource.user", "root");
+
         String modelPackage = "io.jboot.codegen.vomodel.test";
-
-        String dbHost = "127.0.0.1";
-        String dbName = "motan";
-        String dbUser = "root";
-        String dbPassword = "";
-
-        run(modelPackage, dbHost, dbName, dbUser, dbPassword);
+        run(modelPackage);
 
     }
 
-    public static void run(String voModelPackage, String dbHost, String dbName, String dbUser, String dbPassword) {
-        new JbootVoModeGenerator(voModelPackage, dbHost, dbName, dbUser, dbPassword).doGenerate();
+    public static void run(String voModelPackage) {
+        new JbootVoModeGenerator(voModelPackage).doGenerate();
     }
 
-//    private final String basePackage;
-    private final String dbHost;
-    private final String dbName;
-    private final String dbUser;
-    private final String dbPassword;
 
-
-    public JbootVoModeGenerator(String basePackage, String dbHost, String dbName,
-                                String dbUser, String dbPassword) {
+    public JbootVoModeGenerator(String basePackage) {
         super(basePackage, PathKit.getWebRootPath() + "/src/main/java/" + basePackage.replace(".", "/"));
 
-//        this.basePackage = basePackage;
-        this.dbHost = dbHost;
-        this.dbName = dbName;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
-
-        init();
-    }
-
-
-    public void doGenerate() {
-
-
-        System.out.println("start generate...");
-
-        List<TableMeta> tableMetaList = new MetaBuilder(new GenDatasourceBuilder(dbHost,dbName,dbUser,dbPassword).build()).build();
-
-        generate(tableMetaList);
-
-        System.out.println("generate finished !!!");
-
-    }
-
-
-
-    public void init() {
 
         this.packageTemplate = "%n"
                 + "package %s;%n%n";
@@ -98,19 +66,36 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
 
 
         this.importTemplate = "import io.jboot.db.model.JbootVoModel;%n%n";
+    }
 
-//        this.setterTemplate =
-//                "\tpublic void %s(%s %s) {%n" +
-//                        "\t\tthis.%s = %s;%n" +
-//                        "\t}%n%n";
-//
-//        this.getterTemplate =
-//                "\tpublic %s %s() {%n" +
-//                        "\t\treturn %s;%n" +
-//                        "\t}%n%n";
 
+    public void doGenerate() {
+
+
+        System.out.println("start generate...");
+
+
+        DatasourceConfig datasourceConfig = JbootProperties.get("jboot.datasource", DatasourceConfig.class);
+
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(datasourceConfig.getUrl());
+        config.setUsername(datasourceConfig.getUser());
+        config.setPassword(datasourceConfig.getPassword());
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.setDriverClassName("com.mysql.jdbc.Driver");
+
+        HikariDataSource dataSource = new HikariDataSource(config);
+
+        List<TableMeta> tableMetaList = new MetaBuilder(dataSource).build();
+
+        generate(tableMetaList);
+
+        System.out.println("generate finished !!!");
 
     }
+
 
     @Override
     protected void genClassDefine(TableMeta tableMeta, StringBuilder ret) {
@@ -118,39 +103,6 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
                 tableMeta.modelName + "Vo"));
     }
 
-//    @Override
-//    protected void genBaseModelContent(TableMeta tableMeta) {
-//        StringBuilder ret = new StringBuilder();
-//        genPackage(ret);
-//        genImport(ret);
-//        genClassDefine(tableMeta, ret);
-////        for (ColumnMeta columnMeta : tableMeta.columnMetas) {
-////            ret.append(String.format("\tprivate %s %s;\n", columnMeta.javaType, columnMeta.attrName));
-////        }
-////        ret.append(String.format("%n%n"));
-//        for (ColumnMeta columnMeta : tableMeta.columnMetas) {
-//            genSetMethodName(columnMeta, ret);
-//            genGetMethodName(columnMeta, ret);
-//        }
-//        ret.append(String.format("}%n"));
-//        tableMeta.baseModelContent = ret.toString();
-//    }
-
-//    protected void genSetMethodName(ColumnMeta columnMeta, StringBuilder ret) {
-//        String setterMethodName = "set" + StrKit.firstCharToUpperCase(columnMeta.attrName);
-//        // 如果 setter 参数名为 java 语言关键字，则添加下划线前缀 "_"
-//        String argName = javaKeyword.contains(columnMeta.attrName) ? "_" + columnMeta.attrName : columnMeta.attrName;
-//        String template = generateChainSetter ? setterChainTemplate : setterTemplate;
-//        String setter = String.format(template, setterMethodName, columnMeta.javaType, argName, argName, argName);
-//        ret.append(setter);
-//    }
-//
-//    protected void genGetMethodName(ColumnMeta columnMeta, StringBuilder ret) {
-//        String getterMethodName = "get" + StrKit.firstCharToUpperCase(columnMeta.attrName);
-//        String argName = javaKeyword.contains(columnMeta.attrName) ? "_" + columnMeta.attrName : columnMeta.attrName;
-//        String getter = String.format(getterTemplate, columnMeta.javaType, getterMethodName, argName);
-//        ret.append(getter);
-//    }
 
     /**
      * base model 覆盖写入
