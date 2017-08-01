@@ -19,7 +19,7 @@ https://github.com/yangfuhai/jbootdemo
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.0-beta2</version>
+    <version>1.0-beta3</version>
 </dependency>
 
 ```
