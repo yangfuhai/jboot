@@ -114,7 +114,7 @@
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-core</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-transport-netty</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-registry-consul</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -384,6 +384,7 @@
     <profiles>
         <profile>
             <!-- mvn deploy -Dmaven.test.skip=true -e -P release  -->
+            <!-- mvn deploy -e -P release  -->
             <id>release</id>
             <build>
                 <plugins>
