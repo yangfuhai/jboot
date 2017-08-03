@@ -77,6 +77,8 @@ public class MyStarter{
 
 ## @RquestMapping
 
+## render
+
 #安全控制 
 ## shiro
 
