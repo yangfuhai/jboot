@@ -24,7 +24,7 @@ public class JbootEhredisMessage implements Serializable {
     public static final int ACTION_REMOVE = 2;
     public static final int ACTION_REMOVE_ALL = 3;
 
-    private String id;
+    private String clientId;
     private int action;
     private String cacheName;
     private Object key;
@@ -34,19 +34,19 @@ public class JbootEhredisMessage implements Serializable {
 
     }
 
-    public JbootEhredisMessage(String id, int action, String cacheName, Object key) {
-        this.id = id;
+    public JbootEhredisMessage(String clientId, int action, String cacheName, Object key) {
+        this.clientId = clientId;
         this.action = action;
         this.cacheName = cacheName;
         this.key = key;
     }
 
-    public String getId() {
-        return id;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public int getAction() {

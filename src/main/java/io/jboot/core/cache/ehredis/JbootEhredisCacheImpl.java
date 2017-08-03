@@ -37,15 +37,15 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     private JbootRedisCacheImpl redisCache;
 
     private String channel = DEFAULT_NOTIFY_CHANNEL;
-    private String uuid;
+    private String clientId;
 
 
     public JbootEhredisCacheImpl() {
         ehcache = new JbootEhcacheImpl();
         redisCache = new JbootRedisCacheImpl();
+        clientId = StringUtils.uuid();
 
         Jboot.me().getMq().addMessageListener(this, channel);
-        uuid = StringUtils.uuid();
     }
 
 
@@ -73,7 +73,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.put(cacheName, key, value);
             redisCache.put(cacheName, key, value);
         } finally {
-            Jboot.me().getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_PUT, cacheName, key), channel);
+            Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, JbootEhredisMessage.ACTION_PUT, cacheName, key), channel);
         }
     }
 
@@ -83,7 +83,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.remove(cacheName, key);
             redisCache.remove(cacheName, key);
         } finally {
-            Jboot.me().getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE, cacheName, key), channel);
+            Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, JbootEhredisMessage.ACTION_REMOVE, cacheName, key), channel);
         }
     }
 
@@ -93,7 +93,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.removeAll(cacheName);
             redisCache.removeAll(cacheName);
         } finally {
-            Jboot.me().getMq().publish(new JbootEhredisMessage(uuid, JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null), channel);
+            Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null), channel);
         }
     }
 
@@ -119,7 +119,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         /**
          * 不处理自己发送的消息
          */
-        if (uuid.equals(message.getId())) {
+        if (clientId.equals(message.getClientId())) {
             return;
         }
 
