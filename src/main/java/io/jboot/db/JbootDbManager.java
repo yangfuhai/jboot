@@ -123,15 +123,14 @@ public class JbootDbManager {
      */
     private ActiveRecordPlugin createRecordPlugin(String configName, String configTable, DataSource dataSource) {
 
-        List<Class<Model>> modelClassList = ClassScanner.scanSubClass(Model.class);
-
-        if (ArrayUtils.isNullOrEmpty(modelClassList)) {
-            return null;
-        }
-
         ActiveRecordPlugin activeRecordPlugin = StringUtils.isNotBlank(configName)
                 ? new ActiveRecordPlugin(configName, dataSource)
                 : new ActiveRecordPlugin(dataSource);
+
+        List<Class<Model>> modelClassList = ClassScanner.scanSubClass(Model.class);
+        if (ArrayUtils.isNullOrEmpty(modelClassList)) {
+            return activeRecordPlugin;
+        }
 
         Set<String> tables = configTable == null ? null : buildTables(configTable);
 
