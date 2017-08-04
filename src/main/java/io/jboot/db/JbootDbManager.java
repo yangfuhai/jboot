@@ -62,7 +62,8 @@ public class JbootDbManager {
                 activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
                 activeRecordPlugin.setCache(Jboot.me().getCache());
 
-                initActiveRecordPluginDialect(activeRecordPlugin, datasourceConfig);
+                configSqlTemplate(datasourceConfig, activeRecordPlugin);
+                configDialect(activeRecordPlugin, datasourceConfig);
 
                 activeRecordPlugins.add(activeRecordPlugin);
             }
@@ -70,7 +71,38 @@ public class JbootDbManager {
 
     }
 
-    private void initActiveRecordPluginDialect(ActiveRecordPlugin activeRecordPlugin, DatasourceConfig datasourceConfig) {
+    /**
+     * 配置 本地 sql
+     *
+     * @param datasourceConfig
+     * @param activeRecordPlugin
+     */
+    private void configSqlTemplate(DatasourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
+        String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
+        if (sqlTemplatePath != null) {
+            if (sqlTemplatePath.startsWith("/")) {
+                activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
+            } else {
+                activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
+            }
+        }
+
+        String sqlTemplateString = datasourceConfig.getSqlTemplate();
+        if (sqlTemplateString != null) {
+            String[] sqlTemplateFiles = sqlTemplateString.split(",");
+            for (String sql : sqlTemplateFiles) {
+                activeRecordPlugin.addSqlTemplate(sql);
+            }
+        }
+    }
+
+    /**
+     * 配置 数据源的 方言
+     *
+     * @param activeRecordPlugin
+     * @param datasourceConfig
+     */
+    private void configDialect(ActiveRecordPlugin activeRecordPlugin, DatasourceConfig datasourceConfig) {
         switch (datasourceConfig.getType()) {
             case DatasourceConfig.TYPE_MYSQL:
                 activeRecordPlugin.setDialect(new MysqlDialect());
@@ -91,25 +123,6 @@ public class JbootDbManager {
                 activeRecordPlugin.setDialect(new PostgreSqlDialect());
                 break;
         }
-
-        String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
-        if (sqlTemplatePath != null) {
-            if (sqlTemplatePath.startsWith("/")) {
-                activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
-            } else {
-                activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
-            }
-        }
-
-        String sqlTemplateString = datasourceConfig.getSqlTemplate();
-        if (sqlTemplateString != null) {
-            String[] sqlTemplateFiles = sqlTemplateString.split(",");
-            for (String sql : sqlTemplateFiles) {
-                activeRecordPlugin.addSqlTemplate(sql);
-            }
-        }
-
-
     }
 
 
