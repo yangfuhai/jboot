@@ -23,8 +23,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.Jboot;
 import io.jboot.config.JbootProperties;
 import io.jboot.db.datasource.DatasourceConfig;
+import io.jboot.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class JbootModelGenerator {
 
@@ -41,7 +44,11 @@ public class JbootModelGenerator {
 
 
     public static void run(String modelPackage) {
-        new JbootModelGenerator(modelPackage).doGenerate();
+        new JbootModelGenerator(modelPackage).doGenerate(null);
+    }
+
+    public static void run(String modelPackage, String excludeTables) {
+        new JbootModelGenerator(modelPackage).doGenerate(excludeTables);
     }
 
 
@@ -53,7 +60,7 @@ public class JbootModelGenerator {
     }
 
 
-    public void doGenerate() {
+    public void doGenerate(String excludeTables) {
 
         String modelPackage = basePackage + ".model";
         String baseModelPackage = basePackage + ".model.base";
@@ -76,9 +83,21 @@ public class JbootModelGenerator {
         config.setDriverClassName("com.mysql.jdbc.Driver");
 
         HikariDataSource dataSource = new HikariDataSource(config);
-
-
         List<TableMeta> tableMetaList = new MetaBuilder(dataSource).build();
+
+        if (StringUtils.isNotBlank(excludeTables)) {
+            List<TableMeta> newTableMetaList = new ArrayList<>();
+            Set<String> excludeTableSet = StringUtils.splitToSet(excludeTables.toLowerCase(), ",");
+            for (TableMeta tableMeta : tableMetaList) {
+                if (excludeTableSet.contains(tableMeta.name.toLowerCase())) {
+                    System.out.println("exclude table : " + tableMeta.name);
+                    continue;
+                }
+                newTableMetaList.add(tableMeta);
+            }
+            tableMetaList = newTableMetaList;
+        }
+
 
         new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
         new JbootModelnfoGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);

@@ -23,9 +23,7 @@ import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -210,6 +208,23 @@ public class StringUtils {
 
         Random random = new Random();
         return String.valueOf(random.nextInt(9999 - 1000 + 1) + 1000);//为变量赋随机值1000-9999
+    }
+
+
+    public static Set<String> splitToSet(String src, String regex) {
+        if (src == null) {
+            return null;
+        }
+
+        String[] strings = src.split(regex);
+        Set<String> set = new HashSet<>();
+        for (String table : strings) {
+            if (StringUtils.isBlank(table)) {
+                continue;
+            }
+            set.add(table.trim());
+        }
+        return set;
     }
 
 

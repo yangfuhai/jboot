@@ -24,11 +24,14 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.Jboot;
 import io.jboot.config.JbootProperties;
 import io.jboot.db.datasource.DatasourceConfig;
+import io.jboot.utils.StringUtils;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class JbootVoModeGenerator extends BaseModelGenerator {
 
@@ -44,7 +47,11 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
     }
 
     public static void run(String voModelPackage) {
-        new JbootVoModeGenerator(voModelPackage).doGenerate();
+        new JbootVoModeGenerator(voModelPackage).doGenerate(null);
+    }
+
+    public static void run(String voModelPackage, String excludeTables) {
+        new JbootVoModeGenerator(voModelPackage).doGenerate(excludeTables);
     }
 
 
@@ -69,12 +76,9 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
     }
 
 
-    public void doGenerate() {
-
+    public void doGenerate(String excludeTables) {
 
         System.out.println("start generate...");
-
-
         DatasourceConfig datasourceConfig = JbootProperties.get("jboot.datasource", DatasourceConfig.class);
 
         HikariConfig config = new HikariConfig();
@@ -89,6 +93,19 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
         HikariDataSource dataSource = new HikariDataSource(config);
 
         List<TableMeta> tableMetaList = new MetaBuilder(dataSource).build();
+
+        if (StringUtils.isNotBlank(excludeTables)) {
+            List<TableMeta> newTableMetaList = new ArrayList<>();
+            Set<String> excludeTableSet = StringUtils.splitToSet(excludeTables.toLowerCase(), ",");
+            for (TableMeta tableMeta : tableMetaList) {
+                if (excludeTableSet.contains(tableMeta.name.toLowerCase())) {
+                    System.out.println("exclude table : " + tableMeta.name);
+                    continue;
+                }
+                newTableMetaList.add(tableMeta);
+            }
+            tableMetaList = newTableMetaList;
+        }
 
         generate(tableMetaList);
 

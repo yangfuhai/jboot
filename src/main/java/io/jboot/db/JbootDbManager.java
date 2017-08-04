@@ -31,7 +31,6 @@ import io.jboot.utils.StringUtils;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -132,7 +131,7 @@ public class JbootDbManager {
             return activeRecordPlugin;
         }
 
-        Set<String> tables = configTable == null ? null : buildTables(configTable);
+        Set<String> tables = configTable == null ? null : StringUtils.splitToSet(configTable, ",");
 
         for (Class<?> clazz : modelClassList) {
             Table tb = clazz.getAnnotation(Table.class);
@@ -158,18 +157,6 @@ public class JbootDbManager {
         return activeRecordPlugin;
     }
 
-    private Set<String> buildTables(String configTable) {
-        String[] tables = configTable.split(",");
-
-        Set<String> tableset = new HashSet<>();
-        for (String table : tables) {
-            if (StringUtils.isBlank(table)) {
-                continue;
-            }
-            tableset.add(table.trim());
-        }
-        return tableset;
-    }
 
     public List<ActiveRecordPlugin> getActiveRecordPlugins() {
         return activeRecordPlugins;
