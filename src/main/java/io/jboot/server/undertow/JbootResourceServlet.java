@@ -62,7 +62,7 @@ public class JbootResourceServlet extends HttpServlet {
 
     private boolean defaultAllowed = true;
     private Set<String> allowed = DEFAULT_ALLOWED_EXTENSIONS;
-    private Set<String> disallowed = new HashSet<>(Arrays.asList("class", "jar", "war", "xml", "properties", "yml"));
+    private Set<String> disallowed = new HashSet<>(Arrays.asList("class", "jar", "war", "xml", "properties", "yml", "sql"));
     private boolean resolveAgainstContextRoot;
 
     @Override
