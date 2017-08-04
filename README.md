@@ -1,8 +1,5 @@
 
 
-# <center>欢迎使用JBoot</center>
-
-
 # JBoot 简介
 
 ## JBoot 是什么
