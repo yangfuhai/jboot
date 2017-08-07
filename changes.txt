@@ -1,3 +1,15 @@
+jboot-1.0-beta4:
+1、新增使用@Cacheable @CacheEvict @CachePut无需再添加@Named配置，需java8编译并添加-parameters配置
+2、升级Jfinal到最新版本3.2，支持Controller方法参数化获取页面提交参数，需java8编译并添加-parameters配置
+3、修复部分用户把sql文件放在classes目录下被读取的问题。
+4、重构JbootDbManager使之代码更加直观简洁。
+5、新增生成代码的时候，可以排除指定表名的支持。
+6、初始化Jboot的使用文档和帮助文档。
+7、修复当没有任何model，全部使用record操作数据库的时候出现空指针异常的问题。
+8、重构JbootEhredisCacheImpl二级缓存的实现。
+9、升级新浪RPC框架motan到最新版本0.3.1，并做简单重构功能。
+
+
 jboot-1.0-beta3:
 1、修复使用@Inject自动注入后，再使用JFinal的@Before(Tx.Class)会出现空指针的问题。
 2、修复读取配置文件的时候，同一个Class对于不同的配置信息读取不到的问题。
