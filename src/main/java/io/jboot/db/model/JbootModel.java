@@ -64,7 +64,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         M m = null;
         try {
             m = (M) getUsefulClass().newInstance();
-            m._setAttrs(this.getAttrs());
+            m._setAttrs(this._getAttrs());
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -80,7 +80,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
         proxy = copy().use("proxy").autoCache(this.autoCache);
 
-        if (proxy.getConfig() == null) {
+        if (proxy._getConfig() == null) {
             proxy.use(null);
         }
 
@@ -550,7 +550,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Map<String, Object> _getAttrsAsMap() {
-        return getAttrs();
+        return _getAttrs();
     }
 
     /**
