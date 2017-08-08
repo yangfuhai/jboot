@@ -3,7 +3,7 @@
 
 或者您也可以去购买我的课程进行学习，课程地址：http://www.yangfuhai.com/post/6.html
 
-#JBoot核心组件
+# JBoot核心组件
 Jboot的主要核心组件有以下几个。
 
 * MVC
@@ -23,7 +23,7 @@ Jboot的主要核心组件有以下几个。
 * 等等
 
 
-#MVC
+# MVC
 ## MVC的概念
 略
 ## JbootController
@@ -66,11 +66,11 @@ public class HelloController extend JbootController{
 ## render
 同JFinal render。
 
-#安全控制 
+# 安全控制 
 ## shiro
 暂略
 
-#ORM
+# ORM
 ## 配置
 在使用数据库之前，需要给Jboot应用做一些配置，实际上，在任何的需要到数据库的应用中，都需要给应用程序做一些配置，让应用程序知道去哪里读取数据。
 
@@ -114,7 +114,7 @@ jboot.datasource.password=your_password
 * jboot.datasource.sqlTemplate sql文件，多个用英文逗号隔开
 * jboot.datasource.table 该数据源对应的表名，多个表用英文逗号隔开
 
-更多的具体使用，个别是name、table等在分库分表章节会讲到。
+更多的具体使用，特别是name、table等在分库分表章节会讲到。
 
 
 ## Model
@@ -207,49 +207,50 @@ company.save();
 
 
 ## 分库和分表
-带续
+待续
 
 
-#AOP
+# AOP
 
 ## Google Guice
+Jboot 的AOP功能，是使用了Google的Guice框架来完成的，通过AOP，我们可以轻易的在微服务体系中监控api的调用，轻易的使用@Cacheable，@CachePut，@CacheEvict等注解完成对代码的配置。
 ## @Inject
 ## @Bean
 
-#RPC远程调用
+# RPC远程调用
 ## Motan
 ## @RpcService
 
-#MQ消息队列
+# MQ消息队列
 ## RedisMQ
 ## ActiveMQ
 
-#Cache缓存
+# Cache缓存
 ## ehcache
 ## redis
 ## ehredis
 
-#http客户端
+# http客户端
 
-#监控
+# 监控
 
-#容错与隔离
+# 容错与隔离
 
-#其他
+# 其他
 
-##SPI扩展
+## SPI扩展
 
-##JbootEvnet事件机制
+## JbootEvnet事件机制
 
-##自定义序列化
+## 自定义序列化
 
-##配置文件
+## 配置文件
 
-##分布式session
+## 分布式session
 
-##shiro安全控制
+## shiro安全控制
 
-##代码生成器
+## 代码生成器
 
 
 
