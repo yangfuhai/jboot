@@ -78,5 +78,5 @@ public class MyStarter{
 
 # QQ群
 
-601440615
+Jboot交流QQ群：601440615 ，欢迎加入讨论Jboot和微服务。
 
