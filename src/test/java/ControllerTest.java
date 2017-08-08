@@ -1,5 +1,6 @@
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.Bean;
+import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -29,7 +30,7 @@ public class ControllerTest extends JbootController {
 
         System.out.println("aabbcc");
 
-        renderText("hello ddd : " + serviceTest.hello());
+        renderText("hello ddd : " + serviceTest.hello("michael"));
 
 
     }
@@ -41,14 +42,16 @@ public class ControllerTest extends JbootController {
 
 
         @Override
-        public String hello() {
-            return "aaa";
+        @Cacheable(name = "aaa",key = "#(\"key:\" + aaa)")
+        public String hello(String aaa) {
+            System.out.println("hello invoked");
+            return "aaa" + aaa;
         }
     }
 
 
     public static interface ServiceInter {
-        public String hello();
+        public String hello(String aaa);
     }
 
 
