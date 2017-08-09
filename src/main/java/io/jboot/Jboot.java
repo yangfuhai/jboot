@@ -31,6 +31,7 @@ import io.jboot.core.http.JbootHttpResponse;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqManager;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
@@ -269,8 +270,13 @@ public class Jboot {
     }
 
 
+    private JbootrpcConfig rpcConfig;
+
     public <T> T service(Class<T> clazz) {
-        return service(clazz, "jboot", "1.0");
+        if (rpcConfig == null) {
+            rpcConfig = config(JbootrpcConfig.class);
+        }
+        return service(clazz, rpcConfig.getDefaultGroup(), rpcConfig.getDefaultVersion());
     }
 
     public <T> T service(Class<T> clazz, String group, String version) {
