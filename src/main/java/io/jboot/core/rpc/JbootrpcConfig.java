@@ -21,6 +21,7 @@ import io.jboot.config.annotation.PropertieConfig;
 @PropertieConfig(prefix = "jboot.rpc")
 public class JbootrpcConfig {
 
+    public static final String TYPE_DUBBO = "dubbo";
     public static final String TYPE_GRPC = "grpc";
     public static final String TYPE_MOTAN = "motan";
     public static final String TYPE_THRIFT = "thrift";
@@ -35,8 +36,10 @@ public class JbootrpcConfig {
     private String registryType = REGISTRY_TYPE_CONSUL;
     private String registryAddress = "127.0.0.1:8500";
     private String registryName = "jboot";
+    private String registryUserName;
+    private String registryPassword;
 
-    private String defaultPort = "8088";
+    private int defaultPort = 8088;
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
 
@@ -84,11 +87,11 @@ public class JbootrpcConfig {
         this.registryName = registryName;
     }
 
-    public String getDefaultPort() {
+    public int getDefaultPort() {
         return defaultPort;
     }
 
-    public void setDefaultPort(String defaultPort) {
+    public void setDefaultPort(int defaultPort) {
         this.defaultPort = defaultPort;
     }
 
@@ -106,5 +109,21 @@ public class JbootrpcConfig {
 
     public void setDefaultVersion(String defaultVersion) {
         this.defaultVersion = defaultVersion;
+    }
+
+    public String getRegistryUserName() {
+        return registryUserName;
+    }
+
+    public void setRegistryUserName(String registryUserName) {
+        this.registryUserName = registryUserName;
+    }
+
+    public String getRegistryPassword() {
+        return registryPassword;
+    }
+
+    public void setRegistryPassword(String registryPassword) {
+        this.registryPassword = registryPassword;
     }
 }

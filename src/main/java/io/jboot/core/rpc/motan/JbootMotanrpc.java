@@ -39,16 +39,10 @@ public class JbootMotanrpc extends JbootrpcBase {
 
         jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
 
-        initProtocolConfig();
         initRegistryConfig();
+        initProtocolConfig();
 
-    }
 
-    private void initProtocolConfig() {
-        protocolConfig = new ProtocolConfig();
-        protocolConfig.setId("motan");
-        protocolConfig.setName("motan");
-        protocolConfig.setSerialization("jboot");
     }
 
     private void initRegistryConfig() {
@@ -58,10 +52,19 @@ public class JbootMotanrpc extends JbootrpcBase {
         registryConfig.setName(jbootrpcConfig.getRegistryName());
     }
 
+
+    private void initProtocolConfig() {
+        protocolConfig = new ProtocolConfig();
+        protocolConfig.setId("motan");
+        protocolConfig.setName("motan");
+        protocolConfig.setSerialization("jboot");
+    }
+
+
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
 
-        String key = String.format("%s:%s", serviceClass.getName(), version);
+        String key = String.format("%s:%s:%s", serviceClass.getName(), group, version);
 
         T object = (T) singletons.get(key);
         if (object != null) {
