@@ -39,25 +39,17 @@ public class JbootMotanrpc extends JbootrpcBase {
 
         jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
 
-        initRegistryConfig();
-        initProtocolConfig();
-
-
-    }
-
-    private void initRegistryConfig() {
         registryConfig = new RegistryConfig();
         registryConfig.setRegProtocol(jbootrpcConfig.getRegistryType());
         registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
         registryConfig.setName(jbootrpcConfig.getRegistryName());
-    }
 
 
-    private void initProtocolConfig() {
         protocolConfig = new ProtocolConfig();
         protocolConfig.setId("motan");
         protocolConfig.setName("motan");
         protocolConfig.setSerialization("jboot");
+
     }
 
 

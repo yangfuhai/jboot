@@ -46,12 +46,19 @@ public class JbootDubborpc extends JbootrpcBase {
         registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
         registryConfig.setUsername(jbootrpcConfig.getRegistryUserName());
         registryConfig.setPassword(jbootrpcConfig.getRegistryPassword());
-
-
     }
+
+
 
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
+
+        String key = String.format("%s:%s:%s", serviceClass.getName(), group, version);
+
+        T object = (T) singletons.get(key);
+        if (object != null) {
+            return object;
+        }
 
         // 注意：ReferenceConfig为重对象，内部封装了与注册中心的连接，以及与服务提供方的连接
         // 引用远程服务
@@ -62,9 +69,13 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setInterface(serviceClass);
         reference.setVersion(version);
 
-        //// 注意：此代理对象内部封装了所有通讯细节，对象较重，请缓存复用
-        T t = reference.get();
-        return t;
+        // 注意：此代理对象内部封装了所有通讯细节，对象较重，请缓存复用
+        object = reference.get();
+
+        if (object != null) {
+            singletons.put(key, object);
+        }
+        return object;
     }
 
     @Override
