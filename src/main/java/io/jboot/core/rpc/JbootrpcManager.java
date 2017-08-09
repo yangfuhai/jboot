@@ -75,7 +75,7 @@ public class JbootrpcManager {
 
             String group = StringUtils.isBlank(rpcService.group()) ? config.getDefaultGroup() : rpcService.group();
             String version = StringUtils.isBlank(rpcService.version()) ? config.getDefaultVersion() : rpcService.version();
-            int port = rpcService.port() <= 0 ? Integer.valueOf(config.getDefaultPort()) : rpcService.port();
+            int port = rpcService.port() <= 0 ? config.getDefaultPort() : rpcService.port();
 
             Class[] inters = clazz.getInterfaces();
             JbootAssert.assertFalse(inters == null || inters.length == 0,
