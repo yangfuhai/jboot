@@ -4,7 +4,7 @@
 
 JBoot 定位是一个大型的分布式WEB应用开发框架。
 
-JBoot并不是一个新的发明，而是一个整理了大型分布式常用的技术解决方案，而形成的一个"最佳实践"。例如：JBoot的RPC的通过新浪开源的成熟的框架motan来实现的；针对ORM + MVC 是通过注明的JFinal来实现的；缓存部分则是通过 EHcache 和 Redis 来实现的；容错和隔离则是通过Netflix公司的Hystrix来实现的等等。
+JBoot并不是一个新的发明，而是一个整理了大型分布式常用的技术解决方案，而形成的一个"最佳实践"。例如：JBoot的RPC的通过新浪开源的成熟的框架motan来实现的；针对ORM + MVC 是通过著名的JFinal来实现的；缓存部分则是通过 EHcache 和 Redis 来实现的；容错和隔离则是通过Netflix公司的Hystrix来实现的等等。
 
 QQ交流群： 601440615
 
