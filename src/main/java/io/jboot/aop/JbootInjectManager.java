@@ -24,7 +24,9 @@ import com.jfinal.aop.Before;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.injector.JbootHystrixInjector;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
-import io.jboot.aop.interceptor.*;
+import io.jboot.aop.interceptor.JFinalBeforeInterceptor;
+import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
+import io.jboot.aop.interceptor.JbootrpcInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
@@ -33,7 +35,6 @@ import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.core.cache.annotation.CachePut;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.core.rpc.annotation.JbootrpcService;
-import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 
 import java.io.Serializable;
@@ -45,12 +46,12 @@ import java.util.List;
  */
 public class JbootInjectManager implements Module, TypeListener {
 
-    private static JbootInjectManager manager;
+    /**
+     * 这个manager的创建不能来之ClassNewer
+     */
+    private static JbootInjectManager manager = new JbootInjectManager();
 
     public static JbootInjectManager me() {
-        if (manager == null) {
-            manager = ClassNewer.newInstance(JbootInjectManager.class);
-        }
         return manager;
     }
 
