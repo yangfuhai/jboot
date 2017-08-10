@@ -16,6 +16,7 @@
 package io.jboot.utils;
 
 import com.jfinal.log.Log;
+import io.jboot.Jboot;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -28,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClassNewer {
 
     public static Log log = Log.getLog(ClassNewer.class);
-
     private static final Map<Class, Object> singletons = new ConcurrentHashMap<>();
 
     /**
@@ -66,15 +66,24 @@ public class ClassNewer {
      * @return
      */
     public static <T> T newInstance(Class<T> clazz) {
-        try {
-            Constructor constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            return (T) constructor.newInstance();
-        } catch (Exception e) {
-            log.error("can not newInstance class:" + clazz + "\n" + e.toString(), e);
-        }
+        return newInstance(clazz, true);
+    }
 
-        return null;
+
+    public static <T> T newInstance(Class<T> clazz, boolean createdByGuice) {
+        if (createdByGuice) {
+            return Jboot.me().getInjector().getInstance(clazz);
+        } else {
+            try {
+                Constructor constructor = clazz.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                return (T) constructor.newInstance();
+            } catch (Exception e) {
+                log.error("can not newInstance class:" + clazz + "\n" + e.toString(), e);
+            }
+
+            return null;
+        }
     }
 
     /**
@@ -87,9 +96,7 @@ public class ClassNewer {
     public static <T> T newInstance(String clazzName) {
         try {
             Class<T> clazz = (Class<T>) Class.forName(clazzName, false, Thread.currentThread().getContextClassLoader());
-            Constructor constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            return (T) constructor.newInstance();
+            return newInstance(clazz);
         } catch (Exception e) {
             log.error("can not newInstance class:" + clazzName + "\n" + e.toString(), e);
         }

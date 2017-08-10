@@ -59,7 +59,7 @@ public class ModelCopier {
 
 
     public static <M extends JbootVoModel> M convertToVo(JbootModel model, Class<M> clazz) {
-        return (M) copyToVo(model, ClassNewer.newInstance(clazz));
+        return (M) copyToVo(model, ClassNewer.newInstance(clazz,false));
     }
 
 
@@ -101,7 +101,7 @@ public class ModelCopier {
 
 
     public static <M extends Model> M convertToModel(JbootVoModel voModel, Class<M> clazz) {
-        return (M) copyToModel(voModel, ClassNewer.newInstance(clazz));
+        return (M) copyToModel(voModel, ClassNewer.newInstance(clazz,false));
     }
 
 
