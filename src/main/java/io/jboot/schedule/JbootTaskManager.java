@@ -19,10 +19,13 @@ import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import io.jboot.Jboot;
+import io.jboot.exception.JbootException;
 import io.jboot.schedule.annotation.Cron4jTask;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
+import it.sauronsoftware.cron4j.ProcessTask;
+import it.sauronsoftware.cron4j.Task;
 
 import java.util.List;
 
@@ -32,8 +35,7 @@ public class JbootTaskManager {
     private static JbootTaskManager manager;
     private Cron4jPlugin cron4jPlugin;
 
-    private JbootTaskManager() {
-
+    public JbootTaskManager() {
         if (!isCron4jEnable()) {
             return;
         }
@@ -59,15 +61,22 @@ public class JbootTaskManager {
 
         cron4jPlugin = prop == null ? new Cron4jPlugin() : new Cron4jPlugin(prop);
 
-        List<Class<Runnable>> list = ClassScanner.scanSubClass(Runnable.class);
+        List<Class> list = ClassScanner.scanClassByAnnotation(Cron4jTask.class, true);
         if (ArrayUtils.isNullOrEmpty(list)) {
             return;
         }
 
-        for (Class<Runnable> clazz : list) {
-            Cron4jTask cron4jTask = clazz.getAnnotation(Cron4jTask.class);
-            if (cron4jTask == null) continue;
-            cron4jPlugin.addTask(cron4jTask.cron(), ClassNewer.newInstance(clazz), cron4jTask.daemon());
+        for (Class clazz : list) {
+            Cron4jTask cron4jTask = (Cron4jTask) clazz.getAnnotation(Cron4jTask.class);
+            if (clazz == Runnable.class) {
+                cron4jPlugin.addTask(cron4jTask.cron(), (Runnable) ClassNewer.newInstance(clazz), cron4jTask.daemon());
+            } else if (clazz == ProcessTask.class) {
+                cron4jPlugin.addTask(cron4jTask.cron(), (ProcessTask) ClassNewer.newInstance(clazz), cron4jTask.daemon());
+            } else if (clazz == Task.class) {
+                cron4jPlugin.addTask(cron4jTask.cron(), (Task) ClassNewer.newInstance(clazz), cron4jTask.daemon());
+            } else {
+                throw new JbootException("annotation Cron4jTask can not use for class : " + clazz);
+            }
         }
     }
 
