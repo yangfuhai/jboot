@@ -27,9 +27,6 @@ public class JbootmqManager {
 
     private static JbootmqManager manager;
 
-    private JbootmqManager() {
-    }
-
     public static JbootmqManager me() {
         if (manager == null) {
             manager = ClassNewer.singleton(JbootmqManager.class);

@@ -48,6 +48,7 @@ public class JbootInjectManager implements Module, TypeListener {
 
     /**
      * 这个manager的创建不能来之ClassNewer
+     * 因为 ClassNewer 需要 JbootInjectManager，会造成循环调用。
      */
     private static JbootInjectManager manager = new JbootInjectManager();
 

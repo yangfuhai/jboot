@@ -78,6 +78,9 @@ public class ClassNewer {
                 Constructor constructor = clazz.getDeclaredConstructor();
                 constructor.setAccessible(true);
                 return (T) constructor.newInstance();
+//                T t = (T) constructor.newInstance();
+//                Jboot.me().getInjector().injectMembers(t);
+//                return t;
             } catch (Exception e) {
                 log.error("can not newInstance class:" + clazz + "\n" + e.toString(), e);
             }

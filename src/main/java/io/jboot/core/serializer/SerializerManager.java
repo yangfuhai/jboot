@@ -36,10 +36,6 @@ public class SerializerManager {
         return me;
     }
 
-    private SerializerManager() {
-
-    }
-
 
     private ISerializer serializer;
 
