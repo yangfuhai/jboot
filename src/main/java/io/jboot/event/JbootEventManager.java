@@ -35,7 +35,7 @@ public class JbootEventManager {
 
     private static JbootEventManager manager;
 
-    private JbootEventManager() {
+    public JbootEventManager() {
         threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                 60L, TimeUnit.MINUTES,
                 new SynchronousQueue<Runnable>());

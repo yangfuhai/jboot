@@ -32,9 +32,6 @@ public class JbootMetricsManager {
         return me;
     }
 
-    private JbootMetricsManager() {
-    }
-
 
     private MetricRegistry metricRegistry;
     private JbootMetricsConfig metricsConfig;
