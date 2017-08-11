@@ -82,7 +82,26 @@ public class JbootHttpRequest {
         if (params == null) {
             params = new HashMap<>();
         }
+        if (value instanceof File) {
+            setMultipartFormData(true);
+        }
         params.put(key, value);
+    }
+
+    public void addParams(Map<String, Object> map) {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() == null) {
+                continue;
+            }
+            if (entry.getValue() instanceof File) {
+                setMultipartFormData(true);
+            }
+
+            params.put(entry.getKey(), entry.getValue());
+        }
     }
 
     public void setRequestUrl(String requestUrl) {
@@ -154,6 +173,14 @@ public class JbootHttpRequest {
     }
 
     public void setParams(Map<String, Object> params) {
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            if (entry.getValue() == null) {
+                continue;
+            }
+            if (entry.getValue() instanceof File) {
+                setMultipartFormData(true);
+            }
+        }
         this.params = params;
     }
 

@@ -95,7 +95,7 @@ public class JbootHttpImpl implements JbootHttp {
                         String boundary = "---------" + StringUtils.uuid();
                         connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
                         DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                        for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
+                        for (Map.Entry entry : request.getParams().entrySet()) {
                             if (entry.getValue() instanceof File) {
                                 File file = (File) entry.getValue();
                                 checkFileNormal(file);
@@ -167,7 +167,7 @@ public class JbootHttpImpl implements JbootHttp {
         }
 
         StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, ? extends Object> entry : params.entrySet()) {
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
             if (entry.getKey() != null && StringUtils.isNotBlank(entry.getValue()))
                 builder.append(entry.getKey().trim()).append("=")
                         .append(URLEncoder.encode(entry.getValue().toString(), request.getCharset())).append("&");
