@@ -16,7 +16,6 @@
 package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.inject.Injector;
 import io.jboot.aop.JbootInjectManager;
 import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.redis.JbootRedis;
@@ -387,13 +386,25 @@ public class Jboot {
     }
 
 
+//    /**
+//     * 获取 injector
+//     *
+//     * @return
+//     */
+//    public Injector getInjector() {
+//        return JbootInjectManager.me().getInjector();
+//    }
+
+
     /**
-     * 获取 injector
+     * 获取被增强的，可以使用AOP注入的
      *
+     * @param clazz
+     * @param <T>
      * @return
      */
-    public Injector getInjector() {
-        return JbootInjectManager.me().getInjector();
+    public static <T> T bean(Class<T> clazz) {
+        return JbootInjectManager.me().getInjector().getInstance(clazz);
     }
 
 

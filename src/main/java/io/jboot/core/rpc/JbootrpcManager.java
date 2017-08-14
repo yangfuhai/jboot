@@ -88,7 +88,7 @@ public class JbootrpcManager {
                     if (ex == inter) exclude = true;
                 }
                 if (exclude) continue;
-                getJbootrpc().serviceExport(inter, Jboot.me().getInjector().getInstance(clazz), group, version, port);
+                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), group, version, port);
             }
         }
     }

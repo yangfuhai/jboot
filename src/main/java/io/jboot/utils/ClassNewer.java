@@ -72,7 +72,7 @@ public class ClassNewer {
 
     public static <T> T newInstance(Class<T> clazz, boolean createdByGuice) {
         if (createdByGuice) {
-            return Jboot.me().getInjector().getInstance(clazz);
+            return Jboot.bean(clazz);
         } else {
             try {
                 Constructor constructor = clazz.getDeclaredConstructor();

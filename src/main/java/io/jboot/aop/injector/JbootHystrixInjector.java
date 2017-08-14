@@ -53,7 +53,7 @@ public class JbootHystrixInjector implements MembersInjector {
          *
          *
          */
-        Object o = Jboot.me().getInjector().getInstance(field.getType());
+        Object o = Jboot.bean(field.getType());
 
         try {
             field.setAccessible(true);
