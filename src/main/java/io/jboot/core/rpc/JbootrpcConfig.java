@@ -31,7 +31,7 @@ public class JbootrpcConfig {
     public static final String REGISTRY_TYPE_ZOOKEEPER = "zookeeper";
 
     private String type = TYPE_LOCAL;
-    private String requestTimeOut = "500";
+    private int requestTimeOut = 5000;
 
     private String registryType = REGISTRY_TYPE_CONSUL;
     private String registryAddress = "127.0.0.1:8500";
@@ -51,15 +51,11 @@ public class JbootrpcConfig {
         this.type = type;
     }
 
-    public String getRequestTimeOut() {
+    public int getRequestTimeOut() {
         return requestTimeOut;
     }
 
-    public int getRequestTimeOutAsInt() {
-        return Integer.valueOf(requestTimeOut);
-    }
-
-    public void setRequestTimeOut(String requestTimeOut) {
+    public void setRequestTimeOut(int requestTimeOut) {
         this.requestTimeOut = requestTimeOut;
     }
 

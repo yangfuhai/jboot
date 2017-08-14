@@ -71,7 +71,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         // 配置服务的group以及版本号
         refererConfig.setGroup(group);
         refererConfig.setVersion(version);
-        refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOutAsInt());
+        refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOut());
         initConfig(refererConfig);
 
         object = refererConfig.getRef();
