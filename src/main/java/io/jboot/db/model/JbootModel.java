@@ -477,13 +477,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return TableMapping.me().getTable(getUsefulClass()).hasColumnLabel(columnLabel);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private Class<? extends JbootModel> getUsefulClass() {
-        Class c = getClass();
-        return c.getName().indexOf("EnhancerByCGLIB") == -1 ? c : c.getSuperclass();
-    }
-
-
     // -----------------------------Override----------------------------
     @Override
     public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {

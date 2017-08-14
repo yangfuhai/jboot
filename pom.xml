@@ -47,11 +47,11 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>com.jfinal</groupId>
-            <artifactId>jfinal-java8</artifactId>
-            <version>3.2</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>com.jfinal</groupId>-->
+        <!--<artifactId>jfinal-java8</artifactId>-->
+        <!--<version>3.2</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.jfinal</groupId>
@@ -63,12 +63,18 @@
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal-weixin</artifactId>
             <version>1.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.jfinal</groupId>
+                    <artifactId>jfinal</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>joda-time</groupId>-->
-            <!--<artifactId>joda-time</artifactId>-->
-            <!--<version>2.9.9</version>-->
+        <!--<groupId>joda-time</groupId>-->
+        <!--<artifactId>joda-time</artifactId>-->
+        <!--<version>2.9.9</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -291,6 +297,99 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+
+        <!--下面的Jfinal的相关依赖 start-->
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>8.1.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>8.1.8.v20121106</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.5.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.29</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.20</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>3.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.4.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.4.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>it.sauronsoftware.cron4j</groupId>
+            <artifactId>cron4j</artifactId>
+            <version>2.2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>4.3.8.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--以上是编译Jfinal的相关依赖，不用动-->
 
 
     </dependencies>
