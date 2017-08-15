@@ -40,7 +40,7 @@ public class AutoDeployManager {
         Scanner scanner = new Scanner(file.getAbsolutePath(), 3) {
             public void onChange() {
                 try {
-                    System.err.println("file changes ......");
+//                    System.err.println("file changes ......");
 //                    Jboot.me().getServer().restart();
 //                    JbootServerFactory.me().buildServer().start();
 //                    System.err.println("Loading complete.");

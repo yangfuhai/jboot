@@ -57,8 +57,8 @@ public class JbootDbManager {
         List<DatasourceConfig> datasourceConfigs = DatasourceConfigManager.me().getDatasourceConfigs();
         for (DatasourceConfig datasourceConfig : datasourceConfigs) {
             if (datasourceConfig.isConfigOk()) {
-                DataSourceBuilder dsBuilder = new DataSourceBuilder(datasourceConfig);
-                ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig.getName(), datasourceConfig.getTable(), dsBuilder.build());
+
+                ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
                 activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
                 activeRecordPlugin.setCache(Jboot.me().getCache());
 
@@ -129,11 +129,15 @@ public class JbootDbManager {
     /**
      * 创建 ActiveRecordPlugin 插件，用于数据库读写
      *
-     * @param configName
-     * @param configTable 指定只做哪些表的映射关系
+     * @param config
      * @return
      */
-    private ActiveRecordPlugin createRecordPlugin(String configName, String configTable, DataSource dataSource) {
+    private ActiveRecordPlugin createRecordPlugin(DatasourceConfig config) {
+
+        String configName = config.getName();
+        DataSource dataSource = new DataSourceBuilder(config).build();
+        String configTable = config.getTable();
+        String excludeTable = config.getExcludeTable();
 
         ActiveRecordPlugin activeRecordPlugin = StringUtils.isNotBlank(configName)
                 ? new ActiveRecordPlugin(configName, dataSource)
@@ -145,17 +149,31 @@ public class JbootDbManager {
         }
 
         Set<String> tables = configTable == null ? null : StringUtils.splitToSet(configTable, ",");
+        Set<String> excludeTables = configTable == null ? null : StringUtils.splitToSet(excludeTable, ",");
 
         for (Class<?> clazz : modelClassList) {
             Table tb = clazz.getAnnotation(Table.class);
             if (tb == null)
                 continue;
 
-            //说明该数据源只允许部分表
+            /**
+             * 包含表
+             * 说明该数据源只允许部分表
+             */
             if (tables != null && !tables.isEmpty()) {
 
                 //如果该数据源的表配置不包含该表，过滤掉
                 if (!tables.contains(tb.tableName())) {
+                    continue;
+                }
+            }
+
+            /**
+             * 排除表
+             * 说明该数据源没有该表
+             */
+            if (excludeTables != null && !excludeTables.isEmpty()) {
+                if (excludeTables.contains(tb.tableName())) {
                     continue;
                 }
             }
