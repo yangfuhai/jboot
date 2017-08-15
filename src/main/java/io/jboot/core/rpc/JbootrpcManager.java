@@ -38,9 +38,6 @@ import java.util.List;
 public class JbootrpcManager {
     private static JbootrpcManager manager;
 
-    private JbootrpcManager() {
-        config = Jboot.config(JbootrpcConfig.class);
-    }
 
     public static JbootrpcManager me() {
         if (manager == null) {
@@ -51,7 +48,7 @@ public class JbootrpcManager {
 
 
     private Jbootrpc jbootrpc;
-    private JbootrpcConfig config;
+    private JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);;
 
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {
