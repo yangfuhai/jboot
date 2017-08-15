@@ -1,3 +1,17 @@
+jboot-1.0-beta5:
+1、新增：在分库的时候，可以给每个数据源排除表配置的支持。
+2、新增：@Cron4jTask 注解无法使用在ProcessTask和Task类的问题。
+3、新增：http模块支持自动设置multipartFormData的问题，之前是需要手动设置。
+4、新增：EncryptCookieUtils工具类，用于对cookie进行安全加密使用。
+5、新增：dubbo rpc实现的支持，据说dubbo要更新了？
+6、优化：RPC模块。
+7、优化：部分代码，提高效率。
+8、修复：无法对jfinal model 进行注入的问题。
+9、修复：ClassNewer创建的实例无法被AOP控制的问题。
+10、修复：RPC模式设置无效的问题。
+11、修复：@JbootrpcService注解的缺省配置无法注入RPC实例的问题。
+
+
 jboot-1.0-beta4:
 1、升级Jfinal到最新版本3.2，支持Controller方法参数化获取页面提交参数，需java8编译并添加-parameters配置
 2、升级新浪RPC框架motan到最新版本0.3.1，并做简单重构功能。
@@ -19,16 +33,20 @@ jboot-1.0-beta3:
 4、修复readme文档编写错误的问题。
 5、修复当有JbootAppListener监听器的时候，JbootAppListenerManager无法初始化的问题。
 
+
+
+
 jboot-1.0-beta2:
 1、修复jboot shiro模块的相关bug，可以愉快的在项目中使用shiro了，而且可能是jfinal的shiro支持中最好用的一个。感谢@zhoujh
 2、修复无法实例化JbootDbManager的bug。
 3、修复JbootRedisLock基于Redis的分布式锁release出错的bug。
-
 4、新增datasource poolName的配置支持。
 5、新增多数据源的支持，非常非常简单的在Jfinal中使用多数据源。
 6、新增CacheEvict和CachePut两个注解，方便通过配置设置缓存。
 7、新增JbootAppListener监听器，方便监听Jboot和Jfinal的启动状态，对自己的程序进行初始化等工作。
 8、新增Jfinal sql template 配置的支持，只需在jboot.properties进行配置，无需一行代码。
+
+
 
 
 jboot-1.0-beta1:
@@ -45,6 +63,7 @@ jboot-1.0-beta1:
 11、修复：motan rpc模块在spi加载的错误问题。
 12、修复：jboot微信模块的access token cache的可能导致的缓存冲突的问题。
 13、更正readme文档，修复其他若干bug，增强稳定性。
+
 
 
 jboot-1.0-alpha5:
@@ -76,6 +95,7 @@ jboot-1.0-alpha4:
 8、移除appassembler打包对jvmSettings的默认配置。
 9、修复在某些情况下使用JbootEhredis缓存错误的问题。
 10、更正readme文档，修复其他若干bug，增强稳定性。
+
 
 
 jboot-1.0-alpha3:
