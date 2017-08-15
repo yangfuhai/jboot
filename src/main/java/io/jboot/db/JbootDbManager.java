@@ -52,7 +52,7 @@ public class JbootDbManager {
         return manager;
     }
 
-    private JbootDbManager() {
+    public JbootDbManager() {
 
         List<DatasourceConfig> datasourceConfigs = DatasourceConfigManager.me().getDatasourceConfigs();
         for (DatasourceConfig datasourceConfig : datasourceConfigs) {
