@@ -1,1 +1,2 @@
 Model.class ---> getUsefulClass()
+DbKit.class ---> getUsefulClass(Class<? extends Model> modelClass)

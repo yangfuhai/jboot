@@ -122,10 +122,15 @@ public final class DbKit {
 		return configNameToConfig.entrySet();
 	}
 	
+//	@SuppressWarnings("unchecked")
+//	public static Class<? extends Model> getUsefulClass(Class<? extends Model> modelClass) {
+//		// com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158return c.getName().indexOf("$$EnhancerBy") == -1 ? c : c.getSuperclass();
+//		return (Class<? extends Model>)((modelClass.getName().indexOf("EnhancerByCGLIB") == -1 ? modelClass : modelClass.getSuperclass()));
+//	}
 	@SuppressWarnings("unchecked")
 	public static Class<? extends Model> getUsefulClass(Class<? extends Model> modelClass) {
 		// com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
-		return (Class<? extends Model>)((modelClass.getName().indexOf("EnhancerByCGLIB") == -1 ? modelClass : modelClass.getSuperclass()));
+		return (Class<? extends Model>)((modelClass.getName().indexOf("EnhancerBy") == -1 ? modelClass : modelClass.getSuperclass()));
 	}
 }
 
