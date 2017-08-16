@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.codegen.model;
+package io.jboot.codegen.service;
 
-import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.zaxxer.hikari.HikariConfig;
@@ -29,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class JbootModelGenerator {
+public class JbootServiceGenerator {
 
 
     public static void main(String[] args) {
@@ -37,40 +36,34 @@ public class JbootModelGenerator {
         Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
         Jboot.setBootArg("jboot.datasource.user", "root");
 
-
+        String basePackage = "io.jboot.codegen.service.test";
         String modelPackage = "io.jboot.codegen.test.model";
-        run(modelPackage);
+        run(basePackage, modelPackage);
+
+    }
+
+    public static void run(String basePackage, String modelPacket) {
+        new JbootServiceGenerator(basePackage, modelPacket).doGenerate(null);
+    }
+
+    public static void run(String basePackage, String modelPacket, String excludeTables) {
+        new JbootServiceGenerator(basePackage, modelPacket).doGenerate(excludeTables);
     }
 
 
-    public static void run(String modelPackage) {
-        new JbootModelGenerator(modelPackage).doGenerate(null);
-    }
+    private String basePackage;
+    private String modelPacket;
 
-    public static void run(String modelPackage, String excludeTables) {
-        new JbootModelGenerator(modelPackage).doGenerate(excludeTables);
-    }
-
-
-    private final String basePackage;
-
-
-    public JbootModelGenerator(String basePackage) {
+    public JbootServiceGenerator(String basePackage, String modelPacket) {
         this.basePackage = basePackage;
+        this.modelPacket = modelPacket;
+
     }
 
 
     public void doGenerate(String excludeTables) {
 
-        String modelPackage = basePackage ;
-        String baseModelPackage = basePackage + ".base";
-
-        String modelDir = PathKit.getWebRootPath() + "/src/main/java/" + modelPackage.replace(".", "/");
-        String baseModelDir = PathKit.getWebRootPath() + "/src/main/java/" + baseModelPackage.replace(".", "/");
-
         System.out.println("start generate...");
-        System.out.println("generate dir:" + modelDir);
-
         DatasourceConfig datasourceConfig = JbootProperties.get("jboot.datasource", DatasourceConfig.class);
 
         HikariConfig config = new HikariConfig();
@@ -83,6 +76,7 @@ public class JbootModelGenerator {
         config.setDriverClassName("com.mysql.jdbc.Driver");
 
         HikariDataSource dataSource = new HikariDataSource(config);
+
         List<TableMeta> tableMetaList = new MetaBuilder(dataSource).build();
 
         if (StringUtils.isNotBlank(excludeTables)) {
@@ -98,11 +92,11 @@ public class JbootModelGenerator {
             tableMetaList = newTableMetaList;
         }
 
+        new JbootServiceInterfaceGenerator(basePackage, modelPacket).generate(tableMetaList);
+        new JbootServiceImplGenerator(basePackage + ".impl", modelPacket).generate(tableMetaList);
 
-        new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
-        new JbootModelnfoGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
 
-        System.out.println("model generate finished !!!");
+        System.out.println("service generate finished !!!");
 
     }
 

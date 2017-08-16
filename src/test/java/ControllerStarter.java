@@ -11,6 +11,7 @@ public class ControllerStarter {
         Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
         Jboot.run(args);
 
+
     }
 
 

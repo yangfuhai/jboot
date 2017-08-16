@@ -82,7 +82,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param model
      * @return
      */
-    public boolean delete(JbootModel<?> model) {
+    public boolean delete(M model) {
         return model.delete();
     }
 
@@ -93,7 +93,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param model
      * @return
      */
-    public boolean save(JbootModel<?> model) {
+    public boolean save(M model) {
         return model.save();
     }
 
@@ -103,7 +103,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param model
      * @return
      */
-    public boolean saveOrUpdate(JbootModel<?> model) {
+    public boolean saveOrUpdate(M model) {
         return model.saveOrUpdate();
     }
 
@@ -113,7 +113,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param model
      * @return
      */
-    public boolean update(JbootModel<?> model) {
+    public boolean update(M model) {
         return model.update();
     }
 
