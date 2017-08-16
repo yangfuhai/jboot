@@ -6,8 +6,8 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.0-beta5-SNAPSHOT</version>
-    <!--<version>1.0</version>-->
+    <version>1.0-beta5</version>
+    <!--<version>1.0-beta6-SNAPSHOT</version>-->
     <packaging>jar</packaging>
 
     <name>jboot</name>
