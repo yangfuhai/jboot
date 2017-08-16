@@ -13,20 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.db.dao;
+package io.jboot.db.service;
 
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.ClassNewer;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * JbootDaoBase 类
+ * JbootServiceBase 类
  */
-public abstract class JbootDaoBase {
+public class JbootServiceBase<M extends JbootModel<M>> {
+
+
+    public M DAO = null;
+    public JbootServiceBase() {
+        Class<M> modelClass = null;
+        Type t = getClass().getGenericSuperclass();
+        if (t instanceof ParameterizedType) {
+            Type[] p = ((ParameterizedType) t).getActualTypeArguments();
+            modelClass = (Class<M>) p[0];
+        }
+
+        if (modelClass == null) {
+            throw new JbootException("can not get parameterizedType in JbootServiceBase");
+        }
+
+        DAO = ClassNewer.newInstance(modelClass).dao();
+    }
+
+    public M getDao() {
+        return DAO;
+    }
 
 
     /**
@@ -35,7 +60,9 @@ public abstract class JbootDaoBase {
      * @param id
      * @return
      */
-    public abstract JbootModel findById(Object id);
+    public M findById(Object id) {
+        return DAO.findById(id);
+    }
 
 
     /**
