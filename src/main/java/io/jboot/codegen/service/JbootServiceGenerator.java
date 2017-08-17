@@ -17,16 +17,11 @@ package io.jboot.codegen.service;
 
 import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.Jboot;
-import io.jboot.config.JbootProperties;
-import io.jboot.db.datasource.DatasourceConfig;
-import io.jboot.utils.StringUtils;
+import io.jboot.codegen.CodeGenHelpler;
 
-import java.util.ArrayList;
+import javax.sql.DataSource;
 import java.util.List;
-import java.util.Set;
 
 public class JbootServiceGenerator {
 
@@ -64,33 +59,9 @@ public class JbootServiceGenerator {
     public void doGenerate(String excludeTables) {
 
         System.out.println("start generate...");
-        DatasourceConfig datasourceConfig = JbootProperties.get("jboot.datasource", DatasourceConfig.class);
-
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(datasourceConfig.getUrl());
-        config.setUsername(datasourceConfig.getUser());
-        config.setPassword(datasourceConfig.getPassword());
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        config.setDriverClassName("com.mysql.jdbc.Driver");
-
-        HikariDataSource dataSource = new HikariDataSource(config);
-
+        DataSource dataSource = CodeGenHelpler.getDatasource();
         List<TableMeta> tableMetaList = new MetaBuilder(dataSource).build();
-
-        if (StringUtils.isNotBlank(excludeTables)) {
-            List<TableMeta> newTableMetaList = new ArrayList<>();
-            Set<String> excludeTableSet = StringUtils.splitToSet(excludeTables.toLowerCase(), ",");
-            for (TableMeta tableMeta : tableMetaList) {
-                if (excludeTableSet.contains(tableMeta.name.toLowerCase())) {
-                    System.out.println("exclude table : " + tableMeta.name);
-                    continue;
-                }
-                newTableMetaList.add(tableMeta);
-            }
-            tableMetaList = newTableMetaList;
-        }
+        CodeGenHelpler.excludeTables(tableMetaList, excludeTables);
 
         new JbootServiceInterfaceGenerator(basePackage, modelPacket).generate(tableMetaList);
         new JbootServiceImplGenerator(basePackage + ".impl", modelPacket).generate(tableMetaList);

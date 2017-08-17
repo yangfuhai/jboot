@@ -179,15 +179,25 @@ public class Jboot {
     }
 
     private void printBannerInfo() {
+        System.out.println(getBannerText());
+    }
+
+    private String getBannerText() {
         JbootConfig config = getJbootConfig();
 
         if (!config.isBannerEnable()) {
-            return;
+            return "";
         }
 
         File bannerFile = new File(getRootClassPath(), config.getBannerFile());
+        if (bannerFile.exists() && bannerFile.canRead()) {
+            String bannerFileText = FileUtils.readString(bannerFile);
+            if (StringUtils.isNotBlank(bannerFileText)) {
+                return bannerFileText;
+            }
+        }
 
-        String bannerText = "  ____  ____    ___    ___   ______ \n" +
+        return "  ____  ____    ___    ___   ______ \n" +
                 " |    ||    \\  /   \\  /   \\ |      |\n" +
                 " |__  ||  o  )|     ||     ||      |\n" +
                 " __|  ||     ||  O  ||  O  ||_|  |_|\n" +
@@ -195,13 +205,6 @@ public class Jboot {
                 "\\  `  ||     ||     ||     |  |  |  \n" +
                 " \\____||_____| \\___/  \\___/   |__|  \n" +
                 "                                    ";
-
-        if (bannerFile.exists() && bannerFile.canRead()) {
-            String bannerFileText = FileUtils.readString(bannerFile);
-            bannerText = StringUtils.isNotBlank(bannerFileText) ? bannerFileText : bannerText;
-        }
-
-        System.out.println(bannerText);
 
     }
 
@@ -385,15 +388,6 @@ public class Jboot {
         return JbootMetricsManager.me().metric();
     }
 
-
-//    /**
-//     * 获取 injector
-//     *
-//     * @return
-//     */
-//    public Injector getInjector() {
-//        return JbootInjectManager.me().getInjector();
-//    }
 
 
     /**
