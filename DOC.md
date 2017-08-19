@@ -246,6 +246,65 @@ Jboot 的AOP功能，是使用了Google的Guice框架来完成的，通过AOP，
 
 ## 配置文件
 
+### 读取jboot.properties的配置信息
+要读取jboot.properties的配置信息非常简单，例如我们配置内容如下：
+
+```xml
+jboot.myconfig.name=aaa
+jboot.myconfig.passowrd=bbb
+jboot.myconfig.age=10
+```
+要读取这个配置信息，我们需要定义我们的一个model类，并通过@PropertieConfig注解给我们的类配置上类与配置文件的对应关系，如下所示：
+
+```java
+@PropertieConfig(prefix="jboot.myconfig")
+public class MyConfigModel{
+    private String name;
+    private String password;
+    private int age;
+
+    //getter setter 略
+}
+```
+
+*注意：* 类名MyConfigModel随便取
+
+编写好配置类MyConfigModel后，我们就可以通过如下代码来读取到配置信息：
+
+```java
+MyConfigModel config = Jboot.config(MyConfigModel.class);
+```
+
+### 读取自定义配置文件的配置信息
+
+在以上章节中，我们已经知道了如何来读取jboot.properties的配置文件，在某些场景下，可能需要我们把我们的配置信息编写到一个独立的properties配置文件里面去，例如：在我们的项目中有一个叫 michael.properties 文件，文件的内容如下：
+
+```xml
+jboot.myconfig.name=aaa
+jboot.myconfig.passowrd=bbb
+jboot.myconfig.age=10
+```
+
+那么，一样的，我们需要编写一个model，并配置上@PropertieConfig注解，与读取jboot.properties文件不同的是，@PropertieConfig 需要添加上file配置，内容如下：
+
+```java
+@PropertieConfig(prefix="jboot.myconfig",file="michael.properties")
+public class MyConfigModel{
+    private String name;
+    private String password;
+    private int age;
+
+    //getter setter 略
+}
+```
+
+然后，和读取jboot.properties一样。
+
+
+```java
+MyConfigModel config = Jboot.config(MyConfigModel.class);
+```
+
 ## 分布式session
 
 ## shiro安全控制
