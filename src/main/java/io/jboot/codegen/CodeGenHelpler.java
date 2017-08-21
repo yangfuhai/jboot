@@ -39,7 +39,7 @@ public class CodeGenHelpler {
      * @return
      */
     public static DataSource getDatasource() {
-        DatasourceConfig datasourceConfig = JbootProperties.get("jboot.datasource", DatasourceConfig.class);
+        DatasourceConfig datasourceConfig = JbootProperties.get(DatasourceConfig.class, "jboot.datasource");
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(datasourceConfig.getUrl());
         config.setUsername(datasourceConfig.getUser());

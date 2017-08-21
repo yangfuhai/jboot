@@ -34,7 +34,7 @@ public class DatasourceConfigManager {
 
     private DatasourceConfigManager() {
 
-        DatasourceConfig datasourceConfig = JbootProperties.get("jboot.datasource", DatasourceConfig.class);
+        DatasourceConfig datasourceConfig = JbootProperties.get(DatasourceConfig.class, "jboot.datasource");
         if (datasourceConfig.isConfigOk()) {
             datasourceConfigs.add(datasourceConfig);
         }
@@ -54,7 +54,7 @@ public class DatasourceConfigManager {
 
 
         for (String name : datasourceNames) {
-            DatasourceConfig dsc = JbootProperties.get("jboot.datasource." + name, DatasourceConfig.class);
+            DatasourceConfig dsc = JbootProperties.get(DatasourceConfig.class, "jboot.datasource." + name);
             if (StringUtils.isBlank(dsc.getName())) {
                 dsc.setName(name);
             }

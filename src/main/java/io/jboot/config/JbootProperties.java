@@ -33,8 +33,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * JBoot的配置文件
- * Created by michael on 17/3/21.
+ * 配置文件读取工具类
  */
 public class JbootProperties {
 
@@ -46,31 +45,29 @@ public class JbootProperties {
     public static <T> T get(Class<T> clazz) {
         PropertieConfig propertieConfig = clazz.getAnnotation(PropertieConfig.class);
         if (propertieConfig == null) {
-            throw new JbootException("PropertieConfig annotation must not be null in class : " + clazz);
+            return get(null, clazz, null);
         }
-
-        return get(propertieConfig.prefix(), propertieConfig.file(), clazz);
+        return get(propertieConfig.file(), clazz, propertieConfig.prefix());
     }
 
-    public static <T> T get(String prefix, Class<T> clazz) {
-        return get(prefix, null, clazz);
+    public static <T> T get(Class<T> clazz, String prefix) {
+        return get(null, clazz, prefix);
     }
+
 
     /**
      * 获取配置信息，并创建和赋值clazz实例
      *
-     * @param prefix      配置文件前缀
-     * @param extPropFile 除了jboot.properties文件以外的扩展文件，并优先读取扩展文件
-     * @param clazz       指定的类
+     * @param propFile 除了jboot.properties文件以外的扩展文件，并优先读取扩展文件
+     * @param clazz    指定的类
+     * @param prefix   配置文件前缀
      * @param <T>
-     * @return 返回对于类的实例
-     **/
-    public static <T> T get(String prefix, String extPropFile, Class<T> clazz) {
-        if (StringUtils.isBlank(prefix)) {
-            throw new JbootException("prefix must not be null");
-        }
+     * @return
+     */
+    public static <T> T get(String propFile, Class<T> clazz, String prefix) {
 
-        Object obj = configs.get(prefix);
+        Object obj = configs.get(clazz.getName() + prefix);
+
         if (obj != null) {
             return (T) obj;
         }
@@ -79,8 +76,8 @@ public class JbootProperties {
 
 
         Prop prop = getJbootProp();
-        if (extPropFile != null) {
-            Prop configProp = PropKit.use(extPropFile);
+        if (propFile != null) {
+            Prop configProp = PropKit.use(propFile);
             prop.getProperties().putAll(configProp.getProperties());
         }
 
@@ -119,26 +116,32 @@ public class JbootProperties {
             }
         }
 
-        configs.put(prefix, obj);
+        configs.put(clazz.getName() + prefix, obj);
 
         return (T) obj;
     }
 
+    /**
+     * 或者Jboot默认的配置信息
+     *
+     * @return
+     */
     public static Prop getJbootProp() {
         if (jbootProp == null) {
-            jbootProp = initProp();
+            jbootProp = PropKit.use("jboot.properties");
+            initModeProp(jbootProp, "jboot.properties");
         }
 
         return jbootProp;
     }
 
-    private static Prop initProp() {
-        Prop prop = PropKit.use("jboot.properties");
-        initModeProp(prop, "jboot.properties");
-        return prop;
-    }
 
-
+    /**
+     * 初始化不同model下的properties文件
+     *
+     * @param prop
+     * @param file
+     */
     private static void initModeProp(Prop prop, String file) {
         String mode = PropKit.use("jboot.properties").get("jboot.mode");
         if (StringUtils.isBlank(mode)) {
@@ -160,7 +163,14 @@ public class JbootProperties {
     }
 
 
-    public static final Object convert(Class<?> type, String s) {
+    /**
+     * 数据转化
+     *
+     * @param type
+     * @param s
+     * @return
+     */
+    private static final Object convert(Class<?> type, String s) {
 
         if (type == String.class) {
             return s;
