@@ -46,6 +46,7 @@ MVC中的C是Controller的简写，在Jboot应用中，所有的控制器Control
 ## @RquestMapping
 RquestMapping是请求映射，也就是通过@RquestMapping注解，可以让某个请求映射到指定的控制器Controller里去。
 
+
 ### 使用@RquestMapping
 使用@RquestMapping非常简单。只需要在Controller类添加上@RquestMapping注解即可。
 
@@ -61,14 +62,140 @@ public class HelloController extend JbootController{
 ```
 我们在HelloController控制器上，添加了@RequestMapping("/")配置，也就是让当访问 `http://127.0.0.1/`的时候让HelloController控制的index()这个方法（action）来处理。
 
-**[注意]：** 访问`http://127.0.0.1`等同于`http://127.0.0.1/`。
+**[注意]：** 
+
+* 访问`http://127.0.0.1`等同于`http://127.0.0.1/`。
+* `@RquestMapping` 可以使用在任何的 Controller，并 **不需要** 这个Controller继承至JbootController。
 
 ## render
 同JFinal render。
 
 # 安全控制 
-## shiro
-暂略
+## shiro简介
+略
+##shiro的配置
+在使用Jboot的shiro模块之前，我假定您已经学习并了解shiro的基础知识。在Jboot中使用shiro非常简单，只需要在resources目录下配置上您的shiro.ini文件即可。在shiro.ini文件里，需要在自行扩展realm等信息。
+
+
+## shiro的使用
+Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro。
+
+| 指令         |  描述  |
+| ------------- | -----|
+| ShiroAuthenticated |用户已经身份验证通过，Subject.login登录成功 |
+| ShiroGuest  |游客访问时。 但是，当用户登录成功了就不显示了|
+| ShiroHasAllPermission  |拥有全部权限 |
+| ShiroHasAllRoles  |拥有全部角色 |
+| ShiroHasAnyPermission  |拥有任何一个权限 |
+| ShiroHasAnyRoles  |拥有任何一个角色 |
+| ShiroHasPermission  |有相应权限 |
+| ShiroHasRole  |有相应角色 |
+| ShiroNoAuthenticated  |未进行身份验证时，即没有调用Subject.login进行登录。 |
+| ShiroNotHasPermission  |没有该权限 |
+| ShiroNotHasRole  |没没有该角色 |
+| ShiroPrincipal  |获取Subject Principal 身份信息 |
+
+
+### ShiroAuthenticated的使用
+
+```html
+#shiroAuthenticated()
+  登陆成功：您的用户名是：#(SESSION("username"))
+#end
+
+```
+
+
+
+### ShiroGuest的使用
+
+```html
+#ShiroGuest()
+  游客您好
+#end
+
+```
+
+### ShiroHasAllPermission的使用
+
+```html
+#ShiroHasAllPermission(permissionName1,permissionName2)
+  您好，您拥有了权限 permissionName1和permissionName2
+#end
+
+```
+
+### ShiroHasAllRoles的使用
+
+```html
+#ShiroHasAllRoles(role1, role2)
+  您好，您拥有了角色 role1和role2
+#end
+
+```
+### ShiroHasAnyPermission的使用
+
+```html
+#ShiroHasAnyPermission(permissionName1,permissionName2)
+  您好，您拥有了权限 permissionName1 或 permissionName2 
+#end
+
+```
+### ShiroHasAnyRoles的使用
+
+```html
+#ShiroHasAllRoles(role1, role2)
+  您好，您拥有了角色 role1 或 role2
+#end
+
+```
+### ShiroHasPermission的使用
+
+```html
+#ShiroHasPermission(permissionName1)
+  您好，您拥有了权限 permissionName1 
+#end
+
+```
+### ShiroHasRole的使用
+
+```html
+#ShiroHasRole(role1)
+  您好，您拥有了角色 role1 
+#end
+
+```
+### ShiroNoAuthenticated的使用
+
+```html
+#ShiroNoAuthenticated()
+  您好，您还没有登陆
+#end
+
+```
+### ShiroNotHasPermission的使用
+
+```html
+#ShiroNotHasPermission(permissionName1)
+  您好，您没有权限 permissionName1 
+#end
+
+```
+### ShiroNotHasRole的使用
+```html
+#ShiroNotHasRole(role1)
+  您好，您没有角色role1
+#end
+
+```
+### ShiroPrincipal的使用
+```html
+#ShiroPrincipal()
+  您好，您的登陆信息是：#(principal)
+#end
+
+```
+
 
 # ORM
 ## 配置

@@ -24,6 +24,8 @@ import java.io.Writer;
 /**
  * 获取Subject Principal 身份信息
  * #principal()
+ * #(principal)
+ * #end
  */
 @JFinalDirective("shiroPrincipal")
 public class ShiroPrincipalDirective extends JbootShiroDirectiveBase {
