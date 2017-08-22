@@ -184,27 +184,27 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public M findFirstByColumn(String column, Object value) {
-        StringBuilder sqlBuilder = new StringBuilder("select * from `");
-        sqlBuilder.append(tableName()).append("` where `").append(column).append("`=?");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `");
+        sqlBuilder.append(tableName()).append("` WHERE `").append(column).append("`=?");
 
         if (hasColumn(COLUMN_CREATED)) {
-            sqlBuilder.append(" order by created desc ");
+            sqlBuilder.append(" ORDER BY created  DESC ");
         }
 
-        sqlBuilder.append(" limit 1");
+        sqlBuilder.append(" LIMIT 1");
         return findFirst(sqlBuilder.toString(), value);
     }
 
 
     public M findFirstByColumns(Map<String, ?> columns) {
-        StringBuilder sqlBuilder = new StringBuilder("select * from `" + tableName() + "` ");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
         if (ArrayUtils.isNotEmpty(columns)) {
-            sqlBuilder.append(" where ");
+            sqlBuilder.append(" WHERE ");
             buildSqlByMap(columns, sqlBuilder, params);
         }
         appendDefaultOrderBy(sqlBuilder);
-        sqlBuilder.append(" limit 1");
+        sqlBuilder.append(" LIMIT 1");
         return params.isEmpty() ? findFirst(sqlBuilder.toString()) : findFirst(sqlBuilder.toString(), params.toArray());
     }
 
@@ -213,7 +213,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         for (Map.Entry<String, ? extends Object> entry : columns.entrySet()) {
             sqlBuilder.append(" `" + entry.getKey() + "` = ? ");
             if (index != columns.size() - 1) {
-                sqlBuilder.append(" and ");
+                sqlBuilder.append(" AND ");
             }
             params.add(entry.getValue());
             index++;
@@ -222,28 +222,28 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findListByColumn(String column, Object value, Integer count) {
-        StringBuilder sqlBuilder = new StringBuilder("select * from `");
-        sqlBuilder.append(tableName()).append("` where `").append(column).append("`=?");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `");
+        sqlBuilder.append(tableName()).append("` WHERE `").append(column).append("`=?");
 
         if (hasColumn(COLUMN_CREATED)) {
-            sqlBuilder.append(" order by created desc ");
+            sqlBuilder.append(" ORDER BY created DESC ");
         }
         if (count != null) {
-            sqlBuilder.append(" limit ").append(count);
+            sqlBuilder.append(" LIMIT ").append(count);
         }
         return find(sqlBuilder.toString(), value);
     }
 
 
     public List<M> findListByColumn(Column column, Integer count) {
-        StringBuilder sqlBuilder = new StringBuilder("select * from `");
-        sqlBuilder.append(tableName()).append("` where ").append(column.sql());
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `");
+        sqlBuilder.append(tableName()).append("` WHERE ").append(column.sql());
 
         if (hasColumn(COLUMN_CREATED)) {
-            sqlBuilder.append(" order by created desc ");
+            sqlBuilder.append(" ORDER BY created DESC ");
         }
         if (count != null) {
-            sqlBuilder.append(" limit ").append(count);
+            sqlBuilder.append(" LIMIT ").append(count);
         }
 
         return find(sqlBuilder.toString(), column.getValue());
@@ -272,11 +272,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findListByColumns(List<Column> columnList, String orderBy, Integer count) {
-        StringBuilder sqlBuilder = new StringBuilder("select * from `" + tableName() + "` ");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
 
         if (ArrayUtils.isNotEmpty(columnList)) {
-            sqlBuilder.append(" where ");
+            sqlBuilder.append(" WHERE ");
             buildSqlByList(columnList, sqlBuilder, params);
         }
         if (StringUtils.isNotBlank(orderBy)) {
@@ -313,7 +313,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         for (Column column : columns) {
             sqlBuilder.append(column.sql());
             if (index != columns.size() - 1) {
-                sqlBuilder.append(" and ");
+                sqlBuilder.append(" AND ");
             }
             params.add(column.getValue());
             index++;
@@ -335,11 +335,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findListByColumns(Map<String, ?> columns, String orderBy, Integer count) {
-        StringBuilder sqlBuilder = new StringBuilder("select * from `" + tableName() + "` ");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
 
         if (ArrayUtils.isNotEmpty(columns)) {
-            sqlBuilder.append(" where ");
+            sqlBuilder.append(" WHERE ");
             buildSqlByMap(columns, sqlBuilder, params);
         }
         if (StringUtils.isNotBlank(orderBy)) {
@@ -360,11 +360,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Page<M> paginateByWhere(int pageNumber, int pageSize, String where, Object... paras) {
-        String sqlExceptSelect = "from `" + tableName() + "` where " + where;
+        String sqlExceptSelect = "FROM `" + tableName() + "` WHERE " + where;
         if (where.toLowerCase().indexOf(" order ") == -1 && hasColumn(COLUMN_CREATED)) {
-            sqlExceptSelect += " order by created desc";
+            sqlExceptSelect += " ORDER BY created DESC";
         }
-        return paginate(pageNumber, pageSize, "select * ", sqlExceptSelect, paras);
+        return paginate(pageNumber, pageSize, "SELECT * ", sqlExceptSelect, paras);
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Map<String, Object> columns) {
@@ -372,10 +372,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Map<String, ?> columns, String orderBy) {
-        StringBuilder sqlBuilder = new StringBuilder(" from `" + tableName() + "` ");
+        StringBuilder sqlBuilder = new StringBuilder(" FROM `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
         if (ArrayUtils.isNotEmpty(columns)) {
-            sqlBuilder.append(" where ");
+            sqlBuilder.append(" WHERE ");
             buildSqlByMap(columns, sqlBuilder, params);
         }
         if (StringUtils.isNotBlank(orderBy)) {
@@ -383,15 +383,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         } else {
             appendDefaultOrderBy(sqlBuilder);
         }
-        return params.isEmpty() ? paginate(pageNumber, pageSize, "select * ", sqlBuilder.toString())
-                : paginate(pageNumber, pageSize, "select * ", sqlBuilder.toString(), params.toArray());
+        return params.isEmpty() ? paginate(pageNumber, pageSize, "SELECT * ", sqlBuilder.toString())
+                : paginate(pageNumber, pageSize, "SELECT * ", sqlBuilder.toString(), params.toArray());
     }
 
 
     public Page<M> paginate(int pageNumber, int pageSize) {
-        StringBuilder sqlBuilder = new StringBuilder(" from `" + tableName() + "` ");
+        StringBuilder sqlBuilder = new StringBuilder(" FROM `" + tableName() + "` ");
         appendDefaultOrderBy(sqlBuilder);
-        return paginate(pageNumber, pageSize, "select * ", sqlBuilder.toString());
+        return paginate(pageNumber, pageSize, "SELECT * ", sqlBuilder.toString());
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns) {
@@ -399,11 +399,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns, String orderBy) {
-        StringBuilder sqlBuilder = new StringBuilder(" from `" + tableName() + "` ");
+        StringBuilder sqlBuilder = new StringBuilder(" FROM `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
 
         if (ArrayUtils.isNotEmpty(columns)) {
-            sqlBuilder.append(" where ");
+            sqlBuilder.append(" WHERE ");
             buildSqlByList(columns, sqlBuilder, params);
 
         }
@@ -413,8 +413,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         } else {
             appendDefaultOrderBy(sqlBuilder);
         }
-        return params.isEmpty() ? paginate(pageNumber, pageSize, "select * ", sqlBuilder.toString())
-                : paginate(pageNumber, pageSize, "select * ", sqlBuilder.toString(), params.toArray());
+        return params.isEmpty() ? paginate(pageNumber, pageSize, "SELECT * ", sqlBuilder.toString())
+                : paginate(pageNumber, pageSize, "SELECT * ", sqlBuilder.toString(), params.toArray());
     }
 
 
@@ -425,7 +425,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private void appendDefaultOrderBy(StringBuilder sqlBuilder) {
         if (hasColumn(COLUMN_CREATED)) {
-            sqlBuilder.append(" order by created desc");
+            sqlBuilder.append(" ORDER BY created DESC");
         }
     }
 
