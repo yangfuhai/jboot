@@ -75,7 +75,7 @@ public class HelloController extend JbootController{
 
 略
 
-##shiro的配置
+## shiro的配置
 在使用Jboot的shiro模块之前，我假定您已经学习并了解shiro的基础知识。在Jboot中使用shiro非常简单，只需要在resources目录下配置上您的shiro.ini文件即可。在shiro.ini文件里，需要在自行扩展realm等信息。
 
 
