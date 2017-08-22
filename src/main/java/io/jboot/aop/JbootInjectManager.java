@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * Inject管理器
  */
-public class JbootInjectManager implements Module, TypeListener {
+public class JbootInjectManager implements com.google.inject.Module, TypeListener {
 
     /**
      * 这个manager的创建不能来之ClassNewer
