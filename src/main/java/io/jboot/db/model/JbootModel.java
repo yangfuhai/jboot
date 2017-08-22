@@ -36,30 +36,63 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private static final String COLUMN_CREATED = "created";
     private static final String COLUMN_MODIFIED = "modified";
 
+    /**
+     * 是否启用自动缓存
+     */
     private boolean autoCache = true;
 
+
+    /**
+     * 添加数据到缓存
+     *
+     * @param key
+     * @param value
+     */
+    public void putCache(Object key, Object value) {
+        Jboot.me().getCache().put(tableName(), key, value);
+    }
+
+    /**
+     * 获取缓存中的数据
+     *
+     * @param key
+     * @param <T>
+     * @return
+     */
+    public <T> T getCache(Object key) {
+        return Jboot.me().getCache().get(tableName(), key);
+    }
+
+    /**
+     * 获取缓存中的数据 ， 如果缓存不存在，则通过dataloader 去加载
+     *
+     * @param key
+     * @param dataloader
+     * @param <T>
+     * @return
+     */
+    public <T> T getCache(Object key, IDataLoader dataloader) {
+        return Jboot.me().getCache().get(tableName(), key, dataloader);
+    }
+
+    /**
+     * 移除缓存数据
+     *
+     * @param key
+     */
     public void removeCache(Object key) {
         if (key == null) return;
         Jboot.me().getCache().remove(tableName(), key);
     }
 
-    public void putCache(Object key, Object value) {
-        Jboot.me().getCache().put(tableName(), key, value);
-    }
 
-    public <T> T getCache(Object key) {
-        return Jboot.me().getCache().get(tableName(), key);
-    }
-
-    public <T> T getCache(Object key, IDataLoader dataloader) {
-        return Jboot.me().getCache().get(tableName(), key, dataloader);
-    }
-
-    public String buildCacheKey(String column, String value) {
-        return String.format("%s:%s", column, value);
-    }
-
-
+    /**
+     * 复制一个新的model
+     * 主要是用在 从缓存取出数据的时候，如果直接修改，在ehcache会抛异常
+     * 如果要对model进行修改，可以先copy一份新的，然后再修改
+     *
+     * @return
+     */
     public M copy() {
         M m = null;
         try {
@@ -72,6 +105,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 可以再DAO中调用此方法使用proxy数据源进行连接数据库
+     * 例如：DAO.useProxy().findById("123")
+     * 注意：使用此方法，需要配置名称为 proxy 的数据源
+     *
+     * @return
+     */
     public M useProxy() {
         M proxy = get("__proxy__");
         if (proxy != null) {
@@ -88,12 +128,68 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return proxy;
     }
 
+
+    /**
+     * 同 useProxy
+     *
+     * @return
+     */
+    public M useSlave() {
+        M proxy = get("__slave__");
+        if (proxy != null) {
+            return proxy;
+        }
+
+        proxy = copy().use("slave").autoCache(this.autoCache);
+
+        if (proxy._getConfig() == null) {
+            proxy.use(null);
+        }
+
+        set("__slave__", proxy);
+        return proxy;
+    }
+
+    /**
+     * 同 useProxy
+     *
+     * @return
+     */
+    public M useMaster() {
+        M proxy = get("__master__");
+        if (proxy != null) {
+            return proxy;
+        }
+
+        proxy = copy().use("master").autoCache(this.autoCache);
+
+        if (proxy._getConfig() == null) {
+            proxy.use(null);
+        }
+
+        set("__master__", proxy);
+        return proxy;
+    }
+
+
+    /**
+     * 是否启用自动缓存
+     *
+     * @param autoCache
+     * @return
+     */
     public M autoCache(boolean autoCache) {
         this.autoCache = autoCache;
         return (M) this;
     }
 
 
+    /**
+     * 更新或者保存
+     * 有主键就更新，没有就保存
+     *
+     * @return
+     */
     public boolean saveOrUpdate() {
         if (null == get(getPrimaryKey())) {
             return this.save();
@@ -102,6 +198,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 保存数据
+     *
+     * @return
+     */
     @Override
     public boolean save() {
         if (hasColumn(COLUMN_CREATED) && get(COLUMN_CREATED) == null) {
@@ -118,6 +219,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 删除
+     *
+     * @return
+     */
     @Override
     public boolean delete() {
         boolean deleted = super.delete();
@@ -131,6 +237,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 根据ID删除
+     *
+     * @param idValue the id value of the model
+     * @return
+     */
     @Override
     public boolean deleteById(Object idValue) {
         JbootModel<?> model = findById(idValue);
@@ -138,6 +250,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 更新
+     *
+     * @return
+     */
     @Override
     public boolean update() {
         Boolean fromCopier = getBoolean(ModelCopier.MODEL_FROM_COPIER);
@@ -172,6 +289,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return tableName() + ":update";
     }
 
+    /**
+     * 根据ID查找model
+     *
+     * @param idValue the id value of the model
+     * @return
+     */
     @Override
     public M findById(final Object idValue) {
         return autoCache ? getCache(idValue, new IDataLoader() {
@@ -183,6 +306,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 根据列名和值，查找1条数据
+     *
+     * @param column
+     * @param value
+     * @return
+     */
     public M findFirstByColumn(String column, Object value) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `");
         sqlBuilder.append(tableName()).append("` WHERE `").append(column).append("`=?");
@@ -196,6 +326,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 根据列名和值 查询第一条数据
+     *
+     * @param columns
+     * @return
+     */
     public M findFirstByColumns(Map<String, ?> columns) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
@@ -221,6 +357,14 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 根据列名和值 查询一个列表
+     *
+     * @param column
+     * @param value
+     * @param count  最多查询多少条数据
+     * @return
+     */
     public List<M> findListByColumn(String column, Object value, Integer count) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `");
         sqlBuilder.append(tableName()).append("` WHERE `").append(column).append("`=?");
@@ -235,6 +379,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 根据 列信息 查找数据列表
+     *
+     * @param column
+     * @param count
+     * @return
+     */
     public List<M> findListByColumn(Column column, Integer count) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `");
         sqlBuilder.append(tableName()).append("` WHERE ").append(column.sql());
@@ -359,6 +510,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return super.findById(idValue);
     }
 
+    /**
+     * 根据where信息，分页查询数据
+     *
+     * @param pageNumber 页码
+     * @param pageSize   每页显示数量
+     * @param where
+     * @param paras
+     * @return
+     */
     public Page<M> paginateByWhere(int pageNumber, int pageSize, String where, Object... paras) {
         String sqlExceptSelect = "FROM `" + tableName() + "` WHERE " + where;
         if (where.toLowerCase().indexOf(" order ") == -1 && hasColumn(COLUMN_CREATED)) {
@@ -367,10 +527,28 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return paginate(pageNumber, pageSize, "SELECT * ", sqlExceptSelect, paras);
     }
 
+    /**
+     * 根据列信息，分页查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param columns
+     * @return
+     */
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Map<String, Object> columns) {
         return paginateByColumns(pageNumber, pageSize, columns, null);
     }
 
+
+    /**
+     * 根据多列信息，分页查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param columns
+     * @param orderBy
+     * @return
+     */
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Map<String, ?> columns, String orderBy) {
         StringBuilder sqlBuilder = new StringBuilder(" FROM `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
@@ -388,16 +566,42 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 分页查询数据
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     public Page<M> paginate(int pageNumber, int pageSize) {
         StringBuilder sqlBuilder = new StringBuilder(" FROM `" + tableName() + "` ");
         appendDefaultOrderBy(sqlBuilder);
         return paginate(pageNumber, pageSize, "SELECT * ", sqlBuilder.toString());
     }
 
+
+    /**
+     * 根据列信息，分页查询数据
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param columns
+     * @return
+     */
     public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns) {
         return paginateByColumns(pageNumber, pageSize, columns, null);
     }
 
+
+    /**
+     * 根据列信息，分页查询数据
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param columns
+     * @param orderBy
+     * @return
+     */
     public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns, String orderBy) {
         StringBuilder sqlBuilder = new StringBuilder(" FROM `" + tableName() + "` ");
         LinkedList<Object> params = new LinkedList<Object>();
