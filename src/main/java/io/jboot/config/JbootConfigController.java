@@ -16,6 +16,7 @@
 package io.jboot.config;
 
 import com.jfinal.aop.Clear;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Ret;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
@@ -27,7 +28,26 @@ import io.jboot.web.controller.annotation.RequestMapping;
 @RequestMapping("/jboot/config")
 public class JbootConfigController extends JbootController {
 
-    public void index() {
+    public void index(@Para(value = "propertie", defaultValue = "jboot.properties") String propertie, String prefix) {
+
         renderJson(Ret.fail("msg", "sorry,  you have no permission to visit this page. "));
+    }
+
+
+    /**
+     * 列出本地目录下的文件信息
+     */
+    public void list() {
+        renderJson(Ret.fail("msg", "sorry,  you have no permission to visit this page. "));
+
+//        File classPathDir = new File(PathKit.getRootClassPath());
+//        String[] names = classPathDir.list(new FilenameFilter() {
+//            @Override
+//            public boolean accept(File dir, String name) {
+//                return name.endsWith(".properties");
+//            }
+//        });
+//
+//        renderJson(Arrays.toString(names));
     }
 }
