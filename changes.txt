@@ -1,3 +1,12 @@
+jboot-1.0-beta6:
+1、添加JbootServiceBase，方便在Jboot APP中对service的编写工作。
+2、添加JbootServiceGenerator用于对Service层的代码生成。
+3、优化Jboot代码生成逻辑，使之代码更加简洁。
+4、优化配置文件读取可以读取没有前缀的配置信息，同时可以不需要@PropertieConfig 注解的配置。
+5、修复：在 JDK9 下编译失败的问题，JDK9 添加新的类java.lang.Module，导致类引入不明。
+6、更新shiro相关的文档内容。
+
+
 jboot-1.0-beta5:
 1、新增：在分库的时候，可以给每个数据源排除表配置的支持。
 2、新增：@Cron4jTask 注解无法使用在ProcessTask和Task类的问题。
