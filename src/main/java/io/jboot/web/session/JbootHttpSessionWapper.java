@@ -127,10 +127,11 @@ public class JbootHttpSessionWapper implements HttpSession {
     }
 
     private String getOrCreatSessionId() {
-        String sessionid = ("JSESSIONID");
+        String sessionid = getCookie("JSESSIONID");
         if (StringUtils.isNotBlank(sessionid)) {
             return sessionid;
         }
+
 
         sessionid = UUID.randomUUID().toString().replace("-", "");
         setCookie("JSESSIONID", sessionid, (int) SESSION_TIME);
