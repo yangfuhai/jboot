@@ -132,8 +132,13 @@ public class JbootHttpSessionWapper implements HttpSession {
             return sessionid;
         }
 
+        sessionid = RequestManager.me().getRequestAttr("JSESSIONID");
+        if (StringUtils.isNotBlank(sessionid)) {
+            return sessionid;
+        }
 
         sessionid = UUID.randomUUID().toString().replace("-", "");
+        RequestManager.me().setRequestAttr("JSESSIONID", sessionid);
         setCookie("JSESSIONID", sessionid, (int) SESSION_TIME);
         return sessionid;
     }
