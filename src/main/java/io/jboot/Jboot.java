@@ -389,7 +389,6 @@ public class Jboot {
     }
 
 
-
     /**
      * 获取被增强的，可以使用AOP注入的
      *
@@ -399,6 +398,16 @@ public class Jboot {
      */
     public static <T> T bean(Class<T> clazz) {
         return JbootInjectManager.me().getInjector().getInstance(clazz);
+    }
+
+
+    /**
+     * 对某个对象内部的变量进行注入
+     *
+     * @param object
+     */
+    public static void injectMembers(Object object) {
+        JbootInjectManager.me().getInjector().injectMembers(object);
     }
 
 
