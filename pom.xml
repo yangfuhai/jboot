@@ -106,13 +106,19 @@
         <dependency>
             <groupId>io.undertow</groupId>
             <artifactId>undertow-core</artifactId>
-            <version>1.4.18.Final</version>
+            <version>1.4.19.Final</version>
         </dependency>
 
         <dependency>
             <groupId>io.undertow</groupId>
             <artifactId>undertow-servlet</artifactId>
-            <version>1.4.18.Final</version>
+            <version>1.4.19.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-websockets-jsr</artifactId>
+            <version>1.4.19.Final</version>
         </dependency>
 
 
@@ -177,7 +183,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.36</version>
+            <version>1.2.37</version>
         </dependency>
 
         <dependency>
@@ -254,14 +260,14 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>3.2.2</version>
+            <version>3.2.4</version>
         </dependency>
 
 
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
-            <version>3.2.2</version>
+            <version>3.2.4</version>
         </dependency>
 
 
