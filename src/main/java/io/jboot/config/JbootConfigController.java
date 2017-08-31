@@ -18,8 +18,11 @@ package io.jboot.config;
 import com.jfinal.aop.Clear;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Ret;
+import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
+
+import java.util.Arrays;
 
 /**
  * 配置文件的Controller，用于给其他应用提供分布式配置读取功能
@@ -28,9 +31,17 @@ import io.jboot.web.controller.annotation.RequestMapping;
 @RequestMapping("/jboot/config")
 public class JbootConfigController extends JbootController {
 
+
+    JbootConfigConfig config = Jboot.config(JbootConfigConfig.class);
+
+
     public void index(@Para(value = "propertie", defaultValue = "jboot.properties") String propertie, String prefix) {
 
-        renderJson(Ret.fail("msg", "sorry,  you have no permission to visit this page. "));
+        if (!config.isConfigServer()) {
+            renderJson(Ret.fail("msg", "sorry,  you have no permission to visit this page. "));
+            return;
+        }
+        
     }
 
 
@@ -38,16 +49,14 @@ public class JbootConfigController extends JbootController {
      * 列出本地目录下的文件信息
      */
     public void list() {
-        renderJson(Ret.fail("msg", "sorry,  you have no permission to visit this page. "));
+        if (!config.isConfigServer()) {
+            renderJson(Ret.fail("msg", "sorry,  you have no permission to visit this page. "));
+            return;
+        }
 
-//        File classPathDir = new File(PathKit.getRootClassPath());
-//        String[] names = classPathDir.list(new FilenameFilter() {
-//            @Override
-//            public boolean accept(File dir, String name) {
-//                return name.endsWith(".properties");
-//            }
-//        });
-//
-//        renderJson(Arrays.toString(names));
+        renderJson(Arrays.toString(config.getConfigFile().split(
+                ","
+        )));
+
     }
 }

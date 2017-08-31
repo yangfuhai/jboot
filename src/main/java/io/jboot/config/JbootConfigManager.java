@@ -15,10 +15,20 @@
  */
 package io.jboot.config;
 
+import io.jboot.utils.ClassNewer;
+
 /**
  * 配置管理类
  * <p>
  * 用于读取配置信息，包括本地配置信息和分布式远程配置信息
  */
 public class JbootConfigManager {
+
+    public static JbootConfigManager me() {
+        return ClassNewer.singleton(JbootConfigManager.class);
+    }
+
+    public void init() {
+
+    }
 }
