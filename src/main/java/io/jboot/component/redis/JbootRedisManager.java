@@ -37,16 +37,16 @@ public class JbootRedisManager {
 
     private JbootRedis redis;
 
-    public JbootRedis getReidis() {
+    public JbootRedis getRedis() {
         if (redis == null) {
             JbootRedisConfig config = Jboot.config(JbootRedisConfig.class);
-            redis = getReidis(config);
+            redis = getRedis(config);
         }
 
         return redis;
     }
 
-    public JbootRedis getReidis(JbootRedisConfig config) {
+    public JbootRedis getRedis(JbootRedisConfig config) {
         if (config == null || !config.isConfigOk()) {
             return null;
         }

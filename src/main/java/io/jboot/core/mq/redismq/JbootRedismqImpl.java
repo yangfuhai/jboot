@@ -33,7 +33,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq {
     public JbootRedismqImpl() {
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
         if (redisConfig.isConfigOk()) {
-            redis = JbootRedisManager.me().getReidis(redisConfig);
+            redis = JbootRedisManager.me().getRedis(redisConfig);
         } else {
             redis = Jboot.me().getRedis();
         }

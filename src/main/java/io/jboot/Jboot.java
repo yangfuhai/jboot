@@ -368,7 +368,7 @@ public class Jboot {
      */
     public JbootRedis getRedis() {
         if (jbootRedis == null) {
-            jbootRedis = JbootRedisManager.me().getReidis();
+            jbootRedis = JbootRedisManager.me().getRedis();
         }
         return jbootRedis;
     }
