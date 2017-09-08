@@ -44,6 +44,14 @@ public class DatasourceConfig {
     private String table;
     private String excludeTable;
 
+    /**
+     * 是否需要添加到映射
+     * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了，
+     * 添加映射：默认为该model的数据源，
+     * 不添加映射：通过 model.use("xxx").save()这种方式去调用该数据源
+     */
+    private boolean needAddMapping = true;
+
     public String getName() {
         return name;
     }
@@ -194,5 +202,13 @@ public class DatasourceConfig {
 
     public void setPoolName(String poolName) {
         this.poolName = poolName;
+    }
+
+    public boolean isNeedAddMapping() {
+        return needAddMapping;
+    }
+
+    public void setNeedAddMapping(boolean needAddMapping) {
+        this.needAddMapping = needAddMapping;
     }
 }

@@ -143,10 +143,18 @@ public class JbootDbManager {
                 ? new ActiveRecordPlugin(configName, dataSource)
                 : new ActiveRecordPlugin(dataSource);
 
+        /**
+         * 不需要添加映射的直接返回
+         */
+        if (!config.isNeedAddMapping()) {
+            return activeRecordPlugin;
+        }
+
         List<Class<Model>> modelClassList = ClassScanner.scanSubClass(Model.class);
         if (ArrayUtils.isNullOrEmpty(modelClassList)) {
             return activeRecordPlugin;
         }
+
 
         Set<String> tables = configTable == null ? null : StringUtils.splitToSet(configTable, ",");
         Set<String> excludeTables = configTable == null ? null : StringUtils.splitToSet(excludeTable, ",");
