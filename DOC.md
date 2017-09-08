@@ -70,6 +70,29 @@ public class HelloController extend JbootController{
 ## render
 同JFinal render。
 
+## session 与 分布式session
+
+使用session分成简单，直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 就可以。
+
+### 分布式session
+在Jboot的设计中，分布式的session是依赖分布式缓存的，jboot中，分布式缓存提供了3种方式：
+
+1. ehcache
+2. redis
+3. ehredis： 基于ehcache和redis实现的二级缓存框架。
+
+所以，在使用jboot的分布式session之前，需要配置上jboot分布式的缓存。
+
+例如：
+
+```html
+jboot.cache.type=redis
+jboot.cache.redis.host = 127.0.0.1
+jboot.cache.redis.password = 123456
+jboot.cache.redis.database = 1
+```
+配置好缓存后，在配置的时候直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 即可。
+
 # 安全控制 
 ## shiro简介
 
