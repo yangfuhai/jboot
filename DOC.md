@@ -72,7 +72,7 @@ public class HelloController extend JbootController{
 
 ## session 与 分布式session
 
-使用session分成简单，直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 就可以。
+使用session非常简单，直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 就可以。
 
 ### 分布式session
 在Jboot的设计中，分布式的session是依赖分布式缓存的，jboot中，分布式缓存提供了3种方式：
@@ -81,7 +81,7 @@ public class HelloController extend JbootController{
 2. redis
 3. ehredis： 基于ehcache和redis实现的二级缓存框架。
 
-所以，在使用jboot的分布式session之前，需要配置上jboot分布式的缓存。
+所以，在使用jboot的分布式session之前，需要在jboot.properties配置上jboot分布式的缓存。
 
 例如：
 
@@ -91,7 +91,9 @@ jboot.cache.redis.host = 127.0.0.1
 jboot.cache.redis.password = 123456
 jboot.cache.redis.database = 1
 ```
-配置好缓存后，在配置的时候直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 即可。
+配置好缓存后，直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 即可。
+
+*注意：* session都是走缓存，如果jboot配置的缓存是ehcache（或者 ehredis）,请注意在ehcache.xml上添加名为 `SESSION` 的缓存节点。
 
 # 安全控制 
 ## shiro简介
