@@ -33,8 +33,6 @@ public class JbootHttpSessionWapper implements HttpSession {
     private static final long SESSION_TIME = TimeUnit.DAYS.toSeconds(2);
     private static final String SESSION_CACHE_NAME = "SESSION";
 
-    HttpSession baseSession;
-
     @Override
     public long getCreationTime() {
         return 0;

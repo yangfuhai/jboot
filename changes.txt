@@ -1,3 +1,16 @@
+jboot-1.0-beta7:
+新增：多数据源情况下，是否添加表映射的配置支持。
+新增：websocket的支持，更新依赖。
+修复：启用分布式session的情况下，在同一个request里setSession又去getSession 得到空值的bug
+修复：修改方法名 RedisManager.getReidis() 为 RedisManager.getRedis()
+优化：appassembler-maven-plugin插件打包jar存放的目录由lib修改为libs
+优化：删除 无用的 JbootSessionManager 类
+更新：分布式session的相关文档。
+更新：dubbo到最新版本2.5.4
+更新：undertow到最新版本1.4.20.Final
+
+
+
 jboot-1.0-beta6:
 1、添加JbootServiceBase，方便在Jboot APP中对service的编写工作。
 2、添加JbootServiceGenerator用于对Service层的代码生成。
