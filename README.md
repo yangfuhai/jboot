@@ -22,7 +22,7 @@ QQ交流群： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.0-beta6</version>
+    <version>1.0-beta7</version>
 </dependency>
 
 ```
@@ -73,7 +73,7 @@ public class MyStarter{
 * 事件机制
 * 等等
 
-### 更多
+### 文档
 
 请查看[JBoot文档](./DOC.md)
 
