@@ -15,11 +15,12 @@
  */
 package io.jboot.core.serializer;
 
-import io.jboot.Jboot;
-import io.jboot.JbootConfig;
 import io.jboot.core.spi.JbootSpiManager;
 import io.jboot.exception.JbootAssert;
 import io.jboot.utils.ClassNewer;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class SerializerManager {
@@ -29,6 +30,8 @@ public class SerializerManager {
 
     private static SerializerManager me;
 
+    private static Map<String, ISerializer> serializerMap = new ConcurrentHashMap<>();
+
     public static SerializerManager me() {
         if (me == null) {
             me = ClassNewer.singleton(SerializerManager.class);
@@ -37,37 +40,43 @@ public class SerializerManager {
     }
 
 
-    private ISerializer serializer;
+    public ISerializer getSerializer(String serializerString) {
 
-    public ISerializer getSerializer() {
+        ISerializer serializer = serializerMap.get(serializerString);
 
         if (serializer == null) {
-            serializer = buildSerializer();
+
+            serializer = buildSerializer(serializerString);
+            serializerMap.put(serializerString, serializer);
         }
 
         return serializer;
     }
 
-    private ISerializer buildSerializer() {
-        JbootConfig config = Jboot.me().getJbootConfig();
+    private ISerializer buildSerializer(String serializerString) {
 
-        JbootAssert.assertTrue(config.getSerializer() != null, "can not get serializer config, please set jboot.serializer value to jboot.proerties");
+        JbootAssert.assertTrue(serializerString != null, "can not get serializer config, please set jboot.serializer value to jboot.proerties");
 
-        if (config.getSerializer() != null && config.getSerializer().contains(".")) {
-            serializer = ClassNewer.newInstance(config.getSerializer());
+        /**
+         * 可能是某个类名
+         */
+        if (serializerString != null && serializerString.contains(".")) {
+
+            ISerializer serializer = ClassNewer.newInstance(serializerString);
+
+            if (serializer != null) {
+                return serializer;
+            }
         }
 
-        if (serializer != null) {
-            return serializer;
-        }
 
-        switch (config.getSerializer()) {
+        switch (serializerString) {
             case FST2:
                 return new Fst2Serializer();
             case FASTJSON:
                 return new FastjsonSerializer();
             default:
-                return JbootSpiManager.me().spi(ISerializer.class, config.getSerializer());
+                return JbootSpiManager.me().spi(ISerializer.class, serializerString);
         }
     }
 

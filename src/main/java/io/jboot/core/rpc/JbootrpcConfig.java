@@ -15,6 +15,8 @@
  */
 package io.jboot.core.rpc;
 
+import io.jboot.Jboot;
+import io.jboot.JbootConfig;
 import io.jboot.config.annotation.PropertieConfig;
 
 
@@ -42,6 +44,7 @@ public class JbootrpcConfig {
     private int defaultPort = 8088;
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
+    private String serializer = Jboot.config(JbootConfig.class).getSerializer();
 
     public String getType() {
         return type;
@@ -121,5 +124,13 @@ public class JbootrpcConfig {
 
     public void setRegistryPassword(String registryPassword) {
         this.registryPassword = registryPassword;
+    }
+
+    public String getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(String serializer) {
+        this.serializer = serializer;
     }
 }

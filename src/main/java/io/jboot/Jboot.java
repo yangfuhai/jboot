@@ -412,7 +412,7 @@ public class Jboot {
 
 
     public ISerializer getSerializer() {
-        return SerializerManager.me().getSerializer();
+        return SerializerManager.me().getSerializer(getJbootConfig().getSerializer());
     }
 
 

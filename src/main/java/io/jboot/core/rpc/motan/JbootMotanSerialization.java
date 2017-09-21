@@ -18,19 +18,24 @@ package io.jboot.core.rpc.motan;
 import com.weibo.api.motan.codec.Serialization;
 import com.weibo.api.motan.core.extension.SpiMeta;
 import io.jboot.Jboot;
+import io.jboot.core.rpc.JbootrpcConfig;
+import io.jboot.core.serializer.SerializerManager;
 
 import java.io.IOException;
 
 
 @SpiMeta(name = "jboot")
 public class JbootMotanSerialization implements Serialization {
+
+    JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
+
     @Override
     public byte[] serialize(Object obj) throws IOException {
-        return Jboot.me().getSerializer().serialize(obj);
+        return SerializerManager.me().getSerializer(config.getSerializer()).serialize(obj);
     }
 
     @Override
     public <T> T deserialize(byte[] bytes, Class<T> clz) throws IOException {
-        return (T) Jboot.me().getSerializer().deserialize(bytes);
+        return (T) SerializerManager.me().getSerializer(config.getSerializer()).deserialize(bytes);
     }
 }
