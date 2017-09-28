@@ -68,11 +68,11 @@ public class JbootTaskManager {
 
         for (Class clazz : list) {
             Cron4jTask cron4jTask = (Cron4jTask) clazz.getAnnotation(Cron4jTask.class);
-            if (clazz == Runnable.class) {
+            if (Runnable.class.isAssignableFrom(clazz)) {
                 cron4jPlugin.addTask(cron4jTask.cron(), (Runnable) ClassNewer.newInstance(clazz), cron4jTask.daemon());
-            } else if (clazz == ProcessTask.class) {
+            } else if (ProcessTask.class.isAssignableFrom(clazz)) {
                 cron4jPlugin.addTask(cron4jTask.cron(), (ProcessTask) ClassNewer.newInstance(clazz), cron4jTask.daemon());
-            } else if (clazz == Task.class) {
+            } else if (Task.class.isAssignableFrom(clazz)) {
                 cron4jPlugin.addTask(cron4jTask.cron(), (Task) ClassNewer.newInstance(clazz), cron4jTask.daemon());
             } else {
                 throw new JbootException("annotation Cron4jTask can not use for class : " + clazz);
