@@ -54,7 +54,7 @@ public class JbootConfig {
         this.bannerFile = bannerFile;
     }
 
-    public boolean isCron4jEnable() {
+    public boolean  isCron4jEnable() {
         return cron4jEnable;
     }
 

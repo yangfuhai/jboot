@@ -21,6 +21,8 @@ import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
 import io.jboot.core.rpc.JbootrpcConfig;
+import io.jboot.exception.JbootException;
+import io.jboot.utils.StringUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,10 +41,26 @@ public class JbootMotanrpc extends JbootrpcBase {
 
         jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
 
-        registryConfig = new RegistryConfig();
-        registryConfig.setRegProtocol(jbootrpcConfig.getRegistryType());
-        registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
-        registryConfig.setName(jbootrpcConfig.getRegistryName());
+
+        /**
+         * 注册中心的调用模式
+         */
+        if (jbootrpcConfig.isRegistryCallMode()) {
+            registryConfig = new RegistryConfig();
+            registryConfig.setRegProtocol(jbootrpcConfig.getRegistryType());
+            registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
+            registryConfig.setName(jbootrpcConfig.getRegistryName());
+        }
+
+
+        /**
+         * 直连调用模式
+         */
+        if (jbootrpcConfig.isRedirectCallMode()) {
+            if (StringUtils.isBlank(jbootrpcConfig.getDirectUrl())) {
+                throw new JbootException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
+            }
+        }
 
 
         protocolConfig = new ProtocolConfig();
@@ -72,7 +90,20 @@ public class JbootMotanrpc extends JbootrpcBase {
         refererConfig.setGroup(group);
         refererConfig.setVersion(version);
         refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOut());
-        initConfig(refererConfig);
+        refererConfig.setProtocol(protocolConfig);
+
+        /**
+         * 注册中心模式
+         */
+        if (jbootrpcConfig.isRegistryCallMode()) {
+            refererConfig.setRegistry(registryConfig);
+        }
+        /**
+         * 直连模式
+         */
+        else if (jbootrpcConfig.isRedirectCallMode()) {
+            refererConfig.setDirectUrl(jbootrpcConfig.getDirectUrl());
+        }
 
         object = refererConfig.getRef();
 
@@ -91,7 +122,11 @@ public class JbootMotanrpc extends JbootrpcBase {
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, false);
 
             ServiceConfig<T> motanServiceConfig = new ServiceConfig<T>();
-            initConfig(motanServiceConfig);
+            if (jbootrpcConfig.isRegistryCallMode()) {
+                motanServiceConfig.setRegistry(registryConfig);
+            }
+
+            motanServiceConfig.setProtocol(protocolConfig);
 
             // 设置接口及实现类
             motanServiceConfig.setInterface(interfaceClass);
@@ -109,11 +144,6 @@ public class JbootMotanrpc extends JbootrpcBase {
         }
 
         return true;
-    }
-
-    private void initConfig(AbstractInterfaceConfig config) {
-        config.setRegistry(registryConfig);
-        config.setProtocol(protocolConfig);
     }
 
 
