@@ -1,3 +1,11 @@
+jboot-1.0-beta8:
+新增：RPC模块支持自定义序列化，可以和Jboot本身的序列化不共享同一个序列化对象。
+修复：在使用redis作为默认缓存的情况下，根据主键查询一个不存在的数据可能会抛出NullPointerException的问题。
+依赖更新：metrics ->3.2.5，HikariCP ->2.7.1 ， fastjson -> 1.2.38 ，fst -> 2.53，dubbo->2.5.5。
+
+
+
+
 jboot-1.0-beta7:
 新增：多数据源情况下，是否添加表映射的配置支持。
 新增：websocket的支持，更新依赖。
