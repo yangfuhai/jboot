@@ -34,9 +34,10 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
 
     public M DAO = null;
+
     public JbootServiceBase() {
         Class<M> modelClass = null;
-        Type t = getClass().getGenericSuperclass();
+        Type t = getUsefulClass(getClass()).getGenericSuperclass();
         if (t instanceof ParameterizedType) {
             Type[] p = ((ParameterizedType) t).getActualTypeArguments();
             modelClass = (Class<M>) p[0];
@@ -48,6 +49,12 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
         DAO = ClassNewer.newInstance(modelClass).dao();
     }
+
+
+    private static Class<?> getUsefulClass(Class<?> modelClass) {
+        return modelClass.getName().indexOf("EnhancerBy") == -1 ? modelClass : modelClass.getSuperclass();
+    }
+
 
     public M getDao() {
         return DAO;
