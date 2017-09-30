@@ -1,3 +1,11 @@
+jboot-1.0-beta9:
+修复：cron4j 注解配置会抛出异常的bug。 close #IF5U1:关于cron4j使用注解创建的问题
+修复：在使用JbootServiceBase作为service层的基类时，通过注入的方式初始化会造成初始化失败的问题。
+新增：RPC直连模式调用的支持。
+
+
+
+
 jboot-1.0-beta8:
 新增：RPC模块支持自定义序列化，可以和Jboot本身的序列化不共享同一个序列化对象。
 修复：在使用redis作为默认缓存的情况下，根据主键查询一个不存在的数据可能会抛出NullPointerException的问题。
