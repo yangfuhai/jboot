@@ -71,7 +71,7 @@ public class ModelCopier {
     }
 
 
-    ////////一下是JbootModel 转化到 JbootVoModel////////
+    ////////以下是JbootModel 转化到 JbootVoModel////////
     public static <M extends Model> Page<M> convertToModel(Page<? extends JbootVoModel> page, Class<M> clazz) {
         if (page == null) {
             return null;
