@@ -24,5 +24,14 @@ import javax.sql.DataSource;
  */
 public interface IShardingRuleFactory {
 
+    /**
+     * 创建 分库分表规则
+     * 具体的规则 可以才考 ： https://github.com/shardingjdbc/sharding-jdbc/tree/master/sharding-jdbc-example/sharding-jdbc-example-jdbc
+     * <p>
+     * 在Jboot中，可以使用多数据源的替代分库，在这里只需要配置分表规则就可以了
+     *
+     * @param dataSource
+     * @return
+     */
     public ShardingRule createShardingRule(DataSource dataSource);
 }

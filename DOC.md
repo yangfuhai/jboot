@@ -361,7 +361,62 @@ company.save();
 
 
 ## 分库和分表
-待续
+
+### 分库
+分库建议使用多数据源的方式进行分库
+
+### 分表
+在Jboot中，分表是通过sharding-jdbc（ https://github.com/shardingjdbc/sharding-jdbc）来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
+
+阅读Jboot的分表之前，假定你对Sharding-jdbc已经有所了解。
+
+#### 第一步：编写分表规则
+
+例如：
+
+```java
+public final class ModuloTableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<Integer> {
+
+    @Override
+    public String doEqualSharding(final Collection<String> tableNames, final ShardingValue<Integer> shardingValue) {
+        
+    }
+
+    @Override
+    public Collection<String> doInSharding(final Collection<String> tableNames, final ShardingValue<Integer> shardingValue) {
+       
+    }
+
+    @Override
+    public Collection<String> doBetweenSharding(final Collection<String> tableNames, final ShardingValue<Integer> shardingValue) {
+        
+    }
+}
+```
+
+具体实现参考：
+
+https://github.com/shardingjdbc/sharding-jdbc/blob/master/sharding-jdbc-example/sharding-jdbc-example-jdbc/src/main/java/com/dangdang/ddframe/rdb/sharding/example/jdbc/algorithm/ModuloTableShardingAlgorithm.java 
+
+#### 第二步：编写 IShardingRuleFactory 的实现类
+
+```java
+public class MyShardingRuleFactory implements IShardingRuleFactory{
+	public ShardingRule createShardingRule(DataSource dataSource){
+	     // 具体可以参 https://github.com/shardingjdbc/sharding-jdbc/blob/master/sharding-jdbc-example/sharding-jdbc-example-jdbc/src/main/java/com/dangdang/ddframe/rdb/sharding/example/jdbc/Main.java
+	}
+}
+```
+
+#### 第三步：给数据源配置上ShardingRuleFactory
+
+```
+jboot.datasource.type=
+jboot.datasource.url=
+jboot.datasource.user=
+jboot.datasource.password=
+jboot.datasource.shardingRuleFactory=com.yours.MyShardingRuleFactory
+```
 
 
 # AOP
