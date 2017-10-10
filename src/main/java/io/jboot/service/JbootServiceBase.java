@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.db.service;
+package io.jboot.service;
 
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Model;

@@ -39,7 +39,7 @@ public class JbootServiceImplGenerator extends BaseModelGenerator {
         this.classDefineTemplate = "public class %s extends JbootServiceBase<%s> implements %s {%n%n";
 
 
-        this.importTemplate = "import io.jboot.db.service.JbootServiceBase;%n%n";
+        this.importTemplate = "import io.jboot.service.JbootServiceBase;%n%n";
     }
 
     protected void genBaseModelContent(TableMeta tableMeta) {
