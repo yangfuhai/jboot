@@ -18,7 +18,7 @@ package io.jboot.utils;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Base64Kit;
 import com.jfinal.kit.HashKit;
-import io.jboot.exception.JbootException;
+import com.jfinal.log.Log;
 
 import java.math.BigInteger;
 
@@ -34,7 +34,8 @@ import java.math.BigInteger;
 public class EncryptCookieUtils {
 
     private final static String COOKIE_SEPARATOR = "#JBOOT#";
-    private static String COOKIE_ENCRYPT_KEY;
+    private static String COOKIE_ENCRYPT_KEY = "#JBOOT#";
+    private static Log log = Log.getLog(EncryptCookieUtils.class);
 
     /**
      * 在使用之前，小调用此方法进行加密key的设置
@@ -68,7 +69,6 @@ public class EncryptCookieUtils {
         String cookie = buildCookieValue(value, maxAgeInSeconds);
         ctr.setCookie(key, cookie, maxAgeInSeconds, null, domain, false);
     }
-
 
 
     public static void remove(Controller ctr, String key) {
@@ -111,8 +111,8 @@ public class EncryptCookieUtils {
     }
 
     private static String encrypt(String encrypt_key, long saveTime, String maxAgeInSeconds, String value) {
-        if (encrypt_key == null) {
-            throw new JbootException("encrypt key is null. please invoke initEncryptKey(key) method before.");
+        if ("#JBOOT#".equals(encrypt_key)) {
+            log.warn("encrypt key is defalut value. please invoke EncryptCookieUtils.initEncryptKey(key) method before.");
         }
         return HashKit.md5(encrypt_key + saveTime + maxAgeInSeconds + value);
     }
