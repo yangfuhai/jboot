@@ -112,7 +112,7 @@ public class EncryptCookieUtils {
 
     private static String encrypt(String encrypt_key, long saveTime, String maxAgeInSeconds, String value) {
         if ("#JBOOT#".equals(encrypt_key)) {
-            log.warn("encrypt key is defalut value. please invoke EncryptCookieUtils.initEncryptKey(key) method before.");
+            log.warn("warn!!! encrypt key is defalut value. please invoke EncryptCookieUtils.initEncryptKey(key) method before.");
         }
         return HashKit.md5(encrypt_key + saveTime + maxAgeInSeconds + value);
     }
