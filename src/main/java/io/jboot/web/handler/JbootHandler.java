@@ -28,6 +28,7 @@ import io.jboot.web.session.JbootServletRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
 
 
 public class JbootHandler extends Handler {
@@ -108,13 +109,32 @@ public class JbootHandler extends Handler {
      */
     private void injectInterceptors(String target) {
         Action action = JFinal.me().getAction(target, urlPara);
-        Interceptor[] interceptors = action.getInterceptors();
-        if (interceptors != null && interceptors.length > 0) {
-            for (Interceptor interceptor : interceptors) {
-                JbootInjectManager.me().getInjector().injectMembers(interceptor);
-            }
+        if (action == null) {
+            return;
         }
+
+        Interceptor[] interceptors = action.getInterceptors();
+        if (interceptors == null || interceptors.length == 0) {
+            return;
+        }
+
+        //如果注入过了，就没必要再次注入
+        if (injectFlags.contains(target)) {
+            return;
+        }
+
+        for (Interceptor interceptor : interceptors) {
+            JbootInjectManager.me().getInjector().injectMembers(interceptor);
+        }
+
+        injectFlags.add(target);
     }
+
+    /**
+     * 用于记录拦截器是否被注入过，
+     * 拦截器属于单例模式，注入过一次就没必要再次注入了
+     */
+    private static HashSet<String> injectFlags = new HashSet<>();
 
 
 }
