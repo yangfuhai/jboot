@@ -15,9 +15,13 @@
  */
 package io.jboot.web.handler;
 
+import com.jfinal.aop.Interceptor;
+import com.jfinal.core.Action;
+import com.jfinal.core.JFinal;
 import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import io.jboot.aop.JbootInjectManager;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.web.RequestManager;
 import io.jboot.web.session.JbootServletRequestWrapper;
@@ -28,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class JbootHandler extends Handler {
     static Log log = Log.getLog(JbootHandler.class);
+    static String[] urlPara = {null};
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
@@ -56,7 +61,7 @@ public class JbootHandler extends Handler {
 
 
         try {
-            
+
             /**
              * 执行请求逻辑
              */
@@ -85,9 +90,30 @@ public class JbootHandler extends Handler {
     }
 
     private void doHandle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        request.setAttribute("REQUEST", request);
-        request.setAttribute("CPATH", request.getContextPath());
-        next.handle(target, request, response, isHandled);
+        try {
+            request.setAttribute("REQUEST", request);
+            request.setAttribute("CPATH", request.getContextPath());
+            injectInterceptors(target);
+        } catch (Throwable ex) {
+            log.error(ex.toString(), ex);
+        } finally {
+            next.handle(target, request, response, isHandled);
+        }
+    }
+
+    /**
+     * 对所有拦截器进行注入
+     *
+     * @param target
+     */
+    private void injectInterceptors(String target) {
+        Action action = JFinal.me().getAction(target, urlPara);
+        Interceptor[] interceptors = action.getInterceptors();
+        if (interceptors != null && interceptors.length > 0) {
+            for (Interceptor interceptor : interceptors) {
+                JbootInjectManager.me().getInjector().injectMembers(interceptor);
+            }
+        }
     }
 
 
