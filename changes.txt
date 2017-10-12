@@ -1,3 +1,14 @@
+jboot-1.0-rc.1:
+新增：数据库分表的支持（之前已经完成对多数据源分库的支持），分表支持依赖于sharding-jdbc
+新增：分库分表相关的使用文档
+新增：对拦截器自动注入功能的支持
+优化：Cookie的加密工具配置加密key为选配，当没配置的时候不会抛出异常，只是会发出警告。
+优化：优化拦截器注入性能
+优化：重构AOP对jfinal 的 Controller和interceptor 注入工作，代码更加容易理解。
+依赖更新：HikariCP -> 2.7.2 ；fastjson -> 1.2.38
+
+
+
 jboot-1.0-beta9:
 修复：cron4j 注解配置会抛出异常的bug。 close #IF5U1:关于cron4j使用注解创建的问题
 修复：在使用JbootServiceBase作为service层的基类时，通过注入的方式初始化会造成初始化失败的问题。
