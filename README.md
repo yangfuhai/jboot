@@ -58,22 +58,22 @@ public class MyStarter{
 通过以上几个步骤，我们就能完成一个Jboot应用的demo实例。然而在大型的分布式应用中，这些远远不够。因此，Jboot还提供了在分布式应用常用的分布式组件。
 
 * MVC
-* 安全控制 
+* 安全控制 （基于shiro）
 * ORM 
-* AOP
-* RPC远程调用
-* MQ消息队列
+* AOP （基于guice）
+* RPC远程调用 （支持可选方案有 motan，dubbo等）
+* MQ消息队列 (支持可选方案有：redis、activemq，rabbitmq等)
 * 分布式缓存
 * 分布式session
-* 调用监控
-* 容错隔离
-* 轻量级的Http客户端
+* 调用监控 (基于metrics)
+* 容错隔离（基于 hystrix）
+* 轻量级的Http客户端（包含了get、post请求，文件上传和下载等）
 * 分布式下的微信和微信第三方
 * 自定义序列化组件
 * 事件机制
 * 等等
 
-### 文档
+## 文档
 
 请查看[JBoot文档](./DOC.md)
 
