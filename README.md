@@ -78,12 +78,12 @@ public class MyStarter{
 请查看[JBoot文档](./DOC.md)
 
 
-# 联系作者
+## 联系作者
 * qq:1506615067
 * wechat：wx198819880
 * email:fuhai999#gmail.com
 
-# QQ群
+## QQ群
 
 Jboot交流QQ群：601440615 ，欢迎加入讨论Jboot和微服务。
 
