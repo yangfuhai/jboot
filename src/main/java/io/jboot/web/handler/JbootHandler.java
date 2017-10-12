@@ -15,25 +15,19 @@
  */
 package io.jboot.web.handler;
 
-import com.jfinal.aop.Interceptor;
-import com.jfinal.core.Action;
-import com.jfinal.core.JFinal;
 import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
-import io.jboot.aop.JbootInjectManager;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.web.RequestManager;
 import io.jboot.web.session.JbootServletRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashSet;
 
 
 public class JbootHandler extends Handler {
     static Log log = Log.getLog(JbootHandler.class);
-    static String[] urlPara = {null};
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
@@ -91,50 +85,10 @@ public class JbootHandler extends Handler {
     }
 
     private void doHandle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        try {
-            request.setAttribute("REQUEST", request);
-            request.setAttribute("CPATH", request.getContextPath());
-            injectInterceptors(target);
-        } catch (Throwable ex) {
-            log.error(ex.toString(), ex);
-        } finally {
-            next.handle(target, request, response, isHandled);
-        }
+        request.setAttribute("REQUEST", request);
+        request.setAttribute("CPATH", request.getContextPath());
+        next.handle(target, request, response, isHandled);
     }
-
-    /**
-     * 对所有拦截器进行注入
-     *
-     * @param target
-     */
-    private void injectInterceptors(String target) {
-        Action action = JFinal.me().getAction(target, urlPara);
-        if (action == null) {
-            return;
-        }
-
-        Interceptor[] interceptors = action.getInterceptors();
-        if (interceptors == null || interceptors.length == 0) {
-            return;
-        }
-
-        //如果注入过了，就没必要再次注入
-        if (injectFlags.contains(target)) {
-            return;
-        }
-
-        for (Interceptor interceptor : interceptors) {
-            JbootInjectManager.me().getInjector().injectMembers(interceptor);
-        }
-
-        injectFlags.add(target);
-    }
-
-    /**
-     * 用于记录拦截器是否被注入过，
-     * 拦截器属于单例模式，注入过一次就没必要再次注入了
-     */
-    private static HashSet<String> injectFlags = new HashSet<>();
 
 
 }
