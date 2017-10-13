@@ -36,12 +36,15 @@ public class JbootDubborpc extends JbootrpcBase {
     private JbootrpcConfig jbootrpcConfig;
     private ApplicationConfig applicationConfig;
     private RegistryConfig registryConfig;
+    private JbootDubborpcConfig dubboConfig;
 
     public JbootDubborpc() {
         jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
+        dubboConfig = Jboot.config(JbootDubborpcConfig.class);
 
         applicationConfig = new ApplicationConfig();
         applicationConfig.setName("jboot");
+
 
         /**
          * 注册中心的调用模式
@@ -75,6 +78,7 @@ public class JbootDubborpc extends JbootrpcBase {
             return object;
         }
 
+
         // 注意：ReferenceConfig为重对象，内部封装了与注册中心的连接，以及与服务提供方的连接
         // 引用远程服务
         // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
@@ -82,6 +86,7 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setApplication(applicationConfig);
         reference.setInterface(serviceClass);
         reference.setVersion(version);
+
 
         /**
          * 注册中心的调用模式
@@ -112,7 +117,11 @@ public class JbootDubborpc extends JbootrpcBase {
         ProtocolConfig protocolConfig = new ProtocolConfig();
         protocolConfig.setName("dubbo");
         protocolConfig.setPort(port <= 0 ? jbootrpcConfig.getDefaultPort() : port);
-        protocolConfig.setThreads(200);
+        protocolConfig.setThreads(dubboConfig.getProtocolThreads());
+
+        if (StringUtils.isNotBlank(dubboConfig.getProtocolTransporter())) {
+            protocolConfig.setTransporter(dubboConfig.getProtocolTransporter());
+        }
 
         //此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏
         ServiceConfig<T> service = new ServiceConfig<T>();

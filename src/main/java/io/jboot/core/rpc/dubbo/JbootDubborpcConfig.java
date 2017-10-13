@@ -21,4 +21,23 @@ import io.jboot.config.annotation.PropertieConfig;
 @PropertieConfig(prefix = "jboot.rpc.dubbo")
 public class JbootDubborpcConfig {
 
+
+    private String protocolTransporter;
+    private int protocolThreads = 200;
+
+    public String getProtocolTransporter() {
+        return protocolTransporter;
+    }
+
+    public void setProtocolTransporter(String protocolTransporter) {
+        this.protocolTransporter = protocolTransporter;
+    }
+
+    public int getProtocolThreads() {
+        return protocolThreads;
+    }
+
+    public void setProtocolThreads(int protocolThreads) {
+        this.protocolThreads = protocolThreads;
+    }
 }
