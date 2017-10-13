@@ -30,8 +30,8 @@ public interface IShardingRuleFactory {
      * <p>
      * 在Jboot中，可以使用多数据源的替代分库，在这里只需要配置分表规则就可以了
      *
-     * @param dataSource
-     * @return
+     * @param originalDataSource 原本的数据源
+     * @return 分片规则，用户可以忽略原本的数据源，而使用自己的数据源
      */
-    public ShardingRule createShardingRule(DataSource dataSource);
+    public ShardingRule createShardingRule(DataSource originalDataSource);
 }
