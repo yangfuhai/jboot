@@ -42,7 +42,7 @@ import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.aop.web.ControllerInjectInterceptor;
-import io.jboot.web.controller.interceptor.ParaValidateInterceptor;
+import io.jboot.web.controller.validate.ParaValidateInterceptor;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;

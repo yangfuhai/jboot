@@ -1,4 +1,4 @@
-package io.jboot.web.controller.interceptor;
+package io.jboot.web.controller.validate;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
@@ -6,7 +6,6 @@ import com.jfinal.kit.Ret;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.controller.annotation.EmptyParaValidate;
 
 /**
  * 验证拦截器
@@ -18,7 +17,7 @@ public class ParaValidateInterceptor implements Interceptor {
     @Override
     public void intercept(Invocation inv) {
 
-        EmptyParaValidate emptyParaValidate = inv.getMethod().getAnnotation(EmptyParaValidate.class);
+        EmptyValidate emptyParaValidate = inv.getMethod().getAnnotation(EmptyValidate.class);
         if (emptyParaValidate == null) {
             inv.invoke();
             return;
