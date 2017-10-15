@@ -26,9 +26,17 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
 
     @Override
     public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = getBaseSql(table, loadColumns);
+        StringBuilder sqlBuilder = new StringBuilder("SELECT ");
+        sqlBuilder.append(loadColumns)
+                .append(" FROM  `")
+                .append(table).append("` ");
 
         appIfNotEmpty(columns, sqlBuilder);
+
+
+        if (orderBy != null) {
+            sqlBuilder.append(" ORDER BY ").append(orderBy);
+        }
 
         if (limit != null) {
             sqlBuilder.append(" LIMIT " + limit);
@@ -73,13 +81,4 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
         }
     }
 
-
-    private StringBuilder getBaseSql(String table, String loadColumns) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT ");
-        sqlBuilder.append(loadColumns)
-                .append(" FROM  `")
-                .append(table);
-
-        return sqlBuilder;
-    }
 }
