@@ -30,6 +30,13 @@ public class Columns {
         return new Columns();
     }
 
+    public static Columns create(Column column) {
+        Columns that = new Columns();
+        that.cols.add(column);
+        return that;
+
+    }
+
     public static Columns create(String name, Object value) {
         return create().eq(name, value);
     }
@@ -121,11 +128,8 @@ public class Columns {
     }
 
 
-    public List<Column> getCols() {
+    public List<Column> getList() {
         return cols;
     }
 
-    public void setCols(List<Column> cols) {
-        this.cols = cols;
-    }
 }

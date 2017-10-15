@@ -18,12 +18,13 @@ package io.jboot.db;
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.Model;
-import com.jfinal.plugin.activerecord.dialect.*;
 import io.jboot.Jboot;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DatasourceConfig;
 import io.jboot.db.datasource.DatasourceConfigManager;
+import io.jboot.db.dialect.*;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
@@ -105,23 +106,25 @@ public class JbootDbManager {
     private void configDialect(ActiveRecordPlugin activeRecordPlugin, DatasourceConfig datasourceConfig) {
         switch (datasourceConfig.getType()) {
             case DatasourceConfig.TYPE_MYSQL:
-                activeRecordPlugin.setDialect(new MysqlDialect());
+                activeRecordPlugin.setDialect(new JbootMysqlDialect());
                 break;
             case DatasourceConfig.TYPE_ORACLE:
-                activeRecordPlugin.setDialect(new OracleDialect());
+                activeRecordPlugin.setDialect(new JbootOracleDialect());
                 break;
             case DatasourceConfig.TYPE_SQLSERVER:
-                activeRecordPlugin.setDialect(new SqlServerDialect());
+                activeRecordPlugin.setDialect(new JbootSqlServerDialect());
                 break;
             case DatasourceConfig.TYPE_SQLITE:
-                activeRecordPlugin.setDialect(new Sqlite3Dialect());
+                activeRecordPlugin.setDialect(new JbootSqlite3Dialect());
                 break;
             case DatasourceConfig.TYPE_ANSISQL:
-                activeRecordPlugin.setDialect(new AnsiSqlDialect());
+                activeRecordPlugin.setDialect(new JbootAnsiSqlDialect());
                 break;
             case DatasourceConfig.TYPE_POSTGRESQL:
-                activeRecordPlugin.setDialect(new PostgreSqlDialect());
+                activeRecordPlugin.setDialect(new JbootPostgreSqlDialect());
                 break;
+            default:
+                throw new JbootException("only support datasource type : mysql，orcale，sqlserver，sqlite，ansisql，postgresql");
         }
     }
 

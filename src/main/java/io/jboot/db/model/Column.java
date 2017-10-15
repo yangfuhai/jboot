@@ -31,6 +31,12 @@ public class Column {
     private String logic = LOGIC_EQUALS;
 
 
+    public static Column create(String name) {
+        Column column = new Column();
+        column.setName(name);
+        return column;
+    }
+
     public static Column create(String name, Object value) {
         Column column = new Column();
         column.setName(name);
@@ -75,7 +81,7 @@ public class Column {
         this.logic = logic;
     }
 
-    public String sql() {
+    public String toSql() {
         return String.format(" `%s` %s ? ", name, logic);
     }
 }
