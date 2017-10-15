@@ -142,7 +142,7 @@ public class JbootRender extends Render {
             }
 
             String url = element.attr(attrName);
-            if (StringUtils.isBlank(url) || !url.startsWith("/")) {
+            if (StringUtils.isBlank(url) || !url.startsWith("/") || url.startsWith("//")) {
                 continue;
             }
 
