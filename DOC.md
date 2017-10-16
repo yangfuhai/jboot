@@ -105,7 +105,9 @@ jboot.cache.redis.database = 1
 
 
 ## shiro的使用
-Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro。
+Jboot的shiro模块为您提供了以下12个模板指令，同时支持shiro的5个Requires注解功能。方便您使用shiro。
+
+### 12个模板指令（用在html上）
 
 | 指令         |  描述  |
 | ------------- | -----|
@@ -123,7 +125,10 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 | ShiroPrincipal  |获取Subject Principal 身份信息 |
 
 
-### ShiroAuthenticated的使用
+
+
+
+#### ShiroAuthenticated的使用
 
 ```html
 #shiroAuthenticated()
@@ -134,7 +139,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 
 
 
-### ShiroGuest的使用
+#### ShiroGuest的使用
 
 ```html
 #ShiroGuest()
@@ -143,7 +148,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 
 ```
 
-### ShiroHasAllPermission的使用
+#### ShiroHasAllPermission的使用
 
 ```html
 #ShiroHasAllPermission(permissionName1,permissionName2)
@@ -152,7 +157,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 
 ```
 
-### ShiroHasAllRoles的使用
+#### ShiroHasAllRoles的使用
 
 ```html
 #ShiroHasAllRoles(role1, role2)
@@ -160,7 +165,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 #end
 
 ```
-### ShiroHasAnyPermission的使用
+#### ShiroHasAnyPermission的使用
 
 ```html
 #ShiroHasAnyPermission(permissionName1,permissionName2)
@@ -168,7 +173,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 #end
 
 ```
-### ShiroHasAnyRoles的使用
+#### ShiroHasAnyRoles的使用
 
 ```html
 #ShiroHasAllRoles(role1, role2)
@@ -176,7 +181,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 #end
 
 ```
-### ShiroHasPermission的使用
+#### ShiroHasPermission的使用
 
 ```html
 #ShiroHasPermission(permissionName1)
@@ -184,7 +189,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 #end
 
 ```
-### ShiroHasRole的使用
+#### ShiroHasRole的使用
 
 ```html
 #ShiroHasRole(role1)
@@ -192,7 +197,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 #end
 
 ```
-### ShiroNoAuthenticated的使用
+#### ShiroNoAuthenticated的使用
 
 ```html
 #ShiroNoAuthenticated()
@@ -200,7 +205,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 #end
 
 ```
-### ShiroNotHasPermission的使用
+#### ShiroNotHasPermission的使用
 
 ```html
 #ShiroNotHasPermission(permissionName1)
@@ -208,19 +213,87 @@ Jboot的shiro模块为您提供了以下12个模板指令，方便您使用shiro
 #end
 
 ```
-### ShiroNotHasRole的使用
+#### ShiroNotHasRole的使用
 ```html
 #ShiroNotHasRole(role1)
   您好，您没有角色role1
 #end
 
 ```
-### ShiroPrincipal的使用
+#### ShiroPrincipal的使用
 ```html
 #ShiroPrincipal()
   您好，您的登陆信息是：#(principal)
 #end
 
+```
+
+
+### 5个Requires注解功能（用在Controller上）
+
+| 指令         |  描述  |
+| ------------- | -----|
+| RequiresPermissions | 需要权限才能访问这个action |
+| RequiresRoles  | 需要角色才能访问这个action|
+| RequiresAuthentication  | 需要授权才能访问这个action，即：`SecurityUtils.getSubject().isAuthenticated()` |
+| RequiresUser  | 获取到用户信息才能访问这个action，即：`SecurityUtils.getSubject().getPrincipal() != null ` |
+| RequiresGuest  | 和RequiresUser相反 |
+
+
+#### RequiresPermissions的使用
+
+```java
+public class MyController extends JbootController{
+
+      @RequiresPermissions("permission1")
+      public void index(){
+
+	  }
+	  
+	  @RequiresPermissions(value={"permission1","permission2"},logical=Logincal.AND)
+      public void index1(){
+
+	  }
+}
+```
+
+#### RequiresRoles的使用
+
+```java
+public class MyController extends JbootController{
+
+      @RequiresRoles("role1")
+      public void index(){
+
+	  }
+	  
+	  @RequiresRoles(value = {"role1","role2"},logical=Logincal.AND)
+      public void userctener(){
+
+	  }
+}
+```
+
+#### RequiresUser、RequiresGuest、RequiresAuthentication的使用
+
+```java
+public class MyController extends JbootController{
+
+      @RequiresUser
+      public void userCenter(){
+
+	  }
+	  
+	  @RequiresGuest
+      public void login(){
+
+	  }
+	  
+	  @RequiresAuthentication
+	  public void my(){
+	  
+	  }
+}
 ```
 
 
