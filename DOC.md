@@ -439,11 +439,11 @@ company.save();
 分库建议使用多数据源的方式进行分库
 
 ### 分表
-在Jboot中，分表是通过sharding-jdbc（ https://github.com/shardingjdbc/sharding-jdbc）来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
+在Jboot中，分表是通过sharding-jdbc（ 网址：https://github.com/shardingjdbc/sharding-jdbc） 来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
 
 阅读Jboot的分表之前，假定你对Sharding-jdbc已经有所了解。
 
-#### 第一步：编写分表规则
+#### 第一步：编写分表策略
 
 例如：
 
@@ -476,10 +476,15 @@ https://github.com/shardingjdbc/sharding-jdbc/blob/master/sharding-jdbc-example/
 ```java
 public class MyShardingRuleFactory implements IShardingRuleFactory{
 	public ShardingRule createShardingRule(DataSource dataSource){
-	     // 具体可以参 https://github.com/shardingjdbc/sharding-jdbc/blob/master/sharding-jdbc-example/sharding-jdbc-example-jdbc/src/main/java/com/dangdang/ddframe/rdb/sharding/example/jdbc/Main.java
+	     // 创建分片规则
 	}
 }
 ```
+
+具体可以参 
+
+https://github.com/shardingjdbc/sharding-jdbc/blob/master/sharding-jdbc-example/sharding-jdbc-example-jdbc/src/main/java/com/dangdang/ddframe/rdb/sharding/example/jdbc/Main.java
+
 
 #### 第三步：给数据源配置上ShardingRuleFactory
 
