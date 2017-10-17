@@ -225,10 +225,17 @@ public class UnderTowServer extends JbootServer {
 
     @Override
     public boolean stop() {
-        mHandler.clearPaths();
+
         mDeploymentManager.undeploy();
         mServletContainer.removeDeployment(mDeploymentInfo);
-        mServer.stop();
+
+        if (mHandler != null) {
+            mHandler.clearPaths();
+        }
+        if (mServer != null) {
+            mServer.stop();
+        }
+
         return true;
     }
 
