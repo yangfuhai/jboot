@@ -111,24 +111,24 @@ Jboot的shiro模块为您提供了以下12个模板指令，同时支持shiro的
 
 | 指令         |  描述  |
 | ------------- | -----|
-| ShiroAuthenticated |用户已经身份验证通过，Subject.login登录成功 |
-| ShiroGuest  |游客访问时。 但是，当用户登录成功了就不显示了|
-| ShiroHasAllPermission  |拥有全部权限 |
-| ShiroHasAllRoles  |拥有全部角色 |
-| ShiroHasAnyPermission  |拥有任何一个权限 |
-| ShiroHasAnyRoles  |拥有任何一个角色 |
-| ShiroHasPermission  |有相应权限 |
-| ShiroHasRole  |有相应角色 |
-| ShiroNoAuthenticated  |未进行身份验证时，即没有调用Subject.login进行登录。 |
-| ShiroNotHasPermission  |没有该权限 |
-| ShiroNotHasRole  |没没有该角色 |
-| ShiroPrincipal  |获取Subject Principal 身份信息 |
+| shiroAuthenticated |用户已经身份验证通过，Subject.login登录成功 |
+| shiroGuest  |游客访问时。 但是，当用户登录成功了就不显示了|
+| shiroHasAllPermission  |拥有全部权限 |
+| shiroHasAllRoles  |拥有全部角色 |
+| shiroHasAnyPermission  |拥有任何一个权限 |
+| shiroHasAnyRoles  |拥有任何一个角色 |
+| shiroHasPermission  |有相应权限 |
+| shiroHasRole  |有相应角色 |
+| shiroNoAuthenticated  |未进行身份验证时，即没有调用Subject.login进行登录。 |
+| shiroNotHasPermission  |没有该权限 |
+| shiroNotHasRole  |没没有该角色 |
+| shiroPrincipal  |获取Subject Principal 身份信息 |
 
 
 
 
 
-#### ShiroAuthenticated的使用
+#### shiroAuthenticated的使用
 
 ```html
 #shiroAuthenticated()
@@ -139,90 +139,90 @@ Jboot的shiro模块为您提供了以下12个模板指令，同时支持shiro的
 
 
 
-#### ShiroGuest的使用
+#### shiroGuest的使用
 
 ```html
-#ShiroGuest()
+#shiroGuest()
   游客您好
 #end
 
 ```
 
-#### ShiroHasAllPermission的使用
+#### shiroHasAllPermission的使用
 
 ```html
-#ShiroHasAllPermission(permissionName1,permissionName2)
+#shiroHasAllPermission(permissionName1,permissionName2)
   您好，您拥有了权限 permissionName1和permissionName2
 #end
 
 ```
 
-#### ShiroHasAllRoles的使用
+#### shiroHasAllRoles的使用
 
 ```html
-#ShiroHasAllRoles(role1, role2)
+#shiroHasAllRoles(role1, role2)
   您好，您拥有了角色 role1和role2
 #end
 
 ```
-#### ShiroHasAnyPermission的使用
+#### shiroHasAnyPermission的使用
 
 ```html
-#ShiroHasAnyPermission(permissionName1,permissionName2)
+#shiroHasAnyPermission(permissionName1,permissionName2)
   您好，您拥有了权限 permissionName1 或 permissionName2 
 #end
 
 ```
-#### ShiroHasAnyRoles的使用
+#### shiroHasAnyRoles的使用
 
 ```html
-#ShiroHasAllRoles(role1, role2)
+#shiroHasAllRoles(role1, role2)
   您好，您拥有了角色 role1 或 role2
 #end
 
 ```
-#### ShiroHasPermission的使用
+#### shiroHasPermission的使用
 
 ```html
-#ShiroHasPermission(permissionName1)
+#shiroHasPermission(permissionName1)
   您好，您拥有了权限 permissionName1 
 #end
 
 ```
-#### ShiroHasRole的使用
+#### shiroHasRole的使用
 
 ```html
-#ShiroHasRole(role1)
+#shiroHasRole(role1)
   您好，您拥有了角色 role1 
 #end
 
 ```
-#### ShiroNoAuthenticated的使用
+#### shiroNoAuthenticated的使用
 
 ```html
-#ShiroNoAuthenticated()
+#shiroNoAuthenticated()
   您好，您还没有登陆
 #end
 
 ```
-#### ShiroNotHasPermission的使用
+#### shiroNotHasPermission的使用
 
 ```html
-#ShiroNotHasPermission(permissionName1)
+#shiroNotHasPermission(permissionName1)
   您好，您没有权限 permissionName1 
 #end
 
 ```
-#### ShiroNotHasRole的使用
+#### shiroNotHasRole的使用
 ```html
-#ShiroNotHasRole(role1)
+#shiroNotHasRole(role1)
   您好，您没有角色role1
 #end
 
 ```
-#### ShiroPrincipal的使用
+#### shiroPrincipal的使用
 ```html
-#ShiroPrincipal()
+#shiroPrincipal()
   您好，您的登陆信息是：#(principal)
 #end
 
