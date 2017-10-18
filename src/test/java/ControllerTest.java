@@ -20,8 +20,6 @@ public class ControllerTest extends JbootController {
         Jboot.run(args);
 
 
-
-
     }
 
 
@@ -38,13 +36,18 @@ public class ControllerTest extends JbootController {
     }
 
 
+    public void directive() {
+        render("/test.html");
+    }
+
+
     @Singleton
     @Bean
     public static class ServiceTest implements ServiceInter {
 
 
         @Override
-        @Cacheable(name = "aaa",key = "#(\"key:\" + aaa)")
+        @Cacheable(name = "aaa", key = "#(\"key:\" + aaa)")
         public String hello(String aaa) {
             System.out.println("hello invoked");
             return "aaa" + aaa;

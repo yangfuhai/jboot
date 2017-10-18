@@ -76,14 +76,18 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
      */
     @Override
     public void configure(Binder binder) {
+
+
+        // 设置 TypeListener
         binder.bindListener(Matchers.any(), this);
+
+
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(JbootrpcService.class), new JbootrpcInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new JFinalBeforeInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Cacheable.class), new JbootCacheInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CacheEvict.class), new JbootCacheEvictInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CachePut.class), new JbootCachePutInterceptor());
-
 
         /**
          * Bean 注解
@@ -128,9 +132,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(JbootrpcService.class)) {
                 encounter.register(new JbootrpcMembersInjector(field));
-            }
-
-            if (field.isAnnotationPresent(EnableHystrixCommand.class)) {
+            } else if (field.isAnnotationPresent(EnableHystrixCommand.class)) {
                 encounter.register(new JbootHystrixInjector(field));
             }
         }

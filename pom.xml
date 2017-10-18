@@ -252,10 +252,10 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>com.dangdang</groupId>-->
-            <!--<artifactId>sharding-jdbc</artifactId>-->
-            <!--<version>1.5.4.1</version>-->
-            <!--<scope>provided</scope>-->
+        <!--<groupId>com.dangdang</groupId>-->
+        <!--<artifactId>sharding-jdbc</artifactId>-->
+        <!--<version>1.5.4.1</version>-->
+        <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
         <dependency>

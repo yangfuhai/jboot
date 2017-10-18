@@ -17,6 +17,7 @@ package io.jboot.web.directive.base;
 
 import com.jfinal.template.Directive;
 import com.jfinal.template.stat.Scope;
+import io.jboot.Jboot;
 
 import java.util.Map;
 
@@ -24,6 +25,10 @@ import java.util.Map;
  * Jfinal 指令的基类
  */
 public abstract class JbootDirectiveBase extends Directive {
+
+    public JbootDirectiveBase() {
+        Jboot.injectMembers(this);
+    }
 
 
     public <T> T getParam(String key, T defaultValue, Scope scope) {

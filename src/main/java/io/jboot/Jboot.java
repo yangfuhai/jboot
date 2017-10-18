@@ -418,16 +418,6 @@ public class Jboot {
 
 
     /**
-     * 对某个实体类进行注入
-     *
-     * @param instance
-     */
-    public static void inject(Object instance) {
-        JbootInjectManager.me().getInjector().injectMembers(instance);
-    }
-
-
-    /**
      * 对某个对象内部的变量进行注入
      *
      * @param object

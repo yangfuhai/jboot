@@ -135,7 +135,6 @@ public class JbootAppConfig extends JFinalConfig {
             if (jDirective != null) {
                 Directive directive = ClassNewer.newInstance((Class<Directive>) clazz);
                 if (directive != null) {
-                    engine.removeDirective(jDirective.value());
                     engine.addDirective(jDirective.value(), directive);
                 }
             }
