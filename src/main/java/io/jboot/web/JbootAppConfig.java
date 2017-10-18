@@ -219,7 +219,7 @@ public class JbootAppConfig extends JFinalConfig {
         /**
          * 发送启动完成通知
          */
-        Jboot.me().sendEvent(Jboot.EVENT_STARTED, null);
+        Jboot.sendEvent(Jboot.EVENT_STARTED, null);
 
         JbootAppListenerManager.me().onJFinalStarted();
         JbootAppListenerManager.me().onJbootStarted();

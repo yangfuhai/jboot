@@ -42,7 +42,7 @@ public class WechatApis {
      */
     public static ApiResult getUserInfo(String token, String openId) {
         Kv pm = Kv.by("access_token", token).set("openid", openId).set("lang", "zh_CN");
-        String jsonResult = Jboot.me().httpGet("https://api.weixin.qq.com/sns/userinfo", pm);
+        String jsonResult = Jboot.httpGet("https://api.weixin.qq.com/sns/userinfo", pm);
 
         if (jsonResult == null)
             return null;
@@ -68,7 +68,7 @@ public class WechatApis {
                 .replace("{secret}", ApiConfigKit.getApiConfig().getAppSecret())
                 .replace("{code}", code);
 
-        String jsonResult = Jboot.me().httpGet(getOpenIdUrl);
+        String jsonResult = Jboot.httpGet(getOpenIdUrl);
 
         if (jsonResult == null)
             return null;

@@ -234,16 +234,7 @@ public class Jboot {
     }
 
 
-    /**
-     * 获取配置信息
-     *
-     * @param clazz
-     * @param <T>
-     * @return
-     */
-    public static <T> T config(Class<T> clazz) {
-        return JbootProperties.get(clazz);
-    }
+    ///////////get component methods///////////
 
 
     /**
@@ -269,28 +260,6 @@ public class Jboot {
             jbootConfig = config(JbootConfig.class);
         }
         return jbootConfig;
-    }
-
-
-    private JbootrpcConfig rpcConfig;
-
-    public <T> T service(Class<T> clazz) {
-        if (rpcConfig == null) {
-            rpcConfig = config(JbootrpcConfig.class);
-        }
-        return service(clazz, rpcConfig.getDefaultGroup(), rpcConfig.getDefaultVersion());
-    }
-
-    public <T> T service(Class<T> clazz, String group, String version) {
-        return getRpc().serviceObtain(clazz, group, version);
-    }
-
-    public void sendEvent(JbootEvent event) {
-        JbootEventManager.me().pulish(event);
-    }
-
-    public void sendEvent(String action, Object data) {
-        sendEvent(new JbootEvent(action, data));
     }
 
 
@@ -340,26 +309,6 @@ public class Jboot {
         return jbootHttp;
     }
 
-    public String httpGet(String url) {
-        return httpGet(url, null);
-    }
-
-    public String httpGet(String url, Map<String, Object> params) {
-        JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_GET);
-        JbootHttpResponse response = getHttp().handle(request);
-        return response.isError() ? null : response.getContent();
-    }
-
-    public String httpPost(String url) {
-        return httpPost(url, null);
-    }
-
-    public String httpPost(String url, Map<String, Object> params) {
-        JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_POST);
-        JbootHttpResponse response = getHttp().handle(request);
-        return response.isError() ? null : response.getContent();
-    }
-
 
     /**
      * 获取 JbootRedis 工具类，方便操作Redis请求
@@ -390,6 +339,73 @@ public class Jboot {
 
 
     /**
+     * 获取序列化对象
+     *
+     * @return
+     */
+    public ISerializer getSerializer() {
+        return SerializerManager.me().getSerializer(getJbootConfig().getSerializer());
+    }
+
+
+    ////////// static tool methods///////////
+
+    /**
+     * 获取配置信息
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> T config(Class<T> clazz) {
+        return JbootProperties.get(clazz);
+    }
+
+
+    private JbootrpcConfig rpcConfig;
+
+    public static <T> T service(Class<T> clazz) {
+        if (jboot.rpcConfig == null) {
+            jboot.rpcConfig = config(JbootrpcConfig.class);
+        }
+        return service(clazz, jboot.rpcConfig.getDefaultGroup(), jboot.rpcConfig.getDefaultVersion());
+    }
+
+    public static <T> T service(Class<T> clazz, String group, String version) {
+        return me().getRpc().serviceObtain(clazz, group, version);
+    }
+
+    public static void sendEvent(JbootEvent event) {
+        JbootEventManager.me().pulish(event);
+    }
+
+    public static void sendEvent(String action, Object data) {
+        sendEvent(new JbootEvent(action, data));
+    }
+
+
+    public static String httpGet(String url) {
+        return httpGet(url, null);
+    }
+
+    public static String httpGet(String url, Map<String, Object> params) {
+        JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_GET);
+        JbootHttpResponse response = jboot.getHttp().handle(request);
+        return response.isError() ? null : response.getContent();
+    }
+
+    public static String httpPost(String url) {
+        return httpPost(url, null);
+    }
+
+    public static String httpPost(String url, Map<String, Object> params) {
+        JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_POST);
+        JbootHttpResponse response = jboot.getHttp().handle(request);
+        return response.isError() ? null : response.getContent();
+    }
+
+
+    /**
      * 获取被增强的，可以使用AOP注入的
      *
      * @param clazz
@@ -402,17 +418,22 @@ public class Jboot {
 
 
     /**
+     * 对某个实体类进行注入
+     *
+     * @param instance
+     */
+    public static void inject(Object instance) {
+        JbootInjectManager.me().getInjector().injectMembers(instance);
+    }
+
+
+    /**
      * 对某个对象内部的变量进行注入
      *
      * @param object
      */
     public static void injectMembers(Object object) {
         JbootInjectManager.me().getInjector().injectMembers(object);
-    }
-
-
-    public ISerializer getSerializer() {
-        return SerializerManager.me().getSerializer(getJbootConfig().getSerializer());
     }
 
 

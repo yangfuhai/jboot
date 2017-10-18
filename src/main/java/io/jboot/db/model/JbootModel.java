@@ -214,7 +214,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
         boolean saved = super.save();
         if (saved) {
-            Jboot.me().sendEvent(addAction(), this);
+            Jboot.sendEvent(addAction(), this);
         }
         return saved;
     }
@@ -232,7 +232,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             if (autoCache) {
                 removeCache(get(getPrimaryKey()));
             }
-            Jboot.me().sendEvent(deleteAction(), this);
+            Jboot.sendEvent(deleteAction(), this);
         }
         return deleted;
     }
@@ -273,7 +273,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             if (autoCache) {
                 removeCache(id);
             }
-            Jboot.me().sendEvent(updateAction(), findById(id));
+            Jboot.sendEvent(updateAction(), findById(id));
         }
         return update;
     }

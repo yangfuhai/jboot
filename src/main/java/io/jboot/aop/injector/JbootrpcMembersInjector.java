@@ -47,7 +47,7 @@ public class JbootrpcMembersInjector implements MembersInjector {
         String version = StringUtils.isBlank(jbootrpcService.version()) ? config.getDefaultVersion() : jbootrpcService.version();
         
         try {
-            rpcImpl = Jboot.me().service(field.getType(), group, version);
+            rpcImpl = Jboot.service(field.getType(), group, version);
         } catch (Throwable e) {
             log.error(e.toString(), e);
         }
