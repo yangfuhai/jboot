@@ -48,7 +48,8 @@ public class JbootrpcManager {
 
 
     private Jbootrpc jbootrpc;
-    private JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);;
+    private JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
+    ;
 
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {
@@ -78,14 +79,16 @@ public class JbootrpcManager {
             JbootAssert.assertFalse(inters == null || inters.length == 0,
                     String.format("class[%s] has no interface, can not use @JbootrpcService", clazz));
 
+            //对某些系统的类 进行排查，例如：Serializable 等
             Class[] excludes = ArrayUtils.concat(default_excludes, rpcService.exclude());
             for (Class inter : inters) {
                 boolean exclude = false;
                 for (Class ex : excludes) {
                     if (ex == inter) exclude = true;
                 }
-                if (exclude) continue;
-                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), group, version, port);
+                if (!exclude) {
+                    getJbootrpc().serviceExport(inter, Jboot.bean(clazz), group, version, port);
+                }
             }
         }
     }
