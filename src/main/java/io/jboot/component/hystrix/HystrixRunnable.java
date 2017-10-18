@@ -15,18 +15,7 @@
  */
 package io.jboot.component.hystrix;
 
-import io.jboot.utils.ClassNewer;
 
-
-public class JbootHystrixManager {
-
-    private static JbootHystrixManager me;
-
-    public static JbootHystrixManager me() {
-        if (me == null) {
-            me = ClassNewer.singleton(JbootHystrixManager.class);
-        }
-        return me;
-    }
-
+public abstract class HystrixRunnable {
+    public abstract Object run();
 }

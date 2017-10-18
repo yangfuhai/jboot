@@ -17,6 +17,8 @@ package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
 import io.jboot.aop.JbootInjectManager;
+import io.jboot.component.hystrix.HystrixRunnable;
+import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.redis.JbootRedis;
 import io.jboot.component.redis.JbootRedisManager;
@@ -426,6 +428,17 @@ public class Jboot {
         JbootInjectManager.me().getInjector().injectMembers(object);
     }
 
+    /**
+     * 通过  hystrix 进行调用
+     *
+     * @param key
+     * @param hystrixRunnable
+     * @param <T>
+     * @return
+     */
+    public static <T> T hystrix(String key, HystrixRunnable hystrixRunnable) {
+        return (T) new JbootHystrixCommand(key, hystrixRunnable).execute();
+    }
 
     private static String getRootClassPath() {
         String path = null;
