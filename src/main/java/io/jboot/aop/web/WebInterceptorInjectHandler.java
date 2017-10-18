@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 
 /**
- * 用于对 jfinal 的拦截器进行注入
+ * 用于对 jfinal 的 Interceptor 进行注入
  */
 public class WebInterceptorInjectHandler extends Handler {
     static Log log = Log.getLog(WebInterceptorInjectHandler.class);
