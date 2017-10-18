@@ -54,6 +54,7 @@ public final class DbKit {
 
     /**
      * Add Config object
+     *
      * @param config the Config contains DataSource, Dialect and so on
      */
     public static void addConfig(Config config) {
@@ -149,13 +150,15 @@ public final class DbKit {
 
     /**
      * 修改 至 jboot
+     *
      * @param modelClass
      * @return
      */
     @SuppressWarnings("unchecked")
     public static Class<? extends Model> getUsefulClass(Class<? extends Model> modelClass) {
         // com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
-        return (Class<? extends Model>) ((modelClass.getName().indexOf("EnhancerBy") == -1 ? modelClass : modelClass.getSuperclass()));
+        // return (Class<? extends Model>)((modelClass.getName().indexOf("EnhancerByCGLIB") == -1 ? modelClass : modelClass.getSuperclass()));
+        return (Class<? extends Model>)(modelClass.getName().indexOf("$$EnhancerBy") == -1 ? modelClass : modelClass.getSuperclass());
     }
 }
 
