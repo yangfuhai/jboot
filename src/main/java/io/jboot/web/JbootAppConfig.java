@@ -28,6 +28,8 @@ import com.jfinal.template.Engine;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
+import io.jboot.aop.jfinal.JfinalHandlers;
+import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.aop.web.WebInterceptorInjectHandler;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.metrics.JbootMetricsManager;
@@ -177,7 +179,7 @@ public class JbootAppConfig extends JFinalConfig {
             plugins.add(new EhCachePlugin());
         }
 
-        JbootAppListenerManager.me().onJfinalPluginConfig(plugins);
+        JbootAppListenerManager.me().onJfinalPluginConfig(new JfinalPlugins(plugins));
 
     }
 
@@ -200,7 +202,7 @@ public class JbootAppConfig extends JFinalConfig {
         //用于对jfinal的拦截器进行注入
         handlers.add(new WebInterceptorInjectHandler());
 
-        JbootAppListenerManager.me().onHandlerConfig(handlers);
+        JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
     }
 
     @Override
