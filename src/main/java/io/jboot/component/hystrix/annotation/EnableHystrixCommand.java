@@ -19,9 +19,8 @@ import java.lang.annotation.*;
 
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface EnableHystrixCommand {
-
 
     String key() default "jboot-defalut-command";
 

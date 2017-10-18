@@ -16,13 +16,15 @@
 package io.jboot.aop;
 
 
-import com.google.inject.*;
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.jfinal.aop.Before;
 import io.jboot.aop.annotation.Bean;
-import io.jboot.aop.injector.JbootHystrixInjector;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
 import io.jboot.aop.interceptor.JFinalBeforeInterceptor;
 import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
@@ -132,8 +134,6 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(JbootrpcService.class)) {
                 encounter.register(new JbootrpcMembersInjector(field));
-            } else if (field.isAnnotationPresent(EnableHystrixCommand.class)) {
-                encounter.register(new JbootHystrixInjector(field));
             }
         }
     }
