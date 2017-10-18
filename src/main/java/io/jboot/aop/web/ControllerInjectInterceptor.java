@@ -1,9 +1,8 @@
 package io.jboot.aop.web;
 
-import com.google.inject.Injector;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.aop.JbootInjectManager;
+import io.jboot.Jboot;
 
 /**
  * 用于对controller的自动注入
@@ -11,16 +10,10 @@ import io.jboot.aop.JbootInjectManager;
  */
 public class ControllerInjectInterceptor implements Interceptor {
 
-    private Injector injector;
-
-    public ControllerInjectInterceptor() {
-        injector = JbootInjectManager.me().getInjector();
-    }
-
 
     @Override
     public void intercept(Invocation inv) {
-        injector.injectMembers(inv.getController());
+        Jboot.injectMembers(inv.getController());
         inv.invoke();
     }
 

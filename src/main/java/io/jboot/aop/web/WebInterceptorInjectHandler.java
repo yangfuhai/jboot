@@ -20,7 +20,7 @@ import com.jfinal.core.Action;
 import com.jfinal.core.JFinal;
 import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
-import io.jboot.aop.JbootInjectManager;
+import io.jboot.Jboot;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,7 +81,7 @@ public class WebInterceptorInjectHandler extends Handler {
         }
 
         for (Interceptor interceptor : interceptors) {
-            JbootInjectManager.me().getInjector().injectMembers(interceptor);
+            Jboot.injectMembers(interceptor);
         }
 
         injectFlags.add(target);
