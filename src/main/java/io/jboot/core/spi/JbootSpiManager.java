@@ -18,6 +18,17 @@ package io.jboot.core.spi;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
+/**
+ * SPI 扩展管理器
+ * <p>
+ * 使用方法：
+ * <p>
+ * 第一步：编写支持扩展点的类，例如MyJbootRpc extends Jbootrpc。
+ * 第二步：给该类添加上注解 JbootSpi， 例如 @JbootSpi("myrpc") MyJbootRpc extends Jbootrpc ...
+ * 第三步：给jboot.properties配置上类型，jboot.rpc.type = myrpc
+ * <p>
+ * 通过这三步，就可以扩展自己的Jbootrpc实现
+ */
 public class JbootSpiManager {
 
     private static final JbootSpiManager me = new JbootSpiManager();
