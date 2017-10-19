@@ -30,22 +30,11 @@ public class JbootHystrixCommandInterceptor implements MethodInterceptor {
 
     static Log log = Log.getLog(JbootHystrixCommandInterceptor.class);
 
-    EnableHystrixCommand enableHystrixCommand;
-
-    public JbootHystrixCommandInterceptor(EnableHystrixCommand hystrixCommand) {
-        this.enableHystrixCommand = hystrixCommand;
-    }
-
-    public JbootHystrixCommandInterceptor() {
-
-    }
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        if (enableHystrixCommand == null) {
-            enableHystrixCommand = methodInvocation.getThis().getClass().getAnnotation(EnableHystrixCommand.class);
-        }
 
+        EnableHystrixCommand enableHystrixCommand = methodInvocation.getThis().getClass().getAnnotation(EnableHystrixCommand.class);
 
         return Jboot.hystrix(enableHystrixCommand.key(), new HystrixRunnable() {
             @Override
