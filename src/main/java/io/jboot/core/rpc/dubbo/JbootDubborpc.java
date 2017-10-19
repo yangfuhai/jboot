@@ -86,6 +86,7 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setApplication(applicationConfig);
         reference.setInterface(serviceClass);
         reference.setVersion(version);
+        reference.setProxy("jboot");
 
 
         /**
