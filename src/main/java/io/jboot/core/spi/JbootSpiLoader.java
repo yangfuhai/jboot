@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
- * SPI 扩展管理器
+ * SPI 扩展加载器
  * <p>
  * 使用方法：
  * <p>
@@ -29,18 +29,18 @@ import java.util.ServiceLoader;
  * <p>
  * 通过这三步，就可以扩展自己的Jbootrpc实现
  */
-public class JbootSpiManager {
+public class JbootSpiLoader {
 
-    private static final JbootSpiManager me = new JbootSpiManager();
 
-    private JbootSpiManager() {
-    }
-
-    public static JbootSpiManager me() {
-        return me;
-    }
-
-    public <T> T spi(Class<T> clazz, String spiName) {
+    /**
+     * 通过 SPI 去加载相应的扩展子类
+     *
+     * @param clazz
+     * @param spiName
+     * @param <T>
+     * @return
+     */
+    public static <T> T load(Class<T> clazz, String spiName) {
         ServiceLoader<T> serviceLoader = ServiceLoader.load(clazz);
         Iterator<T> iterator = serviceLoader.iterator();
         while (iterator.hasNext()) {

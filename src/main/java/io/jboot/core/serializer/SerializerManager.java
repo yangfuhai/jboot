@@ -15,7 +15,7 @@
  */
 package io.jboot.core.serializer;
 
-import io.jboot.core.spi.JbootSpiManager;
+import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootAssert;
 import io.jboot.utils.ClassNewer;
 
@@ -76,7 +76,7 @@ public class SerializerManager {
             case FASTJSON:
                 return new FastjsonSerializer();
             default:
-                return JbootSpiManager.me().spi(ISerializer.class, serializerString);
+                return JbootSpiLoader.load(ISerializer.class, serializerString);
         }
     }
 

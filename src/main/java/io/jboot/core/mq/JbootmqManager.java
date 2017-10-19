@@ -19,7 +19,7 @@ import io.jboot.Jboot;
 import io.jboot.core.mq.aliyunmq.JbootAliyunmqImpl;
 import io.jboot.core.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.core.mq.redismq.JbootRedismqImpl;
-import io.jboot.core.spi.JbootSpiManager;
+import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.ClassNewer;
 
 
@@ -58,7 +58,7 @@ public class JbootmqManager {
             case JbootmqConfig.TYPE_HORNETQ:
                 throw new RuntimeException("not finished!!!!");
             default:
-                return JbootSpiManager.me().spi(Jbootmq.class, config.getType());
+                return JbootSpiLoader.load(Jbootmq.class, config.getType());
         }
 
     }

@@ -18,7 +18,7 @@ package io.jboot.core.rpc;
 import io.jboot.Jboot;
 import io.jboot.core.mq.JbootmqMessageListener;
 import io.jboot.core.rpc.dubbo.JbootDubborpc;
-import io.jboot.core.spi.JbootSpiManager;
+import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.event.JbootEventListener;
 import io.jboot.exception.JbootAssert;
 import io.jboot.core.rpc.annotation.JbootrpcService;
@@ -108,7 +108,7 @@ public class JbootrpcManager {
             case JbootrpcConfig.TYPE_DUBBO:
                 return new JbootDubborpc();
             default:
-                return JbootSpiManager.me().spi(Jbootrpc.class, config.getType());
+                return JbootSpiLoader.load(Jbootrpc.class, config.getType());
         }
     }
 }

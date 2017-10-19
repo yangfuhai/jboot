@@ -17,7 +17,7 @@ package io.jboot.core.http;
 
 import io.jboot.Jboot;
 import io.jboot.core.http.jboot.JbootHttpImpl;
-import io.jboot.core.spi.JbootSpiManager;
+import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.ClassNewer;
 
 public class JbootHttpManager {
@@ -53,7 +53,7 @@ public class JbootHttpManager {
             case JbootHttpConfig.TYPE_OKHTTP:
                 throw new RuntimeException("not finished!!!!");
             default:
-                return JbootSpiManager.me().spi(JbootHttp.class, config.getType());
+                return JbootSpiLoader.load(JbootHttp.class, config.getType());
         }
 
     }
