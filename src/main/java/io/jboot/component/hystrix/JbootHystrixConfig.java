@@ -17,11 +17,17 @@ package io.jboot.component.hystrix;
 
 import io.jboot.config.annotation.PropertieConfig;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @PropertieConfig(prefix = "jboot.hystrix")
 public class JbootHystrixConfig {
 
     private String url;
     private String propertie;
+
+    // keys 的值为  key1:method1,method2;key2:method3,method4
+    private String keys;
 
 
     public String getUrl() {
@@ -38,6 +44,39 @@ public class JbootHystrixConfig {
 
     public void setPropertie(String propertie) {
         this.propertie = propertie;
+    }
+
+    public String getKeys() {
+        return keys;
+    }
+
+    public void setKeys(String keys) {
+        this.keys = keys;
+    }
+
+
+    private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();
+
+    public String getKeyByMethod(String method) {
+        if (keys != null && methodKeyMapping.isEmpty()) {
+            initMapping();
+        }
+
+        return methodKeyMapping.get(method);
+    }
+
+    private void initMapping() {
+        String keyMethodStrings[] = keys.split(";");
+        for (String keyMethodString : keyMethodStrings) {
+            String[] keyMethod = keyMethodString.split(":");
+            if (keyMethod.length != 2) continue;
+
+            String key = keyMethod[0];
+            String[] methods = keyMethod[1].split(",");
+            for (String method : methods) {
+                methodKeyMapping.put(method, key);
+            }
+        }
     }
 }
 
