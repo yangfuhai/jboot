@@ -156,16 +156,16 @@ public class Jboot {
 
         JbootAppListenerManager.me().onJbootStarted();
 
-        tryToHoldApplication();
+//        tryToHoldApplication();
     }
 
-    private void tryToHoldApplication() {
-        try {
-            Thread.sleep(Long.MAX_VALUE);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void tryToHoldApplication() {
+//        try {
+//            Thread.sleep(Long.MAX_VALUE);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     private boolean startServer() {
@@ -233,6 +233,17 @@ public class Jboot {
         String url = String.format("http://%s%s%s", host, port, path);
 
         System.out.println("\nserver started success , url : " + url);
+    }
+
+    private static String getRootClassPath() {
+        String path = null;
+        try {
+            path = Jboot.class.getClassLoader().getResource("").toURI().getPath();
+            return new File(path).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return path;
     }
 
 
@@ -325,6 +336,11 @@ public class Jboot {
     }
 
 
+    /**
+     * 获取本地server 例如，undertow
+     *
+     * @return
+     */
     public JbootServer getServer() {
         return jbootServer;
     }
@@ -366,6 +382,13 @@ public class Jboot {
 
     private JbootrpcConfig rpcConfig;
 
+    /**
+     * 获取 RPC服务
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     public static <T> T service(Class<T> clazz) {
         if (jboot.rpcConfig == null) {
             jboot.rpcConfig = config(JbootrpcConfig.class);
@@ -373,33 +396,79 @@ public class Jboot {
         return service(clazz, jboot.rpcConfig.getDefaultGroup(), jboot.rpcConfig.getDefaultVersion());
     }
 
+    /**
+     * 获取 RPC 服务
+     *
+     * @param clazz
+     * @param group
+     * @param version
+     * @param <T>
+     * @return
+     */
     public static <T> T service(Class<T> clazz, String group, String version) {
-        return me().getRpc().serviceObtain(clazz, group, version);
+        return jboot.getRpc().serviceObtain(clazz, group, version);
     }
 
+    /**
+     * 想本地系统发送一个事件
+     *
+     * @param event
+     */
     public static void sendEvent(JbootEvent event) {
         JbootEventManager.me().pulish(event);
     }
 
+    /**
+     * 向本地系统发送一个事件
+     *
+     * @param action
+     * @param data
+     */
     public static void sendEvent(String action, Object data) {
         sendEvent(new JbootEvent(action, data));
     }
 
 
+    /**
+     * http get操作
+     *
+     * @param url
+     * @return
+     */
     public static String httpGet(String url) {
         return httpGet(url, null);
     }
 
+    /**
+     * http get操作
+     *
+     * @param url
+     * @param params
+     * @return
+     */
     public static String httpGet(String url, Map<String, Object> params) {
         JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_GET);
         JbootHttpResponse response = jboot.getHttp().handle(request);
         return response.isError() ? null : response.getContent();
     }
 
+    /**
+     * http post 操作
+     *
+     * @param url
+     * @return
+     */
     public static String httpPost(String url) {
         return httpPost(url, null);
     }
 
+    /**
+     * Http post 操作
+     *
+     * @param url
+     * @param params post的参数，可以是文件
+     * @return
+     */
     public static String httpPost(String url, Map<String, Object> params) {
         JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_POST);
         JbootHttpResponse response = jboot.getHttp().handle(request);
@@ -408,7 +477,7 @@ public class Jboot {
 
 
     /**
-     * 获取被增强的，可以使用AOP注入的
+     * 获取被增强的，可以使用AOP注入的实体类
      *
      * @param clazz
      * @param <T>
@@ -438,17 +507,6 @@ public class Jboot {
      */
     public static <T> T hystrix(String key, HystrixRunnable hystrixRunnable) {
         return (T) new JbootHystrixCommand(key, hystrixRunnable).execute();
-    }
-
-    private static String getRootClassPath() {
-        String path = null;
-        try {
-            path = Jboot.class.getClassLoader().getResource("").toURI().getPath();
-            return new File(path).getAbsolutePath();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return path;
     }
 
 

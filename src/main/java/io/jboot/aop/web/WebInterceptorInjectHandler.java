@@ -70,16 +70,20 @@ public class WebInterceptorInjectHandler extends Handler {
             return;
         }
 
+        //获取这个拦截器下的所有拦截器
+        //如果没有拦截器，直接返回
         Interceptor[] interceptors = action.getInterceptors();
         if (interceptors == null || interceptors.length == 0) {
             return;
         }
 
         //如果注入过了，就没必要再次注入
+        //因为拦截器是在整个系统中是单例的
         if (injectFlags.contains(target)) {
             return;
         }
 
+        //对所有拦截器进行注入
         for (Interceptor interceptor : interceptors) {
             Jboot.injectMembers(interceptor);
         }
