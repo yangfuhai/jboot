@@ -67,6 +67,8 @@ public class JbootrpcConfig {
     private String defaultVersion = "1.0";
     private String serializer = Jboot.config(JbootConfig.class).getSerializer();
 
+    private String proxy = "jboot";
+
 
     public String getType() {
         return type;
@@ -178,5 +180,13 @@ public class JbootrpcConfig {
 
     public boolean isRegistryCallMode() {
         return CALL_MODE_REGISTRY.equals(getCallMode());
+    }
+
+    public String getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
     }
 }

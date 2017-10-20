@@ -91,6 +91,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         refererConfig.setVersion(version);
         refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOut());
         refererConfig.setProtocol(protocolConfig);
+        refererConfig.setProxy(jbootrpcConfig.getProxy());
 
         /**
          * 注册中心模式

@@ -406,20 +406,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    public List<M> findListByColumns(List<Column> columns, String orderBy, Integer count) {
-        LinkedList<Object> params = new LinkedList<Object>();
-
-        if (ArrayUtils.isNotEmpty(columns)) {
-            for (Column column : columns) {
-                params.add(column.getValue());
-            }
-        }
-
-        String sql = getDialect().forFindByColumns(tableName(), "*", columns, orderBy, count);
-        return params.isEmpty() ? find(sql) : find(sql, params.toArray());
-    }
-
-
     public List<M> findListByColumns(Columns columns) {
         return findListByColumns(columns.getList());
     }
@@ -435,6 +421,28 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
         return findListByColumns(columns.getList(), orderBy, count);
+    }
+
+
+    /**
+     * 根据列信心查询列表
+     *
+     * @param columns
+     * @param orderBy
+     * @param count
+     * @return
+     */
+    public List<M> findListByColumns(List<Column> columns, String orderBy, Integer count) {
+        LinkedList<Object> params = new LinkedList<Object>();
+
+        if (ArrayUtils.isNotEmpty(columns)) {
+            for (Column column : columns) {
+                params.add(column.getValue());
+            }
+        }
+
+        String sql = getDialect().forFindByColumns(tableName(), "*", columns, orderBy, count);
+        return params.isEmpty() ? find(sql) : find(sql, params.toArray());
     }
 
 
