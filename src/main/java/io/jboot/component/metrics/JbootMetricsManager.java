@@ -17,29 +17,27 @@ package io.jboot.component.metrics;
 
 import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import io.jboot.Jboot;
-import io.jboot.utils.ClassNewer;
 
 
 public class JbootMetricsManager {
 
-    private static JbootMetricsManager me;
+    private static JbootMetricsManager me = new JbootMetricsManager();
+
 
     public static JbootMetricsManager me() {
-        if (me == null) {
-            me = ClassNewer.singleton(JbootMetricsManager.class);
-        }
         return me;
     }
 
-
     private MetricRegistry metricRegistry;
-    private JbootMetricsConfig metricsConfig;
+    private HealthCheckRegistry healthCheckRegistry;
+    private JbootMetricsConfig metricsConfig = Jboot.config(JbootMetricsConfig.class);
 
 
-
-    public void init(){
+    private JbootMetricsManager() {
         metricRegistry = new MetricRegistry();
+        healthCheckRegistry = new HealthCheckRegistry();
         metricsConfig = Jboot.config(JbootMetricsConfig.class);
 
         /**
@@ -53,6 +51,10 @@ public class JbootMetricsManager {
 
     public MetricRegistry metric() {
         return metricRegistry;
+    }
+
+    public HealthCheckRegistry healthCheck() {
+        return healthCheckRegistry;
     }
 
 

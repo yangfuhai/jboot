@@ -30,9 +30,9 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.aop.web.ControllerInjectInterceptor;
 import io.jboot.aop.web.WebInterceptorInjectHandler;
 import io.jboot.component.log.Slf4jLogFactory;
-import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.shiro.JbootShiroInterceptor;
 import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.core.cache.JbootCacheConfig;
@@ -43,7 +43,6 @@ import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.RequestMapping;
-import io.jboot.aop.web.ControllerInjectInterceptor;
 import io.jboot.web.controller.validate.ParaValidateInterceptor;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
@@ -213,7 +212,6 @@ public class JbootAppConfig extends JFinalConfig {
         /**
          * 初始化
          */
-        JbootMetricsManager.me().init();
         JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
 

@@ -24,6 +24,10 @@ public class JbootMetricsConfig {
     private boolean jmxReporter = false;
 
     public String getUrl() {
+        //在metrics中，会访问到配置的二级目录，必须添加下 /* 才能正常访问
+        if (url != null && !url.endsWith("/*")) {
+            return url + "/*";
+        }
         return url;
     }
 

@@ -16,6 +16,7 @@ public class ControllerTest extends JbootController {
 
         Jboot.setBootArg("jboot.hystrix.url", "/hystrix.stream");
         Jboot.setBootArg("jboot.cache.type", "redis");
+        Jboot.setBootArg("jboot.metrics.url", "/metrics.abc");
         Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
         Jboot.run(args);
 
@@ -29,6 +30,8 @@ public class ControllerTest extends JbootController {
     public void index() {
 
         System.out.println("aabbcc");
+
+        Jboot.me().getMetric().counter("abc").inc();
 
         renderText("hello ddd : " + serviceTest.hello("michael"));
 
