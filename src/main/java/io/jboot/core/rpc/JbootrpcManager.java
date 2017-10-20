@@ -49,7 +49,7 @@ public class JbootrpcManager {
 
     private Jbootrpc jbootrpc;
     private JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
-    ;
+
 
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {
@@ -111,4 +111,26 @@ public class JbootrpcManager {
                 return JbootSpiLoader.load(Jbootrpc.class, config.getType());
         }
     }
+
+    private JbootrpcHystrixFallbackFactory fallbackFactory = null;
+
+    public JbootrpcHystrixFallbackFactory getHystrixFallbackFactory() {
+
+        if (fallbackFactory != null) {
+            return fallbackFactory;
+        }
+
+
+        if (!StringUtils.isBlank(config.getHystrixFallbackFactory())) {
+            fallbackFactory = ClassNewer.newInstance(config.getHystrixFallbackFactory());
+
+        }
+
+        if (fallbackFactory == null) {
+            fallbackFactory = new JbootrpcHystrixFallbackFactoryDefault();
+        }
+
+        return fallbackFactory;
+    }
+
 }

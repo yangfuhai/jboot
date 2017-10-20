@@ -19,6 +19,9 @@ import io.jboot.Jboot;
 import io.jboot.JbootConfig;
 import io.jboot.config.annotation.PropertieConfig;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 @PropertieConfig(prefix = "jboot.rpc")
 public class JbootrpcConfig {
@@ -68,6 +71,15 @@ public class JbootrpcConfig {
     private String serializer = Jboot.config(JbootConfig.class).getSerializer();
 
     private String proxy = "jboot";
+
+
+    /**
+     * RPC Hystrix 相关的配置
+     */
+    // keys 的值为  key1:method1,method2;key2:method3,method4
+    private String hystrixKeys;
+    private boolean hystrixAutoConfig = true;
+    private String hystrixFallbackFactory;
 
 
     public String getType() {
@@ -188,5 +200,53 @@ public class JbootrpcConfig {
 
     public void setProxy(String proxy) {
         this.proxy = proxy;
+    }
+
+    public String getHystrixKeys() {
+        return hystrixKeys;
+    }
+
+    public void setHystrixKeys(String hystrixKeys) {
+        this.hystrixKeys = hystrixKeys;
+    }
+
+    public boolean isHystrixAutoConfig() {
+        return hystrixAutoConfig;
+    }
+
+    public void setHystrixAutoConfig(boolean hystrixAutoConfig) {
+        this.hystrixAutoConfig = hystrixAutoConfig;
+    }
+
+    public String getHystrixFallbackFactory() {
+        return hystrixFallbackFactory;
+    }
+
+    public void setHystrixFallbackFactory(String hystrixFallbackFactory) {
+        this.hystrixFallbackFactory = hystrixFallbackFactory;
+    }
+
+    private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();
+
+    public String getHystrixKeyByMethod(String method) {
+        if (hystrixKeys != null && methodKeyMapping.isEmpty()) {
+            initMapping();
+        }
+
+        return methodKeyMapping.get(method);
+    }
+
+    private void initMapping() {
+        String keyMethodStrings[] = hystrixKeys.split(";");
+        for (String keyMethodString : keyMethodStrings) {
+            String[] keyMethod = keyMethodString.split(":");
+            if (keyMethod.length != 2) continue;
+
+            String key = keyMethod[0];
+            String[] methods = keyMethod[1].split(",");
+            for (String method : methods) {
+                methodKeyMapping.put(method, key);
+            }
+        }
     }
 }

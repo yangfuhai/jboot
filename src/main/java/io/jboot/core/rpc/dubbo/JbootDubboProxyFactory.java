@@ -23,7 +23,8 @@ import com.alibaba.dubbo.rpc.proxy.AbstractProxyInvoker;
 import com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.HystrixRunnable;
-import io.jboot.component.hystrix.JbootHystrixConfig;
+import io.jboot.core.rpc.JbootrpcConfig;
+import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.utils.StringUtils;
 
 import java.lang.reflect.Method;
@@ -36,7 +37,7 @@ import java.lang.reflect.Proxy;
 public class JbootDubboProxyFactory extends AbstractProxyFactory {
 
 
-    static JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
+    static JbootrpcConfig rpcConfig = Jboot.config(JbootrpcConfig.class);
 
 
     @Override
@@ -72,10 +73,14 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-            String key = hystrixConfig.getKeyByMethod(method.getName());
+            String key = rpcConfig.getHystrixKeyByMethod(method.getName());
+            if (StringUtils.isBlank(key) && rpcConfig.isHystrixAutoConfig()) {
+                key = method.getDeclaringClass().getName() + "." + method.getName();
+            }
 
-            return StringUtils.isBlank(key) ?
-                    super.invoke(proxy, method, args) : Jboot.hystrix(key, new HystrixRunnable() {
+            return StringUtils.isBlank(key)
+                    ? super.invoke(proxy, method, args)
+                    : Jboot.hystrix(key, new HystrixRunnable() {
                 @Override
                 public Object run() {
                     try {
@@ -84,6 +89,11 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
                         throwable.printStackTrace();
                     }
                     return null;
+                }
+
+                @Override
+                public Object getFallback() {
+                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args);
                 }
             });
         }

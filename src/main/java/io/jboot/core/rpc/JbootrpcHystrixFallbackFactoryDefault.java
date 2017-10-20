@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.hystrix;
+package io.jboot.core.rpc;
+
+import java.lang.reflect.Method;
 
 
-public abstract class HystrixRunnable {
-    public abstract Object run();
+public class JbootrpcHystrixFallbackFactoryDefault implements JbootrpcHystrixFallbackFactory {
 
-
-    public Object getFallback() {
+    @Override
+    public Object fallback(Method method, Object[] args) {
         return null;
     }
 }

@@ -59,5 +59,10 @@ public class JbootHystrixCommand extends HystrixCommand<Object> {
     protected Object run() {
         return runnable.run();
     }
+
+    @Override
+    protected Object getFallback() {
+        return runnable.getFallback();
+    }
 }
 

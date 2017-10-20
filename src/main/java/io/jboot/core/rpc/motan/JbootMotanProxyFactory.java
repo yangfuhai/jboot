@@ -19,7 +19,8 @@ import com.weibo.api.motan.core.extension.SpiMeta;
 import com.weibo.api.motan.proxy.ProxyFactory;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.HystrixRunnable;
-import io.jboot.component.hystrix.JbootHystrixConfig;
+import io.jboot.core.rpc.JbootrpcConfig;
+import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.utils.StringUtils;
 
 import java.lang.reflect.InvocationHandler;
@@ -34,7 +35,7 @@ import java.lang.reflect.Proxy;
 public class JbootMotanProxyFactory implements ProxyFactory {
 
 
-    static JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
+    static JbootrpcConfig rpcConfig = Jboot.config(JbootrpcConfig.class);
 
 
     @Override
@@ -60,9 +61,10 @@ public class JbootMotanProxyFactory implements ProxyFactory {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
 
-            String key = hystrixConfig.isCloseAutoHystrix()
-                    ? hystrixConfig.getKeyByMethod(method.getName())
-                    : method.getDeclaringClass().getName() + "." + method.getName();
+            String key = rpcConfig.getHystrixKeyByMethod(method.getName());
+            if (StringUtils.isBlank(key) && rpcConfig.isHystrixAutoConfig()) {
+                key = method.getDeclaringClass().getName() + "." + method.getName();
+            }
 
 
             return StringUtils.isBlank(key)
@@ -76,6 +78,11 @@ public class JbootMotanProxyFactory implements ProxyFactory {
                         throwable.printStackTrace();
                     }
                     return null;
+                }
+
+                @Override
+                public Object getFallback() {
+                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args);
                 }
             });
         }
