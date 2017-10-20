@@ -19,9 +19,7 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 
-/**
- * Created by michael on 2017/10/18.
- */
+
 public class JbootHystrixCommand extends HystrixCommand<Object> {
 
     private final HystrixRunnable runnable;

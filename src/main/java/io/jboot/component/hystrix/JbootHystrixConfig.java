@@ -28,6 +28,7 @@ public class JbootHystrixConfig {
 
     // keys 的值为  key1:method1,method2;key2:method3,method4
     private String keys;
+    private boolean closeAutoHystrix = false;
 
 
     public String getUrl() {
@@ -54,6 +55,13 @@ public class JbootHystrixConfig {
         this.keys = keys;
     }
 
+    public boolean isCloseAutoHystrix() {
+        return closeAutoHystrix;
+    }
+
+    public void setCloseAutoHystrix(boolean closeAutoHystrix) {
+        this.closeAutoHystrix = closeAutoHystrix;
+    }
 
     private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();
 

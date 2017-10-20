@@ -59,10 +59,15 @@ public class JbootMotanProxyFactory implements ProxyFactory {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-            String key = hystrixConfig.getKeyByMethod(method.getName());
 
-            return StringUtils.isBlank(key) ?
-                    handler.invoke(proxy, method, args) : Jboot.hystrix(key, new HystrixRunnable() {
+            String key = hystrixConfig.isCloseAutoHystrix()
+                    ? hystrixConfig.getKeyByMethod(method.getName())
+                    : method.getDeclaringClass().getName() + "." + method.getName();
+
+
+            return StringUtils.isBlank(key)
+                    ? handler.invoke(proxy, method, args)
+                    : Jboot.hystrix(key, new HystrixRunnable() {
                 @Override
                 public Object run() {
                     try {
