@@ -505,14 +505,135 @@ Jboot 的AOP功能，是使用了Google的Guice框架来完成的，通过AOP，
 ## @Bean
 
 # RPC远程调用
-## Motan
-## @RpcService
+在Jboot中，RPC远程调用是通过新浪的motan、或阿里的dubbo来完成的。计划会支持 grpc和thrift等。
+
+
+### 使用步骤：
+#### 第一步：配置Jboot.properties文件，内容如下：
+
+```java
+#默认类型为 motan (支持:dubbo,计划支持 grpc 和 thrift)
+jboot.rpc.type = motan
+#发现服务类型为 consul ，支持zookeeper。
+jboot.rpc.registryType = consul
+jboot.rpc.registryAddress = 127.0.0.1:8500
+```
+
+#### 第二步：定义接口
+
+```java
+public interface HelloService {
+    public String hello(String name);
+}
+```
+
+#### 第三步：通过@JbootrpcService注解暴露服务到注册中心
+
+```java
+@JbootrpcService
+public class myHelloServiceImpl  implements HelloService {
+    public String hello(String name){
+         System.out.println("hello" + name);
+         return "hello ok";
+    }
+}
+```
+
+#### 第四步：客户调用
+
+```java
+ HelloService service = Jboot.me().service(HelloService.class);
+ service.hello("michael");
+```
+如果是在Controller中，也可以通过 @JbootrpcService 注解来获取服务，代码如下：
+
+```java
+public class MyController extends JbootController{
+    
+    @JbootrpcService
+    HelloService service ;
+    
+    public void index(){
+        String text = service.hello();
+        renderText(text);
+    }
+    
+}
+```
+
+#### 其他注意
+因为在配置文件中，配置的服务发现类型为consul，所以需要提前安装好consul。
+
+##### 下载consul
+https://www.consul.io 
+
+##### 启动consul
+
+```java
+consul -agent dev
+```
+
+
 
 # MQ消息队列
+Jboot 内置整个了MQ消息队列，使用MQ非常简单
+
+#### 第一步：配置jboot.properties文件，内容如下：
+```java
+#默认为redis (支持: redis,activemq,rabbitmq,hornetq,aliyunmq等 )
+jboot.mq.type = redis
+jboot.mq.redis.host = 127.0.0.1
+jboot.mq.redis.password =
+jboot.mq.redis.database =
+```
+
+#### 第二步：在服务器A中添加一个MQ消息监听器
+
+```java
+Jboot.me().getMq().addMessageListener(new JbootmqMessageListener(){
+        @Override
+        public void onMessage(String channel, Object obj) {
+           System.out.println(obj);
+        }
+}, channel);
+```
+
+#### 第三步：服务器B发送一个消息
+
+```java
+ Jboot.me().getMq().publish(yourObject, toChannel);
+```
+
+#### 注意：服务器A和服务器B在jboot.properties上应配置相同的内容。
+
 ## RedisMQ
 ## ActiveMQ
 
 # Cache缓存
+Jboot中内置支持了ehcache、redis和 一个基于ehcache、redis研发的二级缓存ehredis，在使用Jboot缓存之前，先配置完成缓存的配置。
+
+### 使用步骤
+#### 第一步：配置jboot.properties文件，内容如下：
+
+```java
+#默认类型为ehcache ehcache (支持:ehcache,redis,ehredis)
+jboot.cache.type = redis
+jboot.cache.redis.host = 127.0.0.1
+jboot.cache.redis.password =
+jboot.cache.redis.database =
+```
+备注：ehredis 是一个基于ehcache和redis实现的二级缓存框架。
+
+#### 第二步：使用缓存
+
+```java
+Jboot.me().getCache().put("cacheName", "key", "value");
+```
+
+### 注意事项
+Jboot的分布式session是通过缓存实现的，所以如果要启用Jboot的分布式session，请在缓存中配置类型为redis或者ehredis。
+
+
 ## ehcache
 ## redis
 ## ehredis
@@ -528,6 +649,29 @@ Jboot 的AOP功能，是使用了Google的Guice框架来完成的，通过AOP，
 ## SPI扩展
 
 ## JbootEvnet事件机制
+为了解耦，Jboot内置了一个简单易用的事件系统，使用事件系统非常简单。
+
+#### 第一步，注册事件的监听器。
+
+```java
+@EventConfig(action = {“event1”,"event2"})
+public class MyEventListener implements JbootEventListener {
+    
+    public  void onMessage(JbootEvent event){
+        Object data = event.getData();
+        System.out.println("get event:"data);
+    }
+}
+```
+通过 @EventConfig 配置 让MyEventListener监听上 event1和event2两个事件。
+
+#### 第二步，在项目任何地方发生事件
+
+```java
+Jboot.sendEvent("event1",  object)
+```
+
+
 
 ## 自定义序列化
 
@@ -594,344 +738,222 @@ MyConfigModel config = Jboot.config(MyConfigModel.class);
 
 ## 分布式session
 
-## shiro安全控制
 
 ## 代码生成器
+Jboot内置了一个简易的代码生成器，可以用来生成model层和Service层的基础代码，在生成代码之前，请先配置jboot.properties关于数据库相关的配置信息。
 
+### 使用步骤
 
-
-# maven dependency
-
+#### 第一步：配置数据源
 ```xml
-<dependency>
-    <groupId>io.jboot</groupId>
-    <artifactId>jboot</artifactId>
-    <version>1.0-beta3</version>
-</dependency>
-
-```
-# controller example
-
-
-
-new a controller
-
-```java
-@RequestMapping("/")
-public class MyController extend JbootController{
-   public void index(){
-        renderText("hello jboot");
-   }
-}
+jboot.datasource.type=mysql
+jboot.datasource.url=jdbc:mysql://127.0.0.1:3306/jbootdemo
+jboot.datasource.user=root
+jboot.datasource.password=your_password
 ```
 
-start 
-
-```java
-public class MyStarter{
-   public static void main(String [] args){
-       Jboot.run(args);
-   }
-}
-```
-
-visit: http://127.0.0.1:8080
-
-
-# mq example
-config jboot.properties
-
-```java
-#type default redis (support: redis,activemq,rabbitmq,hornetq,aliyunmq )
-jboot.mq.type = redis
-jboot.mq.redis.host = 127.0.0.1
-jboot.mq.redis.password =
-jboot.mq.redis.database =
-```
-
-server a sendMqMessage
-
-```java
- Jboot.me().getMq().publish(yourObject, toChannel);
-```
-
-server b message listener
-
-```java
-Jboot.me().getMq().addMessageListener(new JbootmqMessageListener(){
-        @Override
-        public void onMessage(String channel, Object obj) {
-           System.out.println(obj);
-        }
-}, channel);
-```
-
-# rpc example
-config jboot.properties
-
-```java
-#type default motan (support:local,motan,grpc,thrift)
-jboot.rpc.type = motan
-jboot.rpc.requestTimeOut
-jboot.rpc.defaultPort
-jboot.rpc.defaultGroup
-jboot.rpc.defaultVersion
-jboot.rpc.registryType = consul
-jboot.rpc.registryName
-jboot.rpc.registryAddress = 127.0.0.1:8500
-```
-
-define interface
-
-```java
-public interface HelloService {
-    public String hello(String name);
-}
-```
-
-server a export serviceImpl
-
-```java
-@JbootrpcService
-public class myHelloServiceImpl  implements HelloService {
-    public String hello(String name){
-         System.out.println("hello" + name);
-         return "hello ok";
-    }
-}
-```
-
-download consul and start (consul:https://www.consul.io/)
-
-```java
-consul -agent dev
-```
-
-server b call
-
-```java
- HelloService service = Jboot.me().service(HelloService.class);
- service.hello("michael");
-```
-
-or server b controller
-
-```java
-public class MyController extends bootController{
-    
-    @JbootrpcService
-    HelloService service ;
-    
-    public void index(){
-        
-        renderText("hello " + service.hello());
-    }
-    
-}
-```
-
-# cache example
-config jboot.properties
-
-```java
-#type default ehcache (support:ehcache,redis,ehredis)
-jboot.cache.type = redis
-jboot.cache.redis.host =
-jboot.cache.redis.password =
-jboot.cache.redis.database =
-```
-备注：ehredis 是一个基于ehcache和redis实现的二级缓存框架。
-
-use cache
-
-```java
-Jboot.me().getCache().put("cacheName", "key", "value");
-```
-
-# database access example
-config jboot.properties
-
-```java
-#type default mysql (support:mysql,oracle,db2...)
-jboot.datasource.type=
-jboot.datasource.url=
-jboot.datasource.user=
-jboot.datasource.password=
-jboot.datasource.driverClassName=
-jboot.datasource.connectionInitSql=
-jboot.datasource.cachePrepStmts=
-jboot.datasource.prepStmtCacheSize=
-jboot.datasource.prepStmtCacheSqlLimit=
-```
-
-define model
-
-```java
-@Table(tableName = "user", primaryKey = "id")
-public class User extends JbootModel<User> {
-	
-}
-```
-
-dao query
-
-```java
-public class UserDao extends JbootDaoBase {
-    public static find User DAO = new User();
-    
-    public User findById(String id){
-        return DAO.findById(id);
-    }
-    
-    public List<User> findByNameAndAge(String name,int age){
-        
-       Columns columns = Columns.create()
-                        .like("name","%"+name+"%")
-                        .gt("age",age);
-        
-        return DAO.findListByColums(columns);
-    }
-}
-```
-
-# event example
-
-send event
-
-```java
-Jboot.me().sendEvent(actionStr,  dataObj)
-```
-
-event listener
-
-```java
-@EventConfig(action = {User.ACTION_ADD,User.ACTION_DELETE})
-public class MyEventListener implements JbootEventListener {
-    
-    public  void onMessage(JbootEvent event){
-        
-        if(event.getAction.equals(User.ACTION_ADD)){
-            System.out.println("new user add, user:"+event.getData);
-        }else if(event.getAction.equals(User.ACTION_DELETE)){
-            System.out.println("user deleted, user:"+event.getData);
-        }
-        
-    }
-    
-}
-```
-
-# read config
-config jboot.properties
-
-```java
-jboot.myconfig.user = aaa
-jboot.myconfig.password = bbb
-```
-define config model
-
-```java
-@PropertieConfig(prefix = "jboot.myconfig")
-public class MyConfig {
-
-    private String name;
-    private String password;
-    
-    // getter and setter
-}
-```
-
-get config model
-
-```java
-    MyConfig config = Jboot.me().config(MyConfig.class);
-    System.out.println(config.getName());
-```
-
-# code generator
+#### 第二步：通过JbootModelGenerator生成model代码
 ```java
   public static void main(String[] args) {
   
+  		//model 的包名
         String modelPackage = "io.jboot.test";
+        
         JbootModelGenerator.run(modelPackage);
 
     }
 ```
 
-# build
+#### 第三步：通过JbootServiceGenerator生成Service代码
+```java
+  public static void main(String[] args) {
+  
+  		//生成service 的包名
+        String basePackage = "io.jboot.testservice";
+        //依赖model的包名
+        String modelPackage = "io.jboot.test";
+        
+        JbootServiceGenerator.run(basePackage, modelPackage);
+
+    }
+```
+
+#### 其他
+当没在jboot.properties文件配置数据源的时候，可以通过如下代码来使用：
+
+```java
+ public static void main(String[] args) {
+
+        Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
+        Jboot.setBootArg("jboot.datasource.user", "root");
+
+        String basePackage = "io.jboot.codegen.service.test";
+        String modelPackage = "io.jboot.codegen.test.model";
+        JbootServiceGenerator.run(basePackage, modelPackage);
+
+    }
+
+```
+
+
+
+
+
+# 项目构建
+在Jboot中已经内置了高性能服务器undertow，undertow的性能比tomcat高出很多（具体自行搜索：undertow vs tomcat），所以jboot构建和部署等不再需要tomcat。在Jboot构建的时候，在linux平台下，会生成jboot.sh 在windows平台下会生成jboot.bat脚本，直接执行该脚本即可。
+
+生成jboot.sh或者jboot.bat，依赖maven的appassembler插件，因此，你的maven配置文件pom.xml需要添加如下配置：
 
 config pom.xml
 
 ```xml
- <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.10</version>
-                <configuration>
-                    <assembleDirectory>${project.build.directory}/app</assembleDirectory>
-                    <repositoryName>lib</repositoryName>
-                    <binFolder>bin</binFolder>
-                    <configurationDirectory>webRoot</configurationDirectory>
-                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
-                    <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>
-                    <repositoryLayout>flat</repositoryLayout>
-                    <encoding>UTF-8</encoding>
-                    <logsDirectory>logs</logsDirectory>
-                    <tempDirectory>tmp</tempDirectory>
-                    <programs>
-                        <program>
-                            <mainClass>io.jboot.Jboot</mainClass>
-                            <id>jboot</id>
-                            <platforms>
-                                <platform>windows</platform>
-                                <platform>unix</platform>
-                            </platforms>
-                        </program>
-                    </programs>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+                <encoding>UTF-8</encoding>
+                <!--必须添加compilerArgument配置，才能使用JFinal的Controller方法带参数的功能-->
+                <compilerArgument>-parameters</compilerArgument>
+            </configuration>
+        </plugin>
+
+
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>appassembler-maven-plugin</artifactId>
+            <version>1.10</version>
+            <configuration>
+            
+               <assembleDirectory>${project.build.directory}/app</assembleDirectory>
+                <repositoryName>libs</repositoryName>
+                <binFolder>bin</binFolder>
+                <configurationDirectory>webRoot</configurationDirectory>
+                <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>
+                <repositoryLayout>flat</repositoryLayout>
+                <encoding>UTF-8</encoding>
+                <logsDirectory>logs</logsDirectory>
+                <tempDirectory>tmp</tempDirectory>
+
+                <programs>
+                    <!--程序打包 mvn package appassembler:assemble -->
+                    <program>
+                        <mainClass>io.jboot.Jboot</mainClass>
+                        <id>jboot</id>
+                        <platforms>
+                            <platform>windows</platform>
+                            <platform>unix</platform>
+                        </platforms>
+                    </program>
+                </programs>
+
+                <daemons>
+                    <!-- 后台程序打包：mvn clean package appassembler:generate-daemons -->
+                    <daemon>
+                        <mainClass>io.jboot.Jboot</mainClass>
+                        <id>jboot</id>
+                        <platforms>
+                            <platform>jsw</platform>
+                        </platforms>
+                        <generatorConfigurations>
+                            <generatorConfiguration>
+                                <generator>jsw</generator>
+                                <includes>
+                                    <include>linux-x86-32</include>
+                                    <include>linux-x86-64</include>
+                                    <include>macosx-universal-32</include>
+                                    <include>macosx-universal-64</include>
+                                    <include>windows-x86-32</include>
+                                    <include>windows-x86-64</include>
+                                </includes>
+                                <configuration>
+                                    <property>
+                                        <name>configuration.directory.in.classpath.first</name>
+                                        <value>webRoot</value>
+                                    </property>
+                                    <property>
+                                        <name>wrapper.ping.timeout</name>
+                                        <value>120</value>
+                                    </property>
+                                    <property>
+                                        <name>set.default.REPO_DIR</name>
+                                        <value>lib</value>
+                                    </property>
+                                    <property>
+                                        <name>wrapper.logfile</name>
+                                        <value>logs/wrapper.log</value>
+                                    </property>
+                                </configuration>
+                            </generatorConfiguration>
+                        </generatorConfigurations>
+                    </daemon>
+                </daemons>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
 ```
 
-maven build
+#### 进行maven构建
 
 ```java
 mvn package appassembler:assemble
 ```
+构建完毕后，会在target目录下生成一个app文件夹，在app文件的bin目录下会有一个jboot脚本（或者jboot.bat）。
 
-# start app
+#### 启动应用
 ```java
 cd yourProjectPath/target/app/bin
 ./jboot
 ```
 
-start app and change config
+##### 在启动的时候添加上自己的配置信息
 
 ```java
 cd yourProjectPath/target/app/bin
 ./jboot --jboot.server.port=8080 --jboot.rpc.type=local
 ```
-use your properties replace jboot.properties
+##### 使用你自己的配置文件来代替 jboot.properties
 
 ```java
 cd yourProjectPath/target/app/bin
 ./jboot --jboot.model=dev --jboot.server.port=8080
 ```
-use jboot-dev.proerties replace jboot.properties and set jboot.server.port=8080
+上面的命令启动后，会使用 `jboot-dev.proerties` 文件来替代 `jboot.properties` 同时设置 jboot.server.port=8080（服务器端口号为8080）
 
 
-# thanks
+#### 后台程序
+
+在以上文档中，如果通过如下代码进行构建的。
+
+```java
+mvn package appassembler:assemble
+```
+构建会生成 app目录，及对应的jboot脚本，但是jboot在执行的时候是前台执行的，也就是必须打开一个窗口，当关闭这个窗口后，jboot内置的服务器undertow也会随之关闭了，在正式的环境里，我们是希望它能够以服务的方式在后台运行。
+
+那么，如果构建一个后台运行的程序呢？步骤如下：
+
+##### 第一步：执行如下maven编译
+
+```java
+mvn clean package appassembler:generate-daemons
+```
+maven命令执行完毕后，会在target下生成如下文件夹 `/generated-resources/appassembler/jsw/jboot` , 文件中我们会找到bin目录，生成的后台脚本jboot（或jboot.bat）会存放在bin目录里。
+
+##### 第二步：启动应用
+```java
+cd yourProjectPath/target/generated-resources/appassembler/jsw/jboot/bin
+./jboot
+```
+此时，启动的应用为后台程序了。
+
+
+# 鸣谢
 rpc framework: 
 
 * motan(https://github.com/weibocom/motan)
