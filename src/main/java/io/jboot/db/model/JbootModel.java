@@ -312,6 +312,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    private IJbootModelDialect getDialect() {
+        return (IJbootModelDialect) _getConfig().getDialect();
+    }
+
     /**
      * 根据列名和值，查找1条数据
      *
@@ -324,9 +328,33 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return findFirst(sql, value);
     }
 
+    /**
+     * 根据 列和值 查询1条数据
+     *
+     * @param column
+     * @return
+     */
+    public M findFirstByColumn(Column column) {
+        String sql = getDialect().forFindByColumns(tableName(), "*", Columns.create(column).getList(), null, 1);
+        return findFirst(sql, column.getValue());
+    }
 
-    private IJbootModelDialect getDialect() {
-        return (IJbootModelDialect) _getConfig().getDialect();
+    /**
+     * 根据 多列和值，查询1条数据
+     *
+     * @param columns
+     * @return
+     */
+    public M findFirstByColumns(Columns columns) {
+        String sql = getDialect().forFindByColumns(tableName(), "*", columns.getList(), null, 1);
+        LinkedList<Object> params = new LinkedList<Object>();
+
+        if (ArrayUtils.isNotEmpty(columns.getList())) {
+            for (Column column : columns.getList()) {
+                params.add(column.getValue());
+            }
+        }
+        return findFirst(sql, params.toArray());
     }
 
 
