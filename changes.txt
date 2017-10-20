@@ -1,3 +1,33 @@
+jboot-1.0-rc.2:
+新增：hystrix 自动监控和熔断对dubbo的支持
+新增：hystrix 的keys配置，方便RPC调用的时候对方法的监控和熔断
+新增：motan的自定义代理，方便今后扩展对客户端调用的监控
+新增：Jfinal的Plugin和Handler的自动注入功能
+新增：JbootModel的columns查询对AnsiSql、Orcacle、PostgreSql、Sqlite3、SqlServer的支持
+新增：升级dubbo到最新版本2.5.6，支持dubbo通信框架netty4的配置
+优化：重构SPI加载，使代码更加简洁易懂
+优化：完善Jboot SPI 扩展功能的注释和说明
+优化：重构 注解 @EnableHystrixCommand ，不允许其使用在Controller的字段上，造成误解。
+优化：完善Hystrix功能，在客户端（例如：Controller）可以调用 Jboot.hystrix(key,runable) 轻易的通过 hystrix 进行接管。
+优化：web相关拦截器和处理器的注入功能
+优化：重构Jboot的核心类 Jboot.java，把其工具方法全部修改为静态方法。
+优化：重构JbootModel，使Column查询其支持任何的数据库，同时JbootModel代码更加简洁
+优化：参数非空验证的拦截器 ParaValidateInterceptor 代码
+修复：hystrix注解多个key时，其他key的统计失效的问题
+修复：JFinal 指令 Directive 无法进行自动注入的问题
+修复：Shiro相关文档里的指令大小写错误的问题
+修复：Undertow Server在启动的时候出现异常（比如端口号被占用）等，可能出现空指针异常的bug
+修复：CDN配置自适应http和https时，出现的重复添加CDN前缀的问题。
+文档：完善分库分表文档
+文档：完善shiro相关文档
+文档：完善MQ消息队列文档
+文档：完善RPC远程调用相关文档
+文档：完善项目构建文档
+文档：完善JbootEvent事件机制文档
+其他：依赖升级 dubbo ->2.5.6；fst->2.54
+
+
+
 jboot-1.0-rc.1:
 新增：数据库分表的支持（之前已经完成对多数据源分库的支持），分表支持依赖于sharding-jdbc
 新增：分库分表相关的使用文档

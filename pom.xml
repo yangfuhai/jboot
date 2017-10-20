@@ -202,7 +202,7 @@
         <dependency>
             <groupId>de.ruedigermoeller</groupId>
             <artifactId>fst</artifactId>
-            <version>2.53</version>
+            <version>2.54</version>
             <!--<scope>provided</scope>-->
             <!--如果使用其他序列化组件，和fst冲突，请使用exclusions排除 fst 依赖-->
         </dependency>
