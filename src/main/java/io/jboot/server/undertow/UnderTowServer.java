@@ -27,8 +27,10 @@ import io.jboot.component.metrics.JbootHealthCheckServletContextListener;
 import io.jboot.component.metrics.JbootMetricsConfig;
 import io.jboot.component.metrics.JbootMetricsServletContextListener;
 import io.jboot.component.shiro.JbootShiroConfig;
+import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
+import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.StringUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -39,10 +41,12 @@ import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.api.ServletContainer;
+import io.undertow.servlet.api.ServletInfo;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.apache.shiro.web.servlet.ShiroFilter;
 
 import javax.servlet.DispatcherType;
+import javax.servlet.ServletContextListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -123,9 +127,9 @@ public class UnderTowServer extends JbootServer {
 
 
         deploymentInfo.addFilter(
-                Servlets.filter("jboot", JFinalFilter.class)
+                Servlets.filter("jfinal", JFinalFilter.class)
                         .addInitParam("configClass", Jboot.me().getJbootConfig().getJfinalConfig()))
-                .addFilterUrlMapping("jboot", "/*", DispatcherType.REQUEST);
+                .addFilterUrlMapping("jfinal", "/*", DispatcherType.REQUEST);
 
 
         JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
@@ -144,6 +148,19 @@ public class UnderTowServer extends JbootServer {
 
             deploymentInfo.addListeners(Servlets.listener(JbootMetricsServletContextListener.class));
             deploymentInfo.addListeners(Servlets.listener(JbootHealthCheckServletContextListener.class));
+        }
+
+        io.jboot.server.Servlets jbootServlets = new io.jboot.server.Servlets();
+        ContextListeners listeners = new ContextListeners();
+
+        JbootAppListenerManager.me().onJbootDeploy(jbootServlets, listeners);
+        for (Map.Entry<String, io.jboot.server.Servlets.ServletInfo> entry : jbootServlets.getServlets().entrySet()) {
+            ServletInfo servletInfo = Servlets.servlet(entry.getKey(), entry.getValue().getServletClass()).addMappings(entry.getValue().getUrlMapping());
+            deploymentInfo.addServlet(servletInfo);
+        }
+
+        for (Class<? extends ServletContextListener> listenerClass : listeners.getListeners()) {
+            deploymentInfo.addListeners(Servlets.listener(listenerClass));
         }
 
 

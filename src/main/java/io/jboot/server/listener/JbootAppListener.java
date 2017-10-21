@@ -21,9 +21,13 @@ import com.jfinal.config.Routes;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.server.ContextListeners;
+import io.jboot.server.Servlets;
 
 
 public interface JbootAppListener {
+
+    public void onJbootDeploy(Servlets servlets, ContextListeners listeners);
 
     public void onJfinalConstantConfig(Constants constants);
 
