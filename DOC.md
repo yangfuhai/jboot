@@ -1,20 +1,20 @@
 
 # 目录
-- JBoot核心组件
-- MVC
+- [JBoot核心组件](#JBoot核心组件)
+- [MVC](#MVC)
 	- MVC的概念
 	- JbootController
 	- @RquestMapping
 		- 使用@RquestMapping
 		- render
 	- session 与 分布式session
-- 安全控制
+- [安全控制](#安全控制)
 	- shiro简介
 	- shiro的配置
 	- shiro的使用
 		- 12个模板指令（用在html上）
 		- 5个Requires注解功能（用在Controller上）
-- ORM
+- [ORM](#ORM)
 	- 配置
 		- 高级配置
 	- Model
@@ -25,35 +25,39 @@
 	- 分库和分表
 		- 分库
 		- 分表
-- AOP
+- [AOP](#AOP)
 	- Google Guice
 	- @Inject
 	- @Bean
-- RPC远程调用
+- [RPC远程调用](#RPC远程调用)
 	- 使用步骤
 	- 其他注意
-- MQ消息队列
+- [MQ消息队列](#MQ消息队列)
 	- 使用步骤
 	- RedisMQ
 	- ActiveMQ
 	- RabbitMq
 	- 阿里云商业MQ
-- Cache缓存
+- [Cache缓存](#Cache缓存)
 	- 使用步骤
 	- 注意事项
 	- ehcache
 	- redis
 	- ehredis
-- http客户端
+- [http客户端](#http客户端)
+	- Get请求
+	- Post 请求
+	- 文件上传
+	- 文件下载
 - 监控
 - 容错与隔离
 - 其他
 	- SPI扩展
-	- JbootEvnet事件机制
+	- [JbootEvnet事件机制](#JbootEvnet事件机制)
 	- 自定义序列化
 	- 配置文件
 	- 代码生成器
-- 项目构建
+- [项目构建](#项目构建)
 - 鸣谢
 - [联系作者](#联系作者)
 - [常见问题](#常见问题)
@@ -699,6 +703,97 @@ Jboot的分布式session是通过缓存实现的，所以如果要启用Jboot的
 ## ehredis
 
 # http客户端
+Jboot内置了一个轻量级的http客户端，可以通过这个客户端方便的对其他第三方http服务器进行数据请求和下载等功能。
+
+### Get请求
+
+```java
+@Test
+public void testHttpGet(){
+    String html = Jboot.httpGet("https://www.baidu.com");
+    System.out.println(html);
+}
+```
+
+或者
+
+```java
+@Test
+public void testHttpPost(){
+    Map<String, Object> params  = new HashMap<>();
+    params.put("key1","value1");
+    params.put("key2","value2");
+
+
+    String html = Jboot.httpGet("http://www.oschina.net/",params);
+    System.out.println(html);
+}
+```
+
+### Post请求
+
+```java
+@Test
+public void testHttpPost(){
+    String html = Jboot.httpPost("http://www.xxx.com");
+    System.out.println(html);
+}
+```
+
+或者
+
+```java
+@Test
+public void testHttpPost(){
+    Map<String, Object> params  = new HashMap<>();
+    params.put("key1","value1");
+    params.put("key2","value2");
+
+
+    String html = Jboot.httpPost("http://www.oschina.net/",params);
+    System.out.println(html);
+}
+```
+
+### 文件上传
+
+```java
+@Test
+public void testHttpUploadFile(){
+    Map<String, Object> params  = new HashMap<>();
+    params.put("file1",file1);
+    params.put("file2",file2);
+
+
+    String html = Jboot.httpPost("http://www.oschina.net/",params);
+    System.out.println(html);
+}
+```
+备注：文件上传其实和post提交是一样的，只是params中的参数是文件。
+
+### 文件下载
+
+```java
+@Test
+public void testHttpDownload() {
+
+    String url = "http://www.xxx.com/abc.zip";
+    File downloadToFile = new File("/xxx/abc.zip");
+
+    JbootHttpRequest request = JbootHttpRequest.create(url, null, JbootHttpRequest.METHOD_GET);
+    request.setDownloadFile(downloadToFile);
+
+    JbootHttpResponse response = Jboot.me().getHttp().handle(request);
+
+    if (response.isError()){
+        downloadToFile.delete();
+    }
+
+    System.out.println(downloadToFile.length());
+}
+```
+
+
 
 # 监控
 
