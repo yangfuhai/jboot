@@ -15,12 +15,12 @@
  */
 package io.jboot.component.shiro.processer;
 
-import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 
 /**
  * 认证处理器 执行后的认证结果。
  */
-public class AuthorizeResult extends Kv {
+public class AuthorizeResult extends Ret {
 
     /**
      * 未进行身份认证

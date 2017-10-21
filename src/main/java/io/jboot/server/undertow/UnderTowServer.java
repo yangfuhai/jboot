@@ -154,6 +154,8 @@ public class UnderTowServer extends JbootServer {
         ContextListeners listeners = new ContextListeners();
 
         JbootAppListenerManager.me().onJbootDeploy(jbootServlets, listeners);
+
+
         for (Map.Entry<String, io.jboot.server.Servlets.ServletInfo> entry : jbootServlets.getServlets().entrySet()) {
             ServletInfo servletInfo = Servlets.servlet(entry.getKey(), entry.getValue().getServletClass()).addMappings(entry.getValue().getUrlMapping());
             deploymentInfo.addServlet(servletInfo);
