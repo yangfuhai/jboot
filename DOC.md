@@ -1,7 +1,64 @@
 
-在阅读Jboot文档之前，我假定您已经了解了JFinal，已经有JFinal的基础知识，如果您还没有了解JFinal，请先去JFinal官网 www.jfinal.com 了解学习JFinal，Jboot是基于JFinal进行二次开发，依赖JFinal的基础知识。
+# 目录
+- JBoot核心组件
+- MVC
+	- MVC的概念
+	- JbootController
+	- @RquestMapping
+		- 使用@RquestMapping
+		- render
+	- session 与 分布式session
+- 安全控制
+	- shiro简介
+	- shiro的配置
+	- shiro的使用
+		- 12个模板指令（用在html上）
+		- 5个Requires注解功能（用在Controller上）
+- ORM
+	- 配置
+		- 高级配置
+	- Model
+	- @Table注解
+	- Record
+	- DAO
+	- 多数据源
+	- 分库和分表
+		- 分库
+		- 分表
+- AOP
+	- Google Guice
+	- @Inject
+	- @Bean
+- RPC远程调用
+	- 使用步骤
+	- 其他注意
+- MQ消息队列
+	- 使用步骤
+	- RedisMQ
+	- ActiveMQ
+	- RabbitMq
+	- 阿里云商业MQ
+- Cache缓存
+	- 使用步骤
+	- 注意事项
+	- ehcache
+	- redis
+	- ehredis
+- http客户端
+- 监控
+- 容错与隔离
+- 其他
+	- SPI扩展
+	- JbootEvnet事件机制
+	- 自定义序列化
+	- 配置文件
+	- 代码生成器
+- 项目构建
+- 鸣谢
+- 联系作者
+- 常见问题
 
-或者您也可以去购买我的课程进行学习，课程地址：http://www.yangfuhai.com/post/6.html
+
 
 # JBoot核心组件
 Jboot的主要核心组件有以下几个。
@@ -986,4 +1043,26 @@ core framework:
 * qq:1506615067
 * wechat：wx198819880
 * email:fuhai999#gmail.com
+
+# 常见问题
+
+- 使用Jboot后还能自定义Jfinal的配置文件吗？
+	- 答：可以使用，目前提供两种方案。
+		- 方案1（推荐）：编写一个类，随便起个名字，继承 JbootAppListenerBase ,然后复写里面的方法。
+		- 方案2（不推荐）：编写自己的JfinalConfig，继承 JbootAppConfig ，然后在 jboot.properties 的 jboot.jfinalConfig 配置上自己的类名。注意，在自己的config中，请优先调用super方法。例如在configConstant中，请先调用super.configConstant(constants)。
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
