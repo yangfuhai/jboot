@@ -173,6 +173,9 @@ public class JbootHttpRequest {
     }
 
     public void setParams(Map<String, Object> params) {
+        if (params == null) {
+            return;
+        }
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             if (entry.getValue() == null) {
                 continue;
@@ -189,7 +192,7 @@ public class JbootHttpRequest {
     }
 
     public boolean isPostRquest() {
-        return METHOD_GET.equalsIgnoreCase(method);
+        return METHOD_POST.equalsIgnoreCase(method);
     }
 
     public String getCharset() {
