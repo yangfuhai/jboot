@@ -75,12 +75,10 @@ public class MyStarter{
 
 ## 文档
 
-请查看[JBoot文档](./DOC.md)
+文档URL地址 ： [点击这里](./DOC.md)
 
-### 目录
+#### 文档目录
 
-
-# 目录
 - [JBoot核心组件](./DOC.md#jboot核心组件)
 - [MVC](./DOC.md#mvc)
 	- MVC的概念
