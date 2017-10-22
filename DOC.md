@@ -796,12 +796,116 @@ public void testHttpDownload() {
 
 
 # 监控
+Jboot的监控机制是通过Metrics来来做监控的，要启用metrics非常简单，通过在jboot.properties文件配置上`jboot.metrics.url`就可以启用metrics。
+
+例如
+
+```xml
+jboot.metrics.url = /metrics.html
+```
+我们就可以通过访问 `http://host:port/metrics.html` 来访问到metrics数据情况。
+
+### 添加metrics数据
+默认通过Url访问到的数据是没有具体内容，因为metrics无法得知要显示什么样的数据内容。例如，我们要统计某个action的用户访问量，可以通过在action里编写如下代码。
+
+```java
+public void myaction() {
+
+    Jboot.me().getMetric().counter("myaction").inc();
+
+    renderText("my action");
+}
+```
+
+当我们访问myaction这个地址后，然后再通过浏览器`http://host:port/metrics.html`访问，我们就能查看到如下的json数据。
+
+```js
+{
+	"version": "3.1.3",
+	"gauges": {},
+	"counters": {
+		"myaction": {
+				"count": 1
+			}
+	},
+	"histograms": {},
+	"meters": {},
+	"timers": {}
+}
+```
+当再次访问`myaction`后，count里面的值就变成2了。
+
+### metrics与Ganglia
+
+### metrics与jmx
+metrics与jmx集成非常简单，只需要在jboot.properties文件添加如下配置：
+
+```xml
+jboot.metrics.jmxReporter = true
+```
+然后，我们就可以通过`JConsole`或者`VisualVM`进行查看了。
+
 
 # 容错与隔离
+Jboot的容错、隔离和降级服务、都是通过`Hystrix`来实现的。在RPC远程调用中，Jboot已经默认开启了Hystrix的监控机制，对数默认错误率达到50%的service则立即返回，不走网络。
+
+要查看hystrix的数据，我们需要部署`Hystrix Dashboard`。然后通过`Hystrix Dashboard`来查看。
+
+通过Gradle来编译：
+
+```
+$ git clone https://github.com/Netflix/Hystrix.git
+$ cd Hystrix/hystrix-dashboard
+$ ../gradlew appRun
+> Building > :hystrix-dashboard:appRun > Running at http://localhost:7979/hystrix-dashboard
+```
+运行`hystrix-dashboard`成功后，通过浏览器输入`http://localhost:7979/hystrix-dashboard`就可以看到如下图显示：
+![](https://github.com/Netflix/Hystrix/wiki/images/dashboard-home.png)
+
+接下来，我们需要配置jboot应用的hystrix监控地址，配置如下：
+
+```
+jboot.hystrix.url = /hystrix.stream
+```
+然后在上面图片中，填写url地址为：`http://host:port/hystrix.stream`,并点击`monitor stream`按钮,就可以看到如下图显示，所以的远程调用方法都统计到了。
+![](https://github.com/Netflix/Hystrix/wiki/images/hystrix-dashboard-netflix-api-example-iPad.png)
+
+### 自定义监控隔离
+
+
 
 # 其他
 
 ## SPI扩展
+SPI的全名为Service Provider Interface。
+
+### SPI具体约定
+当服务的提供者，提供了服务接口的一种实现之后，在jar包的META-INF/services/目录里同时创建一个以服务接口命名的文件。该文件里就是实现该服务接口的具体实现类。而jboot装配这个模块的时候，就能通过该jar包META-INF/services/里的配置文件找到具体的实现类名，并装载实例化，完成模块的注入。
+
+### Jboot SPI模块
+在jboot中，一下模块已经实现了SPI机制。
+
+- Jbootrpc
+- JbootHttp
+- JbootCache
+- Jbootmq
+- JbootSerializer
+
+例如，在JbootCache中，内置了三种实现方案：ehcache、redis、ehredis。在配置文件中，我看可以通过 `jboot.cache.type = ehcache` 的方式来指定在Jboot应用中使用了什么样的缓存方案。
+
+但是，在Jboot中，通过SPI机制，我们一样可以扩展出第4、第5甚至更多的缓存方案出来。
+
+扩展步骤如下：
+
+- 第一步：编写JbootCache的子类
+- 第二步：通过@JbootSpi注解给刚刚编写的类设置上一个名字，例如：mycache
+- 第三步：通过在jboot.properties文件中配置上类型为 mycache，配置代码如下：
+
+```xml
+jboot.cache.type = mycache
+```
+
+通过以上三步，我们就可以完成了对JbootCache模块的扩展，其他模块类似。
 
 ## JbootEvnet事件机制
 为了解耦，Jboot内置了一个简单易用的事件系统，使用事件系统非常简单。
@@ -829,6 +933,7 @@ Jboot.sendEvent("event1",  object)
 
 
 ## 自定义序列化
+自定义序列化是通过Jboot的SPI机制来实现的，请参考 [SPI扩展](#SPI扩展)。
 
 ## 配置文件
 

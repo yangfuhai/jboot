@@ -41,7 +41,7 @@ public class JbootMetricsManager {
         metricsConfig = Jboot.config(JbootMetricsConfig.class);
 
         /**
-         * JMX报表,方便JConsole或者VisualVM查看查看
+         * JMX报表,方便JConsole或者VisualVM查看
          */
         if (metricsConfig.isJmxReporter()) {
             JmxReporter.forRegistry(metricRegistry).build().start();
