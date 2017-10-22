@@ -58,7 +58,7 @@ public class JbootServiceImplGenerator extends BaseModelGenerator {
     protected void genImport(StringBuilder ret, TableMeta tableMeta) {
         ret.append(String.format("import %s.%sService;%n", baseModelPackageName.substring(0, baseModelPackageName.lastIndexOf(".")), tableMeta.modelName));
         ret.append(String.format("import %s.%s;%n", modelPacket, tableMeta.modelName));
-        ret.append("import io.jboot.db.service.JbootServiceBase;\n\n");
+        ret.append("import io.jboot.service.JbootServiceBase;\n\n");
     }
 
     @Override

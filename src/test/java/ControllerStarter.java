@@ -1,6 +1,5 @@
 import io.jboot.Jboot;
 
-
 public class ControllerStarter {
 
 
@@ -10,6 +9,7 @@ public class ControllerStarter {
         Jboot.setBootArg("jboot.cache.type", "redis");
         Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
         Jboot.run(args);
+
 
 
     }
