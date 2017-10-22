@@ -1,7 +1,7 @@
 
 # 目录
-- [JBoot核心组件](#JBoot核心组件)
-- [MVC](#MVC)
+- [JBoot核心组件](#jboot核心组件)
+- [MVC](#mvc)
 	- MVC的概念
 	- JbootController
 	- @RquestMapping
@@ -14,7 +14,7 @@
 	- shiro的使用
 		- 12个模板指令（用在html上）
 		- 5个Requires注解功能（用在Controller上）
-- [ORM](#ORM)
+- [ORM](#orm)
 	- 配置
 		- 高级配置
 	- Model
@@ -25,20 +25,20 @@
 	- 分库和分表
 		- 分库
 		- 分表
-- [AOP](#AOP)
+- [AOP](#aop)
 	- Google Guice
 	- @Inject
 	- @Bean
-- [RPC远程调用](#RPC远程调用)
+- [RPC远程调用](#rpc远程调用)
 	- 使用步骤
 	- 其他注意
-- [MQ消息队列](#MQ消息队列)
+- [MQ消息队列](#mq消息队列)
 	- 使用步骤
 	- RedisMQ
 	- ActiveMQ
 	- RabbitMq
 	- 阿里云商业MQ
-- [Cache缓存](#Cache缓存)
+- [Cache缓存](#cache缓存)
 	- 使用步骤
 	- 注意事项
 	- ehcache
@@ -49,11 +49,15 @@
 	- Post 请求
 	- 文件上传
 	- 文件下载
-- 监控
-- 容错与隔离
+- [监控](#监控)
+	- 添加metrics数据
+	- metrics与Ganglia
+	- metrics与jmx
+- [容错与隔离](#容错与隔离)
+
 - 其他
-	- SPI扩展
-	- [JbootEvnet事件机制](#JbootEvnet事件机制)
+	- [SPI扩展](#spi扩展)
+	- [JbootEvnet事件机制](#jbootEvnet事件机制)
 	- 自定义序列化
 	- 配置文件
 	- 代码生成器
