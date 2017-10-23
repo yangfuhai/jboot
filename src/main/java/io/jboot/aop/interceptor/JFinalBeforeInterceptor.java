@@ -36,9 +36,15 @@ public class JFinalBeforeInterceptor implements MethodInterceptor {
         Class targetClass = methodInvocation.getThis().getClass();
         Method method = methodInvocation.getMethod();
 
+        targetClass = getUsefulClass(targetClass);
+
         Interceptor[] finalInters = manger.buildServiceMethodInterceptor(InterceptorManager.NULL_INTERS, targetClass, method);
         JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, finalInters);
         invocation.invoke();
         return invocation.getReturnValue();
+    }
+
+    public static Class<?> getUsefulClass(Class<?> clazz) {
+        return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
     }
 }

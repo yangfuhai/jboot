@@ -33,6 +33,9 @@ public class ControllerTest extends JbootController {
 
         Jboot.me().getMetric().counter("myaction").inc();
 
+
+//        serviceTest.test1();
+
         renderText("hello ddd : " + serviceTest.hello("michael"));
 
 
@@ -55,11 +58,17 @@ public class ControllerTest extends JbootController {
             System.out.println("hello invoked");
             return "aaa" + aaa;
         }
+
+        @Override
+        public String test1() {
+            return null;
+        }
     }
 
 
     public static interface ServiceInter {
         public String hello(String aaa);
+        public String test1();
     }
 
 
