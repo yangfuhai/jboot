@@ -80,7 +80,9 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
     public void removeAll(String cacheName) {
         String[] keys = new String[]{};
         keys = redis.keys(cacheName + ":*").toArray(keys);
-        redis.del(keys);
+        if (keys != null && keys.length > 0) {
+            redis.del(keys);
+        }
     }
 
 
