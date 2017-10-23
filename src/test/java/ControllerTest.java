@@ -1,3 +1,5 @@
+import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.core.cache.annotation.Cacheable;
@@ -49,6 +51,7 @@ public class ControllerTest extends JbootController {
 
     @Singleton
     @Bean
+    @Before(Tx.class)
     public static class ServiceTest implements ServiceInter {
 
 
