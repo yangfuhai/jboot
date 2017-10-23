@@ -1,3 +1,15 @@
+jboot-1.0-rc.3:
+新增：添加servlet相关的配置，支持之定义servlet。
+新增：新增RPC是否自动走Hystrix的相关配置支持
+新增：新增RPC 代理的配置，jboot.rpc.proxy
+新增：findFirstByColumns方法，根据多列和值查询一条数据
+优化：重构Shiro相关的AuthorizeResult，使用不被删除的方法。
+修复：service层代码生成器出现导报错误的bug
+修复：http post请求时，请求类型判断错误的bug
+修复：通过Jboot.me().getMetrics进行统计后，在浏览器浏览的数据不正确的问题。
+
+
+
 jboot-1.0-rc.2:
 新增：hystrix 自动监控和熔断对dubbo的支持
 新增：hystrix 的keys配置，方便RPC调用的时候对方法的监控和熔断
