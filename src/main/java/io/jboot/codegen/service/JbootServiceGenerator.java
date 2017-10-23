@@ -15,12 +15,10 @@
  */
 package io.jboot.codegen.service;
 
-import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import io.jboot.Jboot;
 import io.jboot.codegen.CodeGenHelpler;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 public class JbootServiceGenerator {
@@ -59,8 +57,7 @@ public class JbootServiceGenerator {
     public void doGenerate(String excludeTables) {
 
         System.out.println("start generate...");
-        DataSource dataSource = CodeGenHelpler.getDatasource();
-        List<TableMeta> tableMetaList = new MetaBuilder(dataSource).build();
+        List<TableMeta> tableMetaList = CodeGenHelpler.createMetaBuilder().build();
         CodeGenHelpler.excludeTables(tableMetaList, excludeTables);
 
         new JbootServiceInterfaceGenerator(basePackage, modelPacket).generate(tableMetaList);

@@ -17,12 +17,10 @@ package io.jboot.codegen.vomodel;
 
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.generator.BaseModelGenerator;
-import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import io.jboot.Jboot;
 import io.jboot.codegen.CodeGenHelpler;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -74,8 +72,7 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
     public void doGenerate(String excludeTables) {
 
         System.out.println("start generate...");
-        DataSource dataSource = CodeGenHelpler.getDatasource();
-        List<TableMeta> tableMetaList = new MetaBuilder(dataSource).build();
+        List<TableMeta> tableMetaList = CodeGenHelpler.createMetaBuilder().build();
         CodeGenHelpler.excludeTables(tableMetaList, excludeTables);
 
         generate(tableMetaList);

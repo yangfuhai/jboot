@@ -15,11 +15,14 @@
  */
 package io.jboot.codegen;
 
+import com.jfinal.plugin.activerecord.dialect.*;
+import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.config.JbootProperties;
 import io.jboot.db.datasource.DatasourceConfig;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 
 import javax.sql.DataSource;
@@ -44,12 +47,40 @@ public class CodeGenHelpler {
         config.setJdbcUrl(datasourceConfig.getUrl());
         config.setUsername(datasourceConfig.getUser());
         config.setPassword(datasourceConfig.getPassword());
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        config.setDriverClassName("com.mysql.jdbc.Driver");
+        config.setDriverClassName(datasourceConfig.getDriverClassName());
 
         return new HikariDataSource(config);
+    }
+
+
+    public static MetaBuilder createMetaBuilder() {
+        MetaBuilder metaBuilder = new MetaBuilder(getDatasource());
+        DatasourceConfig datasourceConfig = JbootProperties.get(DatasourceConfig.class, "jboot.datasource");
+        switch (datasourceConfig.getType()) {
+            case DatasourceConfig.TYPE_MYSQL:
+                metaBuilder.setDialect(new MysqlDialect());
+                break;
+            case DatasourceConfig.TYPE_ORACLE:
+                metaBuilder.setDialect(new OracleDialect());
+                break;
+            case DatasourceConfig.TYPE_SQLSERVER:
+                metaBuilder.setDialect(new SqlServerDialect());
+                break;
+            case DatasourceConfig.TYPE_SQLITE:
+                metaBuilder.setDialect(new Sqlite3Dialect());
+                break;
+            case DatasourceConfig.TYPE_ANSISQL:
+                metaBuilder.setDialect(new AnsiSqlDialect());
+                break;
+            case DatasourceConfig.TYPE_POSTGRESQL:
+                metaBuilder.setDialect(new PostgreSqlDialect());
+                break;
+            default:
+                throw new JbootException("only support datasource type : mysql，orcale，sqlserver，sqlite，ansisql，postgresql");
+        }
+
+        return metaBuilder;
+
     }
 
 
