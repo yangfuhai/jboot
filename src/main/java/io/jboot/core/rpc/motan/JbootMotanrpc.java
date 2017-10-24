@@ -67,6 +67,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         protocolConfig.setId("motan");
         protocolConfig.setName("motan");
         protocolConfig.setSerialization("jboot");
+        protocolConfig.setFilter("jbootTracing");
 
     }
 
