@@ -17,6 +17,7 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.SqlServerDialect;
 import io.jboot.db.model.Column;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 
 import java.util.List;
@@ -39,11 +40,34 @@ public class JbootSqlServerDialect extends SqlServerDialect implements IJbootMod
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
-        if (limit != null) {
-            sqlBuilder.append(" LIMIT " + limit);
+        if (limit == null) {
+            return sqlBuilder.toString();
         }
 
-        return sqlBuilder.toString();
+        if (limit instanceof Number) {
+            StringBuilder ret = new StringBuilder();
+            ret.append("SELECT * FROM ( SELECT row_number() over (order by tempcolumn) temprownumber, * FROM ");
+            ret.append(" ( SELECT TOP ").append(limit).append(" tempcolumn=0,");
+            ret.append(sqlBuilder.toString().replaceFirst("(?i)select", ""));
+            ret.append(")vip)mvp ");
+            return ret.toString();
+
+
+        } else if (limit instanceof String && limit.toString().contains(",")) {
+            String[] startAndEnd = limit.toString().split(",");
+            String start = startAndEnd[0];
+            String end = startAndEnd[1];
+
+            StringBuilder ret = new StringBuilder();
+            ret.append("SELECT * FROM ( SELECT row_number() over (order by tempcolumn) temprownumber, * FROM ");
+            ret.append(" ( SELECT TOP ").append(end).append(" tempcolumn=0,");
+            ret.append(sqlBuilder.toString().replaceFirst("(?i)select", ""));
+            ret.append(")vip)mvp where temprownumber>").append(start);
+            return ret.toString();
+        } else {
+            throw new JbootException("sql limit is error!,limit must is Number of String like \"0,10\"");
+        }
+
     }
 
 

@@ -17,6 +17,7 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect;
 import io.jboot.db.model.Column;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 
 import java.util.List;
@@ -39,11 +40,23 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
-        if (limit != null) {
-            sqlBuilder.append(" LIMIT " + limit);
+        if (limit == null) {
+            return sqlBuilder.toString();
         }
 
-        return sqlBuilder.toString();
+        if (limit instanceof Number) {
+            sqlBuilder.append(" limit ").append(limit).append(" offset ").append(0);
+            return sqlBuilder.toString();
+        } else if (limit instanceof String && limit.toString().contains(",")) {
+            String[] startAndEnd = limit.toString().split(",");
+            String start = startAndEnd[0];
+            String end = startAndEnd[1];
+
+            sqlBuilder.append(" limit ").append(end).append(" offset ").append(start);
+            return sqlBuilder.toString();
+        } else {
+            throw new JbootException("sql limit is error!,limit must is Number of String like \"0,10\"");
+        }
     }
 
 

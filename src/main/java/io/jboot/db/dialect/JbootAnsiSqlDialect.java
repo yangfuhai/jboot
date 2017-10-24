@@ -17,6 +17,7 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.AnsiSqlDialect;
 import io.jboot.db.model.Column;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements IJbootModelDi
         }
 
         if (limit != null) {
-            sqlBuilder.append(" LIMIT " + limit);
+            throw new JbootException("limit param not finished JbootAnsiSqlDialect.");
         }
 
         return sqlBuilder.toString();
