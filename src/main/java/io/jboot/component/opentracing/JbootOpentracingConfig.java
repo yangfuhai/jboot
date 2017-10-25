@@ -21,6 +21,7 @@ import io.jboot.config.annotation.PropertieConfig;
 public class JbootOpentracingConfig {
 
     public static final String TYPE_ZIPKIN = "zipkin";
+    public static final String TYPE_SKYWALKING = "skyWalking";
 
     private String type = TYPE_ZIPKIN;
     private String serviceName;

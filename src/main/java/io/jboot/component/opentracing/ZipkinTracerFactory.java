@@ -26,7 +26,7 @@ import zipkin2.reporter.urlconnection.URLConnectionSender;
 public class ZipkinTracerFactory implements TracerFactory {
 
 
-    final Tracer braveTracer;
+    final Tracer tracer;
 
     public ZipkinTracerFactory() {
 
@@ -48,12 +48,12 @@ public class ZipkinTracerFactory implements TracerFactory {
                 .localServiceName(config.getServiceName())
                 .build();
 
-        braveTracer = BraveTracer.newBuilder(tracing).build();
+        tracer = BraveTracer.newBuilder(tracing).build();
     }
 
 
     @Override
     public Tracer getTracer() {
-        return braveTracer;
+        return tracer;
     }
 }

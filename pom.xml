@@ -328,7 +328,6 @@
             <version>0.22.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/io.zipkin.reporter2/zipkin-sender-urlconnection -->
         <dependency>
             <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-sender-urlconnection</artifactId>
