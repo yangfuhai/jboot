@@ -54,6 +54,20 @@
 	- metrics与Ganglia
 	- metrics与jmx
 - [容错与隔离](#容错与隔离)
+	- hystrix配置
+	- Hystrix Dashboard 部署
+	- 通过 Hystrix Dashboard 查看数据
+	
+- [Opentracing数据追踪](#opentracing数据追踪)
+	- [Opentracing简介](#opentracing简介)
+	- [Opentracing在Jboot上的配置](#opentracing在jboot上的配置)
+	- [Zipkin](#zipkin)
+		- [Zipkin快速启动](#zipkin快速启动)
+		- [使用zipkin](#使用zipkin)
+	- SkyWalking
+		- [SkyWalking快速启动](#Skywalking快速启动)
+		- [使用SkyWalking](#使用skywalking)
+	- 其他
 
 - 其他
 	- [SPI扩展](#spi扩展)
@@ -849,8 +863,12 @@ jboot.metrics.jmxReporter = true
 
 
 # 容错与隔离
+
+### hystrix配置
 Jboot的容错、隔离和降级服务、都是通过`Hystrix`来实现的。在RPC远程调用中，Jboot已经默认开启了Hystrix的监控机制，对数默认错误率达到50%的service则立即返回，不走网络。
 
+
+### Hystrix Dashboard 部署
 要查看hystrix的数据，我们需要部署`Hystrix Dashboard`。然后通过`Hystrix Dashboard`来查看。
 
 通过Gradle来编译：
@@ -862,8 +880,10 @@ $ ../gradlew appRun
 > Building > :hystrix-dashboard:appRun > Running at http://localhost:7979/hystrix-dashboard
 ```
 运行`hystrix-dashboard`成功后，通过浏览器输入`http://localhost:7979/hystrix-dashboard`就可以看到如下图显示：
-![](https://github.com/Netflix/Hystrix/wiki/images/dashboard-home.png)
+![](https://github.com/Netflix/Hystrix/wiki/images/dashboard-home.png）
 
+
+### 通过 Hystrix Dashboard 查看数据
 接下来，我们需要配置jboot应用的hystrix监控地址，配置如下：
 
 ```
@@ -874,6 +894,68 @@ jboot.hystrix.url = /hystrix.stream
 
 ### 自定义监控隔离
 
+# Opentracing数据追踪
+Jboot在分布式下，对数据的追踪是通过opentracing来实现的，opentracing官方地址（http://opentracing.io ）
+
+### Opentracing简介
+OpenTracing（http://opentracing.io ）通过提供平台无关、厂商无关的API，使得开发人员能够方便的添加（或更换）追踪系统的实现。OpenTracing正在为全球的分布式追踪，提供统一的概念和数据标准。
+
+目前，已经有了诸如 UBER，LightStep，Apple，yelp，workiva等公司在跟进，以及开源团队：ZIPKIN，appdash，TRACER，JAEGER，GRPC等的支持。
+
+已经支持 opentracing-api的开源库有：Zipkin，Jaeger（Uber公司的），Appdash，LightStep，Hawkular，Instana，sky-walking，inspectIT，stagemonitor等。具体地址请查看：http://opentracing.io/documentation/pages/supported-tracers.html
+
+### Opentracing在Jboot上的配置
+在jboot中启用opentracing非常简单，只需要做如下配置：
+
+```java
+jboot.tracing.type=zipkin
+jboot.tracing.serviceName=service1
+jboot.tracing.url=http://host:port
+```
+同步简单几个配置，就可以启动opentracing对数据的追踪，并把数据传输到对应的服务器上，例如使用的是zipkin，那么就会传输到zipkin的server上。
+
+### Zipkin
+zipkin官网： http://zipkin.io/ 
+
+#### zipkin快速启动
+
+```java
+wget -O zipkin.jar 'https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec'
+java -jar zipkin.jar
+```
+
+或者通过docker来运行：
+
+```java
+docker run -d -p 9411:9411 openzipkin/zipkin
+```
+
+或者 自己编译zipkin源代码，然后通过以下方式执行：
+
+```java
+# Build the server and also make its dependencies
+$ ./mvnw -DskipTests --also-make -pl zipkin-server clean install
+# Run the server
+$ java -jar ./zipkin-server/target/zipkin-server-*exec.jar
+```
+
+#### 使用zipkin
+通过以上步骤，把zipkin启动后，只需要在 jboot.properties 文件把 jboot.tracing.url 的属性修改为zipkin的地址即可：
+
+```
+jboot.tracing.url = http://127.0.0.1:9411
+```
+
+配置之后，我们就可以通过zipkin来查看jboot追踪的数据了。
+![](http://zipkin.io/public/img/web-screenshot.png)
+
+### SkyWalking
+SkyWalking官网：http://skywalking.org ，Skywalking为国人开发，据说目前 **华为开发云**、**当当网** 等已经 加入 Skywalking 生态系统，具体查看：https://www.oschina.net/news/89756/devcloud-dangdang-join-skywalking 
+
+#### SkyWalking快速启动
+#### 使用SkyWalking
+
+### 其他
 
 
 # 其他
