@@ -67,7 +67,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         protocolConfig.setId("motan");
         protocolConfig.setName("motan");
         protocolConfig.setSerialization("jboot");
-        protocolConfig.setFilter("jbootTracing");
+        protocolConfig.setFilter("jbootOpentracing");
 
     }
 
@@ -93,6 +93,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOut());
         refererConfig.setProtocol(protocolConfig);
         refererConfig.setProxy(jbootrpcConfig.getProxy());
+        refererConfig.setFilter("jbootOpentracing");
 
         /**
          * 注册中心模式
@@ -137,6 +138,7 @@ public class JbootMotanrpc extends JbootrpcBase {
             // 配置服务的group以及版本号
             motanServiceConfig.setGroup(group);
             motanServiceConfig.setVersion(version);
+            motanServiceConfig.setFilter("jbootOpentracing");
 
             motanServiceConfig.setShareChannel(true);
             motanServiceConfig.setExport(String.format("motan:%s", port));

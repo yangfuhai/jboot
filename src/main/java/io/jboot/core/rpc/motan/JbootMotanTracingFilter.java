@@ -32,7 +32,7 @@ import io.opentracing.propagation.TextMapExtractAdapter;
 import java.util.Iterator;
 import java.util.Map;
 
-@SpiMeta(name = "jbootTracing")
+@SpiMeta(name = "jbootOpentracing")
 @Activation(sequence = 30)
 public class JbootMotanTracingFilter implements Filter {
 
@@ -73,7 +73,7 @@ public class JbootMotanTracingFilter implements Filter {
         if (activeSpan != null) {
             spanBuilder.asChildOf(activeSpan);
         }
-        Span span = spanBuilder.start();
+        Span span = spanBuilder.startManual();
         span.setTag("requestId", request.getRequestId());
 
         attachTraceInfo(tracer, span, request);
@@ -155,7 +155,7 @@ public class JbootMotanTracingFilter implements Filter {
         } catch (Exception e) {
             span.withTag("Error", "extract from request fail, error msg:" + e.getMessage());
         }
-        return span.start();
+        return span.startManual();
     }
 
 

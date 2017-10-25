@@ -71,6 +71,7 @@ public class JbootrpcConfig {
     private String serializer = Jboot.config(JbootConfig.class).getSerializer();
 
     private String proxy = "jboot";
+    private String filter;  //多个过滤器请用英文逗号（,）隔开，默认添加opentracing过滤器，用于对rpc分布式调用的追踪
 
 
     /**
@@ -200,6 +201,14 @@ public class JbootrpcConfig {
 
     public void setProxy(String proxy) {
         this.proxy = proxy;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     public String getHystrixKeys() {

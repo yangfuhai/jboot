@@ -87,6 +87,7 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setInterface(serviceClass);
         reference.setVersion(version);
         reference.setProxy(jbootrpcConfig.getProxy());
+        reference.setFilter("jbootConsumerOpentracing");
 
 
         /**
@@ -139,6 +140,8 @@ public class JbootDubborpc extends JbootrpcBase {
         service.setInterface(interfaceClass);
         service.setRef((T) object);
         service.setVersion(version);
+        service.setProxy("jbootProviderOpentracing");
+        service.setFilter(jbootrpcConfig.getFilter());
 
         // 暴露及注册服务
         service.export();
