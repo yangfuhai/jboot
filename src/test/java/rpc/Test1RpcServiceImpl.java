@@ -18,16 +18,16 @@ package rpc;
 /**
  * Created by michael on 2017/5/5.
  */
-public class TestRpcService implements ITestRpcService {
+public class Test1RpcServiceImpl implements ITest1RpcService {
     @Override
     public String hello(String name) {
-        return "hello " + name;
+        return "hello11 " + name;
     }
 
 
 
     @Override
     public String findUserById(String userId) {
-        return "USER";
+        return "USER11";
     }
 }

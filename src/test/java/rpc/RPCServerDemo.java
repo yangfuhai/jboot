@@ -26,12 +26,16 @@ public class RPCServerDemo {
 
     public static void main(String[] args) throws InterruptedException {
 
+
+        Jboot.setBootArg("jboot.rpc.type","motan");
+        Jboot.setBootArg("jboot.rpc.callMode","redirect");//直连模式，默认为注册中心
+
         Jbootrpc factory = Jboot.me().getRpc();
 
         System.out.println(factory);
 
-        factory.serviceExport(ITestRpcService.class, new TestRpcService(), "jboot", "1.0", 8002);
-        factory.serviceExport(ITest1RpcService.class, new Test1RpcService(), "jboot", "1.0", 8002);
+        factory.serviceExport(ITestRpcService.class, new TestRpcServiceImpl(), "jboot", "1.0", 8002);
+        factory.serviceExport(ITest1RpcService.class, new Test1RpcServiceImpl(), "jboot", "1.0", 8002);
 
         System.out.println("server start...");
 
