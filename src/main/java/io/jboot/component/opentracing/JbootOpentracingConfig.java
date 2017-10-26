@@ -26,9 +26,9 @@ public class JbootOpentracingConfig {
     private String type = TYPE_ZIPKIN;
     private String serviceName;
     private String url;
-    private int connectTimeout;
-    private int readTimeout;
-    private boolean compressionEnabled;
+    private int connectTimeout = 1000 * 10;
+    private int readTimeout = 1000 * 60;
+    private boolean compressionEnabled = true;
 
     public String getType() {
         return type;
