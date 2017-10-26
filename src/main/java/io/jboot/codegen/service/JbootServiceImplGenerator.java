@@ -36,7 +36,7 @@ public class JbootServiceImplGenerator extends BaseModelGenerator {
         this.packageTemplate = "%n"
                 + "package %s;%n%n";
 
-        this.classDefineTemplate = "public class %s extends JbootServiceBase<%s> implements %s {%n%n";
+        this.classDefineTemplate = "@Bean\npublic class %s extends JbootServiceBase<%s> implements %s {%n%n";
 
 
         this.importTemplate = "import io.jboot.service.JbootServiceBase;%n%n";
@@ -56,6 +56,7 @@ public class JbootServiceImplGenerator extends BaseModelGenerator {
     }
 
     protected void genImport(StringBuilder ret, TableMeta tableMeta) {
+        ret.append("import io.jboot.aop.annotation.Bean;\n");
         ret.append(String.format("import %s.%sService;%n", baseModelPackageName.substring(0, baseModelPackageName.lastIndexOf(".")), tableMeta.modelName));
         ret.append(String.format("import %s.%s;%n", modelPacket, tableMeta.modelName));
         ret.append("import io.jboot.service.JbootServiceBase;\n\n");

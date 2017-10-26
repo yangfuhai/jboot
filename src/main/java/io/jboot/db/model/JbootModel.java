@@ -359,6 +359,16 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     /**
+     * 查找全部数据
+     *
+     * @return
+     */
+    public List<M> findAll() {
+        String sql = getDialect().forFindByColumns(tableName(), "*", null, null, null);
+        return find(sql);
+    }
+
+    /**
      * 根据列名和值 查询一个列表
      *
      * @param column

@@ -49,6 +49,14 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
                 "\n" +
                 "\n" +
                 "    /**\n" +
+                "     * 查找全部数据\n" +
+                "     *\n" +
+                "     * @return\n" +
+                "     */\n" +
+                "    public List<User> findAll();\n" +
+                "\n" +
+                "\n" +
+                "    /**\n" +
                 "     * 根据ID删除model\n" +
                 "     *\n" +
                 "     * @param id\n" +
@@ -118,6 +126,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
 
     protected void genImport(StringBuilder ret, TableMeta tableMeta) {
         ret.append(String.format("import %s.%s;%n%n", modelPacket, tableMeta.modelName));
+        ret.append("\nimport java.util.List;");
     }
 
     @Override

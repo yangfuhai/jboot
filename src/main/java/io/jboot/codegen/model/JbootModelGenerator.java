@@ -31,7 +31,7 @@ public class JbootModelGenerator {
         Jboot.setBootArg("jboot.datasource.user", "root");
 
 
-        String modelPackage = "io.jboot.codegen.test.model";
+        String modelPackage = "io.jboot.codegen.model.test";
         run(modelPackage);
     }
 

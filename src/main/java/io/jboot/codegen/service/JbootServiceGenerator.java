@@ -30,7 +30,7 @@ public class JbootServiceGenerator {
         Jboot.setBootArg("jboot.datasource.user", "root");
 
         String basePackage = "io.jboot.codegen.service.test";
-        String modelPackage = "io.jboot.codegen.test.model";
+        String modelPackage = "io.jboot.codegen.model.test";
         run(basePackage, modelPackage);
 
     }

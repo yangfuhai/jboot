@@ -73,6 +73,16 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
 
     /**
+     * 查找全部数据
+     *
+     * @return
+     */
+    public List<M> findAll() {
+        return DAO.findAll();
+    }
+
+
+    /**
      * 根据ID 删除model
      *
      * @param id
