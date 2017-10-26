@@ -918,7 +918,7 @@ OpenTracing（http://opentracing.io ）通过提供平台无关、厂商无关�
 ```java
 jboot.tracing.type=zipkin
 jboot.tracing.serviceName=service1
-jboot.tracing.url=http://host:port
+jboot.tracing.url=http://127.0.0.1:9411/api/v2/spans
 ```
 同步简单几个配置，就可以启动opentracing对数据的追踪，并把数据传输到对应的服务器上，例如使用的是zipkin，那么就会传输到zipkin的server上。
 
@@ -951,7 +951,7 @@ $ java -jar ./zipkin-server/target/zipkin-server-*exec.jar
 通过以上步骤，把zipkin启动后，只需要在 jboot.properties 文件把 jboot.tracing.url 的属性修改为zipkin的地址即可：
 
 ```
-jboot.tracing.url = http://127.0.0.1:9411
+jboot.tracing.url = http://127.0.0.1:9411/api/v2/spans
 ```
 
 配置之后，我们就可以通过zipkin来查看jboot追踪的数据了。
