@@ -49,7 +49,7 @@
 	- Post 请求
 	- 文件上传
 	- 文件下载
-- [监控](#监控)
+- [metrics数据监控](#metrics数据监控)
 	- 添加metrics数据
 	- metrics与Ganglia
 	- metrics与jmx
@@ -811,7 +811,7 @@ public void testHttpDownload() {
 
 
 
-# 监控
+# metrics数据监控
 Jboot的监控机制是通过Metrics来来做监控的，要启用metrics非常简单，通过在jboot.properties文件配置上`jboot.metrics.url`就可以启用metrics。
 
 例如

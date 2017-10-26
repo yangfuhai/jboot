@@ -128,7 +128,7 @@ public class MyStarter{
 	- Post 请求
 	- 文件上传
 	- 文件下载
-- [监控](./DOC.md#监控)
+- [metrics数据监控](./DOC.md#metrics数据监控)
 	- 添加metrics数据
 	- metrics与Ganglia
 	- metrics与jmx
