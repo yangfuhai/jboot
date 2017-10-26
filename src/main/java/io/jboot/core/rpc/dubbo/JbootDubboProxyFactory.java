@@ -73,6 +73,18 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+            /**
+             * 过滤系统方法，不走hystrix
+             */
+            if ("hashCode".equals(method.getName())
+                    || "toString".equals(method.getName())
+                    || "equals".equals(method.getName())
+                    || "getClass".equals(method.getName())) {
+
+                return super.invoke(proxy, method, args);
+
+            }
+
             String key = rpcConfig.getHystrixKeyByMethod(method.getName());
             if (StringUtils.isBlank(key) && rpcConfig.isHystrixAutoConfig()) {
                 key = method.getDeclaringClass().getName() + "." + method.getName();
