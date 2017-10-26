@@ -13,15 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hystrix;
+package rpc;
 
-/**
- * Created by michael on 2017/5/5.
- */
-public interface ITest1RpcService {
+import io.jboot.Jboot;
+import io.jboot.core.rpc.Jbootrpc;
+import service.UserService;
+import service.UserServiceImpl;
 
 
-    public String hello(String hello);
+public class ServerDemo {
 
-    public String findUserById(String userId);
+
+    public static void main(String[] args) throws InterruptedException {
+
+
+        Jboot.setBootArg("jboot.rpc.type","motan");
+        Jboot.setBootArg("jboot.rpc.callMode","redirect");//直连模式，默认为注册中心
+
+
+
+        Jboot.run(args);
+
+        Jbootrpc factory = Jboot.me().getRpc();
+
+        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
+
+        System.out.println("ServerDemo started...");
+
+
+    }
 }

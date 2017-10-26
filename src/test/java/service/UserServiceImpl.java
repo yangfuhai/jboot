@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package opentracing;
+package service;
 
-/**
- * Created by michael on 2017/5/5.
- */
-public class Test1RpcServiceImpl implements ITest1RpcService {
+
+public class UserServiceImpl implements UserService {
     @Override
     public String hello(String name) {
-        return "hello11 " + name;
+        return "UserServiceImpl " + name;
     }
-
 
 
     @Override
     public String findUserById(String userId) {
-        return "USER11";
+        return "get user:" + userId;
     }
 }

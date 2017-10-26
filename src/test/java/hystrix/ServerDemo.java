@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package opentracing;
+package hystrix;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import service.UserService;
+import service.UserServiceImpl;
 
-/**
- * Created by michael on 2017/5/5.
- */
-public class RPCServerDemo {
+
+public class ServerDemo {
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -30,23 +30,14 @@ public class RPCServerDemo {
         Jboot.setBootArg("jboot.rpc.type", "motan");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
 
-        Jboot.setBootArg("jboot.tracing.type", "zipkin");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.tracing.serviceName", "RPCServerDemo");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");//直连模式，默认为注册中心
-
-
-
 
         Jboot.run(args);
 
         Jbootrpc factory = Jboot.me().getRpc();
 
-        System.out.println(factory);
+        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
 
-        factory.serviceExport(ITestRpcService.class, new TestRpcServiceImpl(), "jboot", "1.0", 8002);
-        factory.serviceExport(ITest1RpcService.class, new Test1RpcServiceImpl(), "jboot", "1.0", 8002);
-
-        System.out.println("server start...");
+        System.out.println("ServerDemo started...");
 
 
     }

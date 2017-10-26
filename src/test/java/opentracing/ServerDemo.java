@@ -13,34 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hystrix;
+package opentracing;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
-
-/**
- * Created by michael on 2017/5/5.
- */
-public class RPCServerDemo {
+import service.UserService;
+import service.UserServiceImpl;
 
 
-    public static void main(String[] args) throws InterruptedException {
+public class ServerDemo {
+
+
+    /**
+     * 在启用之前，请先提起启动zipkin
+     * 启动zipkin的步骤：
+     * 1、下载 zipkin 的jar包：https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec
+     * 2、执行 java -jar 下载的jar包路径
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
 
 
         Jboot.setBootArg("jboot.rpc.type", "motan");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
 
 
+        Jboot.setBootArg("jboot.tracing.type", "zipkin");
+        Jboot.setBootArg("jboot.tracing.serviceName", "ServerDemo");
+        Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");
+
+
         Jboot.run(args);
 
         Jbootrpc factory = Jboot.me().getRpc();
 
-        System.out.println(factory);
+        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
 
-        factory.serviceExport(ITestRpcService.class, new TestRpcServiceImpl(), "jboot", "1.0", 8002);
-        factory.serviceExport(ITest1RpcService.class, new Test1RpcServiceImpl(), "jboot", "1.0", 8002);
-
-        System.out.println("server start...");
+        System.out.println("ServerDemo started...");
 
 
     }

@@ -13,21 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rpc;
-
-/**
- * Created by michael on 2017/5/5.
- */
-public class Test1RpcServiceImpl implements ITest1RpcService {
-    @Override
-    public String hello(String name) {
-        return "hello11 " + name;
-    }
+package service;
 
 
+public interface UserService {
 
-    @Override
-    public String findUserById(String userId) {
-        return "USER11";
-    }
+
+    public String hello(String hello);
+
+    public String findUserById(String userId);
 }

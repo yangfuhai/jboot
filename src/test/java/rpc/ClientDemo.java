@@ -13,55 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hystrix;
+package rpc;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
+import service.UserService;
 
-/**
- * Created by michael on 2017/5/5.
- */
-@RequestMapping("/hystrixtest")
-public class RPCClientDemo extends JbootController {
 
-    public static void main(String[] args) throws InterruptedException {
+@RequestMapping("/rpc")
+public class ClientDemo extends JbootController {
 
+
+    /**
+     * 请先启动 ServerDemo 后，再启动
+     * @param args
+     */
+    public static void main(String[] args)  {
+
+        //jboot端口号配置
         Jboot.setBootArg("jboot.server.port", "8088");
+
+        //RPC配置
         Jboot.setBootArg("jboot.rpc.type", "motan");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
         Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
-        Jboot.setBootArg("jboot.hystrix.url", "/hystrix.html");//配置 Hystrix Dashboard 的监控路径
 
         Jboot.run(args);
-
-
     }
 
 
     public void index() {
-        Jbootrpc factory = Jboot.me().getRpc();
+        Jbootrpc jbootrpc = Jboot.me().getRpc();
 
         long time = System.currentTimeMillis();
-        ITestRpcService service = factory.serviceObtain(ITestRpcService.class, "jboot", "1.0");
-        ITest1RpcService service1 = factory.serviceObtain(ITest1RpcService.class, "jboot", "1.0");
-
-//        // 使用服务
+        UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
         System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
-        for (int i = 0; i < 10; i++) {
-            System.out.println(service.hello("海哥" + i));
-        }
 
         for (int i = 0; i < 10; i++) {
-            System.out.println(service1.hello("海哥" + i));
+            // 使用服务
+            System.out.println(service.hello("海哥" + i));
         }
 
 
         renderText("ok");
     }
-
 
 
 }
