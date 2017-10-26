@@ -45,25 +45,24 @@ public class JbootDubborpc extends JbootrpcBase {
         applicationConfig = new ApplicationConfig();
         applicationConfig.setName("jboot");
 
+        registryConfig = new RegistryConfig();
 
         /**
          * 注册中心的调用模式
          */
         if (jbootrpcConfig.isRegistryCallMode()) {
-            registryConfig = new RegistryConfig();
+
             registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
             registryConfig.setUsername(jbootrpcConfig.getRegistryUserName());
             registryConfig.setPassword(jbootrpcConfig.getRegistryPassword());
         }
-
         /**
-         * 直连调用模式
+         * 直连模式
          */
-        if (jbootrpcConfig.isRedirectCallMode()) {
-            if (StringUtils.isBlank(jbootrpcConfig.getDirectUrl())) {
-                throw new JbootException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
-            }
+        else if (jbootrpcConfig.isRedirectCallMode()) {
+            registryConfig.setProtocol("local");
         }
+
 
     }
 
@@ -94,6 +93,9 @@ public class JbootDubborpc extends JbootrpcBase {
          * 注册中心的调用模式
          */
         if (jbootrpcConfig.isRegistryCallMode()) {
+            if (StringUtils.isBlank(jbootrpcConfig.getDirectUrl())) {
+                throw new JbootException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
+            }
             reference.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
         }
 
@@ -129,12 +131,7 @@ public class JbootDubborpc extends JbootrpcBase {
         ServiceConfig<T> service = new ServiceConfig<T>();
         service.setApplication(applicationConfig);
 
-        /**
-         * 注册中心的调用模式
-         */
-        if (jbootrpcConfig.isRegistryCallMode()) {
-            service.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
-        }
+        service.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
 
         service.setProtocol(protocolConfig); // 多个协议可以用setProtocols()
         service.setInterface(interfaceClass);
