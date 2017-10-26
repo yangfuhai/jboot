@@ -879,8 +879,16 @@ $ cd Hystrix/hystrix-dashboard
 $ ../gradlew appRun
 > Building > :hystrix-dashboard:appRun > Running at http://localhost:7979/hystrix-dashboard
 ```
+
+或者通过docker来运行hystrix-dashboard:
+
+```java
+docker run --rm -ti -p 7979:7979 kennedyoliveira/hystrix-dashboard
+```
+
 运行`hystrix-dashboard`成功后，通过浏览器输入`http://localhost:7979/hystrix-dashboard`就可以看到如下图显示：
-![](https://github.com/Netflix/Hystrix/wiki/images/dashboard-home.png）
+
+ ![](https://github.com/Netflix/Hystrix/wiki/images/dashboard-home.png)
 
 
 ### 通过 Hystrix Dashboard 查看数据
@@ -890,7 +898,7 @@ $ ../gradlew appRun
 jboot.hystrix.url = /hystrix.stream
 ```
 然后在上面图片中，填写url地址为：`http://host:port/hystrix.stream`,并点击`monitor stream`按钮,就可以看到如下图显示，所以的远程调用方法都统计到了。
-![](https://github.com/Netflix/Hystrix/wiki/images/hystrix-dashboard-netflix-api-example-iPad.png)
+ ![](https://github.com/Netflix/Hystrix/wiki/images/hystrix-dashboard-netflix-api-example-iPad.png)
 
 ### 自定义监控隔离
 
