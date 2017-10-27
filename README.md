@@ -67,6 +67,7 @@ public class MyStarter{
 * 分布式session
 * 调用监控 (基于metrics)
 * 容错隔离（基于 hystrix）
+* Opentracing数据追踪
 * 轻量级的Http客户端（包含了get、post请求，文件上传和下载等）
 * 分布式下的微信和微信第三方
 * 自定义序列化组件
