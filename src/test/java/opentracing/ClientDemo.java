@@ -16,9 +16,11 @@
 package opentracing;
 
 import io.jboot.Jboot;
+import io.jboot.component.opentracing.EnableTracing;
 import io.jboot.core.rpc.Jbootrpc;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
+import service.CategoryService;
 import service.UserService;
 
 
@@ -32,6 +34,7 @@ public class ClientDemo extends JbootController {
      *
      * @param args
      */
+
     public static void main(String[] args)  {
 
         //jboot端口号配置
@@ -49,7 +52,7 @@ public class ClientDemo extends JbootController {
         Jboot.run(args);
     }
 
-
+    @EnableTracing
     public void index() {
         Jbootrpc jbootrpc = Jboot.me().getRpc();
 
@@ -62,6 +65,9 @@ public class ClientDemo extends JbootController {
             // 使用服务
             System.out.println(service.hello("海哥"));
 //        }
+
+        CategoryService service1 = Jboot.service(CategoryService.class);
+        System.out.println(service1.hello("海哥"));
 
 
         renderText("ok");

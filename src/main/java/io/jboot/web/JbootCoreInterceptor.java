@@ -18,7 +18,7 @@ package io.jboot.web;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
-import io.jboot.component.opentracing.EnableOpentracing;
+import io.jboot.component.opentracing.EnableTracing;
 import io.jboot.component.opentracing.JbootOpentracingManager;
 import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.utils.StringUtils;
@@ -36,7 +36,7 @@ public class JbootCoreInterceptor implements Interceptor {
     public void intercept(Invocation inv) {
         Jboot.injectMembers(inv.getController());
 
-        EnableOpentracing enableOpentracing = inv.getMethod().getAnnotation(EnableOpentracing.class);
+        EnableTracing enableOpentracing = inv.getMethod().getAnnotation(EnableTracing.class);
         Tracer tracer = JbootOpentracingManager.me().getTracer();
         Span span = null;
 
@@ -57,6 +57,7 @@ public class JbootCoreInterceptor implements Interceptor {
             inv.invoke();
         } finally {
             if (span != null) {
+                span.finish();
                 JbootSpanContext.destroy();
             }
         }
