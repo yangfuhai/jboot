@@ -1,3 +1,20 @@
+jboot-1.0-rc.4:
+新增： Opentracing 模块 和 默认的 zipkin 实现，用于对分布式 RPC 的追踪支持。
+新增：注解 EnableTracing ，方便通过 Opentracing 给 Jfinal 的 action 添加数据追踪。
+新增：motan 和 dubbo 默认对 Opentracing 数据追踪的支持。
+新增：Opentracing 的相关文档。
+新增：为JbootModel 默认添加 findAll 方法。
+新增：service代码生成自动添加注解 @Bean ，方便 @Inject后就可以直接使用 。
+优化：给没有JbootModel相关没必要序列化的字段添加 transient 修饰。
+优化：完善 RPC 、opentracing 、hystrix 的相关测试和文档。
+修复：当启用 Opentracing 的同时 启用 Hystrix，会出现 Opentracing 追踪断裂的bug。
+修复：注解 @Before(Tx.class) 应用在类上的时候，事务回滚失败的bug。
+修复：oracle、sqlserver、postgresql的Dialect（方言）的limit数据错误的问题。
+修复：当调用Cache.removeAll()去移除一个不存在的key时，会出现redis错误的bug。
+
+
+
+
 jboot-1.0-rc.3:
 新增：添加servlet相关的配置，支持之定义servlet。
 新增：新增RPC是否自动走Hystrix的相关配置支持
