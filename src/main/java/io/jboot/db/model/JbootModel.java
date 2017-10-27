@@ -537,7 +537,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    private Table table;
+    private transient Table table;
 
     public String tableName() {
         if (table == null) {
@@ -549,7 +549,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return table.getName();
     }
 
-    private String primaryKey;
+    private transient String primaryKey;
 
     protected String getPrimaryKey() {
         if (primaryKey != null) {
@@ -564,7 +564,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return primaryKey;
     }
 
-    private Class<?> primaryType;
+    private transient Class<?> primaryType;
 
     public Class<?> getPrimaryType() {
         if (primaryType == null) {
