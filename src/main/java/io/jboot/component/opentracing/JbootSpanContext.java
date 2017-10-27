@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package service;
+package io.jboot.component.opentracing;
+
+import io.opentracing.Span;
 
 
-import io.jboot.Jboot;
+public class JbootSpanContext {
+    private static ThreadLocal<Span> spans = new ThreadLocal<>();
 
-public class UserServiceImpl implements UserService {
-    @Override
-    public String hello(String name) {
-        
-        System.out.println("UserServiceImpl hello invoked!!!");
 
-        return Jboot.service(CategoryService.class).hello(name);
+    public static void init(Span span) {
+        spans.set(span);
     }
 
+    public static Span get() {
+        return spans.get();
+    }
 
-    @Override
-    public String findUserById(String userId) {
-        return "get user:" + userId;
+    public static void destroy() {
+        spans.remove();
     }
 }

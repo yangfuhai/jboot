@@ -17,6 +17,8 @@ package opentracing;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import service.CategoryService;
+import service.CategoryServiceImpl;
 import service.UserService;
 import service.UserServiceImpl;
 
@@ -29,6 +31,7 @@ public class ServerDemo {
      * 启动zipkin的步骤：
      * 1、下载 zipkin 的jar包：https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec
      * 2、执行 java -jar 下载的jar包路径
+     * 3、执行后，浏览器可以访问 http://127.0.0.1:9411 来查看zipkin收集的数据
      *
      * @param args
      */
@@ -37,6 +40,7 @@ public class ServerDemo {
 
         Jboot.setBootArg("jboot.rpc.type", "motan");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
+        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
 
 
         Jboot.setBootArg("jboot.tracing.type", "zipkin");
@@ -49,6 +53,7 @@ public class ServerDemo {
         Jbootrpc factory = Jboot.me().getRpc();
 
         factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
+        factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot", "1.0", 8002);
 
         System.out.println("ServerDemo started...");
 

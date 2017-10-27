@@ -42,9 +42,9 @@ public class ClientDemo extends JbootController {
         Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
 
 
-        Jboot.setBootArg("jboot.tracing.type", "zipkin");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.tracing.serviceName", "ClientDemo");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");//直连模式，默认为注册中心
+        Jboot.setBootArg("jboot.tracing.type", "zipkin");//opentracing的类型
+        Jboot.setBootArg("jboot.tracing.serviceName", "ClientDemo");//opentracing的本应用服务名称
+        Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");//zipkin的服务器
 
         Jboot.run(args);
     }
@@ -58,10 +58,10 @@ public class ClientDemo extends JbootController {
         System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
 
-        for (int i = 0; i < 10; i++) {
+//        for (int i = 0; i < 10; i++) {
             // 使用服务
-            System.out.println(service.hello("海哥" + i));
-        }
+            System.out.println(service.hello("海哥"));
+//        }
 
 
         renderText("ok");

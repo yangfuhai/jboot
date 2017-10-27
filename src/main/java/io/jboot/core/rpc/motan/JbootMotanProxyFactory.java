@@ -19,9 +19,11 @@ import com.weibo.api.motan.core.extension.SpiMeta;
 import com.weibo.api.motan.proxy.ProxyFactory;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.HystrixRunnable;
+import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.utils.StringUtils;
+import io.opentracing.Span;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -60,7 +62,6 @@ public class JbootMotanProxyFactory implements ProxyFactory {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-
             /**
              * 过滤系统方法，不走hystrix
              */
@@ -70,8 +71,9 @@ public class JbootMotanProxyFactory implements ProxyFactory {
                     || "getClass".equals(method.getName())) {
 
                 return handler.invoke(proxy, method, args);
-                
             }
+
+            final Span span = JbootMotanTracingFilter.getActiveSpan();
 
 
             String key = rpcConfig.getHystrixKeyByMethod(method.getName());
@@ -86,9 +88,13 @@ public class JbootMotanProxyFactory implements ProxyFactory {
                 @Override
                 public Object run() {
                     try {
+                        JbootSpanContext.init(span);
+
                         return handler.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
+                    } finally {
+                        JbootSpanContext.destroy();
                     }
                     return null;
                 }

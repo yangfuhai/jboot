@@ -21,6 +21,7 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.jfinal.log.Log;
+import io.jboot.component.opentracing.JbootSpanContext;
 import io.opentracing.Span;
 
 public class JbootDubboTracingFilterKits {
@@ -93,7 +94,14 @@ public class JbootDubboTracingFilterKits {
         if (span != null && span instanceof Span) {
             return (Span) span;
         }
-        return null;
+
+        /**
+         * 当通过 RpcContext 去获取不到的时候，有可能此线程 由于 hystrix 的原因，或其他原因，已经处于和RpcContext不同的线程
+         * 所以通过 RpcContext 去获取不到当前的Span信息
+         *
+         * 在程序中，当启动新的线程进行操作的时候，会通过 JbootOpentracingManager.me().initSpan(span) 来设置新线程的span内容
+         */
+        return JbootSpanContext.get();
     }
 
     public static void setActiveSpan(Span span) {

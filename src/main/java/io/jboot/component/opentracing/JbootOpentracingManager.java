@@ -33,6 +33,7 @@ public class JbootOpentracingManager {
     private TracerFactory tracerFactory;
 
 
+
     public JbootOpentracingManager() {
         JbootOpentracingConfig config = Jboot.config(JbootOpentracingConfig.class);
 
@@ -45,12 +46,17 @@ public class JbootOpentracingManager {
         } else {
             tracerFactory = JbootSpiLoader.load(TracerFactory.class, config.getType());
         }
+
+
     }
 
 
     public Tracer getTracer() {
         return tracerFactory != null ? tracerFactory.getTracer() : null;
     }
+
+
+
 
 }
 

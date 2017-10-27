@@ -16,20 +16,9 @@
 package service;
 
 
-import io.jboot.Jboot;
-
-public class UserServiceImpl implements UserService {
-    @Override
-    public String hello(String name) {
-        
-        System.out.println("UserServiceImpl hello invoked!!!");
-
-        return Jboot.service(CategoryService.class).hello(name);
-    }
+public interface CategoryService {
 
 
-    @Override
-    public String findUserById(String userId) {
-        return "get user:" + userId;
-    }
+    public String hello(String text);
+
 }

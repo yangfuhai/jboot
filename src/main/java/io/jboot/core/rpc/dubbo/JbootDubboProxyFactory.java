@@ -23,9 +23,11 @@ import com.alibaba.dubbo.rpc.proxy.AbstractProxyInvoker;
 import com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.HystrixRunnable;
+import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.utils.StringUtils;
+import io.opentracing.Span;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -90,15 +92,20 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
                 key = method.getDeclaringClass().getName() + "." + method.getName();
             }
 
+            final Span span = JbootDubboTracingFilterKits.getActiveSpan();
+
             return StringUtils.isBlank(key)
                     ? super.invoke(proxy, method, args)
                     : Jboot.hystrix(key, new HystrixRunnable() {
                 @Override
                 public Object run() {
                     try {
+                        JbootSpanContext.init(span);
                         return JbootInvocationHandler.super.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
+                    } finally {
+                        JbootSpanContext.destroy();
                     }
                     return null;
                 }

@@ -22,6 +22,7 @@ import com.weibo.api.motan.filter.Filter;
 import com.weibo.api.motan.rpc.*;
 import com.weibo.api.motan.util.MotanFrameworkUtil;
 import io.jboot.component.opentracing.JbootOpentracingManager;
+import io.jboot.component.opentracing.JbootSpanContext;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -42,7 +43,10 @@ public class JbootMotanTracingFilter implements Filter {
 
     @Override
     public Response filter(Caller<?> caller, Request request) {
+
         Tracer tracer = JbootOpentracingManager.me().getTracer();
+
+
         if (tracer == null) {
             return caller.call(request);
         }
@@ -80,7 +84,6 @@ public class JbootMotanTracingFilter implements Filter {
         return process(caller, request, span);
 
     }
-
 
 
     protected Response process(Caller<?> caller, Request request, Span span) {
@@ -168,7 +171,14 @@ public class JbootMotanTracingFilter implements Filter {
         if (span != null && span instanceof Span) {
             return (Span) span;
         }
-        return null;
+
+        /**
+         * 当通过 RpcContext 去获取不到的时候，有可能此线程 由于 hystrix 的原因，或其他原因，已经处于和RpcContext不同的线程
+         * 所以通过 RpcContext 去获取不到当前的Span信息
+         *
+         * 在程序中，当启动新的线程进行操作的时候，会通过 JbootOpentracingManager.me().initSpan(span) 来设置新线程的span内容
+         */
+        return JbootSpanContext.get();
     }
 
     public static void setActiveSpan(Span span) {
