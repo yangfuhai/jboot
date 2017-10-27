@@ -53,7 +53,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
                 "     *\n" +
                 "     * @return\n" +
                 "     */\n" +
-                "    public List<User> findAll();\n" +
+                "    public List<%s> findAll();\n" +
                 "\n" +
                 "\n" +
                 "    /**\n" +
@@ -120,7 +120,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
     @Override
     protected void genClassDefine(TableMeta tableMeta, StringBuilder ret) {
         ret.append(String.format(classDefineTemplate,
-                tableMeta.modelName + "Service", tableMeta.modelName, tableMeta.modelName, tableMeta.modelName, tableMeta.modelName, tableMeta.modelName));
+                tableMeta.modelName + "Service", tableMeta.modelName, tableMeta.modelName, tableMeta.modelName, tableMeta.modelName, tableMeta.modelName, tableMeta.modelName));
     }
 
 
