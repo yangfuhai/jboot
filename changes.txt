@@ -11,6 +11,7 @@ jboot-1.0-rc.4:
 修复：注解 @Before(Tx.class) 应用在类上的时候，事务回滚失败的bug。
 修复：oracle、sqlserver、postgresql的Dialect（方言）的limit数据错误的问题。
 修复：当调用Cache.removeAll()去移除一个不存在的key时，会出现redis错误的bug。
+修复：RPC远程调用在直连模式下无法获取service的bug。
 
 
 
