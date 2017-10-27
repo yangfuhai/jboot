@@ -30,8 +30,7 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.aop.web.ControllerInjectInterceptor;
-import io.jboot.aop.web.WebInterceptorInjectHandler;
+import io.jboot.web.handler.WebInterceptorInjectHandler;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.shiro.JbootShiroInterceptor;
 import io.jboot.component.shiro.JbootShiroManager;
@@ -186,7 +185,7 @@ public class JbootAppConfig extends JFinalConfig {
     public void configInterceptor(Interceptors interceptors) {
 
 
-        interceptors.add(new ControllerInjectInterceptor());
+        interceptors.add(new JbootCoreInterceptor());
         interceptors.add(new JbootShiroInterceptor());
         interceptors.add(new ParaValidateInterceptor());
 

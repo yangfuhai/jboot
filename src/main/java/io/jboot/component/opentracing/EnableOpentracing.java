@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop.web;
+package io.jboot.component.opentracing;
 
-import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
-import io.jboot.Jboot;
-
-/**
- * 用于对controller的自动注入
- * 注意：如果 Controller通过 @Clear 来把此 拦截器给清空，那么此方法（action）注入将会失效
- */
-public class ControllerInjectInterceptor implements Interceptor {
+import java.lang.annotation.*;
 
 
-    @Override
-    public void intercept(Invocation inv) {
-        Jboot.injectMembers(inv.getController());
-        inv.invoke();
-    }
+@Documented
+@Target(ElementType.METHOD)
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface EnableOpentracing {
 
+    String value() default "";
 
 }

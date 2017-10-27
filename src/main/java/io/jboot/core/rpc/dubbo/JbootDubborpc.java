@@ -46,6 +46,7 @@ public class JbootDubborpc extends JbootrpcBase {
         applicationConfig.setName("jboot");
 
         registryConfig = new RegistryConfig();
+        registryConfig.setCheck(jbootrpcConfig.isRegistryCheck());
 
         /**
          * 注册中心的调用模式
@@ -87,6 +88,7 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setVersion(version);
         reference.setProxy(jbootrpcConfig.getProxy());
         reference.setFilter("jbootConsumerOpentracing");
+        reference.setCheck(jbootrpcConfig.isConsumerCheck());
 
 
         /**
@@ -138,7 +140,8 @@ public class JbootDubborpc extends JbootrpcBase {
         service.setRef((T) object);
         service.setVersion(version);
         service.setProxy("jbootProviderOpentracing");
-        service.setFilter(jbootrpcConfig.getFilter());
+        service.setFilter("jbootProviderOpentracing");
+
 
         // 暴露及注册服务
         service.export();

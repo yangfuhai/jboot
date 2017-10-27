@@ -55,6 +55,13 @@ public class JbootrpcConfig {
     private String registryUserName;
     private String registryPassword;
 
+    /**
+     * 启动检查
+     */
+    private boolean registryCheck = false;
+    private boolean consumerCheck = false;
+    private boolean providerCheck = false;
+
 
     /**
      * 直连模式的时候，配置的url
@@ -233,6 +240,30 @@ public class JbootrpcConfig {
 
     public void setHystrixFallbackFactory(String hystrixFallbackFactory) {
         this.hystrixFallbackFactory = hystrixFallbackFactory;
+    }
+
+    public boolean isRegistryCheck() {
+        return registryCheck;
+    }
+
+    public void setRegistryCheck(boolean registryCheck) {
+        this.registryCheck = registryCheck;
+    }
+
+    public boolean isConsumerCheck() {
+        return consumerCheck;
+    }
+
+    public void setConsumerCheck(boolean consumerCheck) {
+        this.consumerCheck = consumerCheck;
+    }
+
+    public boolean isProviderCheck() {
+        return providerCheck;
+    }
+
+    public void setProviderCheck(boolean providerCheck) {
+        this.providerCheck = providerCheck;
     }
 
     private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();

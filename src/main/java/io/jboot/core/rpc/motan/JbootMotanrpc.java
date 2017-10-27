@@ -44,6 +44,7 @@ public class JbootMotanrpc extends JbootrpcBase {
 
         jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
         registryConfig = new RegistryConfig();
+        registryConfig.setCheck(String.valueOf(jbootrpcConfig.isRegistryCheck()));
 
         /**
          * 注册中心的调用模式
@@ -93,6 +94,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOut());
         refererConfig.setProtocol(protocolConfig);
         refererConfig.setProxy(jbootrpcConfig.getProxy());
+        refererConfig.setCheck(String.valueOf(jbootrpcConfig.isConsumerCheck()));
 
         /**
          * 注册中心模式
@@ -142,7 +144,11 @@ public class JbootMotanrpc extends JbootrpcBase {
 
             motanServiceConfig.setShareChannel(true);
             motanServiceConfig.setExport(String.format("motan:%s", port));
+            motanServiceConfig.setCheck(String.valueOf(jbootrpcConfig.isProviderCheck()));
+
+
             motanServiceConfig.export();
+
 
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, true);
         }
