@@ -13,35 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.config;
+package io.jboot.config.web;
 
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Ret;
 import io.jboot.Jboot;
+import io.jboot.config.JbootConfigConfig;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
-
-import java.util.Arrays;
 
 /**
  * 配置文件的Controller，用于给其他应用提供分布式配置读取功能
  */
 @Clear
 @RequestMapping("/jboot/config")
+@Before(JbootConfigInterceptor.class)
 public class JbootConfigController extends JbootController {
 
 
     JbootConfigConfig config = Jboot.config(JbootConfigConfig.class);
 
 
-    public void index(@Para(value = "propertie", defaultValue = "jboot.properties") String propertie, String prefix) {
+    public void index() {
 
-        if (!config.isConfigServer()) {
-            renderJson(Ret.fail("msg", "sorry,  you have no permission to visit this page. "));
-            return;
-        }
-        
+
     }
 
 
@@ -49,14 +44,7 @@ public class JbootConfigController extends JbootController {
      * 列出本地目录下的文件信息
      */
     public void list() {
-        if (!config.isConfigServer()) {
-            renderJson(Ret.fail("msg", "sorry,  you have no permission to visit this page. "));
-            return;
-        }
 
-        renderJson(Arrays.toString(config.getConfigFile().split(
-                ","
-        )));
 
     }
 }

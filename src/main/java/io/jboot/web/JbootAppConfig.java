@@ -30,6 +30,7 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.config.JbootConfigManager;
 import io.jboot.web.handler.WebInterceptorInjectHandler;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.shiro.JbootShiroInterceptor;
@@ -213,6 +214,7 @@ public class JbootAppConfig extends JFinalConfig {
          */
         JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
+        JbootConfigManager.me().init();
 
         /**
          * 发送启动完成通知
@@ -237,7 +239,7 @@ public class JbootAppConfig extends JFinalConfig {
                 }
             }
         }
-
+        JbootConfigManager.me().destroy();
         JbootAppListenerManager.me().onJFinalStop();
     }
 
