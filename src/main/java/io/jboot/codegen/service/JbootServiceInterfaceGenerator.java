@@ -126,7 +126,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
 
     protected void genImport(StringBuilder ret, TableMeta tableMeta) {
         ret.append(String.format("import %s.%s;%n%n", modelPacket, tableMeta.modelName));
-        ret.append("\nimport java.util.List;");
+        ret.append("\nimport java.util.List;\n\n");
     }
 
     @Override

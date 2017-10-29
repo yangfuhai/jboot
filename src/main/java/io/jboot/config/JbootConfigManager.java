@@ -61,9 +61,10 @@ public class JbootConfigManager {
 
 
     public JbootConfigManager() {
-        config = get(JbootConfigConfig.class);
         jbootProp = PropKit.use("jboot.properties");
         initModeProp(jbootProp);
+
+        config = get(JbootConfigConfig.class);
     }
 
 
