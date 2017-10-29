@@ -20,7 +20,7 @@ import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.jboot.config.JbootProperties;
+import io.jboot.Jboot;
 import io.jboot.db.datasource.DatasourceConfig;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
@@ -42,7 +42,7 @@ public class CodeGenHelpler {
      * @return
      */
     public static DataSource getDatasource() {
-        DatasourceConfig datasourceConfig = JbootProperties.get(DatasourceConfig.class, "jboot.datasource");
+        DatasourceConfig datasourceConfig = Jboot.config(DatasourceConfig.class, "jboot.datasource");
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(datasourceConfig.getUrl());
         config.setUsername(datasourceConfig.getUser());
@@ -55,7 +55,7 @@ public class CodeGenHelpler {
 
     public static MetaBuilder createMetaBuilder() {
         MetaBuilder metaBuilder = new MetaBuilder(getDatasource());
-        DatasourceConfig datasourceConfig = JbootProperties.get(DatasourceConfig.class, "jboot.datasource");
+        DatasourceConfig datasourceConfig = Jboot.config(DatasourceConfig.class, "jboot.datasource");
         switch (datasourceConfig.getType()) {
             case DatasourceConfig.TYPE_MYSQL:
                 metaBuilder.setDialect(new MysqlDialect());

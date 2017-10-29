@@ -15,16 +15,19 @@
  */
 package io.jboot.config;
 
-import com.jfinal.kit.LogKit;
-import com.jfinal.kit.Prop;
-import com.jfinal.kit.PropKit;
+import com.jfinal.kit.*;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.exception.JbootException;
+import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.ClassNewer;
+import io.jboot.utils.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 配置管理类
@@ -39,109 +42,345 @@ public class JbootConfigManager {
         return me;
     }
 
-    private JbootConfigConfig config = Jboot.config(JbootConfigConfig.class);
-    private HashMap<String, Prop> configProps = new HashMap<>();
+    private JbootConfigConfig config;
+    private Prop jbootProp;
 
-    private Timer timer;
-    private TimerTask timerTask;
-    private ConfigServerScanner serverScanner;
+    private PropInfos propInfos = new PropInfos();
+
+    private ConfigFileScanner configFileScanner;
+    private ConfigRemoteReader configRemoteReader;
+
+
+    private ConcurrentHashMap<String, Object> configs = new ConcurrentHashMap<>();
+    private static final Log log = Log.getLog(JbootConfigManager.class);
+
+
+    private Map<String, Method> keyMethod = new HashMap<>();
+    private Map<Method, List<Object>> methodObjects = new HashMap<>();
+    private Map<Class<?>, List<Method>> classSetMethods = new HashMap<>();
+
+
+    public JbootConfigManager() {
+        config = get(JbootConfigConfig.class);
+        jbootProp = PropKit.use("jboot.properties");
+        initModeProp(jbootProp);
+    }
+
 
     public void init() {
         if (config.isServerEnable()) {
-            initConfigProps();
-            initConfigServerScanner();
+            initConfigFileScanner();
         }
 
         /**
          * 定时获取远程服务配置信息
          */
         else if (config.isRemoteEnable()) {
-            timer = new Timer("Jboot-Config-remoteGetter", true);
-            timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    doRemoteGet();
-                }
-            };
+            initConfigRemoteReader();
         }
     }
 
 
-    private void doRemoteGet() {
-
+    public <T> T get(Class<T> clazz) {
+        PropertieConfig propertieConfig = clazz.getAnnotation(PropertieConfig.class);
+        if (propertieConfig == null) {
+            return get(clazz, null);
+        }
+        return get(clazz, propertieConfig.prefix());
     }
 
-    private void initConfigProps() {
 
-        String paths = config.getPath();
+    /**
+     * 获取配置信息，并创建和赋值clazz实例
+     *
+     * @param clazz  指定的类
+     * @param prefix 配置文件前缀
+     * @param <T>
+     * @return
+     */
+    public <T> T get(Class<T> clazz, String prefix) {
 
-        if (!paths.contains(";")) {
-            initConfig(new File(paths));
-        } else {
-            String[] pathss = paths.split(";");
-            for (String path : pathss) {
-                initConfig(new File(path));
+        T obj = (T) configs.get(clazz.getName() + prefix);
+        if (obj != null) {
+            return obj;
+        }
+
+        obj = ClassNewer.newInstance(clazz);
+        List<Method> setMethods = getSetMethods(clazz);
+
+        for (Method method : setMethods) {
+
+            String key = getKeyByMethod(prefix, method);
+            String value = getValueByKey(key);
+
+            keyMethod.put(key, method);
+
+            List<Object> objects = methodObjects.get(method);
+            if (objects == null) {
+                objects = new ArrayList<>();
+                methodObjects.put(method, objects);
             }
-        }
-    }
+            objects.add(obj);
 
-
-    private void initConfig(File file) {
-        if (file == null || !file.exists())
-            return;
-
-        if (file.isFile() && file.getName().toLowerCase().endsWith(".properties")) {
             try {
-                configProps.put(file.getCanonicalPath(), PropKit.use(file));
-            } catch (IOException e) {
-                LogKit.error(e.getMessage(), e);
-            }
-        } else if (file.isDirectory()) {
-            File[] fs = file.listFiles();
-            if (fs != null && fs.length > 0) {
-                for (File f : fs) {
-                    initConfig(f);
+                if (StringUtils.isNotBlank(value)) {
+                    Object val = convert(method.getParameterTypes()[0], value);
+                    method.invoke(obj, val);
                 }
+            } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
             }
         }
+
+        configs.put(clazz.getName() + prefix, obj);
+
+        return obj;
+    }
+
+    private String getKeyByMethod(String prefix, Method method) {
+
+        String key = StrKit.firstCharToLowerCase(method.getName().substring(3));
+
+        if (StringUtils.isNotBlank(prefix)) {
+            key = prefix.trim() + "." + key;
+        }
+
+        return key;
+    }
+
+    /**
+     * 根据 key 获取value的值
+     * <p>
+     * 优先获取系统启动设置参数
+     * 第二 获取远程配置
+     * 第三 获取本地配置
+     *
+     * @param key
+     * @return
+     */
+    private String getValueByKey(String key) {
+
+        String value = Jboot.getBootArg(key);
+
+        if (StringUtils.isBlank(value) && configRemoteReader != null) {
+            value = (String) configRemoteReader.getRemoteProperties().get(key);
+        }
+
+
+        if (StringUtils.isBlank(value)) {
+            value = jbootProp.get(key);
+        }
+        return value;
     }
 
 
-    private void initConfigServerScanner() {
-        serverScanner = new ConfigServerScanner(config.getPath(), 5) {
+    private List<Method> getSetMethods(Class clazz) {
+        List<Method> setMethods = classSetMethods.get(clazz);
+        if (setMethods == null) {
+            setMethods = new ArrayList<>();
+
+            Method[] methods = clazz.getMethods();
+            if (ArrayUtils.isNotEmpty(methods)) {
+                for (Method m : methods) {
+                    if (m.getName().startsWith("set") && m.getName().length() > 3 && m.getParameterCount() == 1) {
+                        setMethods.add(m);
+                    }
+                }
+            }
+
+            classSetMethods.put(clazz, setMethods);
+        }
+
+        return setMethods;
+    }
+
+    /**
+     * 或者Jboot默认的配置信息
+     *
+     * @return
+     */
+    public Properties getProperties() {
+        Properties properties = new Properties();
+
+        properties.putAll(jbootProp.getProperties());
+
+        if (configRemoteReader != null) {
+            properties.putAll(configRemoteReader.getRemoteProperties());
+        }
+
+        if (Jboot.getBootArgs() != null) {
+            for (Map.Entry<String, String> entry : Jboot.getBootArgs().entrySet()) {
+                properties.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return properties;
+    }
+
+
+    /**
+     * 初始化不同model下的properties文件
+     *
+     * @param prop
+     */
+    private void initModeProp(Prop prop) {
+        String mode = PropKit.use("jboot.properties").get("jboot.mode");
+        if (StringUtils.isBlank(mode)) {
+            return;
+        }
+
+        Prop modeProp = null;
+        try {
+            String p = String.format("jboot-%s.properties", mode);
+            modeProp = PropKit.use(p);
+        } catch (Throwable ex) {
+        }
+
+        if (modeProp == null) {
+            return;
+        }
+
+        prop.getProperties().putAll(modeProp.getProperties());
+    }
+
+
+    /**
+     * 数据转化
+     *
+     * @param type
+     * @param s
+     * @return
+     */
+    private static final Object convert(Class<?> type, String s) {
+
+        if (type == String.class) {
+            return s;
+        }
+
+
+        // mysql type: int, integer, tinyint(n) n > 1, smallint, mediumint
+        if (type == Integer.class || type == int.class) {
+            return Integer.parseInt(s);
+        }
+
+        // mysql type: bigint
+        if (type == Long.class || type == long.class) {
+            return Long.parseLong(s);
+        }
+
+
+        // mysql type: real, double
+        if (type == Double.class || type == double.class) {
+            return Double.parseDouble(s);
+        }
+
+        // mysql type: float
+        if (type == Float.class || type == float.class) {
+            return Float.parseFloat(s);
+        }
+
+        // mysql type: bit, tinyint(1)
+        if (type == Boolean.class || type == boolean.class) {
+            String value = s.toLowerCase();
+            if ("1".equals(value) || "true".equals(value)) {
+                return Boolean.TRUE;
+            } else if ("0".equals(value) || "false".equals(value)) {
+                return Boolean.FALSE;
+            } else {
+                throw new RuntimeException("Can not parse to boolean type of value: " + s);
+            }
+        }
+
+        // mysql type: decimal, numeric
+        if (type == java.math.BigDecimal.class) {
+            return new java.math.BigDecimal(s);
+        }
+
+        // mysql type: unsigned bigint
+        if (type == java.math.BigInteger.class) {
+            return new java.math.BigInteger(s);
+        }
+
+        // mysql type: binary, varbinary, tinyblob, blob, mediumblob, longblob. I have not finished the test.
+        if (type == byte[].class) {
+            return s.getBytes();
+        }
+
+        throw new JbootException(type.getName() + " can not be converted, please use other type in your config class!");
+    }
+
+
+    private void initConfigRemoteReader() {
+        configRemoteReader = new ConfigRemoteReader(config.getRemoteUrl(), 5) {
+            @Override
+            public void onChange(String key, String oldValue, String value) {
+                if (Jboot.me().isDevMode()) {
+                    System.out.println("remote change ---key:" + key + " ---oldValue:" + oldValue + " ---newValue:" + value);
+                }
+
+                /**
+                 * 过滤掉系统启动参数设置
+                 */
+                if (Jboot.getBootArg(key) != null) {
+                    return;
+                }
+
+                Method method = keyMethod.get(key);
+                if (method == null) {
+                    log.warn("can not set value to config object when get value from remote， key:" + key + "---value:" + value);
+                    return;
+                }
+
+                List<Object> objects = methodObjects.get(method);
+                try {
+                    for (Object obj : objects) {
+                        if (StringUtils.isBlank(value)) {
+                            method.invoke(obj, new Object[]{null});
+                        } else {
+                            Object val = convert(method.getParameterTypes()[0], value);
+                            method.invoke(obj, val);
+                        }
+                    }
+                } catch (Throwable ex) {
+                    log.error(ex.toString(), ex);
+                }
+            }
+        };
+        configRemoteReader.start();
+    }
+
+
+    private void initConfigFileScanner() {
+        configFileScanner = new ConfigFileScanner(config.getPath(), 5) {
             @Override
             public void onChange(String action, String file) {
                 switch (action) {
-                    case ConfigServerScanner.ACTION_ADD:
-                        configProps.put(file, PropKit.use(new File(file)));
+                    case ConfigFileScanner.ACTION_ADD:
+                        propInfos.put(HashKit.md5(file), new PropInfos.PropInfo(new File(file)));
                         break;
-                    case ConfigServerScanner.ACTION_DELETE:
-                        configProps.remove(file);
+                    case ConfigFileScanner.ACTION_DELETE:
+                        propInfos.remove(HashKit.md5(file));
                         break;
-                    case ConfigServerScanner.ACTION_UPDATE:
-                        PropKit.useless(file);
-                        configProps.put(file, PropKit.use(new File(file)));
+                    case ConfigFileScanner.ACTION_UPDATE:
+                        propInfos.put(HashKit.md5(file), new PropInfos.PropInfo(new File(file)));
                         break;
                 }
             }
         };
 
-        serverScanner.start();
+        configFileScanner.start();
     }
 
-    public HashMap<String, Prop> getConfigProps() {
-        return configProps;
+    public PropInfos getPropInfos() {
+        return propInfos;
     }
 
     public void destroy() {
-        if (timer != null) {
-            timer.cancel();
+        if (configRemoteReader != null) {
+            configRemoteReader.stop();
         }
-        if (timerTask != null) {
-            timerTask.cancel();
-        }
-        if (serverScanner != null) {
-            serverScanner.stop();
+        if (configFileScanner != null) {
+            configFileScanner.stop();
         }
     }
 

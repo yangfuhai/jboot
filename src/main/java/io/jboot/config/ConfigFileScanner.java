@@ -26,9 +26,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Scanner.
+ * 定时扫描本地配置文件，提供给远程读取
+ *
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.config
  */
-public abstract class ConfigServerScanner {
+public abstract class ConfigFileScanner {
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_DELETE = "delete";
@@ -43,7 +47,7 @@ public abstract class ConfigServerScanner {
     private final Map<String, TimeSize> preScan = new HashMap<String, TimeSize>();
     private final Map<String, TimeSize> curScan = new HashMap<String, TimeSize>();
 
-    public ConfigServerScanner(String rootDir, int interval) {
+    public ConfigFileScanner(String rootDir, int interval) {
         if (StrKit.isBlank(rootDir))
             throw new IllegalArgumentException("The parameter rootDir can not be blank.");
         this.rootDir = rootDir;
@@ -77,7 +81,7 @@ public abstract class ConfigServerScanner {
 
         if (file.isFile() && file.getName().toLowerCase().endsWith(".properties")) {
             try {
-                curScan.put(file.getCanonicalPath(), new TimeSize(file.lastModified(), file.length()));
+                curScan.put(file.getCanonicalPath(), new TimeSize(file));
             } catch (IOException e) {
                 LogKit.error(e.getMessage(), e);
             }
@@ -120,7 +124,7 @@ public abstract class ConfigServerScanner {
                     working();
                 }
             };
-            timer.schedule(task, 1010L * interval, 1010L * interval);
+            timer.schedule(task, 0, 1010L * interval);
             running = true;
         }
     }
@@ -139,10 +143,11 @@ class TimeSize {
     final long time;
     final long size;
 
-    public TimeSize(long time, long size) {
-        this.time = time;
-        this.size = size;
+    public TimeSize(File file) {
+        this.time = file.lastModified();
+        this.size = file.length();
     }
+
 
     public int hashCode() {
         return (int) (time ^ size);
@@ -156,8 +161,12 @@ class TimeSize {
         return false;
     }
 
+    @Override
     public String toString() {
-        return "[t=" + time + ", s=" + size + "]";
+        return "TimeSize{" +
+                "time=" + time +
+                ", size=" + size +
+                '}';
     }
 }
 

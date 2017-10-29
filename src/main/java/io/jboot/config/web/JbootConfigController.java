@@ -19,8 +19,15 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import io.jboot.Jboot;
 import io.jboot.config.JbootConfigConfig;
+import io.jboot.config.JbootConfigManager;
+import io.jboot.config.PropInfos;
+import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 配置文件的Controller，用于给其他应用提供分布式配置读取功能
@@ -35,8 +42,20 @@ public class JbootConfigController extends JbootController {
 
 
     public void index() {
-
-
+        String id = getPara();
+        if (StringUtils.isBlank(id)) {
+            renderJson(JbootConfigManager.me().getPropInfos());
+            return;
+        } else {
+            PropInfos propInfos = JbootConfigManager.me().getPropInfos();
+            for (PropInfos.Entry<String, PropInfos.PropInfo> entry : propInfos.entrySet()) {
+                if (id.equals(entry.getKey())) {
+                    renderJson(PropInfos.create(entry.getKey(), entry.getValue()));
+                    return;
+                }
+            }
+        }
+        renderJson("{}");
     }
 
 
@@ -44,7 +63,14 @@ public class JbootConfigController extends JbootController {
      * 列出本地目录下的文件信息
      */
     public void list() {
-
-
+        List<HashMap<String, String>> props = new ArrayList<>();
+        PropInfos propInfos = JbootConfigManager.me().getPropInfos();
+        for (PropInfos.Entry<String, PropInfos.PropInfo> entry : propInfos.entrySet()) {
+            HashMap<String, String> prop = new HashMap<>();
+            prop.put("id", entry.getKey());
+            prop.put("version", entry.getValue().getVersion());
+            props.add(prop);
+        }
+        renderJson(props.toArray());
     }
 }

@@ -22,7 +22,7 @@ import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.redis.JbootRedis;
 import io.jboot.component.redis.JbootRedisManager;
-import io.jboot.config.JbootProperties;
+import io.jboot.config.JbootConfigManager;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
 import io.jboot.core.http.JbootHttp;
@@ -127,6 +127,10 @@ public class Jboot {
     public static String getBootArg(String key) {
         if (argMap == null) return null;
         return argMap.get(key);
+    }
+
+    public static Map<String, String> getBootArgs() {
+        return argMap;
     }
 
 
@@ -376,7 +380,19 @@ public class Jboot {
      * @return
      */
     public static <T> T config(Class<T> clazz) {
-        return JbootProperties.get(clazz);
+        return JbootConfigManager.me().get(clazz);
+    }
+
+    /**
+     * 读取配置文件信息
+     *
+     * @param clazz
+     * @param prefix
+     * @param <T>
+     * @return
+     */
+    public static <T> T config(Class<T> clazz, String prefix) {
+        return JbootConfigManager.me().get(clazz, prefix);
     }
 
 

@@ -23,6 +23,4 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface PropertieConfig {
     String prefix();
-
-    String file() default "";
 }

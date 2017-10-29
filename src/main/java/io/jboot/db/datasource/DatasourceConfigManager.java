@@ -15,8 +15,8 @@
  */
 package io.jboot.db.datasource;
 
-import com.jfinal.kit.Prop;
-import io.jboot.config.JbootProperties;
+import io.jboot.Jboot;
+import io.jboot.config.JbootConfigManager;
 import io.jboot.utils.StringUtils;
 
 import java.util.*;
@@ -34,15 +34,15 @@ public class DatasourceConfigManager {
 
     private DatasourceConfigManager() {
 
-        DatasourceConfig datasourceConfig = JbootProperties.get(DatasourceConfig.class, "jboot.datasource");
+        DatasourceConfig datasourceConfig = Jboot.config(DatasourceConfig.class, "jboot.datasource");
         if (datasourceConfig.isConfigOk()) {
             datasourceConfigs.add(datasourceConfig);
         }
 
 
-        Prop prop = JbootProperties.getJbootProp();
+        Properties prop = JbootConfigManager.me().getProperties();
         Set<String> datasourceNames = new HashSet<>();
-        for (Map.Entry<Object, Object> entry : prop.getProperties().entrySet()) {
+        for (Map.Entry<Object, Object> entry : prop.entrySet()) {
             String key = entry.getKey().toString();
             if (key.startsWith("jboot.datasource.") && entry.getValue() != null) {
                 String[] keySplits = key.split("\\.");
@@ -54,7 +54,7 @@ public class DatasourceConfigManager {
 
 
         for (String name : datasourceNames) {
-            DatasourceConfig dsc = JbootProperties.get(DatasourceConfig.class, "jboot.datasource." + name);
+            DatasourceConfig dsc = Jboot.config(DatasourceConfig.class, "jboot.datasource." + name);
             if (StringUtils.isBlank(dsc.getName())) {
                 dsc.setName(name);
             }

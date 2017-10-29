@@ -31,7 +31,7 @@ public class JbootConfigConfig {
     /**
      * 远程配置的网址
      */
-    private boolean remoteUrl;
+    private String remoteUrl;
 
     /**
      * 是否把本应用配置为远程配置的服务器
@@ -57,11 +57,11 @@ public class JbootConfigConfig {
         this.remoteEnable = remoteEnable;
     }
 
-    public boolean isRemoteUrl() {
+    public String getRemoteUrl() {
         return remoteUrl;
     }
 
-    public void setRemoteUrl(boolean remoteUrl) {
+    public void setRemoteUrl(String remoteUrl) {
         this.remoteUrl = remoteUrl;
     }
 
