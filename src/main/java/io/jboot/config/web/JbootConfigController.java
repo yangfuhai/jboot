@@ -44,10 +44,10 @@ public class JbootConfigController extends JbootController {
     public void index() {
         String id = getPara();
         if (StringUtils.isBlank(id)) {
-            renderJson(JbootConfigManager.me().getPropInfos());
+            renderJson(JbootConfigManager.me().getPropInfoMap());
             return;
         } else {
-            PropInfoMap propInfos = JbootConfigManager.me().getPropInfos();
+            PropInfoMap propInfos = JbootConfigManager.me().getPropInfoMap();
             for (PropInfoMap.Entry<String, PropInfoMap.PropInfo> entry : propInfos.entrySet()) {
                 if (id.equals(entry.getKey())) {
                     renderJson(PropInfoMap.create(entry.getKey(), entry.getValue()));
@@ -64,7 +64,7 @@ public class JbootConfigController extends JbootController {
      */
     public void list() {
         List<HashMap<String, String>> props = new ArrayList<>();
-        PropInfoMap propInfos = JbootConfigManager.me().getPropInfos();
+        PropInfoMap propInfos = JbootConfigManager.me().getPropInfoMap();
         for (PropInfoMap.Entry<String, PropInfoMap.PropInfo> entry : propInfos.entrySet()) {
             HashMap<String, String> prop = new HashMap<>();
             prop.put("id", entry.getKey());

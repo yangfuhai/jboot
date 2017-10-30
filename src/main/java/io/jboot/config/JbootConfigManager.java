@@ -48,7 +48,7 @@ public class JbootConfigManager {
     private Prop jbootProp;
     private JbootConfigConfig config;
 
-    private PropInfoMap propInfos = new PropInfoMap();
+    private PropInfoMap propInfoMap = new PropInfoMap();
 
     private ConfigFileScanner configFileScanner;
     private ConfigRemoteReader configRemoteReader;
@@ -378,13 +378,13 @@ public class JbootConfigManager {
             public void onChange(String action, String file) {
                 switch (action) {
                     case ConfigFileScanner.ACTION_ADD:
-                        propInfos.put(HashKit.md5(file), new PropInfoMap.PropInfo(new File(file)));
+                        propInfoMap.put(HashKit.md5(file), new PropInfoMap.PropInfo(new File(file)));
                         break;
                     case ConfigFileScanner.ACTION_DELETE:
-                        propInfos.remove(HashKit.md5(file));
+                        propInfoMap.remove(HashKit.md5(file));
                         break;
                     case ConfigFileScanner.ACTION_UPDATE:
-                        propInfos.put(HashKit.md5(file), new PropInfoMap.PropInfo(new File(file)));
+                        propInfoMap.put(HashKit.md5(file), new PropInfoMap.PropInfo(new File(file)));
                         break;
                 }
             }
@@ -393,8 +393,8 @@ public class JbootConfigManager {
         configFileScanner.start();
     }
 
-    public PropInfoMap getPropInfos() {
-        return propInfos;
+    public PropInfoMap getPropInfoMap() {
+        return propInfoMap;
     }
 
     public void destroy() {
