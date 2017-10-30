@@ -22,7 +22,6 @@ import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.StringUtils;
 
@@ -73,7 +72,7 @@ public class JbootConfigManager {
     /**
      * 类的set方法缓存，用于减少对类的反射工作
      */
-    private Map<Class<?>, List<Method>> classMethodsCache = new ConcurrentHashMap<>();
+    private Multimap<Class<?>, Method> classMethodsCache = ArrayListMultimap.create();
 
 
     public JbootConfigManager() {
@@ -126,7 +125,7 @@ public class JbootConfigManager {
         }
 
         obj = ClassNewer.newInstance(clazz);
-        List<Method> setMethods = getSetMethods(clazz);
+        Collection<Method> setMethods = getSetMethods(clazz);
 
         for (Method method : setMethods) {
 
@@ -188,7 +187,6 @@ public class JbootConfigManager {
             value = (String) configRemoteReader.getRemoteProperties().get(key);
         }
 
-
         if (StringUtils.isBlank(value)) {
             value = jbootProp.get(key);
         }
@@ -196,23 +194,16 @@ public class JbootConfigManager {
     }
 
 
-    private List<Method> getSetMethods(Class clazz) {
-        List<Method> setMethods = classMethodsCache.get(clazz);
-        if (setMethods == null) {
-            setMethods = new ArrayList<>();
-
+    private Collection<Method> getSetMethods(Class clazz) {
+        Collection<Method> setMethods = classMethodsCache.get(clazz);
+        if (setMethods == null || setMethods.isEmpty()) {
             Method[] methods = clazz.getMethods();
-            if (ArrayUtils.isNotEmpty(methods)) {
-                for (Method m : methods) {
-                    if (m.getName().startsWith("set") && m.getName().length() > 3 && m.getParameterCount() == 1) {
-                        setMethods.add(m);
-                    }
+            for (Method m : methods) {
+                if (m.getName().startsWith("set") && m.getName().length() > 3 && m.getParameterCount() == 1) {
+                    classMethodsCache.put(clazz, m);
                 }
             }
-
-            classMethodsCache.put(clazz, setMethods);
         }
-
         return setMethods;
     }
 
