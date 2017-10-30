@@ -15,6 +15,8 @@
  */
 package io.jboot.config;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.jfinal.kit.*;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
@@ -42,10 +44,11 @@ public class JbootConfigManager {
         return me;
     }
 
-    private JbootConfigConfig config;
-    private Prop jbootProp;
 
-    private PropInfos propInfos = new PropInfos();
+    private Prop jbootProp;
+    private JbootConfigConfig config;
+
+    private PropInfoMap propInfos = new PropInfoMap();
 
     private ConfigFileScanner configFileScanner;
     private ConfigRemoteReader configRemoteReader;
@@ -55,9 +58,22 @@ public class JbootConfigManager {
     private static final Log log = Log.getLog(JbootConfigManager.class);
 
 
-    private Map<String, Method> keyMethod = new HashMap<>();
-    private Map<Method, List<Object>> methodObjects = new HashMap<>();
-    private Map<Class<?>, List<Method>> classSetMethods = new HashMap<>();
+    /**
+     * 用于在配置文件读取的时候，记录每个key应对的方法，方便在远程配置文件更新的时候
+     * 快速的找对对于的方法，然后执行。
+     */
+    private Map<String, Method> keyMethodMapping = new ConcurrentHashMap<>();
+
+    /**
+     * 用于记录方法和其已经被实例化的对象
+     * 方便方法执行的时候，能找对对应的实例化对象
+     */
+    private Multimap<String, Object> keyInstanceMapping = ArrayListMultimap.create();
+
+    /**
+     * 类的set方法缓存，用于减少对类的反射工作
+     */
+    private Map<Class<?>, List<Method>> classMethodsCache = new ConcurrentHashMap<>();
 
 
     public JbootConfigManager() {
@@ -69,6 +85,9 @@ public class JbootConfigManager {
 
 
     public void init() {
+        /**
+         * 定时扫描本地配置文件
+         */
         if (config.isServerEnable()) {
             initConfigFileScanner();
         }
@@ -114,14 +133,16 @@ public class JbootConfigManager {
             String key = getKeyByMethod(prefix, method);
             String value = getValueByKey(key);
 
-            keyMethod.put(key, method);
+            /**
+             * 记录 key 和其对于的方法，方便远程配置文件修改的时候，能找到其对于的方法
+             * 这里记录了 所有set方法对于的key
+             */
+            keyMethodMapping.put(key, method);
 
-            List<Object> objects = methodObjects.get(method);
-            if (objects == null) {
-                objects = new ArrayList<>();
-                methodObjects.put(method, objects);
-            }
-            objects.add(obj);
+            /**
+             * keyInstanceMapping 为 Multimap，一个key有多个object拥有
+             */
+            keyInstanceMapping.put(key, obj);
 
             try {
                 if (StringUtils.isNotBlank(value)) {
@@ -176,7 +197,7 @@ public class JbootConfigManager {
 
 
     private List<Method> getSetMethods(Class clazz) {
-        List<Method> setMethods = classSetMethods.get(clazz);
+        List<Method> setMethods = classMethodsCache.get(clazz);
         if (setMethods == null) {
             setMethods = new ArrayList<>();
 
@@ -189,7 +210,7 @@ public class JbootConfigManager {
                 }
             }
 
-            classSetMethods.put(clazz, setMethods);
+            classMethodsCache.put(clazz, setMethods);
         }
 
         return setMethods;
@@ -326,13 +347,13 @@ public class JbootConfigManager {
                     return;
                 }
 
-                Method method = keyMethod.get(key);
+                Method method = keyMethodMapping.get(key);
                 if (method == null) {
                     log.warn("can not set value to config object when get value from remote， key:" + key + "---value:" + value);
                     return;
                 }
 
-                List<Object> objects = methodObjects.get(method);
+                Collection<Object> objects = keyInstanceMapping.get(key);
                 try {
                     for (Object obj : objects) {
                         if (StringUtils.isBlank(value)) {
@@ -357,13 +378,13 @@ public class JbootConfigManager {
             public void onChange(String action, String file) {
                 switch (action) {
                     case ConfigFileScanner.ACTION_ADD:
-                        propInfos.put(HashKit.md5(file), new PropInfos.PropInfo(new File(file)));
+                        propInfos.put(HashKit.md5(file), new PropInfoMap.PropInfo(new File(file)));
                         break;
                     case ConfigFileScanner.ACTION_DELETE:
                         propInfos.remove(HashKit.md5(file));
                         break;
                     case ConfigFileScanner.ACTION_UPDATE:
-                        propInfos.put(HashKit.md5(file), new PropInfos.PropInfo(new File(file)));
+                        propInfos.put(HashKit.md5(file), new PropInfoMap.PropInfo(new File(file)));
                         break;
                 }
             }
@@ -372,7 +393,7 @@ public class JbootConfigManager {
         configFileScanner.start();
     }
 
-    public PropInfos getPropInfos() {
+    public PropInfoMap getPropInfos() {
         return propInfos;
     }
 

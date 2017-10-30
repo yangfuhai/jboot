@@ -33,10 +33,6 @@ import java.util.*;
  */
 public abstract class ConfigRemoteReader {
 
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_DELETE = "delete";
-    public static final String ACTION_UPDATE = "update";
-
     private Timer timer;
     private TimerTask task;
     private String url;
@@ -48,7 +44,7 @@ public abstract class ConfigRemoteReader {
     private final Map<String, String> curScan = new HashMap<>();
 
 
-    private final PropInfos remoteProps = new PropInfos();
+    private final PropInfoMap remotePropInfoMap = new PropInfoMap();
     private final Properties remoteProperties = new Properties();
 
     public ConfigRemoteReader(String url, int interval) {
@@ -58,6 +54,9 @@ public abstract class ConfigRemoteReader {
         initRemoteProps();
     }
 
+    /**
+     * 初始化远程配置信息
+     */
     private void initRemoteProps() {
         String jsonString = Jboot.httpGet(url);
 
@@ -84,7 +83,7 @@ public abstract class ConfigRemoteReader {
                 properties.put(propertieKey, propertiesObject.getString(propertieKey));
                 remoteProperties.put(propertieKey, propertiesObject.getString(propertieKey));
             }
-            remoteProps.put(key, new PropInfos.PropInfo(version, properties));
+            remotePropInfoMap.put(key, new PropInfoMap.PropInfo(version, properties));
         }
     }
 
@@ -99,6 +98,9 @@ public abstract class ConfigRemoteReader {
         curScan.clear();
     }
 
+    /**
+     * 定时扫描远程配置信息
+     */
     private void scan() {
 
         String listUrl = url + "/list";
@@ -126,6 +128,7 @@ public abstract class ConfigRemoteReader {
 
     private void compare() {
 
+        //记录被修改或者新增的文件ID
         List<String> changesIds = new ArrayList<>();
 
         for (Map.Entry<String, String> entry : curScan.entrySet()) {
@@ -139,6 +142,7 @@ public abstract class ConfigRemoteReader {
             }
         }
 
+        //记录被删除的文件id
         List<String> deleteIds = new ArrayList<>();
         for (Map.Entry<String, String> entry : preScan.entrySet()) {
             if (curScan.get(entry.getKey()) == null) {
@@ -146,6 +150,7 @@ public abstract class ConfigRemoteReader {
             }
         }
 
+        // 有文件 被修改 或者新增了
         for (String changeId : changesIds) {
             String url = this.url + "/" + changeId;
             String jsonString = Jboot.httpGet(url);
@@ -173,9 +178,9 @@ public abstract class ConfigRemoteReader {
                     properties.put(propertieKey, propertiesObject.getString(propertieKey));
                 }
 
-                PropInfos.PropInfo newPropInfo = new PropInfos.PropInfo(version, properties);
-                PropInfos.PropInfo localPropInfo = remoteProps.get(key);
-                remoteProps.put(key, newPropInfo);
+                PropInfoMap.PropInfo newPropInfo = new PropInfoMap.PropInfo(version, properties);
+                PropInfoMap.PropInfo localPropInfo = remotePropInfoMap.get(key);
+                remotePropInfoMap.put(key, newPropInfo);
 
                 for (Object newKey : newPropInfo.getProperties().keySet()) {
                     String localValue = localPropInfo.getString(newKey);
@@ -194,12 +199,14 @@ public abstract class ConfigRemoteReader {
                         onChange(localKey.toString(), localPropInfo.getString(localKey), null);
                     }
                 }
-
             }
         }
 
+        /**
+         * 有文件被删除了
+         */
         for (String deleteId : deleteIds) {
-            PropInfos.PropInfo propInfo = remoteProps.get(deleteId);
+            PropInfoMap.PropInfo propInfo = remotePropInfoMap.get(deleteId);
             for (Object key : propInfo.getProperties().keySet()) {
                 remoteProperties.remove(key);
                 onChange(key.toString(), propInfo.getString(key), null);
@@ -228,10 +235,6 @@ public abstract class ConfigRemoteReader {
         }
     }
 
-
-    public PropInfos getRemoteProps() {
-        return remoteProps;
-    }
 
     public Properties getRemoteProperties() {
         return remoteProperties;

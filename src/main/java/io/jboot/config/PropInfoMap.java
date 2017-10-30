@@ -13,15 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version V1.0
  * @Package io.jboot.config
  */
-public class PropInfos extends ConcurrentHashMap<String, PropInfos.PropInfo> {
+public class PropInfoMap extends ConcurrentHashMap<String, PropInfoMap.PropInfo> {
 
-    public static PropInfos create(String key, PropInfo propInfo) {
-        PropInfos propInfos = new PropInfos();
+    public static PropInfoMap create(String key, PropInfo propInfo) {
+        PropInfoMap propInfos = new PropInfoMap();
         propInfos.put(key, propInfo);
         return propInfos;
     }
 
-    public PropInfos add(String key, PropInfo propInfo) {
+    public PropInfoMap add(String key, PropInfo propInfo) {
         put(key, propInfo);
         return this;
     }
@@ -35,6 +35,10 @@ public class PropInfos extends ConcurrentHashMap<String, PropInfos.PropInfo> {
     }
 
 
+    /**
+     * 配置文件的信息 以及 其版本号
+     * 只要本地文件发送变化，版本号就不一样
+     */
     public static class PropInfo implements Serializable {
 
         private String version;

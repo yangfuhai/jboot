@@ -20,7 +20,7 @@ import com.jfinal.aop.Clear;
 import io.jboot.Jboot;
 import io.jboot.config.JbootConfigConfig;
 import io.jboot.config.JbootConfigManager;
-import io.jboot.config.PropInfos;
+import io.jboot.config.PropInfoMap;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
@@ -47,10 +47,10 @@ public class JbootConfigController extends JbootController {
             renderJson(JbootConfigManager.me().getPropInfos());
             return;
         } else {
-            PropInfos propInfos = JbootConfigManager.me().getPropInfos();
-            for (PropInfos.Entry<String, PropInfos.PropInfo> entry : propInfos.entrySet()) {
+            PropInfoMap propInfos = JbootConfigManager.me().getPropInfos();
+            for (PropInfoMap.Entry<String, PropInfoMap.PropInfo> entry : propInfos.entrySet()) {
                 if (id.equals(entry.getKey())) {
-                    renderJson(PropInfos.create(entry.getKey(), entry.getValue()));
+                    renderJson(PropInfoMap.create(entry.getKey(), entry.getValue()));
                     return;
                 }
             }
@@ -64,8 +64,8 @@ public class JbootConfigController extends JbootController {
      */
     public void list() {
         List<HashMap<String, String>> props = new ArrayList<>();
-        PropInfos propInfos = JbootConfigManager.me().getPropInfos();
-        for (PropInfos.Entry<String, PropInfos.PropInfo> entry : propInfos.entrySet()) {
+        PropInfoMap propInfos = JbootConfigManager.me().getPropInfos();
+        for (PropInfoMap.Entry<String, PropInfoMap.PropInfo> entry : propInfos.entrySet()) {
             HashMap<String, String> prop = new HashMap<>();
             prop.put("id", entry.getKey());
             prop.put("version", entry.getValue().getVersion());
