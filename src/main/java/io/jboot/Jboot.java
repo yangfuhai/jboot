@@ -355,7 +355,7 @@ public class Jboot {
      *
      * @return
      */
-    public MetricRegistry getMetric() {
+    public MetricRegistry getMetrics() {
         return JbootMetricsManager.me().metric();
     }
 

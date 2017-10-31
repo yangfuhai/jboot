@@ -33,7 +33,7 @@ public class ControllerTest extends JbootController {
 
         System.out.println("aabbcc");
 
-        Jboot.me().getMetric().counter("myaction").inc();
+        Jboot.me().getMetrics().counter("myaction").inc();
 
 
 //        serviceTest.test1();

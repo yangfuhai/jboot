@@ -13,31 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop.interceptor;
+package io.jboot.aop.interceptor.metrics;
 
 
 import com.codahale.metrics.Counter;
 import io.jboot.Jboot;
+import io.jboot.component.metrics.EnableMetricsCounter;
+import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
 /**
- * RPC拦截器，用于拦截调用者 和  被调用者
+ * 用于在AOP拦截，并通过Metrics的Conter进行统计
  */
-public class JbootrpcInterceptor implements MethodInterceptor {
-
-
-    public JbootrpcInterceptor() {
-
-    }
+public class JbootMetricsConterAopInterceptor implements MethodInterceptor {
 
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
-        Counter counter = Jboot.me().getMetric().counter(methodInvocation.getThis().getClass() + "##" + methodInvocation.getMethod().getName());
-        counter.inc();
+        EnableMetricsCounter annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricsCounter.class);
 
-        return methodInvocation.proceed();
+        String name = StringUtils.isBlank(annotation.value())
+                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName()
+                : annotation.value();
+
+        Counter counter = Jboot.me().getMetrics().counter(name);
+        try {
+            counter.inc();
+            return methodInvocation.proceed();
+        } finally {
+            counter.dec();
+        }
+
     }
 }
