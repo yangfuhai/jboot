@@ -214,7 +214,6 @@ public class JbootAppConfig extends JFinalConfig {
          */
         JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
-        JbootConfigManager.me().init();
 
         /**
          * 发送启动完成通知

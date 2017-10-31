@@ -19,7 +19,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.LogKit;
-import io.jboot.Jboot;
+import io.jboot.core.http.JbootHttpRequest;
+import io.jboot.core.http.JbootHttpResponse;
+import io.jboot.core.http.jboot.JbootHttpImpl;
 import io.jboot.utils.StringUtils;
 
 import java.util.*;
@@ -47,6 +49,8 @@ public abstract class ConfigRemoteReader {
     private final PropInfoMap remotePropInfoMap = new PropInfoMap();
     private final Properties remoteProperties = new Properties();
 
+    private final JbootHttpImpl http = new JbootHttpImpl();
+
     public ConfigRemoteReader(String url, int interval) {
         this.url = url;
         this.interval = interval;
@@ -54,11 +58,17 @@ public abstract class ConfigRemoteReader {
         initRemoteProps();
     }
 
+    private String httpGet(String url) {
+        JbootHttpRequest request = JbootHttpRequest.create(url, null, JbootHttpRequest.METHOD_GET);
+        JbootHttpResponse response = http.handle(request);
+        return response.isError() ? null : response.getContent();
+    }
+
     /**
      * 初始化远程配置信息
      */
     private void initRemoteProps() {
-        String jsonString = Jboot.httpGet(url);
+        String jsonString = httpGet(url);
 
         if (StringUtils.isBlank(jsonString)) {
             LogKit.error("can not get remote config info,plase check url : " + url);
@@ -104,7 +114,7 @@ public abstract class ConfigRemoteReader {
     private void scan() {
 
         String listUrl = url + "/list";
-        String jsonString = Jboot.httpGet(listUrl);
+        String jsonString = httpGet(listUrl);
 
         if (StringUtils.isBlank(jsonString)) {
             LogKit.error("can not get remote config info,plase check url : " + listUrl);
@@ -153,7 +163,7 @@ public abstract class ConfigRemoteReader {
         // 有文件 被修改 或者新增了
         for (String changeId : changesIds) {
             String url = this.url + "/" + changeId;
-            String jsonString = Jboot.httpGet(url);
+            String jsonString = httpGet(url);
 
             if (StringUtils.isBlank(jsonString)) {
                 LogKit.error("can not get remote config info,plase check url : " + url);

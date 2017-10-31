@@ -26,7 +26,7 @@ public class ConfigClient {
         Jboot.setBootArg("jboot.config.remoteUrl", "http://127.0.0.1:8080/jboot/config");
 
 
-        Jboot.run(args);
+//        Jboot.run(args);
 
         MyConfig config = Jboot.config(MyConfig.class);
 

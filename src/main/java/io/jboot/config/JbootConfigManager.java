@@ -80,10 +80,7 @@ public class JbootConfigManager {
         initModeProp(jbootProp);
 
         config = get(JbootConfigConfig.class);
-    }
 
-
-    public void init() {
         /**
          * 定时扫描本地配置文件
          */
