@@ -68,6 +68,7 @@ public class MyStarter{
 * 调用监控 (基于metrics)
 * 容错隔离（基于 hystrix）
 * Opentracing数据追踪
+* 统一配置中心
 * 轻量级的Http客户端（包含了get、post请求，文件上传和下载等）
 * 分布式下的微信和微信第三方
 * 自定义序列化组件
@@ -148,6 +149,10 @@ public class MyStarter{
 		- [SkyWalking快速启动](./DOC.md#skywalking快速启动)
 		- [使用SkyWalking](./DOC.md#使用skywalking)
 	- 其他
+	
+- [统一配置中心](./DOC.md#统一配置中心)
+	- [部署统一配置中心服务器](./DOC.md#部署统一配置中心服务器)
+	- [连接统一配置中心](./DOC.md#连接统一配置中心)
 
 - 其他
 	- [SPI扩展](./DOC.md#spi扩展)

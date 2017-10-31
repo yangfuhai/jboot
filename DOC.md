@@ -68,6 +68,9 @@
 		- [SkyWalking快速启动](#skywalking快速启动)
 		- [使用SkyWalking](#使用skywalking)
 	- 其他
+- [统一配置中心](#统一配置中心)
+	- [部署统一配置中心服务器](#部署统一配置中心服务器)
+	- [连接统一配置中心](#连接统一配置中心)
 
 - 其他
 	- [SPI扩展](#spi扩展)
@@ -971,6 +974,31 @@ SkyWalking官网：http://skywalking.org ，Skywalking为国人开发，据说�
 
 ### 其他
 
+
+# 统一配置中心
+在jboot中，已经内置了统一配置中心，当中心配置文件修改后，分布式服务下的所有有用的额配置都会被修改。在某些情况下，如果统一配置中心出现宕机等情况，微服务将会使用本地配置文件当做当前配置信息。
+
+## 部署统一配置中心服务器
+部署统一配置服务器非常简单，不需要写一行代码，把jboot.proerties的配置信息修改如下，并启动jboot，此时的jboot就已经是一个统一配置中心了。
+
+```
+jboot.config.serverEnable=true
+jboot.config.path=/Users/michael/Desktop/test
+```
+在以上配置中，我们可以把所有的配置文件(.properties文件)放到目录 `/Users/michael/Desktop/test` 目录下，当该目录下新增配置文件、修改配置文件、删除配置文件都会通过http暴露出去。
+
+当启动 jboot 后，我们可以通过浏览器输入 `http://127.0.0.1:8080/jboot/config`来查看配置情况，微服务客户端也是定时访问这个url地址来读取配置信息。
+
+
+## 连接统一配置中心
+
+要启用远程配置也非常简单，只需要在微服务添加下配置即可。
+
+```
+jboot.config.remoteEnable=true
+joot.config.remoteUrl=http://127.0.0.1:8080/jboot/config
+```
+当启用远程配置后，服务会优先使用远程配置，在远程配置未配置 或 宕机的情况下使用本地配置。
 
 # 其他
 
