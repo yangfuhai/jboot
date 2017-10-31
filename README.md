@@ -96,6 +96,7 @@ QQ交流群： 601440615
 - [metrics数据监控](./DOC.md#metrics数据监控)
 	- 添加metrics数据
 	- metrics与Ganglia
+	- metrics与grafana
 	- metrics与jmx
 - [容错与隔离](./DOC.md#容错与隔离)
 	- hystrix配置

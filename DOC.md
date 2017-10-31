@@ -52,6 +52,7 @@
 - [metrics数据监控](#metrics数据监控)
 	- 添加metrics数据
 	- metrics与Ganglia
+	- metrics与grafana
 	- metrics与jmx
 - [容错与隔离](#容错与隔离)
 	- hystrix配置
@@ -855,6 +856,9 @@ public void myaction() {
 当再次访问`myaction`后，count里面的值就变成2了。
 
 ### metrics与Ganglia
+
+
+### metrics与Grafana
 
 ### metrics与jmx
 metrics与jmx集成非常简单，只需要在jboot.properties文件添加如下配置：
