@@ -996,7 +996,7 @@ jboot.config.path=/Users/michael/Desktop/test
 
 ```
 jboot.config.remoteEnable=true
-joot.config.remoteUrl=http://127.0.0.1:8080/jboot/config
+jboot.config.remoteUrl=http://127.0.0.1:8080/jboot/config
 ```
 当启用远程配置后，服务会优先使用远程配置，在远程配置未配置 或 宕机的情况下使用本地配置。
 
