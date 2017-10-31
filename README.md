@@ -4,19 +4,9 @@
 
 Jboot，专为大型分布式项目和微服务而生。
 
-JBoot并不是一个新的发明，而是一个整理了大型分布式常用的技术解决方案，而形成的一个"最佳实践"。
-
-例如：
-
-* JBoot的RPC的通过新浪开源的成熟的框架motan（支持其他实现方案grpc、dubbo等）来实现的；
-* ORM + MVC 是通过著名的JFinal来实现的；
-* 缓存部分则是通过 EHcache 和 Redis 来实现的；
-* 容错和隔离则是通过Netflix公司的Hystrix来实现的等等。
-
 QQ交流群： 601440615
 
-## 开始第一个Jboot应用
-### 1、添加 maven 依赖
+## maven 依赖
 
 ```xml
 <dependency>
@@ -28,38 +18,11 @@ QQ交流群： 601440615
 ```
 注意：有某些时候，Jboot版本已经更新，但是文档没有更新的情况下，请自行查看maven中央仓库最新的版本。
 
-### 2、编写控制器 HelloController
-
-```java
-@RequestMapping("/")
-public class HelloController extend JbootController{
-   public void index(){
-        renderText("hello jboot");
-   }
-}
-```
-
-### 3、启动应用
-
-```java
-public class MyStarter{
-   public static void main(String [] args){
-       Jboot.run(args);
-   }
-}
-```
-
-### 4、浏览器访问
-
-* 访问网址：http://127.0.0.1:8080
-* 浏览器显示： hello jboot
-
 ## Jboot的核心组件
-通过以上几个步骤，我们就能完成一个Jboot应用的demo实例。然而在大型的分布式应用中，这些远远不够。因此，Jboot还提供了在分布式应用常用的分布式组件。
 
-* MVC
+* MVC （基于jfinal）
 * 安全控制 （基于shiro）
-* ORM 
+* ORM  （基于jfinal）
 * AOP （基于guice）
 * RPC远程调用 （支持可选方案有 motan，dubbo等）
 * MQ消息队列 (支持可选方案有：redis、activemq，rabbitmq等)
