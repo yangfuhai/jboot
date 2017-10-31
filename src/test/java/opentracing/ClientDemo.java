@@ -29,7 +29,7 @@ public class ClientDemo extends JbootController {
 
 
     /**
-     * 请先启动 ServerDemo 后，再启动
+     * 请先启动 MotanServerDemo 后，再启动
      * 然后通过 http://127.0.0.1:8088/opentracing 访问生产数据
      *
      * @param args
@@ -46,7 +46,7 @@ public class ClientDemo extends JbootController {
 
 
         Jboot.setBootArg("jboot.tracing.type", "zipkin");//opentracing的类型
-        Jboot.setBootArg("jboot.tracing.serviceName", "ClientDemo");//opentracing的本应用服务名称
+        Jboot.setBootArg("jboot.tracing.serviceName", "MotanClientDemo");//opentracing的本应用服务名称
         Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");//zipkin的服务器
 
         Jboot.run(args);

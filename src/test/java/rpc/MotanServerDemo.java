@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hystrix;
+package rpc;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
@@ -23,7 +23,7 @@ import service.UserService;
 import service.UserServiceImpl;
 
 
-public class ServerDemo {
+public class MotanServerDemo {
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -40,6 +40,7 @@ public class ServerDemo {
 
         factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
         factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot", "1.0", 8002);
+
 
         System.out.println("MotanServerDemo started...");
 
