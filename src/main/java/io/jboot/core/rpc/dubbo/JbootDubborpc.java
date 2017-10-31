@@ -61,7 +61,7 @@ public class JbootDubborpc extends JbootrpcBase {
          * 直连模式
          */
         else if (jbootrpcConfig.isRedirectCallMode()) {
-            registryConfig.setProtocol("local");
+            registryConfig.setAddress(RegistryConfig.NO_AVAILABLE);
         }
 
 
@@ -139,7 +139,7 @@ public class JbootDubborpc extends JbootrpcBase {
         service.setInterface(interfaceClass);
         service.setRef((T) object);
         service.setVersion(version);
-        service.setProxy("jbootProviderOpentracing");
+        service.setProxy(jbootrpcConfig.getProxy());
         service.setFilter("jbootProviderOpentracing");
 
 
