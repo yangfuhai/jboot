@@ -54,6 +54,10 @@ public abstract class Controller {
 	private String urlPara;
 	private String[] urlParaArray;
 	
+	private Render render;
+	
+	private static final RenderManager renderManager = RenderManager.me();
+	
 	private static final String[] NULL_URL_PARA_ARRAY = new String[0];
 	private static final String URL_PARA_SEPARATOR = Config.getConstants().getUrlParaSeparator();
 	
@@ -61,6 +65,16 @@ public abstract class Controller {
 		this.request = request;
 		this.response = response;
 		this.urlPara = urlPara;
+		urlParaArray = null;
+		render = null;
+	}
+	
+	void clear() {
+		request = null;
+		response = null;
+		urlPara = null;
+		urlParaArray = null;
+		render = null;
 	}
 	
 	public void setHttpServletRequest(HttpServletRequest request) {
@@ -949,12 +963,6 @@ public abstract class Controller {
 	
 	// ----------------
 	// render below ---
-	private static final RenderManager renderManager = RenderManager.me();
-	
-	/**
-	 * Hold Render object when invoke renderXxx(...)
-	 */
-	private Render render;
 	
 	public Render getRender() {
 		return render;

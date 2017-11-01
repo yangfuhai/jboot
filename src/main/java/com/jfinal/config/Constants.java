@@ -16,12 +16,11 @@
 
 package com.jfinal.config;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.jfinal.captcha.CaptchaManager;
 import com.jfinal.captcha.ICaptchaCache;
 import com.jfinal.core.ActionReporter;
 import com.jfinal.core.Const;
+import com.jfinal.core.ControllerFactory;
 import com.jfinal.i18n.I18n;
 import com.jfinal.json.IJsonFactory;
 import com.jfinal.json.JsonManager;
@@ -32,6 +31,9 @@ import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.RenderManager;
 import com.jfinal.render.ViewType;
 import com.jfinal.token.ITokenCache;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The constant for JFinal runtime.
@@ -51,6 +53,7 @@ final public class Constants {
 	private int freeMarkerTemplateUpdateDelay = Const.DEFAULT_FREEMARKER_TEMPLATE_UPDATE_DELAY;	// just for not devMode
 	
 	private ITokenCache tokenCache = null;
+	private ControllerFactory controllerFactory = null;
 	
 	/**
 	 * Set development mode.
@@ -116,6 +119,14 @@ final public class Constants {
 	
 	public String getEncoding() {
 		return encoding;
+	}
+	
+	public void setControllerFactory(ControllerFactory controllerFactory) {
+		this.controllerFactory = controllerFactory;
+	}
+	
+	public ControllerFactory getControllerFactory() {
+		return controllerFactory;
 	}
 	
 	/**

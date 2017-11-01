@@ -16,15 +16,16 @@
 
 package com.jfinal.core;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import com.jfinal.config.Constants;
 import com.jfinal.aop.Invocation;
+import com.jfinal.config.Constants;
 import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import com.jfinal.render.RenderManager;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * ActionHandler
@@ -33,12 +34,19 @@ public class ActionHandler extends Handler {
 	
 	private final boolean devMode;
 	private final ActionMapping actionMapping;
+	private final ControllerFactory controllerFactory;
 	private static final RenderManager renderManager = RenderManager.me();
 	private static final Log log = Log.getLog(ActionHandler.class);
 	
 	public ActionHandler(ActionMapping actionMapping, Constants constants) {
 		this.actionMapping = actionMapping;
 		this.devMode = constants.getDevMode();
+		
+		if (constants.getControllerFactory() != null) {
+			controllerFactory = constants.getControllerFactory();
+		} else {
+			controllerFactory = new ControllerFactory();
+		}
 	}
 	
 	/**
@@ -65,8 +73,10 @@ public class ActionHandler extends Handler {
 			return ;
 		}
 		
+		Controller controller = null;
 		try {
-			Controller controller = action.getControllerClass().newInstance();
+			// Controller controller = action.getControllerClass().newInstance();
+			controller = controllerFactory.getController(action.getControllerClass());
 			controller.init(request, response, urlPara[0]);
 			
 			if (devMode) {
@@ -135,6 +145,10 @@ public class ActionHandler extends Handler {
 				log.error(qs == null ? target : target + "?" + qs, e);
 			}
 			renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
+		} finally {
+			if (controller != null) {
+				controller.clear();
+			}
 		}
 	}
 }
