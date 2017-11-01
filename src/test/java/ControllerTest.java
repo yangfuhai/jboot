@@ -1,5 +1,3 @@
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.core.cache.annotation.Cacheable;
@@ -20,6 +18,9 @@ public class ControllerTest extends JbootController {
         Jboot.setBootArg("jboot.cache.type", "redis");
         Jboot.setBootArg("jboot.metrics.url", "/metrics.abc");
         Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
+
+//        ClassScanner.scanClass();
+
         Jboot.run(args);
 
 
@@ -51,7 +52,7 @@ public class ControllerTest extends JbootController {
 
     @Singleton
     @Bean
-    @Before(Tx.class)
+//    @Before(Tx.class)
     public static class ServiceTest implements ServiceInter {
 
 
