@@ -83,6 +83,10 @@ public abstract class ConfigRemoteReader {
             return;
         }
 
+        //先清空本地数据，initRemoteProps 可能被多次调用
+        remoteProperties.clear();
+        remotePropInfoMap.clear();
+
         for (String key : jsonObject.keySet()) {
             JSONObject propInfoObject = jsonObject.getJSONObject(key);
             String version = propInfoObject.getString("version");
@@ -112,8 +116,13 @@ public abstract class ConfigRemoteReader {
             // 可能是服务挂了
             if (scanFailTimes++ > 5) {
                 remoteProperties.clear();
+                remotePropInfoMap.clear();
             }
         } else {
+
+            if (scanFailTimes >= 5) {
+                initRemoteProps();
+            }
 
             scanFailTimes = 0;
             compare();
