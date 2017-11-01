@@ -30,12 +30,11 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.component.metrics.JbootMetricsInterceptor;
-import io.jboot.config.JbootConfigManager;
-import io.jboot.web.handler.WebInterceptorInjectHandler;
 import io.jboot.component.log.Slf4jLogFactory;
+import io.jboot.component.metrics.JbootMetricsInterceptor;
 import io.jboot.component.shiro.JbootShiroInterceptor;
 import io.jboot.component.shiro.JbootShiroManager;
+import io.jboot.config.JbootConfigManager;
 import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
@@ -50,6 +49,7 @@ import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.handler.JbootHandler;
+import io.jboot.web.handler.WebInterceptorInjectHandler;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
@@ -88,6 +88,7 @@ public class JbootAppConfig extends JFinalConfig {
         constants.setLogFactory(Slf4jLogFactory.me());
         constants.setMaxPostSize(1024 * 1024 * 2000);
         constants.setReportAfterInvocation(false);
+        constants.setControllerFactory(new JbootControllerFactory());
 
         JbootAppListenerManager.me().onJfinalConstantConfig(constants);
     }

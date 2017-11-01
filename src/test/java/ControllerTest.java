@@ -24,6 +24,7 @@ public class ControllerTest extends JbootController {
         Jboot.run(args);
 
 
+
     }
 
 
@@ -68,6 +69,7 @@ public class ControllerTest extends JbootController {
 
     public static interface ServiceInter {
         public String hello(String aaa);
+
         public String test1();
     }
 
