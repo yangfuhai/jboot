@@ -99,26 +99,44 @@ public abstract class ConfigRemoteReader {
 
     public abstract void onChange(String key, String oldValue, String newValue);
 
-    private void working() {
-        scan();
-        compare();
 
-        preScan.clear();
-        preScan.putAll(curScan);
-        curScan.clear();
+    private int scanFailTimes = 0;
+
+    private void working() {
+
+        boolean scanSuccess = scan();
+
+        //扫描失败
+        if (!scanSuccess) {
+
+            // 可能是服务挂了
+            if (scanFailTimes++ > 5) {
+                remoteProperties.clear();
+            }
+        } else {
+
+            scanFailTimes = 0;
+            compare();
+
+            preScan.clear();
+            preScan.putAll(curScan);
+            curScan.clear();
+        }
+
+
     }
 
     /**
      * 定时扫描远程配置信息
      */
-    private void scan() {
+    private boolean scan() {
 
         String listUrl = url + "/list";
         String jsonString = httpGet(listUrl);
 
         if (StringUtils.isBlank(jsonString)) {
             LogKit.error("can not get remote config info,plase check url : " + listUrl);
-            return;
+            return false;
         }
 
         JSONArray jsonArray = null;
@@ -126,13 +144,15 @@ public abstract class ConfigRemoteReader {
             jsonArray = JSON.parseArray(jsonString);
         } catch (Throwable ex) {
             LogKit.error("can not parse json : \n" + jsonString + "\n\nfrom url : " + listUrl, ex);
-            return;
+            return false;
         }
 
         for (int i = 0; i < jsonArray.size(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             curScan.put(jsonObject.getString("id"), jsonObject.getString("version"));
         }
+
+        return true;
 
     }
 

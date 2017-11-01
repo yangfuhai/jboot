@@ -32,12 +32,9 @@ public class ControllerTest extends JbootController {
 
     public void index() {
 
-        System.out.println("aabbcc");
+        System.out.println("aabbcxxxc");
 
         Jboot.me().getMetrics().counter("myaction").inc();
-
-
-//        serviceTest.test1();
 
         renderText("hello ddd : " + serviceTest.hello("michael"));
 
@@ -52,7 +49,6 @@ public class ControllerTest extends JbootController {
 
     @Singleton
     @Bean
-//    @Before(Tx.class)
     public static class ServiceTest implements ServiceInter {
 
 
