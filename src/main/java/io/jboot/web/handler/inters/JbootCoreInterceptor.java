@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web;
+package io.jboot.web.handler.inters;
 
-import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
 import io.jboot.component.opentracing.EnableTracing;
 import io.jboot.component.opentracing.JbootOpentracingManager;
 import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.handler.HandlerInterceptor;
+import io.jboot.web.handler.HandlerInvocation;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 
@@ -28,11 +28,11 @@ import io.opentracing.Tracer;
  * 用于对controller的自动注入
  * 注意：如果 Controller通过 @Clear 来把此 拦截器给清空，那么此方法（action）注入将会失效
  */
-public class JbootCoreInterceptor implements Interceptor {
+public class JbootCoreInterceptor implements HandlerInterceptor {
 
 
     @Override
-    public void intercept(Invocation inv) {
+    public void intercept(HandlerInvocation inv) {
 
         EnableTracing enableOpentracing = inv.getMethod().getAnnotation(EnableTracing.class);
         Tracer tracer = JbootOpentracingManager.me().getTracer();

@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.metrics;
+package io.jboot.web.handler.inters;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Timer;
-import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
+import io.jboot.component.metrics.EnableMetricsCounter;
+import io.jboot.component.metrics.EnableMetricsHistogram;
+import io.jboot.component.metrics.EnableMetricsMeter;
+import io.jboot.component.metrics.EnableMetricsTimer;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.handler.HandlerInterceptor;
+import io.jboot.web.handler.HandlerInvocation;
 
 /**
  * 用于对controller的Metrics 统计
  * 注意：如果 Controller通过 @Clear 来把此 拦截器给清空，那么此方法（action）注入将会失效
  */
-public class JbootMetricsInterceptor implements Interceptor {
+public class JbootMetricsInterceptor implements HandlerInterceptor {
 
 
     @Override
-    public void intercept(Invocation inv) {
+    public void intercept(HandlerInvocation inv) {
 
 
         Counter counter = null;

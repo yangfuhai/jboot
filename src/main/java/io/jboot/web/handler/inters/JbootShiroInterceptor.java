@@ -13,26 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.shiro;
+package io.jboot.web.handler.inters;
 
-import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
+import io.jboot.component.shiro.JbootShiroConfig;
+import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.component.shiro.processer.AuthorizeResult;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.handler.HandlerInterceptor;
+import io.jboot.web.handler.HandlerInvocation;
 
 /**
  * Shiro 拦截器
  */
-public class JbootShiroInterceptor implements Interceptor {
+public class JbootShiroInterceptor implements HandlerInterceptor {
 
 
     private JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
 
 
     @Override
-    public void intercept(Invocation inv) {
+    public void intercept(HandlerInvocation inv) {
         if (!config.isConfigOK()) {
             inv.invoke();
             return;

@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.controller.validate;
+package io.jboot.web.handler.inters;
 
-import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
 import com.jfinal.kit.Ret;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.controller.validate.EmptyValidate;
+import io.jboot.web.handler.HandlerInterceptor;
+import io.jboot.web.handler.HandlerInvocation;
 
 /**
  * 验证拦截器
  */
-public class ParaValidateInterceptor implements Interceptor {
+public class ParaValidateInterceptor implements HandlerInterceptor {
 
     public static final int DEFAULT_ERROR_CODE = 99;
 
     @Override
-    public void intercept(Invocation inv) {
+    public void intercept(HandlerInvocation inv) {
 
         EmptyValidate emptyParaValidate = inv.getMethod().getAnnotation(EmptyValidate.class);
         if (emptyParaValidate == null) {
@@ -56,7 +57,7 @@ public class ParaValidateInterceptor implements Interceptor {
     }
 
 
-    private void renderError(Invocation inv, String param, String errorRedirect) {
+    private void renderError(HandlerInvocation inv, String param, String errorRedirect) {
         if (StringUtils.isNotBlank(errorRedirect)) {
             inv.getController().redirect(errorRedirect);
             return;

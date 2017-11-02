@@ -31,8 +31,6 @@ import io.jboot.Jboot;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.component.log.Slf4jLogFactory;
-import io.jboot.component.metrics.JbootMetricsInterceptor;
-import io.jboot.component.shiro.JbootShiroInterceptor;
 import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.config.JbootConfigManager;
 import io.jboot.core.cache.JbootCacheConfig;
@@ -43,7 +41,6 @@ import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.RequestMapping;
-import io.jboot.web.controller.validate.ParaValidateInterceptor;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;
@@ -187,12 +184,6 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configInterceptor(Interceptors interceptors) {
 
-
-        interceptors.add(new JbootCoreInterceptor());
-        interceptors.add(new JbootMetricsInterceptor());
-        interceptors.add(new JbootShiroInterceptor());
-        interceptors.add(new ParaValidateInterceptor());
-
         JbootAppListenerManager.me().onInterceptorConfig(interceptors);
     }
 
@@ -202,6 +193,7 @@ public class JbootAppConfig extends JFinalConfig {
 
         //用于对jfinal的拦截器进行注入
         handlers.add(new WebInterceptorInjectHandler());
+        handlers.setActionHandler(new JbootActionHandler());
 
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
     }
