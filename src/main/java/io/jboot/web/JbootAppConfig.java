@@ -32,6 +32,8 @@ import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.shiro.JbootShiroManager;
+import io.jboot.component.swagger.JbootSwaggerConfig;
+import io.jboot.component.swagger.JbootSwaggerController;
 import io.jboot.config.JbootConfigManager;
 import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.core.rpc.JbootrpcManager;
@@ -111,6 +113,11 @@ public class JbootAppConfig extends JFinalConfig {
             } else {
                 routes.add(mapping.value(), clazz);
             }
+        }
+
+        JbootSwaggerConfig swaggerConfig = Jboot.config(JbootSwaggerConfig.class);
+        if (swaggerConfig.isConfigOk()) {
+            routes.add(swaggerConfig.getUrl(), JbootSwaggerController.class, swaggerConfig.getUiPath());
         }
 
         JbootAppListenerManager.me().onJfinalRouteConfig(routes);
