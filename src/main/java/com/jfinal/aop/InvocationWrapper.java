@@ -16,8 +16,9 @@
 
 package com.jfinal.aop;
 
-import java.lang.reflect.Method;
 import com.jfinal.core.Controller;
+
+import java.lang.reflect.Method;
 
 /**
  * InvocationWrapper invoke the InterceptorStack.

@@ -16,10 +16,11 @@
 
 package com.jfinal.core;
 
-import java.lang.reflect.Method;
 import com.jfinal.aop.Interceptor;
-import com.jfinal.core.paragetter.ParaProcessorBuilder;
 import com.jfinal.core.paragetter.ParaProcessor;
+import com.jfinal.core.paragetter.ParaProcessorBuilder;
+
+import java.lang.reflect.Method;
 
 /**
  * Action

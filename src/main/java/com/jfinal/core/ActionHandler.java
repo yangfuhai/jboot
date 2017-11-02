@@ -32,20 +32,20 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ActionHandler extends Handler {
 	
-	private final boolean devMode;
-	private final ActionMapping actionMapping;
-	private final ControllerFactory controllerFactory;
-	private static final RenderManager renderManager = RenderManager.me();
-	private static final Log log = Log.getLog(ActionHandler.class);
+	protected boolean devMode;
+	protected ActionMapping actionMapping;
+	protected ControllerFactory controllerFactory;
+	protected static final RenderManager renderManager = RenderManager.me();
+	protected static final Log log = Log.getLog(ActionHandler.class);
 	
-	public ActionHandler(ActionMapping actionMapping, Constants constants) {
+	public void init(ActionMapping actionMapping, Constants constants) {
 		this.actionMapping = actionMapping;
 		this.devMode = constants.getDevMode();
 		
 		if (constants.getControllerFactory() != null) {
 			controllerFactory = constants.getControllerFactory();
 		} else {
-			controllerFactory = new ControllerFactory();
+			controllerFactory = new FastControllerFactory();
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class ActionHandler extends Handler {
 	 * 2: new Invocation(...).invoke()
 	 * 3: render(...)
 	 */
-	public final void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
+	public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
 		if (target.indexOf('.') != -1) {
 			return ;
 		}

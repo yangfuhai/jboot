@@ -15,14 +15,14 @@
  */
 package com.jfinal.core.paragetter;
 
+import com.jfinal.core.Controller;
+import com.jfinal.kit.LogKit;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.jfinal.core.Controller;
-import com.jfinal.kit.LogKit;
 
 public class ParaProcessorBuilder {
 

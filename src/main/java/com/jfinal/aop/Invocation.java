@@ -16,11 +16,12 @@
 
 package com.jfinal.aop;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import com.jfinal.core.Action;
 import com.jfinal.core.Controller;
 import net.sf.cglib.proxy.MethodProxy;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Invocation is used to invoke the interceptors and the target method

@@ -16,14 +16,15 @@
 
 package com.jfinal.config;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.StrKit;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Routes.

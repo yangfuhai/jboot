@@ -16,6 +16,8 @@
 
 package com.jfinal.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import com.jfinal.captcha.CaptchaManager;
 import com.jfinal.captcha.ICaptchaCache;
 import com.jfinal.core.ActionReporter;
@@ -31,9 +33,6 @@ import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.RenderManager;
 import com.jfinal.render.ViewType;
 import com.jfinal.token.ITokenCache;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The constant for JFinal runtime.
