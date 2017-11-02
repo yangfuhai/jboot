@@ -85,6 +85,7 @@ public class JbootAppConfig extends JFinalConfig {
         constants.setLogFactory(Slf4jLogFactory.me());
         constants.setMaxPostSize(1024 * 1024 * 2000);
         constants.setReportAfterInvocation(false);
+
         constants.setControllerFactory(new JbootControllerFactory());
 
         JbootAppListenerManager.me().onJfinalConstantConfig(constants);

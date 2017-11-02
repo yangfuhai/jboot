@@ -1,10 +1,8 @@
-import com.jfinal.aop.Clear;
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
-import io.jboot.web.controller.validate.EmptyValidate;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,16 +31,9 @@ public class ControllerTest extends JbootController {
     @Inject
     ServiceInter serviceTest;
 
-    @Clear
-    @EmptyValidate("name")
     public void index() {
 
-        System.out.println("aabbcxxxc");
-
-        Jboot.me().getMetrics().counter("myaction").inc();
-
-        renderText("hello ddd : " + serviceTest.hello("michael"));
-
+        renderText("hello");
 
     }
 
