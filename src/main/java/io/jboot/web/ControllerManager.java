@@ -27,13 +27,26 @@ import java.util.Map;
  * @version V1.0
  * @Package io.jboot.web
  */
-public class JbootControllerFactory extends ControllerFactory {
+public class ControllerManager extends ControllerFactory {
+
+    private static final ControllerManager me = new ControllerManager();
+
+    public static ControllerManager me() {
+        return me;
+    }
+
+    private ControllerManager() {
+    }
 
     private ThreadLocal<Map<Class<? extends Controller>, Controller>> buffers = new ThreadLocal<Map<Class<? extends Controller>, Controller>>() {
         protected Map<Class<? extends Controller>, Controller> initialValue() {
             return new HashMap<Class<? extends Controller>, Controller>();
         }
     };
+
+    private ThreadLocal<Controller> controllers = new ThreadLocal<>();
+
+    private com.google.common.collect.BiMap<String, Class<? extends Controller>> controllerMapping = com.google.common.collect.HashBiMap.create();
 
     public Controller getController(Class<? extends Controller> controllerClass) throws InstantiationException, IllegalAccessException {
         Controller ret = buffers.get().get(controllerClass);
@@ -44,4 +57,27 @@ public class JbootControllerFactory extends ControllerFactory {
         }
         return ret;
     }
+
+
+    public void hold(Controller controller) {
+        controllers.set(controller);
+    }
+
+    public void release() {
+        controllers.remove();
+    }
+
+    public void setMapping(String path, Class<? extends Controller> controllerClass) {
+        controllerMapping.put(path, controllerClass);
+    }
+
+    public Class<? extends Controller> getControllerByPath(String path) {
+        return controllerMapping.get(path);
+    }
+
+    public String getPathByController(Class<? extends Controller> controllerClass) {
+        return controllerMapping.inverse().get(controllerClass);
+    }
+
+
 }

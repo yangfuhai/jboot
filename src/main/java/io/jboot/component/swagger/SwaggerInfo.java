@@ -15,6 +15,9 @@
  */
 package io.jboot.component.swagger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
@@ -26,6 +29,7 @@ public class SwaggerInfo {
     private String description;
     private String version;
     private String termsOfService;
+    private Map<String, String> contact;
 
     public String getTitle() {
         return title;
@@ -57,5 +61,21 @@ public class SwaggerInfo {
 
     public void setTermsOfService(String termsOfService) {
         this.termsOfService = termsOfService;
+    }
+
+    public Map<String, String> getContact() {
+        return contact;
+    }
+
+    public void setContact(Map<String, String> contact) {
+        this.contact = contact;
+    }
+
+    public void addContact(String key, String value) {
+        if (this.contact == null) {
+            this.contact = new HashMap<>();
+        }
+
+        this.contact.put(key, value);
     }
 }

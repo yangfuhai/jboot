@@ -17,6 +17,8 @@ package io.jboot.component.swagger;
 
 import io.jboot.web.controller.JbootController;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
@@ -34,7 +36,22 @@ public class JbootSwaggerController extends JbootController {
      * 参考：http://petstore.swagger.io/ 及json信息 http://petstore.swagger.io/v2/swagger.json
      */
     public void json() {
-        renderText("not finished!");
+
+        HttpServletResponse response = getResponse();
+        response.setHeader("Access-Control-Allow-Origin", "*"); //解决跨域访问报错
+        response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
+        response.setHeader("Access-Control-Max-Age", "3600"); //设置过期时间
+        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, client_id, uuid, Authorization");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // 支持HTTP 1.1.
+        response.setHeader("Pragma", "no-cache");
+
+        Swagger swagger = SwaggerManager.me().getSwagger();
+        if (swagger == null) {
+            renderText("swagger config error.");
+            return;
+        }
+
+        renderJson(swagger);
     }
 
 }

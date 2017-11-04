@@ -15,6 +15,9 @@
  */
 package io.jboot.component.swagger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
@@ -24,6 +27,7 @@ public class SwaggerTag {
 
     private String name;
     private String description;
+    private Map<String, String> externalDocs;
 
     public String getName() {
         return name;
@@ -39,5 +43,21 @@ public class SwaggerTag {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Map<String, String> getExternalDocs() {
+        return externalDocs;
+    }
+
+    public void setExternalDocs(Map<String, String> externalDocs) {
+        this.externalDocs = externalDocs;
+    }
+
+    public void addExternalDoc(String key, String value) {
+        if (externalDocs == null) {
+            externalDocs = new HashMap<>();
+        }
+
+        externalDocs.put(key, value);
     }
 }

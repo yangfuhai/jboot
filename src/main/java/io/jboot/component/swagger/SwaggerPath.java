@@ -15,52 +15,18 @@
  */
 package io.jboot.component.swagger;
 
-import java.util.Map;
-
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package io.jboot.component.swagger
  */
-public class Swagger {
+public class SwaggerPath {
 
-    private String swagger = "2.0";
-    private SwaggerInfo info;
-    private String host;
-    private SwaggerTag[] tags;
+    private String path;
+    private String tags;
+    private String summary;
+    private String description;
+    private String operationId;
+    private String parameters;
 
-    //key:path  Object:value
-    private Map<String, Object> paths;
-
-    public String getSwagger() {
-        return swagger;
-    }
-
-    public void setSwagger(String swagger) {
-        this.swagger = swagger;
-    }
-
-    public SwaggerInfo getInfo() {
-        return info;
-    }
-
-    public void setInfo(SwaggerInfo info) {
-        this.info = info;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public SwaggerTag[] getTags() {
-        return tags;
-    }
-
-    public void setTags(SwaggerTag[] tags) {
-        this.tags = tags;
-    }
 }

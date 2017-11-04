@@ -88,7 +88,7 @@ public class JbootAppConfig extends JFinalConfig {
         constants.setMaxPostSize(1024 * 1024 * 2000);
         constants.setReportAfterInvocation(false);
 
-        constants.setControllerFactory(new JbootControllerFactory());
+        constants.setControllerFactory(ControllerManager.me());
 
         JbootAppListenerManager.me().onJfinalConstantConfig(constants);
     }
@@ -121,6 +121,10 @@ public class JbootAppConfig extends JFinalConfig {
         }
 
         JbootAppListenerManager.me().onJfinalRouteConfig(routes);
+
+        for (Routes.Route route : routes.getRouteItemList()) {
+            ControllerManager.me().setMapping(route.getControllerKey(), route.getControllerClass());
+        }
 
         routeList.addAll(routes.getRouteItemList());
     }
