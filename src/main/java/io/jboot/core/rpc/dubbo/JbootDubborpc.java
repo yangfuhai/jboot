@@ -95,9 +95,6 @@ public class JbootDubborpc extends JbootrpcBase {
          * 注册中心的调用模式
          */
         if (jbootrpcConfig.isRegistryCallMode()) {
-            if (StringUtils.isBlank(jbootrpcConfig.getDirectUrl())) {
-                throw new JbootException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
-            }
             reference.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
         }
 
@@ -105,6 +102,9 @@ public class JbootDubborpc extends JbootrpcBase {
          * 直连调用模式
          */
         else if (jbootrpcConfig.isRedirectCallMode()) {
+            if (StringUtils.isBlank(jbootrpcConfig.getDirectUrl())) {
+                throw new JbootException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
+            }
             reference.setUrl(jbootrpcConfig.getDirectUrl());
         }
 
