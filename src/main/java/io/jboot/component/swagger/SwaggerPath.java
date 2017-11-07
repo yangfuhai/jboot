@@ -15,6 +15,12 @@
  */
 package io.jboot.component.swagger;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
@@ -27,6 +33,93 @@ public class SwaggerPath {
     private String summary;
     private String description;
     private String operationId;
-    private String parameters;
+    private List<Map> parameters;
+    private Map responses;
+    private List<String> consumes = Lists.newArrayList("application/json");
+    private List<String> produces = Lists.newArrayList("application/json");
 
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getOperationId() {
+        return operationId;
+    }
+
+    public void setOperationId(String operationId) {
+        this.operationId = operationId;
+    }
+
+    public List<Map> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<Map> parameters) {
+        this.parameters = parameters;
+    }
+
+    public List<String> getConsumes() {
+        return consumes;
+    }
+
+    public void setConsumes(List<String> consumes) {
+        this.consumes = consumes;
+    }
+
+    public List<String> getProduces() {
+        return produces;
+    }
+
+    public void setProduces(List<String> produces) {
+        this.produces = produces;
+    }
+
+    public Map toMap() {
+
+        Map rootMap = Maps.newHashMap();
+
+        Map infoMap = Maps.newHashMap();
+        infoMap.put("tags", Lists.newArrayList(this.tags));
+        infoMap.put("summary", this.summary);
+        infoMap.put("description", this.description);
+        infoMap.put("operationId", this.operationId);
+        infoMap.put("consumes", this.consumes);
+        infoMap.put("produces", this.produces);
+        infoMap.put("parameters", this.parameters);
+        infoMap.put("responses", this.responses);
+
+        rootMap.put("get", infoMap);
+        rootMap.put("post", infoMap);
+
+        return rootMap;
+    }
 }

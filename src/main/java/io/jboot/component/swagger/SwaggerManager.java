@@ -15,13 +15,21 @@
  */
 package io.jboot.component.swagger;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.jboot.Jboot;
+import io.jboot.component.swagger.annotation.SwaggerAPI;
 import io.jboot.component.swagger.annotation.SwaggerAPIs;
+import io.jboot.component.swagger.annotation.SwaggerParam;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.ControllerManager;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -77,26 +85,66 @@ public class SwaggerManager {
 
         List<Class> classes = ClassScanner.scanClassByAnnotation(SwaggerAPIs.class, false);
         for (Class controllerClass : classes) {
-            initSwaggerTag(tagList, controllerClass);
+            SwaggerAPIs apis = (SwaggerAPIs) controllerClass.getAnnotation(SwaggerAPIs.class);
+            SwaggerTag tag = new SwaggerTag();
+            tag.setName(apis.name());
+            tag.setDescription(apis.description());
+
+            if (StringUtils.isNotBlank(apis.externalDescription())) {
+                tag.addExternalDoc("description", apis.externalDescription());
+            }
+            if (StringUtils.isNotBlank(apis.externalUrl())) {
+                tag.addExternalDoc("url", apis.externalUrl());
+            }
+            tagList.add(tag);
+
+            Method[] methods = controllerClass.getMethods();
+            for (Method method : methods) {
+                SwaggerAPI swaggerAPI = method.getAnnotation(SwaggerAPI.class);
+                if (swaggerAPI == null) {
+                    continue;
+                }
+
+                String methodPath = "index".equals(method.getName()) ? "" : "/" + method.getName();
+                String pathString = ControllerManager.me().getPathByController(controllerClass) + methodPath;
+
+                SwaggerPath path = new SwaggerPath();
+
+                path.setPath(pathString);
+                path.setTags(tag.getName());
+                path.setDescription(swaggerAPI.description());
+                path.setOperationId(swaggerAPI.operationId());
+                path.setSummary(swaggerAPI.summary());
+
+                SwaggerParam[] swaggerParams = swaggerAPI.params();
+                List<Map> parameters = Lists.newArrayList();
+                for (SwaggerParam swaggerParam : swaggerParams) {
+                    Map<String, Object> paramMap = new HashMap<>();
+                    paramMap.put("in", swaggerParam.in());
+                    paramMap.put("name", swaggerParam.name());
+                    paramMap.put("description", swaggerParam.description());
+                    paramMap.put("required", swaggerParam.required());
+                    paramMap.put("description", swaggerParam.description());
+
+                    if (StringUtils.isNotBlank(swaggerParam.definition())) {
+                        Map<String, String> schemaMap = Maps.newHashMap();
+                        schemaMap.put("$ref", "#/definitions/" + swaggerParam.definition());
+                        paramMap.put("schema", schemaMap);
+                    }
+
+
+                    parameters.add(paramMap);
+                }
+
+                path.setParameters(parameters);
+
+                this.swagger.addPath(path.getPath(), path.toMap());
+
+            }
         }
 
         this.swagger.setTags(tagList.toArray(new SwaggerTag[]{}));
 
-    }
-
-    private void initSwaggerTag(List<SwaggerTag> tagList, Class controllerClass) {
-        SwaggerAPIs apis = (SwaggerAPIs) controllerClass.getAnnotation(SwaggerAPIs.class);
-        SwaggerTag tag = new SwaggerTag();
-        tag.setName(apis.name());
-        tag.setDescription(apis.description());
-
-        if (StringUtils.isNotBlank(apis.externalDescription())) {
-            tag.addExternalDoc("description", apis.externalDescription());
-        }
-        if (StringUtils.isNotBlank(apis.externalUrl())) {
-            tag.addExternalDoc("url", apis.externalUrl());
-        }
-        tagList.add(tag);
     }
 
 

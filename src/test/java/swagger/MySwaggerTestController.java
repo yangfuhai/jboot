@@ -16,7 +16,7 @@ import io.jboot.web.controller.annotation.RequestMapping;
 public class MySwaggerTestController extends JbootController {
 
 
-    @SwaggerAPI(params = {@SwaggerParam(name = "账号", in = "name", description = "请输入账号名称")})
+    @SwaggerAPI(description = "测试description描述", summary = "测试summary", params = {@SwaggerParam(name = "账号", in = "name", description = "请输入账号名称")})
     public void index() {
         renderText("index");
     }

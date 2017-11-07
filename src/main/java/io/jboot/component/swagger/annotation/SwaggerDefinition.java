@@ -19,23 +19,11 @@ import java.lang.annotation.*;
 
 
 @Documented
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SwaggerParam {
+public @interface SwaggerDefinition {
 
-    String name() default "";
-
-    String in() default "";
-
-    String description() default "";
-
-    boolean required() default false;
-
-    String type() default "";
-
-    String format() default "";
-
-    String definition() default "";
+    String value();
 
 }

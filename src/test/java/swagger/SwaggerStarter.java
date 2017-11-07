@@ -7,7 +7,7 @@ import io.jboot.Jboot;
  * @version V1.0
  * @package config
  */
-public class ConfigClient {
+public class SwaggerStarter {
 
 
     /**
@@ -17,12 +17,6 @@ public class ConfigClient {
      */
     public static void main(String[] args) {
 
-        /**
-         *  private String title;
-         private String description;
-         private String version;
-         private String termsOfService;
-         */
 
         //jboot端口号配置
         Jboot.setBootArg("jboot.server.port", "8088");

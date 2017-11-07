@@ -15,6 +15,8 @@
  */
 package io.jboot.component.swagger;
 
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 /**
@@ -29,8 +31,8 @@ public class Swagger {
     private String host;
     private SwaggerTag[] tags;
 
-    //key:path  Object:value
-    private Map<String, Object> paths;
+    //key:path  Map:value
+    private Map<String, Map> paths;
 
     public String getSwagger() {
         return swagger;
@@ -62,5 +64,21 @@ public class Swagger {
 
     public void setTags(SwaggerTag[] tags) {
         this.tags = tags;
+    }
+
+    public Map<String, Map> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(Map<String, Map> paths) {
+        this.paths = paths;
+    }
+
+    public void addPath(String pathString, Map pathInfo) {
+        if (paths == null) {
+            paths = Maps.newHashMap();
+        }
+
+        paths.put(pathString, pathInfo);
     }
 }
