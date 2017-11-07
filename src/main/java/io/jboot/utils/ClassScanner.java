@@ -15,6 +15,7 @@
  */
 package io.jboot.utils;
 
+import com.jfinal.core.Const;
 import com.jfinal.kit.PathKit;
 
 import java.io.File;
@@ -23,6 +24,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -222,6 +224,7 @@ public class ClassScanner {
 
             JarFile jarFile = null;
             try {
+                path = URLDecoder.decode(path, Const.DEFAULT_ENCODING);
                 jarFile = new JarFile(path);
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
