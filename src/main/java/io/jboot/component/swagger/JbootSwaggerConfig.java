@@ -21,8 +21,7 @@ import io.jboot.utils.StringUtils;
 @PropertieConfig(prefix = "jboot.swagger")
 public class JbootSwaggerConfig {
 
-    private String url;
-    private String uiPath = "/swagger";
+    private String path;
 
     private String title;
     private String description;
@@ -33,24 +32,16 @@ public class JbootSwaggerConfig {
     // 多个联系方式用分号；隔开  例如：jboot.swagger.contact=email:fuhai999@163.com;qq:1506615067
     private String contact;
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getUiPath() {
-        return uiPath;
-    }
-
-    public void setUiPath(String uiPath) {
-        this.uiPath = uiPath;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public boolean isConfigOk() {
-        return StringUtils.isNotBlank(url) && StringUtils.isNotBlank(uiPath);
+        return StringUtils.isNotBlank(path);
     }
 
     public String getTitle() {

@@ -15,6 +15,9 @@
  */
 package io.jboot.component.swagger;
 
+import com.google.common.collect.Maps;
+import com.jfinal.render.RenderManager;
+import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,9 +29,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class JbootSwaggerController extends JbootController {
 
+    JbootSwaggerConfig config = Jboot.config(JbootSwaggerConfig.class);
+
     public void index() {
-//        render("index.html");
-        renderText("not finished!");
+        if (!getRequest().getRequestURI().endsWith("/")) {
+            redirect(config.getPath() + "/");
+            return;
+        }
+
+        String html = RenderManager.me().getEngine().getTemplate(config.getPath() + "/index.html").renderToString(Maps.newHashMap());
+        html = html.replace("http://petstore.swagger.io/v2/swagger.json", config.getPath() + "/json");
+        renderHtml(html);
     }
 
     /**

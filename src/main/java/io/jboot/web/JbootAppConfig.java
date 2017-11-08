@@ -117,7 +117,7 @@ public class JbootAppConfig extends JFinalConfig {
 
         JbootSwaggerConfig swaggerConfig = Jboot.config(JbootSwaggerConfig.class);
         if (swaggerConfig.isConfigOk()) {
-            routes.add(swaggerConfig.getUrl(), JbootSwaggerController.class, swaggerConfig.getUiPath());
+            routes.add(swaggerConfig.getPath(), JbootSwaggerController.class, swaggerConfig.getPath());
         }
 
         JbootAppListenerManager.me().onJfinalRouteConfig(routes);
