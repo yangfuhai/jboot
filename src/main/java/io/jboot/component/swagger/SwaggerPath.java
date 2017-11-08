@@ -28,6 +28,7 @@ import java.util.Map;
  */
 public class SwaggerPath {
 
+    private String method;
     private String path;
     private String tags;
     private String summary;
@@ -38,6 +39,22 @@ public class SwaggerPath {
     private List<String> consumes = Lists.newArrayList("application/json");
     private List<String> produces = Lists.newArrayList("application/json");
 
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public Map getResponses() {
+        return responses;
+    }
+
+    public void setResponses(Map responses) {
+        this.responses = responses;
+    }
 
     public String getPath() {
         return path;
@@ -117,9 +134,7 @@ public class SwaggerPath {
         infoMap.put("parameters", this.parameters);
         infoMap.put("responses", this.responses);
 
-        rootMap.put("get", infoMap);
-        rootMap.put("post", infoMap);
-
+        rootMap.put(method, infoMap);
         return rootMap;
     }
 }

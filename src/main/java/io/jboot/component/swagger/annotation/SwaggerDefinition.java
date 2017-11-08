@@ -24,6 +24,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SwaggerDefinition {
 
-    String value();
+    String value() default "";
 
 }

@@ -24,7 +24,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SwaggerAPI {
 
-    
+
     String path() default "";
 
     String apisName() default "";
@@ -34,6 +34,8 @@ public @interface SwaggerAPI {
     String description() default "";
 
     String operationId() default "";
+
+    String method() default "get";
 
     SwaggerParam[] params();
 

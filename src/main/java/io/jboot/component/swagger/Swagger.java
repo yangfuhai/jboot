@@ -33,6 +33,7 @@ public class Swagger {
 
     //key:path  Map:value
     private Map<String, Map> paths;
+    private Map<String, Map> definitions;
 
     public String getSwagger() {
         return swagger;
@@ -81,4 +82,21 @@ public class Swagger {
 
         paths.put(pathString, pathInfo);
     }
+
+    public Map<String, Map> getDefinitions() {
+        return definitions;
+    }
+
+    public void setDefinitions(Map<String, Map> definitions) {
+        this.definitions = definitions;
+    }
+
+    public void addDefinistion(String name, Map definition) {
+        if (definitions == null) {
+            definitions = Maps.newHashMap();
+        }
+
+        definitions.put(name, definition);
+    }
+
 }

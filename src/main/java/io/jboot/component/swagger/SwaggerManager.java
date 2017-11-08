@@ -17,19 +17,18 @@ package io.jboot.component.swagger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.jfinal.kit.StrKit;
 import io.jboot.Jboot;
 import io.jboot.component.swagger.annotation.SwaggerAPI;
 import io.jboot.component.swagger.annotation.SwaggerAPIs;
+import io.jboot.component.swagger.annotation.SwaggerDefinition;
 import io.jboot.component.swagger.annotation.SwaggerParam;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.ControllerManager;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -110,6 +109,7 @@ public class SwaggerManager {
 
                 SwaggerPath path = new SwaggerPath();
 
+                path.setMethod(swaggerAPI.method());
                 path.setPath(pathString);
                 path.setTags(tag.getName());
                 path.setDescription(swaggerAPI.description());
@@ -144,6 +144,104 @@ public class SwaggerManager {
         }
 
         this.swagger.setTags(tagList.toArray(new SwaggerTag[]{}));
+
+
+        List<Class> definistionClasses = ClassScanner.scanClassByAnnotation(SwaggerDefinition.class, false);
+        for (Class definistionClass : definistionClasses) {
+
+            SwaggerDefinition sd = (SwaggerDefinition) definistionClass.getAnnotation(SwaggerDefinition.class);
+
+            SwaggerDefinitionInfo sdi = new SwaggerDefinitionInfo();
+
+            String name = StringUtils.isBlank(sd.value()) ? definistionClass.getSimpleName() : sd.value();
+            sdi.setName(name);
+
+            Map propertiesMap = Maps.newHashMap();
+            Method[] methods = definistionClass.getMethods();
+            for (Method method : methods) {
+                if (!isGetMethod(method)) {
+                    continue;
+                }
+
+                String filed = StrKit.firstCharToLowerCase(method.getName().substring(3));
+                Class returnType = method.getReturnType();
+
+                String[] strings = getSwaggerTypeAndFormat(returnType);
+                Map propertieInfoMap = Maps.newHashMap();
+                propertieInfoMap.put("type", strings[0]);
+                if (strings.length == 2) {
+                    propertieInfoMap.put("format", strings[1]);
+                }
+
+                propertiesMap.put(filed, propertieInfoMap);
+            }
+
+
+            sdi.setProperties(propertiesMap);
+
+            this.swagger.addDefinistion(sdi.getName(), sdi.toMap());
+        }
+
+
+    }
+
+    private boolean isGetMethod(Method method) {
+        if (method.getParameterCount() != 0) {
+            return false;
+        }
+        if ("getClass".equals(method.getName())) {
+            return false;
+        }
+        if (method.getName().startsWith("get") && method.getName().length() >= 4) {
+            return true;
+        }
+        return false;
+    }
+
+    private String[] getSwaggerTypeAndFormat(Class type) {
+        if (type == String.class) {
+            return new String[]{"string"};
+        }
+
+
+        // mysql type: int, integer, tinyint(n) n > 1, smallint, mediumint
+        if (type == Integer.class || type == int.class) {
+            return new String[]{"integer", "int32"};
+        }
+
+        // mysql type: bigint
+        if (type == Long.class || type == long.class) {
+            return new String[]{"integer", "int64"};
+        }
+
+
+        // mysql type: real, double
+//        if (type == Double.class || type == double.class) {
+//            return Double.parseDouble(s);
+//        }
+//
+//        // mysql type: float
+//        if (type == Float.class || type == float.class) {
+//            return Float.parseFloat(s);
+//        }
+
+
+        // mysql type: decimal, numeric
+        if (type == Date.class || type == java.sql.Date.class) {
+            return new String[]{"string", "date-time"};
+        }
+
+//        // mysql type: unsigned bigint
+//        if (type == java.math.BigInteger.class) {
+//            return new java.math.BigInteger(s);
+//        }
+//
+//        // mysql type: binary, varbinary, tinyblob, blob, mediumblob, longblob. I have not finished the test.
+//        if (type == byte[].class) {
+//            return s.getBytes();
+//        }
+
+        return new String[]{"string"};
 
     }
 
