@@ -72,6 +72,7 @@ public class JbootrpcConfig {
     /**
      * 对外暴露服务的相关配置
      */
+    private String host;
     private int defaultPort = 8088;
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
@@ -89,6 +90,13 @@ public class JbootrpcConfig {
     private boolean hystrixAutoConfig = true;
     private String hystrixFallbackFactory;
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
 
     public String getType() {
         return type;

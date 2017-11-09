@@ -139,6 +139,9 @@ public class JbootMotanrpc extends JbootrpcBase {
             motanServiceConfig.setRef((T) object);
 
             // 配置服务的group以及版本号
+            if (StringUtils.isNotBlank(jbootrpcConfig.getHost())) {
+                motanServiceConfig.setHost(jbootrpcConfig.getHost());
+            }
             motanServiceConfig.setGroup(group);
             motanServiceConfig.setVersion(version);
 
