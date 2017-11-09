@@ -16,8 +16,6 @@
 package io.jboot.component.swagger;
 
 import com.google.common.collect.Maps;
-import com.jfinal.render.RenderManager;
-import com.jfinal.template.Template;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
 
@@ -33,17 +31,18 @@ public class JbootSwaggerController extends JbootController {
     JbootSwaggerConfig config = Jboot.config(JbootSwaggerConfig.class);
 
     public void index() {
-        Template template = null;
+        String html = null;
         try {
-            template = RenderManager.me().getEngine().getTemplate(config.getPath() + "/index.html");
+            html = renderToString("index.html", Maps.newHashMap());
         } catch (Throwable ex) {
+        }
 
-            renderHtml("error，please put  <a href=\"https://github.com/swagger-api/swagger-ui\">swagger-ui</a> into your project path :  " + config.getPath() + " <br />" +
-                    "or show swagger json click <a href=\"" + config.getPath() + "/json\">here</a> .");
+        if (html == null) {
+            renderHtml("error，please put  <a href=\"https://github.com/swagger-api/swagger-ui\" target=\"_blank\">swagger-ui</a> into your project path :  " + config.getPath() + " <br />" +
+                    "or click <a href=\"" + config.getPath() + "/json\">here</a>  show swagger json.");
             return;
         }
 
-        String html = template.renderToString(Maps.newHashMap());
         html = html.replace("http://petstore.swagger.io/v2/swagger.json", getRequest().getRequestURL() + "/json");
         html = html.replace("src=\"./", "src=\"" + config.getPath() + "/");
         html = html.replace("href=\"./", "href=\"" + config.getPath() + "/");
