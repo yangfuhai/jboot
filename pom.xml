@@ -139,7 +139,17 @@
                     <groupId>com.caucho</groupId>
                     <artifactId>hessian</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.ecwid.consul</groupId>
+                    <artifactId>consul-api</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ecwid.consul</groupId>
+            <artifactId>consul-api</artifactId>
+            <version>1.2.4</version>
         </dependency>
 
         <dependency>
