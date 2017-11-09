@@ -36,8 +36,7 @@ public class SwaggerPath {
     private String operationId;
     private List<Map> parameters;
     private Map responses;
-    private List<String> consumes = Lists.newArrayList("application/json");
-    private List<String> produces = Lists.newArrayList("application/json");
+    private String contentType;
 
 
     public String getMethod() {
@@ -104,20 +103,12 @@ public class SwaggerPath {
         this.parameters = parameters;
     }
 
-    public List<String> getConsumes() {
-        return consumes;
+    public String getContentType() {
+        return contentType;
     }
 
-    public void setConsumes(List<String> consumes) {
-        this.consumes = consumes;
-    }
-
-    public List<String> getProduces() {
-        return produces;
-    }
-
-    public void setProduces(List<String> produces) {
-        this.produces = produces;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public void addResponse(String key, Map value) {
@@ -136,8 +127,7 @@ public class SwaggerPath {
         infoMap.put("summary", this.summary);
         infoMap.put("description", this.description);
         infoMap.put("operationId", this.operationId);
-        infoMap.put("consumes", this.consumes);
-        infoMap.put("produces", this.produces);
+        infoMap.put("consumes", Lists.newArrayList(this.contentType));
         infoMap.put("parameters", this.parameters);
         infoMap.put("responses", this.responses);
 

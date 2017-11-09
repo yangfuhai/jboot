@@ -24,6 +24,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SwaggerParam {
 
+    public static final String IN_PATH = "path";
+    public static final String IN_FORMDATA = "formData";
+    public static final String IN_BODY = "body";
+    public static final String IN_QUERY = "query";
+    public static final String IN_HEADER = "header";
+
     String name() default "";
 
     String in() default "";

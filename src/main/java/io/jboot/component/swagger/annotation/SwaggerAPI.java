@@ -24,6 +24,13 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SwaggerAPI {
 
+    public static final String TYPE_JSON = "application/json";
+    public static final String TYPE_XML = "application/xml";
+    public static final String TYPE_FORM_DATA = "multipart/form-data";
+    public static final String TYPE_NORMAL = "application/x-www-form-urlencoded";
+
+    public static final String METHOD_GET = "get";
+    public static final String METHOD_POST = "post";
 
     String path() default "";
 
@@ -35,7 +42,9 @@ public @interface SwaggerAPI {
 
     String operationId() default "";
 
-    String method() default "get";
+    String method() default METHOD_GET;
+
+    String contentType() default TYPE_NORMAL;
 
     SwaggerParam[] params();
 

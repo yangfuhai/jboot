@@ -32,21 +32,21 @@ import io.jboot.web.controller.annotation.RequestMapping;
 public class MySwaggerTestController extends JbootController {
 
 
-    @SwaggerAPI(description = "测试description描述", summary = "测试summary",
-            params = {@SwaggerParam(name = "账号", in = "name", description = "请输入账号名称")}
+    @SwaggerAPI(description = "测试description描述", summary = "测试summary", operationId = "testOnly",
+            params = {@SwaggerParam(name = "name", description = "请输入账号名称")}
     )
     public void index() {
-        renderJson(Ret.ok("k1", "v1"));
+        renderJson(Ret.ok("k1", "v1").set("name", getPara("name")));
     }
 
 
-    @SwaggerAPI(description = "进行用户登录操作", summary = "用户登录API",
+    @SwaggerAPI(description = "进行用户登录操作", summary = "用户登录API", method = "post",
             params = {
-                    @SwaggerParam(name = "账号", in = "name", description = "请输入账号名称"),
-                    @SwaggerParam(name = "密码", in = "password", description = "请输入密码", definition = "MySwaggerPeople")
+                    @SwaggerParam(name = "name", description = "请输入账号名称"),
+                    @SwaggerParam(name = "pwd", description = "请输入密码", definition = "MySwaggerPeople")
             }
     )
     public void login() {
-        renderJson(Ret.ok("k2", "vv"));
+        renderJson(Ret.ok("k2", "vv").set("name", getPara("name")));
     }
 }

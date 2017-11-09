@@ -112,16 +112,24 @@ public class SwaggerManager {
                 path.setDescription(swaggerAPI.description());
                 path.setOperationId(swaggerAPI.operationId());
                 path.setSummary(swaggerAPI.summary());
+                path.setContentType(swaggerAPI.contentType());
 
                 SwaggerParam[] swaggerParams = swaggerAPI.params();
                 List<Map> parameters = Lists.newArrayList();
                 for (SwaggerParam swaggerParam : swaggerParams) {
                     Map<String, Object> paramMap = new HashMap<>();
-                    paramMap.put("in", swaggerParam.in());
+
+                    String in = swaggerParam.in();
+                    if (StringUtils.isBlank(in)) {
+                        in = "get".equalsIgnoreCase(swaggerAPI.method()) ? SwaggerParam.IN_QUERY : SwaggerParam.IN_FORMDATA;
+                    }
+
+                    paramMap.put("in", in);
                     paramMap.put("name", swaggerParam.name());
                     paramMap.put("description", swaggerParam.description());
                     paramMap.put("required", swaggerParam.required());
                     paramMap.put("description", swaggerParam.description());
+                    paramMap.put("type", "string");
 
                     if (StringUtils.isNotBlank(swaggerParam.definition())) {
                         Map<String, String> schemaMap = Maps.newHashMap();

@@ -44,7 +44,7 @@ public class JbootSwaggerController extends JbootController {
         }
 
         String html = template.renderToString(Maps.newHashMap());
-        html = html.replace("http://petstore.swagger.io/v2/swagger.json", config.getPath() + "/json");
+        html = html.replace("http://petstore.swagger.io/v2/swagger.json", getRequest().getRequestURL() + "/json");
         html = html.replace("src=\"./", "src=\"" + config.getPath() + "/");
         html = html.replace("href=\"./", "href=\"" + config.getPath() + "/");
 
