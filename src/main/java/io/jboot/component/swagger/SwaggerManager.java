@@ -19,10 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jfinal.kit.StrKit;
 import io.jboot.Jboot;
-import io.jboot.component.swagger.annotation.SwaggerAPI;
-import io.jboot.component.swagger.annotation.SwaggerAPIs;
-import io.jboot.component.swagger.annotation.SwaggerDefinition;
-import io.jboot.component.swagger.annotation.SwaggerParam;
+import io.jboot.component.swagger.annotation.*;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.ControllerManager;
@@ -135,6 +132,26 @@ public class SwaggerManager {
 
                     parameters.add(paramMap);
                 }
+
+                SwaggerResponse response = swaggerAPI.response();
+                Map response200 = Maps.newHashMap();
+                response200.put("description", response.description200());
+                if (StringUtils.isNotBlank(response.definitions200())) {
+                    Map schemaMap = Maps.newHashMap();
+                    schemaMap.put("$ref", "#/definitions/" + response.definitions200());
+                    response200.put("schema", schemaMap);
+                }
+
+
+                Map response400 = Maps.newHashMap();
+                response400.put("description", response.description400());
+
+                Map response404 = Maps.newHashMap();
+                response404.put("description", response.description404());
+
+                path.addResponse("200", response200);
+                path.addResponse("400", response400);
+                path.addResponse("404", response404);
 
                 path.setParameters(parameters);
 

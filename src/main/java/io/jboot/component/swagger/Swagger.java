@@ -15,8 +15,10 @@
  */
 package io.jboot.component.swagger;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +31,7 @@ public class Swagger {
     private String swagger = "2.0";
     private SwaggerInfo info;
     private String host;
+    private List<String> schemes = Lists.newArrayList("http", "https");
     private SwaggerTag[] tags;
 
     //key:path  Map:value
@@ -99,4 +102,11 @@ public class Swagger {
         definitions.put(name, definition);
     }
 
+    public List<String> getSchemes() {
+        return schemes;
+    }
+
+    public void setSchemes(List<String> schemes) {
+        this.schemes = schemes;
+    }
 }

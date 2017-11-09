@@ -15,6 +15,7 @@
  */
 package swagger;
 
+import com.jfinal.kit.Ret;
 import io.jboot.component.swagger.annotation.SwaggerAPI;
 import io.jboot.component.swagger.annotation.SwaggerAPIs;
 import io.jboot.component.swagger.annotation.SwaggerParam;
@@ -35,7 +36,7 @@ public class MySwaggerTestController extends JbootController {
             params = {@SwaggerParam(name = "账号", in = "name", description = "请输入账号名称")}
     )
     public void index() {
-        renderText("index");
+        renderJson(Ret.ok("k1", "v1"));
     }
 
 
@@ -46,6 +47,6 @@ public class MySwaggerTestController extends JbootController {
             }
     )
     public void login() {
-        renderText("index");
+        renderJson(Ret.ok("k2", "vv"));
     }
 }

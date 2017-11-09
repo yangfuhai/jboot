@@ -120,6 +120,13 @@ public class SwaggerPath {
         this.produces = produces;
     }
 
+    public void addResponse(String key, Map value) {
+        if (responses == null) {
+            responses = Maps.newHashMap();
+        }
+        responses.put(key, value);
+    }
+
     public Map toMap() {
 
         Map rootMap = Maps.newHashMap();
