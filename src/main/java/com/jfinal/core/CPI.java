@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CPI {
 	
-	public static void init(Controller controller, HttpServletRequest request, HttpServletResponse response, String urlPara) {
-		controller.init(request, response, urlPara);
+	public static void init(Controller controller, Action action, HttpServletRequest request, HttpServletResponse response, String urlPara) {
+		controller.init(action, request, response, urlPara);
 	}
 	
 	public static void clear(Controller controller) {

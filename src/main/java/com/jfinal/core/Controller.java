@@ -49,6 +49,8 @@ import java.util.Map.Entry;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class Controller {
 	
+	private Action action;
+	
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 	
@@ -62,7 +64,8 @@ public abstract class Controller {
 	private static final String[] NULL_URL_PARA_ARRAY = new String[0];
 	private static final String URL_PARA_SEPARATOR = Config.getConstants().getUrlParaSeparator();
 	
-	void init(HttpServletRequest request, HttpServletResponse response, String urlPara) {
+	void init(Action action, HttpServletRequest request, HttpServletResponse response, String urlPara) {
+		this.action = action;
 		this.request = request;
 		this.response = response;
 		this.urlPara = urlPara;
@@ -71,11 +74,20 @@ public abstract class Controller {
 	}
 	
 	void clear() {
+		action = null;
 		request = null;
 		response = null;
 		urlPara = null;
 		urlParaArray = null;
 		render = null;
+	}
+	
+	public String getControllerKey() {
+		return action.getControllerKey();
+	}
+	
+	public String getViewPath() {
+		return action.getViewPath();
 	}
 	
 	public void setHttpServletRequest(HttpServletRequest request) {
@@ -989,6 +1001,9 @@ public abstract class Controller {
 	 * 2: Generate email, short message and so on
 	 */
 	public String renderToString(String template, Map data) {
+		if (template.charAt(0) != '/') {
+			template = action.getViewPath() + template;
+		}
 		return renderManager.getEngine().getTemplate(template).renderToString(data);
 	}
 	

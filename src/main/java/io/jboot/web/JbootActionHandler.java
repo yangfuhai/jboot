@@ -17,6 +17,7 @@ package io.jboot.web;
 
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.*;
+import com.jfinal.log.Log;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.web.handler.HandlerInvocation;
@@ -30,6 +31,9 @@ import javax.servlet.http.HttpServletResponse;
  * @Package io.jboot.web
  */
 public class JbootActionHandler extends ActionHandler {
+
+
+    private static final Log log = Log.getLog(JbootActionHandler.class);
 
     /**
      * handle
@@ -61,7 +65,7 @@ public class JbootActionHandler extends ActionHandler {
             controller = controllerFactory.getController(action.getControllerClass());
             ControllerManager.me().hold(controller);
 //            controller.init(request, response, urlPara[0]);
-            CPI.init(controller, request, response, urlPara[0]);
+            CPI.init(controller, action, request, response, urlPara[0]);
 
             Invocation invocation = new Invocation(action, controller);
             if (devMode) {

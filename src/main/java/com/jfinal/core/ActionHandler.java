@@ -36,16 +36,16 @@ public class ActionHandler extends Handler {
 	protected ActionMapping actionMapping;
 	protected ControllerFactory controllerFactory;
 	protected static final RenderManager renderManager = RenderManager.me();
-	protected static final Log log = Log.getLog(ActionHandler.class);
+	private static final Log log = Log.getLog(ActionHandler.class);
 	
-	public void init(ActionMapping actionMapping, Constants constants) {
+	protected void init(ActionMapping actionMapping, Constants constants) {
 		this.actionMapping = actionMapping;
 		this.devMode = constants.getDevMode();
 		
 		if (constants.getControllerFactory() != null) {
 			controllerFactory = constants.getControllerFactory();
 		} else {
-			controllerFactory = new FastControllerFactory();
+			controllerFactory = new ControllerFactory();
 		}
 	}
 	
@@ -77,7 +77,7 @@ public class ActionHandler extends Handler {
 		try {
 			// Controller controller = action.getControllerClass().newInstance();
 			controller = controllerFactory.getController(action.getControllerClass());
-			controller.init(request, response, urlPara[0]);
+			controller.init(action, request, response, urlPara[0]);
 			
 			if (devMode) {
 				if (ActionReporter.isReportAfterInvocation(request)) {
