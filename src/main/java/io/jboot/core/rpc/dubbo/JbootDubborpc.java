@@ -129,6 +129,10 @@ public class JbootDubborpc extends JbootrpcBase {
             protocolConfig.setTransporter(dubboConfig.getProtocolTransporter());
         }
 
+        if (StringUtils.isNotBlank(jbootrpcConfig.getHost())) {
+            protocolConfig.setHost(jbootrpcConfig.getHost());
+        }
+
         //此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏
         ServiceConfig<T> service = new ServiceConfig<T>();
         service.setApplication(applicationConfig);
