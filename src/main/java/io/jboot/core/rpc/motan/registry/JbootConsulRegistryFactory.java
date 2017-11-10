@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
  * 具体的get或put请求请参考：https://github.com/hashicorp/consul/issues/3659
  * @Package io.jboot.core.rpc.motan.registry
  */
-@SpiMeta(name = "consul")
+@SpiMeta(name = "jbootconsul")
 public class JbootConsulRegistryFactory extends AbstractRegistryFactory {
     @Override
     protected Registry createRegistry(URL url) {

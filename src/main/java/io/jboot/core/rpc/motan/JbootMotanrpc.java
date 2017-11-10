@@ -51,7 +51,12 @@ public class JbootMotanrpc extends JbootrpcBase {
          */
         if (jbootrpcConfig.isRegistryCallMode()) {
 
-            registryConfig.setRegProtocol(jbootrpcConfig.getRegistryType());
+            // 如果配置为consul，那么使用jboot自己实现的 JbootConsulRegistryFactory ，原生的无法注册在 consul 1.0 版本。
+            if (JbootrpcConfig.REGISTRY_TYPE_CONSUL.equals(jbootrpcConfig.getRegistryType())) {
+                registryConfig.setRegProtocol("jbootconsul");
+            }
+
+
             registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
             registryConfig.setName(jbootrpcConfig.getRegistryName());
         }
