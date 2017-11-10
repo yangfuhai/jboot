@@ -116,6 +116,8 @@ public class JbootRedisImpl extends JbootRedisBase {
         }
     }
 
+
+
     @Override
     public Long setnx(Object key, Object value) {
         Jedis jedis = getJedis();

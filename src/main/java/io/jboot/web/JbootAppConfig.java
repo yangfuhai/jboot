@@ -22,7 +22,6 @@ import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
 import com.jfinal.weixin.sdk.api.ApiConfig;
@@ -35,7 +34,6 @@ import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.component.swagger.JbootSwaggerConfig;
 import io.jboot.component.swagger.JbootSwaggerController;
 import io.jboot.config.JbootConfigManager;
-import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootTaskManager;
@@ -179,13 +177,6 @@ public class JbootAppConfig extends JFinalConfig {
 
         if (JbootTaskManager.me().isCron4jEnable()) {
             plugins.add(JbootTaskManager.me().getCron4jPlugin());
-        }
-
-        JbootCacheConfig cacheConfig = Jboot.config(JbootCacheConfig.class);
-        if (JbootCacheConfig.TYPE_EHCACHE.equals(cacheConfig.getType())
-                || JbootCacheConfig.TYPE_EHREDIS.equals(cacheConfig.getType())) {
-
-            plugins.add(new EhCachePlugin());
         }
 
         JbootAppListenerManager.me().onJfinalPluginConfig(new JfinalPlugins(plugins));

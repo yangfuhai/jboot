@@ -60,6 +60,17 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
     }
 
     @Override
+    public void put(String cacheName, Object key, Object value, int liveSeconds) {
+        if (value == null) {
+            // if value is null : java.lang.NullPointerException: null at redis.clients.jedis.Protocol.sendCommand(Protocol.java:99)
+            return;
+        }
+
+        String setkey = buildKey(cacheName, key);
+        redis.setex(setkey, liveSeconds, value);
+    }
+
+    @Override
     public List getKeys(String cacheName) {
         List<String> keys = new ArrayList<String>();
         keys.addAll(redis.keys(cacheName + ":*"));

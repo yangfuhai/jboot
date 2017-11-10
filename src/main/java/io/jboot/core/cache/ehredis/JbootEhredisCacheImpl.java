@@ -78,6 +78,11 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     }
 
     @Override
+    public void put(String cacheName, Object key, Object value, int liveSeconds) {
+
+    }
+
+    @Override
     public void remove(String cacheName, Object key) {
         try {
             ehcache.remove(cacheName, key);

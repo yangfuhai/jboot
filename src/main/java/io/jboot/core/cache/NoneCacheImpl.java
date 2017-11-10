@@ -37,6 +37,11 @@ public class NoneCacheImpl extends JbootCacheBase {
     }
 
     @Override
+    public void put(String cacheName, Object key, Object value, int liveSeconds) {
+        
+    }
+
+    @Override
     public void remove(String cacheName, Object key) {
 
     }
