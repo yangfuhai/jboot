@@ -15,72 +15,68 @@
  */
 package io.jboot.codegen.service;
 
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.PathKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.generator.BaseModelGenerator;
-import com.jfinal.plugin.activerecord.generator.ColumnMeta;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
+import com.jfinal.template.Engine;
+import com.jfinal.template.source.ClassPathSourceFactory;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 public class JbootServiceImplGenerator extends BaseModelGenerator {
 
-    String modelPacket;
+    String basePackage;
+    String modelPackage;
 
-    public JbootServiceImplGenerator(String basePackage, String modelPacket) {
-        super(basePackage, PathKit.getWebRootPath() + "/src/main/java/" + basePackage.replace(".", "/"));
+    public JbootServiceImplGenerator(String basePackage, String modelPackage) {
+        super(basePackage + ".impl", PathKit.getWebRootPath() + "/src/main/java/" + (basePackage + ".impl").replace(".", "/"));
 
-        this.modelPacket = modelPacket;
-
-        this.packageTemplate = "%n"
-                + "package %s;%n%n";
-
-        this.classDefineTemplate = "@Bean\npublic class %s extends JbootServiceBase<%s> implements %s {%n%n";
+        this.basePackage = basePackage;
+        this.modelPackage = modelPackage;
+        this.template = "io/jboot/codegen/service/service_impl_template.jf";
 
 
-        this.importTemplate = "import io.jboot.service.JbootServiceBase;%n%n";
     }
 
-    protected void genBaseModelContent(TableMeta tableMeta) {
-        StringBuilder ret = new StringBuilder();
-        genPackage(ret);
-        genImport(ret, tableMeta);
-        genClassDefine(tableMeta, ret);
-        for (ColumnMeta columnMeta : tableMeta.columnMetas) {
-            genSetMethodName(columnMeta, ret);
-            genGetMethodName(columnMeta, ret);
+    @Override
+    public void generate(List<TableMeta> tableMetas) {
+        System.out.println("Generate base model ...");
+        System.out.println("Base Model Output Dir: " + baseModelOutputDir);
+
+        Engine engine = Engine.create("forServiceImpl");
+        engine.setSourceFactory(new ClassPathSourceFactory());
+        engine.addSharedMethod(new StrKit());
+        engine.addSharedObject("getterTypeMap", getterTypeMap);
+        engine.addSharedObject("javaKeyword", javaKeyword);
+
+        for (TableMeta tableMeta : tableMetas) {
+            genBaseModelContent(tableMeta);
         }
-        ret.append(String.format("}%n"));
-        tableMeta.baseModelContent = ret.toString();
+        writeToFile(tableMetas);
     }
 
-    protected void genImport(StringBuilder ret, TableMeta tableMeta) {
-        ret.append("import io.jboot.aop.annotation.Bean;\n");
-        ret.append(String.format("import %s.%sService;%n", baseModelPackageName.substring(0, baseModelPackageName.lastIndexOf(".")), tableMeta.modelName));
-        ret.append(String.format("import %s.%s;%n", modelPacket, tableMeta.modelName));
-        ret.append("import io.jboot.service.JbootServiceBase;\n\n");
-    }
 
     @Override
-    protected void genClassDefine(TableMeta tableMeta, StringBuilder ret) {
-        ret.append(String.format(classDefineTemplate,
-                tableMeta.modelName + "ServiceImpl", tableMeta.modelName, tableMeta.modelName + "Service"));
-    }
+    protected void genBaseModelContent(TableMeta tableMeta) {
+        Kv data = Kv.by("serviceImplPackageName", baseModelPackageName);
+        data.set("generateChainSetter", generateChainSetter);
+        data.set("tableMeta", tableMeta);
+        data.set("basePackage", basePackage);
+        data.set("modelPackage", modelPackage);
 
-    @Override
-    protected void genGetMethodName(ColumnMeta columnMeta, StringBuilder ret) {
-//        super.genGetMethodName(columnMeta, ret);
-    }
-
-    @Override
-    protected void genSetMethodName(ColumnMeta columnMeta, StringBuilder ret) {
-//        super.genSetMethodName(columnMeta, ret);
+        Engine engine = Engine.use("forServiceImpl");
+        tableMeta.baseModelContent = engine.getTemplate(template).renderToString(data);
     }
 
     /**
      * base model 覆盖写入
      */
+    @Override
     protected void writeToFile(TableMeta tableMeta) throws IOException {
         File dir = new File(baseModelOutputDir);
         if (!dir.exists()) {

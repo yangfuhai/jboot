@@ -16,32 +16,16 @@
 package io.jboot.codegen.model;
 
 import com.jfinal.plugin.activerecord.generator.ModelGenerator;
-import com.jfinal.plugin.activerecord.generator.TableMeta;
 
 public class JbootModelnfoGenerator extends ModelGenerator {
 
-	public JbootModelnfoGenerator(String modelPackageName,
+    public JbootModelnfoGenerator(String modelPackageName,
                                   String baseModelPackageName, String modelOutputDir) {
-		super(modelPackageName, baseModelPackageName, modelOutputDir);
+        super(modelPackageName, baseModelPackageName, modelOutputDir);
 
-		this.importTemplate = "import io.jboot.db.annotation.Table;%n"
-				+ "import %s.%s;%n%n";
+        this.template = "/io/jboot/codegen/model/model_template.jf";
 
-		this.classDefineTemplate =
-				"@Table(tableName = \"%s\", primaryKey = \"%s\")%n" +
-				"public class %s extends %s<%s> {%n";
-
-
-		this.daoTemplate = "\tprivate static final long serialVersionUID = 1L;%n%n";
-
-	}
-
-	@Override
-	protected void genClassDefine(TableMeta tableMeta, StringBuilder ret) {
-		ret.append(String.format(classDefineTemplate, tableMeta.name,tableMeta.primaryKey,tableMeta.modelName, tableMeta.baseModelName, tableMeta.modelName));
-	}
-
-
+    }
 
 
 }

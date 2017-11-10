@@ -45,11 +45,11 @@ public class JbootServiceGenerator {
 
 
     private String basePackage;
-    private String modelPacket;
+    private String modelPackage;
 
-    public JbootServiceGenerator(String basePackage, String modelPacket) {
+    public JbootServiceGenerator(String basePackage, String modelPackage) {
         this.basePackage = basePackage;
-        this.modelPacket = modelPacket;
+        this.modelPackage = modelPackage;
 
     }
 
@@ -60,8 +60,8 @@ public class JbootServiceGenerator {
         List<TableMeta> tableMetaList = CodeGenHelpler.createMetaBuilder().build();
         CodeGenHelpler.excludeTables(tableMetaList, excludeTables);
 
-        new JbootServiceInterfaceGenerator(basePackage, modelPacket).generate(tableMetaList);
-        new JbootServiceImplGenerator(basePackage + ".impl", modelPacket).generate(tableMetaList);
+        new JbootServiceInterfaceGenerator(basePackage, modelPackage).generate(tableMetaList);
+        new JbootServiceImplGenerator(basePackage , modelPackage).generate(tableMetaList);
 
 
         System.out.println("service generate finished !!!");

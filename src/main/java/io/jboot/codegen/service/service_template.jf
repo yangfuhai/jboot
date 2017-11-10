@@ -1,0 +1,58 @@
+package #(basePackage);
+
+import #(modelPacket).#(tableMeta.modelName);
+
+public interface #(tableMeta.modelName)Service  {
+
+
+
+    /**
+     * 根据ID查找model
+     *
+     * @param id
+     * @return
+     */
+    public #(tableMeta.modelName) findById(Object id);
+
+
+    /**
+     * 根据ID删除model
+     *
+     * @param id
+     * @return
+     */
+    public boolean deleteById(Object id);
+
+    /**
+     * 删除
+     *
+     * @param model
+     * @return
+     */
+    public boolean delete(#(tableMeta.modelName) model);
+
+
+    /**
+     * 保存到数据库
+     *
+     * @param model
+     * @return
+     */
+    public boolean save(#(tableMeta.modelName) model);
+
+    /**
+     * 保存或更新
+     *
+     * @param model
+     * @return
+     */
+    public boolean saveOrUpdate(#(tableMeta.modelName) model);
+
+    /**
+     * 更新 model
+     *
+     * @param model
+     * @return
+     */
+    public boolean update(#(tableMeta.modelName) model);
+}

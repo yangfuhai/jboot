@@ -52,20 +52,8 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
         super(basePackage, PathKit.getWebRootPath() + "/src/main/java/" + basePackage.replace(".", "/"));
 
 
-        this.packageTemplate = "%n"
-                + "package %s;%n%n";
+        this.template = "io/jboot/codegen/vomodel/vomodel_template.jf";
 
-        this.classDefineTemplate = "/**%n"
-                + " * Auto generated, do not modify this file.%n"
-                + " */%n"
-                + "@SuppressWarnings(\"serial\")%n"
-                + "public class %s extends JbootVoModel {%n%n"
-
-
-        ;
-
-
-        this.importTemplate = "import io.jboot.db.model.JbootVoModel;%n%n";
     }
 
 
@@ -82,16 +70,10 @@ public class JbootVoModeGenerator extends BaseModelGenerator {
     }
 
 
-    @Override
-    protected void genClassDefine(TableMeta tableMeta, StringBuilder ret) {
-        ret.append(String.format(classDefineTemplate,
-                tableMeta.modelName + "Vo"));
-    }
-
-
     /**
      * base model 覆盖写入
      */
+    @Override
     protected void writeToFile(TableMeta tableMeta) throws IOException {
         File dir = new File(baseModelOutputDir);
         if (!dir.exists()) {

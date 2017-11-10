@@ -15,133 +15,68 @@
  */
 package io.jboot.codegen.service;
 
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.PathKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.generator.BaseModelGenerator;
-import com.jfinal.plugin.activerecord.generator.ColumnMeta;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
+import com.jfinal.template.Engine;
+import com.jfinal.template.source.ClassPathSourceFactory;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
 
-
-    String modelPacket;
+    private String modelPacket;
+    private String basePackage;
 
     public JbootServiceInterfaceGenerator(String basePackage, String modelPacket) {
         super(basePackage, PathKit.getWebRootPath() + "/src/main/java/" + basePackage.replace(".", "/"));
 
+
         this.modelPacket = modelPacket;
-
-        this.packageTemplate = "%n"
-                + "package %s;%n%n";
-
-        this.classDefineTemplate = "public interface %s  {%n%n" + "\n" +
-                "\n" +
-                "    /**\n" +
-                "     * 根据ID查找model\n" +
-                "     *\n" +
-                "     * @param id\n" +
-                "     * @return\n" +
-                "     */\n" +
-                "    public %s findById(Object id);\n" +
-                "\n" +
-                "\n" +
-                "    /**\n" +
-                "     * 查找全部数据\n" +
-                "     *\n" +
-                "     * @return\n" +
-                "     */\n" +
-                "    public List<%s> findAll();\n" +
-                "\n" +
-                "\n" +
-                "    /**\n" +
-                "     * 根据ID删除model\n" +
-                "     *\n" +
-                "     * @param id\n" +
-                "     * @return\n" +
-                "     */\n" +
-                "    public boolean deleteById(Object id);\n" +
-                "\n" +
-                "    /**\n" +
-                "     * 删除\n" +
-                "     *\n" +
-                "     * @param model\n" +
-                "     * @return\n" +
-                "     */\n" +
-                "    public boolean delete(%s model);\n" +
-                "\n" +
-                "\n" +
-                "    /**\n" +
-                "     * 保存到数据库\n" +
-                "     *\n" +
-                "     * @param model\n" +
-                "     * @return\n" +
-                "     */\n" +
-                "    public boolean save(%s model);\n" +
-                "\n" +
-                "    /**\n" +
-                "     * 保存或更新\n" +
-                "     *\n" +
-                "     * @param model\n" +
-                "     * @return\n" +
-                "     */\n" +
-                "    public boolean saveOrUpdate(%s model);\n" +
-                "\n" +
-                "    /**\n" +
-                "     * 更新 model\n" +
-                "     *\n" +
-                "     * @param model\n" +
-                "     * @return\n" +
-                "     */\n" +
-                "    public boolean update(%s model);\n";
-
-
-        this.importTemplate = "";
+        this.basePackage = basePackage;
+        this.template = "io/jboot/codegen/service/service_template.jf";
 
     }
 
+    @Override
+    public void generate(List<TableMeta> tableMetas) {
+        System.out.println("Generate base model ...");
+        System.out.println("Base Model Output Dir: " + baseModelOutputDir);
 
-    protected void genBaseModelContent(TableMeta tableMeta) {
-        StringBuilder ret = new StringBuilder();
-        genPackage(ret);
-        genImport(ret, tableMeta);
-        genClassDefine(tableMeta, ret);
-        for (ColumnMeta columnMeta : tableMeta.columnMetas) {
-            genSetMethodName(columnMeta, ret);
-            genGetMethodName(columnMeta, ret);
+        Engine engine = Engine.create("forService");
+        engine.setSourceFactory(new ClassPathSourceFactory());
+        engine.addSharedMethod(new StrKit());
+        engine.addSharedObject("getterTypeMap", getterTypeMap);
+        engine.addSharedObject("javaKeyword", javaKeyword);
+
+        for (TableMeta tableMeta : tableMetas) {
+            genBaseModelContent(tableMeta);
         }
-        ret.append(String.format("}%n"));
-        tableMeta.baseModelContent = ret.toString();
-    }
-
-
-    @Override
-    protected void genClassDefine(TableMeta tableMeta, StringBuilder ret) {
-        ret.append(String.format(classDefineTemplate,
-                tableMeta.modelName + "Service", tableMeta.modelName, tableMeta.modelName, tableMeta.modelName, tableMeta.modelName, tableMeta.modelName, tableMeta.modelName));
-    }
-
-
-    protected void genImport(StringBuilder ret, TableMeta tableMeta) {
-        ret.append(String.format("import %s.%s;%n%n", modelPacket, tableMeta.modelName));
-        ret.append("\nimport java.util.List;\n\n");
+        writeToFile(tableMetas);
     }
 
     @Override
-    protected void genGetMethodName(ColumnMeta columnMeta, StringBuilder ret) {
-//        super.genGetMethodName(columnMeta, ret);
+    protected void genBaseModelContent(TableMeta tableMeta) {
+        Kv data = Kv.by("baseModelPackageName", baseModelPackageName);
+        data.set("generateChainSetter", generateChainSetter);
+        data.set("tableMeta", tableMeta);
+        data.set("modelPacket", modelPacket);
+        data.set("basePackage", basePackage);
+
+        Engine engine = Engine.use("forService");
+        tableMeta.baseModelContent = engine.getTemplate(template).renderToString(data);
     }
 
-    @Override
-    protected void genSetMethodName(ColumnMeta columnMeta, StringBuilder ret) {
-//        super.genSetMethodName(columnMeta, ret);
-    }
 
     /**
      * base model 覆盖写入
      */
+    @Override
     protected void writeToFile(TableMeta tableMeta) throws IOException {
         File dir = new File(baseModelOutputDir);
         if (!dir.exists()) {
@@ -162,4 +97,6 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
             fw.close();
         }
     }
+
+
 }
