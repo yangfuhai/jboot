@@ -18,7 +18,6 @@ package io.jboot.config;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.jfinal.kit.*;
-import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.exception.JbootException;
@@ -27,7 +26,9 @@ import io.jboot.utils.StringUtils;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -44,7 +45,7 @@ public class JbootConfigManager {
     }
 
 
-    private Prop jbootProp;
+    private Properties mainProperties;
     private JbootConfigConfig config;
 
     private PropInfoMap propInfoMap = new PropInfoMap();
@@ -54,7 +55,6 @@ public class JbootConfigManager {
 
 
     private ConcurrentHashMap<String, Object> configs = new ConcurrentHashMap<>();
-    private static final Log log = Log.getLog(JbootConfigManager.class);
 
 
     /**
@@ -76,8 +76,15 @@ public class JbootConfigManager {
 
 
     public JbootConfigManager() {
-        jbootProp = PropKit.use("jboot.properties");
-        initModeProp(jbootProp);
+        try {
+            Prop prop = PropKit.use("jboot.properties");
+            mainProperties = prop.getProperties();
+        } catch (Throwable ex) {
+            LogKit.warn(ex.toString(), ex);
+            mainProperties = new Properties();
+        }
+
+        initModeProp();
 
         config = get(JbootConfigConfig.class);
 
@@ -146,7 +153,7 @@ public class JbootConfigManager {
                     method.invoke(obj, val);
                 }
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LogKit.error(ex.toString(), ex);
             }
         }
 
@@ -185,7 +192,7 @@ public class JbootConfigManager {
         }
 
         if (StringUtils.isBlank(value)) {
-            value = jbootProp.get(key);
+            value = (String) mainProperties.get(key);
         }
         return value;
     }
@@ -212,7 +219,7 @@ public class JbootConfigManager {
     public Properties getProperties() {
         Properties properties = new Properties();
 
-        properties.putAll(jbootProp.getProperties());
+        properties.putAll(mainProperties);
 
         if (configRemoteReader != null) {
             properties.putAll(configRemoteReader.getRemoteProperties());
@@ -230,11 +237,9 @@ public class JbootConfigManager {
 
     /**
      * 初始化不同model下的properties文件
-     *
-     * @param prop
      */
-    private void initModeProp(Prop prop) {
-        String mode = PropKit.use("jboot.properties").get("jboot.mode");
+    private void initModeProp() {
+        String mode = (String) mainProperties.get("jboot.mode");
         if (StringUtils.isBlank(mode)) {
             return;
         }
@@ -250,7 +255,7 @@ public class JbootConfigManager {
             return;
         }
 
-        prop.getProperties().putAll(modeProp.getProperties());
+        mainProperties.putAll(modeProp.getProperties());
     }
 
 
@@ -324,10 +329,6 @@ public class JbootConfigManager {
         configRemoteReader = new ConfigRemoteReader(config.getRemoteUrl(), 5) {
             @Override
             public void onChange(String key, String oldValue, String value) {
-                if (Jboot.me().isDevMode()) {
-                    System.out.println("remote change ---key:" + key + " ---oldValue:" + oldValue + " ---newValue:" + value);
-                }
-
                 /**
                  * 过滤掉系统启动参数设置
                  */
@@ -337,7 +338,7 @@ public class JbootConfigManager {
 
                 Method method = keyMethodMapping.get(key);
                 if (method == null) {
-                    log.warn("can not set value to config object when get value from remote， key:" + key + "---value:" + value);
+                    LogKit.warn("can not set value to config object when get value from remote， key:" + key + "---value:" + value);
                     return;
                 }
 
@@ -352,7 +353,7 @@ public class JbootConfigManager {
                         }
                     }
                 } catch (Throwable ex) {
-                    log.error(ex.toString(), ex);
+                    LogKit.error(ex.toString(), ex);
                 }
             }
         };

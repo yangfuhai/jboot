@@ -16,7 +16,7 @@
 package io.jboot.web.directive;
 
 import io.jboot.utils.StringUtils;
-import io.jboot.web.RequestManager;
+import io.jboot.web.JbootRequestContext;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.base.PaginateDirectiveBase;
 
@@ -27,7 +27,7 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
     protected String getUrl(int pageNumber) {
-        HttpServletRequest request = RequestManager.me().getRequest();
+        HttpServletRequest request = JbootRequestContext.getRequest();
         String queryString = request.getQueryString();
         String url = request.getRequestURI();
         if (StringUtils.isNotBlank(queryString)) {

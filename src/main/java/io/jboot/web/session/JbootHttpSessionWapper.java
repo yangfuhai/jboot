@@ -17,7 +17,7 @@ package io.jboot.web.session;
 
 import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.RequestManager;
+import io.jboot.web.JbootRequestContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -130,13 +130,13 @@ public class JbootHttpSessionWapper implements HttpSession {
             return sessionid;
         }
 
-        sessionid = RequestManager.me().getRequestAttr("JSESSIONID");
+        sessionid = JbootRequestContext.getRequestAttr("JSESSIONID");
         if (StringUtils.isNotBlank(sessionid)) {
             return sessionid;
         }
 
         sessionid = UUID.randomUUID().toString().replace("-", "");
-        RequestManager.me().setRequestAttr("JSESSIONID", sessionid);
+        JbootRequestContext.setRequestAttr("JSESSIONID", sessionid);
         setCookie("JSESSIONID", sessionid, (int) SESSION_TIME);
         return sessionid;
     }
@@ -154,7 +154,7 @@ public class JbootHttpSessionWapper implements HttpSession {
      * Get cookie object by cookie name.
      */
     private Cookie getCookieObject(String name) {
-        Cookie[] cookies = RequestManager.me().getRequest().getCookies();
+        Cookie[] cookies = JbootRequestContext.getRequest().getCookies();
         if (cookies != null)
             for (Cookie cookie : cookies)
                 if (cookie.getName().equals(name))
@@ -172,7 +172,7 @@ public class JbootHttpSessionWapper implements HttpSession {
         cookie.setMaxAge(maxAgeInSeconds);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        RequestManager.me().getResponse().addCookie(cookie);
+        JbootRequestContext.getResponse().addCookie(cookie);
     }
 
 }

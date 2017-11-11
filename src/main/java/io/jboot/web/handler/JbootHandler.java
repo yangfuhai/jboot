@@ -16,10 +16,9 @@
 package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
-import com.jfinal.log.Log;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import io.jboot.exception.JbootExceptionHolder;
-import io.jboot.web.RequestManager;
+import io.jboot.web.JbootRequestContext;
 import io.jboot.web.session.JbootServletRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public class JbootHandler extends Handler {
-    static Log log = Log.getLog(JbootHandler.class);
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
@@ -44,10 +42,10 @@ public class JbootHandler extends Handler {
 
 
         /**
-         * 通过 RequestManager 去保存 request，然后可以在当前线程的任何地方
-         * 通过 RequestManager.me().getRequest() 去获取。
+         * 通过 JbootRequestContext 去保存 request，然后可以在当前线程的任何地方
+         * 通过 JbootRequestContext.me().getRequest() 去获取。
          */
-        RequestManager.me().handle(request, response);
+        JbootRequestContext.handle(request, response);
 
         /**
          * 初始化 异常记录器，用于记录异常信息，然后在页面输出
@@ -63,23 +61,11 @@ public class JbootHandler extends Handler {
             doHandle(target, new JbootServletRequestWrapper(request), response, isHandled);
 
         } finally {
-            try {
-                context.shutdown();
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
 
-            try {
-                RequestManager.me().release();
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
+            context.shutdown();
+            JbootRequestContext.release();
+            JbootExceptionHolder.release();
 
-            try {
-                JbootExceptionHolder.release();
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
         }
 
     }

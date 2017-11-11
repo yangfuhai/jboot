@@ -18,7 +18,7 @@ package io.jboot.web.directive.base;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.template.Env;
 import com.jfinal.template.stat.Scope;
-import io.jboot.web.RequestManager;
+import io.jboot.web.JbootRequestContext;
 
 import java.io.Writer;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         String previousText = getParam("previousText", "上一页", scope);
         String nextText = getParam("nextText", "下一页", scope);
 
-        Page<?> page = RequestManager.me().getRequestAttr("pageData");
+        Page<?> page = JbootRequestContext.getRequestAttr("pageData");
 
         int currentPage = page.getPageNumber();
         int totalPage = page.getTotalPage();

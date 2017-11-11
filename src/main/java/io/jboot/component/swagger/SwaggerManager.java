@@ -22,7 +22,7 @@ import io.jboot.Jboot;
 import io.jboot.component.swagger.annotation.*;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.ControllerManager;
+import io.jboot.web.JbootControllerManager;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -102,7 +102,7 @@ public class SwaggerManager {
                 }
 
                 String methodPath = "index".equals(method.getName()) ? "" : "/" + method.getName();
-                String pathString = ControllerManager.me().getPathByController(controllerClass) + methodPath;
+                String pathString = JbootControllerManager.me().getPathByController(controllerClass) + methodPath;
 
                 SwaggerPath path = new SwaggerPath();
 

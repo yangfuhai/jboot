@@ -63,7 +63,7 @@ public class JbootActionHandler extends ActionHandler {
         try {
             // Controller controller = action.getControllerClass().newInstance();
             controller = controllerFactory.getController(action.getControllerClass());
-            ControllerManager.me().hold(controller);
+            JbootControllerContext.hold(controller);
 //            controller.init(request, response, urlPara[0]);
             CPI.init(controller, action, request, response, urlPara[0]);
 
@@ -133,7 +133,7 @@ public class JbootActionHandler extends ActionHandler {
         } finally {
             if (controller != null) {
 //                controller.clear();
-                ControllerManager.me().release();
+                JbootControllerContext.release();
                 CPI.clear(controller);
             }
         }

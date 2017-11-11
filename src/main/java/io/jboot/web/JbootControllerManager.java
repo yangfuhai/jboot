@@ -15,6 +15,8 @@
  */
 package io.jboot.web;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.jfinal.core.Controller;
 import com.jfinal.core.ControllerFactory;
 import io.jboot.Jboot;
@@ -27,15 +29,15 @@ import java.util.Map;
  * @version V1.0
  * @Package io.jboot.web
  */
-public class ControllerManager extends ControllerFactory {
+public class JbootControllerManager extends ControllerFactory {
 
-    private static final ControllerManager me = new ControllerManager();
+    private static final JbootControllerManager ME = new JbootControllerManager();
 
-    public static ControllerManager me() {
-        return me;
+    public static JbootControllerManager me() {
+        return ME;
     }
 
-    private ControllerManager() {
+    private JbootControllerManager() {
     }
 
     private ThreadLocal<Map<Class<? extends Controller>, Controller>> buffers = new ThreadLocal<Map<Class<? extends Controller>, Controller>>() {
@@ -43,10 +45,6 @@ public class ControllerManager extends ControllerFactory {
             return new HashMap<Class<? extends Controller>, Controller>();
         }
     };
-
-    private ThreadLocal<Controller> controllers = new ThreadLocal<>();
-
-    private com.google.common.collect.BiMap<String, Class<? extends Controller>> controllerMapping = com.google.common.collect.HashBiMap.create();
 
     public Controller getController(Class<? extends Controller> controllerClass) throws InstantiationException, IllegalAccessException {
         Controller ret = buffers.get().get(controllerClass);
@@ -59,17 +57,7 @@ public class ControllerManager extends ControllerFactory {
     }
 
 
-    public void hold(Controller controller) {
-        controllers.set(controller);
-    }
-
-    public void release() {
-        controllers.remove();
-    }
-
-    public void setMapping(String path, Class<? extends Controller> controllerClass) {
-        controllerMapping.put(path, controllerClass);
-    }
+    private BiMap<String, Class<? extends Controller>> controllerMapping = HashBiMap.create();
 
     public Class<? extends Controller> getControllerByPath(String path) {
         return controllerMapping.get(path);
@@ -77,6 +65,10 @@ public class ControllerManager extends ControllerFactory {
 
     public String getPathByController(Class<? extends Controller> controllerClass) {
         return controllerMapping.inverse().get(controllerClass);
+    }
+
+    public void setMapping(String path, Class<? extends Controller> controllerClass) {
+        controllerMapping.put(path, controllerClass);
     }
 
 

@@ -19,38 +19,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-public class RequestManager {
-    private static RequestManager manager = new RequestManager();
-    private ThreadLocal<HttpServletRequest> requests = new ThreadLocal<>();
-    private ThreadLocal<HttpServletResponse> responses = new ThreadLocal<>();
+public class JbootRequestContext {
+    private static ThreadLocal<HttpServletRequest> requests = new ThreadLocal<>();
+    private static ThreadLocal<HttpServletResponse> responses = new ThreadLocal<>();
 
-    private RequestManager() {
-    }
 
-    public static RequestManager me() {
-        return manager;
-    }
-
-    public void handle(HttpServletRequest req, HttpServletResponse response) {
+    public static void handle(HttpServletRequest req, HttpServletResponse response) {
         requests.set(req);
         responses.set(response);
     }
 
-    public HttpServletRequest getRequest() {
+    public static HttpServletRequest getRequest() {
         return requests.get();
     }
 
-    public HttpServletResponse getResponse() {
+    public static HttpServletResponse getResponse() {
         return responses.get();
     }
 
-    public void release() {
+    public static void release() {
         requests.remove();
         responses.remove();
     }
 
 
-    public <T> T getRequestAttr(String key) {
+    public static <T> T getRequestAttr(String key) {
         HttpServletRequest request = requests.get();
         if (request == null) {
             return null;
@@ -59,7 +52,7 @@ public class RequestManager {
         return (T) request.getAttribute(key);
     }
 
-    public void setRequestAttr(String key, Object value) {
+    public static void setRequestAttr(String key, Object value) {
         HttpServletRequest request = requests.get();
         if (request == null) {
             return;
