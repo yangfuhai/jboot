@@ -19,7 +19,6 @@ import com.ecwid.consul.SingleUrlParameters;
 import com.ecwid.consul.UrlParameters;
 import com.ecwid.consul.json.GsonFactory;
 import com.ecwid.consul.transport.RawResponse;
-import com.ecwid.consul.transport.TLSConfig;
 import com.ecwid.consul.v1.ConsulRawClient;
 import com.ecwid.consul.v1.OperationException;
 import com.ecwid.consul.v1.Response;
@@ -43,30 +42,7 @@ public class JbootAgentConsulClient implements AgentClient {
     public JbootAgentConsulClient(ConsulRawClient rawClient) {
         this.rawClient = rawClient;
     }
-
-    public JbootAgentConsulClient() {
-        this(new ConsulRawClient());
-    }
-
-    public JbootAgentConsulClient(TLSConfig tlsConfig) {
-        this(new ConsulRawClient(tlsConfig));
-    }
-
-    public JbootAgentConsulClient(String agentHost) {
-        this(new ConsulRawClient(agentHost));
-    }
-
-    public JbootAgentConsulClient(String agentHost, TLSConfig tlsConfig) {
-        this(new ConsulRawClient(agentHost, tlsConfig));
-    }
-
-    public JbootAgentConsulClient(String agentHost, int agentPort) {
-        this(new ConsulRawClient(agentHost, agentPort));
-    }
-
-    public JbootAgentConsulClient(String agentHost, int agentPort, TLSConfig tlsConfig) {
-        this(new ConsulRawClient(agentHost, agentPort, tlsConfig));
-    }
+    
 
     @Override
     public Response<Map<String, Check>> getAgentChecks() {
