@@ -43,7 +43,7 @@ public class JbootHandler extends Handler {
 
         /**
          * 通过 JbootRequestContext 去保存 request，然后可以在当前线程的任何地方
-         * 通过 JbootRequestContext.me().getRequest() 去获取。
+         * 通过 JbootRequestContext.getRequest() 去获取。
          */
         JbootRequestContext.handle(request, response);
 
