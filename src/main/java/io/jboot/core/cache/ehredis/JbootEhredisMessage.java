@@ -72,4 +72,5 @@ public class JbootEhredisMessage implements Serializable {
     public void setKey(Object key) {
         this.key = key;
     }
+
 }

@@ -79,7 +79,12 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
-
+        try {
+            ehcache.put(cacheName, key, value, liveSeconds);
+            redisCache.put(cacheName, key, value, liveSeconds);
+        } finally {
+            Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, JbootEhredisMessage.ACTION_PUT, cacheName, key), channel);
+        }
     }
 
     @Override
