@@ -73,6 +73,11 @@
 	- [部署统一配置中心服务器](#部署统一配置中心服务器)
 	- [连接统一配置中心](#连接统一配置中心)
 
+
+- Swagger api自动生成
+	- swagger简介
+	- swagger使用
+	- 5个swagger注解
 - 其他
 	- [SPI扩展](#spi扩展)
 	- [JbootEvnet事件机制](#jbootEvnet事件机制)
@@ -1003,6 +1008,84 @@ jboot.config.remoteEnable=true
 jboot.config.remoteUrl=http://127.0.0.1:8080/jboot/config
 ```
 当启用远程配置后，服务会优先使用远程配置，在远程配置未配置 或 宕机的情况下使用本地配置。
+
+# Swagger api自动生成
+
+## swagger简介
+
+## swagger使用
+
+
+### 第一步：配置并启用swagger
+在 jboot.properties上添加如下配置：
+
+```java
+jboot.swagger.path=/swaggerui
+jboot.swagger.title=Jboot API 测试
+jboot.swagger.description=这真的真的真的只是一个测试而已，不要当真。
+jboot.swagger.version=1.0
+jboot.swagger.termsOfService=http://jboot.io
+jboot.swagger.contact=email:fuhai999@gmail.com;qq:123456
+jboot.swagger.host=127.0.0.1:8080 
+```
+
+### 第二步：下载swagger ui放到resource目录下
+注意，这里一定要放在resource的 `swaggerui` 目录，因为以上的配置中是`jboot.swagger.path=/swaggerui`,当然可以通过这个配置来修改这个存放目录。
+
+另：swagger ui 的下载地址是：https://github.com/swagger-api/swagger-ui，下载其 `dist` 目录即可，只需要这个目录里的文件。
+
+### 第三步：通过注解配置Controller的api
+
+代码如下：
+
+```java
+@SwaggerAPIs(name = "测试接口", description = "这个接口集合的描述")
+@RequestMapping("/swaggerTest")
+public class MySwaggerTestController extends JbootController {
+
+
+    @SwaggerAPI(description = "测试description描述", summary = "测试summary", operationId = "testOnly",
+            params = {@SwaggerParam(name = "name", description = "请输入账号名称")}
+    )
+    public void index() {
+        renderJson(Ret.ok("k1", "v1").set("name", getPara("name")));
+    }
+
+
+    @SwaggerAPI(description = "进行用户登录操作", summary = "用户登录API", method = "post",
+            params = {
+                    @SwaggerParam(name = "name", description = "请输入账号名称"),
+                    @SwaggerParam(name = "pwd", description = "请输入密码", definition = "MySwaggerPeople")
+            }
+    )
+    public void login() {
+        renderJson(Ret.ok("k2", "vv").set("name", getPara("name")));
+    }
+}
+```
+
+### 第四步：浏览器访问swagger生成api文档
+在第一步的配置中，因为`jboot.swagger.path=/swaggerui`，所以我们访问如下地址：`http://127.0.0.1:8080/swaggerui` 效果如下图所示。
+
+![](http://oss.yangfuhai.com/markdown/jboot/swagger/01.png)
+图片1
+
+![](http://oss.yangfuhai.com/markdown/jboot/swagger/02.png)
+图片2
+
+在图片2中，我们可以输入参数，并点击 `Execute` 按钮进行测试。
+
+## 5个swagger注解
+
+
+| 指令         |  描述  |
+| ------------- | -----|
+| SwaggerAPIs  | 在Controller上进行配置，指定Controller api的描述|
+| SwaggerAPI | 在Controller上某个action进行注解 |
+| SwaggerDefinition  |  |
+| SwaggerDefinitionEnum  |  |
+| SwaggerParam  |  |
+| SwaggerResponse  |  | 
 
 # 其他
 

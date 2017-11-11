@@ -34,7 +34,7 @@ public class SwaggerStarter {
 
 
         //jboot端口号配置
-        Jboot.setBootArg("jboot.server.port", "8088");
+        Jboot.setBootArg("jboot.server.port", "8080");
 
         Jboot.setBootArg("jboot.swagger.path", "/swaggerui");
         Jboot.setBootArg("jboot.swagger.title", "Jboot API 测试");
@@ -42,7 +42,7 @@ public class SwaggerStarter {
         Jboot.setBootArg("jboot.swagger.version", "1.0");
         Jboot.setBootArg("jboot.swagger.termsOfService", "http://jboot.io");
         Jboot.setBootArg("jboot.swagger.contact", "email:fuhai999@gmail.com;qq:123456");
-        Jboot.setBootArg("jboot.swagger.host", "127.0.0.1:8088");
+        Jboot.setBootArg("jboot.swagger.host", "127.0.0.1:8080");
 
         Jboot.run(args);
 
