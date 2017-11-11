@@ -66,8 +66,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             return;
         }
 
-        String setkey = buildKey(cacheName, key);
-        redis.setex(setkey, liveSeconds, value);
+        redis.setex(buildKey(cacheName, key), liveSeconds, value);
     }
 
     @Override
