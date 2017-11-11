@@ -21,17 +21,19 @@ QQ交流群： 601440615
 ## Jboot的核心组件
 
 * MVC （基于jfinal）
-* 安全控制 （基于shiro）
+* Shiro安全控制 
 * ORM  （基于jfinal）
 * AOP （基于guice）
 * RPC远程调用 （支持可选方案有 motan，dubbo等）
 * MQ消息队列 (支持可选方案有：redis、activemq，rabbitmq等)
 * 分布式缓存
 * 分布式session
+* 分布式锁
 * 调用监控 (基于metrics)
 * 容错隔离（基于 hystrix）
 * Opentracing数据追踪
 * 统一配置中心
+* swagger api
 * 轻量级的Http客户端（包含了get、post请求，文件上传和下载等）
 * 分布式下的微信和微信第三方
 * 自定义序列化组件
@@ -117,6 +119,12 @@ QQ交流群： 601440615
 - [统一配置中心](./DOC.md#统一配置中心)
 	- [部署统一配置中心服务器](./DOC.md#部署统一配置中心服务器)
 	- [连接统一配置中心](./DOC.md#连接统一配置中心)
+
+	
+- [Swagger api自动生成](./DOC.md#swagger-api自动生成)
+	- [swagger简介](./DOC.md#swagger简介)
+	- [swagger使用](./DOC.md#swagger使用)
+	- [5个swagger注解](./DOC.md#swagger使用)
 
 - 其他
 	- [SPI扩展](./DOC.md#spi扩展)

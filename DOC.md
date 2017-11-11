@@ -74,10 +74,12 @@
 	- [连接统一配置中心](#连接统一配置中心)
 
 
-- Swagger api自动生成
-	- swagger简介
-	- swagger使用
-	- 5个swagger注解
+- [Swagger api自动生成](#swagger-api自动生成)
+	- [swagger简介](#swagger简介)
+	- [swagger使用](#swagger使用)
+	- [5个swagger注解](#swagger使用)
+
+	
 - 其他
 	- [SPI扩展](#spi扩展)
 	- [JbootEvnet事件机制](#jbootEvnet事件机制)
