@@ -41,15 +41,8 @@ public class JbootConsulClient extends ConsulClient {
     }
 
 
-    /**
-     * Connect to consul agent on specific address and default port (8500)
-     *
-     * @param agentHost Hostname or IP address of consul agent. You can specify scheme
-     *                  (HTTP/HTTPS) in address. If there is no scheme in address -
-     *                  client will use HTTP.
-     */
-    public JbootConsulClient(String agentHost) {
-        this(new ConsulRawClient(agentHost));
+    public JbootConsulClient(String agentHost, int agentPort) {
+        this(new ConsulRawClient(agentHost, agentPort));
     }
 
 

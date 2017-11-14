@@ -15,7 +15,7 @@
  */
 package io.jboot.core.mq;
 
-import java.util.List;
+import java.util.Collection;
 
 
 public interface Jbootmq {
@@ -30,6 +30,8 @@ public interface Jbootmq {
 
     public void removeAllListeners();
 
-    public List<JbootmqMessageListener> getListeners();
+    public Collection<JbootmqMessageListener> getAllChannelListeners();
+
+    public Collection<JbootmqMessageListener> getListenersByChannel(String channel);
 
 }

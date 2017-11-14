@@ -15,12 +15,13 @@
  */
 package io.jboot.core.mq;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.jfinal.log.Log;
+import io.jboot.utils.StringUtils;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -28,52 +29,59 @@ public abstract class JbootmqBase implements Jbootmq {
 
     private static final Log log = Log.getLog(JbootmqBase.class);
 
-    private List<JbootmqMessageListener> listeners = new CopyOnWriteArrayList<>();
-    private Map<String, List<JbootmqMessageListener>> listenerMap = new ConcurrentHashMap<>();
+    private List<JbootmqMessageListener> allChannelListeners = new CopyOnWriteArrayList<>();
+    private Multimap<String, JbootmqMessageListener> listenersMap = ArrayListMultimap.create();
 
 
     @Override
     public void addMessageListener(JbootmqMessageListener listener) {
-        listeners.add(listener);
+        allChannelListeners.add(listener);
     }
 
     @Override
     public void addMessageListener(JbootmqMessageListener listener, String forChannel) {
-        synchronized (listenerMap) {
-            String[] forChannels = forChannel.split(",");
-            for (String channel : forChannels) {
-                List<JbootmqMessageListener> list = listenerMap.get(channel);
-                if (list == null) {
-                    list = new ArrayList<>();
-                }
-                list.add(listener);
-                listenerMap.put(channel, list);
+        String[] forChannels = forChannel.split(",");
+        for (String channel : forChannels) {
+            if (StringUtils.isBlank(channel)) {
+                continue;
             }
+            listenersMap.put(channel.trim(), listener);
         }
     }
 
     @Override
     public void removeListener(JbootmqMessageListener listener) {
-        listeners.remove(listener);
+        allChannelListeners.remove(listener);
+        for (String channel : listenersMap.keySet()) {
+            listenersMap.remove(channel, listener);
+        }
     }
 
     @Override
     public void removeAllListeners() {
-        listeners.clear();
+        allChannelListeners.clear();
+        listenersMap.clear();
     }
 
+
     @Override
-    public List<JbootmqMessageListener> getListeners() {
-        return listeners;
+    public Collection<JbootmqMessageListener> getAllChannelListeners() {
+        return allChannelListeners;
+    }
+
+
+    @Override
+    public Collection<JbootmqMessageListener> getListenersByChannel(String channel) {
+        return listenersMap.get(channel);
     }
 
     public void notifyListeners(String channel, Object message) {
-        notifyAll(channel, message, listeners);
-        notifyAll(channel, message, listenerMap.get(channel));
+        notifyAll(channel, message, allChannelListeners);
+        notifyAll(channel, message, listenersMap.get(channel));
     }
 
 
-    private void notifyAll(String channel, Object message, List<JbootmqMessageListener> listeners) {
+    private void notifyAll(String channel, Object message, Collection<JbootmqMessageListener> listeners) {
         if (listeners == null || listeners.size() == 0) {
             return;
         }
