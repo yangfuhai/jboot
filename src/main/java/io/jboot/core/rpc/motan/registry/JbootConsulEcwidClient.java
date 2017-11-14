@@ -43,8 +43,8 @@ public class JbootConsulEcwidClient extends MotanConsulClient {
 
     public JbootConsulEcwidClient(String host, int port) {
         super(host, port);
-        client = new JbootConsulClient(host + ":" + port);
-        LoggerUtil.info("ConsulEcwidClient init finish. client host:" + host
+        client = new JbootConsulClient(host, port);
+        LoggerUtil.info("JbootConsulEcwidClient init finish. client host:" + host
                 + ", port:" + port);
     }
 
