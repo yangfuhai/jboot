@@ -36,6 +36,7 @@ public class JbootConsulClient extends ConsulClient {
     private final AgentClient agentClient;
 
     public JbootConsulClient(ConsulRawClient rawClient) {
+        super(rawClient);
         agentClient = new JbootAgentConsulClient(rawClient);
     }
 
