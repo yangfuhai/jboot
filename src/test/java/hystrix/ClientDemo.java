@@ -27,7 +27,7 @@ public class ClientDemo extends JbootController {
 
 
     /**
-     * 请先启动 MotanServerDemo 后，再启动
+     * 请先启动 ServerDemo 后，再启动
      * 然后通过 http://127.0.0.1:8088/hystrixtest 访问生产数据
      * 然后通过 Hystrix Dashboard 来查看数据，
      * 具体文档请看 ：https://gitee.com/fuhai/jboot/blob/master/DOC.md#%E5%AE%B9%E9%94%99%E4%B8%8E%E9%9A%94%E7%A6%BB

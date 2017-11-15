@@ -32,11 +32,7 @@ public class HandlerInvocation {
         if (index < inters.length) {
             inters[index++].intercept(this);
         } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
-            try {
-                invocation.invoke();
-            } catch (Throwable t) {
-                throw new RuntimeException(t);
-            }
+            invocation.invoke();
         }
     }
 

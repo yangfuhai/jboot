@@ -53,6 +53,7 @@ public class JbootDubborpc extends JbootrpcBase {
          */
         if (jbootrpcConfig.isRegistryCallMode()) {
 
+            registryConfig.setProtocol(jbootrpcConfig.getRegistryType());
             registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
             registryConfig.setUsername(jbootrpcConfig.getRegistryUserName());
             registryConfig.setPassword(jbootrpcConfig.getRegistryPassword());

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hystrix;
+package rpczookeeper;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
@@ -23,15 +23,16 @@ import service.UserService;
 import service.UserServiceImpl;
 
 
-public class ServerDemo {
+public class MotanServerZookeeperDemo {
 
 
     public static void main(String[] args) throws InterruptedException {
 
 
         Jboot.setBootArg("jboot.rpc.type", "motan");
-        Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
+        Jboot.setBootArg("jboot.rpc.callMode", "registry");//注册中心模式
+        Jboot.setBootArg("jboot.rpc.registryType", "zookeeper");//注册中心的类型：zookeeper
+        Jboot.setBootArg("jboot.rpc.registryAddress", "127.0.0.1:2181");//注册中心，即zookeeper的地址
 
 
         Jboot.run(args);
@@ -41,7 +42,8 @@ public class ServerDemo {
         factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
         factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot", "1.0", 8002);
 
-        System.out.println("ServerDemo started...");
+
+        System.out.println("MotanServerZookeeperDemo started...");
 
 
     }
