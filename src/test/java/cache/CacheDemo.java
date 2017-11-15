@@ -54,19 +54,32 @@ public class CacheDemo extends JbootController {
         Jboot.run(args);
     }
 
-    public void index() {
+    public void enable() {
         Map<String, String> map = new HashMap<String, String>();
-        map.put("abc", "cba");
-        String result = service.cacheKeyTest("tttttt", map);
+        map.put("abc", "enable");
+        String result = service.cacheAble("key", map);
         renderText(result);
     }
 
-    public void index2() {
+    public void enableLive() {
         Map<String, String> map = new HashMap<String, String>();
-        map.put("abc", "cbaaa");
-        String result = service.cacheKeyTest("tttttt", map);
+        map.put("abc", "live");
+        String result = service.cacheAble("key", map);
         renderText(result);
     }
 
+    public void putLive() {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("abc", "put");
+        String result = service.putCache("key", map);
+        renderText(result);
+    }
+
+    public void evict() {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("abc", "enable");
+        service.cacheEvict("key", map);
+        renderText("ok");
+    }
 
 }

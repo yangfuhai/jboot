@@ -58,7 +58,12 @@ public class JbootCachePutInterceptor implements MethodInterceptor {
                 String.format("CachePut.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
 
         String cacheKey = Kits.buildCacheKey(cachePut.key(), targetClass, method, methodInvocation.getArguments());
-        Jboot.me().getCache().put(cacheName, cacheKey, result);
+
+        if (cachePut.liveSeconds() > 0) {
+            Jboot.me().getCache().put(cacheName, cacheKey, result, cachePut.liveSeconds());
+        } else {
+            Jboot.me().getCache().put(cacheName, cacheKey, result);
+        }
         return result;
     }
 

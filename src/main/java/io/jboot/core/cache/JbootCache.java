@@ -36,5 +36,7 @@ public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache 
 
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader);
 
+    public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds);
+
     public boolean isNoneCache();
 }
