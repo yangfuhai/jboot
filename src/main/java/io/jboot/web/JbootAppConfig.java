@@ -18,7 +18,6 @@ package io.jboot.web;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
-import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -71,7 +70,7 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configConstant(Constants constants) {
 
-        PropKit.use("jboot.properties");
+//        PropKit.use("jboot.properties");
         constants.setRenderFactory(new JbootRenderFactory());
         constants.setDevMode(Jboot.me().isDevMode());
         ApiConfigKit.setDevMode(Jboot.me().isDevMode());
