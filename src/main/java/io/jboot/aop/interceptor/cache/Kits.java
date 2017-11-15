@@ -86,7 +86,13 @@ public class Kits {
         clazz = getUsefulClass(clazz);
 
         if (StringUtils.isBlank(key)) {
-            return String.format("%s#%s", clazz.getName(), method.getName());
+            StringBuilder argumentTag = new StringBuilder("-");
+            for (Object argument : arguments) {
+                if (argument instanceof String && StringUtils.isNotBlank(argument)) {
+                    argumentTag.append(argument);
+                }
+            }
+            return String.format("%s#%s#%s", clazz.getName(), method.getName(), argumentTag);
         }
 
         if (!key.contains("#(") || !key.contains(")")) {
