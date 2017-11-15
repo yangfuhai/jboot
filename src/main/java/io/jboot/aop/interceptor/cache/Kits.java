@@ -15,12 +15,15 @@
  */
 package io.jboot.aop.interceptor.cache;
 
+import com.jfinal.kit.HashKit;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.template.Engine;
+import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 
 import javax.inject.Named;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -88,8 +91,13 @@ public class Kits {
         if (StringUtils.isBlank(key)) {
             StringBuilder argumentTag = new StringBuilder("-");
             for (Object argument : arguments) {
-                if (argument instanceof String && StringUtils.isNotBlank(argument)) {
-                    argumentTag.append(argument);
+                if (StringUtils.isNotBlank(argument)) {
+                    if (argument instanceof String) {
+                        argumentTag.append(argument).append("-");
+                    } else if (argument instanceof Serializable) {
+                        String hash = HashKit.md5(HashKit.toHex(Jboot.me().getSerializer().serialize(argument)));
+                        argumentTag.append(hash).append("-");
+                    }
                 }
             }
             return String.format("%s#%s#%s", clazz.getName(), method.getName(), argumentTag);
