@@ -17,12 +17,14 @@ package io.jboot.component.opentracing;
 
 import io.opentracing.Span;
 
-
+/**
+ * openTracing span 的上下文
+ */
 public class JbootSpanContext {
     private static ThreadLocal<Span> spans = new ThreadLocal<>();
 
 
-    public static void init(Span span) {
+    public static void add(Span span) {
         spans.set(span);
     }
 
@@ -30,7 +32,7 @@ public class JbootSpanContext {
         return spans.get();
     }
 
-    public static void destroy() {
+    public static void release() {
         spans.remove();
     }
 }

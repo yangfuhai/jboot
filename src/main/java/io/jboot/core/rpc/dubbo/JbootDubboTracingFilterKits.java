@@ -99,7 +99,7 @@ public class JbootDubboTracingFilterKits {
          * 当通过 RpcContext 去获取不到的时候，有可能此线程 由于 hystrix 的原因，或其他原因，已经处于和RpcContext不同的线程
          * 所以通过 RpcContext 去获取不到当前的Span信息
          *
-         * 在程序中，当启动新的线程进行操作的时候，会通过 JbootOpentracingManager.me().initSpan(span) 来设置新线程的span内容
+         * 在程序中，当启动新的线程进行操作的时候，会通过 JbootSpanContext.add(span) 来设置新线程的span内容
          */
         return JbootSpanContext.get();
     }
