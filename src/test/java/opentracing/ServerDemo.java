@@ -44,7 +44,7 @@ public class ServerDemo {
 
 
         Jboot.setBootArg("jboot.tracing.type", "zipkin");
-        Jboot.setBootArg("jboot.tracing.serviceName", "MotanServerDemo");
+        Jboot.setBootArg("jboot.tracing.serviceName", "MotanServerZookeeperDemo");
         Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");
 
 
@@ -55,7 +55,7 @@ public class ServerDemo {
         factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
         factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot", "1.0", 8002);
 
-        System.out.println("MotanServerDemo started...");
+        System.out.println("ServerDemo started...");
 
 
     }

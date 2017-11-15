@@ -13,46 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package opentracing;
+package rpczookeeper;
 
 import io.jboot.Jboot;
-import io.jboot.component.opentracing.EnableTracing;
 import io.jboot.core.rpc.Jbootrpc;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
-import service.CategoryService;
 import service.UserService;
 
 
-@RequestMapping("/opentracing")
-public class ClientDemo extends JbootController {
+@RequestMapping("/motanzookeeperrpc")
+public class MotanClientZookeeperDemo extends JbootController {
 
 
     /**
-     * 请先启动 ServerDemo 后，再启动
-     * 然后通过 http://127.0.0.1:8088/opentracing 访问生产数据
-     *
+     * 请先启动 MotanServerZookeeperDemo 后，再启动
      * @param args
      */
-
     public static void main(String[] args)  {
 
         //jboot端口号配置
         Jboot.setBootArg("jboot.server.port", "8088");
 
+        //RPC配置
         Jboot.setBootArg("jboot.rpc.type", "motan");
-        Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
-
-
-        Jboot.setBootArg("jboot.tracing.type", "zipkin");//opentracing的类型
-        Jboot.setBootArg("jboot.tracing.serviceName", "MotanClientZookeeperDemo");//opentracing的本应用服务名称
-        Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");//zipkin的服务器
+        Jboot.setBootArg("jboot.rpc.callMode", "registry");//注册中心模式
+        Jboot.setBootArg("jboot.rpc.registryType", "zookeeper");//注册中心的类型：zookeeper
+        Jboot.setBootArg("jboot.rpc.registryAddress", "127.0.0.1:2181");//注册中心，即zookeeper的地址
 
         Jboot.run(args);
     }
 
-    @EnableTracing
+
     public void index() {
         Jbootrpc jbootrpc = Jboot.me().getRpc();
 
@@ -61,13 +53,10 @@ public class ClientDemo extends JbootController {
         System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
 
-//        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             // 使用服务
-            System.out.println(service.hello("海哥"));
-//        }
-
-        CategoryService service1 = Jboot.service(CategoryService.class);
-        System.out.println(service1.hello("海哥"));
+            System.out.println(service.hello("海哥" + i));
+        }
 
 
         renderText("ok");
