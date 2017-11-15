@@ -100,12 +100,12 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
                 @Override
                 public Object run() {
                     try {
-                        JbootSpanContext.init(span);
+                        JbootSpanContext.add(span);
                         return JbootInvocationHandler.super.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
                     } finally {
-                        JbootSpanContext.destroy();
+                        JbootSpanContext.release();
                     }
                     return null;
                 }

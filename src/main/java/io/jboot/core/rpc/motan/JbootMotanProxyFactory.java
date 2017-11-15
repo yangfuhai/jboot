@@ -88,13 +88,13 @@ public class JbootMotanProxyFactory implements ProxyFactory {
                 @Override
                 public Object run() {
                     try {
-                        JbootSpanContext.init(span);
+                        JbootSpanContext.add(span);
 
                         return handler.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
                     } finally {
-                        JbootSpanContext.destroy();
+                        JbootSpanContext.release();
                     }
                     return null;
                 }

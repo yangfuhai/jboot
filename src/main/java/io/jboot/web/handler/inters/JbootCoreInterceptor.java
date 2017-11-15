@@ -47,7 +47,7 @@ public class JbootCoreInterceptor implements HandlerInterceptor {
 
             span = spanBuilder.startManual();
             span.setTag("requestId", StringUtils.uuid());
-            JbootSpanContext.init(span);
+            JbootSpanContext.add(span);
         }
 
 
@@ -56,7 +56,7 @@ public class JbootCoreInterceptor implements HandlerInterceptor {
         } finally {
             if (span != null) {
                 span.finish();
-                JbootSpanContext.destroy();
+                JbootSpanContext.release();
             }
         }
 
