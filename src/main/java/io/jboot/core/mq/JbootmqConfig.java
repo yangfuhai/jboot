@@ -23,7 +23,6 @@ public class JbootmqConfig {
     public static final String TYPE_REDIS = "redis";
     public static final String TYPE_ACTIVEMQ = "activemq";
     public static final String TYPE_ALIYUNMQ = "aliyunmq";
-    public static final String TYPE_HORNETQ = "hornetq";
     public static final String TYPE_RABBITMQ = "rabbitmq";
 
     public String type = TYPE_REDIS;

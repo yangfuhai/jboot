@@ -55,7 +55,6 @@ public class JbootmqManager {
             case JbootmqConfig.TYPE_RABBITMQ:
                 return new JbootRabbitmqImpl();
             case JbootmqConfig.TYPE_ACTIVEMQ:
-            case JbootmqConfig.TYPE_HORNETQ:
                 throw new RuntimeException("not finished!!!!");
             default:
                 return JbootSpiLoader.load(Jbootmq.class, config.getType());

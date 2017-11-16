@@ -17,15 +17,13 @@ package io.jboot.core.rpc;
 
 import io.jboot.Jboot;
 import io.jboot.core.mq.JbootmqMessageListener;
+import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.core.rpc.dubbo.JbootDubborpc;
+import io.jboot.core.rpc.local.JbootLocalrpc;
+import io.jboot.core.rpc.motan.JbootMotanrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.event.JbootEventListener;
 import io.jboot.exception.JbootAssert;
-import io.jboot.core.rpc.annotation.JbootrpcService;
-import io.jboot.core.rpc.grpc.JbootGrpc;
-import io.jboot.core.rpc.local.JbootLocalrpc;
-import io.jboot.core.rpc.motan.JbootMotanrpc;
-import io.jboot.core.rpc.thrift.JbootThriftrpc;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
@@ -99,10 +97,6 @@ public class JbootrpcManager {
         switch (config.getType()) {
             case JbootrpcConfig.TYPE_MOTAN:
                 return new JbootMotanrpc();
-            case JbootrpcConfig.TYPE_GRPC:
-                return new JbootGrpc();
-            case JbootrpcConfig.TYPE_THRIFT:
-                return new JbootThriftrpc();
             case JbootrpcConfig.TYPE_LOCAL:
                 return new JbootLocalrpc();
             case JbootrpcConfig.TYPE_DUBBO:
