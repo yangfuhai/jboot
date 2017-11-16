@@ -22,4 +22,6 @@ public interface UserService {
     public String hello(String hello);
 
     public String findUserById(String userId);
+
+    public boolean saveUser(User user);
 }

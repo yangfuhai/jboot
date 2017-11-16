@@ -19,6 +19,7 @@ import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
+import service.User;
 import service.UserService;
 
 
@@ -51,11 +52,12 @@ public class MotanClientDemo extends JbootController {
 
         long time = System.currentTimeMillis();
         UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
-//        System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
+        System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
 
         for (int i = 0; i < 10; i++) {
             // 使用服务
+            System.out.println("saved : " + service.saveUser(new User(i, "myname")));
             System.out.println(service.hello("海哥" + i));
         }
 

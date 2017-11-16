@@ -21,7 +21,7 @@ import io.jboot.Jboot;
 public class UserServiceImpl implements UserService {
     @Override
     public String hello(String name) {
-        
+
         System.out.println("UserServiceImpl hello invoked!!!");
 
         return Jboot.service(CategoryService.class).hello(name);
@@ -31,5 +31,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public String findUserById(String userId) {
         return "get user:" + userId;
+    }
+
+    @Override
+    public boolean saveUser(User user) {
+        System.out.println("save user :" + user);
+
+        return true;
     }
 }
