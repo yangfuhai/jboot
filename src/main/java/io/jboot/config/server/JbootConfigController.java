@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.config.web;
+package io.jboot.config.server;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;

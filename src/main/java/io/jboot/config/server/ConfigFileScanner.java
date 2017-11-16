@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.config;
+package io.jboot.config.server;
 
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
@@ -135,38 +135,6 @@ public abstract class ConfigFileScanner {
             task.cancel();
             running = false;
         }
-    }
-}
-
-class TimeSize {
-
-    final long time;
-    final long size;
-
-    public TimeSize(File file) {
-        this.time = file.lastModified();
-        this.size = file.length();
-    }
-
-
-    public int hashCode() {
-        return (int) (time ^ size);
-    }
-
-    public boolean equals(Object o) {
-        if (o instanceof TimeSize) {
-            TimeSize ts = (TimeSize) o;
-            return ts.time == this.time && ts.size == this.size;
-        }
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return "TimeSize{" +
-                "time=" + time +
-                ", size=" + size +
-                '}';
     }
 }
 

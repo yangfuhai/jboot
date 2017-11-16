@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.config;
+package io.jboot.config.client;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.LogKit;
+import io.jboot.config.PropInfoMap;
 import io.jboot.core.http.JbootHttpRequest;
 import io.jboot.core.http.JbootHttpResponse;
 import io.jboot.core.http.jboot.JbootHttpImpl;
