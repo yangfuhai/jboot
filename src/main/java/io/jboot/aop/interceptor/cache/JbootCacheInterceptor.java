@@ -62,8 +62,7 @@ public class JbootCacheInterceptor implements MethodInterceptor {
 
         String cacheKey = Kits.buildCacheKey(cacheable.key(), targetClass, method, methodInvocation.getArguments());
 
-
-        return Jboot.me().getCache().get(cacheName, cacheKey, new IDataLoader() {
+        IDataLoader dataLoader = new IDataLoader() {
             @Override
             public Object load() {
                 Object r = null;
@@ -79,7 +78,13 @@ public class JbootCacheInterceptor implements MethodInterceptor {
 
                 return Cacheable.DEFAULT_NULL_VALUE.equals(cacheable.nullValue()) ? null : cacheable.nullValue();
             }
-        });
+        };
+
+        if (cacheable.liveSeconds() > 0) {
+            return Jboot.me().getCache().get(cacheName, cacheKey, dataLoader, cacheable.liveSeconds());
+        } else {
+            return Jboot.me().getCache().get(cacheName, cacheKey, dataLoader);
+        }
 
     }
 

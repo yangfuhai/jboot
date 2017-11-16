@@ -57,6 +57,11 @@ public class NoneCacheImpl extends JbootCacheBase {
     }
 
     @Override
+    public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
+        return (T) dataLoader.load();
+    }
+
+    @Override
     public boolean isNoneCache() {
         return true;
     }

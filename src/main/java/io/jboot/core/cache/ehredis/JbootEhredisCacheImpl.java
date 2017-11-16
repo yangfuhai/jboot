@@ -121,6 +121,19 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         return obj;
     }
 
+    @Override
+    public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
+        T obj = get(cacheName, key);
+        if (obj != null) {
+            return obj;
+        }
+
+        obj = (T) dataLoader.load();
+        if (obj != null) {
+            put(cacheName, key, obj, liveSeconds);
+        }
+        return obj;
+    }
 
     @Override
     public void onMessage(String channel, Object obj) {

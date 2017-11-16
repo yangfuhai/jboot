@@ -93,4 +93,14 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         }
         return (T) data;
     }
+
+    @Override
+    public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
+        Object data = get(cacheName, key);
+        if (data == null) {
+            data = dataLoader.load();
+            put(cacheName, key, data, liveSeconds);
+        }
+        return (T) data;
+    }
 }

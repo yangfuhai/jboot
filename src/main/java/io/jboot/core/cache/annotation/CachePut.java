@@ -25,5 +25,8 @@ public @interface CachePut {
 
     String key() default "";
 
+    /** 0-默认永久 */
+    int liveSeconds() default 0;
+
     String unless() default "";
 }
