@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.config.server;
+package io.jboot.config;
 
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.Prop;
