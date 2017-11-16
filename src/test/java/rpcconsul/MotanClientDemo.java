@@ -51,7 +51,7 @@ public class MotanClientDemo extends JbootController {
 
         long time = System.currentTimeMillis();
         UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
-        System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
+//        System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
 
         for (int i = 0; i < 10; i++) {
