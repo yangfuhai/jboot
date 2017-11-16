@@ -94,7 +94,9 @@ public class Kits {
                 return String.format("%s#%s", clazz.getName(), method.getName());
             }
 
+            Class[] paramTypes = method.getParameterTypes();
             StringBuilder argumentTag = new StringBuilder();
+            int index = 0;
             for (Object argument : arguments) {
                 String argumentString = converteToString(argument);
                 if (argumentString == null) {
@@ -103,7 +105,7 @@ public class Kits {
                             "with argument class " + argument.getClass() + ", " +
                             "please config key properties in @Cacheable,@CacheEvict or @CachePut annotation.");
                 }
-                argumentTag.append(argumentString).append("-");
+                argumentTag.append(paramTypes[index++].getClass().getName()).append(":").append(argumentString).append("-");
             }
 
             //remove last chat '-'
