@@ -16,12 +16,8 @@
 package cache;
 
 import io.jboot.Jboot;
-import io.jboot.core.cache.annotation.Cacheable;
-import io.jboot.core.rpc.Jbootrpc;
-import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
-import service.UserService;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -34,10 +30,6 @@ public class CacheDemo extends JbootController {
     @Inject
     private CacheService service;
 
-    /**
-     * 请先启动 MotanServerDemo 后，再启动
-     * @param args
-     */
     public static void main(String[] args)  {
 
         //jboot端口号配置
@@ -50,7 +42,6 @@ public class CacheDemo extends JbootController {
         Jboot.setBootArg("jboot.mq.redis.host", "127.0.0.1");
         Jboot.setBootArg("jboot.mq.redis.password", "123456");
         Jboot.setBootArg("jboot.mq.redis.channel", "message-channel");
-        Jboot.setBootArg("jboot.mq.redis.password", "123456");
         Jboot.run(args);
     }
 
