@@ -97,20 +97,25 @@
 # JBoot核心组件
 Jboot的主要核心组件有以下几个。
 
-* MVC
-* 安全控制 
-* ORM 
-* AOP
-* RPC远程调用
-* MQ消息队列
+* MVC （基于jfinal）
+* ORM （基于jfinal）
+* AOP （基于guice）
+* Shiro安全控制
+* RPC远程调用 （支持可选方案有 motan，dubbo等）
+* MQ消息队列 (支持可选方案有：redis、activemq，rabbitmq等)
 * 分布式缓存
 * 分布式session
-* 调用监控
-* 容错隔离
-* 轻量级的Http客户端
+* 分布式锁
+* 调用监控 (基于metrics)
+* 限流、降级、熔断机制（基于hystrix）
+* Opentracing数据追踪（支持zipkin）
+* 统一配置中心
+* swagger api
+* 轻量级的Http客户端（包含了get、post请求，文件上传和下载等）
 * 分布式下的微信和微信第三方
 * 自定义序列化组件
 * 事件机制
+* 代码生成器
 * 等等
 
 
@@ -159,7 +164,28 @@ public class HelloController extend JbootController{
 * `@RquestMapping` 可以使用在任何的 Controller，并 **不需要** 这个Controller继承至JbootController。
 
 ## render
-同JFinal render。
+渲染器，负责把内容输出到浏览器，在Controller中，提供了如下一些列render方法。
+
+| 指令         |  描述  |
+| ------------- | -----|
+| render(”test.html”)  |渲染名为 test.html 的视图，该视图的全路径为”/path/test.html” |
+| render(”/other_path/test.html”)   |渲染名为 test.html 的视图，该视图的全路径为”/other_path/test.html”，即当参数以”/”开头时将采用绝对路径。|
+| renderTemplate(”test.html”)  |渲染名为 test.html 的视图，且视图类型为 JFinalTemplate。|
+| renderFreeMarker(”test.html”)  |渲 染 名 为 test.html 的视图 ， 且 视图类型为FreeMarker。 |
+| renderJsp(”test.jsp”)  |渲染名为 test.jsp 的视图，且视图类型为 Jsp。 |
+| renderVelocity(“test.html”)   |渲染名为 test.html 的视图，且视图类型为 Velocity。 |
+| renderJson()  |将所有通过 Controller.setAttr(String, Object)设置的变量转换成 json 数据并渲染。|
+| renderJson(“users”, userList)   |以”users”为根，仅将 userList 中的数据转换成 json数据并渲染。 |
+| renderJson(user)  |将 user 对象转换成 json 数据并渲染。 |
+| renderJson(“{\”age\”:18}” )   |直接渲染 json 字符串。 |
+| renderJson(new String[]{“user”, “blog”})  |仅将 setAttr(“user”, user)与 setAttr(“blog”, blog)设置的属性转换成 json 并渲染。使用 setAttr 设置的其它属性并不转换为 json。 |
+| renderFile(“test.zip”);  |渲染名为 test.zip 的文件，一般用于文件下载 |
+| renderText(“Hello Jboot”)   |渲染纯文本内容”Hello Jboot”。 |
+| renderHtml(“Hello Html”)   |渲染 Html 内容”Hello Html”。 |
+| renderError (404 , “test.html”)  |渲染名为 test.html 的文件，且状态为 404。 |
+| renderError (500 , “test.html”)   |渲染名为 test.html 的文件，且状态为 500。 |
+| renderNull() |不渲染，即不向客户端返回数据。|
+| render(new MyRender()) |使用自定义渲染器 MyRender 来渲染。 |
 
 ## session 与 分布式session
 
@@ -436,14 +462,46 @@ jboot.datasource.password=your_password
 
 
 ## Model
-model是MVC设计模式中的M，但同时每个model也会对应一个数据库表，更多参考JFinal文档。
+model是MVC设计模式中的M，但同时每个model也会对应一个数据库表，它充当 MVC 模式中的 Model 部分。以下是Model 定义示例代码：
+
+```java
+public class User extends JbootModel<User> {
+	public static final User dao = new User().dao();
+}
+```
+
+以上代码中的 User 通过继承 Model，便立即拥有的众多方便的操作数据库的方法。在 User中声明的 dao 静态对象是为了方便查询操作而定义的，该对象并不是必须的。同时，model无需定义 getter、setter 方法，无需 XML 配置，极大降低了代码量。
+
+以下是model常见的用法：
+
+```java
+// 创建name属性为James,age属性为25的User对象并添加到数据库
+new User().set("name", "James").set("age", 25).save();
+// 删除id值为25的User
+User.dao.deleteById(25);
+// 查询id值为25的User将其name属性改为James并更新到数据库
+User.dao.findById(25).set("name", "James").update();
+// 查询id值为25的user, 且仅仅取name与age两个字段的值
+User user = User.dao.findByIdLoadColumns(25, "name, age");
+// 获取user的name属性
+String userName = user.getStr("name");
+// 获取user的age属性
+Integer userAge = user.getInt("age");
+// 查询所有年龄大于18岁的user
+List<User> users = User.dao.find("select * from user where age>18");
+// 分页查询年龄大于18的user,当前页号为1,每页10个user
+Page<User> userPage = User.dao.paginate(1, 10, "select *", "from user
+where age > ?", 18);
+```
+
+**注意：**User 中定义的 public static final User dao 对象是全局共享的，**只能** 用于数据库查询，**不能** 用于数据承载对象。数据承载需要使用 new User().set(…)来实现。
 
 ### @Table注解
 @Table注解是给Model使用的，表示让Model映射到哪个数据库表，使用代码如下：
 
 ```java
-@Table(tableName = "company", primaryKey = "cid")
-public class Company extends BaseCompany<Company> {
+@Table(tableName = "user", primaryKey = "id")
+public class User extends JbootModel <Company> {
 	
 }
 ```
@@ -451,11 +509,44 @@ public class Company extends BaseCompany<Company> {
 
 在Jboot应用中，我们几乎感受不到@Table这个注解的存在，因为这部分完全是代码生成器生成的，关于代码生成器，请查看 代码生成器章节。
 
-## Record
-参考JFinal
+## Db + Record 模式
+Db 类及其配套的 Record 类，提供了在 Model 类之外更为丰富的数据库操作功能。使用Db 与 Record 类时，无需对数据库表进行映射，Record 相当于一个通用的 Model。以下为 Db +Record 模式的一些常见用法：
 
-## DAO
-参考JFinal
+```java
+// 创建name属性为James,age属性为25的record对象并添加到数据库
+Record user = new Record().set("name", "James").set("age", 25);
+Db.save("user", user);
+// 删除id值为25的user表中的记录
+Db.deleteById("user", 25);
+// 查询id值为25的Record将其name属性改为James并更新到数据库
+user = Db.findById("user", 25).set("name", "James");
+Db.update("user", user);
+// 获取user的name属性
+String userName = user.getStr("name");
+// 获取user的age属性
+Integer userAge = user.getInt("age");
+// 查询所有年龄大于18岁的user
+Page<Record> userPage = Db.paginate(1, 10, "select *", "from user where
+age > ?", 18);
+```
+
+或者，事务操作：
+
+```java
+boolean succeed = Db.tx(new IAtom(){
+		public boolean run() throws SQLException {
+		int count = Db.update("update account set cash = cash - ? where
+		id = ?", 100, 123);
+		int count2 = Db.update("update account set cash = cash + ? where
+		id = ?", 100, 456);
+		return count == 1 && count2 == 1;
+	}
+});
+```
+以上两次数据库更新操作在一个事务中执行，如果执行过程中发生异常或者 run()方法返回 false，则自动回滚事务。
+
+## 更多
+请参考JFinal的文档：http://download.jfinal.com/download/3.2/jfinal-3.2-manual.pdf 
 
 ## 多数据源
 在Jboot中，使用多数据源非常简单。
@@ -542,17 +633,20 @@ company.save();
 public final class ModuloTableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<Integer> {
 
     @Override
-    public String doEqualSharding(final Collection<String> tableNames, final ShardingValue<Integer> shardingValue) {
+    public String doEqualSharding(final Collection<String> tableNames, 
+    	final ShardingValue<Integer> shardingValue) {
         
     }
 
     @Override
-    public Collection<String> doInSharding(final Collection<String> tableNames, final ShardingValue<Integer> shardingValue) {
+    public Collection<String> doInSharding(final Collection<String> tableNames, 
+    	final ShardingValue<Integer> shardingValue) {
        
     }
 
     @Override
-    public Collection<String> doBetweenSharding(final Collection<String> tableNames, final ShardingValue<Integer> shardingValue) {
+    public Collection<String> doBetweenSharding(final Collection<String> tableNames, 
+    	final ShardingValue<Integer> shardingValue) {
         
     }
 }
@@ -652,8 +746,7 @@ public class MyController extends JbootController{
 }
 ```
 
-#### 其他注意
-因为在配置文件中，配置的服务发现类型为consul，所以需要提前安装好consul。
+### 配置中心
 
 ##### 下载consul
 https://www.consul.io 
@@ -664,6 +757,27 @@ https://www.consul.io
 consul -agent dev
 ```
 
+#### zookeeper
+##### 下载zookeeper
+http://zookeeper.apache.org/releases.html
+
+##### 启动zookeeper
+下载zookeeper后，进入zookeeper目录下，找到 conf/zoo_example.cfg，重命名为 zoo.cfg。
+
+zoo.cfg 内容如下：
+
+```
+tickTime=2000
+dataDir=/var/lib/zookeeper
+clientPort=2181
+```
+
+在终端模式下，进入 zookeeper的更目录，执行：
+
+```java
+bin/zkServer.sh start
+```
+关于zookeeper更多的内容，请查看 http://zookeeper.apache.org 和 http://zookeeper.apache.org/doc/trunk/zookeeperStarted.html
 
 
 # MQ消息队列

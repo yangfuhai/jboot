@@ -21,17 +21,17 @@ QQ交流群： 601440615
 ## Jboot的核心组件
 
 * MVC （基于jfinal）
-* Shiro安全控制 
-* ORM  （基于jfinal）
+* ORM （基于jfinal）
 * AOP （基于guice）
+* Shiro安全控制
 * RPC远程调用 （支持可选方案有 motan，dubbo等）
 * MQ消息队列 (支持可选方案有：redis、activemq，rabbitmq等)
 * 分布式缓存
 * 分布式session
 * 分布式锁
 * 调用监控 (基于metrics)
-* 容错隔离（基于 hystrix）
-* Opentracing数据追踪
+* 限流、降级、熔断机制（基于hystrix）
+* Opentracing数据追踪（支持zipkin）
 * 统一配置中心
 * swagger api
 * 轻量级的Http客户端（包含了get、post请求，文件上传和下载等）
