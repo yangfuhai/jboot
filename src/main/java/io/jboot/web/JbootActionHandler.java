@@ -15,15 +15,19 @@
  */
 package io.jboot.web;
 
+import com.google.common.collect.Sets;
+import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.*;
 import com.jfinal.log.Log;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import io.jboot.Jboot;
 import io.jboot.web.handler.HandlerInvocation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -58,6 +62,9 @@ public class JbootActionHandler extends ActionHandler {
             renderManager.getRenderFactory().getErrorRender(404).setContext(request, response).render();
             return;
         }
+
+        //对拦截器进行注入
+        injectActionInterceptors(action);
 
         Controller controller = null;
         try {
@@ -142,5 +149,39 @@ public class JbootActionHandler extends ActionHandler {
 
     private void invokeInvocation(Invocation inv) {
         new HandlerInvocation(inv).invoke();
+    }
+
+    static Set<Action> injectedActions = Sets.newConcurrentHashSet();
+
+    /**
+     * 对所有拦截器进行注入
+     *
+     * @param action
+     */
+    private void injectActionInterceptors(Action action) {
+        if (action == null) {
+            return;
+        }
+
+
+        //获取这个拦截器下的所有拦截器
+        //如果没有拦截器，直接返回
+        Interceptor[] interceptors = action.getInterceptors();
+        if (interceptors == null || interceptors.length == 0) {
+            return;
+        }
+
+        //如果注入过了，就没必要再次注入
+        //因为拦截器是在整个系统中是单例的
+        if (injectedActions.contains(action)) {
+            return;
+        }
+
+        //对所有拦截器进行注入
+        for (Interceptor interceptor : interceptors) {
+            Jboot.injectMembers(interceptor);
+        }
+
+        injectedActions.add(action);
     }
 }

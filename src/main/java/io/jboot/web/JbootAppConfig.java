@@ -45,7 +45,6 @@ import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.handler.JbootHandler;
-import io.jboot.web.handler.WebInterceptorInjectHandler;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
@@ -194,7 +193,6 @@ public class JbootAppConfig extends JFinalConfig {
         handlers.add(new JbootHandler());
 
         //用于对jfinal的拦截器进行注入
-        handlers.add(new WebInterceptorInjectHandler());
         handlers.setActionHandler(new JbootActionHandler());
 
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
