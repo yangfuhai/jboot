@@ -375,6 +375,13 @@
             <version>2.1.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.9.1</version>
+            <scope>provided</scope>
+        </dependency>
+
 
         <!--下面的Jfinal的相关依赖 start-->
         <dependency>

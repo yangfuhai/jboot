@@ -15,10 +15,12 @@
  */
 package io.jboot.core.http.jboot;
 
-import io.jboot.exception.JbootException;
+import com.jfinal.log.Log;
+import io.jboot.Jboot;
+import io.jboot.core.http.JbootHttpBase;
 import io.jboot.core.http.JbootHttpRequest;
 import io.jboot.core.http.JbootHttpResponse;
-import io.jboot.core.http.JbootHttp;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 
 import javax.net.ssl.*;
@@ -26,14 +28,15 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Map;
 
 
-public class JbootHttpImpl implements JbootHttp {
+public class JbootHttpImpl extends JbootHttpBase {
+
+    private static final Log LOG = Log.getLog(JbootHttpImpl.class);
 
 
     @Override
@@ -57,6 +60,9 @@ public class JbootHttpImpl implements JbootHttp {
 
 
             if (request.isGetRquest()) {
+                if (Jboot.me().isDevMode()) {
+                    LOG.debug("do get request:" + request.getRequestUrl());
+                }
                 connection.setInstanceFollowRedirects(true);
                 connection.connect();
 
@@ -70,6 +76,10 @@ public class JbootHttpImpl implements JbootHttp {
              * 处理 post请求
              */
             else if (request.isPostRquest()) {
+
+                if (Jboot.me().isDevMode()) {
+                    LOG.debug("do post request:" + request.getRequestUrl());
+                }
 
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
@@ -132,6 +142,7 @@ public class JbootHttpImpl implements JbootHttp {
 
 
         } catch (Throwable ex) {
+            LOG.warn(ex.toString(), ex);
             response.setError(ex);
         } finally {
             if (connection != null) {
@@ -160,27 +171,6 @@ public class JbootHttpImpl implements JbootHttp {
     }
 
 
-    public static String buildParams(JbootHttpRequest request) throws UnsupportedEncodingException {
-        Map<String, Object> params = request.getParams();
-        if (params == null || params.isEmpty()) {
-            return null;
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            if (entry.getKey() != null && StringUtils.isNotBlank(entry.getValue()))
-                builder.append(entry.getKey().trim()).append("=")
-                        .append(URLEncoder.encode(entry.getValue().toString(), request.getCharset())).append("&");
-        }
-
-        if (builder.charAt(builder.length() - 1) == '&') {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-
-        return builder.toString();
-    }
-
-
     private static void configConnection(HttpURLConnection connection, JbootHttpRequest request) throws ProtocolException {
         if (connection == null)
             return;
@@ -200,6 +190,9 @@ public class JbootHttpImpl implements JbootHttp {
 
     private static HttpURLConnection getConnection(JbootHttpRequest request) {
         try {
+            if (request.isGetRquest()) {
+                buildGetUrlWithParams(request);
+            }
             if (request.getRequestUrl().toLowerCase().startsWith("https")) {
                 return getHttpsConnection(request);
             } else {
@@ -221,20 +214,28 @@ public class JbootHttpImpl implements JbootHttp {
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
         if (request.getCertPath() != null && request.getCertPass() != null) {
+
             KeyStore clientStore = KeyStore.getInstance("PKCS12");
             clientStore.load(new FileInputStream(request.getCertPath()), request.getCertPass().toCharArray());
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            kmf.init(clientStore, request.getCertPass().toCharArray());
-            KeyManager[] kms = kmf.getKeyManagers();
+
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            keyManagerFactory.init(clientStore, request.getCertPass().toCharArray());
+            KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+
+
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(clientStore);
+
             SSLContext sslContext = SSLContext.getInstance("TLSv1");
-            sslContext.init(kms, null, new SecureRandom());
+            sslContext.init(keyManagers, trustManagerFactory.getTrustManagers(), new SecureRandom());
+
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
 
         } else {
             conn.setHostnameVerifier(hnv);
             SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
             if (sslContext != null) {
-                TrustManager[] tm = {xtm};
+                TrustManager[] tm = {trustAnyTrustManager};
                 sslContext.init(null, tm, null);
                 SSLSocketFactory ssf = sslContext.getSocketFactory();
                 conn.setSSLSocketFactory(ssf);
@@ -243,7 +244,7 @@ public class JbootHttpImpl implements JbootHttp {
         return conn;
     }
 
-    private static X509TrustManager xtm = new X509TrustManager() {
+    private static X509TrustManager trustAnyTrustManager = new X509TrustManager() {
         public void checkClientTrusted(X509Certificate[] chain, String authType) {
         }
 

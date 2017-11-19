@@ -17,6 +17,7 @@ package io.jboot.core.http;
 
 import io.jboot.Jboot;
 import io.jboot.core.http.jboot.JbootHttpImpl;
+import io.jboot.core.http.okhttp.OKHttpImpl;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.ClassNewer;
 
@@ -49,8 +50,9 @@ public class JbootHttpManager {
         switch (config.getType()) {
             case JbootHttpConfig.TYPE_DEFAULT:
                 return new JbootHttpImpl();
-            case JbootHttpConfig.TYPE_HTTPCLIENT:
             case JbootHttpConfig.TYPE_OKHTTP:
+                return new OKHttpImpl();
+            case JbootHttpConfig.TYPE_HTTPCLIENT:
                 throw new RuntimeException("not finished!!!!");
             default:
                 return JbootSpiLoader.load(JbootHttp.class, config.getType());

@@ -24,6 +24,7 @@ import java.util.Map;
 public class JbootHttpResponse {
     private static final Log log = Log.getLog(JbootHttpResponse.class);
 
+    private String content;
     private OutputStream outputStream;
     private File file;
     private Throwable error;
@@ -60,10 +61,17 @@ public class JbootHttpResponse {
      * @return
      */
     public String getContent() {
+        if (content != null) {
+            return content;
+        }
         if (outputStream != null && outputStream instanceof ByteArrayOutputStream) {
             return new String(((ByteArrayOutputStream) outputStream).toByteArray());
         }
         return null;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
 

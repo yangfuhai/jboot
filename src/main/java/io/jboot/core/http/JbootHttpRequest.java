@@ -30,6 +30,9 @@ public class JbootHttpRequest {
     public static final int CONNECT_TIME_OUT = 1000 * 5; // 5秒
     public static final String CHAR_SET = "UTF-8";
 
+    public static final String CONTENT_TYPE_JSON = "application/json; charset=utf-8";
+    public static final String CONTENT_TYPE_URL_ENCODED = "application/x-www-form-urlencoded;charset=utf-8";
+
     Map<String, String> headers;
     Map<String, Object> params;
 
@@ -45,6 +48,7 @@ public class JbootHttpRequest {
     private boolean multipartFormData = false;
 
     private File downloadFile;
+    private String contentType = CONTENT_TYPE_URL_ENCODED;
 
 
     public static JbootHttpRequest create(String url) {
@@ -217,5 +221,13 @@ public class JbootHttpRequest {
 
     public void setDownloadFile(File downloadFile) {
         this.downloadFile = downloadFile;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }
