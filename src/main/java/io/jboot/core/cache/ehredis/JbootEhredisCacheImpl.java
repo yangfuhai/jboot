@@ -52,7 +52,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     @Override
     public List getKeys(String cacheName) {
         List list = ehcache.getKeys(cacheName);
-        if (list == null) {
+        if (list == null || list.isEmpty()) {
             list = redisCache.getKeys(cacheName);
         }
         return list;
@@ -63,6 +63,9 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         T obj = ehcache.get(cacheName, key);
         if (obj == null) {
             obj = redisCache.get(cacheName, key);
+            if (obj != null) {
+                ehcache.put(cacheName, key, obj);
+            }
         }
         return obj;
     }
