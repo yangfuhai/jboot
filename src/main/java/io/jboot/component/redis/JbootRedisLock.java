@@ -37,7 +37,7 @@ import io.jboot.Jboot;
  * 使用方法2：
  * JbootRedisLock lock = new JbootRedisLock("lockName");
  * lock.runIfAcquired(new Runnable(){
- *
+ * <p>
  * public void run() {
  * //do your something
  * }
@@ -50,20 +50,34 @@ public class JbootRedisLock {
 
     private String lockName;
     private boolean locked = false;
+    private JbootRedis redis;
 
+    /**
+     * 创建redis分布式锁
+     *
+     * @param lockName 锁的名称
+     */
     public JbootRedisLock(String lockName) {
         if (lockName == null) {
             throw new RuntimeException("lockName must not null !");
         }
         this.lockName = lockName;
+        this.redis = Jboot.me().getRedis();
     }
 
+    /**
+     * 创建redis分布式锁
+     *
+     * @param lockName     锁名称
+     * @param timeoutMsecs 获取锁的时候，等待时长
+     */
     public JbootRedisLock(String lockName, long timeoutMsecs) {
         if (lockName == null) {
             throw new RuntimeException("lockName must not null !");
         }
         this.lockName = lockName;
         this.timeoutMsecs = timeoutMsecs;
+        this.redis = Jboot.me().getRedis();
     }
 
 
@@ -76,6 +90,7 @@ public class JbootRedisLock {
                 runnable.run();
             }
         } finally {
+            //执行完毕，释放锁
             release();
         }
     }
@@ -92,19 +107,19 @@ public class JbootRedisLock {
         do {
             long expires = System.currentTimeMillis() + expireMsecs + 1;
 
-            Long result = Jboot.me().getRedis().setnx(lockName, expires);
+            Long result = redis.setnx(lockName, expires);
             if (result != null && result == 1) {
                 // lock acquired
                 locked = true;
                 return true;
             }
 
-            Long currentValue = Jboot.me().getRedis().get(lockName);
+            Long currentValue = redis.get(lockName);
             if (currentValue != null && currentValue < System.currentTimeMillis()) {
                 //判断是否为空，不为空的情况下，如果被其他线程设置了值，则第二个条件判断是过不去的
                 // lock is expired
 
-                Long oldValue = Jboot.me().getRedis().getSet(lockName, expires);
+                Long oldValue = redis.getSet(lockName, expires);
                 //获取上一个锁到期时间，并设置现在的锁到期时间，
                 //只有一个线程才能获取上一个线上的设置时间，因为jedis.getSet是同步的
                 if (oldValue != null && oldValue.equals(currentValue)) {
