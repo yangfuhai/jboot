@@ -68,9 +68,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             registerListner(getChannel(toChannel));
         }
 
-        /**
-         * 阿里云需要提前注册缓存通知使用的通道
-         */
+       
         registerListner(getChannel(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL));
     }
 
