@@ -35,7 +35,7 @@ import io.jboot.component.swagger.JbootSwaggerController;
 import io.jboot.config.JbootConfigManager;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
-import io.jboot.schedule.JbootTaskManager;
+import io.jboot.schedule.JbootScheduleManager;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
@@ -173,10 +173,6 @@ public class JbootAppConfig extends JFinalConfig {
             plugins.add(arp);
         }
 
-        if (JbootTaskManager.me().isCron4jEnable()) {
-            plugins.add(JbootTaskManager.me().getCron4jPlugin());
-        }
-
         JbootAppListenerManager.me().onJfinalPluginConfig(new JfinalPlugins(plugins));
 
     }
@@ -209,6 +205,7 @@ public class JbootAppConfig extends JFinalConfig {
          */
         JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
+        JbootScheduleManager.me().init();
 
         /**
          * 发送启动完成通知

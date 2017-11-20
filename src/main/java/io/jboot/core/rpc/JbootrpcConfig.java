@@ -16,8 +16,8 @@
 package io.jboot.core.rpc;
 
 import io.jboot.Jboot;
-import io.jboot.JbootConfig;
 import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.core.serializer.JbootSerializerConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,7 +76,7 @@ public class JbootrpcConfig {
     private int defaultPort = 8088;
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
-    private String serializer = Jboot.config(JbootConfig.class).getSerializer();
+    private String serializer = Jboot.config(JbootSerializerConfig.class).getType();
 
     private String proxy = "jboot";
     private String filter;  //多个过滤器请用英文逗号（,）隔开，默认添加opentracing过滤器，用于对rpc分布式调用的追踪

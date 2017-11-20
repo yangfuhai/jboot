@@ -16,7 +16,6 @@
 package io.jboot;
 
 import io.jboot.config.annotation.PropertieConfig;
-import io.jboot.core.serializer.SerializerManager;
 import io.jboot.web.JbootAppConfig;
 
 @PropertieConfig(prefix = "jboot")
@@ -25,10 +24,7 @@ public class JbootConfig {
     private String mode = Jboot.MODE.DEV.getValue();
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
-    private boolean cron4jEnable = true;
-    private String cron4jFile = "cron4j.properties";
     private String jfinalConfig = JbootAppConfig.class.getName();
-    private String serializer = SerializerManager.FST2;
 
     public String getMode() {
         return mode;
@@ -54,21 +50,6 @@ public class JbootConfig {
         this.bannerFile = bannerFile;
     }
 
-    public boolean  isCron4jEnable() {
-        return cron4jEnable;
-    }
-
-    public void setCron4jEnable(boolean cron4jEnable) {
-        this.cron4jEnable = cron4jEnable;
-    }
-
-    public String getCron4jFile() {
-        return cron4jFile;
-    }
-
-    public void setCron4jFile(String cron4jFile) {
-        this.cron4jFile = cron4jFile;
-    }
 
     public String getJfinalConfig() {
         return jfinalConfig;
@@ -78,24 +59,14 @@ public class JbootConfig {
         this.jfinalConfig = jfinalConfig;
     }
 
-    public String getSerializer() {
-        return serializer;
-    }
-
-    public void setSerializer(String serializer) {
-        this.serializer = serializer;
-    }
 
     @Override
     public String toString() {
         return "JbootConfig {" +
                 "mode='" + mode + '\'' +
-                ", bannerEnable='" + bannerEnable + '\'' +
+                ", bannerEnable=" + bannerEnable +
                 ", bannerFile='" + bannerFile + '\'' +
-                ", cron4jEnable='" + cron4jEnable + '\'' +
-                ", cron4jFile='" + cron4jFile + '\'' +
                 ", jfinalConfig='" + jfinalConfig + '\'' +
-                ", serializer='" + serializer + '\'' +
                 '}';
     }
 }
