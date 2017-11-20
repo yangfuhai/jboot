@@ -41,9 +41,9 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
 
     public JbootEhredisCacheImpl() {
-        ehcache = new JbootEhcacheImpl();
-        redisCache = new JbootRedisCacheImpl();
-        clientId = StringUtils.uuid();
+        this.ehcache = new JbootEhcacheImpl();
+        this.redisCache = new JbootRedisCacheImpl();
+        this.clientId = StringUtils.uuid();
 
         Jboot.me().getMq().addMessageListener(this, channel);
     }
@@ -76,9 +76,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.put(cacheName, key, value);
             redisCache.put(cacheName, key, value);
         } finally {
-            Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, JbootEhredisMessage.ACTION_PUT, cacheName, key), channel);
+            publishMessage(JbootEhredisMessage.ACTION_PUT, cacheName, key);
         }
     }
+
 
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
@@ -86,7 +87,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.put(cacheName, key, value, liveSeconds);
             redisCache.put(cacheName, key, value, liveSeconds);
         } finally {
-            Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, JbootEhredisMessage.ACTION_PUT, cacheName, key), channel);
+            publishMessage(JbootEhredisMessage.ACTION_PUT, cacheName, key);
         }
     }
 
@@ -96,7 +97,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.remove(cacheName, key);
             redisCache.remove(cacheName, key);
         } finally {
-            Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, JbootEhredisMessage.ACTION_REMOVE, cacheName, key), channel);
+            publishMessage(JbootEhredisMessage.ACTION_REMOVE, cacheName, key);
         }
     }
 
@@ -106,7 +107,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             ehcache.removeAll(cacheName);
             redisCache.removeAll(cacheName);
         } finally {
-            Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null), channel);
+            publishMessage(JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null);
         }
     }
 
@@ -136,6 +137,11 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             put(cacheName, key, obj, liveSeconds);
         }
         return obj;
+    }
+
+
+    private void publishMessage(int action, String cacheName, Object key) {
+        Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, action, cacheName, key), channel);
     }
 
     @Override
