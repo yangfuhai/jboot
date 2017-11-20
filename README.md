@@ -29,6 +29,7 @@ QQ交流群： 601440615
 * 分布式缓存
 * 分布式session
 * 分布式锁
+* 分布式任务调度
 * 调用监控 (基于metrics)
 * 限流、降级、熔断机制（基于hystrix）
 * Opentracing数据追踪（支持zipkin）
