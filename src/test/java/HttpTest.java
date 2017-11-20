@@ -25,7 +25,7 @@ public class HttpTest {
     @Test
     public void testOkHttpGet() throws InterruptedException {
         Jboot.setBootArg("jboot.http.type", "okhttp");
-        String html = Jboot.httpGet("http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html");
+        String html = Jboot.httpGet("https://www.baidu.com");
         System.out.println("babbb:" + html);
     }
 

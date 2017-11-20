@@ -79,9 +79,7 @@ public class OKHttpImpl extends JbootHttpBase {
                 .build();
 
 
-        OkHttpClient client = getClient(request);
-        Call call = client.newCall(okHttpRequest);
-        call.enqueue(new OkHttpResponseCallback(response));
+        doProcessRequest(request, response, okHttpRequest);
     }
 
     private void doProcessPostRequest(final JbootHttpRequest request, JbootHttpResponse response) throws Exception {
@@ -111,9 +109,17 @@ public class OKHttpImpl extends JbootHttpBase {
                 .build();
 
 
+        doProcessRequest(request, response, okHttpRequest);
+    }
+
+    private void doProcessRequest(JbootHttpRequest request, JbootHttpResponse response, Request okHttpRequest) throws Exception {
         OkHttpClient client = getClient(request);
         Call call = client.newCall(okHttpRequest);
-        call.enqueue(new OkHttpResponseCallback(response));
+        Response okHttpResponse = call.execute();
+        response.setResponseCode(okHttpResponse.code());
+        response.setContentType(okHttpResponse.body().contentType().type());
+        response.pipe(okHttpResponse.body().byteStream());
+        response.finish();
     }
 
 
