@@ -20,8 +20,7 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface Cron4jTask {
-    String cron();
-
-    boolean daemon() default false;
+public @interface FixedRate {
+    int period();
+    int initialDelay() default 0;
 }

@@ -18,21 +18,19 @@ package io.jboot.schedule;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.component.redis.JbootRedis;
-import it.sauronsoftware.cron4j.Task;
-import it.sauronsoftware.cron4j.TaskExecutionContext;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Title: 分布式任务
  * @Description: 在分布式应用中，处理分布式应用，基于redis。
- *  特点： 1、简单，无需依赖数据库。
- *        2、高可用，不存在单点故障
- *        3、一致性，在集群环境中，只有一个任务在执行。
- *        4、Failover，支持故障转移
+ * 特点： 1、简单，无需依赖数据库。
+ * 2、高可用，不存在单点故障
+ * 3、一致性，在集群环境中，只有一个任务在执行。
+ * 4、Failover，支持故障转移
  * @Package io.jboot.schedule
  */
-public abstract class JbootDistributedRunnable extends Task {
+public abstract class JbootDistributedRunnable implements Runnable {
 
     private static final Log LOG = Log.getLog(JbootDistributedRunnable.class);
 
@@ -51,10 +49,9 @@ public abstract class JbootDistributedRunnable extends Task {
         }
     }
 
+
     @Override
-    public void execute(TaskExecutionContext context) throws RuntimeException {
-
-
+    public void run() {
         Long result = null;
 
         for (int i = 0; i < 6; i++) {
@@ -98,7 +95,7 @@ public abstract class JbootDistributedRunnable extends Task {
         }
 
         try {
-            boolean runSuccess = run();
+            boolean runSuccess = execute();
 
             //run()执行失败，让别的分布式应用APP去执行
             //如果run()执行的时间很长（超过30秒）,那么别的分布式应用可能也抢不到了，只能等待下次轮休
@@ -116,6 +113,7 @@ public abstract class JbootDistributedRunnable extends Task {
         }
     }
 
+
     /**
      * 重置分布式的key
      */
@@ -131,5 +129,5 @@ public abstract class JbootDistributedRunnable extends Task {
         }
     }
 
-    public abstract boolean run();
+    public abstract boolean execute();
 }
