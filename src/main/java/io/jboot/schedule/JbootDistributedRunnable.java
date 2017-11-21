@@ -30,13 +30,14 @@ import io.jboot.component.redis.JbootRedis;
  * 4、Failover，支持故障转移
  * @Package io.jboot.schedule
  */
-public abstract class JbootDistributedRunnable implements Runnable {
+public class JbootDistributedRunnable implements Runnable {
 
     private static final Log LOG = Log.getLog(JbootDistributedRunnable.class);
 
     private JbootRedis redis;
-    private int expire = 50; // 单位秒
+    private int expire = 50 * 1000; // 单位秒
     private String key;
+    private Runnable runnable;
 
 
     public JbootDistributedRunnable() {
@@ -45,18 +46,38 @@ public abstract class JbootDistributedRunnable implements Runnable {
         this.key = "jbootRunnable:" + this.getClass().getName();
 
         if (redis == null) {
-            throw new NullPointerException("redis is null, please config redis info in jboot.properties");
+            LOG.error("redis is null, " +
+                    "can not use @DistributedRunnableEnable in your Class[" + this.getClass().getName() + "], " +
+                    "or config redis info in jboot.properties");
+        }
+
+    }
+
+    public JbootDistributedRunnable(Runnable runnable) {
+        this.runnable = runnable;
+        this.key = "jbootRunnable:" + runnable.getClass().getName();
+        this.redis = Jboot.me().getRedis();
+        if (redis == null) {
+            LOG.error("redis is null, " +
+                    "can not use @DistributedRunnableEnable in your Class[" + runnable.getClass().getName() + "], " +
+                    "or config redis info in jboot.properties");
         }
     }
 
 
     @Override
     public void run() {
+
+        if (redis == null) {
+            return;
+        }
+
         Long result = null;
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 5; i++) {
 
-            result = redis.setnx(key, "locked");
+            Long setTimeMillis = System.currentTimeMillis();
+            result = redis.setnx(key, setTimeMillis);
 
             //error
             if (result == null) {
@@ -65,14 +86,19 @@ public abstract class JbootDistributedRunnable implements Runnable {
 
             //setnx fail
             else if (result == 0) {
-                Long ttl = redis.ttl(key);
-                if (ttl == null || ttl <= 0 || ttl > expire) {
+                Long saveTimeMillis = redis.get(key);
+                if (saveTimeMillis == null) {
+                    reset();
+                }
+                long ttl = System.currentTimeMillis() - saveTimeMillis;
+                if (ttl > expire) {
                     //防止死锁
                     reset();
-                } else {
-                    // 休息 2 秒钟，重新去抢，因为可能别的设置好后，但是却执行失败了
-                    quietSleep();
                 }
+
+                // 休息 2 秒钟，重新去抢，因为可能别的应用执行失败了
+                quietSleep();
+
             }
 
             //set success
@@ -81,27 +107,25 @@ public abstract class JbootDistributedRunnable implements Runnable {
             }
         }
 
-
         //抢了5次都抢不到，证明已经被别的应用抢走了
         if (result == null || result == 0) {
             return;
         }
 
-        //抢到了，但是设置超时时间设置失败，删除后，让分布式的其他app去抢
-        Long expireResult = redis.expire(key, 50);
-        if (expireResult == null && expireResult <= 0) {
-            reset();
-            return;
-        }
 
         try {
-            boolean runSuccess = execute();
 
-            //run()执行失败，让别的分布式应用APP去执行
-            //如果run()执行的时间很长（超过30秒）,那么别的分布式应用可能也抢不到了，只能等待下次轮休
-            //作用：故障转移
-            if (!runSuccess) {
-                reset();
+            if (runnable != null) {
+                runnable.run();
+            } else {
+                boolean runSuccess = execute();
+
+                //run()执行失败，让别的分布式应用APP去执行
+                //如果run()执行的时间很长（超过30秒）,那么别的分布式应用可能也抢不到了，只能等待下次轮休
+                //作用：故障转移
+                if (!runSuccess) {
+                    reset();
+                }
             }
         }
 
@@ -123,11 +147,16 @@ public abstract class JbootDistributedRunnable implements Runnable {
 
     public static void quietSleep() {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public abstract boolean execute();
+    //for override
+    public boolean execute() {
+        return true;
+    }
+
+
 }
