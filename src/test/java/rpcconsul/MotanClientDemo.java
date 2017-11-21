@@ -17,6 +17,7 @@ package rpcconsul;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.exception.JbootException;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import service.User;
@@ -59,6 +60,12 @@ public class MotanClientDemo extends JbootController {
             // 使用服务
             System.out.println("saved : " + service.saveUser(new User(i, "myname")));
             System.out.println(service.hello("海哥" + i));
+        }
+
+        try {
+            service.exception("1");
+        } catch (JbootException e) {
+            System.out.println("exception : " + e.getMessage());
         }
 
 
