@@ -28,12 +28,12 @@ QQ交流群： 601440615
 * RPC远程调用 
     * [x] motan
     * [x] dubbo
-    * [] grpc
+    * [ ] grpc
 * MQ消息队列 
     * [x] rabbitmq
     * [x] redismq
     * [x] 阿里云商业MQ
-    * [] activemq
+    * [ ] activemq
 * 缓存
     * [x] ehcache
     * [x] redis
@@ -54,7 +54,7 @@ QQ交流群： 601440615
 * [x] Http客户端（包含了get、post请求，文件上传和下载等）
     * [x] httpUrlConnection
     * [x] okHttp
-    * [] httpClient
+    * [ ] httpClient
 * [x] 分布式下的微信和微信第三方
 * [x] 自定义序列化组件
 * [x] 事件机制
