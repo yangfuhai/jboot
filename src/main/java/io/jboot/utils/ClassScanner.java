@@ -97,12 +97,11 @@ public class ClassScanner {
 
         excludeJars.add("jcommander-");
         excludeJars.add("jackson-");
-        excludeJars.add("org.eclipse.jdt.core-");
+        excludeJars.add("org.eclipse.");
         excludeJars.add("javax.servlet.jsp-");
         excludeJars.add("jetty-");
         excludeJars.add("freemarker-");
         excludeJars.add("dom4j-");
-        excludeJars.add("org.apache.taglibs.standard.glassfish-");
         excludeJars.add("amqp-client-");
         excludeJars.add("ons-client-");
         excludeJars.add("hamcrest-core-");
@@ -121,6 +120,10 @@ public class ClassScanner {
         excludeJars.add("sslext-");
         excludeJars.add("logback-");
         excludeJars.add("metrics-");
+        excludeJars.add("jline-");
+        excludeJars.add("zkclient-");
+        excludeJars.add("okhttp-");
+        excludeJars.add("okio-");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();
