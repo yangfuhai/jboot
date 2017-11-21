@@ -139,8 +139,10 @@ public class JbootActionHandler extends ActionHandler {
             renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
         } finally {
             if (controller != null) {
-//                controller.clear();
+
                 JbootControllerContext.release();
+
+//              controller.clear();
                 CPI.clear(controller);
             }
         }
@@ -159,10 +161,6 @@ public class JbootActionHandler extends ActionHandler {
      * @param action
      */
     private void injectActionInterceptors(Action action) {
-        if (action == null) {
-            return;
-        }
-
 
         //获取这个拦截器下的所有拦截器
         //如果没有拦截器，直接返回

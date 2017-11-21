@@ -26,7 +26,7 @@ public class SwaggerStarter {
 
 
     /**
-     * 启动后，进入网址：http://petstore.swagger.io/ ，在输入框输入：http://127.0.0.1:8088/swagger/json ，然后点击：Explore
+     * 启动后，访问：http://127.0.0.1:8080/swaggerui
      *
      * @param args
      */
