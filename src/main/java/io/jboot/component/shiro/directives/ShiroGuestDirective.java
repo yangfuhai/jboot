@@ -16,10 +16,10 @@
 package io.jboot.component.shiro.directives;
 
 import com.jfinal.template.Env;
+import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.web.directive.annotation.JFinalDirective;
 
-import java.io.Writer;
 
 /**
  * 游客访问时。

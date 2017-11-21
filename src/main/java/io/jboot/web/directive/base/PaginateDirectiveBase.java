@@ -17,10 +17,10 @@ package io.jboot.web.directive.base;
 
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.template.Env;
+import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.web.JbootRequestContext;
 
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 

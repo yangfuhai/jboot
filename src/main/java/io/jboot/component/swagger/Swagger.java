@@ -15,7 +15,7 @@
  */
 package io.jboot.component.swagger;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.List;

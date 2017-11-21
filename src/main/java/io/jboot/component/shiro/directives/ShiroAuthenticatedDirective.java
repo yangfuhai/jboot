@@ -16,10 +16,10 @@
 package io.jboot.component.shiro.directives;
 
 import com.jfinal.template.Env;
+import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.web.directive.annotation.JFinalDirective;
 
-import java.io.Writer;
 
 /**
  * 用户已经身份验证通过，Subject.login登录成功
@@ -34,6 +34,7 @@ public class ShiroAuthenticatedDirective extends JbootShiroDirectiveBase {
         if (getSubject() != null && getSubject().isAuthenticated())
             stat.exec(env, scope, writer);
     }
+
 
     public boolean hasEnd() {
         return true;

@@ -18,11 +18,10 @@ package io.jboot.component.shiro.directives;
 import com.jfinal.template.Env;
 import com.jfinal.template.expr.ast.Expr;
 import com.jfinal.template.expr.ast.ExprList;
+import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.web.directive.annotation.JFinalDirective;
-
-import java.io.Writer;
 
 /**
  * 有相应角色

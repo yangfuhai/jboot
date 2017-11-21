@@ -16,10 +16,9 @@
 package io.jboot.component.shiro.directives;
 
 import com.jfinal.template.Env;
+import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.web.directive.annotation.JFinalDirective;
-
-import java.io.Writer;
 
 /**
  * 未进行身份验证时，即没有调用Subject.login进行登录。
