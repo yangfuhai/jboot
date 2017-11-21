@@ -17,6 +17,7 @@ package service;
 
 
 import io.jboot.Jboot;
+import io.jboot.exception.JbootException;
 
 public class UserServiceImpl implements UserService {
     @Override
@@ -39,4 +40,11 @@ public class UserServiceImpl implements UserService {
 
         return true;
     }
+
+    @Override
+    public String exception(String id) {
+        throw new JbootException(id);
+    }
+
+
 }
