@@ -24,4 +24,6 @@ public interface UserService {
     public String findUserById(String userId);
 
     public boolean saveUser(User user);
+
+    public String exception(String id);
 }
