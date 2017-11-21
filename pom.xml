@@ -516,7 +516,7 @@
                     <!-- 根目录 -->
                     <assembleDirectory>${project.build.directory}/app</assembleDirectory>
                     <!-- 打包的jar，以及maven依赖的jar放到这个目录里面 -->
-                    <repositoryName>libs</repositoryName>
+                    <repositoryName>lib</repositoryName>
                     <!-- 可执行脚本的目录 -->
                     <binFolder>bin</binFolder>
                     <!-- 配置classpath 或 webroot目录 -->
