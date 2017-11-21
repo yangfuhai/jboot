@@ -18,6 +18,7 @@ package io.jboot.config;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.jfinal.kit.*;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.config.client.ConfigRemoteReader;
@@ -39,6 +40,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 用于读取配置信息，包括本地配置信息和分布式远程配置信息
  */
 public class JbootConfigManager {
+
+    private static final Log LOG = Log.getLog(JbootConfigManager.class);
 
     private static JbootConfigManager me = new JbootConfigManager();
 
@@ -82,7 +85,7 @@ public class JbootConfigManager {
             Prop prop = PropKit.use("jboot.properties");
             mainProperties = prop.getProperties();
         } catch (Throwable ex) {
-            LogKit.warn("warn : not find jboot.properties in your class path.");
+            LOG.warn("Could not find jboot.properties in your class path.");
             mainProperties = new Properties();
         }
 
