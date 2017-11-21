@@ -97,7 +97,7 @@ public class JbootScheduleManager {
             Runnable runnable = (Runnable) ClassNewer.newInstance(clazz);
             Runnable executeRunnable = clazz.getAnnotation(DistributedRunnableEnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
             try {
-                fixedScheduler.scheduleAtFixedRate((Runnable) ClassNewer.newInstance(clazz), fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
+                fixedScheduler.scheduleAtFixedRate(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
             } catch (Exception e) {
                 LOG.error(e.toString(), e);
             }
