@@ -82,7 +82,7 @@ public class JbootConfigManager {
             Prop prop = PropKit.use("jboot.properties");
             mainProperties = prop.getProperties();
         } catch (Throwable ex) {
-            LogKit.warn(ex.toString(), ex);
+            LogKit.warn("warn : not find jboot.properties in your class path.");
             mainProperties = new Properties();
         }
 
