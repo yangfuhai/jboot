@@ -28,9 +28,10 @@ public class MotanClientDemo extends JbootController {
 
     /**
      * 请先启动 MotanServerDemo 后，再启动
+     *
      * @param args
      */
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
         //jboot端口号配置
         Jboot.setBootArg("jboot.server.port", "8088");
@@ -59,6 +60,23 @@ public class MotanClientDemo extends JbootController {
 
 
         renderText("ok");
+    }
+
+
+    public void exception() {
+        Jbootrpc jbootrpc = Jboot.me().getRpc();
+
+        long time = System.currentTimeMillis();
+        UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
+
+//        try {
+        String string = service.exception("1");
+//        } catch (JbootException e) {
+//            System.out.println("exception : " + e.getMessage());
+//        }
+
+        renderText("exception:" + string);
+
     }
 
 
