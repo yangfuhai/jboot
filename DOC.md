@@ -97,26 +97,45 @@
 # JBoot核心组件
 Jboot的主要核心组件有以下几个。
 
-* MVC （基于jfinal）
-* ORM （基于jfinal）
-* AOP （基于guice）
-* Shiro安全控制
-* RPC远程调用 （支持可选方案有 motan，dubbo等）
-* MQ消息队列 (支持可选方案有：redis、activemq，rabbitmq等)
-* 分布式缓存
-* 分布式session
-* 分布式锁
-* 分布式任务调度
-* 调用监控 (基于metrics)
-* 限流、降级、熔断机制（基于hystrix）
-* Opentracing数据追踪（支持zipkin）
-* 统一配置中心
-* swagger api
-* 轻量级的Http客户端（包含了get、post请求，文件上传和下载等）
-* 分布式下的微信和微信第三方
-* 自定义序列化组件
-* 事件机制
-* 代码生成器
+* [x] MVC （基于jfinal）
+* [x] ORM （基于jfinal）
+* [x] AOP （基于guice）
+* 安全控制
+    * [x] shiro
+* RPC远程调用 
+    * [x] motan
+    * [x] dubbo
+    * [ ] grpc
+* MQ消息队列 
+    * [x] rabbitmq
+    * [x] redismq
+    * [x] 阿里云商业MQ
+    * [ ] activemq
+* 缓存
+    * [x] ehcache
+    * [x] redis
+    * [x] 分布式二级缓存ehredis
+* [x] 分布式session
+* [x] 分布式锁
+* 任务调度
+    * [x] cron4j
+    * [x] ScheduledThreadPoolExecutor
+    * [x] 分布式任务调度
+* [x] 调用监控 (基于metrics)
+* [x] 限流、降级、熔断机制（基于hystrix）
+* [x] Opentracing数据追踪
+    * [x] zipkin
+    * [x] skywalking
+* [x] 统一配置中心
+* [x] swagger api
+* [x] Http客户端（包含了get、post请求，文件上传和下载等）
+    * [x] httpUrlConnection
+    * [x] okHttp
+    * [ ] httpClient
+* [x] 分布式下的微信和微信第三方
+* [x] 自定义序列化组件
+* [x] 事件机制
+* [x] 代码生成器
 * 等等
 
 
