@@ -20,5 +20,5 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface DistributedRunnableEnable {
+public @interface EnableDistributedRunnable {
 }

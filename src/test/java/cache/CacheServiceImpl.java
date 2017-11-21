@@ -11,19 +11,19 @@ import java.util.Map;
 public class CacheServiceImpl implements CacheService {
 
     @Override
-    @Cacheable(name = "test")
-    public String cacheAble(String key, Map<String, String> map) {
-        return key + map.get("abc");
+    @Cacheable(name = "#(keyName)")
+    public String cacheAble(String keyName, Map<String, String> map) {
+        return keyName + map.get("abc");
     }
 
     @Override
-    @Cacheable(name = "test", liveSeconds = 30)
+    @Cacheable(name = "#(key)", liveSeconds = 30)
     public String cacheAbleLive(String key, Map<String, String> map) {
         return key + map.get("abc");
     }
 
     @Override
-    @CachePut(name = "test", liveSeconds = 30)
+    @CachePut(name = "#(key)", liveSeconds = 30)
     public String putCache(String key, Map<String, String> map) {
         return key + map.get("abc");
     }

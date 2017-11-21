@@ -1,7 +1,7 @@
 package distributedtask;
 
 import io.jboot.schedule.annotation.Cron;
-import io.jboot.schedule.annotation.DistributedRunnableEnable;
+import io.jboot.schedule.annotation.EnableDistributedRunnable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,7 +14,7 @@ import java.util.Date;
  * @Package distributedtask
  */
 @Cron("*/1 * * * *")
-@DistributedRunnableEnable
+@EnableDistributedRunnable
 public class MyTask implements Runnable {
 
     @Override

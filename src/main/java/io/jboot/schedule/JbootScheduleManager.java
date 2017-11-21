@@ -22,7 +22,7 @@ import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 import io.jboot.schedule.annotation.Cron;
-import io.jboot.schedule.annotation.DistributedRunnableEnable;
+import io.jboot.schedule.annotation.EnableDistributedRunnable;
 import io.jboot.schedule.annotation.FixedDelay;
 import io.jboot.schedule.annotation.FixedRate;
 import io.jboot.utils.ClassNewer;
@@ -80,7 +80,7 @@ public class JbootScheduleManager {
             }
             FixedDelay fixedDelayJob = (FixedDelay) clazz.getAnnotation(FixedDelay.class);
             Runnable runnable = (Runnable) ClassNewer.newInstance(clazz);
-            Runnable executeRunnable = clazz.getAnnotation(DistributedRunnableEnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
+            Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
             try {
                 fixedScheduler.scheduleWithFixedDelay(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
             } catch (Exception e) {
@@ -95,7 +95,7 @@ public class JbootScheduleManager {
             }
             FixedRate fixedDelayJob = (FixedRate) clazz.getAnnotation(FixedRate.class);
             Runnable runnable = (Runnable) ClassNewer.newInstance(clazz);
-            Runnable executeRunnable = clazz.getAnnotation(DistributedRunnableEnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
+            Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
             try {
                 fixedScheduler.scheduleAtFixedRate(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
             } catch (Exception e) {
@@ -111,7 +111,7 @@ public class JbootScheduleManager {
             Cron cron = (Cron) clazz.getAnnotation(Cron.class);
             if (Runnable.class.isAssignableFrom(clazz)) {
                 Runnable runnable = (Runnable) ClassNewer.newInstance(clazz);
-                Runnable executeRunnable = clazz.getAnnotation(DistributedRunnableEnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
+                Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
                 cron4jPlugin.addTask(cron.value(), executeRunnable, cron.daemon());
             } else if (ProcessTask.class.isAssignableFrom(clazz)) {
                 cron4jPlugin.addTask(cron.value(), (ProcessTask) ClassNewer.newInstance(clazz), cron.daemon());
