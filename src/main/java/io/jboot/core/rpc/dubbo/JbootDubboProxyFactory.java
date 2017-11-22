@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,7 @@ import com.alibaba.dubbo.rpc.proxy.AbstractProxyFactory;
 import com.alibaba.dubbo.rpc.proxy.AbstractProxyInvoker;
 import com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler;
 import io.jboot.Jboot;
-import io.jboot.component.hystrix.HystrixRunnable;
+import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
@@ -96,7 +96,7 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
 
             return StringUtils.isBlank(key)
                     ? super.invoke(proxy, method, args)
-                    : Jboot.hystrix(key, new HystrixRunnable() {
+                    : Jboot.hystrix(new JbootHystrixCommand(key) {
                 @Override
                 public Object run() {
                     try {
@@ -112,7 +112,7 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
 
                 @Override
                 public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args);
+                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args, this, this.getExecutionException());
                 }
             });
         }

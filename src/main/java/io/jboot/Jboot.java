@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@ package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
 import io.jboot.aop.JbootInjectManager;
-import io.jboot.component.hystrix.HystrixRunnable;
 import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.redis.JbootRedis;
@@ -516,13 +515,12 @@ public class Jboot {
     /**
      * 通过  hystrix 进行调用
      *
-     * @param key
      * @param hystrixRunnable
      * @param <T>
      * @return
      */
-    public static <T> T hystrix(String key, HystrixRunnable hystrixRunnable) {
-        return (T) new JbootHystrixCommand(key, hystrixRunnable).execute();
+    public static <T> T hystrix(JbootHystrixCommand hystrixRunnable) {
+        return (T) hystrixRunnable.execute();
     }
 
 
