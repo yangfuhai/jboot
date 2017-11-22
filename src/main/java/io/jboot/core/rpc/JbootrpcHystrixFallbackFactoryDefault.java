@@ -24,4 +24,9 @@ public class JbootrpcHystrixFallbackFactoryDefault implements JbootrpcHystrixFal
     public Object fallback(Method method, Object[] args) {
         return null;
     }
+
+    @Override
+    public Object fallback(Throwable throwable) {
+        return throwable;
+    }
 }
