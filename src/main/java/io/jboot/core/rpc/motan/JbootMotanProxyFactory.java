@@ -22,6 +22,7 @@ import io.jboot.component.hystrix.HystrixRunnable;
 import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 import io.opentracing.Span;
 
@@ -82,9 +83,11 @@ public class JbootMotanProxyFactory implements ProxyFactory {
             }
 
 
-            return StringUtils.isBlank(key)
+            Object ret = StringUtils.isBlank(key)
                     ? handler.invoke(proxy, method, args)
                     : Jboot.hystrix(key, new HystrixRunnable() {
+                private Throwable throwable;
+
                 @Override
                 public Object run() {
                     try {
@@ -93,17 +96,25 @@ public class JbootMotanProxyFactory implements ProxyFactory {
                         return handler.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
+                        this.throwable = throwable;
                     } finally {
                         JbootSpanContext.release();
                     }
+
                     return null;
                 }
 
                 @Override
                 public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args);
+                    return throwable;
                 }
             });
+
+            if (ret != null && ret instanceof Throwable) {
+                throw (Throwable) ret;
+            }
+
+            return ret;
         }
     }
 }
