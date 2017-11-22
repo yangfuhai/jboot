@@ -97,11 +97,11 @@ public class JbootMotanProxyFactory implements ProxyFactory {
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
                         this.throwable = throwable;
+                        throw new JbootException(throwable);
                     } finally {
                         JbootSpanContext.release();
                     }
 
-                    return null;
                 }
 
                 @Override
