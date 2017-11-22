@@ -86,31 +86,22 @@ public class JbootMotanProxyFactory implements ProxyFactory {
             Object ret = StringUtils.isBlank(key)
                     ? handler.invoke(proxy, method, args)
                     : Jboot.hystrix(key, new HystrixRunnable() {
-                private Throwable throwable;
 
                 @Override
                 public Object run() {
+                    Throwable retThrowable;
                     try {
                         JbootSpanContext.add(span);
 
                         return handler.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
-                        this.throwable = throwable;
-                        throw new JbootException(throwable);
+                        retThrowable = throwable;
                     } finally {
                         JbootSpanContext.release();
                     }
 
-                }
-
-                @Override
-                public Object getFallback() {
-                    if (throwable != null) {
-                        return JbootrpcManager.me().getHystrixFallbackFactory().fallback(throwable);
-                    } else {
-                        return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args);
-                    }
+                    return retThrowable;
                 }
             });
 

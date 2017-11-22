@@ -25,8 +25,4 @@ public class JbootrpcHystrixFallbackFactoryDefault implements JbootrpcHystrixFal
         return null;
     }
 
-    @Override
-    public Object fallback(Throwable throwable) {
-        return throwable;
-    }
 }

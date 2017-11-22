@@ -24,5 +24,4 @@ public interface JbootrpcHystrixFallbackFactory {
 
     public Object fallback(Method method, Object[] args);
 
-    public Object fallback(Throwable throwable);
 }
