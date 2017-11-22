@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.event.annotation;
+package io.jboot.utils;
 
-import java.lang.annotation.*;
+/**
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.utils
+ */
+public class JbootKits {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Documented
-public @interface EventConfig {
-
-	public static final int DEFAULT_WEIGHT = 10;
-
-	int 		weight() 	default DEFAULT_WEIGHT;
-	boolean 	async() 	default true;
-	String[] 	action();
+    public static Class<?> getUsefulClass(Class<?> clazz) {
+        //ControllerTest$ServiceTest$$EnhancerByGuice$$40471411#hello
+        //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
+        return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
+    }
 }

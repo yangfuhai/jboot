@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
- * Licensed under the GNU Lesser General Public License (LGPL) ,Version 3.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- * http://www.gnu.org/licenses/lgpl-3.0.txt
+ *  http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ package io.jboot.aop.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
+import io.jboot.utils.JbootKits;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -36,7 +37,7 @@ public class JFinalBeforeInterceptor implements MethodInterceptor {
         Class targetClass = methodInvocation.getThis().getClass();
         Method method = methodInvocation.getMethod();
 
-        targetClass = getUsefulClass(targetClass);
+        targetClass = JbootKits.getUsefulClass(targetClass);
 
         Interceptor[] finalInters = manger.buildServiceMethodInterceptor(InterceptorManager.NULL_INTERS, targetClass, method);
         JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, finalInters);
@@ -44,7 +45,4 @@ public class JFinalBeforeInterceptor implements MethodInterceptor {
         return invocation.getReturnValue();
     }
 
-    public static Class<?> getUsefulClass(Class<?> clazz) {
-        return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
-    }
 }

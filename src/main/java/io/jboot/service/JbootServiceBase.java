@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
- * Licensed under the GNU Lesser General Public License (LGPL) ,Version 3.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- * http://www.gnu.org/licenses/lgpl-3.0.txt
+ *  http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
+import io.jboot.utils.JbootKits;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -37,7 +38,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
     public JbootServiceBase() {
         Class<M> modelClass = null;
-        Type t = getUsefulClass(getClass()).getGenericSuperclass();
+        Type t = JbootKits.getUsefulClass(getClass()).getGenericSuperclass();
         if (t instanceof ParameterizedType) {
             Type[] p = ((ParameterizedType) t).getActualTypeArguments();
             modelClass = (Class<M>) p[0];
@@ -50,10 +51,6 @@ public class JbootServiceBase<M extends JbootModel<M>> {
         DAO = ClassNewer.newInstance(modelClass).dao();
     }
 
-
-    private static Class<?> getUsefulClass(Class<?> modelClass) {
-        return modelClass.getName().indexOf("EnhancerBy") == -1 ? modelClass : modelClass.getSuperclass();
-    }
 
 
     public M getDao() {

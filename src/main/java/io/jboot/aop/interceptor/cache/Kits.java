@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
- * Licensed under the GNU Lesser General Public License (LGPL) ,Version 3.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- * http://www.gnu.org/licenses/lgpl-3.0.txt
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,10 +15,10 @@
  */
 package io.jboot.aop.interceptor.cache;
 
-import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.template.Engine;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.JbootKits;
 import io.jboot.utils.StringUtils;
 
 import javax.inject.Named;
@@ -30,7 +30,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Kits {
+class Kits {
 
     static final Engine ENGINE = new Engine("JbootCacheRender");
 
@@ -86,7 +86,7 @@ public class Kits {
 
     static String buildCacheKey(String key, Class clazz, Method method, Object[] arguments) {
 
-        clazz = getUsefulClass(clazz);
+        clazz = JbootKits.getUsefulClass(clazz);
 
         if (StringUtils.isBlank(key)) {
 
@@ -121,13 +121,6 @@ public class Kits {
     }
 
 
-    static Class<? extends Model> getUsefulClass(Class c) {
-
-        //ControllerTest$ServiceTest$$EnhancerByGuice$$40471411#hello
-        //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
-
-        return c.getName().indexOf("EnhancerBy") == -1 ? c : c.getSuperclass();
-    }
 
     static boolean isPrimitive(Class clazz) {
         return clazz == String.class
