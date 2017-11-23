@@ -30,7 +30,7 @@ public class MqTest {
         Jboot.setBootArg("jboot.mq.rabbitmq.host", "127.0.0.1");
         Jboot.setBootArg("jboot.mq.rabbitmq.username", "guest");
         Jboot.setBootArg("jboot.mq.rabbitmq.password", "guest");
-        Jboot.setBootArg("jboot.mq.rabbitmq.channel", "myChannel");
+        Jboot.setBootArg("jboot.mq.rabbitmq.channel", "myChannel,myChannel1");
 
         doTest();
 
@@ -40,13 +40,12 @@ public class MqTest {
         Jboot.me().getMq().addMessageListener(new JbootmqMessageListener() {
             @Override
             public void onMessage(String channel, Object message) {
-                System.out.println("message:" + message + "     channel:" + channel);
+                System.out.println("listener:" + message + "     channel:" + channel);
             }
         });
 
-        for (int i = 0; i < 10; i++) {
-            Jboot.me().getMq().publish("hello" + i, "myChannel1");
-        }
+//        Jboot.me().getMq().publish("hello" , "myChannel1");
+        Jboot.me().getMq().enqueue("hello", "myChannel1");
 
 
         sleep(1000 * 3);

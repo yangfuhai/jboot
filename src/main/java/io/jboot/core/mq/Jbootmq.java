@@ -20,6 +20,8 @@ import java.util.Collection;
 
 public interface Jbootmq {
 
+    public void enqueue(Object message, String toChannel);
+
     public void publish(Object message, String toChannel);
 
     public void addMessageListener(JbootmqMessageListener listener);

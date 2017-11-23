@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  */
 package io.jboot.core.mq.rabbitmq;
 
+import com.google.common.collect.Maps;
 import com.rabbitmq.client.*;
 import io.jboot.Jboot;
 import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
@@ -24,6 +25,7 @@ import io.jboot.core.mq.JbootmqBase;
 import io.jboot.utils.StringUtils;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * doc : http://www.rabbitmq.com/api-guide.html
@@ -32,6 +34,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
 
     Connection connection;
+    Map<String, Channel> channelMap = Maps.newConcurrentMap();
 
     public JbootRabbitmqImpl() {
 
@@ -65,18 +68,22 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
         String[] channels = channelString.split(",");
         for (String toChannel : channels) {
-            registerListner(getChannel(toChannel));
+            registerListner(getChannel(toChannel), toChannel);
         }
 
-       
-        registerListner(getChannel(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL));
+
+        registerListner(getChannel(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL), JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL);
     }
 
-    private void registerListner(final Channel channel) {
+    private void registerListner(final Channel channel, String toChannel) {
         if (channel == null) {
             return;
         }
         try {
+
+            /**
+             * Broadcast listener
+             */
             channel.basicConsume("", true, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
@@ -84,6 +91,19 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
                     notifyListeners(envelope.getExchange(), o);
                 }
             });
+
+
+            /**
+             * Queue listener
+             */
+            channel.basicConsume(toChannel, true, new DefaultConsumer(channel) {
+                @Override
+                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                    Object o = Jboot.me().getSerializer().deserialize(body);
+                    notifyListeners(envelope.getRoutingKey(), o);
+                }
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,17 +111,41 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
 
     private Channel getChannel(String toChannel) {
-        Channel channel = null;
-        try {
-            channel = connection.createChannel();
-            channel.exchangeDeclare(toChannel, BuiltinExchangeType.FANOUT);
-            String queueName = channel.queueDeclare().getQueue();
-            channel.queueBind(queueName, toChannel, "");
-        } catch (IOException e) {
-            throw new JbootException("can not createChannel", e);
+
+        Channel channel = channelMap.get(toChannel);
+        if (channel == null) {
+            try {
+                channel = connection.createChannel();
+                channel.queueDeclare(toChannel, false, false, false, null);
+                channel.exchangeDeclare(toChannel, BuiltinExchangeType.FANOUT);
+                String queueName = channel.queueDeclare().getQueue();
+                channel.queueBind(queueName, toChannel, toChannel);
+            } catch (IOException e) {
+                throw new JbootException("can not createChannel", e);
+            }
+
+            if (channel != null) {
+                channelMap.put(toChannel, channel);
+            }
         }
 
         return channel;
+    }
+
+    @Override
+    public void enqueue(Object message, String toChannel) {
+        Channel channel = getChannel(toChannel);
+
+        if (channel == null) {
+            return;
+        }
+
+        try {
+            byte[] bytes = Jboot.me().getSerializer().serialize(message);
+            channel.basicPublish("", toChannel, MessageProperties.BASIC, bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
