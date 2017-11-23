@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,10 +18,11 @@ package io.jboot.core.rpc.motan;
 import com.weibo.api.motan.core.extension.SpiMeta;
 import com.weibo.api.motan.proxy.ProxyFactory;
 import io.jboot.Jboot;
-import io.jboot.component.hystrix.JbootHystrixCommand;
+import io.jboot.component.hystrix.HystrixRunnable;
 import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 import io.opentracing.Span;
 
@@ -82,26 +83,33 @@ public class JbootMotanProxyFactory implements ProxyFactory {
             }
 
 
-            return StringUtils.isBlank(key)
+            Object ret = StringUtils.isBlank(key)
                     ? handler.invoke(proxy, method, args)
-                    : Jboot.hystrix(new JbootHystrixCommand(key) {
+                    : Jboot.hystrix(key, new HystrixRunnable() {
+
                 @Override
-                public Object run() throws Exception {
+                public Object run() {
+                    Throwable retThrowable;
                     try {
                         JbootSpanContext.add(span);
+
                         return handler.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
-                        throw (Exception) throwable;
+                        throwable.printStackTrace();
+                        retThrowable = throwable;
                     } finally {
                         JbootSpanContext.release();
                     }
-                }
 
-                @Override
-                public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args, this, this.getExecutionException());
+                    return retThrowable;
                 }
             });
+
+            if (ret != null && ret instanceof Throwable) {
+                throw (Throwable) ret;
+            }
+
+            return ret;
         }
     }
 }

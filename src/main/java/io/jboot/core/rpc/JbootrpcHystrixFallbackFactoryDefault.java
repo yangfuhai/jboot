@@ -27,4 +27,5 @@ public class JbootrpcHystrixFallbackFactoryDefault implements JbootrpcHystrixFal
         exception.printStackTrace();
         return null;
     }
+
 }
