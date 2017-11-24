@@ -16,6 +16,7 @@
 package io.jboot.core.mq.redismq;
 
 import com.google.common.collect.Sets;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
@@ -30,6 +31,8 @@ import java.util.Set;
 
 
 public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
+
+    private static final Log LOG = Log.getLog(JbootRedismqImpl.class);
 
     JbootRedis redis;
     Thread dequeueThread;
@@ -86,7 +89,12 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     @Override
     public void run() {
         for (; ; ) {
-            doExecuteDequeue();
+            try {
+                doExecuteDequeue();
+                Thread.sleep(100);
+            } catch (Throwable ex) {
+                LOG.error(ex.toString(), ex);
+            }
         }
     }
 
