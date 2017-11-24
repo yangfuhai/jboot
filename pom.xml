@@ -377,6 +377,18 @@
                 </includes>
                 <filtering>false</filtering>
             </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <excludes>
+                    <exclude>
+                        *.properties
+                    </exclude>
+                </excludes>
+            </resource>
         </resources>
 
         <plugins>
