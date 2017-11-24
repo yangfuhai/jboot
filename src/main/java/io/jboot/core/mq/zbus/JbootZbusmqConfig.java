@@ -13,26 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.mq;
+package io.jboot.core.mq.zbus;
 
 import io.jboot.config.annotation.PropertieConfig;
 
 
-@PropertieConfig(prefix = "jboot.mq")
-public class JbootmqConfig {
-    public static final String TYPE_REDIS = "redis";
-    public static final String TYPE_ACTIVEMQ = "activemq";
-    public static final String TYPE_ALIYUNMQ = "aliyunmq";
-    public static final String TYPE_RABBITMQ = "rabbitmq";
-    public static final String TYPE_ZBUS = "zbus";
+@PropertieConfig(prefix = "jboot.mq.zbus")
+public class JbootZbusmqConfig {
 
-    public String type = TYPE_REDIS;
+    private String channel;
+    private String queue;
+    private String broker;
 
-    public String getType() {
-        return type;
+    public String getChannel() {
+        return channel;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getQueue() {
+        return queue;
+    }
+
+    public void setQueue(String queue) {
+        this.queue = queue;
+    }
+
+    public String getBroker() {
+        return broker;
+    }
+
+    public void setBroker(String broker) {
+        this.broker = broker;
     }
 }

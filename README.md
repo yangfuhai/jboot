@@ -29,13 +29,13 @@ QQ交流群： 601440615
     * [x] motan
     * [x] dubbo
     * [ ] grpc
-    * [ ] zbus
+    * [x] zbus
 * MQ消息队列 
     * [x] rabbitmq
     * [x] redismq
     * [x] 阿里云商业MQ
     * [ ] activemq
-    * [ ] zbus
+    * [x] zbus
 * 缓存
     * [x] ehcache
     * [x] redis

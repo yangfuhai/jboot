@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ import io.jboot.Jboot;
 import io.jboot.core.mq.aliyunmq.JbootAliyunmqImpl;
 import io.jboot.core.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.core.mq.redismq.JbootRedismqImpl;
+import io.jboot.core.mq.zbus.JbootZbusmqImpl;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.ClassNewer;
 
@@ -54,6 +55,8 @@ public class JbootmqManager {
                 return new JbootAliyunmqImpl();
             case JbootmqConfig.TYPE_RABBITMQ:
                 return new JbootRabbitmqImpl();
+            case JbootmqConfig.TYPE_ZBUS:
+                return new JbootZbusmqImpl();
             case JbootmqConfig.TYPE_ACTIVEMQ:
                 throw new RuntimeException("not finished!!!!");
             default:

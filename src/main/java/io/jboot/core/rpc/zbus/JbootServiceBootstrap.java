@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.mq;
+package io.jboot.core.rpc.zbus;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.zbus.rpc.bootstrap.http.ServiceBootstrap;
 
+/**
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.core.rpc.zbus
+ */
+public class JbootServiceBootstrap extends ServiceBootstrap {
 
-@PropertieConfig(prefix = "jboot.mq")
-public class JbootmqConfig {
-    public static final String TYPE_REDIS = "redis";
-    public static final String TYPE_ACTIVEMQ = "activemq";
-    public static final String TYPE_ALIYUNMQ = "aliyunmq";
-    public static final String TYPE_RABBITMQ = "rabbitmq";
-    public static final String TYPE_ZBUS = "zbus";
-
-    public String type = TYPE_REDIS;
-
-    public String getType() {
-        return type;
+    public ServiceBootstrap addModule(Class clazz, Object impl, String group, String version) {
+        String module = ZbusKits.buildModule(clazz, group, version);
+        this.processor.addModule(module, impl);
+        return this;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+
 }
