@@ -31,6 +31,7 @@ public class JbootrpcConfig {
     public static final String TYPE_MOTAN = "motan";
     public static final String TYPE_THRIFT = "thrift";
     public static final String TYPE_LOCAL = "local";
+    public static final String TYPE_ZBUS = "zbus";
 
     public static final String REGISTRY_TYPE_CONSUL = "consul";
     public static final String REGISTRY_TYPE_ZOOKEEPER = "zookeeper";

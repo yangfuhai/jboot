@@ -21,6 +21,7 @@ import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.core.rpc.dubbo.JbootDubborpc;
 import io.jboot.core.rpc.local.JbootLocalrpc;
 import io.jboot.core.rpc.motan.JbootMotanrpc;
+import io.jboot.core.rpc.zbus.JbootZbusrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.event.JbootEventListener;
 import io.jboot.exception.JbootAssert;
@@ -106,6 +107,8 @@ public class JbootrpcManager {
                 return new JbootLocalrpc();
             case JbootrpcConfig.TYPE_DUBBO:
                 return new JbootDubborpc();
+            case JbootrpcConfig.TYPE_ZBUS:
+                return new JbootZbusrpc();
             default:
                 return JbootSpiLoader.load(Jbootrpc.class, config.getType());
         }
