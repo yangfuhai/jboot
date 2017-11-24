@@ -1439,7 +1439,7 @@ config pom.xml
             <configuration>
             
                <assembleDirectory>${project.build.directory}/app</assembleDirectory>
-                <repositoryName>libs</repositoryName>
+                <repositoryName>lib</repositoryName>
                 <binFolder>bin</binFolder>
                 <configurationDirectory>webRoot</configurationDirectory>
                 <copyConfigurationDirectory>true</copyConfigurationDirectory>
