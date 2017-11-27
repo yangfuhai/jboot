@@ -44,6 +44,7 @@ public class JbootZbusrpc extends JbootrpcBase {
     public void onInited() {
         try {
             String[] hostPort = getConfig().getRegistryAddress().split(":");
+
             serviceBootstrap.host(hostPort[0]);
             serviceBootstrap.port(Integer.valueOf(hostPort[1]));
             serviceBootstrap.start();

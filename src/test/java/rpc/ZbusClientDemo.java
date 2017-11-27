@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,9 +38,7 @@ public class ZbusClientDemo extends JbootController {
 
         //RPC配置
         Jboot.setBootArg("jboot.rpc.type", "zbus");
-        Jboot.setBootArg("jboot.rpc.callMode", "registry");//注册中心模式
-        Jboot.setBootArg("jboot.rpc.registryType", "zbus");//注册中心的类型：zbus
-        Jboot.setBootArg("jboot.rpc.registryAddress", "127.0.0.1:15555");//注册中心，即zbus的地址
+        Jboot.setBootArg("jboot.rpc.host", "127.0.0.1:15555");//注册中心，即zbus的地址
 
         Jboot.run(args);
     }
