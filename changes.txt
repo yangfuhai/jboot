@@ -1,3 +1,13 @@
+jboot-1.1.0:
+新增：mq 的队列模式（之前只有广播）
+新增：redis 和 rabbitmq 对队列的支持。
+新增：zbus的支持，暂时只支持zbus的mq。
+修复：代码生成器生成的代码 tableName 注解错误的问题。（感谢 @Rlax 提交代码）
+修复：自定义motan registry但maven打包没有加入spi配置信息导致无法发现的bug。
+优化：重构 hystrix 和 rpc模块，允许用户自己控制rpc服务抛出的异常是否抛出到Controller，方便开发调试。
+其他：更新依赖、完善文档
+
+
 jboot-1.0:
 更新Jfinal到3.3，移除源码依赖（通过maven依赖）。
 
