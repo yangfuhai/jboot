@@ -15,11 +15,12 @@
  */
 package io.jboot.core.rpc.zbus;
 
+import io.zbus.mq.Broker;
 import io.zbus.rpc.RpcConfig;
 import io.zbus.rpc.RpcInvoker;
-import io.zbus.rpc.bootstrap.http.ClientBootstrap;
-import io.zbus.rpc.transport.http.RpcMessageInvoker;
-import io.zbus.transport.http.MessageClientPool;
+import io.zbus.rpc.bootstrap.mq.ClientBootstrap;
+import io.zbus.rpc.transport.mq.RpcMessageInvoker;
+import io.zbus.transport.ServerAddress;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -30,16 +31,19 @@ public class JbootClientBootstrap extends ClientBootstrap {
 
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
 
-        return invoker(serviceClass, group, version).createProxy(serviceClass);
-    }
-
-
-    public RpcInvoker invoker(Class serviceClass, String group, String version) {
-        if (clientPool == null) {
-            clientPool = new MessageClientPool(serverAddress, clientPoolSize, null);
+        if (broker == null) {
+            String token = producerConfig.getToken();
+            if (token != null) {
+                for (ServerAddress address : brokerConfig.getTrackerList()) {
+                    if (address.getToken() == null) {
+                        address.setToken(token);
+                    }
+                }
+            }
+            broker = new Broker(brokerConfig);
         }
-        RpcMessageInvoker messageInvoker = new RpcMessageInvoker(clientPool);
-        messageInvoker.setToken(this.token);
+        producerConfig.setBroker(broker);
+        RpcMessageInvoker messageInvoker = new RpcMessageInvoker(producerConfig, this.topic);
 
         RpcConfig rpcConfig = new RpcConfig();
         rpcConfig.setModule(ZbusKits.buildModule(serviceClass, group, version));
@@ -48,8 +52,34 @@ public class JbootClientBootstrap extends ClientBootstrap {
         RpcInvoker rpcInvoker = new RpcInvoker(rpcConfig);
         rpcInvoker.getCodec().setRequestTypeInfo(requestTypeInfo);
 
-        return rpcInvoker;
+        return rpcInvoker.createProxy(serviceClass, rpcConfig);
     }
+
+
+//    public RpcInvoker invoker(Class serviceClass, String group, String version) {
+//        if (broker == null) {
+//            String token = producerConfig.getToken();
+//            if (token != null) {
+//                for (ServerAddress address : brokerConfig.getTrackerList()) {
+//                    if (address.getToken() == null) {
+//                        address.setToken(token);
+//                    }
+//                }
+//            }
+//            broker = new Broker(brokerConfig);
+//        }
+//        producerConfig.setBroker(broker);
+//        RpcMessageInvoker messageInvoker = new RpcMessageInvoker(producerConfig, this.topic);
+//
+//        RpcConfig rpcConfig = new RpcConfig();
+//        rpcConfig.setModule(ZbusKits.buildModule(serviceClass, group, version));
+//        rpcConfig.setMessageInvoker(messageInvoker);
+//
+//        RpcInvoker rpcInvoker = new RpcInvoker(rpcConfig);
+//        rpcInvoker.getCodec().setRequestTypeInfo(requestTypeInfo);
+//
+//        return rpcInvoker;
+//    }
 
 
 }

@@ -15,7 +15,9 @@
  */
 package io.jboot.core.rpc.zbus;
 
+import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
+import io.jboot.utils.StringUtils;
 
 
 public class JbootZbusrpc extends JbootrpcBase {
@@ -23,10 +25,21 @@ public class JbootZbusrpc extends JbootrpcBase {
     JbootServiceBootstrap serviceBootstrap;
     JbootClientBootstrap clientBootstrap;
 
+    JbootZbusRpcConfig zbusConfig = Jboot.config(JbootZbusRpcConfig.class);
+
     public JbootZbusrpc() {
+        if (StringUtils.isBlank(zbusConfig.getServiceName())) {
+            throw new NullPointerException("please config jboot.rpc.zbus.serviceName in your properties.");
+        }
+
         serviceBootstrap = new JbootServiceBootstrap();
         clientBootstrap = new JbootClientBootstrap();
         clientBootstrap.serviceAddress(getConfig().getRegistryAddress());
+        clientBootstrap.serviceName(zbusConfig.getServiceName());
+        if (StringUtils.isNotBlank(zbusConfig.getServiceToken())) {
+            clientBootstrap.serviceToken(zbusConfig.getServiceToken());
+        }
+
     }
 
     @Override
@@ -43,10 +56,11 @@ public class JbootZbusrpc extends JbootrpcBase {
     @Override
     public void onInited() {
         try {
-            String[] hostPort = getConfig().getRegistryAddress().split(":");
-
-            serviceBootstrap.host(hostPort[0]);
-            serviceBootstrap.port(Integer.valueOf(hostPort[1]));
+            serviceBootstrap.serviceAddress(getConfig().getRegistryAddress());
+            serviceBootstrap.serviceName(zbusConfig.getServiceName());
+            if (StringUtils.isNotBlank(zbusConfig.getServiceToken())) {
+                serviceBootstrap.serviceToken(zbusConfig.getServiceToken());
+            }
             serviceBootstrap.start();
         } catch (Exception e) {
             e.printStackTrace();

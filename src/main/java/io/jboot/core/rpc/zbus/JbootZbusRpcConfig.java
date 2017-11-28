@@ -15,21 +15,28 @@
  */
 package io.jboot.core.rpc.zbus;
 
+import io.jboot.config.annotation.PropertieConfig;
 
-import io.zbus.rpc.bootstrap.mq.ServiceBootstrap;
 
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Package io.jboot.core.rpc.zbus
- */
-public class JbootServiceBootstrap extends ServiceBootstrap {
+@PropertieConfig(prefix = "jboot.rpc.zbus")
+public class JbootZbusRpcConfig {
 
-    public ServiceBootstrap addModule(Class clazz, Object impl, String group, String version) {
-        String module = ZbusKits.buildModule(clazz, group, version);
-        this.processor.addModule(module, impl);
-        return this;
+    private String serviceName;
+    private String serviceToken;
+
+    public String getServiceName() {
+        return serviceName;
     }
 
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 
+    public String getServiceToken() {
+        return serviceToken;
+    }
+
+    public void setServiceToken(String serviceToken) {
+        this.serviceToken = serviceToken;
+    }
 }
