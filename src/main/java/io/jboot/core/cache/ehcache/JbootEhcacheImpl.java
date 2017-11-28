@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,7 @@ import java.util.List;
 
 public class JbootEhcacheImpl extends JbootCacheBase {
 
-    private static CacheManager cacheManager;
+    private CacheManager cacheManager;
     private static Object locker = new Object();
 
     private static final Log log = Log.getLog(JbootEhcacheImpl.class);
@@ -36,7 +36,7 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         cacheManager = CacheManager.create();
     }
 
-    public static Cache getOrAddCache(String cacheName) {
+    public Cache getOrAddCache(String cacheName) {
         Cache cache = cacheManager.getCache(cacheName);
         if (cache == null) {
             synchronized (locker) {
@@ -103,4 +103,9 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         }
         return (T) data;
     }
+
+    public CacheManager getCacheManager() {
+        return cacheManager;
+    }
+
 }

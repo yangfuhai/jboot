@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,16 +33,16 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     public static final String DEFAULT_NOTIFY_CHANNEL = "jboot_ehredis_channel";
 
-    private JbootEhcacheImpl ehcache;
-    private JbootRedisCacheImpl redisCache;
+    private JbootEhcacheImpl ehcacheImpl;
+    private JbootRedisCacheImpl redisCacheImpl;
 
     private String channel = DEFAULT_NOTIFY_CHANNEL;
     private String clientId;
 
 
     public JbootEhredisCacheImpl() {
-        this.ehcache = new JbootEhcacheImpl();
-        this.redisCache = new JbootRedisCacheImpl();
+        this.ehcacheImpl = new JbootEhcacheImpl();
+        this.redisCacheImpl = new JbootRedisCacheImpl();
         this.clientId = StringUtils.uuid();
 
         Jboot.me().getMq().addMessageListener(this, channel);
@@ -51,20 +51,20 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     @Override
     public List getKeys(String cacheName) {
-        List list = ehcache.getKeys(cacheName);
+        List list = ehcacheImpl.getKeys(cacheName);
         if (list == null || list.isEmpty()) {
-            list = redisCache.getKeys(cacheName);
+            list = redisCacheImpl.getKeys(cacheName);
         }
         return list;
     }
 
     @Override
     public <T> T get(String cacheName, Object key) {
-        T obj = ehcache.get(cacheName, key);
+        T obj = ehcacheImpl.get(cacheName, key);
         if (obj == null) {
-            obj = redisCache.get(cacheName, key);
+            obj = redisCacheImpl.get(cacheName, key);
             if (obj != null) {
-                ehcache.put(cacheName, key, obj);
+                ehcacheImpl.put(cacheName, key, obj);
             }
         }
         return obj;
@@ -73,8 +73,8 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     @Override
     public void put(String cacheName, Object key, Object value) {
         try {
-            ehcache.put(cacheName, key, value);
-            redisCache.put(cacheName, key, value);
+            ehcacheImpl.put(cacheName, key, value);
+            redisCacheImpl.put(cacheName, key, value);
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_PUT, cacheName, key);
         }
@@ -84,8 +84,8 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
         try {
-            ehcache.put(cacheName, key, value, liveSeconds);
-            redisCache.put(cacheName, key, value, liveSeconds);
+            ehcacheImpl.put(cacheName, key, value, liveSeconds);
+            redisCacheImpl.put(cacheName, key, value, liveSeconds);
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_PUT, cacheName, key);
         }
@@ -94,8 +94,8 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     @Override
     public void remove(String cacheName, Object key) {
         try {
-            ehcache.remove(cacheName, key);
-            redisCache.remove(cacheName, key);
+            ehcacheImpl.remove(cacheName, key);
+            redisCacheImpl.remove(cacheName, key);
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_REMOVE, cacheName, key);
         }
@@ -104,8 +104,8 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     @Override
     public void removeAll(String cacheName) {
         try {
-            ehcache.removeAll(cacheName);
-            redisCache.removeAll(cacheName);
+            ehcacheImpl.removeAll(cacheName);
+            redisCacheImpl.removeAll(cacheName);
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null);
         }
@@ -158,15 +158,22 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
         switch (message.getAction()) {
             case JbootEhredisMessage.ACTION_PUT:
-                ehcache.remove(message.getCacheName(), message.getKey());
+                ehcacheImpl.remove(message.getCacheName(), message.getKey());
                 break;
             case JbootEhredisMessage.ACTION_REMOVE:
-                ehcache.remove(message.getCacheName(), message.getKey());
+                ehcacheImpl.remove(message.getCacheName(), message.getKey());
                 break;
             case JbootEhredisMessage.ACTION_REMOVE_ALL:
-                ehcache.removeAll(message.getCacheName());
+                ehcacheImpl.removeAll(message.getCacheName());
                 break;
         }
+    }
 
+    public JbootEhcacheImpl getEhcacheImpl() {
+        return ehcacheImpl;
+    }
+
+    public JbootRedisCacheImpl getRedisCacheImpl() {
+        return redisCacheImpl;
     }
 }
