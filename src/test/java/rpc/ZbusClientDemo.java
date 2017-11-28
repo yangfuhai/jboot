@@ -56,7 +56,7 @@ public class ZbusClientDemo extends JbootController {
 
         for (int i = 0; i < 10; i++) {
             // 使用服务
-            System.out.println(service.hello("海哥" + i));
+            System.out.println(service.hello("test" + i));
         }
 
 
