@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 public class JbootrpcHystrixFallbackFactoryDefault implements JbootrpcHystrixFallbackFactory {
 
     @Override
-    public Object fallback(Method method, Object[] args, JbootHystrixCommand command, Throwable exception) {
+    public Object fallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception) {
         exception.printStackTrace();
         return null;
     }

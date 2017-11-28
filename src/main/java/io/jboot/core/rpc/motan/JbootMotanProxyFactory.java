@@ -103,7 +103,7 @@ public class JbootMotanProxyFactory implements ProxyFactory {
 
                 @Override
                 public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args, this, this.getExecutionException());
+                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(proxy,method, args, this, this.getExecutionException());
                 }
             });
 

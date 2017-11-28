@@ -24,6 +24,6 @@ import java.lang.reflect.Method;
  */
 public interface JbootrpcHystrixFallbackFactory {
 
-    public Object fallback(Method method, Object[] args, JbootHystrixCommand command, Throwable exception);
+    public Object fallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception);
 
 }

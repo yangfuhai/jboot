@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -89,7 +89,7 @@ public class JbootrpcConfig {
     // keys 的值为  key1:method1,method2;key2:method3,method4
     private String hystrixKeys;
     private boolean hystrixAutoConfig = true;
-    private String hystrixFallbackFactory;
+    private String hystrixFallbackFactory = JbootrpcHystrixFallbackFactoryDefault.class.getName();
 
     public String getHost() {
         return host;

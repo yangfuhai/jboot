@@ -98,21 +98,20 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
                     ? super.invoke(proxy, method, args)
                     : Jboot.hystrix(new JbootHystrixCommand(key) {
                 @Override
-                public Object run() {
+                public Object run() throws Exception {
                     try {
                         JbootSpanContext.add(span);
                         return JbootInvocationHandler.super.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
-                        throwable.printStackTrace();
+                        throw (Exception) throwable;
                     } finally {
                         JbootSpanContext.release();
                     }
-                    return null;
                 }
 
                 @Override
                 public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(method, args, this, this.getExecutionException());
+                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(proxy, method, args, this, this.getExecutionException());
                 }
             });
         }
