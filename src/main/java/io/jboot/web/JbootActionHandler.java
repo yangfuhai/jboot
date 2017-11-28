@@ -24,11 +24,12 @@ import com.jfinal.render.RedirectRender;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.Jboot;
-import io.jboot.web.flash.JbootFlashManager;
+import io.jboot.web.controller.JbootController;
 import io.jboot.web.handler.HandlerInvocation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -106,13 +107,20 @@ public class JbootActionHandler extends ActionHandler {
 
 
             if (!(render instanceof RedirectRender)) {
-                controller.setAttr("flash", JbootFlashManager.me().getFlashes());
+                HashMap flash = controller.getSessionAttr("_jboot_flash_");
+                controller.setAttr("flash", flash);
             }
 
             render.setContext(request, response, action.getViewPath()).render();
 
-            if (!(render instanceof RedirectRender)) {
-                JbootFlashManager.me().clearFlash();
+
+            if (render instanceof RedirectRender && controller instanceof JbootController) {
+                HashMap flash = ((JbootController) controller).getFlashAttrs();
+                if (flash != null) {
+                    controller.setSessionAttr("_jboot_flash_", flash);
+                }
+            } else {
+                controller.removeSessionAttr("_jboot_flash_");
             }
 
         } catch (RenderException e) {

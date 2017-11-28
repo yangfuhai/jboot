@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,6 +35,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public HttpSession getSession() {
         return getSession(true);
+
     }
 
 
@@ -42,13 +43,11 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
     public HttpSession getSession(boolean create) {
 
         if (httpSession == null) {
-            /**
-             * 没有启用缓存的话，就用系统自带的session
-             */
+
             if (Jboot.me().getCache().isNoneCache()) {
-                httpSession = super.getSession(create);
+                httpSession = new JbootDefaultSessionWapper();
             } else {
-                httpSession = new JbootHttpSessionWapper();
+                httpSession = new JbootCacheSessionWapper();
             }
         }
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,6 @@
  */
 package io.jboot.web.session;
 
-import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.JbootRequestContext;
 
@@ -28,10 +27,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
-public class JbootHttpSessionWapper implements HttpSession {
+public abstract class JbootSessionWapperBase implements HttpSession {
 
     private static final long SESSION_TIME = TimeUnit.DAYS.toSeconds(2);
-    private static final String SESSION_CACHE_NAME = "SESSION";
+
 
     @Override
     public long getCreationTime() {
@@ -68,15 +67,6 @@ public class JbootHttpSessionWapper implements HttpSession {
         throw new RuntimeException("getSessionContext method not finished.");
     }
 
-    @Override
-    public Object getAttribute(String name) {
-        return Jboot.me().getCache().get(SESSION_CACHE_NAME, buildKey(name));
-    }
-
-    @Override
-    public Object getValue(String name) {
-        return Jboot.me().getCache().get(SESSION_CACHE_NAME, buildKey(name));
-    }
 
     @Override
     public Enumeration<String> getAttributeNames() {
@@ -89,19 +79,13 @@ public class JbootHttpSessionWapper implements HttpSession {
     }
 
     @Override
-    public void setAttribute(String name, Object value) {
-        Jboot.me().getCache().put(SESSION_CACHE_NAME, buildKey(name), value);
-    }
-
-    @Override
     public void putValue(String name, Object value) {
-        Jboot.me().getCache().put(SESSION_CACHE_NAME, buildKey(name), value);
+        setAttribute(name, value);
     }
 
-
     @Override
-    public void removeAttribute(String name) {
-        Jboot.me().getCache().remove(SESSION_CACHE_NAME, buildKey(name));
+    public Object getValue(String name) {
+        return getAttribute(name);
     }
 
     @Override
@@ -120,7 +104,7 @@ public class JbootHttpSessionWapper implements HttpSession {
     }
 
 
-    private Object buildKey(String name) {
+    public String buildKey(String name) {
         return String.format("%s:%s", getOrCreatSessionId(), name);
     }
 
