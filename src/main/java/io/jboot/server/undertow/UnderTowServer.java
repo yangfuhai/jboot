@@ -27,6 +27,7 @@ import io.jboot.component.metrics.JbootHealthCheckServletContextListener;
 import io.jboot.component.metrics.JbootMetricsConfig;
 import io.jboot.component.metrics.JbootMetricsServletContextListener;
 import io.jboot.component.shiro.JbootShiroConfig;
+import io.jboot.exception.JbootException;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
@@ -34,6 +35,7 @@ import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.StringUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
+import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
@@ -42,6 +44,7 @@ import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.api.ServletContainer;
 import io.undertow.servlet.api.ServletInfo;
+import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.apache.shiro.web.servlet.ShiroFilter;
 
@@ -80,6 +83,22 @@ public class UnderTowServer extends JbootServer {
 
 
         deploymentInfo = buildDeploymentInfo(classloader);
+
+        if (config.isWebsocketEnable()) {
+            if (StringUtils.isBlank(config.getWebsocketEndpoint())) {
+                throw new JbootException("websocket endpoint is null,please config jboot.server.websocketEndpoint in your properties.");
+            }
+
+            try {
+                deploymentInfo.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME,
+                        new WebSocketDeploymentInfo()
+                                .setBuffers(new DefaultByteBufferPool(true, config.getWebsocketBufferPoolSize()))
+                                .addEndpoint(Class.forName(config.getWebsocketEndpoint())));
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         servletContainer = Servlets.newContainer();
         deploymentManager = servletContainer.addDeployment(deploymentInfo);
         deploymentManager.deploy();
@@ -98,7 +117,6 @@ public class UnderTowServer extends JbootServer {
 
         pathHandler = Handlers.path(
                 Handlers.resource(new ClassPathResourceManager(classloader, "webRoot")));
-
 
         pathHandler.addPrefixPath(config.getContextPath(), httpHandler);
 

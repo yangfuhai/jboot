@@ -29,6 +29,9 @@ public class JbootServerConfig {
     private String host = "0.0.0.0";
     private int port = 8080;
     private String contextPath = "/";
+    private boolean websocketEnable = false;
+    private int websocketBufferPoolSize = 100;
+    private String websocketEndpoint;
 
 
     public String getType() {
@@ -63,6 +66,29 @@ public class JbootServerConfig {
         this.contextPath = contextPath;
     }
 
+    public boolean isWebsocketEnable() {
+        return websocketEnable;
+    }
+
+    public void setWebsocketEnable(boolean websocketEnable) {
+        this.websocketEnable = websocketEnable;
+    }
+
+    public int getWebsocketBufferPoolSize() {
+        return websocketBufferPoolSize;
+    }
+
+    public void setWebsocketBufferPoolSize(int websocketBufferPoolSize) {
+        this.websocketBufferPoolSize = websocketBufferPoolSize;
+    }
+
+    public String getWebsocketEndpoint() {
+        return websocketEndpoint;
+    }
+
+    public void setWebsocketEndpoint(String websocketEndpoint) {
+        this.websocketEndpoint = websocketEndpoint;
+    }
 
     @Override
     public String toString() {
