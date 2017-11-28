@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,9 +20,11 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.*;
 import com.jfinal.log.Log;
+import com.jfinal.render.RedirectRender;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.Jboot;
+import io.jboot.web.flash.JbootFlashManager;
 import io.jboot.web.handler.HandlerInvocation;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +103,18 @@ public class JbootActionHandler extends ActionHandler {
             if (render == null) {
                 render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
             }
+
+
+            if (!(render instanceof RedirectRender)) {
+                controller.setAttr("flash", JbootFlashManager.me().getFlashes());
+            }
+
             render.setContext(request, response, action.getViewPath()).render();
+
+            if (!(render instanceof RedirectRender)) {
+                JbootFlashManager.me().clearFlash();
+            }
+
         } catch (RenderException e) {
             if (log.isErrorEnabled()) {
                 String qs = request.getQueryString();

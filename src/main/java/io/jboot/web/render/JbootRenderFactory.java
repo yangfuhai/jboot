@@ -31,4 +31,5 @@ public class JbootRenderFactory extends RenderFactory {
     public Render getErrorRender(int errorCode) {
         return new JbootErrorRender(errorCode);
     }
+
 }

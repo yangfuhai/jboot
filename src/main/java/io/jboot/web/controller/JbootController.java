@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,16 +18,22 @@ package io.jboot.web.controller;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.ext.interceptor.NotAction;
+import com.jfinal.kit.LogKit;
 import com.jfinal.upload.UploadFile;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
+import io.jboot.web.flash.JbootFlashManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 public class JbootController extends Controller {
+
+    public Map flash;
 
     /**
      * 是否是手机浏览器
@@ -105,6 +111,30 @@ public class JbootController extends Controller {
     public String getUserAgent() {
         return RequestUtils.getUserAgent(getRequest());
     }
+
+
+    @Before(NotAction.class)
+    public Controller setFlashAttr(String name, Object value) {
+        try {
+            JbootFlashManager.me().addFlash(name, value);
+        } catch (ExecutionException e) {
+            LogKit.error(e.toString(), e);
+        }
+        return this;
+    }
+
+
+    @Before(NotAction.class)
+    public <T> T getFlashAttr(String name) {
+        return JbootFlashManager.me().getFlash(name);
+    }
+
+    
+    @Before(NotAction.class)
+    public Map<String, Object> getFlashAttrs(String name) {
+        return JbootFlashManager.me().getFlashes();
+    }
+
 
     /**
      * 获取当前网址
