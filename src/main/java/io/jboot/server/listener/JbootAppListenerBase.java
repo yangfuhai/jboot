@@ -22,6 +22,7 @@ import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.server.ContextListeners;
+import io.jboot.server.JbootServer;
 import io.jboot.server.Servlets;
 
 
@@ -75,6 +76,11 @@ public class JbootAppListenerBase implements JbootAppListener {
 
     @Override
     public void onJbootStarted() {
+
+    }
+
+    @Override
+    public void onAppStartBefore(JbootServer underTowServer) {
 
     }
 }

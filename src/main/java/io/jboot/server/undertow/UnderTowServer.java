@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -57,11 +57,11 @@ public class UnderTowServer extends JbootServer {
 
     static Log log = Log.getLog(UnderTowServer.class);
 
-    private DeploymentManager mDeploymentManager;
-    private DeploymentInfo mDeploymentInfo;
-    private PathHandler mHandler;
-    private Undertow mServer;
-    private ServletContainer mServletContainer;
+    private DeploymentManager deploymentManager;
+    private DeploymentInfo deploymentInfo;
+    private PathHandler pathHandler;
+    private Undertow undertow;
+    private ServletContainer servletContainer;
     private JbootServerConfig config;
 
 
@@ -79,10 +79,10 @@ public class UnderTowServer extends JbootServer {
         initJfinalConfig();
 
 
-        mDeploymentInfo = buildDeploymentInfo(classloader);
-        mServletContainer = Servlets.newContainer();
-        mDeploymentManager = mServletContainer.addDeployment(mDeploymentInfo);
-        mDeploymentManager.deploy();
+        deploymentInfo = buildDeploymentInfo(classloader);
+        servletContainer = Servlets.newContainer();
+        deploymentManager = servletContainer.addDeployment(deploymentInfo);
+        deploymentManager.deploy();
 
 
         HttpHandler httpHandler = null;
@@ -90,20 +90,21 @@ public class UnderTowServer extends JbootServer {
             /**
              * 启动并初始化servlet和filter
              */
-            httpHandler = mDeploymentManager.start();
+            httpHandler = deploymentManager.start();
         } catch (Throwable ex) {
             ex.printStackTrace();
         }
 
 
-        mHandler = Handlers.path(
-                Handlers.resource(new ClassPathResourceManager(classloader, "webRoot")))
-                .addPrefixPath(config.getContextPath(), httpHandler);
+        pathHandler = Handlers.path(
+                Handlers.resource(new ClassPathResourceManager(classloader, "webRoot")));
 
 
-        mServer = Undertow.builder()
+        pathHandler.addPrefixPath(config.getContextPath(), httpHandler);
+
+        undertow = Undertow.builder()
                 .addHttpListener(config.getPort(), config.getHost())
-                .setHandler(mHandler)
+                .setHandler(pathHandler)
                 .build();
 
     }
@@ -219,7 +220,8 @@ public class UnderTowServer extends JbootServer {
     public boolean start() {
         try {
             initUndertowServer();
-            mServer.start();
+            JbootAppListenerManager.me().onAppStartBefore(this);
+            undertow.start();
         } catch (Throwable ex) {
             log.error(ex.toString(), ex);
             stop();
@@ -245,17 +247,40 @@ public class UnderTowServer extends JbootServer {
     @Override
     public boolean stop() {
 
-        mDeploymentManager.undeploy();
-        mServletContainer.removeDeployment(mDeploymentInfo);
+        deploymentManager.undeploy();
+        servletContainer.removeDeployment(deploymentInfo);
 
-        if (mHandler != null) {
-            mHandler.clearPaths();
+        if (pathHandler != null) {
+            pathHandler.clearPaths();
         }
-        if (mServer != null) {
-            mServer.stop();
+        if (undertow != null) {
+            undertow.stop();
         }
 
         return true;
     }
 
+    public DeploymentManager getDeploymentManager() {
+        return deploymentManager;
+    }
+
+    public DeploymentInfo getDeploymentInfo() {
+        return deploymentInfo;
+    }
+
+    public PathHandler getPathHandler() {
+        return pathHandler;
+    }
+
+    public Undertow getUndertow() {
+        return undertow;
+    }
+
+    public ServletContainer getServletContainer() {
+        return servletContainer;
+    }
+
+    public JbootServerConfig getConfig() {
+        return config;
+    }
 }

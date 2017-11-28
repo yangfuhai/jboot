@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.server.ContextListeners;
+import io.jboot.server.JbootServer;
 import io.jboot.server.Servlets;
 import io.jboot.utils.ClassNewer;
 import io.jboot.utils.ClassScanner;
@@ -64,7 +65,7 @@ public class JbootAppListenerManager implements JbootAppListener {
     public void onJbootDeploy(Servlets servlets, ContextListeners listeners) {
         for (JbootAppListener listener : this.listeners) {
             try {
-                listener.onJbootDeploy(servlets,listeners);
+                listener.onJbootDeploy(servlets, listeners);
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
@@ -164,6 +165,17 @@ public class JbootAppListenerManager implements JbootAppListener {
         for (JbootAppListener listener : listeners) {
             try {
                 listener.onJbootStarted();
+            } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
+            }
+        }
+    }
+
+    @Override
+    public void onAppStartBefore(JbootServer jbootServer) {
+        for (JbootAppListener listener : listeners) {
+            try {
+                listener.onAppStartBefore(jbootServer);
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }

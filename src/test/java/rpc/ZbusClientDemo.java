@@ -70,11 +70,7 @@ public class ZbusClientDemo extends JbootController {
         long time = System.currentTimeMillis();
         UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
 
-//        try {
         String string = service.exception("1");
-//        } catch (JbootException e) {
-//            System.out.println("exception : " + e.getMessage());
-//        }
 
         renderText("exception:" + string);
 
