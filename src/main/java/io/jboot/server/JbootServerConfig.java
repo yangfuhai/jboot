@@ -29,6 +29,9 @@ public class JbootServerConfig {
     private String host = "0.0.0.0";
     private int port = 8080;
     private String contextPath = "/";
+
+    //websocket 的相关配置
+    //具体使用请参考：https://github.com/undertow-io/undertow/tree/master/examples/src/main/java/io/undertow/examples/jsrwebsockets
     private boolean websocketEnable = false;
     private int websocketBufferPoolSize = 100;
     private String websocketEndpoint;
@@ -95,8 +98,11 @@ public class JbootServerConfig {
         return "JbootServerConfig {" +
                 "type='" + type + '\'' +
                 ", host='" + host + '\'' +
-                ", port='" + port + '\'' +
+                ", port=" + port +
                 ", contextPath='" + contextPath + '\'' +
+                ", websocketEnable=" + websocketEnable +
+                ", websocketBufferPoolSize=" + websocketBufferPoolSize +
+                ", websocketEndpoint='" + websocketEndpoint + '\'' +
                 '}';
     }
 }
