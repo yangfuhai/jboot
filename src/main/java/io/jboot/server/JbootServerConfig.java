@@ -34,7 +34,6 @@ public class JbootServerConfig {
     //具体使用请参考：https://github.com/undertow-io/undertow/tree/master/examples/src/main/java/io/undertow/examples/jsrwebsockets
     private boolean websocketEnable = false;
     private int websocketBufferPoolSize = 100;
-    private String websocketEndpoint;
 
 
     public String getType() {
@@ -85,13 +84,6 @@ public class JbootServerConfig {
         this.websocketBufferPoolSize = websocketBufferPoolSize;
     }
 
-    public String getWebsocketEndpoint() {
-        return websocketEndpoint;
-    }
-
-    public void setWebsocketEndpoint(String websocketEndpoint) {
-        this.websocketEndpoint = websocketEndpoint;
-    }
 
     @Override
     public String toString() {
@@ -102,7 +94,6 @@ public class JbootServerConfig {
                 ", contextPath='" + contextPath + '\'' +
                 ", websocketEnable=" + websocketEnable +
                 ", websocketBufferPoolSize=" + websocketBufferPoolSize +
-                ", websocketEndpoint='" + websocketEndpoint + '\'' +
                 '}';
     }
 }

@@ -20,6 +20,7 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.web.JbootRequestContext;
 import io.jboot.web.session.JbootServletRequestWrapper;
+import io.jboot.web.websocket.JbootWebsocketManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +31,7 @@ public class JbootHandler extends Handler {
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
 
-        if (target.indexOf('.') != -1) {
+        if (target.indexOf('.') != -1 || JbootWebsocketManager.me().containsEndPoint(target)) {
             return;
         }
 
