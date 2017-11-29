@@ -27,13 +27,12 @@ import io.jboot.component.metrics.JbootHealthCheckServletContextListener;
 import io.jboot.component.metrics.JbootMetricsConfig;
 import io.jboot.component.metrics.JbootMetricsServletContextListener;
 import io.jboot.component.shiro.JbootShiroConfig;
-import io.jboot.exception.JbootException;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.listener.JbootAppListenerManager;
-import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.websocket.JbootWebsocketManager;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.DefaultByteBufferPool;
@@ -51,12 +50,11 @@ import org.apache.shiro.web.servlet.ShiroFilter;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContextListener;
-import javax.websocket.server.ServerEndpoint;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class UnderTowServer extends JbootServer {
@@ -88,15 +86,13 @@ public class UnderTowServer extends JbootServer {
         deploymentInfo = buildDeploymentInfo(classloader);
 
         if (config.isWebsocketEnable()) {
-            List<Class> endPointClasses = ClassScanner.scanClassByAnnotation(ServerEndpoint.class, false);
-            if (endPointClasses != null && endPointClasses.size() != 0) {
-                WebSocketDeploymentInfo webSocketDeploymentInfo = new WebSocketDeploymentInfo();
-                webSocketDeploymentInfo.setBuffers(new DefaultByteBufferPool(true, config.getWebsocketBufferPoolSize()));
-                for (Class entry : endPointClasses) {
-                    webSocketDeploymentInfo.addEndpoint(entry);
-                }
-                deploymentInfo.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME, webSocketDeploymentInfo);
+            Set<Class> endPointClasses = JbootWebsocketManager.me().getWebsocketEndPoints();
+            WebSocketDeploymentInfo webSocketDeploymentInfo = new WebSocketDeploymentInfo();
+            webSocketDeploymentInfo.setBuffers(new DefaultByteBufferPool(true, config.getWebsocketBufferPoolSize()));
+            for (Class endPointClass : endPointClasses) {
+                webSocketDeploymentInfo.addEndpoint(endPointClass);
             }
+            deploymentInfo.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME, webSocketDeploymentInfo);
         }
 
         servletContainer = Servlets.newContainer();
