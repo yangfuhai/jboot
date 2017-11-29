@@ -16,15 +16,37 @@
 package io.jboot.web.websocket;
 
 import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassScanner;
+import io.jboot.utils.StringUtils;
+
+import javax.websocket.server.ServerEndpoint;
+import java.util.*;
 
 
 public class JbootWebsocketManager {
     private static JbootWebsocketManager manager;
+    private static Vector<String> serverEndPointValues = new Vector<String>();;
 
     public static JbootWebsocketManager me() {
         if (manager == null) {
+            List<Class> endPointClasses = ClassScanner.scanClassByAnnotation(ServerEndpoint.class, false);
+            if (endPointClasses != null && endPointClasses.size() != 0) {
+                for (Class entry : endPointClasses) {
+                    ServerEndpoint serverEndpoint = (ServerEndpoint) entry.getAnnotation(ServerEndpoint.class);
+                    String value = serverEndpoint.value();
+                    if (!StringUtils.isBlank(value)) {
+                        serverEndPointValues.add(value);
+                    }
+                }
+            }
+
             manager = ClassNewer.singleton(JbootWebsocketManager.class);
         }
         return manager;
     }
+
+    public boolean containsEndPoint(String endPointValue) {
+        return serverEndPointValues.contains(endPointValue);
+    }
+
 }

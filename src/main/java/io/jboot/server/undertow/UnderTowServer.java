@@ -32,6 +32,7 @@ import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.listener.JbootAppListenerManager;
+import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -50,9 +51,11 @@ import org.apache.shiro.web.servlet.ShiroFilter;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContextListener;
+import javax.websocket.server.ServerEndpoint;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 
@@ -85,17 +88,14 @@ public class UnderTowServer extends JbootServer {
         deploymentInfo = buildDeploymentInfo(classloader);
 
         if (config.isWebsocketEnable()) {
-            if (StringUtils.isBlank(config.getWebsocketEndpoint())) {
-                throw new JbootException("websocket endpoint is null,please config jboot.server.websocketEndpoint in your properties.");
-            }
-
-            try {
-                deploymentInfo.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME,
-                        new WebSocketDeploymentInfo()
-                                .setBuffers(new DefaultByteBufferPool(true, config.getWebsocketBufferPoolSize()))
-                                .addEndpoint(Class.forName(config.getWebsocketEndpoint())));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            List<Class> endPointClasses = ClassScanner.scanClassByAnnotation(ServerEndpoint.class, false);
+            if (endPointClasses != null && endPointClasses.size() != 0) {
+                WebSocketDeploymentInfo webSocketDeploymentInfo = new WebSocketDeploymentInfo();
+                webSocketDeploymentInfo.setBuffers(new DefaultByteBufferPool(true, config.getWebsocketBufferPoolSize()));
+                for (Class entry : endPointClasses) {
+                    webSocketDeploymentInfo.addEndpoint(entry);
+                }
+                deploymentInfo.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME, webSocketDeploymentInfo);
             }
         }
 
