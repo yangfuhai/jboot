@@ -1,3 +1,14 @@
+jboot-1.1.1:
+新增：FlashMessage功能，方便Controller进行redirect的时候可以通知用户。
+新增：websocket的功能和具体使用demo。
+新增：在JbootAppListener里新增onAppStartBefore方法，方便扩展。
+新增：zbus rpc 的实现和支持。
+优化：重构JfinalHandler，可以自由添加Handler的顺序。
+优化：重构hystrix的降级功能，在进行降级回调的时候获取更多的细节。
+优化：重构JbootCache模块，方便获取底层具体对象，方便扩展。
+其他：更新依赖、完善文档。
+
+
 jboot-1.1.0:
 新增：mq 的队列模式（之前只有广播）
 新增：redis 和 rabbitmq 对队列的支持。
