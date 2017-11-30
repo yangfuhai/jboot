@@ -13,12 +13,12 @@ public class MqTest {
          * jboot.mq.redis.host= 127.0.0.1
          */
 
-        Jboot.setBootArg("jboot.mq.type", "redis");
-        Jboot.setBootArg("jboot.mq.redis.host", "127.0.0.1");
-//        Jboot.setBootArg("jboot.mq.redis.password", "123456");
-        Jboot.setBootArg("jboot.mq.redis.channel", "myChannel,myChannel1,myChannel2");
-
-        doTest();
+//        Jboot.setBootArg("jboot.mq.type", "redis");
+//        Jboot.setBootArg("jboot.mq.redis.host", "127.0.0.1");
+////        Jboot.setBootArg("jboot.mq.redis.password", "123456");
+//        Jboot.setBootArg("jboot.mq.redis.channel", "myChannel,myChannel1,myChannel2");
+//
+//        doTest();
 
     }
 
@@ -26,13 +26,13 @@ public class MqTest {
     @Test
     public void testRabbitmqSend() {
 
-        Jboot.setBootArg("jboot.mq.type", "rabbitmq");
-        Jboot.setBootArg("jboot.mq.rabbitmq.host", "127.0.0.1");
-        Jboot.setBootArg("jboot.mq.rabbitmq.username", "guest");
-        Jboot.setBootArg("jboot.mq.rabbitmq.password", "guest");
-        Jboot.setBootArg("jboot.mq.rabbitmq.channel", "myChannel,myChannel1");
+//        Jboot.setBootArg("jboot.mq.type", "rabbitmq");
+//        Jboot.setBootArg("jboot.mq.rabbitmq.host", "127.0.0.1");
+//        Jboot.setBootArg("jboot.mq.rabbitmq.username", "guest");
+//        Jboot.setBootArg("jboot.mq.rabbitmq.password", "guest");
+//        Jboot.setBootArg("jboot.mq.rabbitmq.channel", "myChannel,myChannel1");
 
-        doTest();
+//        doTest();
 
     }
 
