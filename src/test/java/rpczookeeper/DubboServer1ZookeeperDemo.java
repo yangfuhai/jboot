@@ -23,7 +23,7 @@ import service.UserService;
 import service.UserServiceImpl;
 
 
-public class DubboServerZookeeperDemo {
+public class DubboServer1ZookeeperDemo {
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -43,7 +43,7 @@ public class DubboServerZookeeperDemo {
         factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot", "1.0", 8002);
 
 
-        System.out.println("DubboServerZookeeperDemo started...");
+        System.out.println("DubboServer1ZookeeperDemo started...");
 
 
     }

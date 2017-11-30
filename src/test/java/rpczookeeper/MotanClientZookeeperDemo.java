@@ -27,7 +27,7 @@ public class MotanClientZookeeperDemo extends JbootController {
 
 
     /**
-     * 请先启动 MotanServerZookeeperDemo 后，再启动
+     * 请先启动 MotanServer1ZookeeperDemo 后，再启动
      * @param args
      */
     public static void main(String[] args)  {

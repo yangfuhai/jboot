@@ -23,13 +23,13 @@ import service.UserService;
 import service.UserServiceImpl;
 
 
-public class MotanServerZookeeperDemo {
+public class DubboServer2ZookeeperDemo {
 
 
     public static void main(String[] args) throws InterruptedException {
 
 
-        Jboot.setBootArg("jboot.rpc.type", "motan");
+        Jboot.setBootArg("jboot.rpc.type", "dubbo");
         Jboot.setBootArg("jboot.rpc.callMode", "registry");//注册中心模式
         Jboot.setBootArg("jboot.rpc.registryType", "zookeeper");//注册中心的类型：zookeeper
         Jboot.setBootArg("jboot.rpc.registryAddress", "127.0.0.1:2181");//注册中心，即zookeeper的地址
@@ -39,11 +39,11 @@ public class MotanServerZookeeperDemo {
 
         Jbootrpc factory = Jboot.me().getRpc();
 
-        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
-        factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot", "1.0", 8002);
+        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot2", "1.0", 8002);
+        factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot2", "1.0", 8002);
 
 
-        System.out.println("MotanServerZookeeperDemo started...");
+        System.out.println("DubboServer2ZookeeperDemo started...");
 
 
     }

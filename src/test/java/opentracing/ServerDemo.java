@@ -44,7 +44,7 @@ public class ServerDemo {
 
 
         Jboot.setBootArg("jboot.tracing.type", "zipkin");
-        Jboot.setBootArg("jboot.tracing.serviceName", "MotanServerZookeeperDemo");
+        Jboot.setBootArg("jboot.tracing.serviceName", "ServerDemo");
         Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");
 
 
