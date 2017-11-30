@@ -93,10 +93,10 @@ QQ交流群： 601440615
 - [常见问题](./DOC.md#常见问题)
 
 
-## 联系作者
-* qq:1506615067
-* wechat：wx198819880
-* email:fuhai999#gmail.com
+## Contributors
+* Michael Yang（qq:1506615067，wechat：wx198819880，email:fuhai999@gmail.com，github:@yangfuhai)
+* Rlax （qq:441420519，wechat:RlaxUC，email:popkids@qq.com，github:@pkanyue)
+* 徐海峰 （qq:27533892，email:xhf6731202@126.com，github:@xhf6731202）
 
 ## QQ群
 
