@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ public class ClientDemo extends JbootController {
      * @param args
      */
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
         //jboot端口号配置
         Jboot.setBootArg("jboot.server.port", "8088");
@@ -46,7 +46,7 @@ public class ClientDemo extends JbootController {
 
 
         Jboot.setBootArg("jboot.tracing.type", "zipkin");//opentracing的类型
-        Jboot.setBootArg("jboot.tracing.serviceName", "MotanClientZookeeperDemo");//opentracing的本应用服务名称
+        Jboot.setBootArg("jboot.tracing.serviceName", "ClientDemo");//opentracing的本应用服务名称
         Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");//zipkin的服务器
 
         Jboot.run(args);
@@ -61,10 +61,7 @@ public class ClientDemo extends JbootController {
         System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
 
-//        for (int i = 0; i < 10; i++) {
-            // 使用服务
-            System.out.println(service.hello("海哥"));
-//        }
+        System.out.println(service.hello("海哥"));
 
         CategoryService service1 = Jboot.service(CategoryService.class);
         System.out.println(service1.hello("海哥"));

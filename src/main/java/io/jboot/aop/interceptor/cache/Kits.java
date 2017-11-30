@@ -102,7 +102,7 @@ class Kits {
                 if (argumentString == null) {
                     throw new JbootException("not support empty key for annotation @Cacheable,@CacheEvict or @CachePut " +
                             "at method[" + clazz.getName() + "." + method.getName() + "()] " +
-                            "with argument class " + argument.getClass() + ", " +
+                            "with argument class:" + argument.getClass().getName() + ", " +
                             "please config key properties in @Cacheable,@CacheEvict or @CachePut annotation.");
                 }
                 argumentTag.append(paramTypes[index++].getClass().getName()).append(":").append(argumentString).append("-");
@@ -119,7 +119,6 @@ class Kits {
 
         return Kits.engineRender(key, method, arguments);
     }
-
 
 
     static boolean isPrimitive(Class clazz) {

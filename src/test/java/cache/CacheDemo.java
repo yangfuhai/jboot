@@ -20,8 +20,6 @@ import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @RequestMapping("/cache")
@@ -34,43 +32,30 @@ public class CacheDemo extends JbootController {
 
         //jboot端口号配置
         Jboot.setBootArg("jboot.server.port", "8088");
-        Jboot.setBootArg("jboot.cache.type", "ehredis");
-        Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
-        Jboot.setBootArg("jboot.cache.redis.password", "123456");
+        Jboot.setBootArg("jboot.cache.type", "ehcache");
 
-        Jboot.setBootArg("jboot.mq.type", "redis");
-        Jboot.setBootArg("jboot.mq.redis.host", "127.0.0.1");
-        Jboot.setBootArg("jboot.mq.redis.password", "123456");
-        Jboot.setBootArg("jboot.mq.redis.channel", "message-channel");
+
         Jboot.run(args);
     }
 
     public void enable() {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("abc", "enable");
-        String result = service.cacheAble("key", map);
+        String result = service.cacheAble("mykey");
         renderText(result);
     }
 
     public void enableLive() {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("abc", "live");
-        String result = service.cacheAble("key", map);
+        String result = service.cacheAble("mykey");
         renderText(result);
     }
 
     public void putLive() {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("abc", "put");
-        String result = service.putCache("key", map);
+        String result = service.putCache("mykey");
         renderText(result);
     }
 
     public void evict() {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("abc", "enable");
-        service.cacheEvict("key", map);
-        renderText("ok");
+        service.cacheEvict("mykey");
+        renderText("evict ok");
     }
 
 }

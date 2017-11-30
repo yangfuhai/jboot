@@ -48,9 +48,7 @@ public class MotanClientZookeeperDemo extends JbootController {
     public void index() {
         Jbootrpc jbootrpc = Jboot.me().getRpc();
 
-        long time = System.currentTimeMillis();
         UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
-        System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
 
         for (int i = 0; i < 10; i++) {
