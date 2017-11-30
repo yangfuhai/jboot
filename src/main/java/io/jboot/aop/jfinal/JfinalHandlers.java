@@ -35,4 +35,10 @@ public class JfinalHandlers {
         handlers.add(handler);
         return this;
     }
+
+    public JfinalHandlers add(int index, Handler handler) {
+        Jboot.injectMembers(handler);
+        handlers.getHandlerList().add(index, handler);
+        return this;
+    }
 }
