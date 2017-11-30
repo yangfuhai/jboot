@@ -96,7 +96,7 @@ QQ交流群： 601440615
 ## Contributors
 * Michael Yang（email:fuhai999@gmail.com，github:[@yangfuhai](https://github.com/yangfuhai)，qq:1506615067，wechat：wx198819880)
 * Rlax（email:popkids@qq.com，github:[@pkanyue](https://github.com/pkanyue)，qq:441420519，wechat:RlaxUC)
-* 徐海峰（email:xhf6731202@126.com，github:[@xhf6731202](https://github.com/xhf6731202)，qq:27533892）
+* 徐海峰（email:xhf6731202@126.com，github:[@xhf6731202](https://github.com/xhf6731202)，qq:27533892，wechat:atm27533892）
 
 ## QQ群
 
