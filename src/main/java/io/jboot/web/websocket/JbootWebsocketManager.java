@@ -28,8 +28,9 @@ import java.util.Set;
 
 public class JbootWebsocketManager {
     private static JbootWebsocketManager manager = new JbootWebsocketManager();
-    private static Set<String> websocketEndPointValues = new HashSet<>();
-    private static Set<Class> websocketEndPoints = new HashSet<>();
+
+    private Set<String> websocketEndPointValues = new HashSet<>();
+    private Set<Class> websocketEndPoints = new HashSet<>();
     private JbootServerConfig serverConfig = Jboot.config(JbootServerConfig.class);
 
     private JbootWebsocketManager() {
