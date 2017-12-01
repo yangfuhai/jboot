@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,7 @@ import io.jboot.Jboot;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.component.log.Slf4jLogFactory;
+import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.component.swagger.JbootSwaggerConfig;
 import io.jboot.component.swagger.JbootSwaggerController;
@@ -206,6 +207,7 @@ public class JbootAppConfig extends JFinalConfig {
         JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
         JbootScheduleManager.me().init();
+        JbootMetricsManager.me().init();
 
         /**
          * 发送启动完成通知

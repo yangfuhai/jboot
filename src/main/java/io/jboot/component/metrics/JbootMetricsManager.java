@@ -53,9 +53,10 @@ public class JbootMetricsManager {
     private JbootMetricsManager() {
         metricRegistry = new MetricRegistry();
         healthCheckRegistry = new HealthCheckRegistry();
-        metricsConfig = Jboot.config(JbootMetricsConfig.class);
+    }
 
-
+    
+    public void init() {
         List<JbootMetricsReporter> reporters = getReporters();
         if (ArrayUtils.isNullOrEmpty(reporters)) {
             LOG.warn("metrics reporter is empty in application.");
