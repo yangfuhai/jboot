@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +20,17 @@ import io.jboot.config.annotation.PropertieConfig;
 @PropertieConfig(prefix = "jboot.metrics")
 public class JbootMetricsConfig {
 
+    public static final String REPORTER_JMX = "jmx";
+    public static final String REPORTER_INFLUXDB = "influxdb";
+    public static final String REPORTER_GRAPHITE = "graphite";
+    public static final String REPORTER_ELASTICSEARCH = "elasticsearch";
+    public static final String REPORTER_GANGLIA = "ganglia";
+    public static final String REPORTER_CONSOLE = "console";
+    public static final String REPORTER_CSV = "csv";
+    public static final String REPORTER_SLF4J = "slf4j";
+
     private String url;
-    private boolean jmxReporter = false;
+    private String reporter;
 
     public String getUrl() {
         //在metrics中，会访问到配置的二级目录，必须添加下 /* 才能正常访问
@@ -35,12 +44,13 @@ public class JbootMetricsConfig {
         this.url = url;
     }
 
-    public boolean isJmxReporter() {
-        return jmxReporter;
+
+    public String getReporter() {
+        return reporter;
     }
 
-    public void setJmxReporter(boolean jmxReporter) {
-        this.jmxReporter = jmxReporter;
+    public void setReporter(String reporter) {
+        this.reporter = reporter;
     }
 }
 

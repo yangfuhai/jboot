@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.metrics;
+package io.jboot.component.metrics.annotation;
 
 import java.lang.annotation.*;
 
@@ -22,10 +22,8 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EnableMetricsTimer {
+public @interface EnableMetricsMeter {
 
     String value() default "";
-
-
 
 }

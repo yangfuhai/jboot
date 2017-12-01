@@ -18,7 +18,7 @@ package io.jboot.aop.interceptor.metrics;
 
 import com.codahale.metrics.Timer;
 import io.jboot.Jboot;
-import io.jboot.component.metrics.EnableMetricsTimer;
+import io.jboot.component.metrics.annotation.EnableMetricsTimer;
 import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

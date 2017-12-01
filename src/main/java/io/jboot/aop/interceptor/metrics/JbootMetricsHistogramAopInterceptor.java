@@ -18,7 +18,7 @@ package io.jboot.aop.interceptor.metrics;
 
 import com.codahale.metrics.Histogram;
 import io.jboot.Jboot;
-import io.jboot.component.metrics.EnableMetricsHistogram;
+import io.jboot.component.metrics.annotation.EnableMetricsHistogram;
 import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

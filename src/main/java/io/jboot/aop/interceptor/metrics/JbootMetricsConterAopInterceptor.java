@@ -18,7 +18,7 @@ package io.jboot.aop.interceptor.metrics;
 
 import com.codahale.metrics.Counter;
 import io.jboot.Jboot;
-import io.jboot.component.metrics.EnableMetricsCounter;
+import io.jboot.component.metrics.annotation.EnableMetricsCounter;
 import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
