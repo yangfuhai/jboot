@@ -81,6 +81,13 @@ public class JbootConfigManager {
 
 
     public JbootConfigManager() {
+
+    }
+
+    /**
+     * 读取本地配置文件
+     */
+    public void readLocalConfig() {
         try {
             Prop prop = PropKit.use("jboot.properties");
             mainProperties = prop.getProperties();
@@ -99,11 +106,20 @@ public class JbootConfigManager {
         if (config.isServerEnable()) {
             initConfigFileScanner();
         }
+    }
+
+    /**
+     * 读取远程配置文件
+     */
+    public void readRemoteConfig() {
+        if (config.isServerEnable()) {
+            return;
+        }
 
         /**
          * 定时获取远程服务配置信息
          */
-        else if (config.isRemoteEnable()) {
+        if (config.isRemoteEnable()) {
             initConfigRemoteReader();
         }
     }
