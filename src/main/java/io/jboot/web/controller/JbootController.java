@@ -25,6 +25,7 @@ import io.jboot.utils.RequestUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class JbootController extends Controller {
@@ -116,6 +117,20 @@ public class JbootController extends Controller {
         }
 
         flash.put(name, value);
+        return this;
+    }
+
+
+    @Before(NotAction.class)
+    public Controller setFlashAttr(Map map) {
+        if (map == null) {
+            throw new NullPointerException("map is null");
+        }
+        if (flash == null) {
+            flash = new HashMap<>();
+        }
+
+        flash.putAll(map);
         return this;
     }
 
