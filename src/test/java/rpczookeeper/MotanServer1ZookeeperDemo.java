@@ -17,48 +17,35 @@ package rpczookeeper;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
-import io.jboot.web.controller.JbootController;
-import io.jboot.web.controller.annotation.RequestMapping;
+import service.CategoryService;
+import service.CategoryServiceImpl;
 import service.UserService;
+import service.UserServiceImpl;
 
 
-@RequestMapping("/motanzookeeperrpc")
-public class MotanClientZookeeperDemo extends JbootController {
+public class MotanServer1ZookeeperDemo {
 
 
-    /**
-     * 请先启动 MotanServer1ZookeeperDemo 后，再启动
-     * @param args
-     */
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws InterruptedException {
 
-        //jboot端口号配置
-        Jboot.setBootArg("jboot.server.port", "8088");
+        Jboot.setBootArg("jboot.server.port",8081);
 
-        //RPC配置
         Jboot.setBootArg("jboot.rpc.type", "motan");
         Jboot.setBootArg("jboot.rpc.callMode", "registry");//注册中心模式
         Jboot.setBootArg("jboot.rpc.registryType", "zookeeper");//注册中心的类型：zookeeper
         Jboot.setBootArg("jboot.rpc.registryAddress", "127.0.0.1:2181");//注册中心，即zookeeper的地址
 
+
         Jboot.run(args);
+
+        Jbootrpc factory = Jboot.me().getRpc();
+
+        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
+        factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot", "1.0", 8002);
+
+
+        System.out.println("MotanServer1ZookeeperDemo started...");
+
+
     }
-
-
-    public void index() {
-        Jbootrpc jbootrpc = Jboot.me().getRpc();
-
-        UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
-
-
-        for (int i = 0; i < 10; i++) {
-            // 使用服务
-            System.out.println(service.hello("海哥" + i));
-        }
-
-
-        renderText("ok");
-    }
-
-
 }

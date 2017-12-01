@@ -1,6 +1,3 @@
-import io.jboot.Jboot;
-import io.jboot.core.http.JbootHttpRequest;
-import io.jboot.core.http.JbootHttpResponse;
 import org.junit.Test;
 
 
@@ -8,25 +5,25 @@ public class HttpTest {
 
     @Test
     public void testHttp() {
-        JbootHttpResponse response = Jboot.me().getHttp().handle(JbootHttpRequest.create("https://www.baidu.com"));
-
-        System.out.println(response.getContentType());
-        System.out.println(response.getHeaders());
+//        JbootHttpResponse response = Jboot.me().getHttp().handle(JbootHttpRequest.create("https://www.baidu.com"));
+//
+//        System.out.println(response.getContentType());
+//        System.out.println(response.getHeaders());
 
     }
 
     @Test
     public void testHttpGet() {
-        String html = Jboot.httpGet("https://www.baidu.com");
-        System.out.println(html);
+//        String html = Jboot.httpGet("https://www.baidu.com");
+//        System.out.println(html);
     }
 
 
     @Test
     public void testOkHttpGet() throws InterruptedException {
-        Jboot.setBootArg("jboot.http.type", "okhttp");
-        String html = Jboot.httpGet("https://www.baidu.com");
-        System.out.println("babbb:" + html);
+//        Jboot.setBootArg("jboot.http.type", "okhttp");
+//        String html = Jboot.httpGet("https://www.baidu.com");
+//        System.out.println("babbb:" + html);
     }
 
     @Test

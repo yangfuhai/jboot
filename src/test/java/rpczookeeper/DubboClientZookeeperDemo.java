@@ -27,7 +27,7 @@ public class DubboClientZookeeperDemo extends JbootController {
 
 
     /**
-     * 请先启动 DubboServerZookeeperDemo 后，再启动
+     * 请先启动 DubboServer1ZookeeperDemo 后，再启动
      * @param args
      */
     public static void main(String[] args)  {

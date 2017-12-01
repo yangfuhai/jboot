@@ -524,6 +524,21 @@ public class Jboot {
     }
 
 
+    private static Boolean isRunInjar = null;
+
+    /**
+     * 是否在jar包里运行
+     *
+     * @return
+     */
+    public static boolean isRunInJar() {
+        if (isRunInjar == null) {
+            isRunInjar = Thread.currentThread().getContextClassLoader().getResource("") == null;
+        }
+        return isRunInjar;
+    }
+
+
     /**
      * 产品模式：开发、测试、产品
      */

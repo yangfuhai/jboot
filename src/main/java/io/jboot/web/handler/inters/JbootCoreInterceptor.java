@@ -46,6 +46,7 @@ public class JbootCoreInterceptor implements HandlerInterceptor {
             Tracer.SpanBuilder spanBuilder = tracer.buildSpan(spanName);
 
             span = spanBuilder.startManual();
+
             span.setTag("requestId", StringUtils.uuid());
             JbootSpanContext.add(span);
         }

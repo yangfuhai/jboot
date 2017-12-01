@@ -10,17 +10,23 @@ public class CacheTest {
 
     @Test
     public void testSetAndGet() {
+
         Jboot.setBootArg("jboot.cache.type", "ehcache");
+
         Jboot.me().getCache().put("test", "mykey", "abc");
+
         System.out.println((String) Jboot.me().getCache().get("test", "mykey"));
     }
+
+
 
     @Test
     public void testSetInTimeAndGet() {
         Jboot.setBootArg("jboot.cache.type", "ehcache");
-        Jboot.me().getCache().put("test", "mykey", "abc", 5);
-        for (int i = 0; i < 10; i++) {
-            System.out.println(i + " : " + (String) Jboot.me().getCache().get("test", "mykey"));
+        Jboot.me().getCache().put("test", "mykey", "abc", 2);
+
+        for (int i = 0; i < 4; i++) {
+            System.out.println(i + " : " +  Jboot.me().getCache().get("test", "mykey"));
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

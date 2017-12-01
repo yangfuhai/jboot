@@ -13,9 +13,9 @@ import com.jfinal.plugin.activerecord.IBean;
 #end
 public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModelName)<M>> extends JbootModel<M> implements IBean {
 
-    public static final String ACTION_ADD = "#(tableMeta.baseModelName):add";
-    public static final String ACTION_DELETE = "#(tableMeta.baseModelName):delete";
-    public static final String ACTION_UPDATE = "#(tableMeta.baseModelName):update";
+    public static final String ACTION_ADD = "#(tableMeta.modelName):add";
+    public static final String ACTION_DELETE = "#(tableMeta.modelName):delete";
+    public static final String ACTION_UPDATE = "#(tableMeta.modelName):update";
 
 
     @Override

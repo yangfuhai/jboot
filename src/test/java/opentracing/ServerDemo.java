@@ -38,13 +38,15 @@ public class ServerDemo {
     public static void main(String[] args) {
 
 
+        Jboot.setBootArg("jboot.server.port","8083");
+
         Jboot.setBootArg("jboot.rpc.type", "motan");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
         Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
 
 
         Jboot.setBootArg("jboot.tracing.type", "zipkin");
-        Jboot.setBootArg("jboot.tracing.serviceName", "MotanServerZookeeperDemo");
+        Jboot.setBootArg("jboot.tracing.serviceName", "ServerDemo");
         Jboot.setBootArg("jboot.tracing.url", "http://127.0.0.1:9411/api/v2/spans");
 
 
