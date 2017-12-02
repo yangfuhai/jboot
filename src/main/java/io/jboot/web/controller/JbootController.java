@@ -35,6 +35,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
+    @Before(NotAction.class)
     public boolean isMoblieBrowser() {
         return RequestUtils.isMoblieBrowser(getRequest());
     }
@@ -44,6 +45,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
+    @Before(NotAction.class)
     public boolean isWechatBrowser() {
         return RequestUtils.isWechatBrowser(getRequest());
     }
@@ -53,6 +55,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
+    @Before(NotAction.class)
     public boolean isIEBrowser() {
         return RequestUtils.isIEBrowser(getRequest());
     }
@@ -62,6 +65,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
+    @Before(NotAction.class)
     public boolean isAjaxRequest() {
         return RequestUtils.isAjaxRequest(getRequest());
     }
@@ -71,6 +75,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
+    @Before(NotAction.class)
     public boolean isMultipartRequest() {
         return RequestUtils.isMultipartRequest(getRequest());
     }
@@ -169,6 +174,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
+    @Before(NotAction.class)
     public HashMap<String, UploadFile> getUploadFilesMap() {
         if (!isMultipartRequest()) {
             return null;
