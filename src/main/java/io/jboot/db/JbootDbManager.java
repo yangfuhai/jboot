@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -139,8 +139,8 @@ public class JbootDbManager {
 
         String configName = config.getName();
         DataSource dataSource = new DataSourceBuilder(config).build();
-        String configTable = config.getTable();
-        String excludeTable = config.getExcludeTable();
+        String configTableString = config.getTable();
+        String excludeTableString = config.getExcludeTable();
 
         ActiveRecordPlugin activeRecordPlugin = StringUtils.isNotBlank(configName)
                 ? new ActiveRecordPlugin(configName, dataSource)
@@ -159,8 +159,8 @@ public class JbootDbManager {
         }
 
 
-        Set<String> tables = configTable == null ? null : StringUtils.splitToSet(configTable, ",");
-        Set<String> excludeTables = configTable == null ? null : StringUtils.splitToSet(excludeTable, ",");
+        Set<String> includeTables = configTableString == null ? null : StringUtils.splitToSet(configTableString, ",");
+        Set<String> excludeTables = excludeTableString == null ? null : StringUtils.splitToSet(excludeTableString, ",");
 
         for (Class<?> clazz : modelClassList) {
             Table tb = clazz.getAnnotation(Table.class);
@@ -171,10 +171,9 @@ public class JbootDbManager {
              * 包含表
              * 说明该数据源只允许部分表
              */
-            if (tables != null && !tables.isEmpty()) {
-
+            if (includeTables != null && !includeTables.isEmpty()) {
                 //如果该数据源的表配置不包含该表，过滤掉
-                if (!tables.contains(tb.tableName())) {
+                if (!includeTables.contains(tb.tableName())) {
                     continue;
                 }
             }
