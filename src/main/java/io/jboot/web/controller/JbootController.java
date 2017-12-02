@@ -108,7 +108,7 @@ public class JbootController extends Controller {
     }
 
 
-    HashMap<String, Object> flash;
+    protected HashMap<String, Object> flash;
 
     @Before(NotAction.class)
     public Controller setFlashAttr(String name, Object value) {
@@ -122,7 +122,7 @@ public class JbootController extends Controller {
 
 
     @Before(NotAction.class)
-    public Controller setFlashAttr(Map map) {
+    public Controller setFlashMap(Map map) {
         if (map == null) {
             throw new NullPointerException("map is null");
         }

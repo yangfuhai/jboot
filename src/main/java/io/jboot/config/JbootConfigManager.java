@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -80,8 +80,9 @@ public class JbootConfigManager {
     private Multimap<Class<?>, Method> classMethodsCache = ArrayListMultimap.create();
 
 
-    public JbootConfigManager() {
-
+    public void init() {
+        readLocalConfig();
+        readRemoteConfig();
     }
 
     /**
@@ -112,10 +113,6 @@ public class JbootConfigManager {
      * 读取远程配置文件
      */
     public void readRemoteConfig() {
-        if (config.isServerEnable()) {
-            return;
-        }
-
         /**
          * 定时获取远程服务配置信息
          */
@@ -294,29 +291,15 @@ public class JbootConfigManager {
         }
 
 
-        // mysql type: int, integer, tinyint(n) n > 1, smallint, mediumint
         if (type == Integer.class || type == int.class) {
             return Integer.parseInt(s);
-        }
-
-        // mysql type: bigint
-        if (type == Long.class || type == long.class) {
+        } else if (type == Long.class || type == long.class) {
             return Long.parseLong(s);
-        }
-
-
-        // mysql type: real, double
-        if (type == Double.class || type == double.class) {
+        } else if (type == Double.class || type == double.class) {
             return Double.parseDouble(s);
-        }
-
-        // mysql type: float
-        if (type == Float.class || type == float.class) {
+        } else if (type == Float.class || type == float.class) {
             return Float.parseFloat(s);
-        }
-
-        // mysql type: bit, tinyint(1)
-        if (type == Boolean.class || type == boolean.class) {
+        } else if (type == Boolean.class || type == boolean.class) {
             String value = s.toLowerCase();
             if ("1".equals(value) || "true".equals(value)) {
                 return Boolean.TRUE;
@@ -325,20 +308,11 @@ public class JbootConfigManager {
             } else {
                 throw new RuntimeException("Can not parse to boolean type of value: " + s);
             }
-        }
-
-        // mysql type: decimal, numeric
-        if (type == java.math.BigDecimal.class) {
+        } else if (type == java.math.BigDecimal.class) {
             return new java.math.BigDecimal(s);
-        }
-
-        // mysql type: unsigned bigint
-        if (type == java.math.BigInteger.class) {
+        } else if (type == java.math.BigInteger.class) {
             return new java.math.BigInteger(s);
-        }
-
-        // mysql type: binary, varbinary, tinyblob, blob, mediumblob, longblob. I have not finished the test.
-        if (type == byte[].class) {
+        } else if (type == byte[].class) {
             return s.getBytes();
         }
 

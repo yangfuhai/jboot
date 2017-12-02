@@ -138,8 +138,7 @@ public class Jboot {
      */
     public void start() {
 
-        JbootConfigManager.me().readLocalConfig();
-        JbootConfigManager.me().readRemoteConfig();
+        JbootConfigManager.me().init();
 
         printBannerInfo();
         printJbootConfigInfo();
