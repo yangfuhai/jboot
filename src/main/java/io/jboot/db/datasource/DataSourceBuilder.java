@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,14 +15,14 @@
  */
 package io.jboot.db.datasource;
 
-import com.dangdang.ddframe.rdb.sharding.api.ShardingDataSourceFactory;
-import com.dangdang.ddframe.rdb.sharding.api.rule.ShardingRule;
 import com.jfinal.log.Log;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.db.sharding.IShardingRuleFactory;
 import io.jboot.db.sharding.ShardingRuleFactoryBuilder;
 import io.jboot.utils.StringUtils;
+import io.shardingjdbc.core.jdbc.core.datasource.ShardingDataSource;
+import io.shardingjdbc.core.rule.ShardingRule;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -75,7 +75,8 @@ public class DataSourceBuilder {
 
         ShardingRule shardingRule = factory.createShardingRule(dataSource);
         try {
-            return ShardingDataSourceFactory.createDataSource(shardingRule);
+//            return ShardingDataSourceFactory.createDataSource(shardingRule);
+            return new ShardingDataSource(shardingRule);
         } catch (SQLException e) {
             log.error("create sharding datasource error." + e.toString(), e);
         }
