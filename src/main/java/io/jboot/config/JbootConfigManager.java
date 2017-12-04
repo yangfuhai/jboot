@@ -43,12 +43,6 @@ public class JbootConfigManager {
 
     private static final Log LOG = Log.getLog(JbootConfigManager.class);
 
-    private static JbootConfigManager me = new JbootConfigManager();
-
-    public static JbootConfigManager me() {
-        return me;
-    }
-
 
     private Properties mainProperties;
     private JbootConfigConfig config;
@@ -80,7 +74,21 @@ public class JbootConfigManager {
     private Multimap<Class<?>, Method> classMethodsCache = ArrayListMultimap.create();
 
 
-    public void init() {
+    private static JbootConfigManager instance;
+
+    public static JbootConfigManager me() {
+        if (instance == null) {
+            instance = new JbootConfigManager();
+        }
+        return instance;
+    }
+
+    private JbootConfigManager() {
+        init();
+    }
+
+
+    private void init() {
         readLocalConfig();
         readRemoteConfig();
     }

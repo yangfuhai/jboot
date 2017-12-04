@@ -138,8 +138,6 @@ public class Jboot {
      */
     public void start() {
 
-        JbootConfigManager.me().init();
-
         printBannerInfo();
         printJbootConfigInfo();
         printServerConfigInfo();
