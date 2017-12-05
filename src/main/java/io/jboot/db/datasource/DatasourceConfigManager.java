@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  */
 package io.jboot.db.datasource;
 
+import com.google.common.collect.Maps;
 import io.jboot.Jboot;
 import io.jboot.config.JbootConfigManager;
 import io.jboot.utils.StringUtils;
@@ -30,13 +31,18 @@ public class DatasourceConfigManager {
         return manager;
     }
 
-    private List<DatasourceConfig> datasourceConfigs = new ArrayList<>();
+    private Map<String, DatasourceConfig> datasourceConfigs = Maps.newHashMap();
+    private Map<String, DatasourceConfig> shardingDatasourceConfigs = Maps.newHashMap();
 
     private DatasourceConfigManager() {
 
         DatasourceConfig datasourceConfig = Jboot.config(DatasourceConfig.class, "jboot.datasource");
+        datasourceConfig.setName(DatasourceConfig.NAME_MAIN);
         if (datasourceConfig.isConfigOk()) {
-            datasourceConfigs.add(datasourceConfig);
+            datasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
+        }
+        if (datasourceConfig.isShardingConfig()) {
+            shardingDatasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
         }
 
 
@@ -59,14 +65,21 @@ public class DatasourceConfigManager {
                 dsc.setName(name);
             }
             if (dsc.isConfigOk()) {
-                datasourceConfigs.add(dsc);
+                datasourceConfigs.put(name, dsc);
+            }
+            if (dsc.isShardingConfig()) {
+                shardingDatasourceConfigs.put(name, dsc);
             }
         }
     }
 
 
-    public List<DatasourceConfig> getDatasourceConfigs() {
+    public Map<String, DatasourceConfig> getDatasourceConfigs() {
         return datasourceConfigs;
+    }
+
+    public Map<String, DatasourceConfig> getShardingDatasourceConfigs() {
+        return shardingDatasourceConfigs;
     }
 
 }

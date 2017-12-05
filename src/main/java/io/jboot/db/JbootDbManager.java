@@ -19,7 +19,6 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.Jboot;
-import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DatasourceConfig;
 import io.jboot.db.datasource.DatasourceConfigManager;
@@ -27,13 +26,10 @@ import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassNewer;
-import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -55,8 +51,40 @@ public class JbootDbManager {
 
     public JbootDbManager() {
 
-        List<DatasourceConfig> datasourceConfigs = DatasourceConfigManager.me().getDatasourceConfigs();
-        for (DatasourceConfig datasourceConfig : datasourceConfigs) {
+        // 所有的数据源
+        Map<String, DatasourceConfig> datasourceConfigs = DatasourceConfigManager.me().getDatasourceConfigs();
+
+        // 分库的数据源，一个数据源包含了多个数据源。
+        Map<String, DatasourceConfig> shardingDatasourceConfigs = DatasourceConfigManager.me().getShardingDatasourceConfigs();
+
+        if (shardingDatasourceConfigs != null && shardingDatasourceConfigs.size() > 0) {
+            for (Map.Entry<String, DatasourceConfig> entry : shardingDatasourceConfigs.entrySet()) {
+                Set<String> databases = StringUtils.splitToSet(entry.getValue().getShardingDatabase(), ",");
+                for (String database : databases) {
+                    DatasourceConfig datasourceConfig = datasourceConfigs.remove(database);
+                    if (datasourceConfig == null) {
+                        throw new NullPointerException("has no datasource config named " + database + ",plase check your sharding database config");
+                    }
+                    entry.getValue().addChildDatasourceConfig(datasourceConfig);
+                }
+            }
+        }
+
+        //所有数据源，包含了分库的和未分库的
+        Map<String, DatasourceConfig> allDatasourceConfigs = new HashMap<>();
+        if (datasourceConfigs != null) {
+            allDatasourceConfigs.putAll(datasourceConfigs);
+        }
+
+        if (shardingDatasourceConfigs != null) {
+            allDatasourceConfigs.putAll(shardingDatasourceConfigs);
+        }
+
+
+        for (Map.Entry<String, DatasourceConfig> entry : allDatasourceConfigs.entrySet()) {
+
+            DatasourceConfig datasourceConfig = entry.getValue();
+
             if (datasourceConfig.isConfigOk()) {
 
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
@@ -153,45 +181,16 @@ public class JbootDbManager {
             return activeRecordPlugin;
         }
 
-        List<Class<Model>> modelClassList = ClassScanner.scanSubClass(Model.class);
-        if (ArrayUtils.isNullOrEmpty(modelClassList)) {
+        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(configTableString, excludeTableString);
+        if (ArrayUtils.isNullOrEmpty(tableInfos)) {
             return activeRecordPlugin;
         }
 
-
-        Set<String> includeTables = configTableString == null ? null : StringUtils.splitToSet(configTableString, ",");
-        Set<String> excludeTables = excludeTableString == null ? null : StringUtils.splitToSet(excludeTableString, ",");
-
-        for (Class<?> clazz : modelClassList) {
-            Table tb = clazz.getAnnotation(Table.class);
-            if (tb == null)
-                continue;
-
-            /**
-             * 包含表
-             * 说明该数据源只允许部分表
-             */
-            if (includeTables != null && !includeTables.isEmpty()) {
-                //如果该数据源的表配置不包含该表，过滤掉
-                if (!includeTables.contains(tb.tableName())) {
-                    continue;
-                }
-            }
-
-            /**
-             * 排除表
-             * 说明该数据源没有该表
-             */
-            if (excludeTables != null && !excludeTables.isEmpty()) {
-                if (excludeTables.contains(tb.tableName())) {
-                    continue;
-                }
-            }
-
-            if (StringUtils.isNotBlank(tb.primaryKey())) {
-                activeRecordPlugin.addMapping(tb.tableName(), tb.primaryKey(), (Class<? extends Model<?>>) clazz);
+        for (TableInfo ti : tableInfos) {
+            if (StringUtils.isNotBlank(ti.getPrimaryKey())) {
+                activeRecordPlugin.addMapping(ti.getTableName(), ti.getPrimaryKey(), (Class<? extends Model<?>>) ti.getModelClass());
             } else {
-                activeRecordPlugin.addMapping(tb.tableName(), (Class<? extends Model<?>>) clazz);
+                activeRecordPlugin.addMapping(ti.getTableName(), (Class<? extends Model<?>>) ti.getModelClass());
             }
         }
 

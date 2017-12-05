@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,13 @@ package io.jboot.db.datasource;
 
 import io.jboot.utils.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DatasourceConfig {
+    public static final String NAME_MAIN = "_main_";
+
     public static final String TYPE_MYSQL = "mysql";
     public static final String TYPE_ORACLE = "oracle";
     public static final String TYPE_SQLSERVER = "sqlserver";
@@ -45,6 +50,10 @@ public class DatasourceConfig {
     private String excludeTable;
 
     private String shardingRuleFactory;
+    private String shardingDatabase;
+
+
+    private List<DatasourceConfig> childDatasourceConfigs;
 
     /**
      * 是否需要添加到映射
@@ -143,7 +152,12 @@ public class DatasourceConfig {
     }
 
     public boolean isConfigOk() {
-        return StringUtils.isNotBlank(url) && StringUtils.isNotBlank(user);
+        return (StringUtils.isNotBlank(url) && StringUtils.isNotBlank(user))
+                || (StringUtils.isNotBlank(shardingDatabase) && StringUtils.isNotBlank(shardingRuleFactory));
+    }
+
+    public boolean isShardingConfig() {
+        return StringUtils.isNotBlank(shardingDatabase) && StringUtils.isNotBlank(shardingRuleFactory);
     }
 
     public boolean isMysqlType() {
@@ -220,5 +234,29 @@ public class DatasourceConfig {
 
     public void setShardingRuleFactory(String shardingRuleFactory) {
         this.shardingRuleFactory = shardingRuleFactory;
+    }
+
+    public String getShardingDatabase() {
+        return shardingDatabase;
+    }
+
+    public void setShardingDatabase(String shardingDatabase) {
+        this.shardingDatabase = shardingDatabase;
+    }
+
+    public List<DatasourceConfig> getChildDatasourceConfigs() {
+        return childDatasourceConfigs;
+    }
+
+    public void setChildDatasourceConfigs(List<DatasourceConfig> childDatasourceConfigs) {
+        this.childDatasourceConfigs = childDatasourceConfigs;
+    }
+
+    public void addChildDatasourceConfig(DatasourceConfig config) {
+        if (this.childDatasourceConfigs == null) {
+            this.childDatasourceConfigs = new ArrayList<>();
+        }
+
+        this.childDatasourceConfigs.add(config);
     }
 }
