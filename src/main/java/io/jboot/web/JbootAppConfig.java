@@ -21,11 +21,12 @@ import com.jfinal.json.JsonManager;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
+import com.jfinal.template.ext.directive.NowDirective;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
+import io.jboot.JbootConstants;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.component.log.Slf4jLogFactory;
@@ -132,19 +133,15 @@ public class JbootAppConfig extends JFinalConfig {
 
         /**
          * now 并没有被添加到默认的指令当中
-         * 先添加，后移除，防止在热加载的时候重复添加而产生异常。
          * 查看：EngineConfig
          */
-        engine.addDirective("now", new com.jfinal.template.ext.directive.NowDirective());
+        engine.addDirective("now", NowDirective.class);
 
         List<Class> directiveClasses = ClassScanner.scanClass();
         for (Class clazz : directiveClasses) {
-            JFinalDirective jDirective = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
-            if (jDirective != null) {
-                Directive directive = ClassNewer.newInstance((Class<Directive>) clazz);
-                if (directive != null) {
-                    engine.addDirective(jDirective.value(), directive);
-                }
+            JFinalDirective jFinalDirective = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
+            if (jFinalDirective != null) {
+                engine.addDirective(jFinalDirective.value(), clazz);
             }
 
             JFinalSharedMethod sharedMethod = (JFinalSharedMethod) clazz.getAnnotation(JFinalSharedMethod.class);
@@ -214,7 +211,7 @@ public class JbootAppConfig extends JFinalConfig {
         /**
          * 发送启动完成通知
          */
-        Jboot.sendEvent(Jboot.EVENT_STARTED, null);
+        Jboot.sendEvent(JbootConstants.EVENT_STARTED, null);
 
         JbootAppListenerManager.me().onJFinalStarted();
     }
