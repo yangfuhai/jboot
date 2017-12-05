@@ -217,8 +217,6 @@ public class JbootAppConfig extends JFinalConfig {
         Jboot.sendEvent(Jboot.EVENT_STARTED, null);
 
         JbootAppListenerManager.me().onJFinalStarted();
-        JbootAppListenerManager.me().onJbootStarted();
-
     }
 
     @Override
