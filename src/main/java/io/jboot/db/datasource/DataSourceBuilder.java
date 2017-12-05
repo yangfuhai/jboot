@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,22 +15,27 @@
  */
 package io.jboot.db.datasource;
 
-import com.dangdang.ddframe.rdb.sharding.api.ShardingDataSourceFactory;
-import com.dangdang.ddframe.rdb.sharding.api.rule.ShardingRule;
-import com.jfinal.log.Log;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.jboot.db.sharding.IShardingRuleFactory;
-import io.jboot.db.sharding.ShardingRuleFactoryBuilder;
+import io.jboot.db.TableInfo;
+import io.jboot.db.TableInfoManager;
+import io.jboot.exception.JbootException;
+import io.jboot.utils.ClassNewer;
 import io.jboot.utils.StringUtils;
+import io.shardingjdbc.core.api.ShardingDataSourceFactory;
+import io.shardingjdbc.core.api.config.ShardingRuleConfiguration;
+import io.shardingjdbc.core.api.config.TableRuleConfiguration;
+import io.shardingjdbc.core.api.config.strategy.ShardingStrategyConfiguration;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 
 public class DataSourceBuilder {
-
-    static Log log = Log.getLog(DataSourceBuilder.class);
 
     private DatasourceConfig datasourceConfig;
 
@@ -40,6 +45,80 @@ public class DataSourceBuilder {
 
     public DataSource build() {
 
+        if (datasourceConfig.isShardingEnable()) {
+            Map<String, DataSource> dataSourceMap = new HashMap<>();
+
+            if (datasourceConfig.getChildDatasourceConfigs() != null) {
+                for (DatasourceConfig childConfig : datasourceConfig.getChildDatasourceConfigs()) {
+                    dataSourceMap.put(childConfig.getName(), buildHikariDataSource(childConfig));
+                }
+            }
+            /**
+             * 可能只是分表，不分库
+             */
+            else {
+                dataSourceMap.put(datasourceConfig.getName(), buildHikariDataSource(datasourceConfig));
+            }
+
+
+            ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
+
+            List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(datasourceConfig.getTable(), datasourceConfig.getExcludeTable());
+            StringBuilder bindTableGroups = new StringBuilder();
+            for (TableInfo ti : tableInfos) {
+                TableRuleConfiguration tableRuleConfiguration = getTableRuleConfiguration(ti);
+                shardingRuleConfiguration.getTableRuleConfigs().add(tableRuleConfiguration);
+                bindTableGroups.append(ti.getTableName()).append(",");
+            }
+
+            if (bindTableGroups.length() > 0) {
+                bindTableGroups.deleteCharAt(bindTableGroups.length() - 1); //delete last char
+                shardingRuleConfiguration.getBindingTableGroups().add(bindTableGroups.toString());
+            }
+
+
+            try {
+                return ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingRuleConfiguration, new HashMap<>(), new Properties());
+            } catch (SQLException e) {
+                throw new JbootException(e);
+            }
+
+        } else {
+            return buildHikariDataSource(datasourceConfig);
+        }
+
+
+    }
+
+    private static TableRuleConfiguration getTableRuleConfiguration(TableInfo tableInfo) {
+        TableRuleConfiguration tableRuleConfig = new TableRuleConfiguration();
+        tableRuleConfig.setLogicTable(tableInfo.getTableName());
+
+        if (StringUtils.isNotBlank(tableInfo.getActualDataNodes())) {
+            tableRuleConfig.setActualDataNodes(tableInfo.getActualDataNodes());
+        }
+
+        if (StringUtils.isNotBlank(tableInfo.getKeyGeneratorClass())) {
+            tableRuleConfig.setKeyGeneratorClass(tableInfo.getKeyGeneratorClass());
+        }
+
+        if (StringUtils.isNotBlank(tableInfo.getKeyGeneratorColumnName())) {
+            tableRuleConfig.setKeyGeneratorColumnName(tableInfo.getKeyGeneratorColumnName());
+        }
+
+        if (tableInfo.getDatabaseShardingStrategyConfig() != ShardingStrategyConfiguration.class) {
+            tableRuleConfig.setDatabaseShardingStrategyConfig(ClassNewer.newInstance(tableInfo.getDatabaseShardingStrategyConfig()));
+        }
+
+        if (tableInfo.getTableShardingStrategyConfig() != ShardingStrategyConfiguration.class) {
+            tableRuleConfig.setTableShardingStrategyConfig(ClassNewer.newInstance(tableInfo.getTableShardingStrategyConfig()));
+        }
+
+        return tableRuleConfig;
+    }
+
+
+    private DataSource buildHikariDataSource(DatasourceConfig datasourceConfig) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(datasourceConfig.getUrl());
         hikariConfig.setUsername(datasourceConfig.getUser());
@@ -59,28 +138,6 @@ public class DataSourceBuilder {
 
         hikariConfig.setMaximumPoolSize(datasourceConfig.getMaximumPoolSize());
 
-        DataSource dataSource = new HikariDataSource(hikariConfig);
-
-        // 如果 shardingRuleFacetory 配置为空，则不使用分表规则
-        if (StringUtils.isBlank(datasourceConfig.getShardingRuleFactory())) {
-            return dataSource;
-        }
-
-        // 如果 通过shardingRuleFacetory去创建IShardingRuleFactory 不成功，则不使用分表规则
-        IShardingRuleFactory factory = ShardingRuleFactoryBuilder.me().build(datasourceConfig.getShardingRuleFactory());
-        if (factory == null) {
-            log.warn("create not create shardingRuleFactory");
-            return dataSource;
-        }
-
-        ShardingRule shardingRule = factory.createShardingRule(dataSource);
-        try {
-            return ShardingDataSourceFactory.createDataSource(shardingRule);
-        } catch (SQLException e) {
-            log.error("create sharding datasource error." + e.toString(), e);
-        }
-
-        return dataSource;
-
+        return new HikariDataSource(hikariConfig);
     }
 }

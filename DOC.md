@@ -638,68 +638,134 @@ company.save();
 ## 分库和分表
 
 ### 分库
-分库建议使用多数据源的方式进行分库
+暂无内容
 
 ### 分表
 在Jboot中，分表是通过sharding-jdbc（ 网址：https://github.com/shardingjdbc/sharding-jdbc） 来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
 
-阅读Jboot的分表之前，假定你对Sharding-jdbc已经有所了解。
 
-#### 第一步：编写分表策略
 
-例如：
+#### demos
+
+例如：有一个userModel，我们希望能进行分为三张表，通过id的hashcode进行取模，代码如下：
 
 ```java
-public final class ModuloTableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<Integer> {
 
-    @Override
-    public String doEqualSharding(final Collection<String> tableNames, 
-    	final ShardingValue<Integer> shardingValue) {
-        
+@Table(tableName = "tb_user",
+        primaryKey = "id",
+         // 具体的表tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2,
+         // main 是默认数据源的名称
+        actualDataNodes = "main.tb_user${0..2}",
+        //分表策略
+        tableShardingStrategyConfig = UserTableShardingStrategyConfig.class 
+)
+public class UserModel extends JbootModel<UserModel> {
+
+
+    public UserModel(String id, String name) {
+        setId(id);
+        setName(name);
     }
 
-    @Override
-    public Collection<String> doInSharding(final Collection<String> tableNames, 
-    	final ShardingValue<Integer> shardingValue) {
-       
+    public UserModel() {
     }
 
-    @Override
-    public Collection<String> doBetweenSharding(final Collection<String> tableNames, 
-    	final ShardingValue<Integer> shardingValue) {
-        
+
+    public String getId() {
+        return get("id");
     }
+
+    public void setId(String id) {
+        set("id", id);
+    }
+
+    public String getName() {
+        return get("name");
+    }
+
+    public void setName(String name) {
+        set("name", name);
+    }
+}
+
+```
+
+编写UserModel的分表策略  UserTableShardingStrategyConfig，代码如下：
+
+```java
+public class UserTableShardingStrategyConfig implements ShardingStrategyConfiguration {
+
+    @Override
+    public ShardingStrategy build() {
+        return shardingStrategy;
+    }
+
+
+    private ShardingStrategy shardingStrategy = new ShardingStrategy() {
+
+        @Override
+        public Collection<String> getShardingColumns() {
+            //根据id进行分表
+            return Sets.newHashSet("id");
+        }
+
+        @Override
+        public Collection<String> doSharding(Collection<String> availableTargetNames, Collection<ShardingValue> shardingValues) {
+            ListShardingValue shardingValue = (ListShardingValue) shardingValues.stream().findFirst().get();
+
+            String tableName = "tb_user" + Math.abs(shardingValue.getValues().iterator().next().toString().hashCode()) % 3;
+
+            System.out.println("插入数据到表：" + tableName);
+
+            //返回通过计算得到的表
+            return Sets.newHashSet(tableName);
+
+        }
+    };
+
 }
 ```
 
-具体实现参考：
-
-https://github.com/shardingjdbc/sharding-jdbc/blob/master/sharding-jdbc-example/sharding-jdbc-example-jdbc/src/main/java/com/dangdang/ddframe/rdb/sharding/example/jdbc/algorithm/ModuloTableShardingAlgorithm.java 
-
-#### 第二步：编写 IShardingRuleFactory 的实现类
-
-```java
-public class MyShardingRuleFactory implements IShardingRuleFactory{
-	public ShardingRule createShardingRule(DataSource dataSource){
-	     // 创建分片规则
-	}
-}
-```
-
-具体可以参 
-
-https://github.com/shardingjdbc/sharding-jdbc/blob/master/sharding-jdbc-example/sharding-jdbc-example-jdbc/src/main/java/com/dangdang/ddframe/rdb/sharding/example/jdbc/Main.java
-
-
-#### 第三步：给数据源配置上ShardingRuleFactory
+编写配置文件：
 
 ```
-jboot.datasource.type=
-jboot.datasource.url=
-jboot.datasource.user=
+jboot.datasource.type=mysql
+jboot.datasource.url=jdbc:mysql://127.0.0.1:3306/jbootsharding
+jboot.datasource.user=root
 jboot.datasource.password=
-jboot.datasource.shardingRuleFactory=com.yours.MyShardingRuleFactory
+jboot.datasource.shardingEnable=true
 ```
+
+进行UserModel保存到数据库
+
+```java
+@RequestMapping("/sharding")
+public class ShardingController extends JbootController {
+
+
+    public void index() {
+
+        UserModel user = new UserModel();
+        user.setId(StringUtils.uuid());
+        user.setName("Michael yang");
+
+        user.save();
+
+        renderText("插入数据成功，请查看数据库...");
+
+    }
+
+
+    public static void main(String[] args) {
+        Jboot.run(args);
+    }
+}
+
+```
+
+具体demo请参考：
+
+https://gitee.com/fuhai/jboot/tree/master/src/test/java/sharding
 
 
 # AOP

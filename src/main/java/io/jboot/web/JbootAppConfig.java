@@ -33,6 +33,7 @@ import io.jboot.component.metrics.JbootMetricsManager;
 import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.component.swagger.JbootSwaggerConfig;
 import io.jboot.component.swagger.JbootSwaggerController;
+import io.jboot.component.swagger.JbootSwaggerManager;
 import io.jboot.config.JbootConfigManager;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
@@ -208,6 +209,7 @@ public class JbootAppConfig extends JFinalConfig {
         JbootShiroManager.me().init(routeList);
         JbootScheduleManager.me().init();
         JbootMetricsManager.me().init();
+        JbootSwaggerManager.me().init();
 
         /**
          * 发送启动完成通知

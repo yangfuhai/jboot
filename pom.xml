@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -240,14 +240,14 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>1.6.0.Final</version>
+            <version>1.7.0.Final</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
-            <version>4.2.0</version>
+            <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -276,10 +276,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.dangdang</groupId>
+            <groupId>io.shardingjdbc</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
-            <version>1.5.4.1</version>
-            <scope>provided</scope>
+            <version>2.0.0</version>
         </dependency>
 
         <dependency>
@@ -327,6 +326,18 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

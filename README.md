@@ -12,7 +12,7 @@ QQ交流群： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 </dependency>
 
 ```
@@ -29,7 +29,7 @@ QQ交流群： 601440615
     * [x] motan
     * [x] dubbo
     * [ ] grpc
-    * [ ] zbus
+    * [x] zbus
 * MQ消息队列 
     * [x] rabbitmq
     * [x] redismq

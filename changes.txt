@@ -1,3 +1,13 @@
+jboot-1.1.2:
+优化：重构metrics reporter，支持监控信息输出到 console、csv、jmx、slf4j、influxdb、graphite、ganglia 和 elasticsearch。
+优化：修改代码生成器的生成model的action由baseModelName改为modelName
+优化：添加setFlashMap(Map map)方法，flashMessage可以直接设置Map或者Jfinal的Ret
+优化：代码生成器的配置信息支持不完善，修改通过jboot.properties获取不到的问题
+优化：重构分库分表的功能，支持shardingjdbc 2.0最新版，并添加jfinal、jboot分库分表的demo
+优化：移除因为dubbo而关联依赖的spring-web
+
+
+
 jboot-1.1.1:
 新增：FlashMessage功能，方便Controller进行redirect的时候可以通知用户。
 新增：websocket的功能和具体使用demo。
