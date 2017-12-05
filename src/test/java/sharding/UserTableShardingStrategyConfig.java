@@ -25,15 +25,18 @@ public class UserTableShardingStrategyConfig implements ShardingStrategyConfigur
 
         @Override
         public Collection<String> getShardingColumns() {
-            //根据id进行分表
+            //根据id进行分表,可以根据多个字段
             return Sets.newHashSet("id");
         }
 
         @Override
         public Collection<String> doSharding(Collection<String> availableTargetNames, Collection<ShardingValue> shardingValues) {
-            ListShardingValue shardingValue = (ListShardingValue) shardingValues.stream().findFirst().get();
 
-            String tableName = "tb_user" + Math.abs(shardingValue.getValues().iterator().next().toString().hashCode()) % 3;
+            ListShardingValue shardingValue = (ListShardingValue) shardingValues.iterator().next();
+            String value = (String) shardingValue.getValues().iterator().next();
+
+            //得到要插入 或者 查询的表
+            String tableName = "tb_user" + Math.abs(value.hashCode()) % 3;
 
             System.out.println("插入数据到表：" + tableName);
 
@@ -42,6 +45,5 @@ public class UserTableShardingStrategyConfig implements ShardingStrategyConfigur
 
         }
     };
-
 
 }

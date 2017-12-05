@@ -13,16 +13,23 @@ import io.jboot.web.controller.annotation.RequestMapping;
 @RequestMapping("/sharding")
 public class ShardingController extends JbootController {
 
+    static UserModel DAO = new UserModel().dao();
+
 
     public void index() {
 
-        UserModel user = new UserModel();
-        user.setId(StringUtils.uuid());
-        user.setName("Michael yang");
+        String id = StringUtils.uuid();
 
+        UserModel user = new UserModel();
+        user.setId(id);
+        user.setName("Michael yang");
         user.save();
 
-        renderText("插入数据成功，请查看数据库...");
+        System.out.println("保存成功！");
+
+
+        UserModel findModel = DAO.findById(id);
+        renderJson(findModel);
 
     }
 
