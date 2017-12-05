@@ -64,7 +64,7 @@ public class JbootSwaggerController extends JbootController {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // 支持HTTP 1.1.
         response.setHeader("Pragma", "no-cache");
 
-        Swagger swagger = SwaggerManager.me().getSwagger();
+        Swagger swagger = JbootSwaggerManager.me().getSwagger();
         if (swagger == null) {
             renderText("swagger config error.");
             return;

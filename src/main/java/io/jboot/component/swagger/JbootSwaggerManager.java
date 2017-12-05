@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,20 +31,26 @@ import java.util.*;
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package io.jboot.component.swagger
+ * <p>
+ * 相关文档: https://www.gitbook.com/book/huangwenchao/swagger/details
  */
-public class SwaggerManager {
+public class JbootSwaggerManager {
 
-    private static SwaggerManager me = new SwaggerManager();
-
-    public static SwaggerManager me() {
-        return me;
-    }
 
     private JbootSwaggerConfig config = Jboot.config(JbootSwaggerConfig.class);
-
     private Swagger swagger;
+    private static JbootSwaggerManager instance;
 
-    private SwaggerManager() {
+    public static JbootSwaggerManager me() {
+        if (instance == null) {
+            instance = new JbootSwaggerManager();
+        }
+
+        return instance;
+    }
+
+
+    public void init() {
         if (!config.isConfigOk()) {
             return;
         }
