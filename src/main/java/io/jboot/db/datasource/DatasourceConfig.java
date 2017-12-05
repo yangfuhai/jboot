@@ -22,7 +22,7 @@ import java.util.List;
 
 
 public class DatasourceConfig {
-    public static final String NAME_MAIN = "_main_";
+    public static final String NAME_MAIN = "main";
 
     public static final String TYPE_MYSQL = "mysql";
     public static final String TYPE_ORACLE = "oracle";
@@ -49,7 +49,7 @@ public class DatasourceConfig {
     private String table;
     private String excludeTable;
 
-    private String shardingRuleFactory;
+    private boolean shardingEnable = false;
     private String shardingDatabase;
 
 
@@ -153,12 +153,9 @@ public class DatasourceConfig {
 
     public boolean isConfigOk() {
         return (StringUtils.isNotBlank(url) && StringUtils.isNotBlank(user))
-                || (StringUtils.isNotBlank(shardingDatabase) && StringUtils.isNotBlank(shardingRuleFactory));
+                || shardingEnable == true;
     }
 
-    public boolean isShardingConfig() {
-        return StringUtils.isNotBlank(shardingDatabase) && StringUtils.isNotBlank(shardingRuleFactory);
-    }
 
     public boolean isMysqlType() {
         return TYPE_MYSQL.equals(getType());
@@ -228,12 +225,12 @@ public class DatasourceConfig {
         this.needAddMapping = needAddMapping;
     }
 
-    public String getShardingRuleFactory() {
-        return shardingRuleFactory;
+    public boolean isShardingEnable() {
+        return shardingEnable;
     }
 
-    public void setShardingRuleFactory(String shardingRuleFactory) {
-        this.shardingRuleFactory = shardingRuleFactory;
+    public void setShardingEnable(boolean shardingEnable) {
+        this.shardingEnable = shardingEnable;
     }
 
     public String getShardingDatabase() {

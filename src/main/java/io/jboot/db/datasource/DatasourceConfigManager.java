@@ -41,7 +41,7 @@ public class DatasourceConfigManager {
         if (datasourceConfig.isConfigOk()) {
             datasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
         }
-        if (datasourceConfig.isShardingConfig()) {
+        if (datasourceConfig.isShardingEnable()) {
             shardingDatasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
         }
 
@@ -67,7 +67,7 @@ public class DatasourceConfigManager {
             if (dsc.isConfigOk()) {
                 datasourceConfigs.put(name, dsc);
             }
-            if (dsc.isShardingConfig()) {
+            if (dsc.isShardingEnable()) {
                 shardingDatasourceConfigs.put(name, dsc);
             }
         }

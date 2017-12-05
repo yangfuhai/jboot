@@ -45,11 +45,21 @@ public class DataSourceBuilder {
 
     public DataSource build() {
 
-        if (datasourceConfig.isShardingConfig()) {
+        if (datasourceConfig.isShardingEnable()) {
             Map<String, DataSource> dataSourceMap = new HashMap<>();
-            for (DatasourceConfig childConfig : datasourceConfig.getChildDatasourceConfigs()) {
-                dataSourceMap.put(childConfig.getName(), buildHikariDataSource(childConfig));
+
+            if (datasourceConfig.getChildDatasourceConfigs() != null) {
+                for (DatasourceConfig childConfig : datasourceConfig.getChildDatasourceConfigs()) {
+                    dataSourceMap.put(childConfig.getName(), buildHikariDataSource(childConfig));
+                }
             }
+            /**
+             * 可能只是分表，不分库
+             */
+            else {
+                dataSourceMap.put(datasourceConfig.getName(), buildHikariDataSource(datasourceConfig));
+            }
+
 
             ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
 

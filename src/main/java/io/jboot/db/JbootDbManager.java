@@ -59,7 +59,11 @@ public class JbootDbManager {
 
         if (shardingDatasourceConfigs != null && shardingDatasourceConfigs.size() > 0) {
             for (Map.Entry<String, DatasourceConfig> entry : shardingDatasourceConfigs.entrySet()) {
-                Set<String> databases = StringUtils.splitToSet(entry.getValue().getShardingDatabase(), ",");
+                String databaseConfig = entry.getValue().getShardingDatabase();
+                if (StringUtils.isBlank(databaseConfig)) {
+                    continue;
+                }
+                Set<String> databases = StringUtils.splitToSet(databaseConfig, ",");
                 for (String database : databases) {
                     DatasourceConfig datasourceConfig = datasourceConfigs.remove(database);
                     if (datasourceConfig == null) {
