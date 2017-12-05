@@ -240,14 +240,14 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>1.6.0.Final</version>
+            <version>1.7.0.Final</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
-            <version>4.2.0</version>
+            <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
 
