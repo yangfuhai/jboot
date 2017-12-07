@@ -376,7 +376,7 @@
         <dependency>
             <groupId>io.zbus</groupId>
             <artifactId>zbus</artifactId>
-            <version>0.11.3</version>
+            <version>0.11.4</version>
             <scope>provided</scope>
         </dependency>
 
