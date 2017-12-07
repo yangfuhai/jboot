@@ -20,7 +20,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.db.TableInfo;
 import io.jboot.db.TableInfoManager;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import io.shardingjdbc.core.api.ShardingDataSourceFactory;
 import io.shardingjdbc.core.api.config.ShardingRuleConfiguration;
@@ -107,11 +107,11 @@ public class DataSourceBuilder {
         }
 
         if (tableInfo.getDatabaseShardingStrategyConfig() != ShardingStrategyConfiguration.class) {
-            tableRuleConfig.setDatabaseShardingStrategyConfig(ClassNewer.newInstance(tableInfo.getDatabaseShardingStrategyConfig()));
+            tableRuleConfig.setDatabaseShardingStrategyConfig(ClassKits.newInstance(tableInfo.getDatabaseShardingStrategyConfig()));
         }
 
         if (tableInfo.getTableShardingStrategyConfig() != ShardingStrategyConfiguration.class) {
-            tableRuleConfig.setTableShardingStrategyConfig(ClassNewer.newInstance(tableInfo.getTableShardingStrategyConfig()));
+            tableRuleConfig.setTableShardingStrategyConfig(ClassKits.newInstance(tableInfo.getTableShardingStrategyConfig()));
         }
 
         return tableRuleConfig;

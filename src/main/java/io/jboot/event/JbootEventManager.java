@@ -17,7 +17,7 @@ package io.jboot.event;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 import io.jboot.event.annotation.EventConfig;
 import io.jboot.utils.ArrayUtils;
@@ -47,7 +47,7 @@ public class JbootEventManager {
 
     public static JbootEventManager me() {
         if (manager == null) {
-            manager = ClassNewer.singleton(JbootEventManager.class);
+            manager = ClassKits.singleton(JbootEventManager.class);
         }
         return manager;
     }
@@ -109,7 +109,7 @@ public class JbootEventManager {
             return;
         }
 
-        JbootEventListener listener = ClassNewer.newInstance(listenerClass);
+        JbootEventListener listener = ClassKits.newInstance(listenerClass);
         if (listener == null) {
             return;
         }

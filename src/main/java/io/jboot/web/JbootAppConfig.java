@@ -40,7 +40,7 @@ import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootScheduleManager;
 import io.jboot.server.listener.JbootAppListenerManager;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -146,7 +146,7 @@ public class JbootAppConfig extends JFinalConfig {
 
             JFinalSharedMethod sharedMethod = (JFinalSharedMethod) clazz.getAnnotation(JFinalSharedMethod.class);
             if (sharedMethod != null) {
-                engine.addSharedMethod(ClassNewer.newInstance(clazz));
+                engine.addSharedMethod(ClassKits.newInstance(clazz));
             }
 
             JFinalSharedStaticMethod sharedStaticMethod = (JFinalSharedStaticMethod) clazz.getAnnotation(JFinalSharedStaticMethod.class);
@@ -156,7 +156,7 @@ public class JbootAppConfig extends JFinalConfig {
 
             JFinalSharedObject sharedObject = (JFinalSharedObject) clazz.getAnnotation(JFinalSharedObject.class);
             if (sharedObject != null) {
-                engine.addSharedObject(sharedObject.value(), ClassNewer.newInstance(clazz));
+                engine.addSharedObject(sharedObject.value(), ClassKits.newInstance(clazz));
             }
         }
 

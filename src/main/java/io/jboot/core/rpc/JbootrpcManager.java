@@ -26,7 +26,7 @@ import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.event.JbootEventListener;
 import io.jboot.exception.JbootAssert;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 
@@ -40,7 +40,7 @@ public class JbootrpcManager {
 
     public static JbootrpcManager me() {
         if (manager == null) {
-            manager = ClassNewer.singleton(JbootrpcManager.class);
+            manager = ClassKits.singleton(JbootrpcManager.class);
         }
         return manager;
     }
@@ -124,7 +124,7 @@ public class JbootrpcManager {
 
 
         if (!StringUtils.isBlank(config.getHystrixFallbackFactory())) {
-            fallbackFactory = ClassNewer.newInstance(config.getHystrixFallbackFactory());
+            fallbackFactory = ClassKits.newInstance(config.getHystrixFallbackFactory());
 
         }
 

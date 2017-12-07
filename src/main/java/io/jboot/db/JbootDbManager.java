@@ -25,7 +25,7 @@ import io.jboot.db.datasource.DatasourceConfigManager;
 import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 
 import javax.sql.DataSource;
@@ -44,7 +44,7 @@ public class JbootDbManager {
 
     public static JbootDbManager me() {
         if (manager == null) {
-            manager = ClassNewer.singleton(JbootDbManager.class);
+            manager = ClassKits.singleton(JbootDbManager.class);
         }
         return manager;
     }

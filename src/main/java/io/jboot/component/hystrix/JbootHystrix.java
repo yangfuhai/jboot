@@ -15,7 +15,7 @@
  */
 package io.jboot.component.hystrix;
 
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 
 
 public class JbootHystrix {
@@ -24,7 +24,7 @@ public class JbootHystrix {
 
     public static JbootHystrix me() {
         if (me == null) {
-            me = ClassNewer.singleton(JbootHystrix.class);
+            me = ClassKits.singleton(JbootHystrix.class);
         }
         return me;
     }

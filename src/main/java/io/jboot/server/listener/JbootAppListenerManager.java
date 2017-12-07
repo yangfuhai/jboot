@@ -23,7 +23,7 @@ import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
 import io.jboot.server.Servlets;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class JbootAppListenerManager implements JbootAppListener {
                 continue;
             }
 
-            JbootAppListener listener = ClassNewer.newInstance(clazz);
+            JbootAppListener listener = ClassKits.newInstance(clazz);
             if (listener != null) {
                 listeners.add(listener);
             }

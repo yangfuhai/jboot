@@ -17,7 +17,7 @@ package io.jboot.db.model;
 
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +59,7 @@ public class ModelCopier {
 
 
     public static <M extends JbootVoModel> M convertToVo(JbootModel model, Class<M> clazz) {
-        return (M) copyToVo(model, ClassNewer.newInstance(clazz,false));
+        return (M) copyToVo(model, ClassKits.newInstance(clazz,false));
     }
 
 
@@ -101,7 +101,7 @@ public class ModelCopier {
 
 
     public static <M extends Model> M convertToModel(JbootVoModel voModel, Class<M> clazz) {
-        return (M) copyToModel(voModel, ClassNewer.newInstance(clazz,false));
+        return (M) copyToModel(voModel, ClassKits.newInstance(clazz,false));
     }
 
 
