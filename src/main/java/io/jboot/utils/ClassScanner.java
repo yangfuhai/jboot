@@ -124,6 +124,9 @@ public class ClassScanner {
         excludeJars.add("zkclient-");
         excludeJars.add("okhttp-");
         excludeJars.add("okio-");
+        excludeJars.add("zubs-");
+        excludeJars.add("groovy-");
+        excludeJars.add("snakeyaml-");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();
@@ -282,11 +285,6 @@ public class ClassScanner {
 
             String classFile = file.toString().substring(start + 1, end);
             String className = classFile.replace(File.separator, ".");
-
-            //exclude jfinal source
-            if (className.startsWith("com.jfinal.")) {
-                continue;
-            }
 
             initAppClasses(classForName(className));
         }
