@@ -1,3 +1,13 @@
+jboot-1.1.3:
+修复：Jboot在启动的时候会触发两次onJbootStarted的问题。
+修复：数据库删除一个不存在的id的时候可能存在空指针异常的问题。
+新增：rpc 序列化自定义配置
+优化：升级motan到最新版本1.1.0，并修复consul1.0无法注册的问题
+优化：默认使用netty4作为motan的rpc底层框架
+优化：添加数据库缓存失效时间的支持，默认失效时间为24小时。
+优化：合并JbootKits和ClassNewer为Classkits。
+
+
 jboot-1.1.2:
 优化：重构metrics reporter，支持监控信息输出到 console、csv、jmx、slf4j、influxdb、graphite、ganglia 和 elasticsearch。
 优化：修改代码生成器的生成model的action由baseModelName改为modelName
