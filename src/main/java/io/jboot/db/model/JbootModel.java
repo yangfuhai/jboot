@@ -259,7 +259,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public boolean deleteById(Object idValue) {
         JbootModel<?> model = findById(idValue);
-        return model.delete();
+        return model == null ? true : model.delete();
     }
 
 
