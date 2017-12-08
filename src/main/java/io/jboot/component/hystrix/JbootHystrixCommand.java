@@ -26,6 +26,10 @@ public abstract class JbootHystrixCommand extends HystrixCommand<Object> {
         super(HystrixCommandGroupKey.Factory.asKey(key));
     }
 
+    public JbootHystrixCommand(String key, int executionIsolationThreadTimeoutInMilliseconds) {
+        super(HystrixCommandGroupKey.Factory.asKey(key), executionIsolationThreadTimeoutInMilliseconds);
+    }
+
     public JbootHystrixCommand(HystrixCommandGroupKey group) {
         super(group);
     }

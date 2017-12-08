@@ -85,6 +85,8 @@ public class JbootrpcConfig {
      * RPC Hystrix 相关的配置
      */
     // keys 的值为  key1:method1,method2;key2:method3,method4
+    private boolean hystrixEnable = true;
+    private int hystrixTimeout = 1000 * 3;
     private String hystrixKeys;
     private boolean hystrixAutoConfig = true;
     private String hystrixFallbackFactory = JbootrpcHystrixFallbackFactoryDefault.class.getName();
@@ -223,6 +225,22 @@ public class JbootrpcConfig {
 
     public void setHystrixKeys(String hystrixKeys) {
         this.hystrixKeys = hystrixKeys;
+    }
+
+    public boolean isHystrixEnable() {
+        return hystrixEnable;
+    }
+
+    public void setHystrixEnable(boolean hystrixEnable) {
+        this.hystrixEnable = hystrixEnable;
+    }
+
+    public int getHystrixTimeout() {
+        return hystrixTimeout;
+    }
+
+    public void setHystrixTimeout(int hystrixTimeout) {
+        this.hystrixTimeout = hystrixTimeout;
     }
 
     public boolean isHystrixAutoConfig() {
