@@ -126,21 +126,7 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>com.caucho</groupId>
-                    <artifactId>hessian</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.ecwid.consul</groupId>
-                    <artifactId>consul-api</artifactId>
-                </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.ecwid.consul</groupId>
-            <artifactId>consul-api</artifactId>
-            <version>1.3.0</version>
         </dependency>
 
         <dependency>

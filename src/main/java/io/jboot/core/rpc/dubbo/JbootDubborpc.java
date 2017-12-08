@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -125,6 +125,7 @@ public class JbootDubborpc extends JbootrpcBase {
         protocolConfig.setName("dubbo");
         protocolConfig.setPort(port <= 0 ? jbootrpcConfig.getDefaultPort() : port);
         protocolConfig.setThreads(dubboConfig.getProtocolThreads());
+        protocolConfig.setSerialization("jboot");
 
         if (StringUtils.isNotBlank(dubboConfig.getProtocolTransporter())) {
             protocolConfig.setTransporter(dubboConfig.getProtocolTransporter());
@@ -133,6 +134,11 @@ public class JbootDubborpc extends JbootrpcBase {
         if (StringUtils.isNotBlank(jbootrpcConfig.getHost())) {
             protocolConfig.setHost(jbootrpcConfig.getHost());
         }
+
+        if (StringUtils.isNotBlank(jbootrpcConfig.getSerialization())) {
+            protocolConfig.setSerialization(jbootrpcConfig.getSerialization());
+        }
+
 
         //此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏
         ServiceConfig<T> service = new ServiceConfig<T>();
