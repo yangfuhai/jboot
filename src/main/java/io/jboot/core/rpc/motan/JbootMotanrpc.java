@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,14 +51,7 @@ public class JbootMotanrpc extends JbootrpcBase {
          */
         if (jbootrpcConfig.isRegistryCallMode()) {
 
-            // 如果配置为consul，那么使用jboot自己实现的 JbootConsulRegistryFactory ，原生的无法注册在 consul 1.0 版本。
-            if (JbootrpcConfig.REGISTRY_TYPE_CONSUL.equals(jbootrpcConfig.getRegistryType())) {
-                registryConfig.setRegProtocol("jbootconsul");
-            } else {
-                registryConfig.setRegProtocol(jbootrpcConfig.getRegistryType());
-            }
-
-
+            registryConfig.setRegProtocol(jbootrpcConfig.getRegistryType());
             registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
             registryConfig.setName(jbootrpcConfig.getRegistryName());
         }
