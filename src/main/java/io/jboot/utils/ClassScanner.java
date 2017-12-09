@@ -124,7 +124,8 @@ public class ClassScanner {
         excludeJars.add("zkclient-");
         excludeJars.add("okhttp-");
         excludeJars.add("okio-");
-        excludeJars.add("zubs-");
+        excludeJars.add("zbus-");
+        excludeJars.add("hessian-");
         excludeJars.add("groovy-");
         excludeJars.add("snakeyaml-");
     }
