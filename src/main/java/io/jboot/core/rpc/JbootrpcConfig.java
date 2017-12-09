@@ -89,7 +89,7 @@ public class JbootrpcConfig {
     private int hystrixTimeout = 1000 * 3; //单位：毫秒
     private String hystrixKeys;
     private boolean hystrixAutoConfig = true;
-    private String hystrixFallbackFactory = JbootrpcHystrixFallbackFactoryDefault.class.getName();
+    private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();
 
     public String getHost() {
         return host;
@@ -251,12 +251,12 @@ public class JbootrpcConfig {
         this.hystrixAutoConfig = hystrixAutoConfig;
     }
 
-    public String getHystrixFallbackFactory() {
-        return hystrixFallbackFactory;
+    public String getHystrixFallbackListener() {
+        return hystrixFallbackListener;
     }
 
-    public void setHystrixFallbackFactory(String hystrixFallbackFactory) {
-        this.hystrixFallbackFactory = hystrixFallbackFactory;
+    public void setHystrixFallbackListener(String hystrixFallbackListener) {
+        this.hystrixFallbackListener = hystrixFallbackListener;
     }
 
     public boolean isRegistryCheck() {

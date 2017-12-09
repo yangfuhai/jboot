@@ -21,13 +21,13 @@ import io.jboot.component.hystrix.JbootHystrixCommand;
 import java.lang.reflect.Method;
 
 
-public class JbootrpcHystrixFallbackFactoryDefault implements JbootrpcHystrixFallbackFactory {
+public class JbootrpcHystrixFallbackListenerDefault implements JbootrpcHystrixFallbackListener {
 
     @Override
-    public Object fallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception) {
+    public Object onFallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception) {
         if (exception instanceof HystrixTimeoutException) {
-            System.err.println("rpc request timeout，the timeout time is defalut 3000 milliseconds，" +
-                    "you can config jboot.rpc.hystrixTimeout to set the value." +
+            System.err.println("rpc request timeout，the timeout time is defalut 3000 milliseconds, " +
+                    "you can config jboot.rpc.hystrixTimeout to set the value, " +
                     "or config \"jboot.rpc.hystrixEnable = false\" to close hystrix.");
         }
         exception.printStackTrace();

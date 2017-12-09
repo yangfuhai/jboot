@@ -42,7 +42,7 @@ public class ClientDemo extends JbootController {
         Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
         Jboot.setBootArg("jboot.rpc.hystrixTimeout", "10");//直连模式的url地址
 //        Jboot.setBootArg("jboot.rpc.hystrixEnable", false);//直连模式的url地址
-//        Jboot.setBootArg("jboot.rpc.hystrixFallbackFactory", HystrixFallbackFactoryTest.class.getName());//直连模式的url地址
+//        Jboot.setBootArg("jboot.rpc.hystrixFallbackListener", MyHystrixFallbackListener.class.getName());//直连模式的url地址
 
         Jboot.run(args);
     }

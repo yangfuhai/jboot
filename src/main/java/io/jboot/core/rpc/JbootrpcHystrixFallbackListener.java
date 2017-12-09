@@ -22,8 +22,8 @@ import java.lang.reflect.Method;
 /**
  * Hystrix 执行失败返回数据的工厂
  */
-public interface JbootrpcHystrixFallbackFactory {
+public interface JbootrpcHystrixFallbackListener {
 
-    public Object fallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception);
+    public Object onFallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception);
 
 }

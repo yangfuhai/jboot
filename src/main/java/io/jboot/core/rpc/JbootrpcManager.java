@@ -114,22 +114,22 @@ public class JbootrpcManager {
         }
     }
 
-    private JbootrpcHystrixFallbackFactory fallbackFactory = null;
+    private JbootrpcHystrixFallbackListener fallbackFactory = null;
 
-    public JbootrpcHystrixFallbackFactory getHystrixFallbackFactory() {
+    public JbootrpcHystrixFallbackListener getHystrixFallbackListener() {
 
         if (fallbackFactory != null) {
             return fallbackFactory;
         }
 
 
-        if (!StringUtils.isBlank(config.getHystrixFallbackFactory())) {
-            fallbackFactory = ClassKits.newInstance(config.getHystrixFallbackFactory());
+        if (!StringUtils.isBlank(config.getHystrixFallbackListener())) {
+            fallbackFactory = ClassKits.newInstance(config.getHystrixFallbackListener());
 
         }
 
         if (fallbackFactory == null) {
-            fallbackFactory = new JbootrpcHystrixFallbackFactoryDefault();
+            fallbackFactory = new JbootrpcHystrixFallbackListenerDefault();
         }
 
         return fallbackFactory;
