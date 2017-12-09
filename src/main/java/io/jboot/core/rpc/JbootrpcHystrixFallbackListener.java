@@ -20,7 +20,7 @@ import io.jboot.component.hystrix.JbootHystrixCommand;
 import java.lang.reflect.Method;
 
 /**
- * Hystrix 执行失败返回数据的工厂
+ * Hystrix 降级监听器
  */
 public interface JbootrpcHystrixFallbackListener {
 
