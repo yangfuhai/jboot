@@ -1,4 +1,4 @@
-jboot-1.1.3:
+jboot-1.1.4:
 修复：JbootModel.cacheTime(time) 设置缓存失效时间不起作用的问题。
 优化：重构hystrix降级，修改JbootHystrixFallbackFactory为JbootHystrixFallbackLisntener
 
