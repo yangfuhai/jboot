@@ -125,7 +125,6 @@ public class JbootDubborpc extends JbootrpcBase {
         protocolConfig.setName("dubbo");
         protocolConfig.setPort(port <= 0 ? jbootrpcConfig.getDefaultPort() : port);
         protocolConfig.setThreads(dubboConfig.getProtocolThreads());
-        protocolConfig.setSerialization("jboot");
 
         if (StringUtils.isNotBlank(dubboConfig.getProtocolTransporter())) {
             protocolConfig.setTransporter(dubboConfig.getProtocolTransporter());
