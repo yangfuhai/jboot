@@ -192,7 +192,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public M cacheTime(int time) {
-        this.cacheTime = cacheTime;
+        this.cacheTime = time;
         return (M) this;
     }
 
