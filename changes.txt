@@ -1,4 +1,9 @@
 jboot-1.1.3:
+修复：JbootModel.cacheTime(time) 设置缓存失效时间不起作用的问题。
+优化：重构hystrix降级，修改JbootHystrixFallbackFactory为JbootHystrixFallbackLisntener
+
+
+jboot-1.1.3:
 新增：rpc 序列化自定义配置
 新增：rpc hystrix 启用开关配置和相关demo测试
 新增：rpc hystrix 超时时间配置和相关demo测试
