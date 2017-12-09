@@ -185,6 +185,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return (M) this;
     }
 
+    public boolean cacheEnable() {
+        return cacheEnable;
+    }
+
     /**
      * 设置默认的缓存时间
      *
@@ -194,6 +198,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public M cacheTime(int time) {
         this.cacheTime = time;
         return (M) this;
+    }
+
+    public int cacheTime() {
+        return cacheTime;
     }
 
 
