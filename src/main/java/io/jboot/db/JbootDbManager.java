@@ -112,13 +112,16 @@ public class JbootDbManager {
      */
     private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
         String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
-        if (sqlTemplatePath != null) {
+        if (StringUtils.isNotBlank(sqlTemplatePath)) {
             if (sqlTemplatePath.startsWith("/")) {
                 activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
             } else {
                 activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
             }
+        } else {
+            activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath());
         }
+
 
         String sqlTemplateString = datasourceConfig.getSqlTemplate();
         if (sqlTemplateString != null) {
