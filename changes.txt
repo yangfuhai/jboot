@@ -1,3 +1,10 @@
+jboot-1.1.5:
+新增：自定义DataSource的支持，同时不影响sharding-jdbc的使用。
+新增：默认的sql模板路径，默认路径为classPath。
+新增：onGuiceConfigure配置函数，方便用户自己配置AOP的相关拦截。
+修复：dubbo rpc 无法发现jboot序列化的问题
+
+
 jboot-1.1.4:
 修复：JbootModel.cacheTime(time) 设置缓存失效时间不起作用的问题。
 优化：重构hystrix降级，修改JbootHystrixFallbackFactory为JbootHystrixFallbackLisntener

@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.1.4</version>
+    <version>1.1.5</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -226,7 +226,7 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>1.7.0.Final</version>
+            <version>1.7.1.Final</version>
             <scope>provided</scope>
         </dependency>
 
