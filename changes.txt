@@ -1,3 +1,8 @@
+jboot-1.1.6:
+修复：JbootAppListenerManager 和 JbootInjectManager初始化相互调用的问题。
+修复：Jfinal renderJson() 由于存放了request对象导致无法正常渲染的问题。
+
+
 jboot-1.1.5:
 新增：自定义DataSource的支持，同时不影响sharding-jdbc的使用。
 新增：默认的sql模板路径，默认路径为classPath。
