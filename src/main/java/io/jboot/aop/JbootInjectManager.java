@@ -167,7 +167,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
                 try {
                     binder.bind(interfaceClass).to(beanClass);
                 } catch (Throwable ex) {
-                    System.err.println(String.format("can not bind [%s] to [%s]", beanClass));
+                    System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, beanClass));
                 }
             }
         }
