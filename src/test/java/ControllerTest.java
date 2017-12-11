@@ -1,3 +1,4 @@
+import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.core.cache.annotation.Cacheable;
@@ -14,17 +15,21 @@ public class ControllerTest extends JbootController {
 
     public static void main(String[] args) {
 
-        Jboot.setBootArg("jboot.hystrix.url", "/hystrix.stream");
-        Jboot.setBootArg("jboot.cache.type", "redis");
-        Jboot.setBootArg("jboot.metrics.url", "/metrics.abc");
-        Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
+//        Jboot.setBootArg("jboot.hystrix.url", "/hystrix.stream");
+//        Jboot.setBootArg("jboot.cache.type", "redis");
+//        Jboot.setBootArg("jboot.metrics.url", "/metrics.abc");
+//        Jboot.setBootArg("jboot.cache.redis.host", "127.0.0.1");
 
-//        ClassScanner.scanClass();
 
         Jboot.run(args);
 
 
+    }
 
+
+    public void json() {
+        setAttr("aaa", "bbb");
+        renderJson();
     }
 
 

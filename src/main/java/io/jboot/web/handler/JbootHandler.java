@@ -17,6 +17,7 @@ package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import io.jboot.JbootConstants;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.web.JbootRequestContext;
 import io.jboot.web.session.JbootServletRequestWrapper;
@@ -72,8 +73,8 @@ public class JbootHandler extends Handler {
     }
 
     private void doHandle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        request.setAttribute("REQUEST", request);
-        request.setAttribute("CPATH", request.getContextPath());
+        request.setAttribute(JbootConstants.ATTR_REQUEST, request);
+        request.setAttribute(JbootConstants.ATTR_CONTEXT_PATH, request.getContextPath());
         next.handle(target, request, response, isHandled);
     }
 
