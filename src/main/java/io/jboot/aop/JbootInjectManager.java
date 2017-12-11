@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -117,7 +117,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
         beanBind(binder);
 
         //自定义aop configure
-        JbootAppListenerManager.me().onAopConfigure(binder);
+        JbootAppListenerManager.me().onGuiceConfigure(binder);
     }
 
     /**
@@ -126,7 +126,6 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
      * @param binder
      */
     private void beanBind(Binder binder) {
-        Map<Class, Class> spiBeans = new HashMap<>();
 
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class beanClass : classes) {
@@ -135,35 +134,6 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
                 if (interfaceClass == Serializable.class) {
                     continue;
                 }
-
-                ServiceLoader serviceLoader = ServiceLoader.load(interfaceClass);
-                Iterator iterator = serviceLoader.iterator();
-                while (iterator.hasNext()) {
-                    Object impl = iterator.next();
-                    if (!spiBeans.containsKey(interfaceClass)) {
-                        spiBeans.put(interfaceClass, beanClass);
-
-                        try {
-                            binder.bind(interfaceClass).toInstance(impl);
-                        } catch (Throwable ex) {
-                            System.err.println(String.format("can not bind [%s] to [%s] spi", interfaceClass, beanClass));
-                        }
-                    }
-                }
-            }
-        }
-
-        for (Class beanClass : classes) {
-            Class<?>[] interfaceClasses = beanClass.getInterfaces();
-            for (Class interfaceClass : interfaceClasses) {
-                if (interfaceClass == Serializable.class) {
-                    continue;
-                }
-
-                if (spiBeans.containsKey(interfaceClass)) {
-                    continue;
-                }
-
                 try {
                     binder.bind(interfaceClass).to(beanClass);
                 } catch (Throwable ex) {
