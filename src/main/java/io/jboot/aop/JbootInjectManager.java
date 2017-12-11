@@ -44,11 +44,12 @@ import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.core.cache.annotation.CachePut;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.core.rpc.annotation.JbootrpcService;
+import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassScanner;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.*;
 
 /**
  * Inject管理器
@@ -114,6 +115,9 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
          * Bean 注解
          */
         beanBind(binder);
+
+        //自定义aop configure
+        JbootAppListenerManager.me().onAopConfigure(binder);
     }
 
     /**
@@ -122,6 +126,8 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
      * @param binder
      */
     private void beanBind(Binder binder) {
+        Map<Class, Class> spiBeans = new HashMap<>();
+
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class beanClass : classes) {
             Class<?>[] interfaceClasses = beanClass.getInterfaces();
@@ -129,10 +135,39 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
                 if (interfaceClass == Serializable.class) {
                     continue;
                 }
+
+                ServiceLoader serviceLoader = ServiceLoader.load(interfaceClass);
+                Iterator iterator = serviceLoader.iterator();
+                while (iterator.hasNext()) {
+                    Object impl = iterator.next();
+                    if (!spiBeans.containsKey(interfaceClass)) {
+                        spiBeans.put(interfaceClass, beanClass);
+
+                        try {
+                            binder.bind(interfaceClass).toInstance(impl);
+                        } catch (Throwable ex) {
+                            System.err.println(String.format("can not bind [%s] to [%s] spi", interfaceClass, beanClass));
+                        }
+                    }
+                }
+            }
+        }
+
+        for (Class beanClass : classes) {
+            Class<?>[] interfaceClasses = beanClass.getInterfaces();
+            for (Class interfaceClass : interfaceClasses) {
+                if (interfaceClass == Serializable.class) {
+                    continue;
+                }
+
+                if (spiBeans.containsKey(interfaceClass)) {
+                    continue;
+                }
+
                 try {
                     binder.bind(interfaceClass).to(beanClass);
                 } catch (Throwable ex) {
-                    System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, beanClass));
+                    System.err.println(String.format("can not bind [%s] to [%s]", beanClass));
                 }
             }
         }

@@ -15,6 +15,7 @@
  */
 package io.jboot.server.listener;
 
+import com.google.inject.Binder;
 import com.jfinal.config.*;
 import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
@@ -180,5 +181,10 @@ public class JbootAppListenerManager implements JbootAppListener {
                 log.error(ex.toString(), ex);
             }
         }
+    }
+
+    @Override
+    public void onAopConfigure(Binder binder) {
+
     }
 }

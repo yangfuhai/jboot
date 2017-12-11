@@ -15,6 +15,7 @@
  */
 package io.jboot.server.listener;
 
+import com.google.inject.Binder;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Interceptors;
 import com.jfinal.config.Routes;
@@ -81,6 +82,11 @@ public class JbootAppListenerBase implements JbootAppListener {
 
     @Override
     public void onAppStartBefore(JbootServer underTowServer) {
+
+    }
+
+    @Override
+    public void onAopConfigure(Binder binder) {
 
     }
 }
