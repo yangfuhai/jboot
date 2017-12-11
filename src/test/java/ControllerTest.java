@@ -33,7 +33,7 @@ public class ControllerTest extends JbootController {
 
     public void index() {
 
-        renderText("hello");
+        renderText("hello" + serviceTest.hello(""));
 
     }
 
