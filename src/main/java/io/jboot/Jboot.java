@@ -55,7 +55,7 @@ import java.util.Map;
  */
 public class Jboot {
 
-    public static final String EVENT_STARTED = "jboot:started";
+
     private static Map<String, String> argMap;
 
 
@@ -159,16 +159,7 @@ public class Jboot {
 
         JbootAppListenerManager.me().onJbootStarted();
 
-//        tryToHoldApplication();
     }
-
-//    private void tryToHoldApplication() {
-//        try {
-//            Thread.sleep(Long.MAX_VALUE);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 
     private boolean startServer() {

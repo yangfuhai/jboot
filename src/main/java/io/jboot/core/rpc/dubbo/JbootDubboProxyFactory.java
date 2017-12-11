@@ -75,6 +75,10 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+            if (!rpcConfig.isHystrixEnable()) {
+                return super.invoke(proxy, method, args);
+            }
+
             /**
              * 过滤系统方法，不走hystrix
              */
@@ -96,7 +100,7 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
 
             return StringUtils.isBlank(key)
                     ? super.invoke(proxy, method, args)
-                    : Jboot.hystrix(new JbootHystrixCommand(key) {
+                    : Jboot.hystrix(new JbootHystrixCommand(key, rpcConfig.getHystrixTimeout()) {
                 @Override
                 public Object run() throws Exception {
                     try {
@@ -111,7 +115,7 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
 
                 @Override
                 public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(proxy, method, args, this, this.getExecutionException());
+                    return JbootrpcManager.me().getHystrixFallbackListener().onFallback(proxy, method, args, this, this.getExecutionException());
                 }
             });
         }

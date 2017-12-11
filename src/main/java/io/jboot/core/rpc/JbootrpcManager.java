@@ -26,7 +26,7 @@ import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.event.JbootEventListener;
 import io.jboot.exception.JbootAssert;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 
@@ -40,7 +40,7 @@ public class JbootrpcManager {
 
     public static JbootrpcManager me() {
         if (manager == null) {
-            manager = ClassNewer.singleton(JbootrpcManager.class);
+            manager = ClassKits.singleton(JbootrpcManager.class);
         }
         return manager;
     }
@@ -114,22 +114,22 @@ public class JbootrpcManager {
         }
     }
 
-    private JbootrpcHystrixFallbackFactory fallbackFactory = null;
+    private JbootrpcHystrixFallbackListener fallbackFactory = null;
 
-    public JbootrpcHystrixFallbackFactory getHystrixFallbackFactory() {
+    public JbootrpcHystrixFallbackListener getHystrixFallbackListener() {
 
         if (fallbackFactory != null) {
             return fallbackFactory;
         }
 
 
-        if (!StringUtils.isBlank(config.getHystrixFallbackFactory())) {
-            fallbackFactory = ClassNewer.newInstance(config.getHystrixFallbackFactory());
+        if (!StringUtils.isBlank(config.getHystrixFallbackListener())) {
+            fallbackFactory = ClassKits.newInstance(config.getHystrixFallbackListener());
 
         }
 
         if (fallbackFactory == null) {
-            fallbackFactory = new JbootrpcHystrixFallbackFactoryDefault();
+            fallbackFactory = new JbootrpcHystrixFallbackListenerDefault();
         }
 
         return fallbackFactory;

@@ -21,8 +21,7 @@ import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassNewer;
-import io.jboot.utils.JbootKits;
+import io.jboot.utils.ClassKits;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -38,7 +37,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
     public JbootServiceBase() {
         Class<M> modelClass = null;
-        Type t = JbootKits.getUsefulClass(getClass()).getGenericSuperclass();
+        Type t = ClassKits.getUsefulClass(getClass()).getGenericSuperclass();
         if (t instanceof ParameterizedType) {
             Type[] p = ((ParameterizedType) t).getActualTypeArguments();
             modelClass = (Class<M>) p[0];
@@ -48,7 +47,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
             throw new JbootException("can not get parameterizedType in JbootServiceBase");
         }
 
-        DAO = ClassNewer.newInstance(modelClass).dao();
+        DAO = ClassKits.newInstance(modelClass).dao();
     }
 
 

@@ -21,7 +21,7 @@ import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.Jboot;
-import io.jboot.db.datasource.DatasourceConfig;
+import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 
@@ -42,7 +42,7 @@ public class CodeGenHelpler {
      * @return
      */
     public static DataSource getDatasource() {
-        DatasourceConfig datasourceConfig = Jboot.config(DatasourceConfig.class, "jboot.datasource");
+        DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(datasourceConfig.getUrl());
         config.setUsername(datasourceConfig.getUser());
@@ -55,24 +55,24 @@ public class CodeGenHelpler {
 
     public static MetaBuilder createMetaBuilder() {
         MetaBuilder metaBuilder = new MetaBuilder(getDatasource());
-        DatasourceConfig datasourceConfig = Jboot.config(DatasourceConfig.class, "jboot.datasource");
+        DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
         switch (datasourceConfig.getType()) {
-            case DatasourceConfig.TYPE_MYSQL:
+            case DataSourceConfig.TYPE_MYSQL:
                 metaBuilder.setDialect(new MysqlDialect());
                 break;
-            case DatasourceConfig.TYPE_ORACLE:
+            case DataSourceConfig.TYPE_ORACLE:
                 metaBuilder.setDialect(new OracleDialect());
                 break;
-            case DatasourceConfig.TYPE_SQLSERVER:
+            case DataSourceConfig.TYPE_SQLSERVER:
                 metaBuilder.setDialect(new SqlServerDialect());
                 break;
-            case DatasourceConfig.TYPE_SQLITE:
+            case DataSourceConfig.TYPE_SQLITE:
                 metaBuilder.setDialect(new Sqlite3Dialect());
                 break;
-            case DatasourceConfig.TYPE_ANSISQL:
+            case DataSourceConfig.TYPE_ANSISQL:
                 metaBuilder.setDialect(new AnsiSqlDialect());
                 break;
-            case DatasourceConfig.TYPE_POSTGRESQL:
+            case DataSourceConfig.TYPE_POSTGRESQL:
                 metaBuilder.setDialect(new PostgreSqlDialect());
                 break;
             default:

@@ -15,12 +15,10 @@
  */
 package io.jboot.db.datasource;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.db.TableInfo;
 import io.jboot.db.TableInfoManager;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import io.shardingjdbc.core.api.ShardingDataSourceFactory;
 import io.shardingjdbc.core.api.config.ShardingRuleConfiguration;
@@ -37,9 +35,9 @@ import java.util.Properties;
 
 public class DataSourceBuilder {
 
-    private DatasourceConfig datasourceConfig;
+    private DataSourceConfig datasourceConfig;
 
-    public DataSourceBuilder(DatasourceConfig datasourceConfig) {
+    public DataSourceBuilder(DataSourceConfig datasourceConfig) {
         this.datasourceConfig = datasourceConfig;
     }
 
@@ -49,15 +47,15 @@ public class DataSourceBuilder {
             Map<String, DataSource> dataSourceMap = new HashMap<>();
 
             if (datasourceConfig.getChildDatasourceConfigs() != null) {
-                for (DatasourceConfig childConfig : datasourceConfig.getChildDatasourceConfigs()) {
-                    dataSourceMap.put(childConfig.getName(), buildHikariDataSource(childConfig));
+                for (DataSourceConfig childConfig : datasourceConfig.getChildDatasourceConfigs()) {
+                    dataSourceMap.put(childConfig.getName(), createDataSource(childConfig));
                 }
             }
             /**
              * 可能只是分表，不分库
              */
             else {
-                dataSourceMap.put(datasourceConfig.getName(), buildHikariDataSource(datasourceConfig));
+                dataSourceMap.put(datasourceConfig.getName(), createDataSource(datasourceConfig));
             }
 
 
@@ -84,7 +82,7 @@ public class DataSourceBuilder {
             }
 
         } else {
-            return buildHikariDataSource(datasourceConfig);
+            return createDataSource(datasourceConfig);
         }
 
 
@@ -107,37 +105,23 @@ public class DataSourceBuilder {
         }
 
         if (tableInfo.getDatabaseShardingStrategyConfig() != ShardingStrategyConfiguration.class) {
-            tableRuleConfig.setDatabaseShardingStrategyConfig(ClassNewer.newInstance(tableInfo.getDatabaseShardingStrategyConfig()));
+            tableRuleConfig.setDatabaseShardingStrategyConfig(ClassKits.newInstance(tableInfo.getDatabaseShardingStrategyConfig()));
         }
 
         if (tableInfo.getTableShardingStrategyConfig() != ShardingStrategyConfiguration.class) {
-            tableRuleConfig.setTableShardingStrategyConfig(ClassNewer.newInstance(tableInfo.getTableShardingStrategyConfig()));
+            tableRuleConfig.setTableShardingStrategyConfig(ClassKits.newInstance(tableInfo.getTableShardingStrategyConfig()));
         }
 
         return tableRuleConfig;
     }
 
 
-    private DataSource buildHikariDataSource(DatasourceConfig datasourceConfig) {
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(datasourceConfig.getUrl());
-        hikariConfig.setUsername(datasourceConfig.getUser());
-        hikariConfig.setPassword(datasourceConfig.getPassword());
-        hikariConfig.addDataSourceProperty("cachePrepStmts", datasourceConfig.isCachePrepStmts());
-        hikariConfig.addDataSourceProperty("prepStmtCacheSize", datasourceConfig.getPrepStmtCacheSize());
-        hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", datasourceConfig.getPrepStmtCacheSqlLimit());
-
-        hikariConfig.setDriverClassName(datasourceConfig.getDriverClassName());
-        hikariConfig.setPoolName(datasourceConfig.getPoolName());
-
-
-        if (hikariConfig.getConnectionInitSql() != null) {
-            hikariConfig.setConnectionInitSql(datasourceConfig.getConnectionInitSql());
+    private DataSource createDataSource(DataSourceConfig dataSourceConfig) {
+        DataSourceFactory factory = ClassKits.newInstance(dataSourceConfig.getFactory());
+        if (factory == null) {
+            factory = new HikariDataSourceFactory();
         }
 
-
-        hikariConfig.setMaximumPoolSize(datasourceConfig.getMaximumPoolSize());
-
-        return new HikariDataSource(hikariConfig);
+        return factory.createDataSource(dataSourceConfig);
     }
 }

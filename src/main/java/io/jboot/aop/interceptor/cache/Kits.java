@@ -18,7 +18,7 @@ package io.jboot.aop.interceptor.cache;
 import com.jfinal.template.Engine;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.JbootKits;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 
 import javax.inject.Named;
@@ -86,7 +86,7 @@ class Kits {
 
     static String buildCacheKey(String key, Class clazz, Method method, Object[] arguments) {
 
-        clazz = JbootKits.getUsefulClass(clazz);
+        clazz = ClassKits.getUsefulClass(clazz);
 
         if (StringUtils.isBlank(key)) {
 

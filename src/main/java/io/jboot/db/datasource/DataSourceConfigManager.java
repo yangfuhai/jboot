@@ -22,22 +22,22 @@ import io.jboot.utils.StringUtils;
 
 import java.util.*;
 
-public class DatasourceConfigManager {
+public class DataSourceConfigManager {
 
 
-    private static DatasourceConfigManager manager = new DatasourceConfigManager();
+    private static DataSourceConfigManager manager = new DataSourceConfigManager();
 
-    public static DatasourceConfigManager me() {
+    public static DataSourceConfigManager me() {
         return manager;
     }
 
-    private Map<String, DatasourceConfig> datasourceConfigs = Maps.newHashMap();
-    private Map<String, DatasourceConfig> shardingDatasourceConfigs = Maps.newHashMap();
+    private Map<String, DataSourceConfig> datasourceConfigs = Maps.newHashMap();
+    private Map<String, DataSourceConfig> shardingDatasourceConfigs = Maps.newHashMap();
 
-    private DatasourceConfigManager() {
+    private DataSourceConfigManager() {
 
-        DatasourceConfig datasourceConfig = Jboot.config(DatasourceConfig.class, "jboot.datasource");
-        datasourceConfig.setName(DatasourceConfig.NAME_MAIN);
+        DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
+        datasourceConfig.setName(DataSourceConfig.NAME_MAIN);
         if (datasourceConfig.isConfigOk()) {
             datasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
         }
@@ -60,7 +60,7 @@ public class DatasourceConfigManager {
 
 
         for (String name : datasourceNames) {
-            DatasourceConfig dsc = Jboot.config(DatasourceConfig.class, "jboot.datasource." + name);
+            DataSourceConfig dsc = Jboot.config(DataSourceConfig.class, "jboot.datasource." + name);
             if (StringUtils.isBlank(dsc.getName())) {
                 dsc.setName(name);
             }
@@ -74,11 +74,11 @@ public class DatasourceConfigManager {
     }
 
 
-    public Map<String, DatasourceConfig> getDatasourceConfigs() {
+    public Map<String, DataSourceConfig> getDatasourceConfigs() {
         return datasourceConfigs;
     }
 
-    public Map<String, DatasourceConfig> getShardingDatasourceConfigs() {
+    public Map<String, DataSourceConfig> getShardingDatasourceConfigs() {
         return shardingDatasourceConfigs;
     }
 

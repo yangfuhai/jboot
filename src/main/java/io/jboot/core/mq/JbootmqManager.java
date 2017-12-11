@@ -21,7 +21,7 @@ import io.jboot.core.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.core.mq.redismq.JbootRedismqImpl;
 import io.jboot.core.mq.zbus.JbootZbusmqImpl;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 
 
 public class JbootmqManager {
@@ -30,7 +30,7 @@ public class JbootmqManager {
 
     public static JbootmqManager me() {
         if (manager == null) {
-            manager = ClassNewer.singleton(JbootmqManager.class);
+            manager = ClassKits.singleton(JbootmqManager.class);
         }
         return manager;
     }

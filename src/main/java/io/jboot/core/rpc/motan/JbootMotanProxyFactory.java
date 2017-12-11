@@ -62,6 +62,10 @@ public class JbootMotanProxyFactory implements ProxyFactory {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+            if (!rpcConfig.isHystrixEnable()) {
+                return handler.invoke(proxy, method, args);
+            }
+
             /**
              * 过滤系统方法，不走hystrix
              */
@@ -84,11 +88,10 @@ public class JbootMotanProxyFactory implements ProxyFactory {
 
             return StringUtils.isBlank(key)
                     ? handler.invoke(proxy, method, args)
-                    : Jboot.hystrix(new JbootHystrixCommand(key) {
+                    : Jboot.hystrix(new JbootHystrixCommand(key, rpcConfig.getHystrixTimeout()) {
 
                 @Override
                 public Object run() throws Exception {
-                    Throwable retThrowable;
                     try {
                         JbootSpanContext.add(span);
 
@@ -103,7 +106,7 @@ public class JbootMotanProxyFactory implements ProxyFactory {
 
                 @Override
                 public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackFactory().fallback(proxy,method, args, this, this.getExecutionException());
+                    return JbootrpcManager.me().getHystrixFallbackListener().onFallback(proxy, method, args, this, this.getExecutionException());
                 }
             });
 

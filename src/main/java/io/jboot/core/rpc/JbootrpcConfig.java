@@ -15,9 +15,7 @@
  */
 package io.jboot.core.rpc;
 
-import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertieConfig;
-import io.jboot.core.serializer.JbootSerializerConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -77,19 +75,21 @@ public class JbootrpcConfig {
     private int defaultPort = 8088;
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
-    private String serializer = Jboot.config(JbootSerializerConfig.class).getType();
 
     private String proxy = "jboot";
     private String filter;  //多个过滤器请用英文逗号（,）隔开，默认添加opentracing过滤器，用于对rpc分布式调用的追踪
+    private String serialization;
 
 
     /**
      * RPC Hystrix 相关的配置
      */
     // keys 的值为  key1:method1,method2;key2:method3,method4
+    private boolean hystrixEnable = true;
+    private int hystrixTimeout = 1000 * 3; //单位：毫秒
     private String hystrixKeys;
     private boolean hystrixAutoConfig = true;
-    private String hystrixFallbackFactory = JbootrpcHystrixFallbackFactoryDefault.class.getName();
+    private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();
 
     public String getHost() {
         return host;
@@ -179,14 +179,6 @@ public class JbootrpcConfig {
         this.registryPassword = registryPassword;
     }
 
-    public String getSerializer() {
-        return serializer;
-    }
-
-    public void setSerializer(String serializer) {
-        this.serializer = serializer;
-    }
-
     public String getCallMode() {
         return callMode;
     }
@@ -235,6 +227,22 @@ public class JbootrpcConfig {
         this.hystrixKeys = hystrixKeys;
     }
 
+    public boolean isHystrixEnable() {
+        return hystrixEnable;
+    }
+
+    public void setHystrixEnable(boolean hystrixEnable) {
+        this.hystrixEnable = hystrixEnable;
+    }
+
+    public int getHystrixTimeout() {
+        return hystrixTimeout;
+    }
+
+    public void setHystrixTimeout(int hystrixTimeout) {
+        this.hystrixTimeout = hystrixTimeout;
+    }
+
     public boolean isHystrixAutoConfig() {
         return hystrixAutoConfig;
     }
@@ -243,12 +251,12 @@ public class JbootrpcConfig {
         this.hystrixAutoConfig = hystrixAutoConfig;
     }
 
-    public String getHystrixFallbackFactory() {
-        return hystrixFallbackFactory;
+    public String getHystrixFallbackListener() {
+        return hystrixFallbackListener;
     }
 
-    public void setHystrixFallbackFactory(String hystrixFallbackFactory) {
-        this.hystrixFallbackFactory = hystrixFallbackFactory;
+    public void setHystrixFallbackListener(String hystrixFallbackListener) {
+        this.hystrixFallbackListener = hystrixFallbackListener;
     }
 
     public boolean isRegistryCheck() {
@@ -273,6 +281,14 @@ public class JbootrpcConfig {
 
     public void setProviderCheck(boolean providerCheck) {
         this.providerCheck = providerCheck;
+    }
+
+    public String getSerialization() {
+        return serialization;
+    }
+
+    public void setSerialization(String serialization) {
+        this.serialization = serialization;
     }
 
     private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();

@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.rpc;
+package io.jboot.db.datasource;
 
-import io.jboot.component.hystrix.JbootHystrixCommand;
-
-import java.lang.reflect.Method;
+import javax.sql.DataSource;
 
 
-public class JbootrpcHystrixFallbackFactoryDefault implements JbootrpcHystrixFallbackFactory {
+public interface DataSourceFactory {
 
-    @Override
-    public Object fallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception) {
-        exception.printStackTrace();
-        return null;
-    }
+    public DataSource createDataSource(DataSourceConfig dataSourceConfig);
 
 }

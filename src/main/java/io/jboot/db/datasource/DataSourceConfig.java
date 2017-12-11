@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class DatasourceConfig {
+public class DataSourceConfig {
     public static final String NAME_MAIN = "main";
 
     public static final String TYPE_MYSQL = "mysql";
@@ -48,12 +48,13 @@ public class DatasourceConfig {
     private String sqlTemplate;
     private String table;
     private String excludeTable;
+    private String factory = HikariDataSourceFactory.class.getName();
 
     private boolean shardingEnable = false;
     private String shardingDatabase;
 
 
-    private List<DatasourceConfig> childDatasourceConfigs;
+    private List<DataSourceConfig> childDatasourceConfigs;
 
     /**
      * 是否需要添加到映射
@@ -209,6 +210,14 @@ public class DatasourceConfig {
         this.excludeTable = excludeTable;
     }
 
+    public String getFactory() {
+        return factory;
+    }
+
+    public void setFactory(String factory) {
+        this.factory = factory;
+    }
+
     public String getPoolName() {
         return poolName;
     }
@@ -241,15 +250,15 @@ public class DatasourceConfig {
         this.shardingDatabase = shardingDatabase;
     }
 
-    public List<DatasourceConfig> getChildDatasourceConfigs() {
+    public List<DataSourceConfig> getChildDatasourceConfigs() {
         return childDatasourceConfigs;
     }
 
-    public void setChildDatasourceConfigs(List<DatasourceConfig> childDatasourceConfigs) {
+    public void setChildDatasourceConfigs(List<DataSourceConfig> childDatasourceConfigs) {
         this.childDatasourceConfigs = childDatasourceConfigs;
     }
 
-    public void addChildDatasourceConfig(DatasourceConfig config) {
+    public void addChildDatasourceConfig(DataSourceConfig config) {
         if (this.childDatasourceConfigs == null) {
             this.childDatasourceConfigs = new ArrayList<>();
         }

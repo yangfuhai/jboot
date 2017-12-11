@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.utils;
+package io.jboot;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.utils
+ * @Title: Jboot 常量定义
+ * @Description: Jboot APP 内置的所有常量信息
+ * @Package io.jboot
  */
-public class JbootKits {
+public class JbootConstants {
 
-    public static Class<?> getUsefulClass(Class<?> clazz) {
-        //ControllerTest$ServiceTest$$EnhancerByGuice$$40471411#hello
-        //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
-        return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
-    }
+    /**
+     * Jboot 启动完成事件
+     */
+    public static final String EVENT_STARTED = "jboot:started";
 }

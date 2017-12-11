@@ -16,7 +16,7 @@
 package io.jboot.db.sharding;
 
 
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 
 public class ShardingRuleFactoryBuilder {
     private static ShardingRuleFactoryBuilder me = new ShardingRuleFactoryBuilder();
@@ -30,6 +30,6 @@ public class ShardingRuleFactoryBuilder {
 //            return new DefaultShardingRuleFactory();
 //        }
 
-        return ClassNewer.newInstance(factory);
+        return ClassKits.newInstance(factory);
     }
 }

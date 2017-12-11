@@ -18,7 +18,7 @@ package io.jboot.core.serializer;
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootAssert;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +33,7 @@ public class SerializerManager {
 
     public static SerializerManager me() {
         if (me == null) {
-            me = ClassNewer.singleton(SerializerManager.class);
+            me = ClassKits.singleton(SerializerManager.class);
         }
         return me;
     }
@@ -66,7 +66,7 @@ public class SerializerManager {
          */
         if (serializerString != null && serializerString.contains(".")) {
 
-            ISerializer serializer = ClassNewer.newInstance(serializerString);
+            ISerializer serializer = ClassKits.newInstance(serializerString);
 
             if (serializer != null) {
                 return serializer;

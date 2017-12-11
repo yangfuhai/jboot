@@ -40,7 +40,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     /**
      * 是否启用自动缓存
      */
-    private boolean autoCache = true;
+    private transient boolean cacheEnable = true;
+    private transient int cacheTime = 60 * 60 * 24; // 1day
 
 
     /**
@@ -50,7 +51,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @param value
      */
     public void putCache(Object key, Object value) {
-        Jboot.me().getCache().put(tableName(), key, value);
+        Jboot.me().getCache().put(tableName(), key, value, cacheTime);
     }
 
     /**
@@ -73,7 +74,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public <T> T getCache(Object key, IDataLoader dataloader) {
-        return Jboot.me().getCache().get(tableName(), key, dataloader);
+        return Jboot.me().getCache().get(tableName(), key, dataloader, cacheTime);
     }
 
     /**
@@ -119,7 +120,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return proxy;
         }
 
-        proxy = copy().use("proxy").autoCache(this.autoCache);
+        proxy = copy().use("proxy").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
 
         if (proxy._getConfig() == null) {
             proxy.use(null);
@@ -141,7 +142,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return proxy;
         }
 
-        proxy = copy().use("slave").autoCache(this.autoCache);
+        proxy = copy().use("slave").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
 
         if (proxy._getConfig() == null) {
             proxy.use(null);
@@ -162,7 +163,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return proxy;
         }
 
-        proxy = copy().use("master").autoCache(this.autoCache);
+        proxy = copy().use("master").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
 
         if (proxy._getConfig() == null) {
             proxy.use(null);
@@ -176,12 +177,31 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     /**
      * 是否启用自动缓存
      *
-     * @param autoCache
+     * @param enable
      * @return
      */
-    public M autoCache(boolean autoCache) {
-        this.autoCache = autoCache;
+    public M cacheEnable(boolean enable) {
+        this.cacheEnable = enable;
         return (M) this;
+    }
+
+    public boolean cacheEnable() {
+        return cacheEnable;
+    }
+
+    /**
+     * 设置默认的缓存时间
+     *
+     * @param time 缓存时间，单位：秒
+     * @return
+     */
+    public M cacheTime(int time) {
+        this.cacheTime = time;
+        return (M) this;
+    }
+
+    public int cacheTime() {
+        return cacheTime;
     }
 
 
@@ -229,7 +249,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public boolean delete() {
         boolean deleted = super.delete();
         if (deleted) {
-            if (autoCache) {
+            if (cacheEnable) {
                 removeCache(get(getPrimaryKey()));
             }
             Jboot.sendEvent(deleteAction(), this);
@@ -247,7 +267,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public boolean deleteById(Object idValue) {
         JbootModel<?> model = findById(idValue);
-        return model.delete();
+        return model == null ? true : model.delete();
     }
 
 
@@ -270,7 +290,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         boolean update = super.update();
         if (update) {
             Object id = get(getPrimaryKey());
-            if (autoCache) {
+            if (cacheEnable) {
                 removeCache(id);
             }
             Jboot.sendEvent(updateAction(), findById(id));
@@ -278,15 +298,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return update;
     }
 
-    protected String addAction() {
+    public String addAction() {
         return tableName() + ":add";
     }
 
-    protected String deleteAction() {
+    public String deleteAction() {
         return tableName() + ":delete";
     }
 
-    protected String updateAction() {
+    public String updateAction() {
         return tableName() + ":update";
     }
 
@@ -298,7 +318,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     @Override
     public M findById(final Object idValue) {
-        return autoCache ? getCache(idValue, new IDataLoader() {
+        return cacheEnable ? getCache(idValue, new IDataLoader() {
             @Override
             public Object load() {
                 return findByIdWithoutCache(idValue);

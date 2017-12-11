@@ -24,7 +24,7 @@ import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.config.client.ConfigRemoteReader;
 import io.jboot.config.server.ConfigFileScanner;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ClassNewer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 
 import java.io.File;
@@ -154,7 +154,7 @@ public class JbootConfigManager {
             return obj;
         }
 
-        obj = ClassNewer.newInstance(clazz);
+        obj = ClassKits.newInstance(clazz);
         Collection<Method> setMethods = getSetMethods(clazz);
 
         for (Method method : setMethods) {
