@@ -54,7 +54,7 @@ public class JbootAppListenerManager implements JbootAppListener {
                 continue;
             }
 
-            JbootAppListener listener = ClassKits.newInstance(clazz);
+            JbootAppListener listener = ClassKits.newInstance(clazz, false);
             if (listener != null) {
                 listeners.add(listener);
             }
