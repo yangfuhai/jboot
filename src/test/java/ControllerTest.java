@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 
 
 @RequestMapping("/test")
-public class ControllerTest extends JbootController {
+public class ControllerTest extends Controller {
 
 
     public static void main(String[] args) {

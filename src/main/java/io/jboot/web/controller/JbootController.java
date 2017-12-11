@@ -19,7 +19,6 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.ext.interceptor.NotAction;
 import com.jfinal.upload.UploadFile;
-import io.jboot.JbootConstants;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
 
@@ -191,12 +190,5 @@ public class JbootController extends Controller {
         }
         return filesMap;
     }
-
-
-    @Override
-    public void renderJson() {
-        removeAttr(JbootConstants.ATTR_REQUEST);
-        removeAttr(JbootConstants.ATTR_CONTEXT_PATH);
-        super.renderJson();
-    }
+    
 }
