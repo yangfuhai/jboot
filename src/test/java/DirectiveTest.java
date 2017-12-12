@@ -22,6 +22,16 @@ public class DirectiveTest extends JbootDirectiveBase {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+
+        exprList.eval(scope);
+
+        System.out.println(scope.get("a"));
+        System.out.println(scope.get("b"));
+        System.out.println(scope.get("c"));
+
+
     }
 
 
