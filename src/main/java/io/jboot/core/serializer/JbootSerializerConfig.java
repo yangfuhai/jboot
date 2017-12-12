@@ -20,11 +20,11 @@ import io.jboot.config.annotation.PropertieConfig;
 
 @PropertieConfig(prefix = "jboot.serializer")
 public class JbootSerializerConfig {
-    public static final String FST2 = "fst2";
+    public static final String FST = "fst";
     public static final String FASTJSON = "fastjson";
     public static final String KRYO = "kryo";
 
-    public String type = KRYO;
+    public String type = FST;
 
     public String getType() {
         return type;

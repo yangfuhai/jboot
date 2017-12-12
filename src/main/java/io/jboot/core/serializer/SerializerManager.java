@@ -77,8 +77,8 @@ public class SerializerManager {
         switch (serializerString) {
             case JbootSerializerConfig.KRYO:
                 return new KryoSerializer();
-            case JbootSerializerConfig.FST2:
-                return new Fst2Serializer();
+            case JbootSerializerConfig.FST:
+                return new FstSerializer();
             case JbootSerializerConfig.FASTJSON:
                 return new FastjsonSerializer();
 
