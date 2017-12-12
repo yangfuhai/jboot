@@ -38,10 +38,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     /**
      * 先调用 initParams 后，才能通过 getParam 获取
-     *
      * @param scope
      */
-    public void initParams(Scope scope) {
+    public void initParams(Scope scope){
         exprList.eval(scope);
     }
 
@@ -53,6 +52,17 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public <T> T getParam(String key, Scope scope) {
         return getParam(key, null, scope);
+    }
+
+
+    public <T> T getParam(int index, T defaultValue, Scope scope) {
+        Object data = exprList.getExpr(index).eval(scope);
+        return (T) (data == null ? defaultValue : data);
+    }
+
+
+    public <T> T getParam(int index, Scope scope) {
+        return getParam(index, null, scope);
     }
 
 

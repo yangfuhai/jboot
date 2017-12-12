@@ -5,6 +5,7 @@ import com.jfinal.template.stat.Scope;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.base.JbootDirectiveBase;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @JFinalDirective("testDirective")
@@ -25,11 +26,11 @@ public class DirectiveTest extends JbootDirectiveBase {
 
 
 
-        exprList.eval(scope);
+        initParams(scope);
 
-        System.out.println(scope.get("a"));
-        System.out.println(scope.get("b"));
-        System.out.println(scope.get("c"));
+        System.out.println((HttpServletRequest) getParam(0,scope));
+        System.out.println((String) getParam(1,scope));
+        System.out.println((String) getParam("c",scope));
 
 
     }
