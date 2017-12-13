@@ -18,21 +18,21 @@ package io.jboot.core.mq.aliyunmq;
 import com.aliyun.openservices.ons.api.*;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.utils.StringUtils;
 
 import java.util.Properties;
 
 
 public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageListener {
-    
+
     private static final Log LOG = Log.getLog(JbootAliyunmqImpl.class);
     private Producer producer;
     private Consumer consumer;
 
     public void JbootAliyunmq() {
+
+        initChannels();
 
         JbootAliyunmqConfig aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
 
@@ -46,21 +46,9 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
         producer = ONSFactory.createProducer(properties);
         consumer = ONSFactory.createConsumer(properties);
 
-        String channelString = config.getChannel();
-        if (StringUtils.isBlank(channelString)) {
-            LOG.warn("jboot.mq.channel is blank or null, please config mq channels when you use.");
-            channelString = "";
-        }
-
-        String[] channels = channelString.split(",");
         for (String c : channels) {
             consumer.subscribe(c, "*", this);
         }
-
-        /**
-         * 阿里云需要提前注册缓存通知使用的通道
-         */
-        consumer.subscribe(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL, "*", this);
 
         producer.start();
         consumer.start();
@@ -68,11 +56,13 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
 
     @Override
     public void enqueue(Object message, String toChannel) {
+        ensureChannelExist(toChannel);
         throw new RuntimeException("not finished!");
     }
 
     @Override
     public void publish(Object message, String toChannel) {
+        ensureChannelExist(toChannel);
         byte[] bytes = Jboot.me().getSerializer().serialize(message);
         Message onsMessage = new Message(toChannel, "*", bytes);
         producer.send(onsMessage);

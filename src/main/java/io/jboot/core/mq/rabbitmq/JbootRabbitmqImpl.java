@@ -19,7 +19,6 @@ import com.google.common.collect.Maps;
 import com.jfinal.log.Log;
 import com.rabbitmq.client.*;
 import io.jboot.Jboot;
-import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
@@ -40,6 +39,8 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
     public JbootRabbitmqImpl() {
 
+        initChannels();
+
         JbootmqRabbitmqConfig rabbitmqConfig = Jboot.config(JbootmqRabbitmqConfig.class);
 
         ConnectionFactory factory = new ConnectionFactory();
@@ -57,25 +58,16 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             factory.setPassword(rabbitmqConfig.getPassword());
         }
 
-        String channelString = config.getChannel();
-        if (StringUtils.isBlank(channelString)) {
-            LOG.warn("jboot.mq.channel is blank or null, please config mq channels when you use.");
-            channelString = "";
-        }
-
         try {
             connection = factory.newConnection();
         } catch (Exception e) {
             throw new JbootException("can not connection rabbitmq server", e);
         }
 
-        String[] channels = channelString.split(",");
         for (String toChannel : channels) {
             registerListner(getChannel(toChannel), toChannel);
         }
 
-
-        registerListner(getChannel(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL), JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL);
     }
 
     private void registerListner(final Channel channel, String toChannel) {
@@ -137,12 +129,10 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void enqueue(Object message, String toChannel) {
+
+        ensureChannelExist(toChannel);
+
         Channel channel = getChannel(toChannel);
-
-        if (channel == null) {
-            return;
-        }
-
         try {
             byte[] bytes = Jboot.me().getSerializer().serialize(message);
             channel.basicPublish("", toChannel, MessageProperties.BASIC, bytes);
@@ -154,12 +144,9 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     @Override
     public void publish(Object message, String toChannel) {
 
+        ensureChannelExist(toChannel);
+
         Channel channel = getChannel(toChannel);
-
-        if (channel == null) {
-            return;
-        }
-
         try {
             byte[] bytes = Jboot.me().getSerializer().serialize(message);
             channel.basicPublish(toChannel, "", MessageProperties.BASIC, bytes);

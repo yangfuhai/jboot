@@ -17,22 +17,28 @@ package io.jboot.core.mq;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public abstract class JbootmqBase implements Jbootmq {
 
-    private static final Log log = Log.getLog(JbootmqBase.class);
+    private static final Log LOG = Log.getLog(JbootmqBase.class);
 
     private List<JbootmqMessageListener> allChannelListeners = new CopyOnWriteArrayList<>();
     private Multimap<String, JbootmqMessageListener> listenersMap = ArrayListMultimap.create();
     protected JbootmqConfig config = Jboot.config(JbootmqConfig.class);
+
+    protected Set<String> channels = Sets.newHashSet(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL);
 
 
     @Override
@@ -65,6 +71,22 @@ public abstract class JbootmqBase implements Jbootmq {
         listenersMap.clear();
     }
 
+    protected void initChannels() {
+        String channelString = config.getChannel();
+        if (StringUtils.isBlank(channelString)) {
+            LOG.warn("jboot.mq.channel is blank or null, please config mq channels when you use.");
+            return;
+        }
+
+        this.channels.addAll(StringUtils.splitToSet(channelString, ","));
+    }
+
+    protected void ensureChannelExist(String toChannel) {
+        if (!this.channels.contains(toChannel)) {
+            throw new JbootIllegalConfigException(toChannel + " not exist, please config jboot.mq.channel to set the channel.");
+        }
+    }
+
 
     @Override
     public Collection<JbootmqMessageListener> getAllChannelListeners() {
@@ -92,7 +114,7 @@ public abstract class JbootmqBase implements Jbootmq {
             try {
                 listener.onMessage(channel, message);
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
