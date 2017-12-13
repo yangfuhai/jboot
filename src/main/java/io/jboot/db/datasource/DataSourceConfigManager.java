@@ -24,6 +24,8 @@ import java.util.*;
 
 public class DataSourceConfigManager {
 
+    private static final String DATASOURCE_PREFIX = "jboot.datasource.";
+
 
     private static DataSourceConfigManager manager = new DataSourceConfigManager();
 
@@ -37,7 +39,7 @@ public class DataSourceConfigManager {
     private DataSourceConfigManager() {
 
         DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
-        datasourceConfig.setName(DataSourceConfig.NAME_MAIN);
+        datasourceConfig.setName(DataSourceConfig.NAME_DEFAULT);
         if (datasourceConfig.isConfigOk()) {
             datasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
         }
@@ -50,7 +52,7 @@ public class DataSourceConfigManager {
         Set<String> datasourceNames = new HashSet<>();
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
             String key = entry.getKey().toString();
-            if (key.startsWith("jboot.datasource.") && entry.getValue() != null) {
+            if (key.startsWith(DATASOURCE_PREFIX) && entry.getValue() != null) {
                 String[] keySplits = key.split("\\.");
                 if (keySplits.length == 4) {
                     datasourceNames.add(keySplits[2]);
@@ -60,7 +62,7 @@ public class DataSourceConfigManager {
 
 
         for (String name : datasourceNames) {
-            DataSourceConfig dsc = Jboot.config(DataSourceConfig.class, "jboot.datasource." + name);
+            DataSourceConfig dsc = Jboot.config(DataSourceConfig.class, DATASOURCE_PREFIX + name);
             if (StringUtils.isBlank(dsc.getName())) {
                 dsc.setName(name);
             }
