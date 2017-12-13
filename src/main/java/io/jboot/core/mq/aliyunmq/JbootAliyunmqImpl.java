@@ -16,41 +16,43 @@
 package io.jboot.core.mq.aliyunmq;
 
 import com.aliyun.openservices.ons.api.*;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 
 import java.util.Properties;
 
 
 public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageListener {
-
+    
+    private static final Log LOG = Log.getLog(JbootAliyunmqImpl.class);
     private Producer producer;
     private Consumer consumer;
 
     public void JbootAliyunmq() {
 
-        JbootAliyunmqConfig config = Jboot.config(JbootAliyunmqConfig.class);
+        JbootAliyunmqConfig aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
 
         Properties properties = new Properties();
-        properties.put(PropertyKeyConst.AccessKey, config.getAccessKey());//AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
-        properties.put(PropertyKeyConst.SecretKey, config.getSecretKey());//SecretKey 阿里云身份验证，在阿里云服务器管理控制台创建
-        properties.put(PropertyKeyConst.ProducerId, config.getProducerId());//您在控制台创建的Producer ID
-        properties.put(PropertyKeyConst.ONSAddr, config.getAddr());
-        properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, config.getSendMsgTimeoutMillis());//设置发送超时时间，单位毫秒
+        properties.put(PropertyKeyConst.AccessKey, aliyunmqConfig.getAccessKey());//AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
+        properties.put(PropertyKeyConst.SecretKey, aliyunmqConfig.getSecretKey());//SecretKey 阿里云身份验证，在阿里云服务器管理控制台创建
+        properties.put(PropertyKeyConst.ProducerId, aliyunmqConfig.getProducerId());//您在控制台创建的Producer ID
+        properties.put(PropertyKeyConst.ONSAddr, aliyunmqConfig.getAddr());
+        properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, aliyunmqConfig.getSendMsgTimeoutMillis());//设置发送超时时间，单位毫秒
 
         producer = ONSFactory.createProducer(properties);
         consumer = ONSFactory.createConsumer(properties);
 
-        String channel = config.getChannel();
-        if (StringUtils.isBlank(channel)) {
-            throw new JbootIllegalConfigException("jboot.mq.aliyun.channel config cannot empty in jboot.properties");
+        String channelString = config.getChannel();
+        if (StringUtils.isBlank(channelString)) {
+            LOG.warn("jboot.mq.channel is blank or null, please config mq channels when you use.");
+            channelString = "";
         }
 
-        String[] channels = channel.split(",");
+        String[] channels = channelString.split(",");
         for (String c : channels) {
             consumer.subscribe(c, "*", this);
         }

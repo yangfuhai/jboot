@@ -50,9 +50,10 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
             throw new JbootIllegalConfigException("can not get redis,please check your jboot.properties");
         }
 
-        String channelString = redisConfig.getChannel();
+        String channelString = config.getChannel();
         if (StringUtils.isBlank(channelString)) {
-            throw new JbootIllegalConfigException("channel config cannot empty in jboot.properties");
+            LOG.warn("jboot.mq.channel is blank or null, please config mq channels when you use.");
+            channelString = "";
         }
 
         if (channelString.endsWith(",")) {

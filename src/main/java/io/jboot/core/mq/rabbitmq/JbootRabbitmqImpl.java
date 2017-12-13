@@ -16,13 +16,13 @@
 package io.jboot.core.mq.rabbitmq;
 
 import com.google.common.collect.Maps;
+import com.jfinal.log.Log;
 import com.rabbitmq.client.*;
 import io.jboot.Jboot;
 import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
-import io.jboot.exception.JbootException;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 
 import java.io.IOException;
@@ -34,31 +34,33 @@ import java.util.Map;
 public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
 
-    Connection connection;
-    Map<String, Channel> channelMap = Maps.newConcurrentMap();
+    private static final Log LOG = Log.getLog(JbootRabbitmqImpl.class);
+    private Connection connection;
+    private Map<String, Channel> channelMap = Maps.newConcurrentMap();
 
     public JbootRabbitmqImpl() {
 
-        JbootmqRabbitmqConfig config = Jboot.config(JbootmqRabbitmqConfig.class);
+        JbootmqRabbitmqConfig rabbitmqConfig = Jboot.config(JbootmqRabbitmqConfig.class);
 
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(config.getHost());
-        factory.setPort(config.getPortAsInt());
+        factory.setHost(rabbitmqConfig.getHost());
+        factory.setPort(rabbitmqConfig.getPortAsInt());
 
-        if (StringUtils.isNotBlank(config.getVirtualHost())) {
-            factory.setVirtualHost(config.getVirtualHost());
+        if (StringUtils.isNotBlank(rabbitmqConfig.getVirtualHost())) {
+            factory.setVirtualHost(rabbitmqConfig.getVirtualHost());
         }
-        if (StringUtils.isNotBlank(config.getUsername())) {
-            factory.setUsername(config.getUsername());
+        if (StringUtils.isNotBlank(rabbitmqConfig.getUsername())) {
+            factory.setUsername(rabbitmqConfig.getUsername());
         }
 
-        if (StringUtils.isNotBlank(config.getPassword())) {
-            factory.setPassword(config.getPassword());
+        if (StringUtils.isNotBlank(rabbitmqConfig.getPassword())) {
+            factory.setPassword(rabbitmqConfig.getPassword());
         }
 
         String channelString = config.getChannel();
         if (StringUtils.isBlank(channelString)) {
-            throw new JbootIllegalConfigException("jboot.mq.rabbitmq.channel config cannot empty in jboot.properties");
+            LOG.warn("jboot.mq.channel is blank or null, please config mq channels when you use.");
+            channelString = "";
         }
 
         try {

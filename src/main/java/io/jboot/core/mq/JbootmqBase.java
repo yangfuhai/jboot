@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ package io.jboot.core.mq;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.jfinal.log.Log;
+import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
 
 import java.util.Collection;
@@ -31,6 +32,7 @@ public abstract class JbootmqBase implements Jbootmq {
 
     private List<JbootmqMessageListener> allChannelListeners = new CopyOnWriteArrayList<>();
     private Multimap<String, JbootmqMessageListener> listenersMap = ArrayListMultimap.create();
+    protected JbootmqConfig config = Jboot.config(JbootmqConfig.class);
 
 
     @Override
