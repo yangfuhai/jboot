@@ -1,5 +1,5 @@
 jboot-1.1.7:
-优化：重构 JbootDirectiveBase 治理指令，使得 getParam 更加简洁好用。
+优化：重构 JbootDirectiveBase 自定义指令，使得 getParam 更加简洁好用
 优化：删除 JbootVoModel 和其相关工具
 优化：完善 fastjson 序列化，新增 kryo 序列化配置的支持
 
