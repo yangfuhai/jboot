@@ -21,7 +21,7 @@ import io.jboot.Jboot;
 import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 import io.zbus.mq.*;
 
@@ -40,7 +40,7 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
 
         String channelString = zbusmqConfig.getChannel();
         if (StringUtils.isBlank(channelString)) {
-            throw new JbootException("channel config cannot empty in jboot.properties");
+            throw new JbootIllegalConfigException("channel config cannot empty in jboot.properties");
         }
 
         if (channelString.endsWith(",")) {

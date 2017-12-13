@@ -18,12 +18,12 @@ package io.jboot.core.mq.redismq;
 import com.google.common.collect.Sets;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.component.redis.JbootRedis;
 import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
-import io.jboot.component.redis.JbootRedis;
-import io.jboot.exception.JbootException;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 import redis.clients.jedis.BinaryJedisPubSub;
 
@@ -47,12 +47,12 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         }
 
         if (redis == null) {
-            throw new JbootException("can not get redis,please check your jboot.properties");
+            throw new JbootIllegalConfigException("can not get redis,please check your jboot.properties");
         }
 
         String channelString = redisConfig.getChannel();
         if (StringUtils.isBlank(channelString)) {
-            throw new JbootException("channel config cannot empty in jboot.properties");
+            throw new JbootIllegalConfigException("channel config cannot empty in jboot.properties");
         }
 
         if (channelString.endsWith(",")) {

@@ -17,10 +17,10 @@ package io.jboot.core.cache.redis;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.component.redis.JbootRedis;
 import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.cache.JbootCacheBase;
-import io.jboot.component.redis.JbootRedis;
-import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         }
 
         if (redis == null) {
-            throw new JbootException("can not get redis,please check your jboot.properties");
+            throw new JbootIllegalConfigException("can not get redis, please check your jboot.properties");
         }
     }
 

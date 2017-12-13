@@ -22,6 +22,7 @@ import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.exception.JbootException;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
         String channelString = config.getChannel();
         if (StringUtils.isBlank(channelString)) {
-            throw new JbootException("jboot.mq.rabbitmq.channel config cannot empty in jboot.properties");
+            throw new JbootIllegalConfigException("jboot.mq.rabbitmq.channel config cannot empty in jboot.properties");
         }
 
         try {

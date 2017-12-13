@@ -23,7 +23,7 @@ import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertieConfig;
 import io.jboot.config.client.ConfigRemoteReader;
 import io.jboot.config.server.ConfigFileScanner;
-import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 
@@ -324,7 +324,7 @@ public class JbootConfigManager {
             return s.getBytes();
         }
 
-        throw new JbootException(type.getName() + " can not be converted, please use other type in your config class!");
+        throw new JbootIllegalConfigException(type.getName() + " can not be converted, please use other type in your config class!");
     }
 
 
