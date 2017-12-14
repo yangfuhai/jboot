@@ -60,7 +60,7 @@ public class ControllerTest extends Controller {
         @Cacheable(name = "aaa", key = "#(\"key:\" + aaa)")
         public String hello(String aaa) {
             System.out.println("hello invoked");
-            return "aaa" + aaa;
+            return "hello " + aaa;
         }
 
         @Override

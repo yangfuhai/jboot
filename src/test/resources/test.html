@@ -7,12 +7,18 @@
 <body>
 
 
-#testDirective(REQUEST,"b",c="xuz",d="aa")
-#(user.name) <br />
+#testDirective(name="michael")
+#(user.name ??) <br />
 #end
 
-#testDirective(REQUEST,"bbbbbb",c="xuzzzzzz")
-#(user.name) <br />
+#testDirective()
+#(user.name ??) <br />
+#end
+
+
+
+#testDirective(name="张三")
+#(user.name ??) <br />
 #end
 
 </body>

@@ -36,12 +36,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     private boolean onlyShowPreviousAndNext = false;
 
     @Override
-    public void exec(Env env, Scope scope, Writer writer) {
-
-        /**
-         * 先 initParams，才能通过 getParam 获取
-         */
-        initParams(scope);
+    public void onRender(Env env, Scope scope, Writer writer) {
 
         previousClass = getParam("previousClass", "previous", scope);
         nextClass = getParam("nextClass", "next", scope);
@@ -115,7 +110,8 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         }
 
         scope.setLocal("pages", pages);
-        stat.exec(env, scope, writer);
+
+        renderBody(env, scope, writer);
     }
 
 

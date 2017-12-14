@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,18 +32,20 @@ import io.jboot.web.directive.annotation.JFinalDirective;
  */
 @JFinalDirective("shiroNotHasRole")
 public class ShiroNotHasRoleDirective extends JbootShiroDirectiveBase {
-    private Expr[] exprs;
 
-
+    @Override
     public void setExprList(ExprList exprList) {
-        exprs = exprList.getExprArray();
+        if (exprList.getExprArray().length == 0) {
+            throw new IllegalArgumentException("#shiroNotHasRole argument must not be empty");
+        }
+        super.setExprList(exprList);
     }
 
-
-    public void exec(Env env, Scope scope, Writer writer) {
+    @Override
+    public void onRender(Env env, Scope scope, Writer writer) {
         boolean hasAnyRole = false;
-        if (getSubject() != null && ArrayUtils.isNotEmpty(exprs)) {
-            for (Expr expr : exprs) {
+        if (getSubject() != null && ArrayUtils.isNotEmpty(exprList.getExprArray())) {
+            for (Expr expr : exprList.getExprArray()) {
                 if (getSubject().hasRole(expr.toString())) {
                     hasAnyRole = true;
                     break;
@@ -51,7 +53,7 @@ public class ShiroNotHasRoleDirective extends JbootShiroDirectiveBase {
             }
         }
         if (!hasAnyRole)
-            stat.exec(env, scope, writer);
+            renderBody(env, scope, writer);
     }
 
     public boolean hasEnd() {

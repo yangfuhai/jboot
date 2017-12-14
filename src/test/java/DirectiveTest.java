@@ -13,31 +13,21 @@ public class DirectiveTest extends JbootDirectiveBase {
     ControllerTest.ServiceInter service;
 
 
+
     @Override
-    public void exec(Env env, Scope scope, Writer writer) {
+    public void onRender(Env env, Scope scope, Writer writer) {
 
-        initParams(scope);
+        String name = getParam("name", scope);
 
-        String d = getParam("d",scope);
-
-        String content = service.hello(d);
+        String helloName = service.hello(name);
 
         User user = new User();
-        user.setName(content);
+        user.setName(helloName);
 
-        scope.set("user",user);
-        stat.exec(env,scope,writer);
+        scope.set("user", user);
 
 
-//
-//        System.out.println((HttpServletRequest) getParam(0,scope));
-//        System.out.println((String) getParam(1,scope));
-//        System.out.println((String) getParam("c",scope));
-//        System.out.println((String) getParam("d",scope));
-//
-//        System.out.println("DirectiveTest:"+this);
-//        System.out.println("scope:"+scope);
-
+        renderBody(env, scope, writer);
 
     }
 
