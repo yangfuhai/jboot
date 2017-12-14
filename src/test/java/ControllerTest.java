@@ -2,7 +2,6 @@ import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.core.cache.annotation.Cacheable;
-import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
 import javax.inject.Inject;
@@ -45,6 +44,10 @@ public class ControllerTest extends Controller {
 
     public void directive() {
         render("/test.html");
+    }
+
+    public void directive1() {
+        render("/test1.html");
     }
 
 

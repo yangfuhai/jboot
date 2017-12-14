@@ -18,19 +18,23 @@ public class DirectiveTest extends JbootDirectiveBase {
     @Override
     public void exec(Env env, Scope scope, Writer writer) {
         String abc = service.hello("aabbcc");
+        initParams(scope);
+
         try {
-            writer.write("testDirective : " + abc);
+            writer.write("testDirective : " + getParam("c",scope) +"<br />");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
 
-        initParams(scope);
+
 
         System.out.println((HttpServletRequest) getParam(0,scope));
         System.out.println((String) getParam(1,scope));
         System.out.println((String) getParam("c",scope));
+
+        System.out.println(this);
 
 
     }
