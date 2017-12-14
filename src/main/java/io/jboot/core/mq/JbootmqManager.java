@@ -40,13 +40,20 @@ public class JbootmqManager {
 
     public Jbootmq getJbootmq() {
         if (jbootmq == null) {
-            jbootmq = buildJbootmq();
+            JbootmqConfig config = Jboot.config(JbootmqConfig.class);
+            jbootmq = getJbootmq(config);
         }
         return jbootmq;
     }
 
-    private Jbootmq buildJbootmq() {
-        JbootmqConfig config = Jboot.config(JbootmqConfig.class);
+    public Jbootmq getJbootmq(JbootmqConfig config) {
+        return buildJbootmq(config);
+    }
+
+    private Jbootmq buildJbootmq(JbootmqConfig config) {
+        if (config == null) {
+            throw new IllegalArgumentException("config must not be null");
+        }
 
         switch (config.getType()) {
             case JbootmqConfig.TYPE_REDIS:

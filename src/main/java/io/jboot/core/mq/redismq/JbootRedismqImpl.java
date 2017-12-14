@@ -33,7 +33,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     private Thread dequeueThread;
 
     public JbootRedismqImpl() {
-        
+
         initChannels();
 
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
@@ -44,7 +44,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         }
 
         if (redis == null) {
-            throw new JbootIllegalConfigException("can not get redis,please check your jboot.properties");
+            throw new JbootIllegalConfigException("can not get redis, please check your jboot.properties");
         }
 
         Object[] channels = this.channels.toArray();
