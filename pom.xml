@@ -392,6 +392,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>1.5.17</version>
+        </dependency>
+
+
     </dependencies>
 
 

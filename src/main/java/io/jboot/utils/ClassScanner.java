@@ -128,6 +128,12 @@ public class ClassScanner {
         excludeJars.add("hessian-");
         excludeJars.add("groovy-");
         excludeJars.add("snakeyaml-");
+        excludeJars.add("kryo-");
+        excludeJars.add("reflectasm-");
+        excludeJars.add("asm-");
+        excludeJars.add("minlog-");
+        excludeJars.add("swagger-");
+        excludeJars.add("validation-api-");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();
@@ -316,6 +322,7 @@ public class ClassScanner {
                     }
 
                     if (!path.startsWith(JAVA_HOME) && !isExcludeJar(path)) {
+                        System.out.println(path);
                         set.add(url.getPath());
                     }
                 }

@@ -17,6 +17,7 @@ package io.jboot.web;
 
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
+import com.jfinal.json.FastJsonFactory;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
@@ -88,6 +89,7 @@ public class JbootAppConfig extends JFinalConfig {
         constants.setReportAfterInvocation(false);
 
         constants.setControllerFactory(JbootControllerManager.me());
+        constants.setJsonFactory(new FastJsonFactory());
 
         JbootAppListenerManager.me().onJfinalConstantConfig(constants);
     }
