@@ -16,10 +16,7 @@
 package io.jboot.db.model;
 
 import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.Model;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Table;
-import com.jfinal.plugin.activerecord.TableMapping;
+import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.db.dialect.IJbootModelDialect;
@@ -683,4 +680,5 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
         return id.equals(get(getPrimaryKey()));
     }
+
 }

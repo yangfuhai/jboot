@@ -4,9 +4,7 @@ import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.base.JbootDirectiveBase;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import service.User;
 
 @JFinalDirective("testDirective")
 public class DirectiveTest extends JbootDirectiveBase {
@@ -17,27 +15,34 @@ public class DirectiveTest extends JbootDirectiveBase {
 
     @Override
     public void exec(Env env, Scope scope, Writer writer) {
-        String abc = service.hello("aabbcc");
+
         initParams(scope);
 
-        try {
-            writer.write("testDirective : " + getParam("c",scope) +"<br />");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String d = getParam("d",scope);
+
+        String content = service.hello(d);
+
+        User user = new User();
+        user.setName(content);
+
+        scope.set("user",user);
+        stat.exec(env,scope,writer);
 
 
-
-
-
-        System.out.println((HttpServletRequest) getParam(0,scope));
-        System.out.println((String) getParam(1,scope));
-        System.out.println((String) getParam("c",scope));
-
-        System.out.println(this);
+//
+//        System.out.println((HttpServletRequest) getParam(0,scope));
+//        System.out.println((String) getParam(1,scope));
+//        System.out.println((String) getParam("c",scope));
+//        System.out.println((String) getParam("d",scope));
+//
+//        System.out.println("DirectiveTest:"+this);
+//        System.out.println("scope:"+scope);
 
 
     }
 
-
+    @Override
+    public boolean hasEnd() {
+        return true;
+    }
 }

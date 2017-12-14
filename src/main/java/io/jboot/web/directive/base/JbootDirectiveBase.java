@@ -15,15 +15,22 @@
  */
 package io.jboot.web.directive.base;
 
+import com.google.common.collect.Sets;
 import com.jfinal.template.Directive;
+import com.jfinal.template.expr.ast.Assign;
+import com.jfinal.template.expr.ast.Expr;
 import com.jfinal.template.expr.ast.ExprList;
 import com.jfinal.template.stat.Scope;
 import io.jboot.Jboot;
+
+import java.util.Set;
 
 /**
  * Jfinal 指令的基类
  */
 public abstract class JbootDirectiveBase extends Directive {
+
+    private Set ids = Sets.newHashSet();
 
     public JbootDirectiveBase() {
         Jboot.injectMembers(this);
@@ -33,19 +40,30 @@ public abstract class JbootDirectiveBase extends Directive {
     @Override
     public void setExprList(ExprList exprList) {
         super.setExprList(exprList);
+        for (Expr expr : exprList.getExprArray()) {
+            if (expr instanceof Assign) {
+                Assign assign = (Assign) expr;
+                ids.add(assign.getId());
+            }
+        }
     }
 
 
     /**
      * 先调用 initParams 后，才能通过 getParam 获取
+     *
      * @param scope
      */
-    public void initParams(Scope scope){
+    public void initParams(Scope scope) {
+        scope.getCtrl().setLocalAssignment();
         exprList.eval(scope);
     }
 
     public <T> T getParam(String key, T defaultValue, Scope scope) {
-        Object data = scope.get(key);
+        if (!ids.contains(key)) {
+            return defaultValue;
+        }
+        Object data = scope.getLocal(key);
         return (T) (data == null ? defaultValue : data);
     }
 
