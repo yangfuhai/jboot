@@ -1170,6 +1170,10 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
         }.start();
     }
 
+    
+    public JedisCluster getJedisCluster() {
+        return jedisCluster;
+    }
 
 }
 
