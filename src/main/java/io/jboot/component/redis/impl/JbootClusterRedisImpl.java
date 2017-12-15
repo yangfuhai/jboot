@@ -154,6 +154,10 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
 
     @Override
     public String getWithoutSerialize(Object key) {
+        byte[] bytes = jedisCluster.get(keyToBytes(key));
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
         return new String(jedisCluster.get(keyToBytes(key)));
     }
 
@@ -162,9 +166,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 不存在的 key 会被忽略。
      */
     public Long del(Object key) {
-
         return jedisCluster.del(keyToBytes(key));
-
     }
 
     /**
@@ -1170,7 +1172,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
         }.start();
     }
 
-    
+
     public JedisCluster getJedisCluster() {
         return jedisCluster;
     }

@@ -173,7 +173,11 @@ public class JbootRedisImpl extends JbootRedisBase {
     public String getWithoutSerialize(Object key) {
         Jedis jedis = getJedis();
         try {
-            return new String(jedis.get(keyToBytes(key)));
+            byte[] bytes = jedis.get(keyToBytes(key));
+            if (bytes == null || bytes.length == 0) {
+                return null;
+            }
+            return new String(bytes);
         } finally {
             returnResource(jedis);
         }
