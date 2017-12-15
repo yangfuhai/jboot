@@ -1,3 +1,12 @@
+jboot-1.1.8:
+新增：JbootCacheManager 通过配置文件直接获取 JbootCache 的方法，用于不同的场景调用不同的缓存。
+新增：JbootIllegalConfigException 异常类，用于给出配置文件错误的提示。
+新增：JbootRedis 新增 getWithoutSerialize 方法，用于读取一些由redis生成的非序列化数据。
+修复：自定义JFinal指令的时候，可能存在同一个页面下多个相同的指令出现数据污染的问题。
+优化：重构 Jbootmq 模块，移动channel配置到 jboot.mq.channel。
+优化：重构 ehredis 缓存模块，当不配置mq channel的时候不再抛出异常。
+
+
 jboot-1.1.7:
 优化：重构 JbootDirectiveBase 自定义指令，使得 getParam 更加简洁好用
 优化：删除 JbootVoModel 和其相关工具
