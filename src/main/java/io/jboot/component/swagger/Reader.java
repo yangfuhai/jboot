@@ -17,7 +17,6 @@ package io.jboot.component.swagger;
 
 import com.jfinal.core.Controller;
 import io.jboot.web.JbootControllerManager;
-import io.swagger.annotations.ApiParam;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Response;
@@ -95,30 +94,27 @@ public class Reader {
                 extension.applyImplicitParameters(swagger, context, operation, method);
                 extension.applyExtensions(context, operation, method);
                 for (int i = 0; i < genericParameterTypes.length; i++) {
-                    extension.applyParameters(httpMethod, context, operation, (ApiParam[]) paramAnnotations[i]);
+                    extension.applyParameters(httpMethod, context, operation,paramAnnotations[i]);
                 }
 
                 if (apiParamsAnnotation != null) {
                     extension.applyParameters(httpMethod, context, operation, apiParamsAnnotation.value());
                 }
-
             }
 
-            if (httpMethod != null) {
-                if (operation.getResponses() == null) {
-                    operation.defaultResponse(new Response().description("successful operation"));
-                }
-
-                final Map<String, String> regexMap = new HashMap<String, String>();
-                final String parsedPath = PathUtils.parsePath(operationPath, regexMap);
-
-                Path path = swagger.getPath(parsedPath);
-                if (path == null) {
-                    path = new Path();
-                    swagger.path(parsedPath, path);
-                }
-                path.set(httpMethod.toLowerCase(), operation);
+            if (operation.getResponses() == null) {
+                operation.defaultResponse(new Response().description("successful operation"));
             }
+
+            final Map<String, String> regexMap = new HashMap<String, String>();
+            final String parsedPath = PathUtils.parsePath(operationPath, regexMap);
+
+            Path path = swagger.getPath(parsedPath);
+            if (path == null) {
+                path = new SwaggerPath();
+                swagger.path(parsedPath, path);
+            }
+            path.set(httpMethod.toLowerCase(), operation);
         }
     }
 

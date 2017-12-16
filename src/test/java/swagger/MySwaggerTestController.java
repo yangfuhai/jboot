@@ -32,9 +32,16 @@ import io.swagger.annotations.ApiParam;
 @Api(description = "用户相关接口文档", basePath = "/swaggerTest", tags = "abc")
 public class MySwaggerTestController extends JbootController {
 
-    @ApiOperation(value = "添加用户", httpMethod = "GET", notes = "add user")
+    @ApiOperation(value = "用户列表", httpMethod = "GET", notes = "add user")
     @ApiParams({@ApiParam(required = true, name = "postData", value = "用户信息json数据")})
     public void index() {
+        renderJson(Ret.ok("k1", "v1").set("name", getPara("name")));
+    }
+
+
+    @ApiOperation(value = "添加用户", httpMethod = "GET", notes = "add user")
+    @ApiParams({@ApiParam(required = true, name = "postData", value = "用户信息json数据")})
+    public void add() {
         renderJson(Ret.ok("k1", "v1").set("name", getPara("name")));
     }
 

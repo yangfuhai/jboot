@@ -84,9 +84,8 @@ public class JbootSwaggerManager {
         swagger.setInfo(swaggerInfo);
 
         List<Class> classes = ClassScanner.scanClassByAnnotation(RequestMapping.class, false);
-        
-        Reader.read(swagger, classes);
 
+        Reader.read(swagger, classes);
 
     }
 

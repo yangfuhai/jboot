@@ -373,9 +373,9 @@ public class ControllerReaderExtension {
     }
 
 
-    public void applyParameters(String httpMethod, ReaderContext context, Operation operation, ApiParam[] annotations) {
+    public void applyParameters(String httpMethod, ReaderContext context, Operation operation, Annotation[] annotations) {
 
-        for (ApiParam annotation : annotations) {
+        for (Annotation annotation : annotations) {
             if (annotation instanceof ApiParam) {
                 ApiParam apiParam = (ApiParam) annotation;
 
