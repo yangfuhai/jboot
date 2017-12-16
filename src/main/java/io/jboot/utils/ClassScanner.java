@@ -322,7 +322,6 @@ public class ClassScanner {
                     }
 
                     if (!path.startsWith(JAVA_HOME) && !isExcludeJar(path)) {
-                        System.out.println(path);
                         set.add(url.getPath());
                     }
                 }

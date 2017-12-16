@@ -67,7 +67,6 @@ public class Reader {
 
             final Type[] genericParameterTypes = method.getGenericParameterTypes();
             final Annotation[][] paramAnnotations = method.getParameterAnnotations();
-            final ApiParams apiParamsAnnotation = method.getAnnotation(ApiParams.class);
 
             ControllerReaderExtension extension = new ControllerReaderExtension();
 
@@ -94,11 +93,11 @@ public class Reader {
                 extension.applyImplicitParameters(swagger, context, operation, method);
                 extension.applyExtensions(context, operation, method);
                 for (int i = 0; i < genericParameterTypes.length; i++) {
-                    extension.applyParameters(httpMethod, context, operation,paramAnnotations[i]);
+                    extension.applyParameters(httpMethod, context, operation, paramAnnotations[i]);
                 }
 
-                if (apiParamsAnnotation != null) {
-                    extension.applyParameters(httpMethod, context, operation, apiParamsAnnotation.value());
+                if ("post".equalsIgnoreCase(httpMethod) && operation.getConsumes() == null) {
+                    operation.addConsumes("application/x-www-form-urlencoded");
                 }
             }
 

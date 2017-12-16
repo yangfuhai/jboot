@@ -407,6 +407,16 @@ public class ControllerReaderExtension {
                     parameter.setAllowEmptyValue(apiParam.allowEmptyValue());
                     parameter.setRequired(apiParam.required());
                     parameter.setDescription(apiParam.value());
+
+                    Map<String, String> examples = new HashMap<>();
+                    Example example = apiParam.examples();
+                    if (example != null) {
+                        ExampleProperty[] exampleProperties = example.value();
+                        for (ExampleProperty ep : exampleProperties) {
+                            examples.put(ep.mediaType(), ep.value());
+                        }
+                    }
+                    parameter.setExamples(examples);
                     operation.addParameter(parameter);
                 }
 
