@@ -22,10 +22,19 @@ import io.jboot.web.JbootAppConfig;
 public class JbootConfig {
 
 
+    private String version = "v1.1.9";
     private String mode = Jboot.MODE.DEV.getValue();
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
     private String jfinalConfig = JbootAppConfig.class.getName();
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public String getMode() {
         return mode;
@@ -64,7 +73,8 @@ public class JbootConfig {
     @Override
     public String toString() {
         return "JbootConfig {" +
-                "mode='" + mode + '\'' +
+                "version='" + version + '\'' +
+                ", mode='" + mode + '\'' +
                 ", bannerEnable=" + bannerEnable +
                 ", bannerFile='" + bannerFile + '\'' +
                 ", jfinalConfig='" + jfinalConfig + '\'' +
