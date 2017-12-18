@@ -1,7 +1,7 @@
 package distributedtask;
 
-import io.jboot.schedule.annotation.Cron;
 import io.jboot.schedule.annotation.EnableDistributedRunnable;
+import io.jboot.schedule.annotation.FixedDelay;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,7 +13,8 @@ import java.util.Date;
  * @Description: 每1分钟执行一次
  * @Package distributedtask
  */
-@Cron("*/1 * * * *")
+//@Cron("*/1 * * * *")
+@FixedDelay(period = 5)
 @EnableDistributedRunnable
 public class MyTask implements Runnable {
 
