@@ -1,3 +1,11 @@
+jboot-1.1.9:
+新增：Columns实现序列化，支持RPC直接远程传入Columns。
+修复：JbootRedis的getWithoutSerialize方法返回空数据出现NullPointerException异常的问题。
+修复：JbootModel 通过 fastjson 序列化的时候没有排除某些私有方法而序列化异常的问题。
+优化：重构Swagger模块，移除Jboot自定义Swagger注解，添加Swagger原生注解支持。
+优化：更新sharding-jdbc到2.0.1版本，更新 fastjson 到1.2.43版本。
+
+
 jboot-1.1.8:
 新增：JbootCacheManager 通过配置文件直接获取 JbootCache 的方法，用于不同的场景调用不同的缓存。
 新增：JbootIllegalConfigException 异常类，用于给出配置文件错误的提示。
