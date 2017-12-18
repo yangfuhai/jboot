@@ -1,4 +1,4 @@
-package config;
+package distributedconfig;
 
 import io.jboot.Jboot;
 

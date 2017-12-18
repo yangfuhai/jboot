@@ -346,17 +346,17 @@ public class JbootConfigManager {
                 }
 
                 Collection<Object> objects = keyInstanceMapping.get(key);
-                try {
-                    for (Object obj : objects) {
+                for (Object obj : objects) {
+                    try {
                         if (StringUtils.isBlank(value)) {
                             method.invoke(obj, new Object[]{null});
                         } else {
                             Object val = convert(method.getParameterTypes()[0], value);
                             method.invoke(obj, val);
                         }
+                    } catch (Throwable ex) {
+                        LogKit.error(ex.toString(), ex);
                     }
-                } catch (Throwable ex) {
-                    LogKit.error(ex.toString(), ex);
                 }
             }
         };
