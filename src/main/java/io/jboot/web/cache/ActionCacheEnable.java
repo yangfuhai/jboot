@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2016, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.render;
+package io.jboot.web.cache;
 
-import io.jboot.config.annotation.PropertieConfig;
-import io.jboot.utils.StringUtils;
+import java.lang.annotation.*;
 
-@PropertieConfig(prefix = "jboot.render")
-public class JbootRenderConfig {
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface ActionCacheEnable {
 
-    private String cdn;
+    String cacheName();
 
-    public String getCdn() {
-        return cdn;
-    }
-
-    public void setCdn(String cdn) {
-        this.cdn = cdn;
-    }
-
-    public boolean isEnableCdn() {
-        return StringUtils.isNotBlank(cdn);
-    }
+    /**
+     * 0-默认永久
+     */
+    int liveSeconds() default 0;
 }

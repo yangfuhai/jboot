@@ -15,8 +15,19 @@
  */
 package io.jboot.web.render;
 
+import com.jfinal.kit.JsonKit;
 import com.jfinal.render.JsonRender;
+import com.jfinal.render.RenderException;
+import io.jboot.Jboot;
 import io.jboot.JbootConstants;
+import io.jboot.utils.StringUtils;
+import io.jboot.web.cache.ActionCache;
+import io.jboot.web.cache.ActionCacheContext;
+import io.jboot.web.cache.ActionCacheEnable;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -25,28 +36,114 @@ import io.jboot.JbootConstants;
  */
 public class JbootJsonRender extends JsonRender {
 
+    private static final String contentType = "application/json; charset=" + getEncoding();
+    private static final String contentTypeForIE = "text/html; charset=" + getEncoding();
+
+    private static final Set<String> excludedAttrs = new HashSet<String>() {
+        private static final long serialVersionUID = 9186138395157680676L;
+
+        {
+            add("javax.servlet.request.ssl_session");
+            add("javax.servlet.request.ssl_session_id");
+            add("javax.servlet.request.ssl_session_mgr");
+            add("javax.servlet.request.key_size");
+            add("javax.servlet.request.cipher_suite");
+            add("_res");    // I18nInterceptor 中使用的 _res
+            add(JbootConstants.ATTR_REQUEST);
+            add(JbootConstants.ATTR_CONTEXT_PATH);
+        }
+    };
 
     public JbootJsonRender() {
-        addExcludedAttrs(JbootConstants.ATTR_CONTEXT_PATH, JbootConstants.ATTR_REQUEST);
+
     }
 
     public JbootJsonRender(String key, Object value) {
-        super(key, value);
-        addExcludedAttrs(JbootConstants.ATTR_CONTEXT_PATH, JbootConstants.ATTR_REQUEST);
+        if (key == null) {
+            throw new IllegalArgumentException("The parameter key can not be null.");
+        }
+        this.jsonText = JsonKit.toJson(new HashMap<String, Object>() {{
+            put(key, value);
+        }});
     }
 
     public JbootJsonRender(String[] attrs) {
-        super(attrs);
-        addExcludedAttrs(JbootConstants.ATTR_CONTEXT_PATH, JbootConstants.ATTR_REQUEST);
+        this.attrs = attrs;
     }
 
     public JbootJsonRender(String jsonText) {
-        super(jsonText);
-        addExcludedAttrs(JbootConstants.ATTR_CONTEXT_PATH, JbootConstants.ATTR_REQUEST);
+        this.jsonText = jsonText;
     }
 
     public JbootJsonRender(Object object) {
-        super(object);
-        addExcludedAttrs(JbootConstants.ATTR_CONTEXT_PATH, JbootConstants.ATTR_REQUEST);
+        this.jsonText = JsonKit.toJson(object);
+    }
+
+    private boolean forIE = false;
+
+    public JsonRender forIE() {
+        forIE = true;
+        return this;
+    }
+
+    private String jsonText;
+    private String[] attrs;
+
+    public void render() {
+
+        if (jsonText == null) {
+            buildJsonText();
+        }
+
+        ActionCacheEnable actionCacheEnable = ActionCacheContext.get();
+        if (actionCacheEnable != null) {
+            String key = ActionCacheContext.getKey();
+            String cacheName = actionCacheEnable.cacheName();
+            if (StringUtils.isBlank(cacheName)) {
+                throw new IllegalArgumentException("ActionCacheEnable cacheName must not be empty");
+            }
+            ActionCache actionCache = new ActionCache(forIE ? contentTypeForIE : contentType, jsonText);
+            Jboot.me().getCache().put(cacheName, key, actionCache, actionCacheEnable.liveSeconds());
+        }
+
+        PrintWriter writer = null;
+        try {
+            response.setHeader("Pragma", "no-cache");    // HTTP/1.0 caches might not implement Cache-Control and might only implement Pragma: no-cache
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", 0);
+
+            response.setContentType(forIE ? contentTypeForIE : contentType);
+            writer = response.getWriter();
+            writer.write(jsonText);
+            writer.flush();
+        } catch (IOException e) {
+            throw new RenderException(e);
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void buildJsonText() {
+        Map map = new HashMap();
+        if (attrs != null) {
+            for (String key : attrs) {
+                map.put(key, request.getAttribute(key));
+            }
+        } else {
+            for (Enumeration<String> attrs = request.getAttributeNames(); attrs.hasMoreElements(); ) {
+                String key = attrs.nextElement();
+                if (excludedAttrs.contains(key)) {
+                    continue;
+                }
+
+                Object value = request.getAttribute(key);
+                map.put(key, value);
+            }
+        }
+
+        this.jsonText = JsonKit.toJson(map);
     }
 }

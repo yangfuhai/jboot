@@ -43,6 +43,7 @@ import io.jboot.schedule.JbootScheduleManager;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
+import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
@@ -74,7 +75,7 @@ public class JbootAppConfig extends JFinalConfig {
     public void configConstant(Constants constants) {
 
 //        PropKit.use("jboot.properties");
-        constants.setRenderFactory(new JbootRenderFactory());
+        constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.me().isDevMode());
         ApiConfigKit.setDevMode(Jboot.me().isDevMode());
 
@@ -187,6 +188,8 @@ public class JbootAppConfig extends JFinalConfig {
 
     @Override
     public void configHandler(Handlers handlers) {
+
+        handlers.add(new ActionCacheHandler());
         handlers.add(new JbootHandler());
 
         //用于对jfinal的拦截器进行注入

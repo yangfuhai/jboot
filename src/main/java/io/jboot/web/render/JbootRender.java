@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2016, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.cache.ActionCache;
+import io.jboot.web.cache.ActionCacheEnable;
+import io.jboot.web.cache.ActionCacheContext;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -67,37 +70,30 @@ public class JbootRender extends Render {
             data.put(attrName, request.getAttribute(attrName));
         }
 
-//        data.put("flash", JbootFlashManager.me().getOldFlashes());
-
-        if (!config.isEnableCdn()) {
-            renderByEngine(data);
-            return;
-        }
-
         String html = getEngine().getTemplate(view).renderToString(data);
-        renderHtml(processCDN(html), contentType);
-    }
 
-    private void renderByEngine(Map<Object, Object> data) {
-        PrintWriter writer = null;
-        try {
-            writer = response.getWriter();
-            getEngine().getTemplate(view).render(data, writer);
-        } catch (Exception e) {
-            throw new RenderException(e);
-        } finally {
-            if (writer != null) {
-                writer.close();
+        String finalHtml = config.isEnableCdn() ? processCDN(html) : html;
+
+        ActionCacheEnable actionCacheEnable = ActionCacheContext.get();
+        if (actionCacheEnable != null) {
+            String key = ActionCacheContext.getKey();
+            String cacheName = actionCacheEnable.cacheName();
+            if (StringUtils.isBlank(cacheName)) {
+                throw new IllegalArgumentException("ActionCacheEnable cacheName must not be empty");
             }
+            ActionCache actionCache = new ActionCache(contentType, finalHtml);
+            Jboot.me().getCache().put(cacheName, key, actionCache, actionCacheEnable.liveSeconds());
         }
+        renderHtml(finalHtml, contentType);
     }
 
-    private void renderHtml(String htmlContent, String contentType) {
+
+    private void renderHtml(String html, String contentType) {
         response.setContentType(contentType);
         PrintWriter responseWriter = null;
         try {
             responseWriter = response.getWriter();
-            responseWriter.write(htmlContent);
+            responseWriter.write(html);
             responseWriter.flush();
         } catch (Exception e) {
             throw new RenderException(e);
