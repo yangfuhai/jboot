@@ -35,7 +35,6 @@ public class ActionCacheDemo extends JbootController {
 
     public static void main(String[] args) {
 
-        Jboot.setBootArg("jboot.cache.type", "ehcache");
         Jboot.run(args);
     }
 
