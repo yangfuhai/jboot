@@ -35,7 +35,7 @@ public class ActionCacheDemo extends JbootController {
 
     public static void main(String[] args) {
 
-        Jboot.setBootArg("jboot.cache.type","ehcache");
+        Jboot.setBootArg("jboot.cache.type", "ehcache");
         Jboot.run(args);
     }
 
@@ -59,6 +59,14 @@ public class ActionCacheDemo extends JbootController {
 
     @ActionCacheEnable(cacheName = "test")
     public void json() {
+        System.out.println("json() invoke!!!!");
+        setAttr("user", "Michael Yang");
+        renderJson();
+    }
+
+
+    @ActionCacheEnable(cacheName = "test", liveSeconds = 5)
+    public void time() {
         System.out.println("json() invoke!!!!");
         setAttr("user", "Michael Yang");
         renderJson();
