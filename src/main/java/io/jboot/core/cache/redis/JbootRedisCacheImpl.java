@@ -24,6 +24,7 @@ import io.jboot.exception.JbootIllegalConfigException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public class JbootRedisCacheImpl extends JbootCacheBase {
@@ -71,8 +72,11 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     @Override
     public List getKeys(String cacheName) {
-        List<String> keys = new ArrayList<String>();
-        keys.addAll(redis.keys(cacheName + ":*"));
+        Set<String> keyset = redis.keys(cacheName + ":*");
+        if (keyset == null || keyset.size() == 0) {
+            return null;
+        }
+        List<String> keys = new ArrayList<>(keyset);
         for (int i = 0; i < keys.size(); i++) {
             keys.set(i, keys.get(i).substring(cacheName.length() + 3));
         }
