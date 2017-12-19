@@ -69,6 +69,10 @@ public class JbootEhcacheImpl extends JbootCacheBase {
 
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
+        if (liveSeconds <= 0) {
+            put(cacheName, key, value);
+            return;
+        }
         Element element = new Element(key, value);
         element.setTimeToLive(liveSeconds);
         getOrAddCache(cacheName).put(element);
@@ -96,6 +100,9 @@ public class JbootEhcacheImpl extends JbootCacheBase {
 
     @Override
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
+        if (liveSeconds <= 0) {
+            return get(cacheName, key, dataLoader);
+        }
         Object data = get(cacheName, key);
         if (data == null) {
             data = dataLoader.load();

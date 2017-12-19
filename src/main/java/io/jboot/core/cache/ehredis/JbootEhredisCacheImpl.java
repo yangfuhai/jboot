@@ -83,6 +83,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
+        if (liveSeconds <= 0) {
+            put(cacheName, key, value);
+            return;
+        }
         try {
             ehcacheImpl.put(cacheName, key, value, liveSeconds);
             redisCacheImpl.put(cacheName, key, value, liveSeconds);
@@ -127,6 +131,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     @Override
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
+        if (liveSeconds <= 0) {
+            return get(cacheName, key, dataLoader);
+        }
+        
         T obj = get(cacheName, key);
         if (obj != null) {
             return obj;
