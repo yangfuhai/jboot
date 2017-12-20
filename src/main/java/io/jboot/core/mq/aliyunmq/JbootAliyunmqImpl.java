@@ -16,49 +16,39 @@
 package io.jboot.core.mq.aliyunmq;
 
 import com.aliyun.openservices.ons.api.*;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
-import io.jboot.exception.JbootException;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.utils.StringUtils;
 
 import java.util.Properties;
 
 
 public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageListener {
 
+    private static final Log LOG = Log.getLog(JbootAliyunmqImpl.class);
     private Producer producer;
     private Consumer consumer;
 
     public void JbootAliyunmq() {
 
-        JbootAliyunmqConfig config = Jboot.config(JbootAliyunmqConfig.class);
+        initChannels();
+
+        JbootAliyunmqConfig aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
 
         Properties properties = new Properties();
-        properties.put(PropertyKeyConst.AccessKey, config.getAccessKey());//AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
-        properties.put(PropertyKeyConst.SecretKey, config.getSecretKey());//SecretKey 阿里云身份验证，在阿里云服务器管理控制台创建
-        properties.put(PropertyKeyConst.ProducerId, config.getProducerId());//您在控制台创建的Producer ID
-        properties.put(PropertyKeyConst.ONSAddr, config.getAddr());
-        properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, config.getSendMsgTimeoutMillis());//设置发送超时时间，单位毫秒
+        properties.put(PropertyKeyConst.AccessKey, aliyunmqConfig.getAccessKey());//AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
+        properties.put(PropertyKeyConst.SecretKey, aliyunmqConfig.getSecretKey());//SecretKey 阿里云身份验证，在阿里云服务器管理控制台创建
+        properties.put(PropertyKeyConst.ProducerId, aliyunmqConfig.getProducerId());//您在控制台创建的Producer ID
+        properties.put(PropertyKeyConst.ONSAddr, aliyunmqConfig.getAddr());
+        properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, aliyunmqConfig.getSendMsgTimeoutMillis());//设置发送超时时间，单位毫秒
 
         producer = ONSFactory.createProducer(properties);
         consumer = ONSFactory.createConsumer(properties);
 
-        String channel = config.getChannel();
-        if (StringUtils.isBlank(channel)) {
-            throw new JbootException("jboot.mq.aliyun.channel config cannot empty in jboot.properties");
-        }
-
-        String[] channels = channel.split(",");
         for (String c : channels) {
             consumer.subscribe(c, "*", this);
         }
-
-        /**
-         * 阿里云需要提前注册缓存通知使用的通道
-         */
-        consumer.subscribe(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL, "*", this);
 
         producer.start();
         consumer.start();
@@ -66,11 +56,13 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
 
     @Override
     public void enqueue(Object message, String toChannel) {
+        ensureChannelExist(toChannel);
         throw new RuntimeException("not finished!");
     }
 
     @Override
     public void publish(Object message, String toChannel) {
+        ensureChannelExist(toChannel);
         byte[] bytes = Jboot.me().getSerializer().serialize(message);
         Message onsMessage = new Message(toChannel, "*", bytes);
         producer.send(onsMessage);

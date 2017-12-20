@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -152,14 +152,21 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
 
     }
 
+    @Override
+    public String getWithoutSerialize(Object key) {
+        byte[] bytes = jedisCluster.get(keyToBytes(key));
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        return new String(jedisCluster.get(keyToBytes(key)));
+    }
+
     /**
      * 删除给定的一个 key
      * 不存在的 key 会被忽略。
      */
     public Long del(Object key) {
-
         return jedisCluster.del(keyToBytes(key));
-
     }
 
     /**
@@ -1165,6 +1172,10 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
         }.start();
     }
 
+
+    public JedisCluster getJedisCluster() {
+        return jedisCluster;
+    }
 
 }
 

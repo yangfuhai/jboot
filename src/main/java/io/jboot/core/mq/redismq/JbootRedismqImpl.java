@@ -15,30 +15,27 @@
  */
 package io.jboot.core.mq.redismq;
 
-import com.google.common.collect.Sets;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.component.redis.JbootRedisManager;
-import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.component.redis.JbootRedis;
-import io.jboot.exception.JbootException;
+import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.utils.StringUtils;
+import io.jboot.exception.JbootIllegalConfigException;
 import redis.clients.jedis.BinaryJedisPubSub;
-
-import java.util.Set;
 
 
 public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     private static final Log LOG = Log.getLog(JbootRedismqImpl.class);
 
-    JbootRedis redis;
-    Thread dequeueThread;
-    Set<String> channnels;
+    private JbootRedis redis;
+    private Thread dequeueThread;
 
     public JbootRedismqImpl() {
+
+        initChannels();
+
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
         if (redisConfig.isConfigOk()) {
             redis = JbootRedisManager.me().getRedis(redisConfig);
@@ -47,23 +44,13 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         }
 
         if (redis == null) {
-            throw new JbootException("can not get redis,please check your jboot.properties");
+            throw new JbootIllegalConfigException("can not use redis mq (redis mq is default), " +
+                    "please config jboot.redis.host=yourhost and check your jboot.properties, " +
+                    "or use other mq component. ");
         }
 
-        String channelString = redisConfig.getChannel();
-        if (StringUtils.isBlank(channelString)) {
-            throw new JbootException("channel config cannot empty in jboot.properties");
-        }
+        Object[] channels = this.channels.toArray();
 
-        if (channelString.endsWith(",")) {
-            channelString += JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL;
-        } else {
-            channelString += "," + JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL;
-        }
-
-
-        String[] channels = channelString.split(",");
-        this.channnels = Sets.newHashSet(channels);
         redis.subscribe(new BinaryJedisPubSub() {
             @Override
             public void onMessage(byte[] channel, byte[] message) {
@@ -78,13 +65,17 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     @Override
     public void enqueue(Object message, String toChannel) {
+        ensureChannelExist(toChannel);
         redis.lpush(toChannel, message);
     }
 
+
     @Override
     public void publish(Object message, String toChannel) {
+        ensureChannelExist(toChannel);
         redis.publish(redis.keyToBytes(toChannel), Jboot.me().getSerializer().serialize(message));
     }
+
 
     @Override
     public void run() {
@@ -99,7 +90,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     }
 
     private void doExecuteDequeue() {
-        for (String channel : this.channnels) {
+        for (String channel : this.channels) {
             Object data = redis.lpop(channel);
             if (data != null) {
                 notifyListeners(channel, data);

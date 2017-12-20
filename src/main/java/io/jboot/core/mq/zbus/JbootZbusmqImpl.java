@@ -18,10 +18,8 @@ package io.jboot.core.mq.zbus;
 import com.google.common.collect.Maps;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 import io.zbus.mq.*;
 
@@ -35,21 +33,10 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
     private Broker broker;
 
     public JbootZbusmqImpl() {
+
+        initChannels();
+
         JbootZbusmqConfig zbusmqConfig = Jboot.config(JbootZbusmqConfig.class);
-
-
-        String channelString = zbusmqConfig.getChannel();
-        if (StringUtils.isBlank(channelString)) {
-            throw new JbootException("channel config cannot empty in jboot.properties");
-        }
-
-        if (channelString.endsWith(",")) {
-            channelString += JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL;
-        } else {
-            channelString += "," + JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL;
-        }
-
-        String[] channels = channelString.split(",");
         broker = new Broker(zbusmqConfig.getBroker());
 
         for (String channel : channels) {
@@ -95,6 +82,7 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
 
     @Override
     public void publish(Object message, String toChannel) {
+        ensureChannelExist(toChannel);
         Producer producer = getProducer(toChannel);
 
         Message msg = new Message();

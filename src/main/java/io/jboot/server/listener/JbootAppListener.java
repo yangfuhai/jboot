@@ -51,5 +51,5 @@ public interface JbootAppListener {
 
     public void onAppStartBefore(JbootServer jbootServer);
 
-    public void onAopConfigure(Binder binder);
+    public void onGuiceConfigure(Binder binder);
 }

@@ -1,46 +1,38 @@
 package service;
 
-import java.io.Serializable;
+import io.jboot.db.model.JbootModel;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package service
  */
-public class User implements Serializable {
+public class User extends JbootModel<User> {
 
-    private int id;
-    private String name;
 
     public User() {
     }
 
     public User(int id, String name) {
-        this.id = id;
-        this.name = name;
+        setId(id);
+        setName(name);
     }
 
     public int getId() {
-        return id;
+        return get("id");
     }
 
     public void setId(int id) {
-        this.id = id;
+        set("id", id);
     }
 
     public String getName() {
-        return name;
+        return get("name");
     }
 
     public void setName(String name) {
-        this.name = name;
+        set("name", name);
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
+   
 }

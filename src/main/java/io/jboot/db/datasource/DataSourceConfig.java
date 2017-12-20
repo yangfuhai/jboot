@@ -22,7 +22,7 @@ import java.util.List;
 
 
 public class DataSourceConfig {
-    public static final String NAME_MAIN = "main";
+    public static final String NAME_DEFAULT = "main";
 
     public static final String TYPE_MYSQL = "mysql";
     public static final String TYPE_ORACLE = "oracle";

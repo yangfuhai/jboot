@@ -21,17 +21,9 @@ import io.jboot.config.annotation.PropertieConfig;
 @PropertieConfig(prefix = "jboot.mq.zbus")
 public class JbootZbusmqConfig {
 
-    private String channel;
     private String queue;
     private String broker;
 
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
 
     public String getQueue() {
         return queue;

@@ -26,7 +26,6 @@ public class JbootAliyunmqConfig {
     private String producerId;
     private String addr;
     private String sendMsgTimeoutMillis = "3000";
-    private String channel;
 
     public String getAccessKey() {
         return accessKey;
@@ -68,11 +67,4 @@ public class JbootAliyunmqConfig {
         this.sendMsgTimeoutMillis = sendMsgTimeoutMillis;
     }
 
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
 }

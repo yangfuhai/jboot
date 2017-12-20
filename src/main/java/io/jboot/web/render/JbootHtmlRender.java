@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2016, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.swagger.annotation;
+package io.jboot.web.render;
 
-import java.lang.annotation.*;
+import com.jfinal.render.ContentType;
 
-
-@Documented
-@Target(ElementType.METHOD)
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-public @interface SwaggerResponse {
-
-    String description200() default "successful response";
-
-    String definitions200() default "";
-
-    String description400() default "400 error";
-
-    String description404() default "404 error";
-
-
+/**
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.web.render
+ */
+public class JbootHtmlRender extends JbootTextRender {
+    public JbootHtmlRender(String text) {
+        super(text, ContentType.HTML);
+    }
 }

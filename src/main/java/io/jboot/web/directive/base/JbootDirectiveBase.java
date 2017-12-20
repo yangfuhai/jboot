@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,28 +16,45 @@
 package io.jboot.web.directive.base;
 
 import com.jfinal.template.Directive;
+import com.jfinal.template.Env;
+import com.jfinal.template.expr.ast.ExprList;
+import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.Jboot;
-
-import java.util.Map;
 
 /**
  * Jfinal 指令的基类
  */
 public abstract class JbootDirectiveBase extends Directive {
 
+
     public JbootDirectiveBase() {
         Jboot.injectMembers(this);
     }
 
 
-    public <T> T getParam(String key, T defaultValue, Scope scope) {
-        if (exprList == null || exprList.length() == 0) {
-            return defaultValue;
-        }
+    @Override
+    public void setExprList(ExprList exprList) {
+        super.setExprList(exprList);
+    }
 
-        Map map = (Map) exprList.getExprArray()[0].eval(scope);
-        Object data = map.get(key);
+
+    @Override
+    public void exec(Env env, Scope scope, Writer writer) {
+        scope = new Scope(scope);
+        scope.getCtrl().setLocalAssignment();
+        exprList.eval(scope);
+
+        onRender(env, scope, writer);
+
+    }
+
+
+    public abstract void onRender(Env env, Scope scope, Writer writer);
+
+
+    public <T> T getParam(String key, T defaultValue, Scope scope) {
+        Object data = scope.getLocal(key);
         return (T) (data == null ? defaultValue : data);
     }
 
@@ -48,13 +65,18 @@ public abstract class JbootDirectiveBase extends Directive {
 
 
     public <T> T getParam(int index, T defaultValue, Scope scope) {
-        Object data = exprList.getExprArray()[index].eval(scope);
+        Object data = exprList.getExpr(index).eval(scope);
         return (T) (data == null ? defaultValue : data);
     }
 
 
     public <T> T getParam(int index, Scope scope) {
         return getParam(index, null, scope);
+    }
+
+
+    public void renderBody(Env env, Scope scope, Writer writer) {
+        stat.exec(env, scope, writer);
     }
 
 

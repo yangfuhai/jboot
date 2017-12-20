@@ -1,7 +1,6 @@
-package config;
+package distributedconfig;
 
 import io.jboot.Jboot;
-import io.jboot.config.annotation.PropertieConfig;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -26,8 +25,6 @@ public class ConfigClient {
         Jboot.setBootArg("jboot.config.remoteUrl", "http://127.0.0.1:8080/jboot/config");
 
 
-//        Jboot.run(args);
-
         MyConfig config = Jboot.config(MyConfig.class);
 
         for (int i = 0; i < 1000000; i++) {
@@ -40,17 +37,5 @@ public class ConfigClient {
         }
     }
 
-    @PropertieConfig(prefix = "my")
-    public static class MyConfig {
 
-        private String name = "defalutName";
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
 }

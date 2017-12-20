@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ package io.jboot.component.swagger;
 import com.google.common.collect.Maps;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
+import io.swagger.models.Swagger;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -56,6 +57,13 @@ public class JbootSwaggerController extends JbootController {
      */
     public void json() {
 
+
+        Swagger swagger = JbootSwaggerManager.me().getSwagger();
+        if (swagger == null) {
+            renderText("swagger config error.");
+            return;
+        }
+
         HttpServletResponse response = getResponse();
         response.setHeader("Access-Control-Allow-Origin", "*"); //解决跨域访问报错
         response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
@@ -63,12 +71,6 @@ public class JbootSwaggerController extends JbootController {
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, client_id, uuid, Authorization");
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // 支持HTTP 1.1.
         response.setHeader("Pragma", "no-cache");
-
-        Swagger swagger = JbootSwaggerManager.me().getSwagger();
-        if (swagger == null) {
-            renderText("swagger config error.");
-            return;
-        }
 
         renderJson(swagger);
     }

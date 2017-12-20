@@ -1,3 +1,38 @@
+jboot-1.1.9:
+新增：Columns实现序列化，支持RPC直接远程传入Columns。
+修复：JbootRedis的getWithoutSerialize方法返回空数据出现NullPointerException异常的问题。
+修复：JbootModel 通过 fastjson 序列化的时候没有排除某些私有方法而序列化异常的问题。
+优化：重构Swagger模块，移除Jboot自定义Swagger注解，添加Swagger原生注解支持。
+优化：更新sharding-jdbc到2.0.1版本，更新 fastjson 到1.2.43版本。
+
+
+jboot-1.1.8:
+新增：JbootCacheManager 通过配置文件直接获取 JbootCache 的方法，用于不同的场景调用不同的缓存。
+新增：JbootIllegalConfigException 异常类，用于给出配置文件错误的提示。
+新增：JbootRedis 新增 getWithoutSerialize 方法，用于读取一些由redis生成的非序列化数据。
+修复：自定义JFinal指令的时候，可能存在同一个页面下多个相同的指令出现数据污染的问题。
+优化：重构 Jbootmq 模块，移动channel配置到 jboot.mq.channel。
+优化：重构 ehredis 缓存模块，当不配置mq channel的时候不再抛出异常。
+
+
+jboot-1.1.7:
+优化：重构 JbootDirectiveBase 自定义指令，使得 getParam 更加简洁好用
+优化：删除 JbootVoModel 和其相关工具
+优化：完善 fastjson 序列化，新增 kryo 序列化配置的支持
+
+
+jboot-1.1.6:
+修复：JbootAppListenerManager 和 JbootInjectManager初始化相互调用的问题。
+修复：Jfinal renderJson() 由于存放了request对象导致无法正常渲染的问题。
+
+
+jboot-1.1.5:
+新增：自定义DataSource的支持，同时不影响sharding-jdbc的使用。
+新增：默认的sql模板路径，默认路径为classPath。
+新增：onGuiceConfigure配置函数，方便用户自己配置AOP的相关拦截。
+修复：dubbo rpc 无法发现jboot序列化的问题
+
+
 jboot-1.1.4:
 修复：JbootModel.cacheTime(time) 设置缓存失效时间不起作用的问题。
 优化：重构hystrix降级，修改JbootHystrixFallbackFactory为JbootHystrixFallbackLisntener

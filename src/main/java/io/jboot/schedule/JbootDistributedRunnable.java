@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ public class JbootDistributedRunnable implements Runnable {
     private static final Log LOG = Log.getLog(JbootDistributedRunnable.class);
 
     private JbootRedis redis;
-    private int expire = 50 * 1000; // 单位秒
+    private int expire = 50 * 1000; // 单位毫秒
     private String key;
     private Runnable runnable;
 
@@ -54,6 +54,18 @@ public class JbootDistributedRunnable implements Runnable {
     }
 
     public JbootDistributedRunnable(Runnable runnable) {
+        this.runnable = runnable;
+        this.key = "jbootRunnable:" + runnable.getClass().getName();
+        this.redis = Jboot.me().getRedis();
+        if (redis == null) {
+            LOG.error("redis is null, " +
+                    "can not use @EnableDistributedRunnable in your Class[" + runnable.getClass().getName() + "], " +
+                    "or config redis info in jboot.properties");
+        }
+    }
+
+    public JbootDistributedRunnable(Runnable runnable, int expire) {
+        this.expire = (expire - 1) * 1000;
         this.runnable = runnable;
         this.key = "jbootRunnable:" + runnable.getClass().getName();
         this.redis = Jboot.me().getRedis();
@@ -145,9 +157,19 @@ public class JbootDistributedRunnable implements Runnable {
         redis.del(key);
     }
 
-    public static void quietSleep() {
+    public void quietSleep() {
+
+        int millis = 2000;
+        if (this.expire <= 2000) {
+            millis = 100;
+        } else if (this.expire <= 5000) {
+            millis = 500;
+        } else if (this.expire <= 300000) {
+            millis = 1000;
+        }
+
         try {
-            Thread.sleep(2000);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
