@@ -41,7 +41,9 @@ public class SwaggerStarter {
         Jboot.setBootArg("jboot.swagger.description", "这真的真的真的只是一个测试而已，不要当真。");
         Jboot.setBootArg("jboot.swagger.version", "1.0");
         Jboot.setBootArg("jboot.swagger.termsOfService", "http://jboot.io");
-        Jboot.setBootArg("jboot.swagger.contact", "email:fuhai999@gmail.com;qq:123456");
+        Jboot.setBootArg("jboot.swagger.contactEmail", "fuhai999@gmail.com");
+        Jboot.setBootArg("jboot.swagger.contactName", "fuhai999");
+        Jboot.setBootArg("jboot.swagger.contactUrl", "http://jboot.io");
         Jboot.setBootArg("jboot.swagger.host", "127.0.0.1:8080");
 
         Jboot.run(args);

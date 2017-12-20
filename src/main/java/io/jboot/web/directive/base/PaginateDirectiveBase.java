@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +36,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     private boolean onlyShowPreviousAndNext = false;
 
     @Override
-    public void exec(Env env, Scope scope, Writer writer) {
+    public void onRender(Env env, Scope scope, Writer writer) {
 
         previousClass = getParam("previousClass", "previous", scope);
         nextClass = getParam("nextClass", "next", scope);
@@ -110,7 +110,8 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         }
 
         scope.setLocal("pages", pages);
-        stat.exec(env, scope, writer);
+
+        renderBody(env, scope, writer);
     }
 
 

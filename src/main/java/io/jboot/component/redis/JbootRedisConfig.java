@@ -38,7 +38,6 @@ public class JbootRedisConfig {
     private Long minEvictableIdleTimeMillis;
     private Long timeBetweenEvictionRunsMillis;
     private Integer numTestsPerEvictionRun;
-    private String channel;
     private Integer maxAttempts;
 
 
@@ -144,14 +143,6 @@ public class JbootRedisConfig {
 
     public void setNumTestsPerEvictionRun(Integer numTestsPerEvictionRun) {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
     }
 
     public Integer getMaxAttempts() {

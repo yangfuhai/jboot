@@ -54,7 +54,7 @@ public class JbootAppListenerManager implements JbootAppListener {
                 continue;
             }
 
-            JbootAppListener listener = ClassKits.newInstance(clazz);
+            JbootAppListener listener = ClassKits.newInstance(clazz, false);
             if (listener != null) {
                 listeners.add(listener);
             }
@@ -184,7 +184,13 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onAopConfigure(Binder binder) {
-
+    public void onGuiceConfigure(Binder binder) {
+        for (JbootAppListener listener : listeners) {
+            try {
+                listener.onGuiceConfigure(binder);
+            } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
+            }
+        }
     }
 }

@@ -17,13 +17,14 @@ package io.jboot.core.cache.redis;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.component.redis.JbootRedis;
 import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.cache.JbootCacheBase;
-import io.jboot.component.redis.JbootRedis;
-import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public class JbootRedisCacheImpl extends JbootCacheBase {
@@ -40,7 +41,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         }
 
         if (redis == null) {
-            throw new JbootException("can not get redis,please check your jboot.properties");
+            throw new JbootIllegalConfigException("can not get redis, please check your jboot.properties");
         }
     }
 
@@ -65,14 +66,21 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             // if value is null : java.lang.NullPointerException: null at redis.clients.jedis.Protocol.sendCommand(Protocol.java:99)
             return;
         }
+        if (liveSeconds <= 0) {
+            put(cacheName, key, value);
+            return;
+        }
 
         redis.setex(buildKey(cacheName, key), liveSeconds, value);
     }
 
     @Override
     public List getKeys(String cacheName) {
-        List<String> keys = new ArrayList<String>();
-        keys.addAll(redis.keys(cacheName + ":*"));
+        Set<String> keyset = redis.keys(cacheName + ":*");
+        if (keyset == null || keyset.size() == 0) {
+            return null;
+        }
+        List<String> keys = new ArrayList<>(keyset);
         for (int i = 0; i < keys.size(); i++) {
             keys.set(i, keys.get(i).substring(cacheName.length() + 3));
         }
@@ -123,6 +131,10 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     @Override
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
+        if (liveSeconds <= 0) {
+            return get(cacheName, key, dataLoader);
+        }
+        
         Object data = get(cacheName, key);
         if (data == null) {
             data = dataLoader.load();

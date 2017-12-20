@@ -16,12 +16,12 @@
 package io.jboot.core.mq.rabbitmq;
 
 import com.google.common.collect.Maps;
+import com.jfinal.log.Log;
 import com.rabbitmq.client.*;
 import io.jboot.Jboot;
-import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
-import io.jboot.exception.JbootException;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 
 import java.io.IOException;
@@ -33,31 +33,29 @@ import java.util.Map;
 public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
 
-    Connection connection;
-    Map<String, Channel> channelMap = Maps.newConcurrentMap();
+    private static final Log LOG = Log.getLog(JbootRabbitmqImpl.class);
+    private Connection connection;
+    private Map<String, Channel> channelMap = Maps.newConcurrentMap();
 
     public JbootRabbitmqImpl() {
 
-        JbootmqRabbitmqConfig config = Jboot.config(JbootmqRabbitmqConfig.class);
+        initChannels();
+
+        JbootmqRabbitmqConfig rabbitmqConfig = Jboot.config(JbootmqRabbitmqConfig.class);
 
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(config.getHost());
-        factory.setPort(config.getPortAsInt());
+        factory.setHost(rabbitmqConfig.getHost());
+        factory.setPort(rabbitmqConfig.getPortAsInt());
 
-        if (StringUtils.isNotBlank(config.getVirtualHost())) {
-            factory.setVirtualHost(config.getVirtualHost());
+        if (StringUtils.isNotBlank(rabbitmqConfig.getVirtualHost())) {
+            factory.setVirtualHost(rabbitmqConfig.getVirtualHost());
         }
-        if (StringUtils.isNotBlank(config.getUsername())) {
-            factory.setUsername(config.getUsername());
-        }
-
-        if (StringUtils.isNotBlank(config.getPassword())) {
-            factory.setPassword(config.getPassword());
+        if (StringUtils.isNotBlank(rabbitmqConfig.getUsername())) {
+            factory.setUsername(rabbitmqConfig.getUsername());
         }
 
-        String channelString = config.getChannel();
-        if (StringUtils.isBlank(channelString)) {
-            throw new JbootException("jboot.mq.rabbitmq.channel config cannot empty in jboot.properties");
+        if (StringUtils.isNotBlank(rabbitmqConfig.getPassword())) {
+            factory.setPassword(rabbitmqConfig.getPassword());
         }
 
         try {
@@ -66,13 +64,10 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             throw new JbootException("can not connection rabbitmq server", e);
         }
 
-        String[] channels = channelString.split(",");
         for (String toChannel : channels) {
             registerListner(getChannel(toChannel), toChannel);
         }
 
-
-        registerListner(getChannel(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL), JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL);
     }
 
     private void registerListner(final Channel channel, String toChannel) {
@@ -134,12 +129,10 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void enqueue(Object message, String toChannel) {
+
+        ensureChannelExist(toChannel);
+
         Channel channel = getChannel(toChannel);
-
-        if (channel == null) {
-            return;
-        }
-
         try {
             byte[] bytes = Jboot.me().getSerializer().serialize(message);
             channel.basicPublish("", toChannel, MessageProperties.BASIC, bytes);
@@ -151,12 +144,9 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     @Override
     public void publish(Object message, String toChannel) {
 
+        ensureChannelExist(toChannel);
+
         Channel channel = getChannel(toChannel);
-
-        if (channel == null) {
-            return;
-        }
-
         try {
             byte[] bytes = Jboot.me().getSerializer().serialize(message);
             channel.basicPublish(toChannel, "", MessageProperties.BASIC, bytes);

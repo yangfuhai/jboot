@@ -6,12 +6,12 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.1.4</version>
+    <version>1.1.9</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
     <url>http://jboot.io</url>
-    <description>jboot is a similar springboot project base on jfinal and undertow.</description>
+    <description>Jboot is a similar SpringCloud project base on JFinal, Dubbo, Hystrix and Undertow.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -187,7 +187,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.41</version>
+            <version>1.2.43</version>
         </dependency>
 
         <dependency>
@@ -217,6 +217,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.11.2</version>
@@ -226,7 +232,7 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>1.7.0.Final</version>
+            <version>1.7.1.Final</version>
             <scope>provided</scope>
         </dependency>
 
@@ -264,7 +270,7 @@
         <dependency>
             <groupId>io.shardingjdbc</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.1</version>
         </dependency>
 
         <dependency>
@@ -307,7 +313,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
-            <version>2.5.7</version>
+            <version>2.5.8</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -370,6 +376,18 @@
             <artifactId>zbus</artifactId>
             <version>0.11.4</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>1.5.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
         </dependency>
 
     </dependencies>

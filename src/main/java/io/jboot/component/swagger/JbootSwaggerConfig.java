@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,8 +29,12 @@ public class JbootSwaggerConfig {
     private String termsOfService;
     private String host;
 
-    // 多个联系方式用分号；隔开  例如：jboot.swagger.contact=email:fuhai999@163.com;qq:1506615067
-    private String contact;
+    private String contactName;
+    private String contactEmail;
+    private String contactUrl;
+
+    private String licenseName;
+    private String licenseUrl;
 
     public String getPath() {
         return path;
@@ -84,12 +88,44 @@ public class JbootSwaggerConfig {
         this.host = host;
     }
 
-    public String getContact() {
-        return contact;
+    public String getContactName() {
+        return contactName;
     }
 
-    public void setContact(String contact) {
-        this.contact = contact;
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public String getContactUrl() {
+        return contactUrl;
+    }
+
+    public void setContactUrl(String contactUrl) {
+        this.contactUrl = contactUrl;
+    }
+
+    public String getLicenseName() {
+        return licenseName;
+    }
+
+    public void setLicenseName(String licenseName) {
+        this.licenseName = licenseName;
+    }
+
+    public String getLicenseUrl() {
+        return licenseUrl;
+    }
+
+    public void setLicenseUrl(String licenseUrl) {
+        this.licenseUrl = licenseUrl;
     }
 }
 

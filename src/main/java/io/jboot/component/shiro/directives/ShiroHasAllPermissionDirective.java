@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,23 +31,29 @@ import io.jboot.web.directive.annotation.JFinalDirective;
  */
 @JFinalDirective("shiroHasAllPermission")
 public class ShiroHasAllPermissionDirective extends JbootShiroDirectiveBase {
-    private Expr[] exprs;
 
+    @Override
     public void setExprList(ExprList exprList) {
-        exprs = exprList.getExprArray();
+        if (exprList.getExprArray().length == 0) {
+            throw new IllegalArgumentException("#shiroHasAllPermission argument must not be empty");
+        }
+        super.setExprList(exprList);
     }
 
-    public void exec(Env env, Scope scope, Writer writer) {
-        if (getSubject() != null && ArrayUtils.isNotEmpty(exprs)) {
+    @Override
+    public void onRender(Env env, Scope scope, Writer writer) {
+        if (getSubject() != null && ArrayUtils.isNotEmpty(exprList.getExprArray())) {
             boolean hasAllPermission = true;
-            for (Expr expr : exprs)
+            for (Expr expr : exprList.getExprArray())
                 if (!getSubject().isPermitted(expr.toString())) {
                     hasAllPermission = false;
                     break;
                 }
 
-            if (hasAllPermission)
-                stat.exec(env, scope, writer);
+            if (hasAllPermission) {
+                renderBody(env, scope, writer);
+            }
+
         }
     }
 

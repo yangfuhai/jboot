@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -80,7 +80,7 @@ public class JbootScheduleManager {
             }
             FixedDelay fixedDelayJob = (FixedDelay) clazz.getAnnotation(FixedDelay.class);
             Runnable runnable = (Runnable) ClassKits.newInstance(clazz);
-            Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
+            Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable, fixedDelayJob.period());
             try {
                 fixedScheduler.scheduleWithFixedDelay(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
             } catch (Exception e) {
@@ -95,7 +95,7 @@ public class JbootScheduleManager {
             }
             FixedRate fixedDelayJob = (FixedRate) clazz.getAnnotation(FixedRate.class);
             Runnable runnable = (Runnable) ClassKits.newInstance(clazz);
-            Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
+            Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable, fixedDelayJob.period());
             try {
                 fixedScheduler.scheduleAtFixedRate(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
             } catch (Exception e) {

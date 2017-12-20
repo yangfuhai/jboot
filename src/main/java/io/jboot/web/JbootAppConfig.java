@@ -17,6 +17,7 @@ package io.jboot.web;
 
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
+import com.jfinal.json.FastJsonFactory;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
@@ -42,6 +43,7 @@ import io.jboot.schedule.JbootScheduleManager;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
+import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
@@ -73,7 +75,7 @@ public class JbootAppConfig extends JFinalConfig {
     public void configConstant(Constants constants) {
 
 //        PropKit.use("jboot.properties");
-        constants.setRenderFactory(new JbootRenderFactory());
+        constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.me().isDevMode());
         ApiConfigKit.setDevMode(Jboot.me().isDevMode());
 
@@ -88,6 +90,7 @@ public class JbootAppConfig extends JFinalConfig {
         constants.setReportAfterInvocation(false);
 
         constants.setControllerFactory(JbootControllerManager.me());
+        constants.setJsonFactory(new FastJsonFactory());
 
         JbootAppListenerManager.me().onJfinalConstantConfig(constants);
     }
@@ -185,6 +188,8 @@ public class JbootAppConfig extends JFinalConfig {
 
     @Override
     public void configHandler(Handlers handlers) {
+
+        handlers.add(new ActionCacheHandler());
         handlers.add(new JbootHandler());
 
         //用于对jfinal的拦截器进行注入

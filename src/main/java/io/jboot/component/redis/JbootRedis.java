@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,6 +37,7 @@ public interface JbootRedis {
      */
     public String set(Object key, Object value);
 
+
     public Long setnx(Object key, Object value);
 
     /**
@@ -59,6 +60,14 @@ public interface JbootRedis {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(Object key);
+
+    /**
+     * 获取 数据不进行反序列 , 如果之前设置的是非String类型，得到String后自行转化
+     *
+     * @param key
+     * @return
+     */
+    public String getWithoutSerialize(Object key);
 
     /**
      * 删除给定的一个 key

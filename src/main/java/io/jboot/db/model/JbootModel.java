@@ -15,11 +15,9 @@
  */
 package io.jboot.db.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.Model;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Table;
-import com.jfinal.plugin.activerecord.TableMapping;
+import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.db.dialect.IJbootModelDialect;
@@ -51,7 +49,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @param value
      */
     public void putCache(Object key, Object value) {
-        Jboot.me().getCache().put(tableName(), key, value, cacheTime);
+        Jboot.me().getCache().put(getTableName(), key, value, cacheTime);
     }
 
     /**
@@ -62,7 +60,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public <T> T getCache(Object key) {
-        return Jboot.me().getCache().get(tableName(), key);
+        return Jboot.me().getCache().get(getTableName(), key);
     }
 
     /**
@@ -74,7 +72,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public <T> T getCache(Object key, IDataLoader dataloader) {
-        return Jboot.me().getCache().get(tableName(), key, dataloader, cacheTime);
+        return Jboot.me().getCache().get(getTableName(), key, dataloader, cacheTime);
     }
 
     /**
@@ -84,7 +82,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     public void removeCache(Object key) {
         if (key == null) return;
-        Jboot.me().getCache().remove(tableName(), key);
+        Jboot.me().getCache().remove(getTableName(), key);
     }
 
 
@@ -278,11 +276,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     @Override
     public boolean update() {
-        Boolean fromCopier = getBoolean(ModelCopier.MODEL_FROM_COPIER);
-        if (fromCopier != null && fromCopier) {
-            keepCopier();
-        }
-
         if (hasColumn(COLUMN_MODIFIED)) {
             set(COLUMN_MODIFIED, new Date());
         }
@@ -299,15 +292,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public String addAction() {
-        return tableName() + ":add";
+        return getTableName() + ":add";
     }
 
     public String deleteAction() {
-        return tableName() + ":delete";
+        return getTableName() + ":delete";
     }
 
     public String updateAction() {
-        return tableName() + ":update";
+        return getTableName() + ":update";
     }
 
     /**
@@ -344,7 +337,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public M findFirstByColumn(String column, Object value) {
-        String sql = getDialect().forFindByColumns(tableName(), "*", Columns.create(column, value).getList(), null, 1);
+        String sql = getDialect().forFindByColumns(getTableName(), "*", Columns.create(column, value).getList(), null, 1);
         return findFirst(sql, value);
     }
 
@@ -355,7 +348,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public M findFirstByColumn(Column column) {
-        String sql = getDialect().forFindByColumns(tableName(), "*", Columns.create(column).getList(), null, 1);
+        String sql = getDialect().forFindByColumns(getTableName(), "*", Columns.create(column).getList(), null, 1);
         return findFirst(sql, column.getValue());
     }
 
@@ -366,7 +359,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public M findFirstByColumns(Columns columns) {
-        String sql = getDialect().forFindByColumns(tableName(), "*", columns.getList(), null, 1);
+        String sql = getDialect().forFindByColumns(getTableName(), "*", columns.getList(), null, 1);
         LinkedList<Object> params = new LinkedList<Object>();
 
         if (ArrayUtils.isNotEmpty(columns.getList())) {
@@ -384,7 +377,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public List<M> findAll() {
-        String sql = getDialect().forFindByColumns(tableName(), "*", null, null, null);
+        String sql = getDialect().forFindByColumns(getTableName(), "*", null, null, null);
         return find(sql);
     }
 
@@ -471,7 +464,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             }
         }
 
-        String sql = getDialect().forFindByColumns(tableName(), "*", columns, orderBy, count);
+        String sql = getDialect().forFindByColumns(getTableName(), "*", columns, orderBy, count);
         return params.isEmpty() ? find(sql) : find(sql, params.toArray());
     }
 
@@ -538,7 +531,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns, String orderBy) {
         String selectPartSql = getDialect().forPaginateSelect("*");
-        String fromPartSql = getDialect().forPaginateFrom(tableName(), columns, orderBy);
+        String fromPartSql = getDialect().forPaginateFrom(getTableName(), columns, orderBy);
 
         LinkedList<Object> params = new LinkedList<Object>();
 
@@ -552,14 +545,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    public String cacheName() {
-        return tableName();
-    }
-
 
     private transient Table table;
 
-    public String tableName() {
+    @JSONField(serialize = false)
+    protected String getTableName() {
         if (table == null) {
             table = TableMapping.me().getTable(getUsefulClass());
             if (table == null) {
@@ -569,8 +559,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return table.getName();
     }
 
+
     private transient String primaryKey;
 
+    @JSONField(serialize = false)
     protected String getPrimaryKey() {
         if (primaryKey != null) {
             return primaryKey;
@@ -586,13 +578,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private transient Class<?> primaryType;
 
-    public Class<?> getPrimaryType() {
+
+    @JSONField(serialize = false)
+    protected Class<?> getPrimaryType() {
         if (primaryType == null) {
             primaryType = TableMapping.me().getTable(getUsefulClass()).getColumnType(getPrimaryKey());
         }
         return primaryType;
     }
 
+
+    @JSONField(serialize = false)
     protected String[] getPrimaryKeys() {
         Table t = TableMapping.me().getTable(getUsefulClass());
         if (t == null) {
@@ -600,6 +596,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
         return t.getPrimaryKey();
     }
+
+
 
     protected boolean hasColumn(String columnLabel) {
         return TableMapping.me().getTable(getUsefulClass()).hasColumnLabel(columnLabel);
@@ -670,27 +668,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
     }
 
-    public Map<String, Object> _getAttrsAsMap() {
-        return _getAttrs();
-    }
-
-    /**
-     * 通过调用 keepCopier ，才能把从modelCopier复制过来的数据保存到数据库
-     */
-    public void keepCopier() {
-        Table table = TableMapping.me().getTable(getUsefulClass());
-        if (table == null) {
-            throw new RuntimeException("can't get table of " + getUsefulClass() + " , maybe jboot install incorrect");
-        }
-        Map<String, Class<?>> map = table.getColumnTypeMap();
-        for (Map.Entry<String, Class<?>> entry : map.entrySet()) {
-            Object o = get(entry.getKey());
-            if (o != null) {
-                set(entry.getKey(), o);
-            }
-        }
-    }
-
 
     @Override
     public boolean equals(Object o) {
@@ -709,4 +686,5 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
         return id.equals(get(getPrimaryKey()));
     }
+
 }

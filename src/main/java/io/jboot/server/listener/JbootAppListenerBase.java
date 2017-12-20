@@ -86,7 +86,7 @@ public class JbootAppListenerBase implements JbootAppListener {
     }
 
     @Override
-    public void onAopConfigure(Binder binder) {
+    public void onGuiceConfigure(Binder binder) {
 
     }
 }

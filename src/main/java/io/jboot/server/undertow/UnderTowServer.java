@@ -16,8 +16,6 @@
 package io.jboot.server.undertow;
 
 import com.codahale.metrics.servlets.AdminServlet;
-import com.jfinal.aop.InterceptorManager;
-import com.jfinal.config.Routes;
 import com.jfinal.core.JFinalFilter;
 import com.jfinal.log.Log;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
@@ -50,9 +48,6 @@ import org.apache.shiro.web.servlet.ShiroFilter;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContextListener;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,8 +74,6 @@ public class UnderTowServer extends JbootServer {
 
         UnderTowClassloader classloader = new UnderTowClassloader(UnderTowServer.class.getClassLoader());
         classloader.setDefaultAssertionStatus(false);
-
-        initJfinalConfig();
 
 
         deploymentInfo = buildDeploymentInfo(classloader);
@@ -165,6 +158,7 @@ public class UnderTowServer extends JbootServer {
             deploymentInfo.addListeners(Servlets.listener(JbootHealthCheckServletContextListener.class));
         }
 
+
         io.jboot.server.Servlets jbootServlets = new io.jboot.server.Servlets();
         ContextListeners listeners = new ContextListeners();
 
@@ -186,48 +180,8 @@ public class UnderTowServer extends JbootServer {
                         .addMapping("/*"));
 
         return deploymentInfo;
-
-
     }
 
-    private void initJfinalConfig() {
-        try {
-            Class jfinalCoreConfigClass = Class.forName("com.jfinal.core.Config");
-
-            Field routesField = jfinalCoreConfigClass.getDeclaredField("routes");
-            routesField.setAccessible(true);
-            Routes routes = (Routes) routesField.get(null);
-
-
-            Field controllerKeySet = Routes.class.getDeclaredField("controllerKeySet");
-            controllerKeySet.setAccessible(true);
-            controllerKeySet.set(null, new HashSet<>());
-
-
-            Field routesList = Routes.class.getDeclaredField("routesList");
-            routesList.setAccessible(true);
-            routesList.set(null, new ArrayList<>());
-
-
-            Field routeItemList = Routes.class.getDeclaredField("routeItemList");
-            routeItemList.setAccessible(true);
-            routeItemList.set(routes, new ArrayList<>());
-
-            Field injectInters = Routes.class.getDeclaredField("injectInters");
-            injectInters.setAccessible(true);
-            injectInters.set(routes, new ArrayList<>());
-
-
-            Field singletonMapField = InterceptorManager.class.getDeclaredField("singletonMap");
-            singletonMapField.setAccessible(true);
-            Map map = (Map) singletonMapField.get(InterceptorManager.me());
-            map.clear();
-
-
-        } catch (Throwable ex) {
-            ex.printStackTrace();
-        }
-    }
 
 
     @Override

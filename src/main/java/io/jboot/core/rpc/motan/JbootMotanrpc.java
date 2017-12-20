@@ -24,7 +24,7 @@ import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
 import io.jboot.core.rpc.JbootrpcConfig;
-import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 
 import java.util.Map;
@@ -111,7 +111,7 @@ public class JbootMotanrpc extends JbootrpcBase {
          */
         else if (jbootrpcConfig.isRedirectCallMode()) {
             if (StringUtils.isBlank(jbootrpcConfig.getDirectUrl())) {
-                throw new JbootException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
+                throw new JbootIllegalConfigException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
             }
             refererConfig.setDirectUrl(jbootrpcConfig.getDirectUrl());
         }

@@ -28,6 +28,16 @@ public class JbootmqConfig {
 
     public String type = TYPE_REDIS;
 
+    private String channel;
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
     public String getType() {
         return type;
     }
