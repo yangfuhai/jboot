@@ -237,7 +237,6 @@ public class ClassScanner {
 
             JarFile jarFile = null;
             try {
-                path = URLDecoder.decode(path, Const.DEFAULT_ENCODING);
                 jarFile = new JarFile(path);
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
@@ -311,6 +310,7 @@ public class ClassScanner {
                 String JAVA_HOME = new File(System.getProperty("java.home"), "..").getCanonicalPath();
                 for (URL url : urLs) {
                     String path = url.getPath();
+                    path = URLDecoder.decode(path, Const.DEFAULT_ENCODING);
 
                     // path : /d:/xxx
                     if (path.startsWith("/") && path.indexOf(":") == 2) {
