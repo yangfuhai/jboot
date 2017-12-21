@@ -50,13 +50,13 @@ public class ActionCacheDemo extends JbootController {
     }
 
 
-    @ActionCacheEnable(cacheName = "test")
+    @ActionCacheEnable(group = "test")
     public void cache() {
         System.out.println("cache() invoke!!!!");
         renderHtml("render ok");
     }
 
-    @ActionCacheEnable(cacheName = "test")
+    @ActionCacheEnable(group = "test")
     public void json() {
         System.out.println("json() invoke!!!!");
         setAttr("user", "Michael Yang");
@@ -64,7 +64,7 @@ public class ActionCacheDemo extends JbootController {
     }
 
 
-    @ActionCacheEnable(cacheName = "test", liveSeconds = 5)
+    @ActionCacheEnable(group = "test", liveSeconds = 5)
     public void time() {
         System.out.println("json() invoke!!!!");
         setAttr("user", "Michael Yang");

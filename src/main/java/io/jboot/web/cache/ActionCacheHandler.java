@@ -19,10 +19,10 @@ import com.jfinal.core.Action;
 import com.jfinal.core.JFinal;
 import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
+import com.jfinal.render.RenderManager;
 import io.jboot.Jboot;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.render.JbootRenderFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,9 +90,9 @@ public class ActionCacheHandler extends Handler {
     }
 
     private void exec(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, ActionCacheEnable actionCacheEnable) {
-        String cacheName = actionCacheEnable.cacheName();
+        String cacheName = actionCacheEnable.group();
         if (StringUtils.isBlank(cacheName)) {
-            throw new IllegalArgumentException("ActionCacheEnable cacheName must not be empty " +
+            throw new IllegalArgumentException("ActionCacheEnable group must not be empty " +
                     "in " + action.getControllerClass().getName() + "." + action.getMethodName());
         }
         String cacheKey = target;
@@ -116,7 +116,10 @@ public class ActionCacheHandler extends Handler {
                 isHandled[0] = true;
             } catch (Exception e) {
                 LOG.error(e.toString(), e);
-                JbootRenderFactory.me().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
+                RenderManager.me()
+                        .getRenderFactory()
+                        .getErrorRender(500).setContext(request, response, action.getViewPath())
+                        .render();
             } finally {
                 if (writer != null) {
                     writer.close();

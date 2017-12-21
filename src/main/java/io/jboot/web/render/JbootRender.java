@@ -21,9 +21,6 @@ import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.cache.ActionCache;
-import io.jboot.web.cache.ActionCacheEnable;
-import io.jboot.web.cache.ActionCacheContext;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -74,16 +71,8 @@ public class JbootRender extends Render {
 
         String finalHtml = config.isEnableCdn() ? processCDN(html) : html;
 
-        ActionCacheEnable actionCacheEnable = ActionCacheContext.get();
-        if (actionCacheEnable != null) {
-            String key = ActionCacheContext.getKey();
-            String cacheName = actionCacheEnable.cacheName();
-            if (StringUtils.isBlank(cacheName)) {
-                throw new IllegalArgumentException("ActionCacheEnable cacheName must not be empty");
-            }
-            ActionCache actionCache = new ActionCache(contentType, finalHtml);
-            Jboot.me().getCache().put(cacheName, key, actionCache, actionCacheEnable.liveSeconds());
-        }
+        RenderHelpler.actionCacheExec(finalHtml, contentType);
+        
         renderHtml(finalHtml, contentType);
     }
 

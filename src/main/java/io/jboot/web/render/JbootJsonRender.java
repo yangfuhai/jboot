@@ -18,12 +18,7 @@ package io.jboot.web.render;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.render.JsonRender;
 import com.jfinal.render.RenderException;
-import io.jboot.Jboot;
 import io.jboot.JbootConstants;
-import io.jboot.utils.StringUtils;
-import io.jboot.web.cache.ActionCache;
-import io.jboot.web.cache.ActionCacheContext;
-import io.jboot.web.cache.ActionCacheEnable;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -95,16 +90,7 @@ public class JbootJsonRender extends JsonRender {
             buildJsonText();
         }
 
-        ActionCacheEnable actionCacheEnable = ActionCacheContext.get();
-        if (actionCacheEnable != null) {
-            String key = ActionCacheContext.getKey();
-            String cacheName = actionCacheEnable.cacheName();
-            if (StringUtils.isBlank(cacheName)) {
-                throw new IllegalArgumentException("ActionCacheEnable cacheName must not be empty");
-            }
-            ActionCache actionCache = new ActionCache(forIE ? contentTypeForIE : contentType, jsonText);
-            Jboot.me().getCache().put(cacheName, key, actionCache, actionCacheEnable.liveSeconds());
-        }
+        RenderHelpler.actionCacheExec(jsonText, forIE ? contentTypeForIE : contentType);
 
         PrintWriter writer = null;
         try {
@@ -124,6 +110,7 @@ public class JbootJsonRender extends JsonRender {
             }
         }
     }
+
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void buildJsonText() {

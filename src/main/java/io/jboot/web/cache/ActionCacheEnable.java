@@ -22,7 +22,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface ActionCacheEnable {
 
-    String cacheName();
+    String group() default "action_cache_defalut";
 
     /**
      * 0-默认永久

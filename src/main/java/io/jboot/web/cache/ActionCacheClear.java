@@ -22,6 +22,6 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 public @interface ActionCacheClear {
 
-    String[] value();
+    String[] value() default "action_cache_defalut";
 
 }
