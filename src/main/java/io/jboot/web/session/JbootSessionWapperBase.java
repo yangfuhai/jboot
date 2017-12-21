@@ -22,7 +22,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
-import java.util.Enumeration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -67,17 +66,6 @@ public abstract class JbootSessionWapperBase implements HttpSession {
         throw new RuntimeException("getSessionContext method not finished.");
     }
 
-
-    @Override
-    public Enumeration<String> getAttributeNames() {
-        throw new RuntimeException("getAttributeNames method not finished.");
-    }
-
-    @Override
-    public String[] getValueNames() {
-        throw new RuntimeException("getValueNames method not finished.");
-    }
-
     @Override
     public void putValue(String name, Object value) {
         setAttribute(name, value);
@@ -90,7 +78,7 @@ public abstract class JbootSessionWapperBase implements HttpSession {
 
     @Override
     public void removeValue(String name) {
-
+        removeAttribute(name);
     }
 
     @Override
@@ -104,11 +92,7 @@ public abstract class JbootSessionWapperBase implements HttpSession {
     }
 
 
-    public String buildKey(String name) {
-        return String.format("%s:%s", getOrCreatSessionId(), name);
-    }
-
-    private String getOrCreatSessionId() {
+    protected String getOrCreatSessionId() {
         String sessionid = getCookie("JSESSIONID");
         if (StringUtils.isNotBlank(sessionid)) {
             return sessionid;

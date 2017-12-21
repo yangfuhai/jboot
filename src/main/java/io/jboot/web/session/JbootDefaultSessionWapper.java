@@ -19,38 +19,83 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import javax.servlet.http.HttpSession;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 
 public class JbootDefaultSessionWapper extends JbootSessionWapperBase implements HttpSession {
 
 
-    private static Cache<String, Object> sessions = CacheBuilder.newBuilder()
+    private static Cache<String, Map<String, Object>> sessions = CacheBuilder.newBuilder()
             .expireAfterAccess(40, TimeUnit.MINUTES)
+            .expireAfterWrite(40, TimeUnit.MINUTES)
             .build();
 
 
     @Override
     public Object getAttribute(String name) {
-        String key = buildKey(name);
-        return sessions.getIfPresent(key);
+        Map<String, Object> map = sessions.getIfPresent(getOrCreatSessionId());
+        return map == null ? null : map.get(name);
     }
-
-
 
 
     @Override
     public void setAttribute(String name, Object value) {
-        String key = buildKey(name);
-        sessions.put(key, value);
-    }
+        try {
+            Map<String, Object> map = sessions.get(getOrCreatSessionId(), new Callable<Map<String, Object>>() {
+                @Override
+                public Map<String, Object> call() throws Exception {
+                    return new HashMap<>();
+                }
+            });
+            map.put(name, value);
 
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Override
     public void removeAttribute(String name) {
-        String key = buildKey(name);
-        sessions.invalidate(key);
+        Map<String, Object> map = sessions.getIfPresent(getOrCreatSessionId());
+        if (map != null) {
+            map.remove(name);
+        }
     }
 
+
+    @Override
+    public Enumeration<String> getAttributeNames() {
+        Map<String, Object> map = sessions.getIfPresent(getOrCreatSessionId());
+        if (map == null) {
+            map = new HashMap<>();
+        }
+
+        Set<String> keyset = map.keySet();
+        final Iterator<String> iterator = keyset.iterator();
+        return new Enumeration<String>() {
+            @Override
+            public boolean hasMoreElements() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public String nextElement() {
+                return iterator.next();
+            }
+        };
+    }
+
+
+    @Override
+    public String[] getValueNames() {
+        Map<String, Object> map = sessions.getIfPresent(getOrCreatSessionId());
+        if (map == null) {
+            map = new HashMap<>();
+        }
+        return map.keySet().toArray(new String[]{});
+    }
 }
