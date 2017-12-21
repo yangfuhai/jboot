@@ -39,7 +39,7 @@ public class SessionDemo extends JbootController {
         Jboot.run(args);
     }
 
-    @Before(SessionInViewInterceptor.class)
+
     public void index() {
 
         User user = new User();
@@ -47,6 +47,11 @@ public class SessionDemo extends JbootController {
         user.setName("Micahel Yang");
 
         setSessionAttr("user", user);
+        renderHtml("session已经成功设置数据，请访问<a href=\"/session/show\">这里</a>查看session数据");
+    }
+
+    @Before(SessionInViewInterceptor.class)
+    public void show() {
         render("/session.html");
     }
 
