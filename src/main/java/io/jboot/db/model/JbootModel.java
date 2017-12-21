@@ -32,6 +32,8 @@ import java.util.*;
 @SuppressWarnings("serial")
 public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
+    public static final String AUTO_COPY_MODEL = "_auto_copy_model_";
+
     private static final String COLUMN_CREATED = "created";
     private static final String COLUMN_MODIFIED = "modified";
 
@@ -258,11 +260,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (null == get(getPrimaryKey()) && String.class == getPrimaryType()) {
             set(getPrimaryKey(), StringUtils.uuid());
         }
-        boolean saved = super.save();
-        if (saved) {
+
+        Boolean autoCopyModel = get(AUTO_COPY_MODEL);
+        boolean saveSuccess = autoCopyModel == true ? copyModel().saveNormal() : saveNormal();
+        if (saveSuccess) {
             Jboot.sendEvent(addAction(), this);
         }
-        return saved;
+        return saveSuccess;
+    }
+
+
+    boolean saveNormal() {
+        return super.save();
     }
 
 
@@ -308,15 +317,20 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(COLUMN_MODIFIED, new Date());
         }
 
-        boolean update = super.update();
-        if (update) {
+        Boolean autoCopyModel = get(AUTO_COPY_MODEL);
+        boolean updateSuccess = autoCopyModel == true ? copyModel().updateNormal() : updateNormal();
+        if (updateSuccess) {
             Object id = get(getPrimaryKey());
             if (cacheEnable) {
                 removeCache(id);
             }
             Jboot.sendEvent(updateAction(), findById(id));
         }
-        return update;
+        return updateSuccess;
+    }
+
+    boolean updateNormal() {
+        return super.update();
     }
 
     public String addAction() {
