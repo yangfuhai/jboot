@@ -134,6 +134,7 @@ public class ClassScanner {
         excludeJars.add("minlog-");
         excludeJars.add("swagger-");
         excludeJars.add("validation-api-");
+        excludeJars.add("checker-compat-qual-");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();
