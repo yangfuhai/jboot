@@ -436,6 +436,16 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
                 <version>1.10</version>
+
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <goals>
+                            <goal>generate-daemons</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                
                 <configuration>
 
 
