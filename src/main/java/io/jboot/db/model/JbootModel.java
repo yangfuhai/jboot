@@ -97,7 +97,35 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         M m = null;
         try {
             m = (M) getUsefulClass().newInstance();
-            m._setAttrs(this._getAttrs());
+            m.put(_getAttrs());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return m;
+    }
+
+    /**
+     * 在 RPC 传输的时候，通过 Controller 传入到Service
+     * 不同的序列化方案 可能导致 getModifyFlag 并未设置，可能造成无法保存到数据库
+     * 因此需要 通过这个方法 拷贝数据库对于字段，然后再进行更新或保存
+     *
+     * @return
+     */
+    public M copyModel() {
+        M m = null;
+        try {
+            m = (M) getUsefulClass().newInstance();
+            Table table = TableMapping.me().getTable(getUsefulClass());
+            if (table == null) {
+                throw new JbootException("can't get table of " + getUsefulClass() + " , maybe config incorrect");
+            }
+            Set<String> attrKeys = table.getColumnTypeMap().keySet();
+            for (String attrKey : attrKeys) {
+                Object o = this.get(attrKey);
+                if (o != null) {
+                    m.set(attrKey, o);
+                }
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -545,7 +573,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-
     private transient Table table;
 
     @JSONField(serialize = false)
@@ -596,7 +623,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
         return t.getPrimaryKey();
     }
-
 
 
     protected boolean hasColumn(String columnLabel) {
