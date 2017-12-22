@@ -39,7 +39,7 @@ public class ActionCacheDemo extends JbootController {
 
     public void index() {
         System.out.println("index() invoke!!!!");
-        renderHtml("htmlok");
+        renderHtml("index");
     }
 
     public void clear() {
@@ -47,7 +47,6 @@ public class ActionCacheDemo extends JbootController {
         renderHtml("clear ok!!!");
 
     }
-
 
     @ActionCacheEnable(group = "test#(id)")
     public void cache() {
