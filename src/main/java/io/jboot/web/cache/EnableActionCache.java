@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface ActionCacheEnable {
+public @interface EnableActionCache {
 
     String group() default "action_cache_defalut";
 

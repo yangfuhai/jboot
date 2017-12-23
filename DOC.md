@@ -1241,28 +1241,26 @@ jboot.swagger.host=127.0.0.1:8080
 代码如下：
 
 ```java
-@SwaggerAPIs(name = "测试接口", description = "这个接口集合的描述")
 @RequestMapping("/swaggerTest")
+@Api(description = "用户相关接口文档", basePath = "/swaggerTest", tags = "abc")
 public class MySwaggerTestController extends JbootController {
 
-
-    @SwaggerAPI(description = "测试description描述", summary = "测试summary", operationId = "testOnly",
-            params = {@SwaggerParam(name = "name", description = "请输入账号名称")}
-    )
+    @ApiOperation(value = "用户列表", httpMethod = "GET", notes = "user list")
     public void index() {
         renderJson(Ret.ok("k1", "v1").set("name", getPara("name")));
     }
 
 
-    @SwaggerAPI(description = "进行用户登录操作", summary = "用户登录API", method = "post",
-            params = {
-                    @SwaggerParam(name = "name", description = "请输入账号名称"),
-                    @SwaggerParam(name = "pwd", description = "请输入密码", definition = "MySwaggerPeople")
-            }
-    )
-    public void login() {
-        renderJson(Ret.ok("k2", "vv").set("name", getPara("name")));
+    @ApiOperation(value = "添加用户", httpMethod = "POST", notes = "add user")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户名", paramType = "form", dataType = "string", required = true),
+            @ApiImplicitParam(name = "k1", value = "k1", paramType = "form", dataType = "string", required = true),
+    })
+    public void add(String username) {
+        renderJson(Ret.ok("k1", "v1").set("username", username));
     }
+
+
 }
 ```
 
@@ -1277,17 +1275,7 @@ public class MySwaggerTestController extends JbootController {
 
 在图片2中，我们可以输入参数，并点击 `Execute` 按钮进行测试。
 
-## 5个swagger注解
 
-
-| 指令         |  描述  |
-| ------------- | -----|
-| SwaggerAPIs  | 在Controller上进行配置，指定Controller api的描述|
-| SwaggerAPI | 在Controller上某个action进行注解 |
-| SwaggerDefinition  |  |
-| SwaggerDefinitionEnum  |  |
-| SwaggerParam  |  |
-| SwaggerResponse  |  | 
 
 # 其他
 

@@ -51,7 +51,7 @@ public class ActionCacheHandler extends Handler {
             return;
         }
 
-        ActionCacheEnable actionCache = getActionCache(action);
+        EnableActionCache actionCache = getActionCache(action);
         if (actionCache == null) {
             next.handle(target, request, response, isHandled);
             return;
@@ -85,15 +85,15 @@ public class ActionCacheHandler extends Handler {
         }
     }
 
-    public ActionCacheEnable getActionCache(Action action) {
-        ActionCacheEnable actionCache = action.getMethod().getAnnotation(ActionCacheEnable.class);
-        return actionCache != null ? actionCache : action.getControllerClass().getAnnotation(ActionCacheEnable.class);
+    public EnableActionCache getActionCache(Action action) {
+        EnableActionCache actionCache = action.getMethod().getAnnotation(EnableActionCache.class);
+        return actionCache != null ? actionCache : action.getControllerClass().getAnnotation(EnableActionCache.class);
     }
 
-    private void exec(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, ActionCacheEnable actionCacheEnable) {
+    private void exec(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, EnableActionCache actionCacheEnable) {
         String cacheName = actionCacheEnable.group();
         if (StringUtils.isBlank(cacheName)) {
-            throw new IllegalArgumentException("ActionCacheEnable group must not be empty " +
+            throw new IllegalArgumentException("EnableActionCache group must not be empty " +
                     "in " + action.getControllerClass().getName() + "." + action.getMethodName());
         }
 

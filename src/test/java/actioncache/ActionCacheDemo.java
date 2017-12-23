@@ -16,7 +16,7 @@
 package actioncache;
 
 import io.jboot.Jboot;
-import io.jboot.web.cache.ActionCacheEnable;
+import io.jboot.web.cache.EnableActionCache;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -48,13 +48,13 @@ public class ActionCacheDemo extends JbootController {
 
     }
 
-    @ActionCacheEnable(group = "test#(id)")
+    @EnableActionCache(group = "test#(id)")
     public void cache() {
         System.out.println("cache() invoke!!!!");
         renderHtml("render ok");
     }
 
-    @ActionCacheEnable(group = "test")
+    @EnableActionCache(group = "test")
     public void json() {
         System.out.println("json() invoke!!!!");
         setAttr("user", "Michael Yang");
@@ -62,7 +62,7 @@ public class ActionCacheDemo extends JbootController {
     }
 
 
-    @ActionCacheEnable(group = "test", liveSeconds = 5)
+    @EnableActionCache(group = "test", liveSeconds = 5)
     public void time() {
         System.out.println("json() invoke!!!!");
         setAttr("user", "Michael Yang");
