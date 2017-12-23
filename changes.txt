@@ -1,11 +1,11 @@
 jboot-1.2.0:
 新增：新增 JbootShiroCacheManager ，用于 给shiro.ini 进行配置使用 Jboot 默认缓存
-新增：Jfinal ActionCacheEnable 和 ActionCacheClear 注解，用于对action进行配置高速页面缓存
+新增：EnableActionCache 和 ActionCacheClear 注解，用于对action进行配置高速页面缓存
 新增：给JbootModel 添加 copyModel 方法，用于rpc对象传输时modifys丢失 无法保存的的问题
 修复：分布式配置文件启用是，读取分布式配置文件错误的问题
 修复：当分布式任务执行间隔小于60秒时，可能存在一个任务在多个系统执行的问题
 修复：ClassScanner有中文路径时，扫描不到class的问题
-修复：修复由于jboot的自定义session没有实现getAttributeNames，使用Jfinal 的 SessionInViewInterceptor 会报错的问题
+修复：修复由于Jboot的自定义session没有实现getAttributeNames，使用Jfinal 的 SessionInViewInterceptor 会报错的问题
 优化：删除 undertow server 对 Jfinal 内部数据的初始化过程
 优化：当传入缓存时间为0 或者 小于0时，默认为永久缓存
 优化：执行package指令时，同步业务jar拷贝到 app 的 lib 目录中
