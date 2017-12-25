@@ -262,7 +262,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        boolean saveSuccess = autoCopyModel == true ? copyModel().saveNormal() : saveNormal();
+        boolean saveSuccess = (autoCopyModel != null && autoCopyModel) ? copyModel().saveNormal() : saveNormal();
         if (saveSuccess) {
             Jboot.sendEvent(addAction(), this);
         }
@@ -318,7 +318,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        boolean updateSuccess = autoCopyModel == true ? copyModel().updateNormal() : updateNormal();
+        boolean updateSuccess = (autoCopyModel != null && autoCopyModel) ? copyModel().updateNormal() : updateNormal();
         if (updateSuccess) {
             Object id = get(getPrimaryKey());
             if (cacheEnable) {
