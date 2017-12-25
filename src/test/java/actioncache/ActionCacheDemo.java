@@ -16,6 +16,7 @@
 package actioncache;
 
 import io.jboot.Jboot;
+import io.jboot.web.cache.ActionCacheClear;
 import io.jboot.web.cache.EnableActionCache;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
@@ -35,6 +36,7 @@ public class ActionCacheDemo extends JbootController {
         renderHtml("index");
     }
 
+    @ActionCacheClear("test")
     public void clear() {
         System.out.println("clear() invoke!!!!");
         renderHtml("clear ok!!!");
@@ -45,6 +47,13 @@ public class ActionCacheDemo extends JbootController {
     public void cache() {
         System.out.println("cache() invoke!!!!");
         renderHtml("render ok");
+    }
+
+
+    @EnableActionCache(group = "test#(id)")
+    public void template() {
+        System.out.println("template() invoke!!!!");
+        renderTemplate("/test.html");
     }
 
     @EnableActionCache(group = "test")

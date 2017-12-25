@@ -20,7 +20,7 @@ package io.jboot.web.render;
  * @version V1.0
  * @Package io.jboot.web.render
  */
-public class JbootXmlRender extends JbootTemplateRender {
+public class JbootXmlRender extends JbootRender {
 
     private static final String contentType = "text/xml; charset=" + getEncoding();
 

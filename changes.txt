@@ -1,3 +1,8 @@
+jboot-1.2.1:
+修复：JbootModel 的 NullPointerException 异常问题
+修复：Controller rendderXml 和 renderTemplate 的时候，无法使用 ActionCache 的问题
+
+
 jboot-1.2.0:
 新增：新增 JbootShiroCacheManager ，用于 给shiro.ini 进行配置使用 Jboot 默认缓存
 新增：EnableActionCache 和 ActionCacheClear 注解，用于对action进行配置高速页面缓存
