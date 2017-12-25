@@ -52,7 +52,7 @@ public class SessionDemo extends JbootController {
 
     @Before(SessionInViewInterceptor.class)
     public void show() {
-        render("/session.html");
+        render("/htmls/session/session.html");
     }
 
 
