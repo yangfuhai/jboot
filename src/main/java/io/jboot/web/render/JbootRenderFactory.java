@@ -87,4 +87,14 @@ public class JbootRenderFactory extends RenderFactory {
     public Render getJsonRender(Object object) {
         return new JbootJsonRender(object);
     }
+
+    @Override
+    public Render getTemplateRender(String view) {
+        return new JbootTemplateRender(view);
+    }
+
+    @Override
+    public Render getXmlRender(String view) {
+        return new JbootXmlRender(view);
+    }
 }
