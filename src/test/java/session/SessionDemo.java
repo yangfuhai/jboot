@@ -27,13 +27,6 @@ import service.User;
 public class SessionDemo extends JbootController {
 
 
-    /**
-     * 请先启动 ServerDemo 后，再启动
-     * 然后通过 http://127.0.0.1:8088/opentracing 访问生产数据
-     *
-     * @param args
-     */
-
     public static void main(String[] args) {
 
         Jboot.run(args);
