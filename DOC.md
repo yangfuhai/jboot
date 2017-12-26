@@ -1,5 +1,6 @@
 
 # 目录
+- [快速上手](#快速上手)
 - [JBoot核心组件](#jboot核心组件)
 - [MVC](#mvc)
 	- MVC的概念
@@ -93,6 +94,36 @@
 	- 使用Jboot后还能自定义JfinalConfig等配置文件吗？
 
 
+# 快速上手
+
+#### 创建项目
+略
+#### 添加Jboot依赖
+
+```xml
+<dependency>
+    <groupId>io.jboot</groupId>
+    <artifactId>jboot</artifactId>
+    <version>1.2.1</version>
+</dependency>
+```
+#### 编写helloworld
+
+```java
+@UrlMapping(url="/")
+public class MyController extend JbootController{
+   public void index(){
+        renderText("hello jboot");
+   }
+   
+   public static void main(String [] args){
+       Jboot.run(args);
+   }
+}
+```
+#### 运行并浏览器查看
+运行main方法后，在浏览器输入网址：http://127.0.0.1:8088 查看。
+
 
 # JBoot核心组件
 Jboot的主要核心组件有以下几个。
@@ -183,7 +214,89 @@ public class HelloController extend JbootController{
 * 访问`http://127.0.0.1`等同于`http://127.0.0.1/`。
 * `@RquestMapping` 可以使用在任何的 Controller，并 **不需要** 这个Controller继承至JbootController。
 
-## render
+## Action
+在 Controller 之中定义的 public 方法称为 Action。Action 是请求的最小单位。Action 方法 必须在 Controller 中定义，且必须是 public 可见性。
+
+```java
+public class HelloController extends Controller { 
+
+	public void index() {		renderText("此方法是一个action"); 
+	}	public String test() { 
+		return "index.html";	} 
+	
+	public String save(User user) { 
+		user.save();
+		render("index.html");	} 
+}
+```
+以上代码中定义了三个 Action，分表是 HelloController.index()、 HelloController.test() 和 HelloController.save(User user)。
+
+Action 可以有返回值，返回值可在拦截器中通过 invocation.getReturnValue() 获取到，以便 进行 render 控制。
+
+Action 可以带参数，可以代替 getPara、getBean、getModel 系列方法获取参数，使用 UploadFile 参数时可以代替 getFile 方法实现文件上传。这种传参方式还有一个好处是便于与 swagger 这类 第三方无缝集成，生成 API 文档。
+
+**注意：** 带参数的Action必须在pom.xml文件里添加如下配置：
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <source>1.8</source>
+        <target>1.8</target>
+        <encoding>UTF-8</encoding>
+        <!--必须添加compilerArgument配置，才能使用JController方法带参数的功能-->
+        <compilerArgument>-parameters</compilerArgument>
+    </configuration>
+</plugin>
+```
+
+如果 action 形参是一个 model 或者 bean，原先通过 getBean(User.class, “”) 获取 时第二个参数为空字符串或 null，那么与之等价的形参注入只需要用一下@Para(“”)注解即可:
+
+```java
+public void save(@Para(“”)User user) { 
+	user.save();
+	render("index.html");
+}
+```
+
+### getPara 系列方法
+Controller  供了 getPara 系列方法用来从请求中获取参数。getPara 系列方法分为两种类型。 第一种类型为第一个形参为 String 的 getPara 系列方法。该系列方法是对 HttpServletRequest.getParameter(String name) 的 封 装 ， 这 类 方 法 都 是 转 调 了 HttpServletRequest.getParameter(String name)。第二种类型为第一个形参为 int 或无形参的 getPara 系列方法。该系列方法是去获取 urlPara 中所带的参数值。getParaMap 与 getParaNames 分别对应 HttpServletRequest 的 getParameterMap 与 getParameterNames。
+
+|方法调用 | 返回值 |
+| ------------- | -----||getPara(”title”)| 返回页面表单域名为“title”参数值||getParaToInt(”age”) |返回页面表单域名为“age”的参数值并转为 int 型 ||getPara(0)|返回 url 请求中的 urlPara 参数的第一个值，如 http://localhost/controllerKey/method/v0-v1-v2 这个请求将 返回”v0”||getParaToInt(1)|返回 url 请求中的 urlPara 参数的第二个值并转换成 int 型，如 http://localhost/controllerKey/method/2-5-9 这个请求将返回 5||getParaToInt(2)|如http://localhost/controllerKey/method/2-5-N8 这个 请求将返回 -8。注意:约定字母 N 与 n 可以表示负 号，这对 urlParaSeparator 为 “-” 时非常有用。||getPara()|返回 url 请求中的 urlPara 参数的整体值，如 http://localhost/controllerKey/method/v0-v1-v2 这个 请求将返回”v0-v1-v2”
+
+### getBean 与 getModel 方法
+getModel 用来接收页面表单域传递过来的 model 对象，表单域名称以”modelName.attrName”方式命名，getModel 使用的 attrName 必须与数据表字段名完全一样。getBean 方法用于支持传统 Java Bean，包括支持使用 jfnal 生成器生成了 getter、setter 方法的 Model，页面表单传参时使用与 setter 方法相一致的 attrName，而非数据表字段名。 getModel 与 getBean 区别在于前者使用数表字段名而后者使用与 setter 方法一致的属性名进行数据注入。建议优先使用 getBean 方法。 
+
+以下是一个简单的示例:
+
+```java
+// 定义Model，在此为Blogpublic class Blog extends JbootModel<Blog> {	
+}
+// 在页面表单中采用modelName.attrName形式为作为表单域的name 
+<form action="/blog/save" method="post">	<input name="blog.title" type="text"> 
+	<input name="blog.content" type="text"> 
+	<input value=" 交" type="submit"></form>
+
+@RequestMapping("/blog")public class BlogController extends JbootController { 
+
+	public void save() {		// 页面的modelName正好是Blog类名的首字母小写 
+		Blog blog = getModel(Blog.class);
+				//如果表单域的名称为 "otherName.title"可加上一个参数来获取		Blog blog = getModel(Blog.class, "otherName");
+		
+		//如果表单域的名称为 "title" 和 "content" 
+		Blog blog = getModel(Blog.class, "");
+	}
+	
+	// 或者 也可以写如下代码,但是注意，只能写一个save方法
+	public void save(Blog blog) {
+		// do your something
+	}
+	}
+```
+
+上面代码中，表单域采用了”blog.title”、”blog.content”作为表单域的 name 属性，”blog”是类 文件名称”Blog”的首字母变小写，”title”是 blog 数据库表的 title 字段，如果希望表单域使用任 意的 modelName ，只需要在 getModel 时多添加一个参数来指定，例如: getModel(Blog.class, ”otherName”)。## render
 渲染器，负责把内容输出到浏览器，在Controller中，提供了如下一些列render方法。
 
 | 指令         |  描述  |
