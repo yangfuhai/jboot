@@ -60,7 +60,12 @@ public class JbootRenderFactory extends RenderFactory {
 
     @Override
     public Render getErrorRender(int errorCode) {
-        return new JbootErrorRender(errorCode);
+        return new JbootErrorRender(errorCode, constants.getErrorView(errorCode));
+    }
+
+    @Override
+    public Render getErrorRender(int errorCode, String view) {
+        return new JbootErrorRender(errorCode, view);
     }
 
     @Override
