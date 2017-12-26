@@ -25,7 +25,7 @@ public @interface EnableActionCache {
     String group() default "action_cache_defalut";
 
     /**
-     * 0-默认永久
+     * default 7 days
      */
-    int liveSeconds() default 0;
+    int liveSeconds() default 60 * 60 * 24 * 7;
 }
