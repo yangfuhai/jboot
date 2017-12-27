@@ -134,7 +134,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         if (liveSeconds <= 0) {
             return get(cacheName, key, dataLoader);
         }
-        
+
         Object data = get(cacheName, key);
         if (data == null) {
             data = dataLoader.load();
@@ -145,5 +145,16 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     public JbootRedis getRedis() {
         return redis;
+    }
+
+    /**
+     * 返回单位：秒
+     *
+     * @param cacheName
+     * @param key
+     * @return
+     */
+    public Long ttl(String cacheName, Object key) {
+        return redis.ttl(buildKey(cacheName, key));
     }
 }

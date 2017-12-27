@@ -64,7 +64,12 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         if (obj == null) {
             obj = redisCacheImpl.get(cacheName, key);
             if (obj != null) {
-                ehcacheImpl.put(cacheName, key, obj);
+                Long ttl = redisCacheImpl.ttl(cacheName, key);
+                if (ttl != null && ttl > 0) {
+                    ehcacheImpl.put(cacheName, key, obj, ttl.intValue());
+                } else {
+                    ehcacheImpl.put(cacheName, key, obj);
+                }
             }
         }
         return obj;
@@ -134,7 +139,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         if (liveSeconds <= 0) {
             return get(cacheName, key, dataLoader);
         }
-        
+
         T obj = get(cacheName, key);
         if (obj != null) {
             return obj;
@@ -184,4 +189,5 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     public JbootRedisCacheImpl getRedisCacheImpl() {
         return redisCacheImpl;
     }
+
 }
