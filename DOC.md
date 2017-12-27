@@ -1452,7 +1452,7 @@ jboot.cache.type = mycache
 #### 第一步，注册事件的监听器。
 
 ```java
-@EventConfig(action = {“event1”,"event2"})
+@EventConfig(action = {"event1","event2"})
 public class MyEventListener implements JbootEventListener {
     
     public  void onEvent(JbootEvent event){
