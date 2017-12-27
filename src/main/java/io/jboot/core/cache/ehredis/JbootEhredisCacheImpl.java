@@ -60,19 +60,19 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     @Override
     public <T> T get(String cacheName, Object key) {
-        T obj = ehcacheImpl.get(cacheName, key);
-        if (obj == null) {
-            obj = redisCacheImpl.get(cacheName, key);
-            if (obj != null) {
+        T value = ehcacheImpl.get(cacheName, key);
+        if (value == null) {
+            value = redisCacheImpl.get(cacheName, key);
+            if (value != null) {
                 Long ttl = redisCacheImpl.ttl(cacheName, key);
                 if (ttl != null && ttl > 0) {
-                    ehcacheImpl.put(cacheName, key, obj, ttl.intValue());
+                    ehcacheImpl.put(cacheName, key, value, ttl.intValue());
                 } else {
-                    ehcacheImpl.put(cacheName, key, obj);
+                    ehcacheImpl.put(cacheName, key, value);
                 }
             }
         }
-        return obj;
+        return value;
     }
 
     @Override
@@ -122,16 +122,16 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     @Override
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader) {
-        T obj = get(cacheName, key);
-        if (obj != null) {
-            return obj;
+        T value = get(cacheName, key);
+        if (value != null) {
+            return value;
         }
 
-        obj = (T) dataLoader.load();
-        if (obj != null) {
-            put(cacheName, key, obj);
+        value = (T) dataLoader.load();
+        if (value != null) {
+            put(cacheName, key, value);
         }
-        return obj;
+        return value;
     }
 
     @Override
@@ -140,16 +140,16 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             return get(cacheName, key, dataLoader);
         }
 
-        T obj = get(cacheName, key);
-        if (obj != null) {
-            return obj;
+        T value = get(cacheName, key);
+        if (value != null) {
+            return value;
         }
 
-        obj = (T) dataLoader.load();
-        if (obj != null) {
-            put(cacheName, key, obj, liveSeconds);
+        value = (T) dataLoader.load();
+        if (value != null) {
+            put(cacheName, key, value, liveSeconds);
         }
-        return obj;
+        return value;
     }
 
 
