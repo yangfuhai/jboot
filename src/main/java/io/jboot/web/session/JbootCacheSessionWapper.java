@@ -15,42 +15,73 @@
  */
 package io.jboot.web.session;
 
+import com.google.common.cache.*;
 import io.jboot.Jboot;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 若使用ehcache作为缓存，那么
  */
 public class JbootCacheSessionWapper extends JbootSessionWapperBase implements HttpSession {
 
-    private static final int CACHE_TIME = 60 * 60 * 2; // 2 hours
+    private static Cache<String, Object> sessions = CacheBuilder.newBuilder()
+            .expireAfterAccess(60, TimeUnit.MINUTES)
+            .expireAfterWrite(60, TimeUnit.MINUTES)
+            .removalListener(new RemovalListener<String, Object>() {
+                @Override
+                public void onRemoval(RemovalNotification<String, Object> removalNotification) {
+                    Jboot.me().getCache().removeAll("SESSION:" + removalNotification.getKey());
+                }
+            })
+            .build(new CacheLoader<String, Object>() {
+                @Override
+                public Object load(String key) throws Exception {
+                    return new Object();
+                }
+            });
+
 
     private String getSessionCacheName() {
-        return "session:" + getOrCreatSessionId();
+        return "SESSION:" + getOrCreatSessionId();
     }
 
     @Override
     public Object getAttribute(String name) {
-        return Jboot.me().getCache().get(getSessionCacheName(), name);
+        Object data = Jboot.me().getCache().get(getSessionCacheName(), name);
+        if (data != null) {
+            refreshCache();
+        }
+        return data;
     }
 
 
     @Override
     public void setAttribute(String name, Object value) {
-        Jboot.me().getCache().put(getSessionCacheName(), name, value, CACHE_TIME);
+        refreshCache();
+        Jboot.me().getCache().put(getSessionCacheName(), name, value);
     }
 
 
     @Override
     public void removeAttribute(String name) {
+        refreshCache();
         Jboot.me().getCache().remove(getSessionCacheName(), name);
+    }
+
+    /**
+     * 刷新缓存，刷新后延长40分钟
+     */
+    private void refreshCache() {
+        sessions.getIfPresent(getOrCreatSessionId());
     }
 
 
     @Override
     public Enumeration<String> getAttributeNames() {
+
         List<String> keys = Jboot.me().getCache().getKeys(getSessionCacheName());
         if (keys == null) {
             keys = new ArrayList<>();
@@ -73,6 +104,7 @@ public class JbootCacheSessionWapper extends JbootSessionWapperBase implements H
 
     @Override
     public String[] getValueNames() {
+
         List<String> keys = Jboot.me().getCache().getKeys(getSessionCacheName());
         if (keys == null) {
             keys = new ArrayList<>();

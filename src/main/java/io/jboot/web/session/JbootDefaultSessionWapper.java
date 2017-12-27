@@ -29,8 +29,8 @@ public class JbootDefaultSessionWapper extends JbootSessionWapperBase implements
 
 
     private static Cache<String, Map<String, Object>> sessions = CacheBuilder.newBuilder()
-            .expireAfterAccess(40, TimeUnit.MINUTES)
-            .expireAfterWrite(40, TimeUnit.MINUTES)
+            .expireAfterAccess(60, TimeUnit.MINUTES)
+            .expireAfterWrite(60, TimeUnit.MINUTES)
             .build();
 
 
