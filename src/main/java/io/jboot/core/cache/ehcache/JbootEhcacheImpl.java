@@ -111,6 +111,24 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         return (T) data;
     }
 
+    @Override
+    public Integer getTtl(String cacheName, Object key) {
+        Element element = getOrAddCache(cacheName).get(key);
+        return element != null ? element.getTimeToLive() : null;
+    }
+    
+
+    @Override
+    public void setTtl(String cacheName, Object key, int seconds) {
+        Element element = getOrAddCache(cacheName).get(key);
+        if (element == null) {
+            return;
+        }
+
+        element.setTimeToLive(seconds);
+        getOrAddCache(cacheName).put(element);
+    }
+
     public CacheManager getCacheManager() {
         return cacheManager;
     }

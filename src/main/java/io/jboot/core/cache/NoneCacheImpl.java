@@ -63,5 +63,15 @@ public class NoneCacheImpl extends JbootCacheBase {
         return (T) dataLoader.load();
     }
 
+    @Override
+    public Integer getTtl(String cacheName, Object key) {
+        return null;
+    }
+
+    @Override
+    public void setTtl(String cacheName, Object key, int ttl) {
+
+    }
+
 
 }

@@ -143,18 +143,20 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         return (T) data;
     }
 
+
+    @Override
+    public Integer getTtl(String cacheName, Object key) {
+        Long ttl = redis.ttl(buildKey(cacheName, key));
+        return ttl != null ? ttl.intValue() : null;
+    }
+
+    @Override
+    public void setTtl(String cacheName, Object key, int seconds) {
+        redis.expire(buildKey(cacheName, key), seconds);
+    }
+
     public JbootRedis getRedis() {
         return redis;
     }
 
-    /**
-     * 返回单位：秒
-     *
-     * @param cacheName
-     * @param key
-     * @return
-     */
-    public Long ttl(String cacheName, Object key) {
-        return redis.ttl(buildKey(cacheName, key));
-    }
 }

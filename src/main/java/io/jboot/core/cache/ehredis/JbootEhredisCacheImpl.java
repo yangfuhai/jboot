@@ -64,9 +64,9 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         if (value == null) {
             value = redisCacheImpl.get(cacheName, key);
             if (value != null) {
-                Long ttl = redisCacheImpl.ttl(cacheName, key);
+                Integer ttl = redisCacheImpl.getTtl(cacheName, key);
                 if (ttl != null && ttl > 0) {
-                    ehcacheImpl.put(cacheName, key, value, ttl.intValue());
+                    ehcacheImpl.put(cacheName, key, value, ttl);
                 } else {
                     ehcacheImpl.put(cacheName, key, value);
                 }
@@ -150,6 +150,22 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
             put(cacheName, key, value, liveSeconds);
         }
         return value;
+    }
+
+    @Override
+    public Integer getTtl(String cacheName, Object key) {
+        Integer ttl = ehcacheImpl.getTtl(cacheName, key);
+        if (ttl == null) {
+            ttl = redisCacheImpl.getTtl(cacheName, key);
+        }
+        return ttl;
+    }
+    
+
+    @Override
+    public void setTtl(String cacheName, Object key, int seconds) {
+        ehcacheImpl.setTtl(cacheName, key, seconds);
+        redisCacheImpl.setTtl(cacheName, key, seconds);
     }
 
 
