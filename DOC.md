@@ -1455,7 +1455,7 @@ jboot.cache.type = mycache
 @EventConfig(action = {“event1”,"event2"})
 public class MyEventListener implements JbootEventListener {
     
-    public  void onMessage(JbootEvent event){
+    public  void onEvent(JbootEvent event){
         Object data = event.getData();
         System.out.println("get event:"data);
     }
