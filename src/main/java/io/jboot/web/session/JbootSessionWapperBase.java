@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class JbootSessionWapperBase implements HttpSession {
 
     private static final long SESSION_TIME = TimeUnit.DAYS.toSeconds(2);
+    private static final String SESSION_NAME = "_JSID_";
 
 
     @Override
@@ -93,19 +94,19 @@ public abstract class JbootSessionWapperBase implements HttpSession {
 
 
     protected String getOrCreatSessionId() {
-        String sessionid = getCookie("JSESSIONID");
+        String sessionid = getCookie(SESSION_NAME);
         if (StringUtils.isNotBlank(sessionid)) {
             return sessionid;
         }
 
-        sessionid = JbootRequestContext.getRequestAttr("JSESSIONID");
+        sessionid = JbootRequestContext.getRequestAttr(SESSION_NAME);
         if (StringUtils.isNotBlank(sessionid)) {
             return sessionid;
         }
 
         sessionid = UUID.randomUUID().toString().replace("-", "");
-        JbootRequestContext.setRequestAttr("JSESSIONID", sessionid);
-        setCookie("JSESSIONID", sessionid, (int) SESSION_TIME);
+        JbootRequestContext.setRequestAttr(SESSION_NAME, sessionid);
+        setCookie(SESSION_NAME, sessionid, (int) SESSION_TIME);
         return sessionid;
     }
 
