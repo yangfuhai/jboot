@@ -43,55 +43,78 @@ public class DataSourceBuilder {
 
     public DataSource build() {
 
-        if (datasourceConfig.isShardingEnable()) {
-            Map<String, DataSource> dataSourceMap = new HashMap<>();
-
-            if (datasourceConfig.getChildDatasourceConfigs() != null) {
-                for (DataSourceConfig childConfig : datasourceConfig.getChildDatasourceConfigs()) {
-                    dataSourceMap.put(childConfig.getName(), createDataSource(childConfig));
-                }
-            }
-            /**
-             * 可能只是分表，不分库
-             */
-            else {
-                dataSourceMap.put(datasourceConfig.getName(), createDataSource(datasourceConfig));
-            }
-
-
-            ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
-
-            List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(datasourceConfig.getTable(), datasourceConfig.getExcludeTable());
-            StringBuilder bindTableGroups = new StringBuilder();
-            for (TableInfo ti : tableInfos) {
-                TableRuleConfiguration tableRuleConfiguration = getTableRuleConfiguration(ti);
-                shardingRuleConfiguration.getTableRuleConfigs().add(tableRuleConfiguration);
-                bindTableGroups.append(ti.getTableName()).append(",");
-            }
-
-            if (bindTableGroups.length() > 0) {
-                bindTableGroups.deleteCharAt(bindTableGroups.length() - 1); //delete last char
-                shardingRuleConfiguration.getBindingTableGroups().add(bindTableGroups.toString());
-            }
-
-
-            try {
-                return ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingRuleConfiguration, new HashMap<>(), new Properties());
-            } catch (SQLException e) {
-                throw new JbootException(e);
-            }
-
-        } else {
+        /**
+         * 不启用分库分表功能
+         */
+        if (!datasourceConfig.isShardingEnable()) {
             return createDataSource(datasourceConfig);
+        }
+
+
+        Map<String, DataSource> dataSourceMap = new HashMap<>();
+
+        /**
+         * 如果包含了子数据源，说明是进行了分库
+         */
+        if (datasourceConfig.getChildDatasourceConfigs() != null) {
+            for (DataSourceConfig childConfig : datasourceConfig.getChildDatasourceConfigs()) {
+                dataSourceMap.put(childConfig.getName(), createDataSource(childConfig));
+            }
+        }
+        /**
+         * 可能只是分表，不分库
+         */
+        else {
+            dataSourceMap.put(datasourceConfig.getName(), createDataSource(datasourceConfig));
+        }
+
+
+        //分库分表策略配置
+        //具体需要配置信息可以参考：https://github.com/shardingjdbc/sharding-jdbc-example/tree/dev/sharding-jdbc-raw-jdbc-example/sharding-jdbc-raw-jdbc-java-example/src/main/java/io/shardingjdbc/example/jdbc/java
+        ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
+
+        //通过数据源配置，获取所有的表信息
+        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(datasourceConfig.getTable(), datasourceConfig.getExcludeTable());
+
+        //具体的表，例如："t_order, t_order_item"
+        StringBuilder bindTableGroups = new StringBuilder();
+
+        for (TableInfo ti : tableInfos) {
+            //每张表的分表和分库规则
+            TableRuleConfiguration tableRuleConfiguration = getTableRuleConfiguration(ti);
+            shardingRuleConfiguration.getTableRuleConfigs().add(tableRuleConfiguration);
+
+            bindTableGroups.append(ti.getTableName()).append(",");
+        }
+
+        if (bindTableGroups.length() > 0) {
+            bindTableGroups.deleteCharAt(bindTableGroups.length() - 1); //delete last char
+            shardingRuleConfiguration.getBindingTableGroups().add(bindTableGroups.toString());
+        }
+
+
+        try {
+            return ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingRuleConfiguration, new HashMap<>(), new Properties());
+        } catch (SQLException e) {
+            throw new JbootException(e);
         }
 
 
     }
 
+    /**
+     * 获取每张表的分表策略配置
+     *
+     * @param tableInfo
+     * @return
+     */
     private static TableRuleConfiguration getTableRuleConfiguration(TableInfo tableInfo) {
         TableRuleConfiguration tableRuleConfig = new TableRuleConfiguration();
+
+        //逻辑表
         tableRuleConfig.setLogicTable(tableInfo.getTableName());
 
+        //真实表
         if (StringUtils.isNotBlank(tableInfo.getActualDataNodes())) {
             tableRuleConfig.setActualDataNodes(tableInfo.getActualDataNodes());
         }
@@ -104,10 +127,12 @@ public class DataSourceBuilder {
             tableRuleConfig.setKeyGeneratorColumnName(tableInfo.getKeyGeneratorColumnName());
         }
 
+        //分库规则
         if (tableInfo.getDatabaseShardingStrategyConfig() != ShardingStrategyConfiguration.class) {
             tableRuleConfig.setDatabaseShardingStrategyConfig(ClassKits.newInstance(tableInfo.getDatabaseShardingStrategyConfig()));
         }
 
+        //分表规则
         if (tableInfo.getTableShardingStrategyConfig() != ShardingStrategyConfiguration.class) {
             tableRuleConfig.setTableShardingStrategyConfig(ClassKits.newInstance(tableInfo.getTableShardingStrategyConfig()));
         }
@@ -117,6 +142,8 @@ public class DataSourceBuilder {
 
 
     private DataSource createDataSource(DataSourceConfig dataSourceConfig) {
+        
+        //支持自定义 数据源，默认为hikariCP，可以通过这个扩展druid、c3p0等
         DataSourceFactory factory = ClassKits.newInstance(dataSourceConfig.getFactory());
         if (factory == null) {
             factory = new HikariDataSourceFactory();

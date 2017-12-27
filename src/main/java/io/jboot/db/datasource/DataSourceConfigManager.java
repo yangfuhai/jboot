@@ -39,10 +39,16 @@ public class DataSourceConfigManager {
     private DataSourceConfigManager() {
 
         DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
-        datasourceConfig.setName(DataSourceConfig.NAME_DEFAULT);
+
+        //若未配置数据源的名称，设置为默认
+        if (StringUtils.isBlank(datasourceConfig.getName())) {
+            datasourceConfig.setName(DataSourceConfig.NAME_DEFAULT);
+        }
+
         if (datasourceConfig.isConfigOk()) {
             datasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
         }
+        
         if (datasourceConfig.isShardingEnable()) {
             shardingDatasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
         }

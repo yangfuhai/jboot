@@ -74,7 +74,6 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configConstant(Constants constants) {
 
-//        PropKit.use("jboot.properties");
         constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.me().isDevMode());
         ApiConfigKit.setDevMode(Jboot.me().isDevMode());
