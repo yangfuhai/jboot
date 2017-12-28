@@ -16,9 +16,9 @@
 package io.jboot.web.websocket;
 
 import io.jboot.Jboot;
-import io.jboot.server.JbootServerConfig;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.JbootWebConfig;
 
 import javax.websocket.server.ServerEndpoint;
 import java.util.HashSet;
@@ -31,7 +31,7 @@ public class JbootWebsocketManager {
 
     private Set<String> websocketEndPointValues = new HashSet<>();
     private Set<Class> websocketEndPoints = new HashSet<>();
-    private JbootServerConfig serverConfig = Jboot.config(JbootServerConfig.class);
+    private JbootWebConfig config = Jboot.config(JbootWebConfig.class);
 
     private JbootWebsocketManager() {
         List<Class> endPointClasses = ClassScanner.scanClassByAnnotation(ServerEndpoint.class, false);
@@ -52,7 +52,7 @@ public class JbootWebsocketManager {
     }
 
     public boolean isWebsokcetEndPoint(String endPointValue) {
-        if (!serverConfig.isWebsocketEnable()) {
+        if (!config.isWebsocketEnable()) {
             return false;
         }
         return websocketEndPointValues.contains(endPointValue);

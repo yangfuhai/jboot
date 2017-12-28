@@ -23,6 +23,8 @@ import com.jfinal.render.RenderManager;
 import io.jboot.Jboot;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.JbootWebConfig;
+import io.jboot.web.cache.keygen.ActionKeyGeneratorManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,9 +36,15 @@ public class ActionCacheHandler extends Handler {
 
     private static String[] urlPara = {null};
     private static Log LOG = Log.getLog(ActionCacheHandler.class);
+    private static JbootWebConfig webConfig = Jboot.config(JbootWebConfig.class);
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
+
+        if (!webConfig.isActionCacheEnable()) {
+            next.handle(target, request, response, isHandled);
+            return;
+        }
 
         Action action = JFinal.me().getAction(target, urlPara);
         if (action == null) {
@@ -91,6 +99,8 @@ public class ActionCacheHandler extends Handler {
     }
 
     private void exec(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, EnableActionCache actionCacheEnable) {
+
+        //缓存名称
         String cacheName = actionCacheEnable.group();
         if (StringUtils.isBlank(cacheName)) {
             throw new IllegalArgumentException("EnableActionCache group must not be empty " +
@@ -101,11 +111,11 @@ public class ActionCacheHandler extends Handler {
             cacheName = regexGetCacheName(cacheName, request);
         }
 
-        String cacheKey = target;
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            queryString = "?" + queryString;
-            cacheKey += queryString;
+        //缓存的key
+        String cacheKey = ActionKeyGeneratorManager.me().getGenerator().generate(target, request);
+        if (StringUtils.isBlank(cacheKey)) {
+            next.handle(target, request, response, isHandled);
+            return;
         }
 
         ActionCacheInfo info = new ActionCacheInfo();

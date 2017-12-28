@@ -30,6 +30,7 @@ import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.JbootWebConfig;
 import io.jboot.web.websocket.JbootWebsocketManager;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -62,10 +63,12 @@ public class UnderTowServer extends JbootServer {
     private Undertow undertow;
     private ServletContainer servletContainer;
     private JbootServerConfig config;
+    private JbootWebConfig webConfig;
 
 
     public UnderTowServer() {
         config = Jboot.config(JbootServerConfig.class);
+        webConfig = Jboot.config(JbootWebConfig.class);
 
     }
 
@@ -78,10 +81,10 @@ public class UnderTowServer extends JbootServer {
 
         deploymentInfo = buildDeploymentInfo(classloader);
 
-        if (config.isWebsocketEnable()) {
+        if (webConfig.isWebsocketEnable()) {
             Set<Class> endPointClasses = JbootWebsocketManager.me().getWebsocketEndPoints();
             WebSocketDeploymentInfo webSocketDeploymentInfo = new WebSocketDeploymentInfo();
-            webSocketDeploymentInfo.setBuffers(new DefaultByteBufferPool(true, config.getWebsocketBufferPoolSize()));
+            webSocketDeploymentInfo.setBuffers(new DefaultByteBufferPool(true, webConfig.getWebsocketBufferPoolSize()));
             for (Class endPointClass : endPointClasses) {
                 webSocketDeploymentInfo.addEndpoint(endPointClass);
             }
@@ -181,7 +184,6 @@ public class UnderTowServer extends JbootServer {
 
         return deploymentInfo;
     }
-
 
 
     @Override
