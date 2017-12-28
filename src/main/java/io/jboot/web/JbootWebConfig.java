@@ -67,4 +67,14 @@ public class JbootWebConfig {
     public void setWebsocketBufferPoolSize(int websocketBufferPoolSize) {
         this.websocketBufferPoolSize = websocketBufferPoolSize;
     }
+
+    @Override
+    public String toString() {
+        return "JbootWebConfig {" +
+                "actionCacheEnable=" + actionCacheEnable +
+                ", actionCacheKeyGeneratorType='" + actionCacheKeyGeneratorType + '\'' +
+                ", websocketEnable=" + websocketEnable +
+                ", websocketBufferPoolSize=" + websocketBufferPoolSize +
+                '}';
+    }
 }

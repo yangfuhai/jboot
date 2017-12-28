@@ -44,6 +44,7 @@ import io.jboot.server.JbootServerFactory;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.FileUtils;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.JbootWebConfig;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -139,8 +140,7 @@ public class Jboot {
     public void start() {
 
         printBannerInfo();
-        printJbootConfigInfo();
-        printServerConfigInfo();
+        printConfigInfo();
 
         ensureServerCreated();
 
@@ -204,13 +204,12 @@ public class Jboot {
 
     }
 
-    private void printJbootConfigInfo() {
+    private void printConfigInfo() {
         System.out.println(getJbootConfig());
+        System.out.println(config(JbootServerConfig.class));
+        System.out.println(config(JbootWebConfig.class));
     }
 
-    private void printServerConfigInfo() {
-        System.out.println(config(JbootServerConfig.class));
-    }
 
     private void printServerPath() {
         System.out.println("server classPath    : " + getRootClassPath());
