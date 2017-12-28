@@ -28,6 +28,7 @@ import io.jboot.component.shiro.JbootShiroConfig;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
+import io.jboot.server.JbootServerClassloader;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.JbootWebConfig;
@@ -75,7 +76,7 @@ public class UnderTowServer extends JbootServer {
     public void initUndertowServer() {
 
 
-        UnderTowClassloader classloader = new UnderTowClassloader(UnderTowServer.class.getClassLoader());
+        JbootServerClassloader classloader = new JbootServerClassloader(UnderTowServer.class.getClassLoader());
         classloader.setDefaultAssertionStatus(false);
 
 
@@ -119,7 +120,7 @@ public class UnderTowServer extends JbootServer {
 
     }
 
-    private DeploymentInfo buildDeploymentInfo(UnderTowClassloader classloader) {
+    private DeploymentInfo buildDeploymentInfo(JbootServerClassloader classloader) {
         DeploymentInfo deploymentInfo = Servlets.deployment()
                 .setClassLoader(classloader)
                 .setResourceManager(new ClassPathResourceManager(classloader))

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.server.undertow;
+package io.jboot.server;
 
-public class UnderTowClassloader extends ClassLoader {
+public class JbootServerClassloader extends ClassLoader {
 
-    public UnderTowClassloader(ClassLoader parent) {
+    public JbootServerClassloader(ClassLoader parent) {
         super(parent);
     }
 
