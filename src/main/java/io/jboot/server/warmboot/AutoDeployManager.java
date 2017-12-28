@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.server;
+package io.jboot.server.warmboot;
 
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
-import com.jfinal.server.Scanner;
 
 import java.io.File;
 
@@ -36,11 +35,12 @@ public class AutoDeployManager {
 
     public void run() {
 
-        File file = new File(PathKit.getRootClassPath()).getParentFile().getParentFile();
-        Scanner scanner = new Scanner(file.getAbsolutePath(), 3) {
-            public void onChange() {
+        File file = new File(PathKit.getRootClassPath());
+        JbootFileScanner scanner = new JbootFileScanner(file.getAbsolutePath(), 3) {
+            @Override
+            public void onChange(String action, String file) {
                 try {
-//                    System.err.println("file changes ......");
+//                    System.err.println("file changes : " + file);
 //                    Jboot.me().getServer().restart();
 //                    JbootServerFactory.me().buildServer().start();
 //                    System.err.println("Loading complete.");
