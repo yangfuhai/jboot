@@ -28,7 +28,7 @@ public class SessionDemo extends JbootController {
 
 
     public static void main(String[] args) {
-
+        Jboot.setBootArg("jboot.server.type", "jetty");
         Jboot.run(args);
     }
 

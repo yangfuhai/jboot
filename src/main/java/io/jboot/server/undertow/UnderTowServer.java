@@ -96,7 +96,6 @@ public class UnderTowServer extends JbootServer {
         deploymentManager = servletContainer.addDeployment(deploymentInfo);
         deploymentManager.deploy();
 
-
         HttpHandler httpHandler = null;
         try {
             /**
