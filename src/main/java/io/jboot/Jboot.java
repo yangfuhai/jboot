@@ -16,6 +16,7 @@
 package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
+import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
 import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.metrics.JbootMetricsManager;
@@ -37,7 +38,7 @@ import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
-import io.jboot.server.AutoDeployManager;
+import io.jboot.server.warmboot.AutoDeployManager;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerFactory;
@@ -212,7 +213,8 @@ public class Jboot {
 
 
     private void printServerPath() {
-        System.out.println("server classPath    : " + getRootClassPath());
+        System.out.println("server classPath : " + getRootClassPath());
+        System.out.println("server webRoot : " + PathKit.getWebRootPath());
     }
 
 
@@ -225,7 +227,7 @@ public class Jboot {
 
         String url = String.format("http://%s%s%s", host, port, path);
 
-        System.out.println("\nserver started success , url : " + url);
+        System.out.println("server started success , url : " + url);
     }
 
     private static String getRootClassPath() {
