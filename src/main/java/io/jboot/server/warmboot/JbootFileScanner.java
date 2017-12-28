@@ -26,11 +26,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * 定时扫描本地配置文件，提供给远程读取
+ * 定时扫描本地文件
  *
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.config
+ * @Package io.server.warmboot
  */
 public abstract class JbootFileScanner {
 
@@ -118,7 +118,7 @@ public abstract class JbootFileScanner {
 
     public void start() {
         if (!running) {
-            timer = new Timer("Jboot-Config-Scanner", true);
+            timer = new Timer("Jboot-File-Scanner", true);
             task = new TimerTask() {
                 public void run() {
                     working();
