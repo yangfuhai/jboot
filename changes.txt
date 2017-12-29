@@ -1,3 +1,20 @@
+jboot-1.2.2:
+新增：ParamType类，方便swagger注解使用
+新增：JbootCache 新增 getTtl() 和 setTtl() 方法，方便对缓存设置过期时间
+新增：添加ActionCache的key生成机制的配置，方便自己对ActionCache的key的管理
+新增：JbootController 新增 getBodyString() 方法，方便接收客户端POST过来的body数据
+新增：添加jetty的支持，需要自行添加jetty的maven依赖
+新增：AOP 添加对 @Bean(name="serviceName") 的支持，方便对一个接口有多个实现类的情况进行注入
+修复：JFinal constants.setError404View 等无效的问题
+修复：分布式下，可能导致不同节点的ehcache缓存过期时间不一致的问题
+修复：由于Jboot不断迭代导致文档多处错误的问题
+修复：在某些情况下 SPILoader 可能出现的空指针异常的问题
+优化：设置 ActionCache 的默认时间为1周，1周后自动缓存过期自动清除
+优化：重构数据源和sharding-jdbc分库分表部分，删除无用设计和代码
+优化：设置 session 自动过期和修改默认的 session 为 —JSID—，之前为JSESSIONID可能会和其他框架冲突
+优化：重命名 UnderTowClassloader 为 JbootServerClassloader，方便今后统一对class的管理
+
+
 jboot-1.2.1:
 修复：JbootModel 的 NullPointerException 异常问题
 修复：Controller rendderXml 和 renderTemplate 的时候，无法使用 ActionCache 的问题
