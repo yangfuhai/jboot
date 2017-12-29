@@ -40,6 +40,7 @@ QQ交流群： 601440615
     * [x] ehcache
     * [x] redis
     * [x] 分布式二级缓存ehredis
+    * [x] J2Cache ([https://gitee.com/ld/J2Cache](https://gitee.com/ld/J2Cache))
 * [x] 分布式session
 * [x] 分布式锁
 * 任务调度
