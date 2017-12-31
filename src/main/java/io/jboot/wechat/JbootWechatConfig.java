@@ -17,10 +17,10 @@ package io.jboot.wechat;
 
 
 import com.jfinal.weixin.sdk.api.ApiConfig;
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.utils.StringUtils;
 
-@PropertieConfig(prefix = "jboot.wechat")
+@PropertyConfig(prefix = "jboot.wechat")
 public class JbootWechatConfig {
 
     private String debug = "false";

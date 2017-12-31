@@ -15,9 +15,9 @@
  */
 package io.jboot.component.zuul;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
-@PropertieConfig(prefix = "jboot.zuul")
+@PropertyConfig(prefix = "jboot.zuul")
 public class JbootZuulConfig {
 
     

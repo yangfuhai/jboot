@@ -15,10 +15,10 @@
  */
 package io.jboot.core.rpc.dubbo;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 
-@PropertieConfig(prefix = "jboot.rpc.dubbo")
+@PropertyConfig(prefix = "jboot.rpc.dubbo")
 public class JbootDubborpcConfig {
 
 

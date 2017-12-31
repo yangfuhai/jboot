@@ -1,13 +1,13 @@
 package distributedconfig;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package distributedconfig
  */
-@PropertieConfig(prefix = "my")
+@PropertyConfig(prefix = "my")
 public class MyConfig {
 
     private String name = "defalutName";

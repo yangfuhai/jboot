@@ -15,10 +15,10 @@
  */
 package io.jboot.core.mq.zbus;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 
-@PropertieConfig(prefix = "jboot.mq.zbus")
+@PropertyConfig(prefix = "jboot.mq.zbus")
 public class JbootZbusmqConfig {
 
     private String queue;

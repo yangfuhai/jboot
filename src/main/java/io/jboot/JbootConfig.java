@@ -15,10 +15,10 @@
  */
 package io.jboot;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.web.JbootAppConfig;
 
-@PropertieConfig(prefix = "jboot")
+@PropertyConfig(prefix = "jboot")
 public class JbootConfig {
 
 

@@ -15,10 +15,10 @@
  */
 package io.jboot.server;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 
-@PropertieConfig(prefix = "jboot.server")
+@PropertyConfig(prefix = "jboot.server")
 public class JbootServerConfig {
 
     public static final String TYPE_UNDERTOW = "undertow";

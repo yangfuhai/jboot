@@ -15,9 +15,9 @@
  */
 package io.jboot.component.opentracing;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
-@PropertieConfig(prefix = "jboot.tracing")
+@PropertyConfig(prefix = "jboot.tracing")
 public class JbootOpentracingConfig {
 
     public static final String TYPE_ZIPKIN = "zipkin";

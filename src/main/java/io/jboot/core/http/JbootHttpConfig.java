@@ -15,10 +15,10 @@
  */
 package io.jboot.core.http;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 
-@PropertieConfig(prefix = "jboot.http")
+@PropertyConfig(prefix = "jboot.http")
 public class JbootHttpConfig {
     public static final String TYPE_DEFAULT = "default";
     public static final String TYPE_HTTPCLIENT = "httpclient";

@@ -15,9 +15,9 @@
  */
 package io.jboot.component.hystrix;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
-@PropertieConfig(prefix = "jboot.hystrix")
+@PropertyConfig(prefix = "jboot.hystrix")
 public class JbootHystrixConfig {
 
     private String url;

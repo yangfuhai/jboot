@@ -15,14 +15,14 @@
  */
 package io.jboot.component.redis;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.utils.StringUtils;
 import redis.clients.jedis.HostAndPort;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@PropertieConfig(prefix = "jboot.redis")
+@PropertyConfig(prefix = "jboot.redis")
 public class JbootRedisConfig {
 
     private String host;

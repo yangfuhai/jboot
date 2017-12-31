@@ -15,10 +15,10 @@
  */
 package io.jboot.component.swagger;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.utils.StringUtils;
 
-@PropertieConfig(prefix = "jboot.swagger")
+@PropertyConfig(prefix = "jboot.swagger")
 public class JbootSwaggerConfig {
 
     private String path;

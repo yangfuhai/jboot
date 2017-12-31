@@ -15,13 +15,13 @@
  */
 package io.jboot.core.rpc;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-@PropertieConfig(prefix = "jboot.rpc")
+@PropertyConfig(prefix = "jboot.rpc")
 public class JbootrpcConfig {
 
     public static final String TYPE_DUBBO = "dubbo";

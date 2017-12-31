@@ -20,7 +20,7 @@ import com.google.common.collect.Multimap;
 import com.jfinal.kit.*;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.config.client.ConfigRemoteReader;
 import io.jboot.config.server.ConfigFileScanner;
 import io.jboot.exception.JbootIllegalConfigException;
@@ -131,7 +131,7 @@ public class JbootConfigManager {
 
 
     public <T> T get(Class<T> clazz) {
-        PropertieConfig propertieConfig = clazz.getAnnotation(PropertieConfig.class);
+        PropertyConfig propertieConfig = clazz.getAnnotation(PropertyConfig.class);
         if (propertieConfig == null) {
             return get(clazz, null);
         }

@@ -15,12 +15,12 @@
  */
 package io.jboot.config;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 /**
  * 好吧，类名想了半天，Jboot配置的配置
  */
-@PropertieConfig(prefix = "jboot.config")
+@PropertyConfig(prefix = "jboot.config")
 public class JbootConfigConfig {
 
     /**

@@ -15,9 +15,9 @@
  */
 package io.jboot.component.metrics.reporter.csv;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
-@PropertieConfig(prefix = "jboot.metrics.reporter.cvr")
+@PropertyConfig(prefix = "jboot.metrics.reporter.cvr")
 public class JbootMetricsCVRReporterConfig {
 
     private String path;

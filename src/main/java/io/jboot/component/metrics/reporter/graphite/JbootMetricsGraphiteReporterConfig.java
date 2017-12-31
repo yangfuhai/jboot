@@ -15,9 +15,9 @@
  */
 package io.jboot.component.metrics.reporter.graphite;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
-@PropertieConfig(prefix = "jboot.metrics.reporter.graphite")
+@PropertyConfig(prefix = "jboot.metrics.reporter.graphite")
 public class JbootMetricsGraphiteReporterConfig {
 
 

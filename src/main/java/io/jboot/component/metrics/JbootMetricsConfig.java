@@ -15,9 +15,9 @@
  */
 package io.jboot.component.metrics;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
-@PropertieConfig(prefix = "jboot.metrics")
+@PropertyConfig(prefix = "jboot.metrics")
 public class JbootMetricsConfig {
 
     public static final String REPORTER_JMX = "jmx";
