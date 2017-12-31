@@ -130,7 +130,7 @@ public class ClassKits {
      */
     public static Collection<Method> getClassSetMethods(Class clazz) {
         Collection<Method> setMethods = classMethodsCache.get(clazz);
-        if (setMethods == null) {
+        if (setMethods == null || setMethods.isEmpty()) {
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
                 if (method.getName().startsWith("set")

@@ -17,11 +17,13 @@ package io.jboot.core.cache.ehredis;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.component.redis.JbootRedis;
 import io.jboot.core.cache.JbootCacheBase;
 import io.jboot.core.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.core.cache.redis.JbootRedisCacheImpl;
-import io.jboot.core.mq.JbootmqMessageListener;
+import io.jboot.core.serializer.ISerializer;
 import io.jboot.utils.StringUtils;
+import redis.clients.jedis.BinaryJedisPubSub;
 
 import java.util.List;
 
@@ -29,12 +31,14 @@ import java.util.List;
  * 基于 ehcache和redis做的二级缓存
  * 优点是：减少高并发下redis的io瓶颈
  */
-public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMessageListener {
+public class JbootEhredisCacheImpl extends JbootCacheBase {
 
     public static final String DEFAULT_NOTIFY_CHANNEL = "jboot_ehredis_channel";
 
     private JbootEhcacheImpl ehcacheImpl;
     private JbootRedisCacheImpl redisCacheImpl;
+    private JbootRedis redis;
+    private ISerializer serializer;
 
     private String channel = DEFAULT_NOTIFY_CHANNEL;
     private String clientId;
@@ -44,8 +48,15 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         this.ehcacheImpl = new JbootEhcacheImpl();
         this.redisCacheImpl = new JbootRedisCacheImpl();
         this.clientId = StringUtils.uuid();
+        this.serializer = Jboot.me().getSerializer();
 
-        Jboot.me().getMq().addMessageListener(this, channel);
+        this.redis = redisCacheImpl.getRedis();
+        this.redis.subscribe(new BinaryJedisPubSub() {
+            @Override
+            public void onMessage(byte[] channel, byte[] message) {
+                JbootEhredisCacheImpl.this.onMessage((String) serializer.deserialize(channel), serializer.deserialize(message));
+            }
+        }, serializer.serialize(channel));
     }
 
 
@@ -160,7 +171,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         }
         return ttl;
     }
-    
+
 
     @Override
     public void setTtl(String cacheName, Object key, int seconds) {
@@ -170,10 +181,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
 
     private void publishMessage(int action, String cacheName, Object key) {
-        Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, action, cacheName, key), channel);
+        JbootEhredisMessage message = new JbootEhredisMessage(clientId, action, cacheName, key);
+        redis.publish(serializer.serialize(channel), serializer.serialize(message));
     }
 
-    @Override
     public void onMessage(String channel, Object obj) {
 
         JbootEhredisMessage message = (JbootEhredisMessage) obj;
