@@ -1484,10 +1484,10 @@ jboot.myconfig.name=aaa
 jboot.myconfig.passowrd=bbb
 jboot.myconfig.age=10
 ```
-要读取这个配置信息，我们需要定义我们的一个model类，并通过@PropertieConfig注解给我们的类配置上类与配置文件的对应关系，如下所示：
+要读取这个配置信息，我们需要定义我们的一个model类，并通过@PropertyConfig注解给我们的类配置上类与配置文件的对应关系，如下所示：
 
 ```java
-@PropertieConfig(prefix="jboot.myconfig")
+@PropertyConfig(prefix="jboot.myconfig")
 public class MyConfigModel{
     private String name;
     private String password;
@@ -1515,10 +1515,10 @@ jboot.myconfig.passowrd=bbb
 jboot.myconfig.age=10
 ```
 
-那么，一样的，我们需要编写一个model，并配置上@PropertieConfig注解，与读取jboot.properties文件不同的是，@PropertieConfig 需要添加上file配置，内容如下：
+那么，一样的，我们需要编写一个model，并配置上@PropertyConfig注解，与读取jboot.properties文件不同的是，@PropertyConfig 需要添加上file配置，内容如下：
 
 ```java
-@PropertieConfig(prefix="jboot.myconfig",file="michael.properties")
+@PropertyConfig(prefix="jboot.myconfig",file="michael.properties")
 public class MyConfigModel{
     private String name;
     private String password;
