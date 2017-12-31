@@ -383,7 +383,21 @@ public class Jboot {
      * @return
      */
     public static <T> T config(Class<T> clazz, String prefix) {
-        return JbootConfigManager.me().get(clazz, prefix);
+        return JbootConfigManager.me().get(clazz, prefix, null);
+    }
+
+
+    /**
+     * 读取配置文件信息
+     *
+     * @param clazz
+     * @param prefix
+     * @param file
+     * @param <T>
+     * @return
+     */
+    public static <T> T config(Class<T> clazz, String prefix, String file) {
+        return JbootConfigManager.me().get(clazz, prefix, file);
     }
 
 
