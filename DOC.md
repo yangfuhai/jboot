@@ -116,8 +116,8 @@
 #### 编写helloworld
 
 ```java
-@RequestMapping(url="/")
-public class MyController extend JbootController{
+@RequestMapping("/")
+public class MyController extends JbootController{
    public void index(){
         renderText("hello jboot");
    }
