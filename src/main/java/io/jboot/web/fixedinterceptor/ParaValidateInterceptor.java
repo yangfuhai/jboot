@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.handler.inters;
+package io.jboot.web.fixedinterceptor;
 
 import com.jfinal.kit.Ret;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.validate.EmptyValidate;
-import io.jboot.web.handler.HandlerInterceptor;
-import io.jboot.web.handler.HandlerInvocation;
 
 /**
  * 验证拦截器
  */
-public class ParaValidateInterceptor implements HandlerInterceptor {
+public class ParaValidateInterceptor implements FixedInterceptor {
 
     public static final int DEFAULT_ERROR_CODE = 99;
 

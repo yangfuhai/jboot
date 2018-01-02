@@ -25,6 +25,7 @@ import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
 import io.jboot.server.Servlets;
+import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 
 public interface JbootAppListener {
@@ -40,6 +41,8 @@ public interface JbootAppListener {
     public void onJfinalPluginConfig(JfinalPlugins plugins);
 
     public void onInterceptorConfig(Interceptors interceptors);
+
+    public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors);
 
     public void onHandlerConfig(JfinalHandlers handlers);
 

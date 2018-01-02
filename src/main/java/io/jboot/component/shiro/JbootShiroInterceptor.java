@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.handler.inters;
+package io.jboot.component.shiro;
 
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
-import io.jboot.component.shiro.JbootShiroConfig;
-import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.component.shiro.processer.AuthorizeResult;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.handler.HandlerInterceptor;
-import io.jboot.web.handler.HandlerInvocation;
+import io.jboot.web.fixedinterceptor.FixedInterceptor;
+import io.jboot.web.fixedinterceptor.HandlerInvocation;
 
 /**
  * Shiro 拦截器
  */
-public class JbootShiroInterceptor implements HandlerInterceptor {
+public class JbootShiroInterceptor implements FixedInterceptor {
 
 
     private JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);

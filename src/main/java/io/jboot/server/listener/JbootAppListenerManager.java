@@ -26,6 +26,7 @@ import io.jboot.server.JbootServer;
 import io.jboot.server.Servlets;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
+import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,6 +123,17 @@ public class JbootAppListenerManager implements JbootAppListener {
         for (JbootAppListener listener : listeners) {
             try {
                 listener.onInterceptorConfig(interceptors);
+            } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
+            }
+        }
+    }
+
+    @Override
+    public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors) {
+        for (JbootAppListener listener : listeners) {
+            try {
+                listener.onFixedInterceptorConfig(fixedInterceptors);
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }

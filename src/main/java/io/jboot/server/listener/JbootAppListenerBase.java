@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,7 @@ import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
 import io.jboot.server.Servlets;
+import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 
 public class JbootAppListenerBase implements JbootAppListener {
@@ -57,6 +58,11 @@ public class JbootAppListenerBase implements JbootAppListener {
 
     @Override
     public void onInterceptorConfig(Interceptors interceptors) {
+
+    }
+
+    @Override
+    public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors) {
 
     }
 

@@ -49,6 +49,8 @@ import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
+import io.jboot.web.fixedinterceptor.FixedInterceptors;
+import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
@@ -183,6 +185,8 @@ public class JbootAppConfig extends JFinalConfig {
     public void configInterceptor(Interceptors interceptors) {
 
         JbootAppListenerManager.me().onInterceptorConfig(interceptors);
+
+        JbootAppListenerManager.me().onFixedInterceptorConfig(FixedInterceptors.me());
     }
 
     @Override
