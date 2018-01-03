@@ -15,11 +15,19 @@
  */
 package io.jboot.web.session;
 
-import com.google.common.cache.*;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.RemovalCause;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 import io.jboot.Jboot;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,21 +35,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class JbootCacheSessionWapper extends JbootSessionWapperBase implements HttpSession {
 
-    private static Cache<String, Object> sessions = CacheBuilder.newBuilder()
+
+    private static LoadingCache<String, Object> sessions = Caffeine.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .expireAfterWrite(60, TimeUnit.MINUTES)
             .removalListener(new RemovalListener<String, Object>() {
                 @Override
-                public void onRemoval(RemovalNotification<String, Object> removalNotification) {
-                    Jboot.me().getCache().removeAll("SESSION:" + removalNotification.getKey());
+                public void onRemoval(@Nullable String key, @Nullable Object value, @Nonnull RemovalCause cause) {
+                    Jboot.me().getCache().removeAll("SESSION:" + key);
                 }
             })
-            .build(new CacheLoader<String, Object>() {
-                @Override
-                public Object load(String key) throws Exception {
-                    return new Object();
-                }
-            });
+            .build(key -> new Object());
 
 
     private String getSessionCacheName() {

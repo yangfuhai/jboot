@@ -15,23 +15,21 @@
  */
 package io.jboot.web.session;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 
 public class JbootDefaultSessionWapper extends JbootSessionWapperBase implements HttpSession {
 
 
-    private static Cache<String, Map<String, Object>> sessions = CacheBuilder.newBuilder()
+    private static LoadingCache<String, Map<String, Object>> sessions = Caffeine.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .expireAfterWrite(60, TimeUnit.MINUTES)
-            .build();
+            .build(key -> new HashMap<>());
 
 
     @Override
@@ -43,18 +41,8 @@ public class JbootDefaultSessionWapper extends JbootSessionWapperBase implements
 
     @Override
     public void setAttribute(String name, Object value) {
-        try {
-            Map<String, Object> map = sessions.get(getOrCreatSessionId(), new Callable<Map<String, Object>>() {
-                @Override
-                public Map<String, Object> call() throws Exception {
-                    return new HashMap<>();
-                }
-            });
-            map.put(name, value);
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        Map<String, Object> map = sessions.get(getOrCreatSessionId());
+        map.put(name, value);
     }
 
 
