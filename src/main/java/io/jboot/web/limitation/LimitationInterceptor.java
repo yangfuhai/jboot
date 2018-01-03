@@ -96,16 +96,16 @@ public class LimitationInterceptor implements FixedInterceptor {
          */
         else {
             switch (requestRateLimit.limitAction()) {
-                case LimitationActions.JSON:
+                case LimitActions.JSON:
                     inv.getController().renderJson(requestRateLimit.limitContent());
                     break;
-                case LimitationActions.TEXT:
+                case LimitActions.TEXT:
                     inv.getController().renderText(requestRateLimit.limitContent());
                     break;
-                case LimitationActions.RENDER:
+                case LimitActions.RENDER:
                     inv.getController().render(requestRateLimit.limitContent());
                     break;
-                case LimitationActions.REDIRECT:
+                case LimitActions.REDIRECT:
                     inv.getController().redirect(requestRateLimit.limitContent(), true);
                     break;
                 default:
@@ -175,16 +175,16 @@ public class LimitationInterceptor implements FixedInterceptor {
          */
         else {
             switch (userRateLimit.limitAction()) {
-                case LimitationActions.JSON:
+                case LimitActions.JSON:
                     inv.getController().renderJson(userRateLimit.limitContent());
                     break;
-                case LimitationActions.TEXT:
+                case LimitActions.TEXT:
                     inv.getController().renderText(userRateLimit.limitContent());
                     break;
-                case LimitationActions.RENDER:
+                case LimitActions.RENDER:
                     inv.getController().render(userRateLimit.limitContent());
                     break;
-                case LimitationActions.REDIRECT:
+                case LimitActions.REDIRECT:
                     inv.getController().redirect(userRateLimit.limitContent(), true);
                     break;
                 default:
@@ -254,16 +254,16 @@ public class LimitationInterceptor implements FixedInterceptor {
          */
         else {
             switch (ipRateLimit.limitAction()) {
-                case LimitationActions.JSON:
+                case LimitActions.JSON:
                     inv.getController().renderJson(ipRateLimit.limitContent());
                     break;
-                case LimitationActions.TEXT:
+                case LimitActions.TEXT:
                     inv.getController().renderText(ipRateLimit.limitContent());
                     break;
-                case LimitationActions.RENDER:
+                case LimitActions.RENDER:
                     inv.getController().render(ipRateLimit.limitContent());
                     break;
-                case LimitationActions.REDIRECT:
+                case LimitActions.REDIRECT:
                     inv.getController().redirect(ipRateLimit.limitContent(), true);
                     break;
                 default:
