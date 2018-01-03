@@ -39,12 +39,12 @@ public class LimitationInterceptor implements FixedInterceptor {
         }
 
         EnableUserRateLimit userRateLimit = inv.getMethod().getAnnotation(EnableUserRateLimit.class);
-        if (requestRateLimit != null && userIntercept(inv, userRateLimit)) {
+        if (userRateLimit != null && userIntercept(inv, userRateLimit)) {
             return;
         }
 
         EnableIpRateLimit ipRateLimit = inv.getMethod().getAnnotation(EnableIpRateLimit.class);
-        if (requestRateLimit != null && ipIntercept(inv, ipRateLimit)) {
+        if (ipRateLimit != null && ipIntercept(inv, ipRateLimit)) {
             return;
         }
 
@@ -136,6 +136,11 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         manager.flagUserRequest(sesssionId);
 
+        //第一次访问，可能manager里还未对此用户进行标识
+        if (userFlagTime >= currentTime) {
+            return false;
+        }
+
         double rate = userRateLimit.rate();
         if (rate <= 0 || rate >= 1000) {
             throw new IllegalArgumentException("@EnableIpRateLimit.rate must > 0 and < 1000");
@@ -208,6 +213,11 @@ public class LimitationInterceptor implements FixedInterceptor {
         long currentTime = System.currentTimeMillis();
         long userFlagTime = manager.getIpflag(ipaddress);
         manager.flagIpRequest(ipaddress);
+
+        //第一次访问，可能manager里还未对此IP进行标识
+        if (userFlagTime >= currentTime) {
+            return false;
+        }
 
         double rate = ipRateLimit.rate();
         if (rate <= 0 || rate >= 1000) {
