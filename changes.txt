@@ -1,3 +1,39 @@
+jboot-1.2.2:
+新增：ParamType类，方便swagger注解使用
+新增：JbootCache 新增 getTtl() 和 setTtl() 方法，方便对缓存设置过期时间
+新增：添加ActionCache的key生成机制的配置，方便自己对ActionCache的key的管理
+新增：JbootController 新增 getBodyString() 方法，方便接收客户端POST过来的body数据
+新增：添加jetty的支持，需要自行添加jetty的maven依赖
+新增：AOP 添加对 @Bean(name="serviceName") 的支持，方便对一个接口有多个实现类的情况进行注入
+修复：JFinal constants.setError404View 等无效的问题
+修复：分布式下，可能导致不同节点的ehcache缓存过期时间不一致的问题
+修复：由于Jboot不断迭代导致文档多处错误的问题
+修复：在某些情况下 SPILoader 可能出现的空指针异常的问题
+优化：设置 ActionCache 的默认时间为1周，1周后自动缓存过期自动清除
+优化：重构数据源和sharding-jdbc分库分表部分，删除无用设计和代码
+优化：设置 session 自动过期和修改默认的 session 为 —JSID—，之前为JSESSIONID可能会和其他框架冲突
+优化：重命名 UnderTowClassloader 为 JbootServerClassloader，方便今后统一对class的管理
+
+
+jboot-1.2.1:
+修复：JbootModel 的 NullPointerException 异常问题
+修复：Controller rendderXml 和 renderTemplate 的时候，无法使用 ActionCache 的问题
+
+
+jboot-1.2.0:
+新增：新增 JbootShiroCacheManager ，用于 给shiro.ini 进行配置使用 Jboot 默认缓存
+新增：EnableActionCache 和 ActionCacheClear 注解，用于对action进行配置高速页面缓存
+新增：给JbootModel 添加 copyModel 方法，用于rpc对象传输时modifys丢失 无法保存的的问题
+修复：分布式配置文件启用是，读取分布式配置文件错误的问题
+修复：当分布式任务执行间隔小于60秒时，可能存在一个任务在多个系统执行的问题
+修复：ClassScanner有中文路径时，扫描不到class的问题
+修复：修复由于Jboot的自定义session没有实现getAttributeNames，使用Jfinal 的 SessionInViewInterceptor 会报错的问题
+优化：删除 undertow server 对 Jfinal 内部数据的初始化过程
+优化：当传入缓存时间为0 或者 小于0时，默认为永久缓存
+优化：执行package指令时，同步业务jar拷贝到 app 的 lib 目录中
+优化：更新guava、fastjson、opentracing等到最新版本
+
+
 jboot-1.1.9:
 新增：Columns实现序列化，支持RPC直接远程传入Columns。
 修复：JbootRedis的getWithoutSerialize方法返回空数据出现NullPointerException异常的问题。

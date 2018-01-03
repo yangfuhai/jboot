@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,14 @@
  */
 package io.jboot.utils;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -110,6 +114,35 @@ public class ClassKits {
         //ControllerTest$ServiceTest$$EnhancerByGuice$$40471411#hello
         //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
         return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
+    }
+
+
+    /**
+     * 类的set方法缓存，用于减少对类的反射工作
+     */
+    private static Multimap<Class<?>, Method> classMethodsCache = ArrayListMultimap.create();
+
+    /**
+     * 获取 某class 下的所有set 方法
+     *
+     * @param clazz
+     * @return
+     */
+    public static Collection<Method> getClassSetMethods(Class clazz) {
+        Collection<Method> setMethods = classMethodsCache.get(clazz);
+        if (setMethods == null || setMethods.isEmpty()) {
+            Method[] methods = clazz.getMethods();
+            for (Method method : methods) {
+                if (method.getName().startsWith("set")
+                        && method.getName().length() > 3
+                        && method.getParameterCount() == 1) {
+
+                    classMethodsCache.put(clazz, method);
+
+                }
+            }
+        }
+        return setMethods;
     }
 
 

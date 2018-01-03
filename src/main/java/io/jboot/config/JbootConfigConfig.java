@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package io.jboot.config;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 /**
  * 好吧，类名想了半天，Jboot配置的配置
  */
-@PropertieConfig(prefix = "jboot.config")
+@PropertyConfig(prefix = "jboot.config")
 public class JbootConfigConfig {
 
     /**

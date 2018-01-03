@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matchers;
+import com.google.inject.name.Names;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.jfinal.aop.Before;
@@ -46,10 +47,11 @@ import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassScanner;
+import io.jboot.utils.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.List;
 
 /**
  * Inject管理器
@@ -128,16 +130,22 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
     private void beanBind(Binder binder) {
 
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
-        for (Class beanClass : classes) {
-            Class<?>[] interfaceClasses = beanClass.getInterfaces();
+        for (Class impl : classes) {
+            Class<?>[] interfaceClasses = impl.getInterfaces();
+            Bean bean = (Bean) impl.getAnnotation(Bean.class);
+            String name = bean.name();
             for (Class interfaceClass : interfaceClasses) {
                 if (interfaceClass == Serializable.class) {
                     continue;
                 }
                 try {
-                    binder.bind(interfaceClass).to(beanClass);
+                    if (StringUtils.isBlank(name)) {
+                        binder.bind(interfaceClass).to(impl);
+                    } else {
+                        binder.bind(interfaceClass).annotatedWith(Names.named(name)).to(impl);
+                    }
                 } catch (Throwable ex) {
-                    System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, beanClass));
+                    System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, impl));
                 }
             }
         }

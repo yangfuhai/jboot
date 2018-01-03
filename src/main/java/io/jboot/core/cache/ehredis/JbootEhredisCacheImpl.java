@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@ package io.jboot.core.cache.ehredis;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.component.redis.JbootRedis;
 import io.jboot.core.cache.JbootCacheBase;
 import io.jboot.core.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.core.cache.redis.JbootRedisCacheImpl;
-import io.jboot.core.mq.JbootmqMessageListener;
+import io.jboot.core.serializer.ISerializer;
 import io.jboot.utils.StringUtils;
+import redis.clients.jedis.BinaryJedisPubSub;
 
 import java.util.List;
 
@@ -29,12 +31,14 @@ import java.util.List;
  * 基于 ehcache和redis做的二级缓存
  * 优点是：减少高并发下redis的io瓶颈
  */
-public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMessageListener {
+public class JbootEhredisCacheImpl extends JbootCacheBase {
 
     public static final String DEFAULT_NOTIFY_CHANNEL = "jboot_ehredis_channel";
 
     private JbootEhcacheImpl ehcacheImpl;
     private JbootRedisCacheImpl redisCacheImpl;
+    private JbootRedis redis;
+    private ISerializer serializer;
 
     private String channel = DEFAULT_NOTIFY_CHANNEL;
     private String clientId;
@@ -44,8 +48,15 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         this.ehcacheImpl = new JbootEhcacheImpl();
         this.redisCacheImpl = new JbootRedisCacheImpl();
         this.clientId = StringUtils.uuid();
+        this.serializer = Jboot.me().getSerializer();
 
-        Jboot.me().getMq().addMessageListener(this, channel);
+        this.redis = redisCacheImpl.getRedis();
+        this.redis.subscribe(new BinaryJedisPubSub() {
+            @Override
+            public void onMessage(byte[] channel, byte[] message) {
+                JbootEhredisCacheImpl.this.onMessage((String) serializer.deserialize(channel), serializer.deserialize(message));
+            }
+        }, serializer.serialize(channel));
     }
 
 
@@ -60,14 +71,19 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     @Override
     public <T> T get(String cacheName, Object key) {
-        T obj = ehcacheImpl.get(cacheName, key);
-        if (obj == null) {
-            obj = redisCacheImpl.get(cacheName, key);
-            if (obj != null) {
-                ehcacheImpl.put(cacheName, key, obj);
+        T value = ehcacheImpl.get(cacheName, key);
+        if (value == null) {
+            value = redisCacheImpl.get(cacheName, key);
+            if (value != null) {
+                Integer ttl = redisCacheImpl.getTtl(cacheName, key);
+                if (ttl != null && ttl > 0) {
+                    ehcacheImpl.put(cacheName, key, value, ttl);
+                } else {
+                    ehcacheImpl.put(cacheName, key, value);
+                }
             }
         }
-        return obj;
+        return value;
     }
 
     @Override
@@ -117,16 +133,16 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
 
     @Override
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader) {
-        T obj = get(cacheName, key);
-        if (obj != null) {
-            return obj;
+        T value = get(cacheName, key);
+        if (value != null) {
+            return value;
         }
 
-        obj = (T) dataLoader.load();
-        if (obj != null) {
-            put(cacheName, key, obj);
+        value = (T) dataLoader.load();
+        if (value != null) {
+            put(cacheName, key, value);
         }
-        return obj;
+        return value;
     }
 
     @Override
@@ -134,25 +150,41 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
         if (liveSeconds <= 0) {
             return get(cacheName, key, dataLoader);
         }
-        
-        T obj = get(cacheName, key);
-        if (obj != null) {
-            return obj;
+
+        T value = get(cacheName, key);
+        if (value != null) {
+            return value;
         }
 
-        obj = (T) dataLoader.load();
-        if (obj != null) {
-            put(cacheName, key, obj, liveSeconds);
+        value = (T) dataLoader.load();
+        if (value != null) {
+            put(cacheName, key, value, liveSeconds);
         }
-        return obj;
+        return value;
+    }
+
+    @Override
+    public Integer getTtl(String cacheName, Object key) {
+        Integer ttl = ehcacheImpl.getTtl(cacheName, key);
+        if (ttl == null) {
+            ttl = redisCacheImpl.getTtl(cacheName, key);
+        }
+        return ttl;
+    }
+
+
+    @Override
+    public void setTtl(String cacheName, Object key, int seconds) {
+        ehcacheImpl.setTtl(cacheName, key, seconds);
+        redisCacheImpl.setTtl(cacheName, key, seconds);
     }
 
 
     private void publishMessage(int action, String cacheName, Object key) {
-        Jboot.me().getMq().publish(new JbootEhredisMessage(clientId, action, cacheName, key), channel);
+        JbootEhredisMessage message = new JbootEhredisMessage(clientId, action, cacheName, key);
+        redis.publish(serializer.serialize(channel), serializer.serialize(message));
     }
 
-    @Override
     public void onMessage(String channel, Object obj) {
 
         JbootEhredisMessage message = (JbootEhredisMessage) obj;
@@ -184,4 +216,5 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements JbootmqMess
     public JbootRedisCacheImpl getRedisCacheImpl() {
         return redisCacheImpl;
     }
+
 }

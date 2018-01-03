@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import io.jboot.core.http.JbootHttpBase;
 import io.jboot.core.http.JbootHttpRequest;
 import io.jboot.core.http.JbootHttpResponse;
 import io.jboot.exception.JbootException;
+import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
 
 import javax.net.ssl.*;
@@ -62,12 +63,6 @@ public class JbootHttpImpl extends JbootHttpBase {
 
                 connection.setInstanceFollowRedirects(true);
                 connection.connect();
-
-                if (connection.getResponseCode() >= 400) {
-                    stream = connection.getErrorStream();
-                } else {
-                    stream = connection.getInputStream();
-                }
             }
             /**
              * 处理 post请求
@@ -77,7 +72,11 @@ public class JbootHttpImpl extends JbootHttpBase {
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
 
+                /**
+                 * 处理 非文件上传的 post 请求
+                 */
                 if (!request.isMultipartFormData()) {
+
                     String postContent = buildParams(request);
                     if (StringUtils.isNotEmpty(postContent)) {
                         DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
@@ -85,46 +84,22 @@ public class JbootHttpImpl extends JbootHttpBase {
                         dos.flush();
                         dos.close();
                     }
-                    stream = connection.getInputStream();
+
                 }
 
                 /**
-                 * 处理文件上传
+                 * 处理文件上传的post请求
                  */
                 else {
 
-                    if (request.getParams() != null && request.getParams().size() > 0) {
-                        String endFlag = "\r\n";
-                        String boundary = "---------" + StringUtils.uuid();
-                        connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                        for (Map.Entry entry : request.getParams().entrySet()) {
-                            if (entry.getValue() instanceof File) {
-                                File file = (File) entry.getValue();
-                                checkFileNormal(file);
-                                dos.writeBytes(boundary + endFlag);
-                                dos.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\"; filename=\"%s\"", entry.getKey(), file.getName()) + endFlag);
-                                dos.writeBytes(endFlag);
-                                FileInputStream fStream = new FileInputStream(file);
-                                byte[] buffer = new byte[2028];
-                                for (int len = 0; (len = fStream.read(buffer)) > 0; ) {
-                                    dos.write(buffer, 0, len);
-                                }
-
-                                dos.writeBytes(endFlag);
-                            } else {
-                                dos.writeBytes("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"");
-                                dos.writeBytes(endFlag);
-                                dos.writeBytes(endFlag);
-                                dos.writeBytes(String.valueOf(entry.getValue()));
-                                dos.writeBytes(endFlag);
-                            }
-                        }
-
-                        dos.writeBytes("--" + boundary + "--" + endFlag);
+                    if (ArrayUtils.isNotEmpty(request.getParams())) {
+                        uploadData(request, connection);
                     }
+
                 }
             }
+
+            stream = getInutStream(connection);
 
             response.setContentType(connection.getContentType());
             response.setResponseCode(connection.getResponseCode());
@@ -132,7 +107,6 @@ public class JbootHttpImpl extends JbootHttpBase {
 
             response.pipe(stream);
             response.finish();
-
 
         } catch (Throwable ex) {
             LOG.warn(ex.toString(), ex);
@@ -149,6 +123,41 @@ public class JbootHttpImpl extends JbootHttpBase {
                 }
             }
         }
+    }
+
+    private InputStream getInutStream(HttpURLConnection connection) throws IOException {
+        return connection.getResponseCode() >= 400 ? connection.getErrorStream() : connection.getInputStream();
+    }
+
+    private void uploadData(JbootHttpRequest request, HttpURLConnection connection) throws IOException {
+        String endFlag = "\r\n";
+        String boundary = "---------" + StringUtils.uuid();
+        connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+        for (Map.Entry entry : request.getParams().entrySet()) {
+            if (entry.getValue() instanceof File) {
+                File file = (File) entry.getValue();
+                checkFileNormal(file);
+                dos.writeBytes(boundary + endFlag);
+                dos.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\"; filename=\"%s\"", entry.getKey(), file.getName()) + endFlag);
+                dos.writeBytes(endFlag);
+                FileInputStream fStream = new FileInputStream(file);
+                byte[] buffer = new byte[2028];
+                for (int len = 0; (len = fStream.read(buffer)) > 0; ) {
+                    dos.write(buffer, 0, len);
+                }
+
+                dos.writeBytes(endFlag);
+            } else {
+                dos.writeBytes("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"");
+                dos.writeBytes(endFlag);
+                dos.writeBytes(endFlag);
+                dos.writeBytes(String.valueOf(entry.getValue()));
+                dos.writeBytes(endFlag);
+            }
+        }
+
+        dos.writeBytes("--" + boundary + "--" + endFlag);
     }
 
     private static void checkFileNormal(File file) {

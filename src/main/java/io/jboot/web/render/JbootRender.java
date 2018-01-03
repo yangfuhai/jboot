@@ -16,23 +16,12 @@
 package io.jboot.web.render;
 
 import com.jfinal.render.Render;
-import com.jfinal.render.RenderException;
 import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
-import io.jboot.utils.StringUtils;
-import io.jboot.web.cache.ActionCache;
-import io.jboot.web.cache.ActionCacheEnable;
-import io.jboot.web.cache.ActionCacheContext;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class JbootRender extends Render {
@@ -71,84 +60,13 @@ public class JbootRender extends Render {
         }
 
         String html = getEngine().getTemplate(view).renderToString(data);
+        html = config.isEnableCdn() ? RenderHelpler.processCDN(html) : html;
 
-        String finalHtml = config.isEnableCdn() ? processCDN(html) : html;
+        RenderHelpler.actionCacheExec(html, contentType);
 
-        ActionCacheEnable actionCacheEnable = ActionCacheContext.get();
-        if (actionCacheEnable != null) {
-            String key = ActionCacheContext.getKey();
-            String cacheName = actionCacheEnable.cacheName();
-            if (StringUtils.isBlank(cacheName)) {
-                throw new IllegalArgumentException("ActionCacheEnable cacheName must not be empty");
-            }
-            ActionCache actionCache = new ActionCache(contentType, finalHtml);
-            Jboot.me().getCache().put(cacheName, key, actionCache, actionCacheEnable.liveSeconds());
-        }
-        renderHtml(finalHtml, contentType);
+        RenderHelpler.renderHtml(response, html, contentType);
     }
 
-
-    private void renderHtml(String html, String contentType) {
-        response.setContentType(contentType);
-        PrintWriter responseWriter = null;
-        try {
-            responseWriter = response.getWriter();
-            responseWriter.write(html);
-            responseWriter.flush();
-        } catch (Exception e) {
-            throw new RenderException(e);
-        } finally {
-            if (responseWriter != null)
-                responseWriter.close();
-        }
-    }
-
-
-    private String processCDN(String content) {
-        if (StringUtils.isBlank(content)) {
-            return content;
-        }
-
-
-        Document doc = Jsoup.parse(content);
-
-        Elements jsElements = doc.select("script[src]");
-        replace(jsElements, "src");
-
-        Elements imgElements = doc.select("img[src]");
-        replace(imgElements, "src");
-
-        Elements lazyElements = doc.select("img[data-original]");
-        replace(lazyElements, "data-original");
-
-        Elements linkElements = doc.select("link[href]");
-        replace(linkElements, "href");
-
-        return doc.toString();
-
-    }
-
-    private void replace(Elements elements, String attrName) {
-        String cdnDomain = config.getCdn();
-        Iterator<Element> iterator = elements.iterator();
-        while (iterator.hasNext()) {
-
-            Element element = iterator.next();
-
-            if (element.hasAttr("cdn-exclude")) {
-                continue;
-            }
-
-            String url = element.attr(attrName);
-            if (StringUtils.isBlank(url) || !url.startsWith("/") || url.startsWith("//")) {
-                continue;
-            }
-
-            url = cdnDomain + url;
-
-            element.attr(attrName, url);
-        }
-    }
 
     public String toString() {
         return view;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,12 @@ public interface JbootRedis {
     public String set(Object key, Object value);
 
 
+    /**
+     * 当且仅当 key 不存在能成功设置
+     * @param key
+     * @param value 设置成功，返回 1，设置失败，返回 0
+     * @return
+     */
     public Long setnx(Object key, Object value);
 
     /**
@@ -97,8 +103,7 @@ public interface JbootRedis {
      * MSET 是一个原子性(atomic)操作，所有给定 key 都会在同一时间内被设置，某些给定 key 被更新而另一些给定 key 没有改变的情况，不可能发生。
      * <pre>
      * 例子：
-     * Cache cache = RedisKit.use();			// 使用 JbootRedis 的 cache
-     * cache.mset("k1", "v1", "k2", "v2");		// 放入多个 key value 键值对
+     * mset("k1", "v1", "k2", "v2");		// 放入多个 key value 键值对
      * List list = cache.mget("k1", "k2");		// 利用多个键值得到上面代码放入的值
      * </pre>
      */
@@ -127,7 +132,7 @@ public interface JbootRedis {
      * 本操作的值限制在 64 位(bit)有符号数字表示之内。
      * 关于更多递增(increment) / 递减(decrement)操作的更多信息，请参见 INCR 命令。
      */
-    public Long decrBy(Object key, long longValue);
+    public Long decrBy(Object key, long value);
 
     /**
      * 将 key 中储存的数字值增一。
@@ -144,7 +149,7 @@ public interface JbootRedis {
      * 本操作的值限制在 64 位(bit)有符号数字表示之内。
      * 关于递增(increment) / 递减(decrement)操作的更多信息，参见 INCR 命令。
      */
-    public Long incrBy(Object key, long longValue);
+    public Long incrBy(Object key, long value);
 
     /**
      * 检查给定 key 是否存在。
@@ -323,12 +328,6 @@ public interface JbootRedis {
      */
     public Double hincrByFloat(Object key, Object field, double value);
 
-    /**
-     * 返回列表 key 中，下标为 index 的元素。
-     * 下标(index)参数 start 和 stop 都以 0 为底，也就是说，以 0 表示列表的第一个元素，以 1 表示列表的第二个元素，以此类推。
-     * 你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
-     * 如果 key 不是列表类型，返回一个错误。
-     */
 
     /**
      * 返回列表 key 中，下标为 index 的元素。
@@ -504,7 +503,6 @@ public interface JbootRedis {
 
     /**
      * 返回集合中的 count 个随机元素。
-     * 从 JbootRedis 2.6 版本开始， SRANDMEMBER 命令接受可选的 count 参数：
      * 如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。
      * 如果 count 大于等于集合基数，那么返回整个集合。
      * 如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。

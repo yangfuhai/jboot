@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.1.9</version>
+    <version>1.2.2</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -114,6 +114,21 @@
         </dependency>
 
         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.4.8.v20171121</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>9.4.8.v20171121</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-core</artifactId>
             <version>1.1.0</version>
@@ -187,14 +202,21 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.43</version>
+            <version>1.2.44</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>23.0</version>
+            <version>23.6-jre</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>2.6.1</version>
+        </dependency>
+
 
         <dependency>
             <groupId>it.sauronsoftware.cron4j</groupId>
@@ -343,13 +365,13 @@
         <dependency>
             <groupId>io.opentracing</groupId>
             <artifactId>opentracing-api</artifactId>
-            <version>0.31.0-RC1</version>
+            <version>0.31.0-RC2</version>
         </dependency>
 
         <dependency>
             <groupId>io.opentracing.brave</groupId>
             <artifactId>brave-opentracing</artifactId>
-            <version>0.23.0</version>
+            <version>0.24.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.zipkin.brave</groupId>
@@ -361,7 +383,7 @@
         <dependency>
             <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-sender-urlconnection</artifactId>
-            <version>2.1.4</version>
+            <version>2.2.2</version>
         </dependency>
 
         <dependency>
@@ -389,6 +411,14 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.7</version>
         </dependency>
+
+        <dependency>
+            <groupId>net.oschina.j2cache</groupId>
+            <artifactId>j2cache-core</artifactId>
+            <version>2.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
 
     </dependencies>
 
@@ -436,6 +466,16 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
                 <version>1.10</version>
+
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <goals>
+                            <goal>generate-daemons</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
                 <configuration>
 
 

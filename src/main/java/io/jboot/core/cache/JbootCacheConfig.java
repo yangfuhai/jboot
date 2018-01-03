@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
 package io.jboot.core.cache;
 
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 
-@PropertieConfig(prefix = "jboot.cache")
+@PropertyConfig(prefix = "jboot.cache")
 public class JbootCacheConfig {
 
     public static final String TYPE_EHCACHE = "ehcache";
     public static final String TYPE_REDIS = "redis";
     public static final String TYPE_EHREDIS = "ehredis";
     public static final String TYPE_NONE_CACHE = "none";
+    public static final String TYPE_J2CACHE = "j2cache";
 
 
     private String type = TYPE_EHCACHE;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 package io.jboot.core.rpc;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-@PropertieConfig(prefix = "jboot.rpc")
+@PropertyConfig(prefix = "jboot.rpc")
 public class JbootrpcConfig {
 
     public static final String TYPE_DUBBO = "dubbo";

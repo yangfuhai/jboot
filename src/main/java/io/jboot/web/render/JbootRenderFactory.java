@@ -60,7 +60,12 @@ public class JbootRenderFactory extends RenderFactory {
 
     @Override
     public Render getErrorRender(int errorCode) {
-        return new JbootErrorRender(errorCode);
+        return new JbootErrorRender(errorCode, constants.getErrorView(errorCode));
+    }
+
+    @Override
+    public Render getErrorRender(int errorCode, String view) {
+        return new JbootErrorRender(errorCode, view);
     }
 
     @Override
@@ -86,5 +91,15 @@ public class JbootRenderFactory extends RenderFactory {
     @Override
     public Render getJsonRender(Object object) {
         return new JbootJsonRender(object);
+    }
+
+    @Override
+    public Render getTemplateRender(String view) {
+        return new JbootTemplateRender(view);
+    }
+
+    @Override
+    public Render getXmlRender(String view) {
+        return new JbootXmlRender(view);
     }
 }

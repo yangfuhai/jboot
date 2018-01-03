@@ -22,16 +22,16 @@ import java.io.Serializable;
  * @version V1.0
  * @Package io.jboot.web.cache
  */
-public class ActionCache implements Serializable {
+public class ActionCacheContent implements Serializable {
 
     private String contentType;
     private String content;
 
-    public ActionCache() {
+    public ActionCacheContent() {
 
     }
 
-    public ActionCache(String contentType, String content) {
+    public ActionCacheContent(String contentType, String content) {
         this.contentType = contentType;
         this.content = content;
     }

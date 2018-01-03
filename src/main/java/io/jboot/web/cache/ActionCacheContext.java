@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,29 +17,19 @@ package io.jboot.web.cache;
 
 public class ActionCacheContext {
 
-    private static ThreadLocal<ActionCacheEnable> threadLocal = new ThreadLocal<>();
-    private static ThreadLocal<String> keyThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<ActionCacheInfo> threadLocal = new ThreadLocal<>();
 
 
-    public static void hold(ActionCacheEnable actionCache) {
-        threadLocal.set(actionCache);
+    public static void hold(ActionCacheInfo cacheName) {
+        threadLocal.set(cacheName);
     }
 
-    public static ActionCacheEnable get() {
+    public static ActionCacheInfo get() {
         return threadLocal.get();
     }
 
     public static void release() {
         threadLocal.remove();
-        keyThreadLocal.remove();
-    }
-
-    public static void holdKey(String actionCache) {
-        keyThreadLocal.set(actionCache);
-    }
-
-    public static String getKey() {
-        return keyThreadLocal.get();
     }
 
 }

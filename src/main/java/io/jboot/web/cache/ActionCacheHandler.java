@@ -19,22 +19,32 @@ import com.jfinal.core.Action;
 import com.jfinal.core.JFinal;
 import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
+import com.jfinal.render.RenderManager;
 import io.jboot.Jboot;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.render.JbootRenderFactory;
+import io.jboot.web.JbootWebConfig;
+import io.jboot.web.cache.keygen.ActionKeyGeneratorManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ActionCacheHandler extends Handler {
 
     private static String[] urlPara = {null};
     private static Log LOG = Log.getLog(ActionCacheHandler.class);
+    private static JbootWebConfig webConfig = Jboot.config(JbootWebConfig.class);
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
+
+        if (!webConfig.isActionCacheEnable()) {
+            next.handle(target, request, response, isHandled);
+            return;
+        }
 
         Action action = JFinal.me().getAction(target, urlPara);
         if (action == null) {
@@ -49,14 +59,13 @@ public class ActionCacheHandler extends Handler {
             return;
         }
 
-        ActionCacheEnable actionCache = getActionCache(action);
+        EnableActionCache actionCache = getActionCache(action);
         if (actionCache == null) {
             next.handle(target, request, response, isHandled);
             return;
         }
 
         try {
-            ActionCacheContext.hold(actionCache);
             exec(target, request, response, isHandled, action, actionCache);
         } finally {
             ActionCacheContext.release();
@@ -84,47 +93,78 @@ public class ActionCacheHandler extends Handler {
         }
     }
 
-    public ActionCacheEnable getActionCache(Action action) {
-        ActionCacheEnable actionCache = action.getMethod().getAnnotation(ActionCacheEnable.class);
-        return actionCache != null ? actionCache : action.getControllerClass().getAnnotation(ActionCacheEnable.class);
+    public EnableActionCache getActionCache(Action action) {
+        EnableActionCache actionCache = action.getMethod().getAnnotation(EnableActionCache.class);
+        return actionCache != null ? actionCache : action.getControllerClass().getAnnotation(EnableActionCache.class);
     }
 
-    private void exec(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, ActionCacheEnable actionCacheEnable) {
-        String cacheName = actionCacheEnable.cacheName();
+    private void exec(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, EnableActionCache actionCacheEnable) {
+
+        //缓存名称
+        String cacheName = actionCacheEnable.group();
         if (StringUtils.isBlank(cacheName)) {
-            throw new IllegalArgumentException("ActionCacheEnable cacheName must not be empty " +
+            throw new IllegalArgumentException("EnableActionCache group must not be empty " +
                     "in " + action.getControllerClass().getName() + "." + action.getMethodName());
         }
-        String cacheKey = target;
 
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            queryString = "?" + queryString;
-            cacheKey += queryString;
+        if (cacheName.contains("#(") && cacheName.contains(")")) {
+            cacheName = regexGetCacheName(cacheName, request);
         }
 
-        ActionCacheContext.holdKey(cacheKey);
-
-        ActionCache actionCache = Jboot.me().getCache().get(cacheName, cacheKey);
-        if (actionCache != null) {
-            response.setContentType(actionCache.getContentType());
-            PrintWriter writer = null;
-            try {
-                writer = response.getWriter();
-                writer.write(actionCache.getContent());
-                writer.flush();
-                isHandled[0] = true;
-            } catch (Exception e) {
-                LOG.error(e.toString(), e);
-                JbootRenderFactory.me().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-        } else {
+        //缓存的key
+        String cacheKey = ActionKeyGeneratorManager.me().getGenerator().generate(target, request);
+        if (StringUtils.isBlank(cacheKey)) {
             next.handle(target, request, response, isHandled);
+            return;
         }
+
+        ActionCacheInfo info = new ActionCacheInfo();
+        info.setGroup(cacheName);
+        info.setKey(cacheKey);
+        info.setLiveSeconds(actionCacheEnable.liveSeconds());
+
+        ActionCacheContext.hold(info);
+
+        ActionCacheContent actionCache = Jboot.me().getCache().get(cacheName, cacheKey);
+        if (actionCache == null) {
+            next.handle(target, request, response, isHandled);
+            return;
+        }
+
+        response.setContentType(actionCache.getContentType());
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+            writer.write(actionCache.getContent());
+            writer.flush();
+            isHandled[0] = true;
+        } catch (Exception e) {
+            LOG.error(e.toString(), e);
+            RenderManager.me()
+                    .getRenderFactory()
+                    .getErrorRender(500).setContext(request, response, action.getViewPath())
+                    .render();
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    private static final Pattern pattern = Pattern.compile("#\\(\\S+?\\)");
+
+    private String regexGetCacheName(String cacheName, HttpServletRequest request) {
+        Matcher m = pattern.matcher(cacheName);
+        while (m.find()) {
+            // find 的值 ： #(id)
+            String find = m.group(0);
+            String parameterName = find.substring(2, find.length() - 1);
+            String value = request.getParameter(parameterName);
+            if (StringUtils.isBlank(value)) value = "";
+            cacheName = cacheName.replace(find, value);
+        }
+
+        return cacheName;
     }
 
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@ package io.jboot.web.render;
 
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import com.jfinal.render.RenderManager;
 import io.jboot.exception.JbootExceptionHolder;
 
 import java.io.IOException;
@@ -45,12 +46,23 @@ public class JbootErrorRender extends Render {
 
     protected int errorCode;
 
-    public JbootErrorRender(int errorCode) {
+    public JbootErrorRender(int errorCode, String view) {
         this.errorCode = errorCode;
+        this.view = view;
     }
 
     public void render() {
         response.setStatus(getErrorCode());
+
+        //render with view
+        String view = getView();
+        if (view != null) {
+            RenderManager.me().getRenderFactory()
+                    .getRender(view)
+                    .setContext(request, response)
+                    .render();
+            return;
+        }
 
         PrintWriter writer = null;
         try {

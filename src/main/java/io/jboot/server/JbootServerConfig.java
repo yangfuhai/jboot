@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package io.jboot.server;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 
 
-@PropertieConfig(prefix = "jboot.server")
+@PropertyConfig(prefix = "jboot.server")
 public class JbootServerConfig {
 
     public static final String TYPE_UNDERTOW = "undertow";
@@ -29,11 +29,6 @@ public class JbootServerConfig {
     private String host = "0.0.0.0";
     private int port = 8080;
     private String contextPath = "/";
-
-    //websocket 的相关配置
-    //具体使用请参考：https://github.com/undertow-io/undertow/tree/master/examples/src/main/java/io/undertow/examples/jsrwebsockets
-    private boolean websocketEnable = false;
-    private int websocketBufferPoolSize = 100;
 
 
     public String getType() {
@@ -68,22 +63,6 @@ public class JbootServerConfig {
         this.contextPath = contextPath;
     }
 
-    public boolean isWebsocketEnable() {
-        return websocketEnable;
-    }
-
-    public void setWebsocketEnable(boolean websocketEnable) {
-        this.websocketEnable = websocketEnable;
-    }
-
-    public int getWebsocketBufferPoolSize() {
-        return websocketBufferPoolSize;
-    }
-
-    public void setWebsocketBufferPoolSize(int websocketBufferPoolSize) {
-        this.websocketBufferPoolSize = websocketBufferPoolSize;
-    }
-
 
     @Override
     public String toString() {
@@ -92,8 +71,6 @@ public class JbootServerConfig {
                 ", host='" + host + '\'' +
                 ", port=" + port +
                 ", contextPath='" + contextPath + '\'' +
-                ", websocketEnable=" + websocketEnable +
-                ", websocketBufferPoolSize=" + websocketBufferPoolSize +
                 '}';
     }
 }

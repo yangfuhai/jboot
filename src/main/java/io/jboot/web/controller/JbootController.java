@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package io.jboot.web.controller;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.ext.interceptor.NotAction;
+import com.jfinal.kit.HttpKit;
 import com.jfinal.upload.UploadFile;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
@@ -168,6 +169,11 @@ public class JbootController extends Controller {
 
     }
 
+    @Before(NotAction.class)
+    public String getBodyString() {
+        return HttpKit.readData(getRequest());
+    }
+
 
     /**
      * 获取所有上传的文件
@@ -190,5 +196,5 @@ public class JbootController extends Controller {
         }
         return filesMap;
     }
-    
+
 }

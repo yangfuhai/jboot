@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.handler.inters;
+package io.jboot.component.opentracing;
 
-import io.jboot.component.opentracing.EnableTracing;
-import io.jboot.component.opentracing.JbootOpentracingManager;
-import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.handler.HandlerInterceptor;
-import io.jboot.web.handler.HandlerInvocation;
+import io.jboot.web.fixedinterceptor.FixedInterceptor;
+import io.jboot.web.fixedinterceptor.HandlerInvocation;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 
-/**
- * 用于对controller的自动注入
- * 注意：如果 Controller通过 @Clear 来把此 拦截器给清空，那么此方法（action）注入将会失效
- */
-public class JbootCoreInterceptor implements HandlerInterceptor {
+public class OpentracingInterceptor implements FixedInterceptor {
 
 
     @Override

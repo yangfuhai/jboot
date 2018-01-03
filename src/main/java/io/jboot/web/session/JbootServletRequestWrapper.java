@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.jboot.web.session;
 
 import io.jboot.Jboot;
+import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.utils.RequestUtils;
 
 import javax.servlet.ServletException;
@@ -50,10 +51,21 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
         if (httpSession == null) {
 
-            if (Jboot.me().getCache().isNoneCache()) {
-                httpSession = new JbootDefaultSessionWapper();
-            } else {
-                httpSession = new JbootCacheSessionWapper();
+            JbootCacheConfig cacheConfig = Jboot.config(JbootCacheConfig.class);
+            
+            switch (cacheConfig.getType()) {
+                case JbootCacheConfig.TYPE_REDIS:
+                case JbootCacheConfig.TYPE_EHREDIS:
+                    httpSession = new JbootCacheSessionWapper();
+                    break;
+                case JbootCacheConfig.TYPE_EHCACHE:
+                case JbootCacheConfig.TYPE_NONE_CACHE:
+                    httpSession = new JbootDefaultSessionWapper();
+                    break;
+                default:
+                    httpSession = new JbootDefaultSessionWapper();
+                    break;
+
             }
         }
 

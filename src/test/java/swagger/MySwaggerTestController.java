@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package swagger;
 
 import com.jfinal.kit.Ret;
+import io.jboot.component.swagger.ParamType;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.swagger.annotations.Api;
@@ -40,8 +41,8 @@ public class MySwaggerTestController extends JbootController {
 
     @ApiOperation(value = "添加用户", httpMethod = "POST", notes = "add user")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户名", paramType = "form", dataType = "string", required = true),
-            @ApiImplicitParam(name = "k1", value = "k1", paramType = "form", dataType = "string", required = true),
+            @ApiImplicitParam(name = "username", value = "用户名", paramType = ParamType.FORM, dataType = "string", required = true),
+            @ApiImplicitParam(name = "k1", value = "k1", paramType = ParamType.FORM, dataType = "string", required = true),
     })
     public void add(String username) {
         renderJson(Ret.ok("k1", "v1").set("username", username));

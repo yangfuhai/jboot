@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         if (liveSeconds <= 0) {
             return get(cacheName, key, dataLoader);
         }
-        
+
         Object data = get(cacheName, key);
         if (data == null) {
             data = dataLoader.load();
@@ -143,7 +143,20 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         return (T) data;
     }
 
+
+    @Override
+    public Integer getTtl(String cacheName, Object key) {
+        Long ttl = redis.ttl(buildKey(cacheName, key));
+        return ttl != null ? ttl.intValue() : null;
+    }
+
+    @Override
+    public void setTtl(String cacheName, Object key, int seconds) {
+        redis.expire(buildKey(cacheName, key), seconds);
+    }
+
     public JbootRedis getRedis() {
         return redis;
     }
+
 }

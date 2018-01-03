@@ -1,5 +1,6 @@
 
 # 目录
+- [快速上手](#快速上手)
 - [JBoot核心组件](#jboot核心组件)
 - [MVC](#mvc)
 	- MVC的概念
@@ -32,6 +33,12 @@
 - [RPC远程调用](#rpc远程调用)
 	- 使用步骤
 	- 其他注意
+- [Redis操作](#redis操作)
+	- Redis简介
+	- Redis的使用
+	- Redis操作系列方法
+	- Redis扩展
+	- Redis集群
 - [MQ消息队列](#mq消息队列)
 	- 使用步骤
 	- RedisMQ
@@ -92,6 +99,36 @@
 - [常见问题](#常见问题)
 	- 使用Jboot后还能自定义JfinalConfig等配置文件吗？
 
+
+# 快速上手
+
+#### 创建项目
+略
+#### 添加Jboot依赖
+
+```xml
+<dependency>
+    <groupId>io.jboot</groupId>
+    <artifactId>jboot</artifactId>
+    <version>1.2.2</version>
+</dependency>
+```
+#### 编写helloworld
+
+```java
+@RequestMapping("/")
+public class MyController extends JbootController{
+   public void index(){
+        renderText("hello jboot");
+   }
+   
+   public static void main(String [] args){
+       Jboot.run(args);
+   }
+}
+```
+#### 运行并浏览器查看
+运行main方法后，在浏览器输入网址：http://127.0.0.1:8088 查看。
 
 
 # JBoot核心组件
@@ -182,6 +219,111 @@ public class HelloController extend JbootController{
 
 * 访问`http://127.0.0.1`等同于`http://127.0.0.1/`。
 * `@RquestMapping` 可以使用在任何的 Controller，并 **不需要** 这个Controller继承至JbootController。
+
+## Action
+在 Controller 之中定义的 public 方法称为 Action。Action 是请求的最小单位。Action 方法 必须在 Controller 中定义，且必须是 public 可见性。
+
+```java
+public class HelloController extends Controller { 
+
+	public void index() {
+		renderText("此方法是一个action"); 
+	}
+
+	public String test() { 
+		return "index.html";
+	} 
+	
+	public String save(User user) { 
+		user.save();
+		render("index.html");
+	} 
+}
+```
+以上代码中定义了三个 Action，分表是 HelloController.index()、 HelloController.test() 和 HelloController.save(User user)。
+
+Action 可以有返回值，返回值可在拦截器中通过 invocation.getReturnValue() 获取到，以便 进行 render 控制。
+
+Action 可以带参数，可以代替 getPara、getBean、getModel 系列方法获取参数，使用 UploadFile 参数时可以代替 getFile 方法实现文件上传。这种传参方式还有一个好处是便于与 swagger 这类 第三方无缝集成，生成 API 文档。
+
+**注意：** 带参数的Action必须在pom.xml文件里添加如下配置：
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <source>1.8</source>
+        <target>1.8</target>
+        <encoding>UTF-8</encoding>
+        <!--必须添加compilerArgument配置，才能使用JController方法带参数的功能-->
+        <compilerArgument>-parameters</compilerArgument>
+    </configuration>
+</plugin>
+```
+
+如果 action 形参是一个 model 或者 bean，原先通过 getBean(User.class, “”) 获取 时第二个参数为空字符串或 null，那么与之等价的形参注入只需要用一下@Para(“”)注解即可:
+
+```java
+public void save(@Para(“”)User user) { 
+	user.save();
+	render("index.html");
+}
+```
+
+### getPara 系列方法
+Controller  供了 getPara 系列方法用来从请求中获取参数。getPara 系列方法分为两种类型。 第一种类型为第一个形参为 String 的 getPara 系列方法。该系列方法是对 HttpServletRequest.getParameter(String name) 的 封 装 ， 这 类 方 法 都 是 转 调 了 HttpServletRequest.getParameter(String name)。第二种类型为第一个形参为 int 或无形参的 getPara 系列方法。该系列方法是去获取 urlPara 中所带的参数值。getParaMap 与 getParaNames 分别对应 HttpServletRequest 的 getParameterMap 与 getParameterNames。
+
+|方法调用 | 返回值 |
+| ------------- | -----|
+|getPara(”title”)| 返回页面表单域名为“title”参数值|
+|getParaToInt(”age”) |返回页面表单域名为“age”的参数值并转为 int 型 |
+|getPara(0)|返回 url 请求中的 urlPara 参数的第一个值，如 http://localhost/controllerKey/method/v0-v1-v2 这个请求将 返回”v0”|
+|getParaToInt(1)|返回 url 请求中的 urlPara 参数的第二个值并转换成 int 型，如 http://localhost/controllerKey/method/2-5-9 这个请求将返回 5|
+|getParaToInt(2)|如http://localhost/controllerKey/method/2-5-N8 这个 请求将返回 -8。注意:约定字母 N 与 n 可以表示负 号，这对 urlParaSeparator 为 “-” 时非常有用。|
+|getPara()|返回 url 请求中的 urlPara 参数的整体值，如 http://localhost/controllerKey/method/v0-v1-v2 这个 请求将返回”v0-v1-v2”
+
+### getBean 与 getModel 方法
+getModel 用来接收页面表单域传递过来的 model 对象，表单域名称以”modelName.attrName”方式命名，getModel 使用的 attrName 必须与数据表字段名完全一样。getBean 方法用于支持传统 Java Bean，包括支持使用 jfnal 生成器生成了 getter、setter 方法的 Model，页面表单传参时使用与 setter 方法相一致的 attrName，而非数据表字段名。 getModel 与 getBean 区别在于前者使用数表字段名而后者使用与 setter 方法一致的属性名进行数据注入。建议优先使用 getBean 方法。 
+
+以下是一个简单的示例:
+
+```java
+// 定义Model，在此为Blog
+public class Blog extends JbootModel<Blog> {
+	
+}
+
+// 在页面表单中采用modelName.attrName形式为作为表单域的name 
+<form action="/blog/save" method="post">
+	<input name="blog.title" type="text"> 
+	<input name="blog.content" type="text"> 
+	<input value=" 交" type="submit">
+</form>
+
+@RequestMapping("/blog")
+public class BlogController extends JbootController { 
+
+	public void save() {
+		// 页面的modelName正好是Blog类名的首字母小写 
+		Blog blog = getModel(Blog.class);
+		
+		//如果表单域的名称为 "otherName.title"可加上一个参数来获取
+		Blog blog = getModel(Blog.class, "otherName");
+		
+		//如果表单域的名称为 "title" 和 "content" 
+		Blog blog = getModel(Blog.class, "");
+	}
+	
+	// 或者 也可以写如下代码,但是注意，只能写一个save方法
+	public void save(Blog blog) {
+		// do your something
+	}
+	
+}
+```
+
+上面代码中，表单域采用了”blog.title”、”blog.content”作为表单域的 name 属性，”blog”是类 文件名称”Blog”的首字母变小写，”title”是 blog 数据库表的 title 字段，如果希望表单域使用任 意的 modelName ，只需要在 getModel 时多添加一个参数来指定，例如: getModel(Blog.class, ”otherName”)。
 
 ## render
 渲染器，负责把内容输出到浏览器，在Controller中，提供了如下一些列render方法。
@@ -865,6 +1007,168 @@ bin/zkServer.sh start
 ```
 关于zookeeper更多的内容，请查看 http://zookeeper.apache.org 和 http://zookeeper.apache.org/doc/trunk/zookeeperStarted.html
 
+# Redis操作
+## Redis简介
+Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。
+
+Redis 与其他 key - value 缓存产品有以下三个特点：
+
+* Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。
+* Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。
+* Redis支持数据的备份，即master-slave模式的数据备份。
+	
+Redis 优势:
+
+* 性能极高 – Redis能读的速度是110000次/s,写的速度是81000次/s 。
+* 丰富的数据类型 – Redis支持二进制案例的 Strings, Lists, Hashes, Sets 及 Ordered Sets 数据类型操作。
+* 原子 – Redis的所有操作都是原子性的，意思就是要么成功执行要么失败完全不执行。单个操作是原子性的。多个操作也支持事务，即原子性，通过MULTI和EXEC指令包起来。
+* 丰富的特性 – Redis还支持 publish/subscribe, 通知, key 过期等等特性。
+
+
+## Redis的使用
+在使用Reids之前，先进行Redis配置，配置内容如下：
+
+```java
+jboot.redis.host=127.0.0.1
+jboot.redis.password=xxxx
+```
+
+配置后，就可以通过如下代码获取 JbootRedis 对redis进行操作：
+
+```java
+JbootRedis redis = Jboot.me().getReids();
+redis.set("key1","value1");
+
+String value = redis.get("key1");
+
+System.out.println(value); // 输出 value1
+```
+
+## Redis操作系列方法
+
+| 指令（方法）         |  描述  |
+| ------------- | -----|
+| set(Object key, Object value);| 存放 key value 对到 redis，对于某个原本带有生存时间（TTL）的键来说， 当 SET 命令成功在这个键上执行时， 这个键原有的 TTL 将被清除。如果 key 已经持有其他值， SET 就覆写旧值，无视类型。 |
+| setnx  | 当且仅当 key 不存在能成功设置|
+| setWithoutSerialize  | 存放 key value 对到 redis，不对value进行序列化，经常用在设置某些 数字或字符串类型的数据 |
+| setex(Object key, int seconds, Object value)  |存放 key value 对到 redis，并将 key 的生存时间设为 seconds (以秒为单位) |
+| get  |  返回 key 所关联的 value 值 |
+| getWithoutSerialize  |  返回 key 所关联的 value 值，不对value近反序列化 |
+| del(Object key)  | 删除给定的一个 key |
+| del(Object... keys)  | 删除给定的多个 key |
+| keys  | 查找所有符合给定模式 pattern 的 key，例如：KEYS h?llo 匹配 hello ， hallo 和 hxllo 等 |
+| mset  | 同时设置一个或多个 key-value 对，例如：mset("k1", "v1", "k2", "v2") |
+| mget  | 返回所有(一个或多个)给定 key 的值 |
+| decr  | 将 key 中储存的数字值减一 |
+| decrBy(Object key, long longValue)  | 将 key 所储存的值减去减量 value |
+| incr  | 将 key 中储存的数字值增一 |
+| incrBy(Object key, long value)  | 将 key 所储存的值加上增量 value |
+| exists  | 检查给定 key 是否存在 |
+| randomKey  | 从当前数据库中随机返回(不删除)一个 key |
+| rename  | 将 key 改名为 newkey，当 newkey 已经存在时， RENAME 命令将覆盖旧值 |
+| move  | 将当前数据库的 key 移动到给定的数据库 db 当中 |
+| migrate  | 将 key 原子性地从当前实例传送到目标实例的指定数据库上 |
+| select  | 切换到指定的数据库，数据库索引号 index 用数字值指定，以 0 作为起始索引值 |
+| expire  | 为给定 key 设置生存时间，当 key 过期时(生存时间为 0 )，它会被自动删除 |
+| expireAt  | expireAt 的作用和 expire 类似，都用于为 key 设置生存时间。不同在于 expireAt 命令接受的时间参数是 UNIX 时间戳(unix timestamp) |
+| pexpire  | 这个命令和 expire 命令的作用类似，但是它以毫秒为单位设置 key 的生存时间 |
+| pexpireAt  | 这个命令和 expireAt 命令类似，但它以毫秒为单位设置 key 的过期 unix 时间戳 |
+| getSet  | 将给定 key 的值设为 value ，并返回 key 的旧值(old value) |
+| persist  | 移除给定 key 的生存时间 |
+| type  | 返回 key 所储存的值的类型 |
+| ttl  | 以秒为单位，返回给定 key 的剩余生存时间 |
+| pttl  | 这个命令类似于 TTL 命令，但它以毫秒为单位返回 key 的剩余生存时间 |
+| objectRefcount  | 对象被引用的数量 |
+| objectIdletime  | 对象没有被访问的空闲时间 |
+| hset(Object key, Object field, Object value)  | 将哈希表 key 中的域 field 的值设为 value |
+| hmset(Object key, Map<Object, Object> hash)  | 同时将多个 field-value (域-值)对设置到哈希表 key 中 |
+| hget(Object key, Object field)  | 返回哈希表 key 中给定域 field 的值 |
+| hmget(Object key, Object... fields)  | 返回哈希表 key 中，一个或多个给定域的值 |
+| hdel  |  删除哈希表 key 中的一个或多个指定域，不存在的域将被忽略 |
+| hexists  | 查看哈希表 key 中，给定域 field 是否存在 |
+| hgetAll  | 返回哈希表 key 中，所有的域和值 |
+| hvals  | 返回哈希表 key 中所有域的值 |
+| hkeys  | 返回哈希表 key 中的所有域 |
+| hlen  | 返回哈希表 key 中域的数量 |
+| hincrBy(Object key, Object field, long value)  | 为哈希表 key 中的域 field 的值加上增量 value |
+| hincrByFloat  | 为哈希表 key 中的域 field 加上浮点数增量 value |
+| lindex  | 返回列表 key 中，下标为 index 的元素 |
+| getCounter  | 获取记数器的值 |
+| llen  | 返回列表 key 的长度 |
+| lpop  | 移除并返回列表 key 的头元素 |
+| lpush  | 将一个或多个值 value 插入到列表 key 的表头 |
+| lset  | 将列表 key 下标为 index 的元素的值设置为 value |
+| lrem  | 根据参数 count 的值，移除列表中与参数 value 相等的元素 |
+| lrange(Object key, long start, long end)  | 返回列表 key 中指定区间内的元素，区间以偏移量 start 和 stop 指定 |
+| ltrim  | 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除 |
+| rpop  | 移除并返回列表 key 的尾元素 |
+| rpoplpush  | 命令 rpoplpush 在一个原子时间内，执行以下两个动作：1：将列表中的最后一个元素(尾元素)弹出，并返回给客户端。2：将弹出的元素插入到列表 ，作为列表的的头元素 |
+| rpush  | 将一个或多个值 value 插入到列表 key 的表尾(最右边) |
+| blpop(Object... keys)  | blpop 是列表的阻塞式(blocking)弹出原语 |
+| blpop(Integer timeout, Object... keys)  | blpop 是列表的阻塞式(blocking)弹出原语 |
+| brpop(Object... keys)   | 列表的阻塞式(blocking)弹出原语 |
+| brpop(Integer timeout, Object... keys)  | 列表的阻塞式(blocking)弹出原语 |
+| ping  | 使用客户端向服务器发送一个 PING ，如果服务器运作正常的话，会返回一个 PONG  |
+| sadd  | 将一个或多个 member 元素加入到集合 key 当中，已经存在于集合的 member 元素将被忽略 |
+| scard  | 返回集合 key 的基数(集合中元素的数量) |
+| spop  | 移除并返回集合中的一个随机元素 |
+| smembers  | 返回集合 key 中的所有成员|
+| sismember  | 判断 member 元素是否集合 key 的成员 |
+| sinter  | 返回多个集合的交集，多个集合由 keys 指定 |
+| srandmember  | 返回集合中的一个随机元素 |
+| srandmember  | 返回集合中的 count 个随机元素 |
+| srem  |  移除集合 key 中的一个或多个 member 元素，不存在的 member 元素会被忽略 |
+| sunion  | 返回多个集合的并集，多个集合由 keys 指定 |
+| sdiff  | 返回一个集合的全部成员，该集合是所有给定集合之间的差集 |
+| zadd(Object key, double score, Object member)  |  将一个或多个 member 元素及其 score 值加入到有序集 key 当中 |
+| zadd(Object key, Map<Object, Double> scoreMembers)  | 同上|
+| zcard  | 返回有序集 key 的基数 |
+| zcount  | 返回有序集 key 中， score 值在 min 和 max 之间(默认包括 score 值等于 min 或 max )的成员的数量 |
+| zincrby  | 为有序集 key 的成员 member 的 score 值加上增量 increment  |
+| zrange  | 返回有序集 key 中，指定区间内的成员 |
+| zrevrange  |  返回有序集 key 中，指定区间内的成员 |
+| zrangeByScore  | 返回有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员 |
+| zrank  | 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递增(从小到大)顺序排列 |
+| zrevrank  | 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递减(从大到小)排序 |
+| zrem  |  移除有序集 key 中的一个或多个成员，不存在的成员将被忽略 |
+| zscore  | 返回有序集 key 中，成员 member 的 score 值 |
+| publish(String channel, String message)  | 发布一条消息 |
+| publish(byte[] channel, byte[] message)  | 发布一条消息 |
+| subscribe(JedisPubSub listener, final String... channels)  | 订阅消息 |
+| subscribe(BinaryJedisPubSub binaryListener, final byte[]... channels)  | 订阅消息 |
+
+
+## Redis扩展
+
+JbootRedis 是通过 `jedis` 或者 `JedisCluster` 进行操作的，如果想扩展自己的方法。可以直接获取 `jedis` （或`JedisCluster`) 对 Redis 进行操作，获取  `jedis`（或`JedisCluster`) 的代码如下：
+
+```java
+JbootRedis redis = Jboot.me().getReids();
+
+//单机模式下
+JbootRedisImpl redisImpl = (JbootRedisImpl)redis;
+Jedis jedis = redisImpl.getJedis();
+
+//集群模式下
+JbootClusterRedisImpl redisImpl = (JbootClusterRedisImpl)redis;
+JedisCluster jedis = redisImpl.getJedisCluster();
+```
+## Redis集群
+在单机模式下，配置文件如下：
+
+```java
+jboot.redis.host=127.0.0.1
+jboot.redis.password=xxxx
+```
+
+在集群模式下，只需要在 jboot.redis.host 配置为多个主机即可，例如：
+
+
+```java
+## 多个IP用英文逗号隔开
+Jboot.redis.host=192.168.1.33,192.168.1.34
+jboot.redis.password=xxxx
+```
 
 # MQ消息队列
 Jboot 内置整个了MQ消息队列，使用MQ非常简单
@@ -1241,28 +1545,26 @@ jboot.swagger.host=127.0.0.1:8080
 代码如下：
 
 ```java
-@SwaggerAPIs(name = "测试接口", description = "这个接口集合的描述")
 @RequestMapping("/swaggerTest")
+@Api(description = "用户相关接口文档", basePath = "/swaggerTest", tags = "abc")
 public class MySwaggerTestController extends JbootController {
 
-
-    @SwaggerAPI(description = "测试description描述", summary = "测试summary", operationId = "testOnly",
-            params = {@SwaggerParam(name = "name", description = "请输入账号名称")}
-    )
+    @ApiOperation(value = "用户列表", httpMethod = "GET", notes = "user list")
     public void index() {
         renderJson(Ret.ok("k1", "v1").set("name", getPara("name")));
     }
 
 
-    @SwaggerAPI(description = "进行用户登录操作", summary = "用户登录API", method = "post",
-            params = {
-                    @SwaggerParam(name = "name", description = "请输入账号名称"),
-                    @SwaggerParam(name = "pwd", description = "请输入密码", definition = "MySwaggerPeople")
-            }
-    )
-    public void login() {
-        renderJson(Ret.ok("k2", "vv").set("name", getPara("name")));
+    @ApiOperation(value = "添加用户", httpMethod = "POST", notes = "add user")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户名", paramType = "form", dataType = "string", required = true),
+            @ApiImplicitParam(name = "k1", value = "k1", paramType = "form", dataType = "string", required = true),
+    })
+    public void add(String username) {
+        renderJson(Ret.ok("k1", "v1").set("username", username));
     }
+
+
 }
 ```
 
@@ -1277,17 +1579,7 @@ public class MySwaggerTestController extends JbootController {
 
 在图片2中，我们可以输入参数，并点击 `Execute` 按钮进行测试。
 
-## 5个swagger注解
 
-
-| 指令         |  描述  |
-| ------------- | -----|
-| SwaggerAPIs  | 在Controller上进行配置，指定Controller api的描述|
-| SwaggerAPI | 在Controller上某个action进行注解 |
-| SwaggerDefinition  |  |
-| SwaggerDefinitionEnum  |  |
-| SwaggerParam  |  |
-| SwaggerResponse  |  | 
 
 # 其他
 
@@ -1328,12 +1620,12 @@ jboot.cache.type = mycache
 #### 第一步，注册事件的监听器。
 
 ```java
-@EventConfig(action = {“event1”,"event2"})
+@EventConfig(action = {"event1","event2"})
 public class MyEventListener implements JbootEventListener {
     
-    public  void onMessage(JbootEvent event){
+    public  void onEvent(JbootEvent event){
         Object data = event.getData();
-        System.out.println("get event:"data);
+        System.out.println("get data:"+data);
     }
 }
 ```
@@ -1360,10 +1652,10 @@ jboot.myconfig.name=aaa
 jboot.myconfig.passowrd=bbb
 jboot.myconfig.age=10
 ```
-要读取这个配置信息，我们需要定义我们的一个model类，并通过@PropertieConfig注解给我们的类配置上类与配置文件的对应关系，如下所示：
+要读取这个配置信息，我们需要定义我们的一个model类，并通过@PropertyConfig注解给我们的类配置上类与配置文件的对应关系，如下所示：
 
 ```java
-@PropertieConfig(prefix="jboot.myconfig")
+@PropertyConfig(prefix="jboot.myconfig")
 public class MyConfigModel{
     private String name;
     private String password;
@@ -1391,10 +1683,10 @@ jboot.myconfig.passowrd=bbb
 jboot.myconfig.age=10
 ```
 
-那么，一样的，我们需要编写一个model，并配置上@PropertieConfig注解，与读取jboot.properties文件不同的是，@PropertieConfig 需要添加上file配置，内容如下：
+那么，一样的，我们需要编写一个model，并配置上@PropertyConfig注解，与读取jboot.properties文件不同的是，@PropertyConfig 需要添加上file配置，内容如下：
 
 ```java
-@PropertieConfig(prefix="jboot.myconfig",file="michael.properties")
+@PropertyConfig(prefix="jboot.myconfig",file="michael.properties")
 public class MyConfigModel{
     private String name;
     private String password;

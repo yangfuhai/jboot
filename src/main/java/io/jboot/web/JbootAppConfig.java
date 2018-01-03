@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,8 @@ import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
+import io.jboot.web.fixedinterceptor.FixedInterceptors;
+import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
@@ -74,7 +76,6 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configConstant(Constants constants) {
 
-//        PropKit.use("jboot.properties");
         constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.me().isDevMode());
         ApiConfigKit.setDevMode(Jboot.me().isDevMode());
@@ -184,6 +185,8 @@ public class JbootAppConfig extends JFinalConfig {
     public void configInterceptor(Interceptors interceptors) {
 
         JbootAppListenerManager.me().onInterceptorConfig(interceptors);
+
+        JbootAppListenerManager.me().onFixedInterceptorConfig(FixedInterceptors.me());
     }
 
     @Override

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.google.common.collect.Multimap;
 import com.jfinal.kit.*;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.config.client.ConfigRemoteReader;
 import io.jboot.config.server.ConfigFileScanner;
 import io.jboot.exception.JbootIllegalConfigException;
@@ -67,12 +67,6 @@ public class JbootConfigManager {
      * 方便方法执行的时候，能找对对应的实例化对象
      */
     private Multimap<String, Object> keyInstanceMapping = ArrayListMultimap.create();
-
-    /**
-     * 类的set方法缓存，用于减少对类的反射工作
-     */
-    private Multimap<Class<?>, Method> classMethodsCache = ArrayListMultimap.create();
-
 
     private static JbootConfigManager instance;
 
@@ -131,11 +125,11 @@ public class JbootConfigManager {
 
 
     public <T> T get(Class<T> clazz) {
-        PropertieConfig propertieConfig = clazz.getAnnotation(PropertieConfig.class);
-        if (propertieConfig == null) {
-            return get(clazz, null);
+        PropertyConfig propertyConfig = clazz.getAnnotation(PropertyConfig.class);
+        if (propertyConfig == null) {
+            return get(clazz, null, null);
         }
-        return get(clazz, propertieConfig.prefix());
+        return get(clazz, propertyConfig.prefix(), propertyConfig.file());
     }
 
 
@@ -147,7 +141,7 @@ public class JbootConfigManager {
      * @param <T>
      * @return
      */
-    public <T> T get(Class<T> clazz, String prefix) {
+    public <T> T get(Class<T> clazz, String prefix, String file) {
 
         T obj = (T) configs.get(clazz.getName() + prefix);
         if (obj != null) {
@@ -155,12 +149,24 @@ public class JbootConfigManager {
         }
 
         obj = ClassKits.newInstance(clazz);
-        Collection<Method> setMethods = getSetMethods(clazz);
+        Collection<Method> setMethods = ClassKits.getClassSetMethods(clazz);
 
         for (Method method : setMethods) {
 
             String key = getKeyByMethod(prefix, method);
             String value = getValueByKey(key);
+
+            if (StringUtils.isNotBlank(file)) {
+                try {
+                    Prop prop = PropKit.use(file);
+                    String filePropValue = prop.get(key);
+                    if (StringUtils.isNotBlank(filePropValue)) {
+                        value = filePropValue;
+                    }
+                } catch (Throwable ex) {
+                    LOG.warn("Could not find " + file + " in your class path, use jboot.properties to replace. ");
+                }
+            }
 
             /**
              * 记录 key 和其对于的方法，方便远程配置文件修改的时候，能找到其对于的方法
@@ -223,19 +229,6 @@ public class JbootConfigManager {
         return value;
     }
 
-
-    private Collection<Method> getSetMethods(Class clazz) {
-        Collection<Method> setMethods = classMethodsCache.get(clazz);
-        if (setMethods == null || setMethods.isEmpty()) {
-            Method[] methods = clazz.getMethods();
-            for (Method m : methods) {
-                if (m.getName().startsWith("set") && m.getName().length() > 3 && m.getParameterCount() == 1) {
-                    classMethodsCache.put(clazz, m);
-                }
-            }
-        }
-        return setMethods;
-    }
 
     /**
      * 或者Jboot默认的配置信息

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  */
 package io.jboot;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.web.JbootAppConfig;
 
-@PropertieConfig(prefix = "jboot")
+@PropertyConfig(prefix = "jboot")
 public class JbootConfig {
 
 
-    private String version = "1.1.9";
+    private String version = "1.2.2";
     private String mode = Jboot.MODE.DEV.getValue();
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
@@ -30,10 +30,6 @@ public class JbootConfig {
 
     public String getVersion() {
         return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     public String getMode() {

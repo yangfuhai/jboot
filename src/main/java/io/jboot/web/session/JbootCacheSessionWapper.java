@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,31 +15,103 @@
  */
 package io.jboot.web.session;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.RemovalCause;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 import io.jboot.Jboot;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class JbootCacheSessionWapper extends JbootSessionWapperBase implements HttpSession {
 
-    private static final String SESSION_CACHE_NAME = "SESSION";
 
+    private static LoadingCache<String, Object> sessions = Caffeine.newBuilder()
+            .expireAfterAccess(60, TimeUnit.MINUTES)
+            .expireAfterWrite(60, TimeUnit.MINUTES)
+            .removalListener(new RemovalListener<String, Object>() {
+                @Override
+                public void onRemoval(@Nullable String key, @Nullable Object value, @Nonnull RemovalCause cause) {
+                    Jboot.me().getCache().removeAll("SESSION:" + key);
+                }
+            })
+            .build(key -> new Object());
+
+
+    private String getSessionCacheName() {
+        return "SESSION:" + getOrCreatSessionId();
+    }
 
     @Override
     public Object getAttribute(String name) {
-        return Jboot.me().getCache().get(SESSION_CACHE_NAME, buildKey(name));
+        Object data = Jboot.me().getCache().get(getSessionCacheName(), name);
+        if (data != null) {
+            refreshCache();
+        }
+        return data;
     }
 
 
     @Override
     public void setAttribute(String name, Object value) {
-        Jboot.me().getCache().put(SESSION_CACHE_NAME, buildKey(name), value);
+        refreshCache();
+        Jboot.me().getCache().put(getSessionCacheName(), name, value);
     }
 
 
     @Override
     public void removeAttribute(String name) {
-        Jboot.me().getCache().remove(SESSION_CACHE_NAME, buildKey(name));
+        refreshCache();
+        Jboot.me().getCache().remove(getSessionCacheName(), name);
+    }
+
+    /**
+     * 刷新缓存，刷新后延长40分钟
+     */
+    private void refreshCache() {
+        sessions.getIfPresent(getOrCreatSessionId());
+    }
+
+
+    @Override
+    public Enumeration<String> getAttributeNames() {
+
+        List<String> keys = Jboot.me().getCache().getKeys(getSessionCacheName());
+        if (keys == null) {
+            keys = new ArrayList<>();
+        }
+
+        final Iterator<String> iterator = keys.iterator();
+        return new Enumeration<String>() {
+            @Override
+            public boolean hasMoreElements() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public String nextElement() {
+                return iterator.next();
+            }
+        };
+    }
+
+
+    @Override
+    public String[] getValueNames() {
+
+        List<String> keys = Jboot.me().getCache().getKeys(getSessionCacheName());
+        if (keys == null) {
+            keys = new ArrayList<>();
+        }
+        return keys.toArray(new String[]{});
     }
 
 

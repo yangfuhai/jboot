@@ -13,19 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.cache;
+package io.jboot.web.cache.keygen;
 
-import java.lang.annotation.*;
+import javax.servlet.http.HttpServletRequest;
 
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface ActionCacheEnable {
+/**
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.web.cache.keygen
+ */
+public class DefaultActionKeyGeneratorImpl implements IActionKeyGenerator {
 
-    String cacheName();
+    @Override
+    public String generate(String target, HttpServletRequest request) {
+        String cacheKey = target;
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            queryString = "?" + queryString;
+            cacheKey += queryString;
+        }
+        return cacheKey;
+    }
 
-    /**
-     * 0-默认永久
-     */
-    int liveSeconds() default 0;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
-import java.util.Enumeration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class JbootSessionWapperBase implements HttpSession {
 
     private static final long SESSION_TIME = TimeUnit.DAYS.toSeconds(2);
+    private static final String SESSION_NAME = "_JSID_";
 
 
     @Override
@@ -67,17 +67,6 @@ public abstract class JbootSessionWapperBase implements HttpSession {
         throw new RuntimeException("getSessionContext method not finished.");
     }
 
-
-    @Override
-    public Enumeration<String> getAttributeNames() {
-        throw new RuntimeException("getAttributeNames method not finished.");
-    }
-
-    @Override
-    public String[] getValueNames() {
-        throw new RuntimeException("getValueNames method not finished.");
-    }
-
     @Override
     public void putValue(String name, Object value) {
         setAttribute(name, value);
@@ -90,7 +79,7 @@ public abstract class JbootSessionWapperBase implements HttpSession {
 
     @Override
     public void removeValue(String name) {
-
+        removeAttribute(name);
     }
 
     @Override
@@ -104,24 +93,20 @@ public abstract class JbootSessionWapperBase implements HttpSession {
     }
 
 
-    public String buildKey(String name) {
-        return String.format("%s:%s", getOrCreatSessionId(), name);
-    }
-
-    private String getOrCreatSessionId() {
-        String sessionid = getCookie("JSESSIONID");
+    protected String getOrCreatSessionId() {
+        String sessionid = getCookie(SESSION_NAME);
         if (StringUtils.isNotBlank(sessionid)) {
             return sessionid;
         }
 
-        sessionid = JbootRequestContext.getRequestAttr("JSESSIONID");
+        sessionid = JbootRequestContext.getRequestAttr(SESSION_NAME);
         if (StringUtils.isNotBlank(sessionid)) {
             return sessionid;
         }
 
         sessionid = UUID.randomUUID().toString().replace("-", "");
-        JbootRequestContext.setRequestAttr("JSESSIONID", sessionid);
-        setCookie("JSESSIONID", sessionid, (int) SESSION_TIME);
+        JbootRequestContext.setRequestAttr(SESSION_NAME, sessionid);
+        setCookie(SESSION_NAME, sessionid, (int) SESSION_TIME);
         return sessionid;
     }
 

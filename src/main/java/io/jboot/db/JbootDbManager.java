@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,21 +51,23 @@ public class JbootDbManager {
 
     public JbootDbManager() {
 
-        // 所有的数据源
-        Map<String, DataSourceConfig> datasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
+        // 所有的数据源，包含了分库数据源的子数据源
+        Map<String, DataSourceConfig> allDatasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
 
         // 分库的数据源，一个数据源包含了多个数据源。
         Map<String, DataSourceConfig> shardingDatasourceConfigs = DataSourceConfigManager.me().getShardingDatasourceConfigs();
 
         if (shardingDatasourceConfigs != null && shardingDatasourceConfigs.size() > 0) {
             for (Map.Entry<String, DataSourceConfig> entry : shardingDatasourceConfigs.entrySet()) {
-                String databaseConfig = entry.getValue().getShardingDatabase();
-                if (StringUtils.isBlank(databaseConfig)) {
+
+                //子数据源的配置
+                String shardingDatabase = entry.getValue().getShardingDatabase();
+                if (StringUtils.isBlank(shardingDatabase)) {
                     continue;
                 }
-                Set<String> databases = StringUtils.splitToSet(databaseConfig, ",");
+                Set<String> databases = StringUtils.splitToSet(shardingDatabase, ",");
                 for (String database : databases) {
-                    DataSourceConfig datasourceConfig = datasourceConfigs.remove(database);
+                    DataSourceConfig datasourceConfig = allDatasourceConfigs.remove(database);
                     if (datasourceConfig == null) {
                         throw new NullPointerException("has no datasource config named " + database + ",plase check your sharding database config");
                     }
@@ -74,18 +76,18 @@ public class JbootDbManager {
             }
         }
 
-        //所有数据源，包含了分库的和未分库的
-        Map<String, DataSourceConfig> allDatasourceConfigs = new HashMap<>();
-        if (datasourceConfigs != null) {
-            allDatasourceConfigs.putAll(datasourceConfigs);
+        //合并后的数据源，包含了分库分表的数据源和正常数据源
+        Map<String, DataSourceConfig> mergeDatasourceConfigs = new HashMap<>();
+        if (allDatasourceConfigs != null) {
+            mergeDatasourceConfigs.putAll(allDatasourceConfigs);
         }
 
         if (shardingDatasourceConfigs != null) {
-            allDatasourceConfigs.putAll(shardingDatasourceConfigs);
+            mergeDatasourceConfigs.putAll(shardingDatasourceConfigs);
         }
 
 
-        for (Map.Entry<String, DataSourceConfig> entry : allDatasourceConfigs.entrySet()) {
+        for (Map.Entry<String, DataSourceConfig> entry : mergeDatasourceConfigs.entrySet()) {
 
             DataSourceConfig datasourceConfig = entry.getValue();
 

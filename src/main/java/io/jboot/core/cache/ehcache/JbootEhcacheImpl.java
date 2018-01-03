@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,6 +109,24 @@ public class JbootEhcacheImpl extends JbootCacheBase {
             put(cacheName, key, data, liveSeconds);
         }
         return (T) data;
+    }
+
+    @Override
+    public Integer getTtl(String cacheName, Object key) {
+        Element element = getOrAddCache(cacheName).get(key);
+        return element != null ? element.getTimeToLive() : null;
+    }
+    
+
+    @Override
+    public void setTtl(String cacheName, Object key, int seconds) {
+        Element element = getOrAddCache(cacheName).get(key);
+        if (element == null) {
+            return;
+        }
+
+        element.setTimeToLive(seconds);
+        getOrAddCache(cacheName).put(element);
     }
 
     public CacheManager getCacheManager() {

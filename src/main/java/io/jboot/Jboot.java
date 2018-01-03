@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
+import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
 import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.metrics.JbootMetricsManager;
@@ -37,13 +38,14 @@ import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
-import io.jboot.server.AutoDeployManager;
+import io.jboot.server.warmboot.AutoDeployManager;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerFactory;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.FileUtils;
 import io.jboot.utils.StringUtils;
+import io.jboot.web.JbootWebConfig;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -139,8 +141,7 @@ public class Jboot {
     public void start() {
 
         printBannerInfo();
-        printJbootConfigInfo();
-        printServerConfigInfo();
+        printConfigInfo();
 
         ensureServerCreated();
 
@@ -204,16 +205,16 @@ public class Jboot {
 
     }
 
-    private void printJbootConfigInfo() {
+    private void printConfigInfo() {
         System.out.println(getJbootConfig());
+        System.out.println(config(JbootServerConfig.class));
+        System.out.println(config(JbootWebConfig.class));
     }
 
-    private void printServerConfigInfo() {
-        System.out.println(config(JbootServerConfig.class));
-    }
 
     private void printServerPath() {
-        System.out.println("server classPath    : " + getRootClassPath());
+        System.out.println("server classPath : " + getRootClassPath());
+        System.out.println("server webRoot : " + PathKit.getWebRootPath());
     }
 
 
@@ -226,7 +227,7 @@ public class Jboot {
 
         String url = String.format("http://%s%s%s", host, port, path);
 
-        System.out.println("\nserver started success , url : " + url);
+        System.out.println("server started success , url : " + url);
     }
 
     private static String getRootClassPath() {
@@ -382,7 +383,21 @@ public class Jboot {
      * @return
      */
     public static <T> T config(Class<T> clazz, String prefix) {
-        return JbootConfigManager.me().get(clazz, prefix);
+        return JbootConfigManager.me().get(clazz, prefix, null);
+    }
+
+
+    /**
+     * 读取配置文件信息
+     *
+     * @param clazz
+     * @param prefix
+     * @param file
+     * @param <T>
+     * @return
+     */
+    public static <T> T config(Class<T> clazz, String prefix, String file) {
+        return JbootConfigManager.me().get(clazz, prefix, file);
     }
 
 

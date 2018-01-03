@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package actioncache;
 
 import io.jboot.Jboot;
 import io.jboot.web.cache.ActionCacheClear;
-import io.jboot.web.cache.ActionCacheEnable;
+import io.jboot.web.cache.EnableActionCache;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -26,13 +26,6 @@ import io.jboot.web.controller.annotation.RequestMapping;
 public class ActionCacheDemo extends JbootController {
 
 
-    /**
-     * 请先启动 ServerDemo 后，再启动
-     * 然后通过 http://127.0.0.1:8088/opentracing 访问生产数据
-     *
-     * @param args
-     */
-
     public static void main(String[] args) {
 
         Jboot.run(args);
@@ -40,23 +33,30 @@ public class ActionCacheDemo extends JbootController {
 
     public void index() {
         System.out.println("index() invoke!!!!");
-        renderHtml("htmlok");
+        renderHtml("index");
     }
 
     @ActionCacheClear("test")
     public void clear() {
         System.out.println("clear() invoke!!!!");
         renderHtml("clear ok!!!");
+
     }
 
-
-    @ActionCacheEnable(cacheName = "test")
+    @EnableActionCache(group = "test#(id)")
     public void cache() {
         System.out.println("cache() invoke!!!!");
         renderHtml("render ok");
     }
 
-    @ActionCacheEnable(cacheName = "test")
+
+    @EnableActionCache(group = "test#(id)")
+    public void template() {
+        System.out.println("template() invoke!!!!");
+        renderTemplate("/test.html");
+    }
+
+    @EnableActionCache(group = "test")
     public void json() {
         System.out.println("json() invoke!!!!");
         setAttr("user", "Michael Yang");
@@ -64,7 +64,7 @@ public class ActionCacheDemo extends JbootController {
     }
 
 
-    @ActionCacheEnable(cacheName = "test", liveSeconds = 5)
+    @EnableActionCache(group = "test", liveSeconds = 5)
     public void time() {
         System.out.println("json() invoke!!!!");
         setAttr("user", "Michael Yang");

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.handler.inters;
+package io.jboot.component.metrics;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Histogram;
@@ -25,14 +25,14 @@ import io.jboot.component.metrics.annotation.EnableMetricsHistogram;
 import io.jboot.component.metrics.annotation.EnableMetricsMeter;
 import io.jboot.component.metrics.annotation.EnableMetricsTimer;
 import io.jboot.utils.StringUtils;
-import io.jboot.web.handler.HandlerInterceptor;
-import io.jboot.web.handler.HandlerInvocation;
+import io.jboot.web.fixedinterceptor.FixedInterceptor;
+import io.jboot.web.fixedinterceptor.HandlerInvocation;
 
 /**
  * 用于对controller的Metrics 统计
  * 注意：如果 Controller通过 @Clear 来把此 拦截器给清空，那么此方法（action）注入将会失效
  */
-public class JbootMetricsInterceptor implements HandlerInterceptor {
+public class JbootMetricsInterceptor implements FixedInterceptor {
 
 
     @Override

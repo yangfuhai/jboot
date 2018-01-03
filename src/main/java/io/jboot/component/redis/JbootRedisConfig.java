@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2017, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  */
 package io.jboot.component.redis;
 
-import io.jboot.config.annotation.PropertieConfig;
+import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.utils.StringUtils;
 import redis.clients.jedis.HostAndPort;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@PropertieConfig(prefix = "jboot.redis")
+@PropertyConfig(prefix = "jboot.redis")
 public class JbootRedisConfig {
 
     private String host;
