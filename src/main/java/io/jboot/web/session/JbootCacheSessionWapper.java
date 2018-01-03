@@ -30,9 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 若使用ehcache作为缓存，那么
- */
+
 public class JbootCacheSessionWapper extends JbootSessionWapperBase implements HttpSession {
 
 

@@ -15,12 +15,15 @@
  */
 package io.jboot.web.limitation;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
 import io.jboot.Jboot;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -39,11 +42,26 @@ public class LimitationManager {
     private Map<String, Object> ajaxJsonMap = new HashMap();
     private String limitView;
 
+
+    /**
+     * 用户请求记录
+     */
+    private LoadingCache<String, Long> userRequestRecord = Caffeine.newBuilder()
+            .expireAfterWrite(1, TimeUnit.MINUTES)
+            .build(key -> System.currentTimeMillis());
+
+    /**
+     * IP 请求记录
+     */
+    private LoadingCache<String, Long> ipRequestRecord = Caffeine.newBuilder()
+            .expireAfterWrite(1, TimeUnit.MINUTES)
+            .build(key -> System.currentTimeMillis());
+
+
     private LimitationManager() {
         LimitationConfig config = Jboot.config(LimitationConfig.class);
         ajaxJsonMap.put("code", config.getLimitAjaxCode());
         ajaxJsonMap.put("message", config.getLimitAjaxMessage());
-
         this.limitView = config.getLimitView();
     }
 
@@ -70,6 +88,35 @@ public class LimitationManager {
     public RateLimiter getLimiter(String target) {
         return requestRateLimiterMap.get(target);
     }
+
+
+    /**
+     * 标识用户当前请求时间
+     *
+     * @param sessionId
+     */
+    public void flagUserRequest(String sessionId) {
+        userRequestRecord.put(sessionId, System.currentTimeMillis());
+    }
+
+    public long getUserflag(String sessionId) {
+        return userRequestRecord.get(sessionId);
+    }
+
+
+    /**
+     * 标识IP地址当前的请求时间
+     *
+     * @param ip
+     */
+    public void flagIpRequest(String ip) {
+        ipRequestRecord.put(ip, System.currentTimeMillis());
+    }
+
+    public long getIpflag(String sessionId) {
+        return ipRequestRecord.get(sessionId);
+    }
+
 
     public Map<String, Object> getAjaxJsonMap() {
         return ajaxJsonMap;

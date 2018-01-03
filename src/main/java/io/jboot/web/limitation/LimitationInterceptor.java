@@ -44,7 +44,7 @@ public class LimitationInterceptor implements FixedInterceptor {
         }
 
         EnableIpRateLimit ipRateLimit = inv.getMethod().getAnnotation(EnableIpRateLimit.class);
-        if (requestRateLimit != null && ipIntercept(inv, userRateLimit)) {
+        if (requestRateLimit != null && ipIntercept(inv, ipRateLimit)) {
             return;
         }
 
@@ -116,7 +116,6 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         }
 
-
         return true;
     }
 
@@ -129,7 +128,70 @@ public class LimitationInterceptor implements FixedInterceptor {
      * @return
      */
     private boolean userIntercept(HandlerInvocation inv, EnableUserRateLimit userRateLimit) {
-        return false;
+        LimitationManager manager = LimitationManager.me();
+        String sesssionId = inv.getController().getSession(true).getId();
+
+        long currentTime = System.currentTimeMillis();
+        long userFlagTime = manager.getUserflag(sesssionId);
+
+        manager.flagUserRequest(sesssionId);
+
+        double rate = userRateLimit.rate();
+        if (rate <= 0 || rate >= 1000) {
+            throw new IllegalArgumentException("@EnableIpRateLimit.rate must > 0 and < 1000");
+        }
+
+        double interval = 1000 / rate;
+        if ((currentTime - userFlagTime) >= interval) {
+            return false;
+        }
+
+        /**
+         * 注解上没有设置 Action , 使用jboot.properties配置文件的
+         */
+        if (StringUtils.isBlank(userRateLimit.limitAction())) {
+            //ajax 请求
+            if (RequestUtils.isAjaxRequest(inv.getController().getRequest())) {
+                inv.getController().renderJson(manager.getAjaxJsonMap());
+            }
+            //非ajax的正常请求
+            else {
+                String limitView = manager.getLimitView();
+                if (limitView != null) {
+                    inv.getController().render(limitView);
+                } else {
+                    inv.getController().renderText("reqeust limit by @EnableUserRateLimit.");
+                }
+            }
+        }
+
+        /**
+         * 设置了 Action , 用用户自己配置的
+         */
+        else {
+            switch (userRateLimit.limitAction()) {
+                case LimitationActions.JSON:
+                    inv.getController().renderJson(userRateLimit.limitContent());
+                    break;
+                case LimitationActions.TEXT:
+                    inv.getController().renderText(userRateLimit.limitContent());
+                    break;
+                case LimitationActions.RENDER:
+                    inv.getController().render(userRateLimit.limitContent());
+                    break;
+                case LimitationActions.REDIRECT:
+                    inv.getController().redirect(userRateLimit.limitContent(), true);
+                    break;
+                default:
+                    throw new IllegalArgumentException("annotation @EnableUserRateLimit.limitAction error in "
+                            + inv.getController().getClass().getName() + "." + inv.getMethodName()
+                            + ",  limitAction support text,json,render,redirect only, not support " + userRateLimit.limitAction());
+            }
+
+        }
+
+
+        return true;
     }
 
 
@@ -137,11 +199,73 @@ public class LimitationInterceptor implements FixedInterceptor {
      * ip请求频率拦截
      *
      * @param inv
-     * @param userRateLimit
+     * @param ipRateLimit
      * @return
      */
-    private boolean ipIntercept(HandlerInvocation inv, EnableUserRateLimit userRateLimit) {
-        return false;
+    private boolean ipIntercept(HandlerInvocation inv, EnableIpRateLimit ipRateLimit) {
+        LimitationManager manager = LimitationManager.me();
+        String ipaddress = RequestUtils.getIpAddress(inv.getController().getRequest());
+        long currentTime = System.currentTimeMillis();
+        long userFlagTime = manager.getIpflag(ipaddress);
+        manager.flagIpRequest(ipaddress);
+
+        double rate = ipRateLimit.rate();
+        if (rate <= 0 || rate >= 1000) {
+            throw new IllegalArgumentException("@EnableIpRateLimit.rate must > 0 and < 1000");
+        }
+
+        double interval = 1000 / rate;
+        if ((currentTime - userFlagTime) >= interval) {
+            return false;
+        }
+
+
+        /**
+         * 注解上没有设置 Action , 使用jboot.properties配置文件的
+         */
+        if (StringUtils.isBlank(ipRateLimit.limitAction())) {
+            //ajax 请求
+            if (RequestUtils.isAjaxRequest(inv.getController().getRequest())) {
+                inv.getController().renderJson(manager.getAjaxJsonMap());
+            }
+            //非ajax的正常请求
+            else {
+                String limitView = manager.getLimitView();
+                if (limitView != null) {
+                    inv.getController().render(limitView);
+                } else {
+                    inv.getController().renderText("reqeust limit by @EnableIpRateLimit.");
+                }
+            }
+        }
+
+        /**
+         * 设置了 Action , 用用户自己配置的
+         */
+        else {
+            switch (ipRateLimit.limitAction()) {
+                case LimitationActions.JSON:
+                    inv.getController().renderJson(ipRateLimit.limitContent());
+                    break;
+                case LimitationActions.TEXT:
+                    inv.getController().renderText(ipRateLimit.limitContent());
+                    break;
+                case LimitationActions.RENDER:
+                    inv.getController().render(ipRateLimit.limitContent());
+                    break;
+                case LimitationActions.REDIRECT:
+                    inv.getController().redirect(ipRateLimit.limitContent(), true);
+                    break;
+                default:
+                    throw new IllegalArgumentException("annotation @EnableIpRateLimit.limitAction error in "
+                            + inv.getController().getClass().getName() + "." + inv.getMethodName()
+                            + ",  limitAction support text,json,render,redirect only, not support " + ipRateLimit.limitAction());
+            }
+
+        }
+
+
+        return true;
     }
 
 
