@@ -1,3 +1,15 @@
+jboot-1.2.3:
+新增：JbootCache 新增 J2Cache 的支持
+新增：PropertyConfig 注解新增 file() 的支持，可读取任意 properties 文件
+新增：Jboot 默认新增限流功能
+新增：自定义 FixedInterceptor 功能，FixedInterceptor 在Jfinal体系里是一个不能被 @Clear 的拦截器
+优化：重命名注解 PropertieConfig 为 PropertyConfig
+优化：移除 ehredis 缓存的 mq 依赖，默认使用 redis 的发布订阅功能
+优化：重命名 HandlerInterceptor 为 FixedInterceptor
+优化：使用 Caffeine 全面替代 Guava Cache
+
+
+
 jboot-1.2.2:
 新增：ParamType类，方便swagger注解使用
 新增：JbootCache 新增 getTtl() 和 setTtl() 方法，方便对缓存设置过期时间
