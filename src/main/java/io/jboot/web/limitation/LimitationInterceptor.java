@@ -38,13 +38,15 @@ public class LimitationInterceptor implements FixedInterceptor {
             return;
         }
 
-        EnableUserRateLimit userRateLimit = inv.getMethod().getAnnotation(EnableUserRateLimit.class);
-        if (userRateLimit != null && userIntercept(inv, userRateLimit)) {
-            return;
-        }
 
         EnableIpRateLimit ipRateLimit = inv.getMethod().getAnnotation(EnableIpRateLimit.class);
         if (ipRateLimit != null && ipIntercept(inv, ipRateLimit)) {
+            return;
+        }
+
+
+        EnableUserRateLimit userRateLimit = inv.getMethod().getAnnotation(EnableUserRateLimit.class);
+        if (userRateLimit != null && userIntercept(inv, userRateLimit)) {
             return;
         }
 
