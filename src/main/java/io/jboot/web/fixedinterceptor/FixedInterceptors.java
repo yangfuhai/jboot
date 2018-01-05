@@ -1,5 +1,6 @@
 package io.jboot.web.fixedinterceptor;
 
+import io.jboot.Jboot;
 import io.jboot.component.metrics.JbootMetricsInterceptor;
 import io.jboot.component.opentracing.OpentracingInterceptor;
 import io.jboot.component.shiro.JbootShiroInterceptor;
@@ -44,10 +45,12 @@ public class FixedInterceptors {
 
         int i = 0;
         for (FixedInterceptor interceptor : defaultInters) {
+            Jboot.injectMembers(interceptor);
             allInters[i++] = interceptor;
         }
 
         for (FixedInterceptor interceptor : userInters) {
+            Jboot.injectMembers(interceptor);
             allInters[i++] = interceptor;
         }
     }
