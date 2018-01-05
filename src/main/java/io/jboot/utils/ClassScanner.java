@@ -94,7 +94,6 @@ public class ClassScanner {
         excludeJars.add("undertow-");
         excludeJars.add("xnio-");
         excludeJars.add("zipkin-");
-
         excludeJars.add("jcommander-");
         excludeJars.add("jackson-");
         excludeJars.add("org.eclipse.");
@@ -135,6 +134,10 @@ public class ClassScanner {
         excludeJars.add("swagger-");
         excludeJars.add("validation-api-");
         excludeJars.add("checker-compat-qual-");
+        excludeJars.add("caffeine-");
+        excludeJars.add("j2cache-core-");
+        excludeJars.add("jgroups-");
+        excludeJars.add("snappy-java-");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();

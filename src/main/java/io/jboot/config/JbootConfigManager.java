@@ -215,7 +215,7 @@ public class JbootConfigManager {
      * @param key
      * @return
      */
-    private String getValueByKey(String key) {
+    public String getValueByKey(String key) {
 
         String value = Jboot.getBootArg(key);
 

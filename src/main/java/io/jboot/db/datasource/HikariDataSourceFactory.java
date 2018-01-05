@@ -42,7 +42,7 @@ public class HikariDataSourceFactory implements DataSourceFactory {
         hikariConfig.setPoolName(dataSourceConfig.getPoolName());
 
 
-        if (hikariConfig.getConnectionInitSql() != null) {
+        if (dataSourceConfig.getConnectionInitSql() != null) {
             hikariConfig.setConnectionInitSql(dataSourceConfig.getConnectionInitSql());
         }
 
