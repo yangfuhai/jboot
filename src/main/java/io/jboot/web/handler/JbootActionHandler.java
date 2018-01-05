@@ -31,6 +31,7 @@ import io.jboot.web.fixedinterceptor.FixedInvocation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -108,8 +109,12 @@ public class JbootActionHandler extends ActionHandler {
 
 
             if (!(render instanceof RedirectRender)) {
-                HashMap flash = controller.getSessionAttr("_jboot_flash_");
-                controller.setAttr("flash", flash);
+                HashMap<String, Object> flash = controller.getSessionAttr("_jboot_flash_");
+                if (flash != null) {
+                    for (Map.Entry<String, Object> entry : flash.entrySet()) {
+                        controller.setAttr(entry.getKey(), entry.getValue());
+                    }
+                }
             }
 
             render.setContext(request, response, action.getViewPath()).render();
