@@ -24,10 +24,10 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EmptyValidate {
+public @interface Form {
 
-    Form[] value();
+    String value();
 
-    String errorRedirect() default "";
+    String message() default "";
 
 }

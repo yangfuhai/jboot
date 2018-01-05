@@ -44,6 +44,8 @@ public class JbootActionHandler extends ActionHandler {
 
     private static final Log log = Log.getLog(JbootActionHandler.class);
 
+    public static final String FLASH_SESSION_ATTR = "_jboot_flash_";
+
     /**
      * handle
      * 1: Action action = actionMapping.getAction(target)
@@ -109,7 +111,7 @@ public class JbootActionHandler extends ActionHandler {
 
 
             if (!(render instanceof RedirectRender)) {
-                HashMap<String, Object> flash = controller.getSessionAttr("_jboot_flash_");
+                HashMap<String, Object> flash = controller.getSessionAttr(FLASH_SESSION_ATTR);
                 if (flash != null) {
                     for (Map.Entry<String, Object> entry : flash.entrySet()) {
                         controller.setAttr(entry.getKey(), entry.getValue());
@@ -123,10 +125,10 @@ public class JbootActionHandler extends ActionHandler {
             if (render instanceof RedirectRender && controller instanceof JbootController) {
                 HashMap flash = ((JbootController) controller).getFlashAttrs();
                 if (flash != null) {
-                    controller.setSessionAttr("_jboot_flash_", flash);
+                    controller.setSessionAttr(FLASH_SESSION_ATTR, flash);
                 }
             } else {
-                controller.removeSessionAttr("_jboot_flash_");
+                controller.removeSessionAttr(FLASH_SESSION_ATTR);
             }
 
         } catch (RenderException e) {
