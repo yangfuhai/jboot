@@ -424,6 +424,7 @@
             <groupId>org.apache.qpid</groupId>
             <artifactId>qpid-client</artifactId>
             <version>6.3.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec -->
@@ -431,6 +432,7 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jms_1.1_spec</artifactId>
             <version>1.1.1</version>
+            <scope>provided</scope>
         </dependency>
 
 

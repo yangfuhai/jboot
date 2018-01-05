@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2018, 徐海峰 (27533892@qq.com).
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
