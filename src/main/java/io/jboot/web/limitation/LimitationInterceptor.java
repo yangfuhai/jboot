@@ -19,7 +19,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import io.jboot.utils.RequestUtils;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.HandlerInvocation;
+import io.jboot.web.fixedinterceptor.FixedInvocation;
 import io.jboot.web.limitation.annotation.EnableIpRateLimit;
 import io.jboot.web.limitation.annotation.EnableRequestRateLimit;
 import io.jboot.web.limitation.annotation.EnableUserRateLimit;
@@ -31,7 +31,7 @@ public class LimitationInterceptor implements FixedInterceptor {
 
 
     @Override
-    public void intercept(HandlerInvocation inv) {
+    public void intercept(FixedInvocation inv) {
 
         EnableRequestRateLimit requestRateLimit = inv.getMethod().getAnnotation(EnableRequestRateLimit.class);
         if (requestRateLimit != null && requestIntercept(inv, requestRateLimit)) {
@@ -61,7 +61,7 @@ public class LimitationInterceptor implements FixedInterceptor {
      * @param requestRateLimit
      * @return
      */
-    private boolean requestIntercept(HandlerInvocation inv, EnableRequestRateLimit requestRateLimit) {
+    private boolean requestIntercept(FixedInvocation inv, EnableRequestRateLimit requestRateLimit) {
 
         LimitationManager manager = LimitationManager.me();
 
@@ -129,7 +129,7 @@ public class LimitationInterceptor implements FixedInterceptor {
      * @param userRateLimit
      * @return
      */
-    private boolean userIntercept(HandlerInvocation inv, EnableUserRateLimit userRateLimit) {
+    private boolean userIntercept(FixedInvocation inv, EnableUserRateLimit userRateLimit) {
         LimitationManager manager = LimitationManager.me();
         String sesssionId = inv.getController().getSession(true).getId();
 
@@ -209,7 +209,7 @@ public class LimitationInterceptor implements FixedInterceptor {
      * @param ipRateLimit
      * @return
      */
-    private boolean ipIntercept(HandlerInvocation inv, EnableIpRateLimit ipRateLimit) {
+    private boolean ipIntercept(FixedInvocation inv, EnableIpRateLimit ipRateLimit) {
         LimitationManager manager = LimitationManager.me();
         String ipaddress = RequestUtils.getIpAddress(inv.getController().getRequest());
         long currentTime = System.currentTimeMillis();

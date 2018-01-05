@@ -26,7 +26,7 @@ import io.jboot.component.metrics.annotation.EnableMetricsMeter;
 import io.jboot.component.metrics.annotation.EnableMetricsTimer;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.HandlerInvocation;
+import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 /**
  * 用于对controller的Metrics 统计
@@ -36,7 +36,7 @@ public class JbootMetricsInterceptor implements FixedInterceptor {
 
 
     @Override
-    public void intercept(HandlerInvocation inv) {
+    public void intercept(FixedInvocation inv) {
 
 
         Counter counter = null;

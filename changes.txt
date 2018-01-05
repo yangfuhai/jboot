@@ -1,3 +1,13 @@
+jboot-1.2.4:
+修复：FixedInterceptor 无法被注入的问题
+优化：重命名 HandlerInvocation 为 FixedInvocation
+优化：设置 FlashAttr 在页面渲染时，不在使用 #(flash.attr) 而直接使用 #(attr)
+优化：增强 EmptyValidate 的用法，支持指定字段的错误信息反馈
+优化：Service 层的代码生成器生成代码 默认使用 单利模式
+优化：移除 ehredis 的默认 channel，修正 demo 的配置信息
+优化：更新 FlashMessage demo 的使用方法
+
+
 jboot-1.2.3:
 新增：JbootCache 新增 J2Cache 的支持
 新增：PropertyConfig 注解新增 file() 的支持，可读取任意 properties 文件
