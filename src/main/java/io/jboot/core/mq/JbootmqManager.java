@@ -17,6 +17,7 @@ package io.jboot.core.mq;
 
 import io.jboot.Jboot;
 import io.jboot.core.mq.aliyunmq.JbootAliyunmqImpl;
+import io.jboot.core.mq.qpidmq.JbootQpidmqImpl;
 import io.jboot.core.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.core.mq.redismq.JbootRedismqImpl;
 import io.jboot.core.mq.zbus.JbootZbusmqImpl;
@@ -64,6 +65,8 @@ public class JbootmqManager {
                 return new JbootRabbitmqImpl();
             case JbootmqConfig.TYPE_ZBUS:
                 return new JbootZbusmqImpl();
+            case JbootmqConfig.TYPE_QPID:
+                return new JbootQpidmqImpl();
             case JbootmqConfig.TYPE_ACTIVEMQ:
                 throw new RuntimeException("not finished!!!!");
             default:

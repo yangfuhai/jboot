@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2018, 徐海峰 (27533892@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package io.jboot.core.mq.qpidmq;
 
-import io.jboot.component.redis.JbootRedisConfig;
 import io.jboot.config.annotation.PropertyConfig;
-
 
 @PropertyConfig(prefix = "jboot.mq.qpid")
 public class JbootQpidmqConfig {
@@ -26,6 +24,8 @@ public class JbootQpidmqConfig {
 
     private String host = "127.0.0.1:5672";
     private String virtualHost;
+
+    private boolean serializerEnable = true;
 
     public String getUsername() {
         return username;
@@ -57,5 +57,13 @@ public class JbootQpidmqConfig {
 
     public void setVirtualHost(String virtualHost) {
         this.virtualHost = virtualHost;
+    }
+
+    public boolean isSerializerEnable() {
+        return serializerEnable;
+    }
+
+    public void setSerializerEnable(boolean serializerEnable) {
+        this.serializerEnable = serializerEnable;
     }
 }
