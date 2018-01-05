@@ -77,7 +77,7 @@ public class JbootCacheSessionWapper extends JbootSessionWapperBase implements H
      * 刷新缓存，刷新后延长40分钟
      */
     private void refreshCache() {
-        sessions.getIfPresent(getOrCreatSessionId());
+        sessions.refresh(getOrCreatSessionId());
     }
 
 
