@@ -22,5 +22,5 @@ package io.jboot.web.fixedinterceptor;
  * @Package io.jboot.web.handler
  */
 public interface FixedInterceptor {
-    void intercept(HandlerInvocation inv);
+    void intercept(FixedInvocation inv);
 }

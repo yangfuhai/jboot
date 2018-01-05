@@ -17,7 +17,7 @@ package io.jboot.component.opentracing;
 
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.HandlerInvocation;
+import io.jboot.web.fixedinterceptor.FixedInvocation;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 
@@ -25,7 +25,7 @@ public class OpentracingInterceptor implements FixedInterceptor {
 
 
     @Override
-    public void intercept(HandlerInvocation inv) {
+    public void intercept(FixedInvocation inv) {
 
         EnableTracing enableOpentracing = inv.getMethod().getAnnotation(EnableTracing.class);
         Tracer tracer = JbootOpentracingManager.me().getTracer();

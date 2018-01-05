@@ -20,7 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.component.shiro.processer.AuthorizeResult;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.HandlerInvocation;
+import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 /**
  * Shiro 拦截器
@@ -32,7 +32,7 @@ public class JbootShiroInterceptor implements FixedInterceptor {
 
 
     @Override
-    public void intercept(HandlerInvocation inv) {
+    public void intercept(FixedInvocation inv) {
         if (!config.isConfigOK()) {
             inv.invoke();
             return;

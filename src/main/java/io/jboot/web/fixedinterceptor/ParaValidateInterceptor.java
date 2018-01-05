@@ -29,7 +29,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     public static final int DEFAULT_ERROR_CODE = 99;
 
     @Override
-    public void intercept(HandlerInvocation inv) {
+    public void intercept(FixedInvocation inv) {
 
         EmptyValidate emptyParaValidate = inv.getMethod().getAnnotation(EmptyValidate.class);
         if (emptyParaValidate == null) {
@@ -55,7 +55,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     }
 
 
-    private void renderError(HandlerInvocation inv, String param, String errorRedirect) {
+    private void renderError(FixedInvocation inv, String param, String errorRedirect) {
         if (StringUtils.isNotBlank(errorRedirect)) {
             inv.getController().redirect(errorRedirect);
             return;

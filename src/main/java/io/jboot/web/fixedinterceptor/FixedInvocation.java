@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
  * @version V1.0
  * @Package io.jboot.web.handler
  */
-public class HandlerInvocation {
+public class FixedInvocation {
 
     private Invocation invocation;
 
@@ -34,7 +34,7 @@ public class HandlerInvocation {
     private int index = 0;
 
 
-    public HandlerInvocation(Invocation invocation) {
+    public FixedInvocation(Invocation invocation) {
         this.invocation = invocation;
     }
 

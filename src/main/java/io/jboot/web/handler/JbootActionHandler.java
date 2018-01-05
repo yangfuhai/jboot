@@ -26,7 +26,7 @@ import com.jfinal.render.RenderException;
 import io.jboot.Jboot;
 import io.jboot.web.JbootControllerContext;
 import io.jboot.web.controller.JbootController;
-import io.jboot.web.fixedinterceptor.HandlerInvocation;
+import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -172,7 +172,7 @@ public class JbootActionHandler extends ActionHandler {
 
 
     private void invokeInvocation(Invocation inv) {
-        new HandlerInvocation(inv).invoke();
+        new FixedInvocation(inv).invoke();
     }
 
     static Set<Action> injectedActions = Sets.newConcurrentHashSet();
