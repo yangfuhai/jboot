@@ -20,7 +20,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 
@@ -38,7 +37,7 @@ public abstract class JbootmqBase implements Jbootmq {
     private Multimap<String, JbootmqMessageListener> listenersMap = ArrayListMultimap.create();
     protected JbootmqConfig config = Jboot.config(JbootmqConfig.class);
 
-    protected Set<String> channels = Sets.newHashSet(JbootEhredisCacheImpl.DEFAULT_NOTIFY_CHANNEL);
+    protected Set<String> channels = Sets.newHashSet();
 
 
     @Override

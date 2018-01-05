@@ -25,8 +25,9 @@ public class ZbusMqServerDemo {
 
 
         Jboot.setBootArg("jboot.mq.type", "zbus");
+        Jboot.setBootArg("jboot.mq.channel", "myChannel,myChannel1,myChannel2");
+
         Jboot.setBootArg("jboot.mq.zbus.broker", "127.0.0.1:15555");
-        Jboot.setBootArg("jboot.mq.zbus.channel", "myChannel,myChannel1,myChannel2");
 
         Jboot.run(args);
 
