@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,25 +23,25 @@ import io.jboot.web.directive.base.PaginateDirectiveBase;
 import javax.servlet.http.HttpServletRequest;
 
 @JFinalDirective("JbootPaginateDirective")
-public class JbootPaginateDirective extends PaginateDirectiveBase {
+public abstract class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
     protected String getUrl(int pageNumber) {
         HttpServletRequest request = JbootRequestContext.getRequest();
         String queryString = request.getQueryString();
+
         String url = request.getRequestURI();
+
         if (StringUtils.isNotBlank(queryString)) {
             url = url.concat("?").concat(queryString);
         }
-        return replaceUrlValue(url, "page", pageNumber);
-    }
 
+        String pageString = "page=";
+        int index = url.indexOf(pageString);
 
-    public String replaceUrlValue(String url, String name, int value) {
-        int index = url.indexOf(name + "=");
         if (index != -1) {
             StringBuilder sb = new StringBuilder();
-            sb.append(url.substring(0, index)).append(name + "=").append(value);
+            sb.append(url.substring(0, index)).append(pageString).append(pageNumber);
             int idx = url.indexOf("&", index);
             if (idx != -1) {
                 sb.append(url.substring(idx));
@@ -49,11 +49,12 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
             url = sb.toString();
         } else {
             if (url.contains("?")) {
-                url = url.concat(String.format("&page=%s", value));
+                url = url.concat(String.format("&page=%s", pageNumber));
             } else {
-                url = url.concat(String.format("?page=%s", value));
+                url = url.concat(String.format("?page=%s", pageNumber));
             }
         }
+
         return url;
     }
 
