@@ -1,3 +1,9 @@
+jboot-1.2.5:
+新增：qpid mq 的支持
+新增：Service 代码生成 默认添加 join 系列方法
+优化：注解 Form 的 value 属性修改为 name
+
+
 jboot-1.2.4:
 修复：FixedInterceptor 无法被注入的问题
 优化：重命名 HandlerInvocation 为 FixedInvocation
