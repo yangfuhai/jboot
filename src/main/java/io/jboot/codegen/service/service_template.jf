@@ -1,6 +1,10 @@
 package #(basePackage);
 
+import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.plugin.activerecord.Page;
 import #(modelPacket).#(tableMeta.modelName);
+
+import java.util.List;
 
 public interface #(tableMeta.modelName)Service  {
 
