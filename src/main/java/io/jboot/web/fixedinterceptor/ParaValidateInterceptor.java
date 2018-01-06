@@ -47,13 +47,13 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         }
 
         for (Form form : forms) {
-            String formName = form.value();
+            String formName = form.name();
             if (StringUtils.isBlank(formName)) {
                 throw new IllegalArgumentException("@Form.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
             }
             String value = inv.getController().getPara(formName);
             if (value == null || value.trim().length() == 0) {
-                renderError(inv.getController(), form.value(), form.message(), emptyParaValidate.errorRedirect());
+                renderError(inv.getController(), formName, form.message(), emptyParaValidate.errorRedirect());
                 return;
             }
         }
