@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.fixedinterceptor;
+package io.jboot.web.controller.validate;
 
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
@@ -21,8 +21,8 @@ import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
-import io.jboot.web.controller.validate.EmptyValidate;
-import io.jboot.web.controller.validate.Form;
+import io.jboot.web.fixedinterceptor.FixedInterceptor;
+import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 /**
  * 验证拦截器
@@ -35,15 +35,70 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     public void intercept(FixedInvocation inv) {
 
         EmptyValidate emptyParaValidate = inv.getMethod().getAnnotation(EmptyValidate.class);
-        if (emptyParaValidate == null) {
-            inv.invoke();
+        if (emptyParaValidate != null && !validateEmpty(inv, emptyParaValidate)) {
             return;
         }
 
+        CaptchaValidate captchaValidate = inv.getMethod().getAnnotation(CaptchaValidate.class);
+        if (captchaValidate != null && !validateCaptache(inv, captchaValidate)) {
+            return;
+        }
+
+        inv.invoke();
+    }
+
+
+
+    /**
+     * 对验证码进行验证
+     *
+     * @param inv
+     * @param captchaValidate
+     * @return
+     */
+    private boolean validateCaptache(FixedInvocation inv, CaptchaValidate captchaValidate) {
+        String formName = captchaValidate.form();
+        if (StringUtils.isBlank(formName)) {
+            throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
+        }
+
+        Controller controller = inv.getController();
+        if (controller.validateCaptcha(formName)) {
+            return true;
+        }
+
+        String errorRedirect = captchaValidate.errorRedirect();
+        String message = StringUtils.isBlank(captchaValidate.message()) ? "验证码不能为空" : captchaValidate.message();
+        if (StringUtils.isNotBlank(errorRedirect)) {
+            if (controller instanceof JbootController) {
+                JbootController c = (JbootController) controller;
+                c.setFlashMap(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
+            }
+            controller.redirect(errorRedirect);
+            return false;
+        }
+
+        //如果ajax请求，返回一个错误数据。
+        if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+            controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
+            return false;
+        }
+
+        controller.renderError(404);
+        return false;
+    }
+
+    /**
+     * 非空判断验证
+     *
+     * @param inv
+     * @param emptyParaValidate
+     * @return
+     */
+    private boolean validateEmpty(FixedInvocation inv, EmptyValidate emptyParaValidate) {
         Form[] forms = emptyParaValidate.value();
         if (ArrayUtils.isNullOrEmpty(forms)) {
-            inv.invoke();
-            return;
+            return true;
         }
 
         for (Form form : forms) {
@@ -54,11 +109,11 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             String value = inv.getController().getPara(formName);
             if (value == null || value.trim().length() == 0) {
                 renderError(inv.getController(), formName, form.message(), emptyParaValidate.errorRedirect());
-                return;
+                return false;
             }
         }
 
-        inv.invoke();
+        return true;
     }
 
 
