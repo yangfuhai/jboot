@@ -41,7 +41,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         }
 
         if (redis == null) {
-            throw new JbootIllegalConfigException("can not get redis, please check your jboot.properties");
+            throw new JbootIllegalConfigException("can not get redis, please check your jboot.properties , please correct config jboot.cache.redis.host or jboot.redis.host ");
         }
     }
 

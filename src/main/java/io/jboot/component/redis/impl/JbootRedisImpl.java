@@ -17,8 +17,10 @@ package io.jboot.component.redis.impl;
 
 import io.jboot.component.redis.JbootRedisBase;
 import io.jboot.component.redis.JbootRedisConfig;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -30,8 +32,11 @@ import java.util.Map.Entry;
 public class JbootRedisImpl extends JbootRedisBase {
 
     protected JedisPool jedisPool;
+    protected JbootRedisConfig config;
 
     public JbootRedisImpl(JbootRedisConfig config) {
+
+        this.config = config;
 
         String host = config.getHost();
         Integer port = config.getPort();
@@ -1431,7 +1436,12 @@ public class JbootRedisImpl extends JbootRedisBase {
 
 
     public Jedis getJedis() {
-        return jedisPool.getResource();
+        try {
+            return jedisPool.getResource();
+        } catch (JedisConnectionException e) {
+            throw new JbootIllegalConfigException("can not connect to redis host  " + config.getHost() + ":" + config.getPort() + " ," +
+                    " cause : " + e.toString(), e);
+        }
     }
 
     public void returnResource(Jedis jedis) {

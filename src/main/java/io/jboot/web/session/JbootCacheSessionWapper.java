@@ -34,16 +34,20 @@ import java.util.concurrent.TimeUnit;
 public class JbootCacheSessionWapper extends JbootSessionWapperBase implements HttpSession {
 
 
+    private static final Object empty = new Object();
+
     private static LoadingCache<String, Object> sessions = Caffeine.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .expireAfterWrite(60, TimeUnit.MINUTES)
             .removalListener(new RemovalListener<String, Object>() {
                 @Override
                 public void onRemoval(@Nullable String key, @Nullable Object value, @Nonnull RemovalCause cause) {
-                    Jboot.me().getCache().removeAll("SESSION:" + key);
+                    if (cause.wasEvicted()) {
+                        Jboot.me().getCache().removeAll(key);
+                    }
                 }
             })
-            .build(key -> new Object());
+            .build(key -> empty);
 
 
     private String getSessionCacheName() {
@@ -69,7 +73,6 @@ public class JbootCacheSessionWapper extends JbootSessionWapperBase implements H
 
     @Override
     public void removeAttribute(String name) {
-        refreshCache();
         Jboot.me().getCache().remove(getSessionCacheName(), name);
     }
 
@@ -77,7 +80,7 @@ public class JbootCacheSessionWapper extends JbootSessionWapperBase implements H
      * 刷新缓存，刷新后延长40分钟
      */
     private void refreshCache() {
-        sessions.refresh(getOrCreatSessionId());
+        sessions.refresh(getSessionCacheName());
     }
 
 
