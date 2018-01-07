@@ -24,9 +24,7 @@ import net.oschina.j2cache.J2Cache;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -40,7 +38,7 @@ public class J2cacheImpl implements JbootCache {
     @Override
     public <T> T get(String cacheName, Object key) {
         try {
-            CacheObject cacheObject = J2Cache.getChannel().get(cacheName, key.toString());
+            CacheObject cacheObject = J2Cache.getChannel().getObject(cacheName, key.toString());
             return cacheObject != null ? (T) cacheObject.getValue() : null;
         } catch (IOException e) {
             LOG.error(e.toString(), e);
@@ -59,13 +57,17 @@ public class J2cacheImpl implements JbootCache {
 
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
-        throw new JbootException("not support in j2cache");
+        try {
+            J2Cache.getChannel().set(cacheName, key.toString(), (Serializable) value, liveSeconds);
+        } catch (IOException e) {
+            LOG.error(e.toString(), e);
+        }
     }
 
     @Override
     public List getKeys(String cacheName) {
         try {
-            Set keys = J2Cache.getChannel().keys(cacheName);
+            Collection keys = J2Cache.getChannel().keys(cacheName);
             return keys != null ? new ArrayList(keys) : null;
         } catch (IOException e) {
             LOG.error(e.toString(), e);
@@ -76,7 +78,7 @@ public class J2cacheImpl implements JbootCache {
     @Override
     public void remove(String cacheName, Object key) {
         try {
-            J2Cache.getChannel().evict(cacheName, (Serializable) key);
+            J2Cache.getChannel().exists(cacheName, key.toString());
         } catch (IOException e) {
             LOG.error(e.toString(), e);
         }
@@ -85,11 +87,7 @@ public class J2cacheImpl implements JbootCache {
     @Override
     public void removeAll(String cacheName) {
         try {
-            Set keys = J2Cache.getChannel().keys(cacheName);
-            if (keys == null || keys.isEmpty()) {
-                return;
-            }
-            J2Cache.getChannel().evicts(cacheName, new ArrayList<>(keys));
+            J2Cache.getChannel().clear(cacheName);
         } catch (IOException e) {
             LOG.error(e.toString(), e);
         }
@@ -109,7 +107,16 @@ public class J2cacheImpl implements JbootCache {
 
     @Override
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
-        throw new JbootException("not support in j2cache");
+        if (liveSeconds <= 0) {
+            return get(cacheName, key, dataLoader);
+        }
+
+        Object data = get(cacheName, key);
+        if (data == null) {
+            data = dataLoader.load();
+            put(cacheName, key, data, liveSeconds);
+        }
+        return (T) data;
     }
 
     @Override
