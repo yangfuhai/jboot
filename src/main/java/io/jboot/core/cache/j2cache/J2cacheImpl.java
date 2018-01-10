@@ -38,7 +38,7 @@ public class J2cacheImpl implements JbootCache {
     @Override
     public <T> T get(String cacheName, Object key) {
         try {
-            CacheObject cacheObject = J2Cache.getChannel().getObject(cacheName, key.toString());
+            CacheObject cacheObject = J2Cache.getChannel().get(cacheName, key.toString());
             return cacheObject != null ? (T) cacheObject.getValue() : null;
         } catch (IOException e) {
             LOG.error(e.toString(), e);
@@ -78,7 +78,7 @@ public class J2cacheImpl implements JbootCache {
     @Override
     public void remove(String cacheName, Object key) {
         try {
-            J2Cache.getChannel().exists(cacheName, key.toString());
+            J2Cache.getChannel().evict(cacheName, key.toString());
         } catch (IOException e) {
             LOG.error(e.toString(), e);
         }
