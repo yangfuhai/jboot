@@ -19,7 +19,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
 import io.jboot.component.hystrix.JbootHystrixCommand;
-import io.jboot.component.metrics.JbootMetricsManager;
+import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.component.redis.JbootRedis;
 import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.config.JbootConfigManager;
@@ -346,8 +346,8 @@ public class Jboot {
      *
      * @return
      */
-    public MetricRegistry getMetrics() {
-        return JbootMetricsManager.me().metric();
+    public MetricRegistry getMetric() {
+        return JbootMetricManager.me().metric();
     }
 
 

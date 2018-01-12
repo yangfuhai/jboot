@@ -16,7 +16,7 @@
 package io.jboot.web.fixedinterceptor;
 
 import io.jboot.Jboot;
-import io.jboot.component.metrics.JbootMetricsInterceptor;
+import io.jboot.component.metric.JbootMetricInterceptor;
 import io.jboot.component.opentracing.OpentracingInterceptor;
 import io.jboot.component.shiro.JbootShiroInterceptor;
 import io.jboot.web.controller.validate.ParaValidateInterceptor;
@@ -42,7 +42,7 @@ public class FixedInterceptors {
     /**
      * 默认的 Jboot 系统拦截器
      */
-    private FixedInterceptor[] defaultInters = new FixedInterceptor[]{new LimitationInterceptor(), new ParaValidateInterceptor(), new JbootShiroInterceptor(), new OpentracingInterceptor(), new JbootMetricsInterceptor()};
+    private FixedInterceptor[] defaultInters = new FixedInterceptor[]{new LimitationInterceptor(), new ParaValidateInterceptor(), new JbootShiroInterceptor(), new OpentracingInterceptor(), new JbootMetricInterceptor()};
     private List<FixedInterceptor> userInters = new ArrayList<>();
 
 

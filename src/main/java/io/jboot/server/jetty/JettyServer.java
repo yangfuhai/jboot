@@ -22,9 +22,9 @@ import com.jfinal.log.Log;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.JbootHystrixConfig;
-import io.jboot.component.metrics.JbootHealthCheckServletContextListener;
-import io.jboot.component.metrics.JbootMetricsConfig;
-import io.jboot.component.metrics.JbootMetricsServletContextListener;
+import io.jboot.component.metric.JbootHealthCheckServletContextListener;
+import io.jboot.component.metric.JbootMetricConfig;
+import io.jboot.component.metric.JbootMetricServletContextListener;
 import io.jboot.component.shiro.JbootShiroConfig;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
@@ -102,9 +102,9 @@ public class JettyServer extends JbootServer {
         }
 
 
-        JbootMetricsConfig metricsConfig = Jboot.config(JbootMetricsConfig.class);
+        JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
         if (StringUtils.isNotBlank(metricsConfig.getUrl())) {
-            handler.addEventListener(new JbootMetricsServletContextListener());
+            handler.addEventListener(new JbootMetricServletContextListener());
             handler.addEventListener(new JbootHealthCheckServletContextListener());
             handler.addServlet(AdminServlet.class, metricsConfig.getUrl());
         }
