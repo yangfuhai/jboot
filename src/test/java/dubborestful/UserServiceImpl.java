@@ -13,41 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package service;
+package dubborestful;
 
 
-import io.jboot.Jboot;
-import io.jboot.exception.JbootException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 
+@Path("users")
 public class UserServiceImpl implements UserService {
 
 
     @Override
-    public String hello(String name) {
+    @GET
+    @Path("hello")
+    @Consumes({MediaType.TEXT_PLAIN})
+    public String test(String name) {
 
-        System.out.println("UserServiceImpl hello invoked!!!");
+        System.out.println("UserServiceImpl test() invoked!!!");
 
-        return Jboot.service(CategoryService.class).hello(name);
-    }
-
-
-
-    @Override
-    public String findUserById(String userId) {
-        return "get user:" + userId;
+        return "test";
     }
 
     @Override
-    public boolean saveUser(User user) {
-        System.out.println("save user :" + user);
+    @GET
+    @Path("get")
+    @Consumes({MediaType.TEXT_PLAIN})
+    public String get() {
 
-        return true;
+        System.out.println("UserServiceImpl get() invoked!!!");
+
+        return "hello , dubbo restful";
     }
 
-    @Override
-    public String exception(String id) {
-        throw new JbootException(id);
-    }
+
 
 
 }

@@ -122,9 +122,16 @@ public class JbootDubborpc extends JbootrpcBase {
     public <T> boolean serviceExport(Class<T> interfaceClass, Object object, String group, String version, int port) {
 
         ProtocolConfig protocolConfig = new ProtocolConfig();
-        protocolConfig.setName("dubbo");
         protocolConfig.setPort(port <= 0 ? jbootrpcConfig.getDefaultPort() : port);
         protocolConfig.setThreads(dubboConfig.getProtocolThreads());
+
+        protocolConfig.setName(dubboConfig.getProtocolName());
+        protocolConfig.setServer(dubboConfig.getProtocolServer());
+        protocolConfig.setPort(dubboConfig.getProtocolPort());
+
+        if (StringUtils.isNotBlank(dubboConfig.getProtocolContextPath())) {
+            protocolConfig.setContextpath(dubboConfig.getProtocolContextPath());
+        }
 
         if (StringUtils.isNotBlank(dubboConfig.getProtocolTransporter())) {
             protocolConfig.setTransporter(dubboConfig.getProtocolTransporter());
