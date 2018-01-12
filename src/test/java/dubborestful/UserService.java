@@ -19,7 +19,7 @@ package dubborestful;
 public interface UserService {
 
 
-    public String test(String hello);
+    public String test(String name);
 
     public String get();
 

@@ -16,9 +16,12 @@
 package dubborestful;
 
 
+import com.jfinal.kit.Ret;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 @Path("users")
@@ -28,12 +31,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @GET
     @Path("hello")
-    @Consumes({MediaType.TEXT_PLAIN})
-    public String test(String name) {
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String test(@QueryParam("name") String name) {
 
         System.out.println("UserServiceImpl test() invoked!!!");
-
-        return "test";
+        return Ret.ok().set("name",name).toJson();
     }
 
     @Override
