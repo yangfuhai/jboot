@@ -76,7 +76,7 @@ public class JbootrpcConfig {
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
 
-    private String proxy = "jboot";
+    private String proxy;
     private String filter;  //多个过滤器请用英文逗号（,）隔开，默认添加opentracing过滤器，用于对rpc分布式调用的追踪
     private String serialization;
 
