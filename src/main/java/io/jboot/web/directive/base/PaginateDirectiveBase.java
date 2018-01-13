@@ -48,7 +48,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         String previousText = getParam("previousText", "上一页", scope);
         String nextText = getParam("nextText", "下一页", scope);
 
-        Page<?> page = JbootRequestContext.getRequestAttr("pageData");
+        Page<?> page = JbootRequestContext.getRequestAttr(getPageAttrName());
 
         int currentPage = page.getPageNumber();
         int totalPage = page.getTotalPage();
@@ -109,7 +109,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
             pages.add(new PaginateDirectiveBase.PaginateItem(nextClass, getUrl(currentPage + 1), nextText));
         }
 
-        scope.setLocal("pages", pages);
+        scope.setLocal(getPageItemsName(), pages);
 
         renderBody(env, scope, writer);
     }
@@ -132,6 +132,17 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     }
 
     protected abstract String getUrl(int pageNumber);
+
+    /**
+     * 获取 page 设置到 requestAttr 里的名字
+     *
+     * @return
+     */
+    protected abstract String getPageAttrName();
+
+    protected String getPageItemsName() {
+        return "pages";
+    }
 
 
     public static class PaginateItem {

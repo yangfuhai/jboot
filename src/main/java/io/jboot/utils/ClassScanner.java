@@ -138,6 +138,9 @@ public class ClassScanner {
         excludeJars.add("j2cache-core-");
         excludeJars.add("jgroups-");
         excludeJars.add("snappy-java-");
+        excludeJars.add("resteasy-");
+        excludeJars.add("activation-");
+        excludeJars.add("jcip-annotations-");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();

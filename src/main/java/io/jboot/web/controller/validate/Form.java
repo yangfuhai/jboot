@@ -26,7 +26,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Form {
 
-    String value();
+    String name();
 
     String message() default "";
 

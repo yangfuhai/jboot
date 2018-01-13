@@ -1,6 +1,10 @@
 package #(basePackage);
 
+import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.plugin.activerecord.Page;
 import #(modelPacket).#(tableMeta.modelName);
+
+import java.util.List;
 
 public interface #(tableMeta.modelName)Service  {
 
@@ -55,4 +59,59 @@ public interface #(tableMeta.modelName)Service  {
      * @return
      */
     public boolean update(#(tableMeta.modelName) model);
+
+
+    public void join(Page<? extends Model> page, String joinOnField);
+    public void join(Page<? extends Model> page, String joinOnField, String[] attrs);
+    public void join(Page<? extends Model> page, String joinOnField, String joinName);
+    public void join(Page<? extends Model> page, String joinOnField, String joinName, String[] attrs);
+
+
+    public void join(List<? extends Model> models, String joinOnField);
+    public void join(List<? extends Model> models, String joinOnField, String[] attrs);
+    public void join(List<? extends Model> models, String joinOnField, String joinName);
+    public void join(List<? extends Model> models, String joinOnField, String joinName, String[] attrs);
+
+    /**
+     * 添加关联数据到某个model中去，避免关联查询，提高性能。
+     *
+     * @param model       要添加到的model
+     * @param joinOnField model对于的关联字段
+     */
+    public void join(Model model, String joinOnField);
+
+    /**
+     * 添加关联数据到某个model中去，避免关联查询，提高性能。
+     *
+     * @param model
+     * @param joinOnField
+     * @param attrs
+     */
+    public void join(Model model, String joinOnField, String[] attrs);
+
+
+    /**
+     * 添加关联数据到某个model中去，避免关联查询，提高性能。
+     *
+     * @param model
+     * @param joinOnField
+     * @param joinName
+     */
+    public void join(Model model, String joinOnField, String joinName);
+
+
+    /**
+     * 添加关联数据到某个model中去，避免关联查询，提高性能。
+     *
+     * @param model
+     * @param joinOnField
+     * @param joinName
+     * @param attrs
+     */
+    public void join(Model model, String joinOnField, String joinName, String[] attrs);
+
+
+    public void keep(Model model, String... attrs);
+
+    public void keep(List<? extends Model> models, String... attrs);
 }

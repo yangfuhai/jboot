@@ -22,6 +22,7 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -1137,13 +1138,21 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
          * A single JedisPubSub instance can be used to subscribe to multiple channels.
          * You can call subscribe or psubscribe on an existing JedisPubSub instance to change your subscriptions.
          */
-        new Thread() {
+        new Thread("jboot-redisCluster-subscribe-JedisPubSub") {
             @Override
             public void run() {
-
-                jedisCluster.subscribe(listener, channels);
-
-
+                while (true) {
+                    try {
+                        jedisCluster.subscribe(listener, channels);
+                    } catch (JedisConnectionException e) {
+                        LOG.error("failed connect to redis, reconnect it.", e);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ie) {
+                            break;
+                        }
+                    }
+                }
             }
         }.start();
     }
@@ -1161,13 +1170,21 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
          * A single JedisPubSub instance can be used to subscribe to multiple channels.
          * You can call subscribe or psubscribe on an existing JedisPubSub instance to change your subscriptions.
          */
-        new Thread() {
+        new Thread("jboot-redisCluster-subscribe-BinaryJedisPubSub") {
             @Override
             public void run() {
-
-                jedisCluster.subscribe(binaryListener, channels);
-
-
+                while (true) {
+                    try {
+                        jedisCluster.subscribe(binaryListener, channels);
+                    } catch (JedisConnectionException e) {
+                        LOG.error("failed connect to redis, reconnect it.", e);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ie) {
+                            break;
+                        }
+                    }
+                }
             }
         }.start();
     }

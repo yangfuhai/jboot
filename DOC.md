@@ -110,7 +110,7 @@
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.7</version>
 </dependency>
 ```
 #### 编写helloworld

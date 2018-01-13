@@ -67,7 +67,13 @@ public class JbootMotanrpc extends JbootrpcBase {
         protocolConfig = new ProtocolConfig();
         protocolConfig.setId("motan");
         protocolConfig.setName("motan");
-        protocolConfig.setFilter("jbootHystrix,jbootOpentracing");
+
+        if (StringUtils.isNotBlank(jbootrpcConfig.getProxy())) {
+            protocolConfig.setFilter(jbootrpcConfig.getProxy());
+        } else {
+            protocolConfig.setFilter("jbootHystrix,jbootOpentracing");
+        }
+
 
         if (StringUtils.isNotBlank(jbootrpcConfig.getSerialization())) {
             protocolConfig.setSerialization(jbootrpcConfig.getSerialization());
@@ -96,7 +102,14 @@ public class JbootMotanrpc extends JbootrpcBase {
         refererConfig.setVersion(version);
         refererConfig.setRequestTimeout(jbootrpcConfig.getRequestTimeOut());
         refererConfig.setProtocol(protocolConfig);
-        refererConfig.setProxy(jbootrpcConfig.getProxy());
+
+        if (StringUtils.isNotBlank(jbootrpcConfig.getProxy())) {
+            refererConfig.setProxy(jbootrpcConfig.getProxy());
+        } else {
+            refererConfig.setProxy("jboot");
+        }
+
+
         refererConfig.setCheck(String.valueOf(jbootrpcConfig.isConsumerCheck()));
 
         /**

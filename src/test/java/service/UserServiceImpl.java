@@ -20,6 +20,8 @@ import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 
 public class UserServiceImpl implements UserService {
+
+
     @Override
     public String hello(String name) {
 
@@ -27,6 +29,7 @@ public class UserServiceImpl implements UserService {
 
         return Jboot.service(CategoryService.class).hello(name);
     }
+
 
 
     @Override

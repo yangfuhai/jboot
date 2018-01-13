@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,8 +22,44 @@ import io.jboot.config.annotation.PropertyConfig;
 public class JbootDubborpcConfig {
 
 
+    private String protocolName = "dubbo"; //default is dubbo
+    private String protocolServer = "netty"; //default is netty
+    private int protocolPort = 8888;
+    private String protocolContextPath;
     private String protocolTransporter;
     private int protocolThreads = 200;
+
+    public String getProtocolName() {
+        return protocolName;
+    }
+
+    public void setProtocolName(String protocolName) {
+        this.protocolName = protocolName;
+    }
+
+    public String getProtocolServer() {
+        return protocolServer;
+    }
+
+    public void setProtocolServer(String protocolServer) {
+        this.protocolServer = protocolServer;
+    }
+
+    public int getProtocolPort() {
+        return protocolPort;
+    }
+
+    public void setProtocolPort(int protocolPort) {
+        this.protocolPort = protocolPort;
+    }
+
+    public String getProtocolContextPath() {
+        return protocolContextPath;
+    }
+
+    public void setProtocolContextPath(String protocolContextPath) {
+        this.protocolContextPath = protocolContextPath;
+    }
 
     public String getProtocolTransporter() {
         return protocolTransporter;

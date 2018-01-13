@@ -15,10 +15,13 @@
  */
 package io.jboot.component.redis.impl;
 
+import com.jfinal.log.Log;
 import io.jboot.component.redis.JbootRedisBase;
 import io.jboot.component.redis.JbootRedisConfig;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -30,8 +33,12 @@ import java.util.Map.Entry;
 public class JbootRedisImpl extends JbootRedisBase {
 
     protected JedisPool jedisPool;
+    protected JbootRedisConfig config;
+    private static final Log LOG = Log.getLog(JbootRedisImpl.class);
 
     public JbootRedisImpl(JbootRedisConfig config) {
+
+        this.config = config;
 
         String host = config.getHost();
         Integer port = config.getPort();
@@ -1386,14 +1393,26 @@ public class JbootRedisImpl extends JbootRedisBase {
          * A single JedisPubSub instance can be used to subscribe to multiple channels.
          * You can call subscribe or psubscribe on an existing JedisPubSub instance to change your subscriptions.
          */
-        new Thread() {
+        new Thread("jboot-redis-subscribe-JedisPubSub") {
             @Override
             public void run() {
-                Jedis jedis = getJedis();
-                try {
-                    jedis.subscribe(listener, channels);
-                } finally {
-                    returnResource(jedis);
+                while (true) {
+                    Jedis jedis = getJedis();
+                    try {
+                        // subscribe 方法是阻塞的，不用担心会走到returnResource，除非异常
+                        jedis.subscribe(listener, channels);
+                        LOG.warn("Disconnect to redis channels : " + Arrays.toString(channels));
+                        break;
+                    } catch (JedisConnectionException e) {
+                        LOG.error("Failed connect to redis, reconnect it.", e);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ie) {
+                            break;
+                        }
+                    } finally {
+                        returnResource(jedis);
+                    }
                 }
 
 
@@ -1414,24 +1433,40 @@ public class JbootRedisImpl extends JbootRedisBase {
          * A single JedisPubSub instance can be used to subscribe to multiple channels.
          * You can call subscribe or psubscribe on an existing JedisPubSub instance to change your subscriptions.
          */
-        new Thread() {
+        new Thread("jboot-redis-subscribe-BinaryJedisPubSub") {
             @Override
             public void run() {
-                Jedis jedis = getJedis();
-                try {
-                    jedis.subscribe(binaryListener, channels);
-                } finally {
-                    returnResource(jedis);
+                //当 Redis 重启会导致订阅线程断开连接，需要进行重连
+                while (true) {
+                    Jedis jedis = getJedis();
+                    try {
+                        // subscribe 方法是阻塞的，不用担心会走到returnResource，除非异常
+                        jedis.subscribe(binaryListener, channels);
+                        LOG.warn("Disconnect to redis channel in subscribe binaryListener!");
+                        break;
+                    } catch (JedisConnectionException e) {
+                        LOG.error("Failed connect to redis, reconnect it.", e);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ie) {
+                            break;
+                        }
+                    } finally {
+                        returnResource(jedis);
+                    }
                 }
-
-
             }
         }.start();
     }
 
 
     public Jedis getJedis() {
-        return jedisPool.getResource();
+        try {
+            return jedisPool.getResource();
+        } catch (JedisConnectionException e) {
+            throw new JbootIllegalConfigException("can not connect to redis host  " + config.getHost() + ":" + config.getPort() + " ," +
+                    " cause : " + e.toString(), e);
+        }
     }
 
     public void returnResource(Jedis jedis) {

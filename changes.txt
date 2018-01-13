@@ -1,3 +1,25 @@
+jboot-1.2.7:
+新增：dubbo 对 restful 的支持
+修复：当 jbootCache 配置类型为 j2cache 的时候，无法 clear() 的问题
+优化：Redis mq 当断开连接的时候会自动重连
+优化：更新 dubbo 到 2.6.0 最新版本
+优化：更新 j2cache 到 2.3.0 最新版本
+
+
+jboot-1.2.6:
+新增：CaptchaValidate注解，方便验证码验证；
+修复：配置cache为ehredis时，某些情况无法获取session的问题。
+优化：系统内置拦截器加载顺序，使之更加合理。
+优化：升级 J2cache 到最新 v2.2.0 版本，支持 cache element 的 ttl 设置。
+优化：支持自定义page的attr，使之更加好用合理。
+
+
+jboot-1.2.5:
+新增：qpid mq 的支持
+新增：Service 代码生成 默认添加 join 系列方法
+优化：注解 Form 的 value 属性修改为 name
+
+
 jboot-1.2.4:
 修复：FixedInterceptor 无法被注入的问题
 优化：重命名 HandlerInvocation 为 FixedInvocation

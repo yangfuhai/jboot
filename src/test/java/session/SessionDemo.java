@@ -18,6 +18,7 @@ package session;
 import com.jfinal.aop.Before;
 import com.jfinal.ext.interceptor.SessionInViewInterceptor;
 import io.jboot.Jboot;
+import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import service.User;
@@ -29,6 +30,8 @@ public class SessionDemo extends JbootController {
 
     public static void main(String[] args) {
         Jboot.setBootArg("jboot.server.type", "jetty");
+        Jboot.setBootArg("jboot.cache.type", "ehredis");
+        Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
         Jboot.run(args);
     }
 
@@ -37,7 +40,7 @@ public class SessionDemo extends JbootController {
 
         User user = new User();
         user.setId(100);
-        user.setName("Micahel Yang");
+        user.setName("Micahel Yang" + StringUtils.uuid());
 
         setSessionAttr("user", user);
         renderHtml("session已经成功设置数据，请访问<a href=\"/session/show\">这里</a>查看session数据");

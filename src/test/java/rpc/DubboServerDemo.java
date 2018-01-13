@@ -28,6 +28,8 @@ public class DubboServerDemo {
 
     public static void main(String[] args) throws InterruptedException {
 
+        //设置qos的端口号，否则在同一个机器下测试会造成端口冲突，dubbo目前暂时无法关闭qos server
+        System.setProperty("dubbo.qos.port","11111");
 
         Jboot.setBootArg("jboot.rpc.type", "dubbo");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心

@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.7</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>2.7.4</version>
+            <version>2.7.5</version>
         </dependency>
 
         <dependency>
@@ -335,7 +335,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
-            <version>2.5.8</version>
+            <version>2.6.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -355,6 +355,44 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- 用于支持 dubbo 的 restful 注解 start -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jdk-http</artifactId>
+            <version>3.1.4.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>3.1.4.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>3.1.4.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-netty4</artifactId>
+            <version>3.1.4.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson-provider</artifactId>
+            <version>3.1.4.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- 用于支持 dubbo 的 restful 注解 end -->
 
         <dependency>
             <groupId>com.101tec</groupId>
@@ -415,11 +453,10 @@
         <dependency>
             <groupId>net.oschina.j2cache</groupId>
             <artifactId>j2cache-core</artifactId>
-            <version>2.0.1</version>
+            <version>2.2.3-release</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.qpid/qpid-client -->
         <dependency>
             <groupId>org.apache.qpid</groupId>
             <artifactId>qpid-client</artifactId>
@@ -427,7 +464,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec -->
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jms_1.1_spec</artifactId>
