@@ -36,19 +36,18 @@ public class JbootHandler extends Handler {
             return;
         }
 
-
-        /**
-         * 初始化 当前线程的 Hystrix
-         */
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
-
-
         /**
          * 通过 JbootRequestContext 去保存 request，然后可以在当前线程的任何地方
          * 通过 JbootRequestContext.getRequest() 去获取。
          */
         JbootServletRequestWrapper jbootServletRequest = new JbootServletRequestWrapper(request);
         JbootRequestContext.handle(jbootServletRequest, response);
+
+
+        /**
+         * 初始化 当前线程的 Hystrix
+         */
+        HystrixRequestContext context = HystrixRequestContext.initializeContext();
 
         /**
          * 初始化 异常记录器，用于记录异常信息，然后在页面输出
@@ -57,18 +56,15 @@ public class JbootHandler extends Handler {
 
 
         try {
-
             /**
              * 执行请求逻辑
              */
             doHandle(target, jbootServletRequest, response, isHandled);
 
         } finally {
-
+            JbootExceptionHolder.release();
             context.shutdown();
             JbootRequestContext.release();
-            JbootExceptionHolder.release();
-
         }
 
     }
