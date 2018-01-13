@@ -47,7 +47,8 @@ public class JbootHandler extends Handler {
          * 通过 JbootRequestContext 去保存 request，然后可以在当前线程的任何地方
          * 通过 JbootRequestContext.getRequest() 去获取。
          */
-        JbootRequestContext.handle(request, response);
+        JbootServletRequestWrapper jbootServletRequest = new JbootServletRequestWrapper(request);
+        JbootRequestContext.handle(jbootServletRequest, response);
 
         /**
          * 初始化 异常记录器，用于记录异常信息，然后在页面输出
@@ -60,7 +61,7 @@ public class JbootHandler extends Handler {
             /**
              * 执行请求逻辑
              */
-            doHandle(target, new JbootServletRequestWrapper(request), response, isHandled);
+            doHandle(target, jbootServletRequest, response, isHandled);
 
         } finally {
 
