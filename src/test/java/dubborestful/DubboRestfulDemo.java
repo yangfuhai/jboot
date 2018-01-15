@@ -29,7 +29,7 @@ public class DubboRestfulDemo {
      * 针对某个Service 单独暴露 restful 的配置晚点支持，目前针对单个 Service，
      * 目前可以通过 父子系统的方式来实现，父子系统通信走RPC，子系统对外暴露 restful
      * <p>
-     * 运行 main() 方法后，访问： http://127.0.0.1:8888/users/get 来查看效果
+     * 运行 main() 方法后，访问： http://127.0.0.1:8002/users/get 来查看效果
      * <p>
      * 具体代码在： UserServiceImpl 里
      *
@@ -44,7 +44,6 @@ public class DubboRestfulDemo {
 
         Jboot.setBootArg("jboot.rpc.dubbo.protocolName", "rest");
 //        Jboot.setBootArg("jboot.rpc.dubbo.protocolServer","netty"); //netty tomcat jetty
-//        Jboot.setBootArg("jboot.rpc.dubbo.protocolPort",8888); //default 8888
 //        Jboot.setBootArg("jboot.rpc.dubbo.protocolContextPath","/mypath");
 
 

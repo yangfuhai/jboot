@@ -24,7 +24,6 @@ public class JbootDubborpcConfig {
 
     private String protocolName = "dubbo"; //default is dubbo
     private String protocolServer = "netty"; //default is netty
-    private int protocolPort = 8888;
     private String protocolContextPath;
     private String protocolTransporter;
     private int protocolThreads = 200;
@@ -43,14 +42,6 @@ public class JbootDubborpcConfig {
 
     public void setProtocolServer(String protocolServer) {
         this.protocolServer = protocolServer;
-    }
-
-    public int getProtocolPort() {
-        return protocolPort;
-    }
-
-    public void setProtocolPort(int protocolPort) {
-        this.protocolPort = protocolPort;
     }
 
     public String getProtocolContextPath() {

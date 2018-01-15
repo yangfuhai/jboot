@@ -140,7 +140,6 @@ public class JbootDubborpc extends JbootrpcBase {
 
         protocolConfig.setName(dubboConfig.getProtocolName());
         protocolConfig.setServer(dubboConfig.getProtocolServer());
-        protocolConfig.setPort(dubboConfig.getProtocolPort());
 
         if (StringUtils.isNotBlank(dubboConfig.getProtocolContextPath())) {
             protocolConfig.setContextpath(dubboConfig.getProtocolContextPath());
