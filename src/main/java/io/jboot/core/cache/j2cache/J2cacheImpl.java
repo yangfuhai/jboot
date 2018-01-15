@@ -15,16 +15,15 @@
  */
 package io.jboot.core.cache.j2cache;
 
-import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.exception.JbootException;
 import net.oschina.j2cache.CacheObject;
 import net.oschina.j2cache.J2Cache;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -33,64 +32,36 @@ import java.util.*;
  */
 public class J2cacheImpl implements JbootCache {
 
-    private static final Log LOG = Log.getLog(J2cacheImpl.class);
-
     @Override
     public <T> T get(String cacheName, Object key) {
-        try {
-            CacheObject cacheObject = J2Cache.getChannel().get(cacheName, key.toString());
-            return cacheObject != null ? (T) cacheObject.getValue() : null;
-        } catch (IOException e) {
-            LOG.error(e.toString(), e);
-        }
-        return null;
+        CacheObject cacheObject = J2Cache.getChannel().get(cacheName, key.toString());
+        return cacheObject != null ? (T) cacheObject.getValue() : null;
     }
 
     @Override
     public void put(String cacheName, Object key, Object value) {
-        try {
-            J2Cache.getChannel().set(cacheName, key.toString(), (Serializable) value);
-        } catch (IOException e) {
-            LOG.error(e.toString(), e);
-        }
+        J2Cache.getChannel().set(cacheName, key.toString(), value);
     }
 
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
-        try {
-            J2Cache.getChannel().set(cacheName, key.toString(), (Serializable) value, liveSeconds);
-        } catch (IOException e) {
-            LOG.error(e.toString(), e);
-        }
+        J2Cache.getChannel().set(cacheName, key.toString(), value, liveSeconds);
     }
 
     @Override
     public List getKeys(String cacheName) {
-        try {
-            Collection keys = J2Cache.getChannel().keys(cacheName);
-            return keys != null ? new ArrayList(keys) : null;
-        } catch (IOException e) {
-            LOG.error(e.toString(), e);
-        }
-        return null;
+        Collection keys = J2Cache.getChannel().keys(cacheName);
+        return keys != null ? new ArrayList(keys) : null;
     }
 
     @Override
     public void remove(String cacheName, Object key) {
-        try {
-            J2Cache.getChannel().evict(cacheName, key.toString());
-        } catch (IOException e) {
-            LOG.error(e.toString(), e);
-        }
+        J2Cache.getChannel().evict(cacheName, key.toString());
     }
 
     @Override
     public void removeAll(String cacheName) {
-        try {
-            J2Cache.getChannel().clear(cacheName);
-        } catch (IOException e) {
-            LOG.error(e.toString(), e);
-        }
+        J2Cache.getChannel().clear(cacheName);
     }
 
     @Override
