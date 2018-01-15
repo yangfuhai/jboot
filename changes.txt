@@ -1,9 +1,16 @@
+jboot-1.2.8:
+修复：jboot.rpc.proxy 和 jboot.rpc.filter 对 dubbo 或 motan 设置无效的问题
+修复：使用JbootRequestContext获取session的id不正确的问题
+优化：重命名 metrics 为 metric
+优化：升级 j2cache 到最新版本 2.2.4
+
+
 jboot-1.2.7:
 新增：dubbo 对 restful 的支持
 修复：当 jbootCache 配置类型为 j2cache 的时候，无法 clear() 的问题
 优化：Redis mq 当断开连接的时候会自动重连
 优化：更新 dubbo 到 2.6.0 最新版本
-优化：更新 j2cache 到 2.3.0 最新版本
+优化：更新 j2cache 到 2.2.3 最新版本
 
 
 jboot-1.2.6:
