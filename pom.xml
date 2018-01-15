@@ -453,7 +453,7 @@
         <dependency>
             <groupId>net.oschina.j2cache</groupId>
             <artifactId>j2cache-core</artifactId>
-            <version>2.2.3-release</version>
+            <version>2.2.4-release</version>
             <scope>provided</scope>
         </dependency>
 
