@@ -27,11 +27,10 @@ import io.jboot.Jboot;
 import io.jboot.web.JbootControllerContext;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
+import io.jboot.web.flashmessage.FlashMessageManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,7 +43,6 @@ public class JbootActionHandler extends ActionHandler {
 
     private static final Log log = Log.getLog(JbootActionHandler.class);
 
-    public static final String FLASH_SESSION_ATTR = "_jboot_flash_";
 
     /**
      * handle
@@ -110,25 +108,29 @@ public class JbootActionHandler extends ActionHandler {
             }
 
 
+            /**
+             * 如果当期 不是redirect
+             * 显示 FlashMessage 的数据
+             */
             if (!(render instanceof RedirectRender)) {
-                HashMap<String, Object> flash = controller.getSessionAttr(FLASH_SESSION_ATTR);
-                if (flash != null) {
-                    for (Map.Entry<String, Object> entry : flash.entrySet()) {
-                        controller.setAttr(entry.getKey(), entry.getValue());
-                    }
-                }
+                FlashMessageManager.me().renderTo(controller);
             }
 
             render.setContext(request, response, action.getViewPath()).render();
 
 
+            /**
+             * 如果当前 redirect，就把 FlashMessage 存入到 session 里去
+             */
             if (render instanceof RedirectRender && controller instanceof JbootController) {
-                HashMap flash = ((JbootController) controller).getFlashAttrs();
-                if (flash != null) {
-                    controller.setSessionAttr(FLASH_SESSION_ATTR, flash);
-                }
-            } else {
-                controller.removeSessionAttr(FLASH_SESSION_ATTR);
+                FlashMessageManager.me().init(controller);
+            }
+
+            /**
+             * 否则，尝试去 清空 FlashMessage
+             */
+            else {
+                FlashMessageManager.me().release(controller);
             }
 
         } catch (RenderException e) {
