@@ -28,6 +28,8 @@ public class JbootDubborpcConfig {
     private String protocolTransporter;
     private int protocolThreads = 200;
 
+    private int qosPort;
+
     public String getProtocolName() {
         return protocolName;
     }
@@ -66,5 +68,13 @@ public class JbootDubborpcConfig {
 
     public void setProtocolThreads(int protocolThreads) {
         this.protocolThreads = protocolThreads;
+    }
+
+    public int getQosPort() {
+        return qosPort;
+    }
+
+    public void setQosPort(int qosPort) {
+        this.qosPort = qosPort;
     }
 }
