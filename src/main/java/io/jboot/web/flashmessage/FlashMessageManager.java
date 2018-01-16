@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.jboot.web.flashmessage;
 
 import com.jfinal.core.Controller;
@@ -40,11 +55,15 @@ public class FlashMessageManager {
     }
 
     public void init(Controller controller) {
-        HashMap flash = ((JbootController) controller).getFlashAttrs();
-        if (flash != null) {
-            controller.setSessionAttr(FLASH_SESSION_ATTR, flash);
-            controller.setCookie(FLASH_COOKIE_ATTR, FLASH_COOKIE_VALUE, 60);
+        if (!(controller instanceof JbootController)) {
+            return;
         }
+        HashMap flash = ((JbootController) controller).getFlashAttrs();
+        if (flash == null || flash.isEmpty()) {
+            return;
+        }
+        controller.setSessionAttr(FLASH_SESSION_ATTR, flash);
+        controller.setCookie(FLASH_COOKIE_ATTR, FLASH_COOKIE_VALUE, 60);
     }
 
     public void release(Controller controller) {
