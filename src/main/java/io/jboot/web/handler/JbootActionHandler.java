@@ -25,7 +25,6 @@ import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.Jboot;
 import io.jboot.web.JbootControllerContext;
-import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 import io.jboot.web.flashmessage.FlashMessageManager;
 
@@ -108,11 +107,13 @@ public class JbootActionHandler extends ActionHandler {
             }
 
 
+            boolean isRedirect = render instanceof RedirectRender;
+
             /**
              * 如果当期 不是redirect
              * 显示 FlashMessage 的数据
              */
-            if (!(render instanceof RedirectRender)) {
+            if (!isRedirect) {
                 FlashMessageManager.me().renderTo(controller);
             }
 
@@ -122,7 +123,7 @@ public class JbootActionHandler extends ActionHandler {
             /**
              * 如果当前 redirect，就把 FlashMessage 存入到 session 里去
              */
-            if (render instanceof RedirectRender && controller instanceof JbootController) {
+            if (isRedirect) {
                 FlashMessageManager.me().init(controller);
             }
 
