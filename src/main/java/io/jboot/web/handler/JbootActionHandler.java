@@ -110,10 +110,17 @@ public class JbootActionHandler extends ActionHandler {
             boolean isRedirect = render instanceof RedirectRender;
 
             /**
-             * 如果当期 不是redirect
-             * 显示 FlashMessage 的数据
+             * 如果当前是redirect
+             * 尝试设置 FlashMessage 数据到 session
              */
-            if (!isRedirect) {
+            if (isRedirect) {
+                FlashMessageManager.me().init(controller);
+            }
+            /**
+             * 如果当前不是redirect
+             * 尝试去渲染 FlashMessage 的数据
+             */
+            else {
                 FlashMessageManager.me().renderTo(controller);
             }
 
@@ -121,16 +128,9 @@ public class JbootActionHandler extends ActionHandler {
 
 
             /**
-             * 如果当前 redirect，就把 FlashMessage 存入到 session 里去
+             * 如果当前不是redirect，那么尝试去清空FlashMessage数据
              */
-            if (isRedirect) {
-                FlashMessageManager.me().init(controller);
-            }
-
-            /**
-             * 否则，尝试去 清空 FlashMessage
-             */
-            else {
+            if (!isRedirect) {
                 FlashMessageManager.me().release(controller);
             }
 

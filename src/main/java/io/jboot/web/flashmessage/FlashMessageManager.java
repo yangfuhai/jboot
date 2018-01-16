@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public class FlashMessageManager {
 
-    private static final String FLASH_SESSION_ATTR = "_JBOOT_FLASH_";
+    private static final String FLASH_SESSION_ATTR = "_JFM_"; // JFM : jboot flash message
 
-    private static final String FLASH_COOKIE_ATTR = "_JBOOT_FLASH_";
+    private static final String FLASH_COOKIE_ATTR = "_JFM_"; // JFM : jboot flash message
     private static final String FLASH_COOKIE_VALUE = "1";
 
 
@@ -27,7 +27,7 @@ public class FlashMessageManager {
     }
 
     public void renderTo(Controller controller) {
-        if (!hasFlashMessage()) {
+        if (!hasFlashMessage(controller)) {
             return;
         }
         HashMap<String, Object> flash = controller.getSessionAttr(FLASH_SESSION_ATTR);
@@ -43,12 +43,12 @@ public class FlashMessageManager {
         HashMap flash = ((JbootController) controller).getFlashAttrs();
         if (flash != null) {
             controller.setSessionAttr(FLASH_SESSION_ATTR, flash);
-            controller.setCookie(FLASH_SESSION_ATTR, FLASH_COOKIE_VALUE, 60);
+            controller.setCookie(FLASH_COOKIE_ATTR, FLASH_COOKIE_VALUE, 60);
         }
     }
 
     public void release(Controller controller) {
-        if (!hasFlashMessage()) {
+        if (!hasFlashMessage(controller)) {
             return;
         }
         controller.removeSessionAttr(FLASH_SESSION_ATTR);
@@ -62,7 +62,7 @@ public class FlashMessageManager {
      *
      * @return
      */
-    private boolean hasFlashMessage() {
-        return FLASH_COOKIE_VALUE.equals(FLASH_COOKIE_ATTR);
+    private boolean hasFlashMessage(Controller controller) {
+        return FLASH_COOKIE_VALUE.equals(controller.getCookie(FLASH_COOKIE_ATTR));
     }
 }
