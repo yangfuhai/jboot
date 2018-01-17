@@ -15,6 +15,8 @@
  */
 package io.jboot.core.cache.ehredis;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.component.redis.JbootRedis;
@@ -25,7 +27,9 @@ import io.jboot.core.serializer.ISerializer;
 import io.jboot.utils.StringUtils;
 import redis.clients.jedis.BinaryJedisPubSub;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 基于 ehcache和redis做的二级缓存
@@ -42,6 +46,11 @@ public class JbootEhredisCacheImpl extends JbootCacheBase {
 
     private String channel = DEFAULT_NOTIFY_CHANNEL;
     private String clientId;
+
+    private LoadingCache<String, List> keysCache = Caffeine.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build(key -> null);
 
 
     public JbootEhredisCacheImpl() {
@@ -62,9 +71,13 @@ public class JbootEhredisCacheImpl extends JbootCacheBase {
 
     @Override
     public List getKeys(String cacheName) {
-        List list = ehcacheImpl.getKeys(cacheName);
-        if (list == null || list.isEmpty()) {
+        List list = keysCache.getIfPresent(cacheName);
+        if (list == null) {
             list = redisCacheImpl.getKeys(cacheName);
+            if (list  == null) {
+                list = new ArrayList();
+            }
+            keysCache.put(cacheName,list);
         }
         return list;
     }
@@ -181,8 +194,13 @@ public class JbootEhredisCacheImpl extends JbootCacheBase {
 
 
     private void publishMessage(int action, String cacheName, Object key) {
+        clearKeysCache(cacheName);
         JbootEhredisMessage message = new JbootEhredisMessage(clientId, action, cacheName, key);
         redis.publish(serializer.serialize(channel), serializer.serialize(message));
+    }
+
+    private void clearKeysCache(String cacheName){
+        keysCache.invalidate(cacheName);
     }
 
     public void onMessage(String channel, Object obj) {
