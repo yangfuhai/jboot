@@ -1436,7 +1436,7 @@ public class JbootRedisImpl extends JbootRedisBase {
         new Thread("jboot-redis-subscribe-BinaryJedisPubSub") {
             @Override
             public void run() {
-                //当 Redis 重启会导致订阅线程断开连接，需要进行重连
+                //订阅线程断开连接，需要进行重连
                 while (true) {
                     Jedis jedis = getJedis();
                     try {

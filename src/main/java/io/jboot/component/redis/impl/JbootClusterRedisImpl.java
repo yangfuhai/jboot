@@ -1142,8 +1142,11 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
             @Override
             public void run() {
                 while (true) {
+                    //订阅线程断开连接，需要进行重连
                     try {
                         jedisCluster.subscribe(listener, channels);
+                        LOG.warn("Disconnect to redis channel in subscribe JedisPubSub!");
+                        break;
                     } catch (JedisConnectionException e) {
                         LOG.error("failed connect to redis, reconnect it.", e);
                         try {
@@ -1174,8 +1177,11 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
             @Override
             public void run() {
                 while (true) {
+                    //订阅线程断开连接，需要进行重连
                     try {
                         jedisCluster.subscribe(binaryListener, channels);
+                        LOG.warn("Disconnect to redis channel in subscribe BinaryJedisPubSub!");
+                        break;
                     } catch (JedisConnectionException e) {
                         LOG.error("failed connect to redis, reconnect it.", e);
                         try {
