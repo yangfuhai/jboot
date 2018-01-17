@@ -323,8 +323,10 @@ public class JbootConfigManager {
     private void initConfigRemoteReader() {
         configRemoteReader = new ConfigRemoteReader(config.getRemoteUrl(), config.getAppName(), 5) {
             @Override
-            public void onChange(String key, String oldValue, String value) {
+            public void onChange(String appName,String key, String oldValue, String value) {
 
+                if(!appName.equals(name))
+                    return;
                 /**
                  * 过滤掉系统启动参数设置
                  */

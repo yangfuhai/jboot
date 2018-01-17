@@ -39,7 +39,7 @@ public abstract class ConfigRemoteReader {
     private Timer timer;
     private TimerTask task;
     private String url;
-    private String name;
+    protected String name;
     private int interval;
     private boolean running = false;
 
@@ -104,7 +104,7 @@ public abstract class ConfigRemoteReader {
         }
     }
 
-    public abstract void onChange(String key, String oldValue, String newValue);
+    public abstract void onChange(String appName, String key, String oldValue, String newValue);
 
 
     private int scanFailTimes = 0;
@@ -232,16 +232,16 @@ public abstract class ConfigRemoteReader {
                     String remoteValue = newPropInfo.getString(newKey);
                     remoteProperties.put(newKey.toString(), remoteValue);
                     if (localValue == null && StringUtils.isNotBlank(remoteValue)) {
-                        onChange(newKey.toString(), null, remoteValue);
+                        onChange(key, newKey.toString(), null, remoteValue);
                     } else if (!localValue.equals(remoteValue)) {
-                        onChange(newKey.toString(), localValue, remoteValue);
+                        onChange(key, newKey.toString(), localValue, remoteValue);
                     }
                 }
 
                 for (Object localKey : localPropInfo.getProperties().keySet()) {
                     if (newPropInfo.getString(localKey) == null) {
                         remoteProperties.remove(localKey);
-                        onChange(localKey.toString(), localPropInfo.getString(localKey), null);
+                        onChange(key, localKey.toString(), localPropInfo.getString(localKey), null);
                     }
                 }
             }
@@ -254,7 +254,7 @@ public abstract class ConfigRemoteReader {
             PropInfoMap.PropInfo propInfo = remotePropInfoMap.get(deleteId);
             for (Object key : propInfo.getProperties().keySet()) {
                 remoteProperties.remove(key);
-                onChange(key.toString(), propInfo.getString(key), null);
+                onChange(deleteId, key.toString(), propInfo.getString(key), null);
             }
         }
     }
