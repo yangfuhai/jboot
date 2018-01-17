@@ -39,6 +39,7 @@ public abstract class ConfigRemoteReader {
     private Timer timer;
     private TimerTask task;
     private String url;
+    private String name;
     private int interval;
     private boolean running = false;
 
@@ -52,8 +53,9 @@ public abstract class ConfigRemoteReader {
 
     private final JbootHttpImpl http = new JbootHttpImpl();
 
-    public ConfigRemoteReader(String url, int interval) {
+    public ConfigRemoteReader(String url, String name, int interval) {
         this.url = url;
+        this.name = name;
         this.interval = interval;
 
         initRemoteProps();
@@ -69,7 +71,7 @@ public abstract class ConfigRemoteReader {
      * 初始化远程配置信息
      */
     private void initRemoteProps() {
-        String jsonString = httpGet(url);
+        String jsonString = httpGet(url+"/"+name);
 
         if (StringUtils.isBlank(jsonString)) {
             LogKit.error("can not get remote config info,plase check url : " + url);
@@ -221,6 +223,9 @@ public abstract class ConfigRemoteReader {
                 PropInfoMap.PropInfo newPropInfo = new PropInfoMap.PropInfo(version, properties);
                 PropInfoMap.PropInfo localPropInfo = remotePropInfoMap.get(key);
                 remotePropInfoMap.put(key, newPropInfo);
+
+                if(localPropInfo==null)
+                    continue;
 
                 for (Object newKey : newPropInfo.getProperties().keySet()) {
                     String localValue = localPropInfo.getString(newKey);

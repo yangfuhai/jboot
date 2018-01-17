@@ -7,7 +7,7 @@ import io.jboot.Jboot;
  * @version V1.0
  * @package config
  */
-public class ConfigClient {
+public class ConfigClient1 {
 
 
     /**
@@ -19,23 +19,24 @@ public class ConfigClient {
 
 
         //jboot端口号配置
-        Jboot.setBootArg("jboot.server.port", "8088");
+        //Jboot.setBootArg("jboot.server.port", "8087");
 
         Jboot.setBootArg("jboot.config.remoteEnable", "true");
         Jboot.setBootArg("jboot.config.remoteUrl", "http://127.0.0.1:8080/jboot/config");
-        //Jboot.setBootArg("jboot.config.appName", "mos")
+        Jboot.setBootArg("jboot.config.appName", "mos");
 
-        MyConfig config = Jboot.config(MyConfig.class);
+        Jboot.run(args);
+
+        MyConfig1 config = Jboot.config(MyConfig1.class);
 
         for (int i = 0; i < 1000000; i++) {
-            System.out.println("------myname:" + config.getName());
+            System.out.println("------myname1:" + config.getName());
             try {
                 Thread.sleep(1000 * 2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        Jboot.run(args);
     }
 
 

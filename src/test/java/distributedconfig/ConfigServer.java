@@ -18,8 +18,8 @@ public class ConfigServer {
     public static void main(String[] args) {
 
         Jboot.setBootArg("jboot.config.serverEnable", "true");
-        Jboot.setBootArg("jboot.config.path", "/Users/michael/Desktop/test");
-
+        //Jboot.setBootArg("jboot.config.path", "/Users/michael/Desktop/test");
+        Jboot.setBootArg("jboot.config.path", "C://config");//config在resources目录下 复制到C盘 即可
 
         Jboot.run(args);
     }

@@ -19,11 +19,14 @@ public class ConfigClient {
 
 
         //jboot端口号配置
-        Jboot.setBootArg("jboot.server.port", "8088");
+        //Jboot.setBootArg("jboot.server.port", "8088");
 
         Jboot.setBootArg("jboot.config.remoteEnable", "true");
         Jboot.setBootArg("jboot.config.remoteUrl", "http://127.0.0.1:8080/jboot/config");
+        //Jboot.setBootArg("jboot.config.appName", "mos")
+        //不加配置中心应用名 默认使用jboot.properties配置文件
 
+        Jboot.run(args);
 
         MyConfig config = Jboot.config(MyConfig.class);
 
@@ -35,6 +38,7 @@ public class ConfigClient {
                 e.printStackTrace();
             }
         }
+
     }
 
 
