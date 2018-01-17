@@ -21,6 +21,7 @@ import io.jboot.core.cache.JbootCacheBase;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.event.CacheEventListener;
 
 import java.util.List;
 
@@ -32,8 +33,22 @@ public class JbootEhcacheImpl extends JbootCacheBase {
 
     private static final Log log = Log.getLog(JbootEhcacheImpl.class);
 
+    private CacheEventListener cacheEventListener;
+
     public JbootEhcacheImpl() {
         cacheManager = CacheManager.create();
+    }
+
+    public JbootEhcacheImpl(CacheManager cacheManager) {
+        cacheManager = cacheManager;
+    }
+
+    public CacheEventListener getCacheEventListener() {
+        return cacheEventListener;
+    }
+
+    public void setCacheEventListener(CacheEventListener cacheEventListener) {
+        this.cacheEventListener = cacheEventListener;
     }
 
     public Cache getOrAddCache(String cacheName) {
@@ -45,6 +60,9 @@ public class JbootEhcacheImpl extends JbootCacheBase {
                     log.warn("Could not find cache config [" + cacheName + "], using default.");
                     cacheManager.addCacheIfAbsent(cacheName);
                     cache = cacheManager.getCache(cacheName);
+                    if (cacheEventListener != null) {
+                        cache.getCacheEventNotificationService().registerListener(cacheEventListener);
+                    }
                 }
             }
         }
@@ -116,7 +134,7 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         Element element = getOrAddCache(cacheName).get(key);
         return element != null ? element.getTimeToLive() : null;
     }
-    
+
 
     @Override
     public void setTtl(String cacheName, Object key, int seconds) {

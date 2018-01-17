@@ -25,6 +25,10 @@ import io.jboot.core.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.core.cache.redis.JbootRedisCacheImpl;
 import io.jboot.core.serializer.ISerializer;
 import io.jboot.utils.StringUtils;
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.event.CacheEventListener;
 import redis.clients.jedis.BinaryJedisPubSub;
 
 import java.util.ArrayList;
@@ -35,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  * 基于 ehcache和redis做的二级缓存
  * 优点是：减少高并发下redis的io瓶颈
  */
-public class JbootEhredisCacheImpl extends JbootCacheBase {
+public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventListener{
 
     public static final String DEFAULT_NOTIFY_CHANNEL = "jboot_ehredis_channel";
 
@@ -55,6 +59,8 @@ public class JbootEhredisCacheImpl extends JbootCacheBase {
 
     public JbootEhredisCacheImpl() {
         this.ehcacheImpl = new JbootEhcacheImpl();
+        this.ehcacheImpl.setCacheEventListener(this);
+
         this.redisCacheImpl = new JbootRedisCacheImpl();
         this.clientId = StringUtils.uuid();
         this.serializer = Jboot.me().getSerializer();
@@ -236,4 +242,33 @@ public class JbootEhredisCacheImpl extends JbootCacheBase {
         return redisCacheImpl;
     }
 
+
+    @Override
+    public void notifyElementRemoved(Ehcache cache, Element element) throws CacheException {
+    }
+
+    @Override
+    public void notifyElementPut(Ehcache cache, Element element) throws CacheException { }
+
+    @Override
+    public void notifyElementUpdated(Ehcache cache, Element element) throws CacheException {}
+
+    @Override
+    public void notifyElementExpired(Ehcache cache, Element element) {
+        clearKeysCache(cache.getName());
+    }
+
+    @Override
+    public void notifyElementEvicted(Ehcache cache, Element element) {}
+
+    @Override
+    public void notifyRemoveAll(Ehcache cache) {}
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
+
+    @Override
+    public void dispose() {}
 }

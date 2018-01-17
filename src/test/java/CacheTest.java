@@ -1,6 +1,8 @@
 import io.jboot.Jboot;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
@@ -26,7 +28,10 @@ public class CacheTest {
         Jboot.setBootArg("jboot.redis.host","127.0.0.1");
         Jboot.me().getCache().put("test", "mykey", "abc", 2);
 
+
+
         for (int i = 0; i < 4; i++) {
+            System.out.println(Arrays.toString(Jboot.me().getCache().getKeys("test").toArray()));
             System.out.println(i + " : " +  Jboot.me().getCache().get("test", "mykey"));
             try {
                 Thread.sleep(1000);
