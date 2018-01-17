@@ -213,6 +213,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase {
             return;
         }
 
+        clearKeysCache(message.getCacheName());
 
         switch (message.getAction()) {
             case JbootEhredisMessage.ACTION_PUT:
