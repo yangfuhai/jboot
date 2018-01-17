@@ -358,10 +358,12 @@ public class JbootConfigManager {
         configRemoteReader.start();
     }
 
-    private String getKeyName(String file){
-        int index = file.indexOf('.');
+    private static String getKeyName(String file){
+        File fileio = new File(file);
+        file = fileio.getName();
+        int index = file.lastIndexOf('.');
         file = file.substring(0,index);
-        index = file.indexOf('-');
+        index = file.lastIndexOf('-');
         if(index<0)
         {
             return "jboot";
