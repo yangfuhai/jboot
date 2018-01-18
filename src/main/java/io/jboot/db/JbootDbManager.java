@@ -19,6 +19,7 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.Jboot;
+import io.jboot.core.cache.JbootCache;
 import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.datasource.DataSourceConfigManager;
@@ -182,6 +183,14 @@ public class JbootDbManager {
         ActiveRecordPlugin activeRecordPlugin = StringUtils.isNotBlank(configName)
                 ? new ActiveRecordPlugin(configName, dataSource)
                 : new ActiveRecordPlugin(dataSource);
+
+
+        // 设置JFinal使用的cache为jbootCache
+        JbootCache jbootCache = Jboot.me().getCache();
+        if (jbootCache != null) {
+            activeRecordPlugin.setCache(jbootCache);
+        }
+
 
         /**
          * 不需要添加映射的直接返回
