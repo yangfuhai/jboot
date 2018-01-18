@@ -291,7 +291,6 @@ public class JbootConfigManager {
             return s;
         }
 
-
         if (type == Integer.class || type == int.class) {
             return Integer.parseInt(s);
         } else if (type == Long.class || type == long.class) {
@@ -322,9 +321,12 @@ public class JbootConfigManager {
 
 
     private void initConfigRemoteReader() {
-        configRemoteReader = new ConfigRemoteReader(config.getRemoteUrl(), 5) {
+        configRemoteReader = new ConfigRemoteReader(config.getRemoteUrl(), config.getAppName(), 5) {
             @Override
-            public void onChange(String key, String oldValue, String value) {
+            public void onChange(String appName,String key, String oldValue, String value) {
+
+                if(!appName.equals(name))
+                    return;
                 /**
                  * 过滤掉系统启动参数设置
                  */
@@ -356,6 +358,20 @@ public class JbootConfigManager {
         configRemoteReader.start();
     }
 
+    private static String getKeyName(String file){
+        File fileio = new File(file);
+        file = fileio.getName();
+        int index = file.lastIndexOf('.');
+        file = file.substring(0,index);
+        index = file.lastIndexOf('-');
+        if(index<0)
+        {
+            return "jboot";
+        }else{
+            file = file.substring(index+1);
+            return file;
+        }
+    }
 
     private void initConfigFileScanner() {
         configFileScanner = new ConfigFileScanner(config.getPath(), 5) {
@@ -363,13 +379,13 @@ public class JbootConfigManager {
             public void onChange(String action, String file) {
                 switch (action) {
                     case ConfigFileScanner.ACTION_ADD:
-                        propInfoMap.put(HashKit.md5(file), new PropInfoMap.PropInfo(new File(file)));
+                        propInfoMap.put(getKeyName(file), new PropInfoMap.PropInfo(new File(file)));
                         break;
                     case ConfigFileScanner.ACTION_DELETE:
-                        propInfoMap.remove(HashKit.md5(file));
+                        propInfoMap.remove(getKeyName(file));
                         break;
                     case ConfigFileScanner.ACTION_UPDATE:
-                        propInfoMap.put(HashKit.md5(file), new PropInfoMap.PropInfo(new File(file)));
+                        propInfoMap.put(getKeyName(file), new PropInfoMap.PropInfo(new File(file)));
                         break;
                 }
             }

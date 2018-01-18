@@ -48,6 +48,18 @@ public class JbootConfigConfig {
      */
     private String exclude;
 
+    /**
+     * 应用名 区分配置文件
+     */
+    private String appName="jboot";
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
 
     public boolean isRemoteEnable() {
         return remoteEnable;
