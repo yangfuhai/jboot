@@ -233,9 +233,7 @@
         <dependency>
             <groupId>de.ruedigermoeller</groupId>
             <artifactId>fst</artifactId>
-            <version>2.56</version>
-            <!--<scope>provided</scope>-->
-            <!--如果使用其他序列化组件，和fst冲突，请使用exclusions排除 fst 依赖-->
+            <version>2.57</version>
         </dependency>
 
         <dependency>
@@ -403,7 +401,7 @@
         <dependency>
             <groupId>io.opentracing</groupId>
             <artifactId>opentracing-api</artifactId>
-            <version>0.31.0-RC2</version>
+            <version>0.31.0</version>
         </dependency>
 
         <dependency>
