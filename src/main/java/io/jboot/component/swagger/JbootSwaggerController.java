@@ -15,6 +15,7 @@
  */
 package io.jboot.component.swagger;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
@@ -33,8 +34,9 @@ public class JbootSwaggerController extends JbootController {
 
     public void index() {
         String html = null;
+        String viewPath = config.getPath().endsWith("/") ? config.getPath() : config.getPath() + "/";
         try {
-            html = renderToString("index.html", Maps.newHashMap());
+            html = renderToString(viewPath + "index.html", Maps.newHashMap());
         } catch (Throwable ex) {
         }
 
@@ -72,7 +74,8 @@ public class JbootSwaggerController extends JbootController {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // 支持HTTP 1.1.
         response.setHeader("Pragma", "no-cache");
 
-        renderJson(swagger);
+        // 此处如果为 jfianl json 序列化 swagger 会报错
+        renderJson(JSON.toJSONString(swagger));
     }
 
 }
