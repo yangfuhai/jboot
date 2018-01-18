@@ -1,3 +1,14 @@
+jboot-1.2.9:
+新增：dubbo qos 端口的配置支持
+新增：分布式配置中心可以按应用名获取配置信息
+修复：FlashMessage 修复连续多次redirect ，可能造成FlashMessage丢失的问题
+修复：修复由于ehcache过期造成element被移除后导致 getKeys 数据错误的问题
+修复：baseViewPath 非根目录下 swaggerui 找不到的问题
+修复：JFinal json序列化会导致 swaggerui 报错的问题
+优化：FlashMessage性能，之前访问页面的时候会清空FlashMessage，可能导致高并发清空下有大量无效的清空操作。
+优化：ehredis.getKeys() 可能造成大量访问redis的情况
+
+
 jboot-1.2.8:
 修复：jboot.rpc.proxy 和 jboot.rpc.filter 对 dubbo 或 motan 设置无效的问题
 修复：使用JbootRequestContext获取session的id不正确的问题
