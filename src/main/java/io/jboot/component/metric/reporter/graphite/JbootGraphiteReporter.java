@@ -29,13 +29,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.component.metrics.reporter.graphite
+ * @Package io.jboot.component.metric.reporter.graphite
  */
 public class JbootGraphiteReporter implements JbootMetricReporter {
     @Override
     public void report(MetricRegistry metricRegistry) {
 
-        JbootMetricsGraphiteReporterConfig config = Jboot.config(JbootMetricsGraphiteReporterConfig.class);
+        JbootMetricGraphiteReporterConfig config = Jboot.config(JbootMetricGraphiteReporterConfig.class);
 
         if (StringUtils.isBlank(config.getHost())) {
             throw new NullPointerException("graphite reporter host must not be null, please config jboot.metrics.reporter.graphite.host in you properties.");

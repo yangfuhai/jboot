@@ -13,42 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.metric.reporter.graphite;
+package io.jboot.component.metric.reporter.csv;
 
 import io.jboot.config.annotation.PropertyConfig;
 
-@PropertyConfig(prefix = "jboot.metrics.reporter.graphite")
-public class JbootMetricsGraphiteReporterConfig {
+@PropertyConfig(prefix = "jboot.metric.reporter.cvr")
+public class JbootMetricCVRReporterConfig {
 
+    private String path;
 
-    private String host;
-    private Integer port = 2003;
-
-    private String prefixedWith;
-
-
-    public String getHost() {
-        return host;
+    public String getPath() {
+        return path;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    public String getPrefixedWith() {
-        return prefixedWith;
-    }
-
-    public void setPrefixedWith(String prefixedWith) {
-        this.prefixedWith = prefixedWith;
+    public void setPath(String path) {
+        this.path = path;
     }
 }
 

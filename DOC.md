@@ -57,10 +57,10 @@
 	- 文件上传
 	- 文件下载
 - [metrics数据监控](#metrics数据监控)
-	- 添加metrics数据
-	- metrics与Ganglia
-	- metrics与grafana
-	- metrics与jmx
+	- 添加metric数据
+	- metric与Ganglia
+	- metric与grafana
+	- metric与jmx
 - [容错与隔离](#容错与隔离)
 	- hystrix配置
 	- Hystrix Dashboard 部署
@@ -1326,29 +1326,29 @@ public void testHttpDownload() {
 
 
 
-# metrics数据监控
-Jboot的监控机制是通过Metrics来来做监控的，要启用metrics非常简单，通过在jboot.properties文件配置上`jboot.metrics.url`就可以启用metrics。
+# metric数据监控
+Jboot的监控机制是通过metric来来做监控的，要启用metric非常简单，通过在jboot.properties文件配置上`jboot.metric.url`就可以启用metric。
 
 例如
 
 ```xml
-jboot.metrics.url = /metrics.html
+jboot.metric.url = /metric.html
 ```
-我们就可以通过访问 `http://host:port/metrics.html` 来访问到metrics数据情况。
+我们就可以通过访问 `http://host:port/metric.html` 来访问到metric数据情况。
 
-### 添加metrics数据
-默认通过Url访问到的数据是没有具体内容，因为metrics无法得知要显示什么样的数据内容。例如，我们要统计某个action的用户访问量，可以通过在action里编写如下代码。
+### 添加metric数据
+默认通过Url访问到的数据是没有具体内容，因为metric无法得知要显示什么样的数据内容。例如，我们要统计某个action的用户访问量，可以通过在action里编写如下代码。
 
 ```java
 public void myaction() {
 
-    Jboot.me().getMetric().counter("myaction").inc();
+    Jboot.me().getmetric().counter("myaction").inc();
 
     renderText("my action");
 }
 ```
 
-当我们访问myaction这个地址后，然后再通过浏览器`http://host:port/metrics.html`访问，我们就能查看到如下的json数据。
+当我们访问myaction这个地址后，然后再通过浏览器`http://host:port/metric.html`访问，我们就能查看到如下的json数据。
 
 ```js
 {
@@ -1366,16 +1366,16 @@ public void myaction() {
 ```
 当再次访问`myaction`后，count里面的值就变成2了。
 
-### metrics与Ganglia
+### metric与Ganglia
 
 
-### metrics与Grafana
+### metric与Grafana
 
-### metrics与jmx
-metrics与jmx集成非常简单，只需要在jboot.properties文件添加如下配置：
+### metric与jmx
+metric与jmx集成非常简单，只需要在jboot.properties文件添加如下配置：
 
 ```xml
-jboot.metrics.jmxReporter = true
+jboot.metric.jmxReporter = true
 ```
 然后，我们就可以通过`JConsole`或者`VisualVM`进行查看了。
 

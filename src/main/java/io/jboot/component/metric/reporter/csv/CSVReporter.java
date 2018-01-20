@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.component.metrics.reporter.csv
+ * @Package io.jboot.component.metric.reporter.csv
  */
 public class CSVReporter implements JbootMetricReporter {
 
@@ -37,7 +37,7 @@ public class CSVReporter implements JbootMetricReporter {
     @Override
     public void report(MetricRegistry metricRegistry) {
 
-        JbootMetricsCVRReporterConfig cvrReporterConfig = Jboot.config(JbootMetricsCVRReporterConfig.class);
+        JbootMetricCVRReporterConfig cvrReporterConfig = Jboot.config(JbootMetricCVRReporterConfig.class);
 
         if (StringUtils.isBlank(cvrReporterConfig.getPath())) {
             throw new NullPointerException("csv reporter path must not be null, please config jboot.metrics.reporter.cvr.path in you properties.");

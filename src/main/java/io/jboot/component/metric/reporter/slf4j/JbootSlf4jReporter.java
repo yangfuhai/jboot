@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.component.metrics.reporter.slf4j
+ * @Package io.jboot.component.metric.reporter.slf4j
  */
 public class JbootSlf4jReporter implements JbootMetricReporter {
     @Override
