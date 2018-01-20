@@ -1,5 +1,5 @@
 
-## [English document](READER.md)
+## [English document](./README.md)
 ## JBoot 是什么
 
 Jboot，专为大型分布式项目和微服务而生。
