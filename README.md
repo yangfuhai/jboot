@@ -47,7 +47,7 @@ QQ-Group： 601440615
     * [x] ScheduledThreadPoolExecutor
     * [x] distributed task schedule (base on redis)
 * [x] component procedure monitor (base on metrics)
-* [x] Hystrix Monitor
+* [x] Hystrix control
 * [x] Opentracing
     * [x] zipkin
     * [x] skywalking
@@ -78,8 +78,8 @@ document url ： [click here](./DOC.md)
 - [MQ](./DOC.md#mq消息队列)
 - [Cache](./DOC.md#cache缓存)
 - [http Client](./DOC.md#http客户端)
-- [metrics](./DOC.md#metrics数据监控)
-- [Hystrix Monitor](./DOC.md#容错与隔离)
+- [metrics monitor](./DOC.md#metrics数据监控)
+- [Hystrix control](./DOC.md#容错与隔离)
 - [Opentracing](./DOC.md#opentracing数据追踪)	
 - [distributed config center](./DOC.md#统一配置中心)	
 - [Swagger api](./DOC.md#swagger-api自动生成)
