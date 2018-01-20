@@ -1,5 +1,5 @@
 
-## [中文文档](./READER-ZH.md)
+## [中文文档](READER-ZH.md)
 ## what is JBoot 
 
 Jboot，she is born for distributed project and micro service.
