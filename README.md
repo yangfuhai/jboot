@@ -22,7 +22,7 @@ QQ-Group： 601440615
 * [x] MVC （base on JFinal）
 * [x] ORM （base on JFinal）
 * [x] AOP （base on Guice）
-* security controll
+* security control
     * [x] shiro
 * RPC (Remote Procedure Call) 
     * [x] motan
@@ -47,7 +47,7 @@ QQ-Group： 601440615
     * [x] ScheduledThreadPoolExecutor
     * [x] distributed task schedule (base on redis)
 * [x] component procedure monitor (base on metrics)
-* [x] Hystrix controll
+* [x] Hystrix Monitor
 * [x] Opentracing
     * [x] zipkin
     * [x] skywalking
@@ -71,7 +71,7 @@ document url ： [click here](./DOC.md)
 
 - [JBoot core component](./DOC.md#jboot核心组件)
 - [MVC](./DOC.md#mvc)
-- [security controll](./DOC.md#安全控制)
+- [security control](./DOC.md#安全控制)
 - [ORM](./DOC.md#orm)
 - [AOP](./DOC.md#aop)
 - [RPC](./DOC.md#rpc远程调用)
@@ -79,7 +79,7 @@ document url ： [click here](./DOC.md)
 - [Cache](./DOC.md#cache缓存)
 - [http Client](./DOC.md#http客户端)
 - [metrics](./DOC.md#metrics数据监控)
-- [Hystrix Controll](./DOC.md#容错与隔离)
+- [Hystrix Monitor](./DOC.md#容错与隔离)
 - [Opentracing](./DOC.md#opentracing数据追踪)	
 - [distributed config center](./DOC.md#统一配置中心)	
 - [Swagger api](./DOC.md#swagger-api自动生成)
