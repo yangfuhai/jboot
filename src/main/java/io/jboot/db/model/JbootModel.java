@@ -257,12 +257,27 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (hasColumn(COLUMN_CREATED) && get(COLUMN_CREATED) == null) {
             set(COLUMN_CREATED, new Date());
         }
-        if (null == get(getPrimaryKey()) && String.class == getPrimaryType()) {
-            set(getPrimaryKey(), StringUtils.uuid());
+
+        boolean needInitPrimaryKey = (String.class == getPrimaryType() && null == get(getPrimaryKey()));
+
+        if (needInitPrimaryKey) {
+            set(getPrimaryKey(), generatePrimaryKey());
         }
 
+        boolean saveSuccess = false;
+
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        boolean saveSuccess = (autoCopyModel != null && autoCopyModel) ? copyModel().saveNormal() : saveNormal();
+        if (autoCopyModel != null && autoCopyModel == true) {
+            M copyModel = copyModel();
+            saveSuccess = copyModel.saveNormal();
+
+            if (saveSuccess && !needInitPrimaryKey) {
+                this.set(getPrimaryKey(), copyModel.get(getPrimaryKey()));
+            }
+        } else {
+            saveSuccess = this.saveNormal();
+        }
+
         if (saveSuccess) {
             Jboot.sendEvent(addAction(), this);
         }
@@ -270,8 +285,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    boolean saveNormal() {
+    protected boolean saveNormal() {
         return super.save();
+    }
+
+
+    protected String generatePrimaryKey() {
+        return StringUtils.uuid();
     }
 
 
