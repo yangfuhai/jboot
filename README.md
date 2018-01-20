@@ -61,7 +61,7 @@ QQ-Group： 601440615
 * [x] serialization component 
 * [x] event mechanism
 * [x] code generator
-* 等等
+
 
 ## document
 
