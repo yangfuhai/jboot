@@ -23,14 +23,18 @@ public class ShardingController extends JbootController {
         UserModel user = new UserModel();
         user.setId(id);
         user.setName("Michael yang");
+
+        //增加
         user.save();
 
         System.out.println("保存成功！");
 
         user.setName("fuhai yang");
+
+        //更新
         user.update();
 
-
+        //查询
         UserModel findModel = DAO.findById(id);
         renderJson(findModel);
 
