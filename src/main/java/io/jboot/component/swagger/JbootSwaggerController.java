@@ -19,9 +19,8 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
+import io.jboot.web.cors.EnableCORS;
 import io.swagger.models.Swagger;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -57,6 +56,7 @@ public class JbootSwaggerController extends JbootController {
      * 渲染json
      * 参考：http://petstore.swagger.io/ 及json信息 http://petstore.swagger.io/v2/swagger.json
      */
+    @EnableCORS
     public void json() {
 
 
@@ -65,14 +65,6 @@ public class JbootSwaggerController extends JbootController {
             renderText("swagger config error.");
             return;
         }
-
-        HttpServletResponse response = getResponse();
-        response.setHeader("Access-Control-Allow-Origin", "*"); //解决跨域访问报错
-        response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
-        response.setHeader("Access-Control-Max-Age", "3600"); //设置过期时间
-        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, client_id, uuid, Authorization");
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // 支持HTTP 1.1.
-        response.setHeader("Pragma", "no-cache");
 
         // 此处如果为 jfianl json 序列化 swagger 会报错
         renderJson(JSON.toJSONString(swagger));
