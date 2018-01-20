@@ -261,7 +261,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         boolean needInitPrimaryKey = (String.class == getPrimaryType() && null == get(getPrimaryKey()));
 
         if (needInitPrimaryKey) {
-            set(getPrimaryKey(), generatePrimaryKey());
+            set(getPrimaryKey(), generatePrimaryValue());
         }
 
         boolean saveSuccess = false;
@@ -290,7 +290,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    protected String generatePrimaryKey() {
+    protected String generatePrimaryValue() {
         return StringUtils.uuid();
     }
 
