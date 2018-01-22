@@ -20,7 +20,6 @@ public interface #(tableMeta.modelName)Service  {
     /**
      * find all model
      *
-     * @param id
      * @return all <#(tableMeta.modelName)
      */
     public List<#(tableMeta.modelName)> findAll();
