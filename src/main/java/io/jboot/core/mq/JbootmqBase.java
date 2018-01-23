@@ -26,7 +26,7 @@ import io.jboot.utils.StringUtils;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 
 public abstract class JbootmqBase implements Jbootmq {
@@ -38,6 +38,10 @@ public abstract class JbootmqBase implements Jbootmq {
     protected JbootmqConfig config = Jboot.config(JbootmqConfig.class);
 
     protected Set<String> channels = Sets.newHashSet();
+
+    private final ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+            60L, TimeUnit.SECONDS,
+            new SynchronousQueue<Runnable>());
 
 
     @Override
@@ -110,11 +114,9 @@ public abstract class JbootmqBase implements Jbootmq {
         }
 
         for (JbootmqMessageListener listener : listeners) {
-            try {
+            threadPool.execute(() -> {
                 listener.onMessage(channel, message);
-            } catch (Throwable ex) {
-                LOG.error(ex.toString(), ex);
-            }
+            });
         }
     }
 }
