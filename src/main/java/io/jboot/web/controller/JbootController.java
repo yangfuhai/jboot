@@ -31,6 +31,9 @@ import java.util.Map;
 
 public class JbootController extends Controller {
 
+    private static final Object NULL_OBJ = new Object();
+    private static final String BODY_STRING_ATTR = "__body_str";
+
     /**
      * 是否是手机浏览器
      *
@@ -171,7 +174,23 @@ public class JbootController extends Controller {
 
     @Before(NotAction.class)
     public String getBodyString() {
-        return HttpKit.readData(getRequest());
+        Object object = getAttr(BODY_STRING_ATTR);
+        if (object == NULL_OBJ) {
+            return null;
+        }
+
+        if (object != null) {
+            return (String) object;
+        }
+
+        object = HttpKit.readData(getRequest());
+        if (object == null) {
+            setAttr(BODY_STRING_ATTR, NULL_OBJ);
+        } else {
+            setAttr(BODY_STRING_ATTR, object);
+        }
+
+        return (String) object;
     }
 
 
