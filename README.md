@@ -1,3 +1,4 @@
+![](./docs/files/logo.jpg)
 
 ## [中文文档](./README-ZH.md)
 ## what is JBoot 
