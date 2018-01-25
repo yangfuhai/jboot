@@ -1,3 +1,17 @@
+jboot-1.3.0:
+新增：注解 @EnableCORS 用于跨域配置的支持
+新增：Sharding-jdbc的注释说明，同时更新Sharding-jdbc到最新版本
+新增：代码生成器生成代码默认添加 FindAll() 方法
+修复：JFinal 的 findByCache、paginateByCache等方法没有走 JbootCache 的问题
+修复：RPC model作为参数，缓存配置没有序列化导致保持的时候无法更新缓存的问题
+修复：当使用auto_copy_model 模式的时候，保持成功无法自动赋值主键的问题
+修复：@Before(Interceptor.class)注解在Controller时，可能会触发两次的问题
+修复：多次调用 getBodyString() 只有第一次能正常获取数据的问题
+优化：MQ接受消息后，触发监听器改为异步的方式触发
+优化：FixedInvocation新增getInvocation()方法，用于底层自由控制
+其他：更新Jboot相关依赖到最新版本
+
+
 jboot-1.2.9:
 新增：dubbo qos 端口的配置支持
 新增：分布式配置中心可以按应用名获取配置信息
