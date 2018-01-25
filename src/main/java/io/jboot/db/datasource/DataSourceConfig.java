@@ -56,6 +56,11 @@ public class DataSourceConfig {
 
     private List<DataSourceConfig> childDatasourceConfigs;
 
+
+    private String dbProFactory;
+    private String containerFactory;
+    private Integer transactionLevel;
+
     /**
      * 是否需要添加到映射
      * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了，
@@ -264,5 +269,29 @@ public class DataSourceConfig {
         }
 
         this.childDatasourceConfigs.add(config);
+    }
+
+    public String getDbProFactory() {
+        return dbProFactory;
+    }
+
+    public void setDbProFactory(String dbProFactory) {
+        this.dbProFactory = dbProFactory;
+    }
+
+    public String getContainerFactory() {
+        return containerFactory;
+    }
+
+    public void setContainerFactory(String containerFactory) {
+        this.containerFactory = containerFactory;
+    }
+
+    public Integer getTransactionLevel() {
+        return transactionLevel;
+    }
+
+    public void setTransactionLevel(Integer transactionLevel) {
+        this.transactionLevel = transactionLevel;
     }
 }

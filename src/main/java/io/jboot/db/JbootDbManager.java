@@ -17,6 +17,7 @@ package io.jboot.db;
 
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.Jboot;
 import io.jboot.core.cache.JbootCache;
@@ -96,7 +97,11 @@ public class JbootDbManager {
 
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
                 activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
-                activeRecordPlugin.setCache(Jboot.me().getCache());
+
+                JbootCache jbootCache = Jboot.me().getCache();
+                if (jbootCache != null) {
+                    activeRecordPlugin.setCache(jbootCache);
+                }
 
                 configSqlTemplate(datasourceConfig, activeRecordPlugin);
                 configDialect(activeRecordPlugin, datasourceConfig);
@@ -147,6 +152,9 @@ public class JbootDbManager {
                 activeRecordPlugin.setDialect(new JbootMysqlDialect());
                 break;
             case DataSourceConfig.TYPE_ORACLE:
+                if (StringUtils.isBlank(datasourceConfig.getContainerFactory())) {
+                    activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory());
+                }
                 activeRecordPlugin.setDialect(new JbootOracleDialect());
                 break;
             case DataSourceConfig.TYPE_SQLSERVER:
@@ -185,12 +193,17 @@ public class JbootDbManager {
                 : new ActiveRecordPlugin(dataSource);
 
 
-        // 设置JFinal使用的cache为jbootCache
-        JbootCache jbootCache = Jboot.me().getCache();
-        if (jbootCache != null) {
-            activeRecordPlugin.setCache(jbootCache);
+        if (StringUtils.isNotBlank(config.getDbProFactory())) {
+            activeRecordPlugin.setDbProFactory(ClassKits.newInstance(config.getDbProFactory()));
         }
 
+        if (StringUtils.isNotBlank(config.getContainerFactory())) {
+            activeRecordPlugin.setContainerFactory(ClassKits.newInstance(config.getContainerFactory()));
+        }
+
+        if (config.getTransactionLevel() != null) {
+            activeRecordPlugin.setTransactionLevel(config.getTransactionLevel());
+        }
 
         /**
          * 不需要添加映射的直接返回
