@@ -338,7 +338,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        boolean updateSuccess = (autoCopyModel != null && autoCopyModel) ? copyModel().updateNormal() : updateNormal();
+        boolean updateSuccess = (autoCopyModel != null && autoCopyModel == true) ? copyModel().updateNormal() : this.updateNormal();
         if (updateSuccess) {
             Object id = get(getPrimaryKey());
             if (cacheEnable) {

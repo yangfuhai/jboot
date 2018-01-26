@@ -22,6 +22,7 @@ import com.jfinal.kit.HttpKit;
 import com.jfinal.upload.UploadFile;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
+import io.jboot.web.jwt.JwtManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -153,6 +154,50 @@ public class JbootController extends Controller {
     @Before(NotAction.class)
     public HashMap<String, Object> getFlashAttrs() {
         return flash;
+    }
+
+
+    protected HashMap<String, Object> jwts;
+
+    @Before(NotAction.class)
+    public Controller setJwtAttr(String name, Object value) {
+        if (jwts == null) {
+            jwts = new HashMap<>();
+        }
+
+        jwts.put(name, value);
+        return this;
+    }
+
+
+    @Before(NotAction.class)
+    public Controller setJwtMap(Map map) {
+        if (map == null) {
+            throw new NullPointerException("map is null");
+        }
+        if (jwts == null) {
+            jwts = new HashMap<>();
+        }
+
+        jwts.putAll(map);
+        return this;
+    }
+
+
+    @Before(NotAction.class)
+    public <T> T getJwtAttr(String name) {
+        return jwts == null ? null : (T) jwts.get(name);
+    }
+
+
+    @Before(NotAction.class)
+    public HashMap<String, Object> geJwtAttrs() {
+        return jwts;
+    }
+
+    @Before(NotAction.class)
+    public <T> T getJwtPara(String name) {
+        return JwtManager.me().getPara(name);
     }
 
 
