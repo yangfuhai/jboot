@@ -22,7 +22,7 @@ import io.jboot.web.directive.annotation.JFinalDirective;
 
 /**
  * 获取Subject Principal 身份信息
- * #principal()
+ * #shiroPrincipal()
  * #(principal)
  * #end
  */

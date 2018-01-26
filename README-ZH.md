@@ -25,6 +25,7 @@ QQ交流群： 601440615
 * [x] AOP （基于guice）
 * 安全控制
     * [x] shiro
+    * [x] jwt
 * RPC远程调用 
     * [x] motan
     * [x] dubbo

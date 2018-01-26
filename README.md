@@ -25,6 +25,7 @@ QQ-Group： 601440615
 * [x] AOP （base on Guice）
 * security control
     * [x] shiro
+    * [x] jwt
 * RPC (Remote Procedure Call) 
     * [x] motan
     * [x] dubbo
