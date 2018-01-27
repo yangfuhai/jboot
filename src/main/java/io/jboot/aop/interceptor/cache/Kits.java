@@ -103,7 +103,7 @@ class Kits {
                     throw new JbootException("not support empty key for annotation @Cacheable,@CacheEvict or @CachePut " +
                             "at method[" + clazz.getName() + "." + method.getName() + "()] " +
                             "with argument class:" + argument.getClass().getName() + ", " +
-                            "please config key properties in @Cacheable,@CacheEvict or @CachePut annotation.");
+                            "please config key properties in @Cacheable, @CacheEvict or @CachePut annotation.");
                 }
                 argumentTag.append(paramTypes[index++].getClass().getName()).append(":").append(argumentString).append("-");
             }

@@ -21,6 +21,8 @@ import io.jboot.web.cache.EnableActionCache;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
+import javax.inject.Inject;
+
 
 @RequestMapping("/actionCache")
 public class ActionCacheDemo extends JbootController {
@@ -69,6 +71,12 @@ public class ActionCacheDemo extends JbootController {
         System.out.println("json() invoke!!!!");
         setAttr("user", "Michael Yang");
         renderJson();
+    }
+
+    @Inject
+    ActionCacheService service;
+    public void service(){
+        renderText(service.getByPhone(getPara()));
     }
 
 }
