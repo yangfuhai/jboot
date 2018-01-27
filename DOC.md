@@ -110,7 +110,7 @@
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.2.9</version>
+    <version>1.3.1</version>
 </dependency>
 ```
 #### 编写helloworld
@@ -128,7 +128,7 @@ public class MyController extends JbootController{
 }
 ```
 #### 运行并浏览器查看
-运行main方法后，在浏览器输入网址：http://127.0.0.1:8088 查看。
+运行main方法后，在浏览器输入网址：http://127.0.0.1:8088 查看，此时，浏览器显示：hello jboot
 
 
 # JBoot核心组件
@@ -139,6 +139,7 @@ Jboot的主要核心组件有以下几个。
 * [x] AOP （基于guice）
 * 安全控制
     * [x] shiro
+    * [x] jwt
 * RPC远程调用 
     * [x] motan
     * [x] dubbo
@@ -180,21 +181,47 @@ Jboot的主要核心组件有以下几个。
 ## MVC的概念
 略
 ## JbootController
-MVC中的C是Controller的简写，在Jboot应用中，所有的控制器Controller都应该继承至JbootController，JbootController扩展了Jfinal中Controller的许多方法，比如多出了如下这些非常常用的方法：
+MVC中的C是Controller的简写，在Jboot应用中，所有的控制器Controller都应该继承至JbootController，JbootController扩展了JFinal 中 Controller 的许多方法。
 
-* isMoblieBrowser() //是否是手机浏览器
-* isWechatBrowser() //是否是微信浏览器
-* isIEBrowser() //是否是IE浏览器，低级的IE浏览器在ajax请求的时候，返回json要做特殊处理
-* isAjaxRequest() //是否是ajax请求
-* isMultipartRequest() //是否是带有文件上传功能的请求
-* getReferer() // 获取来源网址
-* getIPAddress() //获取用户的IP地址
-* getUserAgent() //获取http头的useragent
-* getBaseUrl() //获取当前域名
-* getUploadFilesMap() // 获取当前上传的所有文件
+**新增的普通方法：**
+
+|方法调用 | 描述 |
+| ------------- | -----|
+|isMoblieBrowser()| 是否是手机浏览器|
+|isWechatBrowser()| 是否是微信浏览器|
+|isIEBrowser()| 是否是IE浏览器，低级的IE浏览器在ajax请求的时候，返回json要做特殊处理|
+| isAjaxRequest()| 是否是ajax请求 |
+| isMultipartRequest()| 是否是带有文件上传功能的请求|
+| getReferer()| 获取来源网址器|
+| getIPAddress()| 获取用户的IP地址，这个决定于浏览器，同时做nginx等转发的时候要做好配置|
+| getUserAgent()| 获取http头的useragent|
+| getBaseUrl()| 获取当前域名|
+| getUploadFilesMap()| 获取当前上传的所有文件|
+
+**新增关于FlashMessage的方法：**
+
+|方法调用 | 描述 |
+| ------------- | -----|
+| setFlashAttr()| 设置 FlashMessage 的 key 和 value |
+| setFlashMap()| 把整个 map的key和value 设置到 FlashMessage|
+| getFlashAttr()| 获取 已经设置进去的FlashMessage 信息 |
+| getFlashAttrs()| 获取 所有已经设置进去的 FlashMessage 信息|
+
+FlashMessage 是一种特殊的 attribute，用法和 setAttr 一样，唯一不同的是 setAttr 是用于当前页面渲染，而
+setFlashAttr 是用于对 redirect 之后的页面进行渲染。
 
 
-同时，JbootController还做了统一的session处理，在分布式应用中，可以配置session的分布式缓存。
+**新增关于JWT的方法：**
+
+|方法调用 | 描述 |
+| ------------- | -----|
+| setJwtAttr()| 设置 jwt 的 key 和 value |
+| setJwtMap()| 把整个 map的key和value 设置到 jwt |
+| getJwtAttr()| 获取 已经设置进去的 jwt 信息 |
+| geJwtAttrs()| 获取 所有已经设置进去的 jwt 信息|
+| getJwtPara()| 获取客户端传进来的 jwt 信息，若 jwt 超时或者不被信任，那么获取到的内容为null |
+
+**JWT简介：**  Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（[RFC 7519](https://tools.ietf.org/html/rfc7519)).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。
 
 ## @RquestMapping
 RquestMapping是请求映射，也就是通过@RquestMapping注解，可以让某个请求映射到指定的控制器Controller里去。
@@ -376,8 +403,7 @@ jboot.cache.redis.database = 1
 
 # 安全控制 
 ## shiro简介
-
-略
+Apache Shiro是一个强大且易用的Java安全框架,执行身份验证、授权、密码学和会话管理。使用Shiro的易于理解的API,您可以快速、轻松地获得任何应用程序,从最小的移动应用程序到最大的网络和企业应用程序。
 
 ## shiro的配置
 在使用Jboot的shiro模块之前，我假定您已经学习并了解shiro的基础知识。在Jboot中使用shiro非常简单，只需要在resources目录下配置上您的shiro.ini文件即可。在shiro.ini文件里，需要在自行扩展realm等信息。
@@ -575,6 +601,56 @@ public class MyController extends JbootController{
 }
 ```
 
+## JWT
+
+### JWT简介
+Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（[RFC 7519](https://tools.ietf.org/html/rfc7519)).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。
+
+### JWT的使用
+
+#### 在server段使用JWT
+
+在Server端使用JWT非常简单，代码如下：
+
+```java
+public class JwtController extends JbootController {
+
+    public void index() {
+        setJwtAttr("key1", "test1");
+        setJwtAttr("key2", "test2");
+        
+        //do your sth
+    }
+
+    public void show() {
+        String value = getJwtPara("key1");
+        // value : test1
+    }
+}
+```
+
+**注意：** 在Server端使用JWT，必须在jboot.properties配置文件中配置上 jwt 的秘钥，代码如下：
+
+```java
+jboot.web.jwt.secret = your_secret
+```
+
+**关于JWT的方法：**
+
+|方法调用 | 描述 |
+| ------------- | -----|
+| setJwtAttr()| 设置 jwt 的 key 和 value |
+| setJwtMap()| 把整个 map的key和value 设置到 jwt |
+| getJwtAttr()| 获取 已经设置进去的 jwt 信息 |
+| geJwtAttrs()| 获取 所有已经设置进去的 jwt 信息|
+| getJwtPara()| 获取客户端传进来的 jwt 信息，若 jwt 超时或者不被信任，那么获取到的内容为null |
+
+#### 在客户端使用JWT
+
+在客户端使用JWT的场景一般是用于非浏览器的第三方进行认证，例如：APP客户端，前后端分离的AJAX请求等。
+
+例如，在登录后，服务器Server会通过 `setJwtAttr()` 设置上用户数据，客户端可以去获取 HTTP 响应头中的 Jwt，就可以获取 服务器渲染的 Jwt 信息，此时，应该把 Jwt 的信息保存下来，比如保存到 cookie 或 保存在storage等，
+在客户每次请求服务器 API 的时候，应该把 Jwt 设置在请求的 http 头中的 Jwt（注意，第一个字母大写），服务器就可以获取到具体是哪个 “用户” 进行请求了。
 
 # ORM
 ## 配置
@@ -1761,9 +1837,6 @@ jboot.datasource.password=your_password
     }
 
 ```
-
-
-
 
 
 # 项目构建
