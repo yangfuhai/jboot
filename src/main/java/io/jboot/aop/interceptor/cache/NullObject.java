@@ -13,25 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.cache.annotation;
+package io.jboot.aop.interceptor.cache;
 
-import java.lang.annotation.*;
-
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface Cacheable {
-
-    String name();
-
-    String key() default "";
-
-    /**
-     * 0-默认永久
-     */
-    int liveSeconds() default 0;
-
-    boolean nullCacheEnable() default false;
-
-    String unless() default "";
+/**
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.aop.interceptor.cache
+ */
+public class NullObject {
 }
