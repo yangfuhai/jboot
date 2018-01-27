@@ -26,9 +26,8 @@ public class CacheTest {
     public void testSetInTimeAndGet() {
         Jboot.setBootArg("jboot.cache.type", "ehredis");
         Jboot.setBootArg("jboot.redis.host","127.0.0.1");
+        Jboot.me().getCache().put("test", 1, "abc", 2);
         Jboot.me().getCache().put("test", "mykey", "abc", 2);
-
-
 
         for (int i = 0; i < 4; i++) {
             System.out.println(Arrays.toString(Jboot.me().getCache().getKeys("test").toArray()));
