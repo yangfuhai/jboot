@@ -158,7 +158,7 @@ public class DataSourceConfig {
     }
 
     public boolean isConfigOk() {
-        return (StringUtils.isNotBlank(url) && StringUtils.isNotBlank(user))
+        return (StringUtils.isNotBlank(url))
                 || shardingEnable == true;
     }
 
