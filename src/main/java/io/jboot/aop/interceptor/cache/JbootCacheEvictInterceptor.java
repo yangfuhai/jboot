@@ -55,8 +55,12 @@ public class JbootCacheEvictInterceptor implements MethodInterceptor {
         JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
                 String.format("CacheEvict.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
 
-        String cacheKey = Kits.buildCacheKey(cacheEvict.key(), targetClass, method, methodInvocation.getArguments());
+        if ("*".equals(cacheEvict.key())) {
+            Jboot.me().getCache().removeAll(cacheName);
+            return methodInvocation.proceed();
+        }
 
+        String cacheKey = Kits.buildCacheKey(cacheEvict.key(), targetClass, method, methodInvocation.getArguments());
         Jboot.me().getCache().remove(cacheName, cacheKey);
         return methodInvocation.proceed();
     }
