@@ -33,7 +33,7 @@ import java.util.Set;
  */
 public class TableInfoManager {
 
-    private List<TableInfo> tableInfos;
+    private List<TableInfo> allTableInfos;
 
 
     private static TableInfoManager instance = new TableInfoManager();
@@ -42,13 +42,6 @@ public class TableInfoManager {
         return instance;
     }
 
-    public List<TableInfo> getAllTableInfos() {
-        if (tableInfos == null) {
-            tableInfos = new ArrayList<>();
-            initTableInfos(tableInfos);
-        }
-        return tableInfos;
-    }
 
 
     public List<TableInfo> getTablesInfos(String includeTables, String excludeTables) {
@@ -75,6 +68,14 @@ public class TableInfoManager {
         }
 
         return tableInfos;
+    }
+
+    private List<TableInfo> getAllTableInfos() {
+        if (allTableInfos == null) {
+            allTableInfos = new ArrayList<>();
+            initTableInfos(allTableInfos);
+        }
+        return allTableInfos;
     }
 
 
