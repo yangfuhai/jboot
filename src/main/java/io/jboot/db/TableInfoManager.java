@@ -17,6 +17,7 @@ package io.jboot.db;
 
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.db.annotation.Table;
+import io.jboot.db.model.JbootModelConfig;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
@@ -83,10 +84,16 @@ public class TableInfoManager {
             return;
         }
 
+        String scanPackage = JbootModelConfig.getConfig().getScan();
+
         for (Class<Model> clazz : modelClassList) {
             Table tb = clazz.getAnnotation(Table.class);
             if (tb == null)
                 continue;
+
+            if (scanPackage != null && !clazz.getName().startsWith(scanPackage)) {
+                continue;
+            }
 
 
             TableInfo tableInfo = new TableInfo();

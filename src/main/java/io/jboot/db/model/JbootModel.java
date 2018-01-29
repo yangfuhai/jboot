@@ -40,8 +40,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     /**
      * 是否启用自动缓存
      */
-    private boolean cacheEnable = true;
-    private int cacheTime = 60 * 60 * 24; // 1day
+    private boolean cacheEnable = JbootModelConfig.getConfig().isCacheEnable();
+    private int cacheTime = JbootModelConfig.getConfig().getCacheTime();
 
 
     /**
