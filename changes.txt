@@ -1,3 +1,13 @@
+jboot-1.3.2:
+新增：JbootModelConfig的配置，全局配置是否缓存及缓存时间等
+新增：@Cacheevict 新增允许移除整个cacheName的配置
+新增：@Cacheable 注解添加允许存储 null 数据的配置 nullCacheEnabl
+修复：在多数据源的情况下无法使用 sqlite 当中数据源的问题
+修复：修改常量错别字
+优化：重构 Jboot 请求数据验证模块，使用更加灵活自由
+其他：更新 jwt 相关文档
+
+
 jboot-1.3.1:
 新增：自定义 dbProFactory、containerFactory、transactionLevel 等配置的支持
 新增：JWT 的支持，具体查看：https://gitee.com/fuhai/jboot/tree/master/src/test/java/jwt
