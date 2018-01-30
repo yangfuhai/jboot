@@ -30,8 +30,8 @@ public @interface CaptchaValidate {
 
     String message() default "";
 
-    String errorRedirect() default "";
+    String flashMessage() default "";
 
-    /** 是否 ajax，如果为 true，校验不通过时返回 json ，解决跨域时无法判断 是否ajax 请求的情况 */
-    boolean isAjax() default false;
+    String renderType() default ValidateRenderType.DEFAULT;
+
 }

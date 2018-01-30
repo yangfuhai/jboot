@@ -35,13 +35,13 @@ public @interface EnableIpRateLimit {
      *
      * @return
      */
-    String limitAction() default "";
+    String renderType() default "";
 
     /**
      * 被限流后给客户端的响应，响应的内容根据 action 的类型来渲染
      *
      * @return
      */
-    String limitContent() default "";
+    String renderContent() default "";
 
 }

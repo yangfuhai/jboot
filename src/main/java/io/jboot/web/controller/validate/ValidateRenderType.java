@@ -15,22 +15,16 @@
  */
 package io.jboot.web.controller.validate;
 
-import java.lang.annotation.*;
-
 /**
- * 非空验证注解
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.web.controller.validate
  */
-@Documented
-@Target(ElementType.METHOD)
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-public @interface EmptyValidate {
+public class ValidateRenderType {
 
-    Form[] value();
-
-    String message() default "";
-
-    String flashMessage() default "";
-
-    String renderType() default ValidateRenderType.DEFAULT;
+    public static final String DEFAULT = "default";
+    public static final String TEXT = "text";
+    public static final String JSON = "josn";
+    public static final String RENDER = "render";
+    public static final String REDIRECT = "redirect";
 }

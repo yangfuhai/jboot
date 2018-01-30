@@ -77,7 +77,7 @@ public class LimitationInterceptor implements FixedInterceptor {
         /**
          * 注解上没有设置 Action , 使用jboot.properties配置文件的
          */
-        if (StringUtils.isBlank(requestRateLimit.limitAction())) {
+        if (StringUtils.isBlank(requestRateLimit.renderType())) {
             //ajax 请求
             if (RequestUtils.isAjaxRequest(inv.getController().getRequest())) {
                 inv.getController().renderJson(manager.getAjaxJsonMap());
@@ -97,23 +97,23 @@ public class LimitationInterceptor implements FixedInterceptor {
          * 设置了 Action , 用用户自己配置的
          */
         else {
-            switch (requestRateLimit.limitAction()) {
-                case LimitAction.JSON:
-                    inv.getController().renderJson(requestRateLimit.limitContent());
+            switch (requestRateLimit.renderType()) {
+                case LimitRenderType.JSON:
+                    inv.getController().renderJson(requestRateLimit.renderContent());
                     break;
-                case LimitAction.TEXT:
-                    inv.getController().renderText(requestRateLimit.limitContent());
+                case LimitRenderType.TEXT:
+                    inv.getController().renderText(requestRateLimit.renderContent());
                     break;
-                case LimitAction.RENDER:
-                    inv.getController().render(requestRateLimit.limitContent());
+                case LimitRenderType.RENDER:
+                    inv.getController().render(requestRateLimit.renderContent());
                     break;
-                case LimitAction.REDIRECT:
-                    inv.getController().redirect(requestRateLimit.limitContent(), true);
+                case LimitRenderType.REDIRECT:
+                    inv.getController().redirect(requestRateLimit.renderContent(), true);
                     break;
                 default:
                     throw new IllegalArgumentException("annotation @EnableRequestRateLimit.limitAction error in "
                             + inv.getController().getClass().getName() + "." + inv.getMethodName()
-                            + ",  limitAction support text,json,render,redirect only, not support " + requestRateLimit.limitAction());
+                            + ",  limitAction support text,json,render,redirect only, not support " + requestRateLimit.renderType());
             }
 
         }
@@ -156,7 +156,7 @@ public class LimitationInterceptor implements FixedInterceptor {
         /**
          * 注解上没有设置 Action , 使用jboot.properties配置文件的
          */
-        if (StringUtils.isBlank(userRateLimit.limitAction())) {
+        if (StringUtils.isBlank(userRateLimit.renderType())) {
             //ajax 请求
             if (RequestUtils.isAjaxRequest(inv.getController().getRequest())) {
                 inv.getController().renderJson(manager.getAjaxJsonMap());
@@ -176,23 +176,23 @@ public class LimitationInterceptor implements FixedInterceptor {
          * 设置了 Action , 用用户自己配置的
          */
         else {
-            switch (userRateLimit.limitAction()) {
-                case LimitAction.JSON:
-                    inv.getController().renderJson(userRateLimit.limitContent());
+            switch (userRateLimit.renderType()) {
+                case LimitRenderType.JSON:
+                    inv.getController().renderJson(userRateLimit.renderContent());
                     break;
-                case LimitAction.TEXT:
-                    inv.getController().renderText(userRateLimit.limitContent());
+                case LimitRenderType.TEXT:
+                    inv.getController().renderText(userRateLimit.renderContent());
                     break;
-                case LimitAction.RENDER:
-                    inv.getController().render(userRateLimit.limitContent());
+                case LimitRenderType.RENDER:
+                    inv.getController().render(userRateLimit.renderContent());
                     break;
-                case LimitAction.REDIRECT:
-                    inv.getController().redirect(userRateLimit.limitContent(), true);
+                case LimitRenderType.REDIRECT:
+                    inv.getController().redirect(userRateLimit.renderContent(), true);
                     break;
                 default:
                     throw new IllegalArgumentException("annotation @EnableUserRateLimit.limitAction error in "
                             + inv.getController().getClass().getName() + "." + inv.getMethodName()
-                            + ",  limitAction support text,json,render,redirect only, not support " + userRateLimit.limitAction());
+                            + ",  limitAction support text,json,render,redirect only, not support " + userRateLimit.renderType());
             }
 
         }
@@ -235,7 +235,7 @@ public class LimitationInterceptor implements FixedInterceptor {
         /**
          * 注解上没有设置 Action , 使用jboot.properties配置文件的
          */
-        if (StringUtils.isBlank(ipRateLimit.limitAction())) {
+        if (StringUtils.isBlank(ipRateLimit.renderType())) {
             //ajax 请求
             if (RequestUtils.isAjaxRequest(inv.getController().getRequest())) {
                 inv.getController().renderJson(manager.getAjaxJsonMap());
@@ -255,23 +255,23 @@ public class LimitationInterceptor implements FixedInterceptor {
          * 设置了 Action , 用用户自己配置的
          */
         else {
-            switch (ipRateLimit.limitAction()) {
-                case LimitAction.JSON:
-                    inv.getController().renderJson(ipRateLimit.limitContent());
+            switch (ipRateLimit.renderType()) {
+                case LimitRenderType.JSON:
+                    inv.getController().renderJson(ipRateLimit.renderContent());
                     break;
-                case LimitAction.TEXT:
-                    inv.getController().renderText(ipRateLimit.limitContent());
+                case LimitRenderType.TEXT:
+                    inv.getController().renderText(ipRateLimit.renderContent());
                     break;
-                case LimitAction.RENDER:
-                    inv.getController().render(ipRateLimit.limitContent());
+                case LimitRenderType.RENDER:
+                    inv.getController().render(ipRateLimit.renderContent());
                     break;
-                case LimitAction.REDIRECT:
-                    inv.getController().redirect(ipRateLimit.limitContent(), true);
+                case LimitRenderType.REDIRECT:
+                    inv.getController().redirect(ipRateLimit.renderContent(), true);
                     break;
                 default:
                     throw new IllegalArgumentException("annotation @EnableIpRateLimit.limitAction error in "
                             + inv.getController().getClass().getName() + "." + inv.getMethodName()
-                            + ",  limitAction support text,json,render,redirect only, not support " + ipRateLimit.limitAction());
+                            + ",  limitAction support text,json,render,redirect only, not support " + ipRateLimit.renderType());
             }
 
         }

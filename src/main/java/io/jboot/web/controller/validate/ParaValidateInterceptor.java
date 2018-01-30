@@ -48,7 +48,6 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     }
 
 
-
     /**
      * 对验证码进行验证
      *
@@ -67,27 +66,36 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             return true;
         }
 
-        String errorRedirect = captchaValidate.errorRedirect();
-        boolean isAjax = captchaValidate.isAjax();
-        String message = StringUtils.isBlank(captchaValidate.message()) ? "验证码不能为空" : captchaValidate.message();
-        if (!isAjax && StringUtils.isNotBlank(errorRedirect)) {
-            if (controller instanceof JbootController) {
-                JbootController c = (JbootController) controller;
-                c.setFlashMap(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
-            }
-            controller.redirect(errorRedirect);
-            return false;
+        switch (captchaValidate.renderType()) {
+            case ValidateRenderType.DEFAULT:
+                if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+                    controller.renderJson(Ret.fail("message", captchaValidate.flashMessage()).set("code", DEFAULT_ERROR_CODE).set("form", formName));
+                } else {
+                    controller.renderError(404);
+                }
+                break;
+            case ValidateRenderType.JSON:
+                controller.renderJson(Ret.fail("message", captchaValidate.message()).set("code", DEFAULT_ERROR_CODE).set("form", formName));
+                break;
+            case ValidateRenderType.REDIRECT:
+                if (controller instanceof JbootController) {
+                    ((JbootController) controller).setFlashAttr("message", captchaValidate.flashMessage());
+                }
+                controller.redirect(captchaValidate.message());
+                break;
+            case ValidateRenderType.RENDER:
+                controller.render(captchaValidate.message());
+                break;
+            case ValidateRenderType.TEXT:
+                controller.renderText(captchaValidate.message());
+                break;
+            default:
+                throw new IllegalArgumentException("can not process render  : " + captchaValidate.renderType());
         }
 
-        //如果ajax请求，返回一个错误数据。
-        if (isAjax || RequestUtils.isAjaxRequest(controller.getRequest())) {
-            controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
-            return false;
-        }
-
-        controller.renderError(404);
         return false;
     }
+
 
     /**
      * 非空判断验证
@@ -109,7 +117,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             }
             String value = inv.getController().getPara(formName);
             if (value == null || value.trim().length() == 0) {
-                renderError(inv.getController(), formName, form.message(), emptyParaValidate.errorRedirect(), emptyParaValidate.isAjax());
+                renderError(inv.getController(), formName, form.message(), emptyParaValidate);
                 return false;
             }
         }
@@ -118,26 +126,33 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     }
 
 
-    private void renderError(Controller controller, String form, String message, String errorRedirect, boolean isAjax) {
-
-        message = StringUtils.isBlank(message) ? "数据不能为空" : message;
-
-        if (!isAjax && StringUtils.isNotBlank(errorRedirect)) {
-            if (controller instanceof JbootController) {
-                JbootController c = (JbootController) controller;
-                c.setFlashMap(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", form));
-            }
-            controller.redirect(errorRedirect);
-            return;
+    private void renderError(Controller controller, String formName, String message, EmptyValidate emptyParaValidate) {
+        switch (emptyParaValidate.renderType()) {
+            case ValidateRenderType.DEFAULT:
+                if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+                    controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
+                } else {
+                    controller.renderError(404);
+                }
+                break;
+            case ValidateRenderType.JSON:
+                controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
+                break;
+            case ValidateRenderType.REDIRECT:
+                if (controller instanceof JbootController) {
+                    ((JbootController) controller).setFlashAttr("message", message);
+                }
+                controller.redirect(emptyParaValidate.message());
+                break;
+            case ValidateRenderType.RENDER:
+                controller.render(emptyParaValidate.message());
+                break;
+            case ValidateRenderType.TEXT:
+                controller.renderText(emptyParaValidate.message());
+                break;
+            default:
+                throw new IllegalArgumentException("can not process render : " + emptyParaValidate.renderType());
         }
-
-        //如果ajax请求，返回一个错误数据。
-        if (isAjax || RequestUtils.isAjaxRequest(controller.getRequest())) {
-            controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", form));
-            return;
-        }
-
-        controller.renderError(404);
     }
 
 
