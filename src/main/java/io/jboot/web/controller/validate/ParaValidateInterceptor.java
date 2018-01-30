@@ -68,8 +68,9 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         }
 
         String errorRedirect = captchaValidate.errorRedirect();
+        boolean isAjax = captchaValidate.isAjax();
         String message = StringUtils.isBlank(captchaValidate.message()) ? "验证码不能为空" : captchaValidate.message();
-        if (StringUtils.isNotBlank(errorRedirect)) {
+        if (!isAjax && StringUtils.isNotBlank(errorRedirect)) {
             if (controller instanceof JbootController) {
                 JbootController c = (JbootController) controller;
                 c.setFlashMap(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
@@ -79,7 +80,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         }
 
         //如果ajax请求，返回一个错误数据。
-        if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+        if (isAjax || RequestUtils.isAjaxRequest(controller.getRequest())) {
             controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
             return false;
         }
@@ -108,7 +109,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             }
             String value = inv.getController().getPara(formName);
             if (value == null || value.trim().length() == 0) {
-                renderError(inv.getController(), formName, form.message(), emptyParaValidate.errorRedirect());
+                renderError(inv.getController(), formName, form.message(), emptyParaValidate.errorRedirect(), emptyParaValidate.isAjax());
                 return false;
             }
         }
@@ -117,11 +118,11 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     }
 
 
-    private void renderError(Controller controller, String form, String message, String errorRedirect) {
+    private void renderError(Controller controller, String form, String message, String errorRedirect, boolean isAjax) {
 
         message = StringUtils.isBlank(message) ? "数据不能为空" : message;
 
-        if (StringUtils.isNotBlank(errorRedirect)) {
+        if (!isAjax && StringUtils.isNotBlank(errorRedirect)) {
             if (controller instanceof JbootController) {
                 JbootController c = (JbootController) controller;
                 c.setFlashMap(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", form));
@@ -131,7 +132,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         }
 
         //如果ajax请求，返回一个错误数据。
-        if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+        if (isAjax || RequestUtils.isAjaxRequest(controller.getRequest())) {
             controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", form));
             return;
         }
