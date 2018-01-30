@@ -24,7 +24,7 @@ public class ValidateRenderType {
 
     public static final String DEFAULT = "default";
     public static final String TEXT = "text";
-    public static final String JSON = "josn";
+    public static final String JSON = "json";
     public static final String RENDER = "render";
     public static final String REDIRECT = "redirect";
 }
