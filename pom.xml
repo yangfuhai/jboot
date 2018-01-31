@@ -407,7 +407,7 @@
         <dependency>
             <groupId>io.opentracing.brave</groupId>
             <artifactId>brave-opentracing</artifactId>
-            <version>0.25.0</version>
+            <version>0.26.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.zipkin.brave</groupId>
@@ -446,7 +446,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-core</artifactId>
-            <version>1.5.17</version>
+            <version>1.5.18</version>
         </dependency>
 
         <dependency>
