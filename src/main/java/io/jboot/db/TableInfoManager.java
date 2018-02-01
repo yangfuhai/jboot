@@ -43,7 +43,6 @@ public class TableInfoManager {
     }
 
 
-
     public List<TableInfo> getTablesInfos(String includeTables, String excludeTables) {
         List<TableInfo> tableInfos = new ArrayList<>();
 
@@ -106,7 +105,9 @@ public class TableInfoManager {
             tableInfo.setDatabaseShardingStrategyConfig(tb.databaseShardingStrategyConfig());
             tableInfo.setTableShardingStrategyConfig(tb.tableShardingStrategyConfig());
 
-            tableInfo.setKeyGeneratorClass(tb.keyGeneratorClass());
+            if (tb.keyGeneratorClass() != null && Void.class != tb.keyGeneratorClass()) {
+                tableInfo.setKeyGeneratorClass(tb.keyGeneratorClass().getName());
+            }
             tableInfo.setKeyGeneratorColumnName(tb.keyGeneratorColumnName());
 
             tableInfos.add(tableInfo);
