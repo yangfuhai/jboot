@@ -48,7 +48,7 @@ public class DataSourceConfig {
     private String sqlTemplate;
     private String table;
     private String excludeTable;
-    private String factory = HikariDataSourceFactory.class.getName();
+    private String factory; //HikariDataSourceFactory.class.getName();
 
     private boolean shardingEnable = false;
     private String shardingDatabase;
