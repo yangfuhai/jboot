@@ -19,7 +19,7 @@ public class Starter extends JbootAppListenerBase {
     public void onJFinalStarted() {
         IniSecurityManagerFactory factory= new IniSecurityManagerFactory("classpath:shiro.ini");
         SecurityManager securityManager = factory.getInstance();
-        SecurityUtils.setSecurityManager(SecurityUtils.getSecurityManager());
+        SecurityUtils.setSecurityManager(securityManager);
     }
 
     public static void main(String[] args) {
