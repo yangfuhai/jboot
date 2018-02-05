@@ -142,26 +142,26 @@ public class DataSourceBuilder {
     }
 
 
-    private DataSource createDataSource(DataSourceConfig dataSourceConfig) {
+    private DataSource createDataSource(DataSourceConfig dsc) {
 
-        String factory = dataSourceConfig.getFactory();
+        String factory = dsc.getFactory();
         if (StringUtils.isBlank(factory)) {
-            return new HikariDataSourceFactory().createDataSource(dataSourceConfig);
+            return new HikariDataSourceFactory().createDataSource(dsc);
         }
 
         switch (factory) {
             case "hikari":
             case "hikariCP":
             case "hikaricp":
-                return new HikariDataSourceFactory().createDataSource(dataSourceConfig);
+                return new HikariDataSourceFactory().createDataSource(dsc);
             case "druid":
-                return new DruidDataSourceFactory().createDataSource(datasourceConfig);
+                return new DruidDataSourceFactory().createDataSource(dsc);
             default:
                 DataSourceFactory dataSourceFactory = JbootSpiLoader.load(DataSourceFactory.class, factory);
                 if (dataSourceFactory == null) {
                     throw new NullPointerException("can not load DataSourceFactory spi for name : " + factory);
                 }
-                return dataSourceFactory.createDataSource(dataSourceConfig);
+                return dataSourceFactory.createDataSource(dsc);
         }
     }
 }
