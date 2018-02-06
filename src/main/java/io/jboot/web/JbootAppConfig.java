@@ -52,6 +52,7 @@ import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
+import io.jboot.web.limitation.JbootLimitationManager;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
@@ -212,6 +213,7 @@ public class JbootAppConfig extends JFinalConfig {
          */
         JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
+        JbootLimitationManager.me().init(routeList);
         JbootScheduleManager.me().init();
         JbootMetricManager.me().init();
         JbootSwaggerManager.me().init();

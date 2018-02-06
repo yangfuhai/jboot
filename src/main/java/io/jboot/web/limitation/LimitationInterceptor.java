@@ -30,10 +30,12 @@ import java.util.concurrent.Semaphore;
 public class LimitationInterceptor implements FixedInterceptor {
 
 
+    private static final ThreadLocal<Semaphore> SEMAPHORE_THREAD_LOCAL = new ThreadLocal<>();
+
     @Override
     public void intercept(FixedInvocation inv) {
 
-        LimitationManager manager = LimitationManager.me();
+        JbootLimitationManager manager = JbootLimitationManager.me();
 
         LimitationInfo info = manager.getLimitationInfo(inv.getActionKey());
         if (info == null) {
@@ -41,60 +43,64 @@ public class LimitationInterceptor implements FixedInterceptor {
             return;
         }
 
-        if (!doIntercept(inv,info)) {
-            try {
-                renderLimitation(inv.getController(), info);
-            }finally {
-                if (info.getType() == LimitationInfo.TYPE_CONCURRENCY){
-                    manager.getSemaphore(inv.getActionKey()).release();
-                }
-            }
+        if (doIntercept(inv, info)) {
+            renderLimitation(inv.getController(), info);
             return;
         }
 
-        inv.invoke();
+        try {
+            inv.invoke();
+        }finally {
+            if (info.getType() == LimitationInfo.TYPE_CONCURRENCY){
+                SEMAPHORE_THREAD_LOCAL.get().release();
+                SEMAPHORE_THREAD_LOCAL.remove();
+            }
+        }
     }
 
 
-    private boolean doIntercept(FixedInvocation inv,LimitationInfo limitationInfo) {
+    private boolean doIntercept(FixedInvocation inv, LimitationInfo limitationInfo) {
 
         switch (limitationInfo.getType()) {
             case LimitationInfo.TYPE_CONCURRENCY:
-                return concurrencyIntercept(inv,limitationInfo);
+                return concurrencyIntercept(inv, limitationInfo);
             case LimitationInfo.TYPE_REQUEST:
-                return requestIntercept(inv,limitationInfo);
+                return requestIntercept(inv, limitationInfo);
             case LimitationInfo.TYPE_IP:
-                return ipIntercept(inv,limitationInfo);
+                return ipIntercept(inv, limitationInfo);
             case LimitationInfo.TYPE_USER:
-               return userIntercept(inv,limitationInfo);
+                return userIntercept(inv, limitationInfo);
         }
 
-        return true;
+        return false;
     }
 
 
     private boolean concurrencyIntercept(FixedInvocation inv, LimitationInfo info) {
-        LimitationManager manager = LimitationManager.me();
+        JbootLimitationManager manager = JbootLimitationManager.me();
         Semaphore semaphore = manager.getSemaphore(inv.getActionKey());
         if (semaphore == null) {
             semaphore = manager.initSemaphore(inv.getActionKey(), info.getRate());
         }
-        return semaphore.tryAcquire();
+        boolean acquire = semaphore.tryAcquire();
+        if (acquire) {
+            SEMAPHORE_THREAD_LOCAL.set(semaphore);
+        }
+        return !acquire;
     }
 
 
-
     private boolean requestIntercept(FixedInvocation inv, LimitationInfo info) {
-        LimitationManager manager = LimitationManager.me();
+        JbootLimitationManager manager = JbootLimitationManager.me();
         RateLimiter limiter = manager.getLimiter(inv.getActionKey());
         if (limiter == null) {
             limiter = manager.initRateLimiter(inv.getActionKey(), info.getRate());
         }
-        return limiter.tryAcquire();
+        return !limiter.tryAcquire();
     }
 
     private boolean ipIntercept(FixedInvocation inv, LimitationInfo info) {
-        LimitationManager manager = LimitationManager.me();
+        JbootLimitationManager manager = JbootLimitationManager.me();
         String ipaddress = RequestUtils.getIpAddress(inv.getController().getRequest());
         long currentTime = System.currentTimeMillis();
         long userFlagTime = manager.getIpflag(ipaddress);
@@ -102,7 +108,7 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         //第一次访问，可能manager里还未对此IP进行标识
         if (userFlagTime >= currentTime) {
-            return true;
+            return false;
         }
 
         double rate = info.getRate();
@@ -112,14 +118,14 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         double interval = 1000 / rate;
         if ((currentTime - userFlagTime) >= interval) {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     private boolean userIntercept(FixedInvocation inv, LimitationInfo info) {
-        LimitationManager manager = LimitationManager.me();
+        JbootLimitationManager manager = JbootLimitationManager.me();
         String sesssionId = inv.getController().getSession(true).getId();
 
         long currentTime = System.currentTimeMillis();
@@ -129,7 +135,7 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         //第一次访问，可能manager里还未对此用户进行标识
         if (userFlagTime >= currentTime) {
-            return true;
+            return false;
         }
 
         double rate = info.getRate();
@@ -139,16 +145,16 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         double interval = 1000 / rate;
         if ((currentTime - userFlagTime) >= interval) {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 
 
     private void renderLimitation(Controller controller, LimitationInfo limitationInfo) {
 
-        LimitationManager manager = LimitationManager.me();
+        JbootLimitationManager manager = JbootLimitationManager.me();
 
         /**
          * 注解上没有设置 Action , 使用jboot.properties配置文件的

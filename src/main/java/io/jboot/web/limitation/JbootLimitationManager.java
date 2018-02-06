@@ -43,11 +43,11 @@ import java.util.concurrent.TimeUnit;
  * @version V1.0
  * @Package io.jboot.web.limitation
  */
-public class LimitationManager {
+public class JbootLimitationManager {
 
-    private static final LimitationManager me = new LimitationManager();
+    private static final JbootLimitationManager me = new JbootLimitationManager();
 
-    public static LimitationManager me() {
+    public static JbootLimitationManager me() {
         return me;
     }
 
@@ -145,7 +145,7 @@ public class LimitationManager {
     }
 
 
-    private LimitationManager() {
+    private JbootLimitationManager() {
         LimitationConfig config = Jboot.config(LimitationConfig.class);
         ajaxJsonMap.put("code", config.getLimitAjaxCode());
         ajaxJsonMap.put("message", config.getLimitAjaxMessage());
