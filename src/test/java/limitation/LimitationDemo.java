@@ -47,10 +47,15 @@ public class LimitationDemo extends JbootController {
     }
 
     /**
-     * 所有的请求，每1秒钟只能访问一次
+     * 所有的请求，并发量为1个
      */
     @EnableConcurrencyRateLimit(rate = 1)
     public void con() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         renderText("con() render ok");
     }
 
