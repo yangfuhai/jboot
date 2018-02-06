@@ -210,7 +210,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.45</version>
+            <version>1.2.46</version>
         </dependency>
 
         <dependency>
