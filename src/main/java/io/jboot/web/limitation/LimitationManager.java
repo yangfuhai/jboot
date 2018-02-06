@@ -18,11 +18,24 @@ package io.jboot.web.limitation;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
+import com.jfinal.config.Routes;
+import com.jfinal.core.Controller;
 import io.jboot.Jboot;
+import io.jboot.utils.ArrayUtils;
+import io.jboot.web.limitation.annotation.EnableConcurrencyRateLimit;
+import io.jboot.web.limitation.annotation.EnableIpRateLimit;
+import io.jboot.web.limitation.annotation.EnableRequestRateLimit;
+import io.jboot.web.limitation.annotation.EnableUserRateLimit;
+import io.jboot.web.utils.ControllerUtils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,6 +51,7 @@ public class LimitationManager {
         return me;
     }
 
+    private Map<String, Semaphore> concurrencyRateLimiterMap = new ConcurrentHashMap<>();
     private Map<String, RateLimiter> requestRateLimiterMap = new ConcurrentHashMap<>();
     private Map<String, Object> ajaxJsonMap = new HashMap();
     private String limitView;
@@ -56,6 +70,79 @@ public class LimitationManager {
     private LoadingCache<String, Long> ipRequestRecord = Caffeine.newBuilder()
             .expireAfterWrite(1, TimeUnit.MINUTES)
             .build(key -> System.currentTimeMillis());
+
+
+    private Map<String, LimitationInfo> concurrencyRates = new ConcurrentHashMap<>();
+    private Map<String, LimitationInfo> ipRates = new ConcurrentHashMap<>();
+    private Map<String, LimitationInfo> requestRates = new ConcurrentHashMap<>();
+    private Map<String, LimitationInfo> userRates = new ConcurrentHashMap<>();
+
+
+    public void init(List<Routes.Route> routes) {
+        initRates(routes);
+    }
+
+    /**
+     * 初始化 invokers 变量
+     */
+    private void initRates(List<Routes.Route> routes) {
+        Set<String> excludedMethodName = ControllerUtils.buildExcludedMethodName();
+
+        for (Routes.Route route : routes) {
+            Class<? extends Controller> controllerClass = route.getControllerClass();
+
+            String controllerKey = route.getControllerKey();
+
+            Annotation[] controllerAnnotations = controllerClass.getAnnotations();
+
+            Method[] methods = controllerClass.getMethods();
+            for (Method method : methods) {
+                if (excludedMethodName.contains(method.getName()) || method.getParameterTypes().length != 0) {
+                    continue;
+                }
+
+
+                Annotation[] methodAnnotations = method.getAnnotations();
+                Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
+
+                String actionKey = ControllerUtils.createActionKey(controllerClass, method, controllerKey);
+
+                for (Annotation annotation : allAnnotations) {
+                    if (annotation.annotationType() == EnableConcurrencyRateLimit.class) {
+                        concurrencyRates.put(actionKey, new LimitationInfo((EnableConcurrencyRateLimit) annotation));
+                    } else if (annotation.annotationType() == EnableIpRateLimit.class) {
+                        ipRates.put(actionKey, new LimitationInfo((EnableIpRateLimit) annotation));
+                    } else if (annotation.annotationType() == EnableRequestRateLimit.class) {
+                        requestRates.put(actionKey, new LimitationInfo((EnableRequestRateLimit) annotation));
+                    } else if (annotation.annotationType() == EnableUserRateLimit.class) {
+                        userRates.put(actionKey, new LimitationInfo((EnableUserRateLimit) annotation));
+                    }
+                }
+            }
+        }
+    }
+
+    public LimitationInfo getLimitationInfo(String actionKey){
+        LimitationInfo info = concurrencyRates.get(actionKey);
+
+        if(info != null){
+            return info;
+        }
+
+        info = requestRates.get(actionKey);
+
+        if(info != null){
+            return info;
+        }
+
+        info = ipRates.get(actionKey);
+
+        if(info != null){
+            return info;
+        }
+
+        return userRates.get(actionKey);
+    }
 
 
     private LimitationManager() {
@@ -87,6 +174,17 @@ public class LimitationManager {
 
     public RateLimiter getLimiter(String target) {
         return requestRateLimiterMap.get(target);
+    }
+
+    public Semaphore initSemaphore(String target, double rate) {
+        Semaphore semaphore = new Semaphore((int)rate);
+        concurrencyRateLimiterMap.put(target, semaphore);
+        return semaphore;
+    }
+
+
+    public Semaphore getSemaphore(String target) {
+        return concurrencyRateLimiterMap.get(target);
     }
 
 

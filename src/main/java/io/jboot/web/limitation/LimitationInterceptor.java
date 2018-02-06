@@ -16,13 +16,13 @@
 package io.jboot.web.limitation;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.jfinal.core.Controller;
 import io.jboot.utils.RequestUtils;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
-import io.jboot.web.limitation.annotation.EnableIpRateLimit;
-import io.jboot.web.limitation.annotation.EnableRequestRateLimit;
-import io.jboot.web.limitation.annotation.EnableUserRateLimit;
+
+import java.util.concurrent.Semaphore;
 
 /**
  * 限流拦截器
@@ -33,20 +33,22 @@ public class LimitationInterceptor implements FixedInterceptor {
     @Override
     public void intercept(FixedInvocation inv) {
 
-        EnableRequestRateLimit requestRateLimit = inv.getMethod().getAnnotation(EnableRequestRateLimit.class);
-        if (requestRateLimit != null && requestIntercept(inv, requestRateLimit)) {
+        LimitationManager manager = LimitationManager.me();
+
+        LimitationInfo info = manager.getLimitationInfo(inv.getActionKey());
+        if (info == null) {
+            inv.invoke();
             return;
         }
 
-
-        EnableIpRateLimit ipRateLimit = inv.getMethod().getAnnotation(EnableIpRateLimit.class);
-        if (ipRateLimit != null && ipIntercept(inv, ipRateLimit)) {
-            return;
-        }
-
-
-        EnableUserRateLimit userRateLimit = inv.getMethod().getAnnotation(EnableUserRateLimit.class);
-        if (userRateLimit != null && userIntercept(inv, userRateLimit)) {
+        if (!doIntercept(inv,info)) {
+            try {
+                renderLimitation(inv.getController(), info);
+            }finally {
+                if (info.getType() == LimitationInfo.TYPE_CONCURRENCY){
+                    manager.getSemaphore(inv.getActionKey()).release();
+                }
+            }
             return;
         }
 
@@ -54,82 +56,69 @@ public class LimitationInterceptor implements FixedInterceptor {
     }
 
 
-    /**
-     * 请求频率拦截
-     *
-     * @param inv
-     * @param requestRateLimit
-     * @return
-     */
-    private boolean requestIntercept(FixedInvocation inv, EnableRequestRateLimit requestRateLimit) {
+    private boolean doIntercept(FixedInvocation inv,LimitationInfo limitationInfo) {
 
-        LimitationManager manager = LimitationManager.me();
-
-        RateLimiter limiter = manager.getLimiter(inv.getActionKey());
-        if (limiter == null) {
-            limiter = manager.initRateLimiter(inv.getActionKey(), requestRateLimit.rate());
-        }
-
-        if (limiter.tryAcquire()) {
-            return false;
-        }
-
-        /**
-         * 注解上没有设置 Action , 使用jboot.properties配置文件的
-         */
-        if (StringUtils.isBlank(requestRateLimit.renderType())) {
-            //ajax 请求
-            if (RequestUtils.isAjaxRequest(inv.getController().getRequest())) {
-                inv.getController().renderJson(manager.getAjaxJsonMap());
-            }
-            //非ajax的正常请求
-            else {
-                String limitView = manager.getLimitView();
-                if (limitView != null) {
-                    inv.getController().render(limitView);
-                } else {
-                    inv.getController().renderText("reqeust limit.");
-                }
-            }
-        }
-
-        /**
-         * 设置了 Action , 用用户自己配置的
-         */
-        else {
-            switch (requestRateLimit.renderType()) {
-                case LimitRenderType.JSON:
-                    inv.getController().renderJson(requestRateLimit.renderContent());
-                    break;
-                case LimitRenderType.TEXT:
-                    inv.getController().renderText(requestRateLimit.renderContent());
-                    break;
-                case LimitRenderType.RENDER:
-                    inv.getController().render(requestRateLimit.renderContent());
-                    break;
-                case LimitRenderType.REDIRECT:
-                    inv.getController().redirect(requestRateLimit.renderContent(), true);
-                    break;
-                default:
-                    throw new IllegalArgumentException("annotation @EnableRequestRateLimit.limitAction error in "
-                            + inv.getController().getClass().getName() + "." + inv.getMethodName()
-                            + ",  limitAction support text,json,render,redirect only, not support " + requestRateLimit.renderType());
-            }
-
+        switch (limitationInfo.getType()) {
+            case LimitationInfo.TYPE_CONCURRENCY:
+                return concurrencyIntercept(inv,limitationInfo);
+            case LimitationInfo.TYPE_REQUEST:
+                return requestIntercept(inv,limitationInfo);
+            case LimitationInfo.TYPE_IP:
+                return ipIntercept(inv,limitationInfo);
+            case LimitationInfo.TYPE_USER:
+               return userIntercept(inv,limitationInfo);
         }
 
         return true;
     }
 
 
-    /**
-     * 用户操作频率拦截
-     *
-     * @param inv
-     * @param userRateLimit
-     * @return
-     */
-    private boolean userIntercept(FixedInvocation inv, EnableUserRateLimit userRateLimit) {
+    private boolean concurrencyIntercept(FixedInvocation inv, LimitationInfo info) {
+        LimitationManager manager = LimitationManager.me();
+        Semaphore semaphore = manager.getSemaphore(inv.getActionKey());
+        if (semaphore == null) {
+            semaphore = manager.initSemaphore(inv.getActionKey(), info.getRate());
+        }
+        return semaphore.tryAcquire();
+    }
+
+
+
+    private boolean requestIntercept(FixedInvocation inv, LimitationInfo info) {
+        LimitationManager manager = LimitationManager.me();
+        RateLimiter limiter = manager.getLimiter(inv.getActionKey());
+        if (limiter == null) {
+            limiter = manager.initRateLimiter(inv.getActionKey(), info.getRate());
+        }
+        return limiter.tryAcquire();
+    }
+
+    private boolean ipIntercept(FixedInvocation inv, LimitationInfo info) {
+        LimitationManager manager = LimitationManager.me();
+        String ipaddress = RequestUtils.getIpAddress(inv.getController().getRequest());
+        long currentTime = System.currentTimeMillis();
+        long userFlagTime = manager.getIpflag(ipaddress);
+        manager.flagIpRequest(ipaddress);
+
+        //第一次访问，可能manager里还未对此IP进行标识
+        if (userFlagTime >= currentTime) {
+            return true;
+        }
+
+        double rate = info.getRate();
+        if (rate <= 0 || rate >= 1000) {
+            throw new IllegalArgumentException("@EnableIpRateLimit.rate must > 0 and < 1000");
+        }
+
+        double interval = 1000 / rate;
+        if ((currentTime - userFlagTime) >= interval) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean userIntercept(FixedInvocation inv, LimitationInfo info) {
         LimitationManager manager = LimitationManager.me();
         String sesssionId = inv.getController().getSession(true).getId();
 
@@ -140,113 +129,42 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         //第一次访问，可能manager里还未对此用户进行标识
         if (userFlagTime >= currentTime) {
-            return false;
+            return true;
         }
 
-        double rate = userRateLimit.rate();
+        double rate = info.getRate();
         if (rate <= 0 || rate >= 1000) {
             throw new IllegalArgumentException("@EnableIpRateLimit.rate must > 0 and < 1000");
         }
 
         double interval = 1000 / rate;
         if ((currentTime - userFlagTime) >= interval) {
-            return false;
+            return true;
         }
 
-        /**
-         * 注解上没有设置 Action , 使用jboot.properties配置文件的
-         */
-        if (StringUtils.isBlank(userRateLimit.renderType())) {
-            //ajax 请求
-            if (RequestUtils.isAjaxRequest(inv.getController().getRequest())) {
-                inv.getController().renderJson(manager.getAjaxJsonMap());
-            }
-            //非ajax的正常请求
-            else {
-                String limitView = manager.getLimitView();
-                if (limitView != null) {
-                    inv.getController().render(limitView);
-                } else {
-                    inv.getController().renderText("reqeust limit by @EnableUserRateLimit.");
-                }
-            }
-        }
-
-        /**
-         * 设置了 Action , 用用户自己配置的
-         */
-        else {
-            switch (userRateLimit.renderType()) {
-                case LimitRenderType.JSON:
-                    inv.getController().renderJson(userRateLimit.renderContent());
-                    break;
-                case LimitRenderType.TEXT:
-                    inv.getController().renderText(userRateLimit.renderContent());
-                    break;
-                case LimitRenderType.RENDER:
-                    inv.getController().render(userRateLimit.renderContent());
-                    break;
-                case LimitRenderType.REDIRECT:
-                    inv.getController().redirect(userRateLimit.renderContent(), true);
-                    break;
-                default:
-                    throw new IllegalArgumentException("annotation @EnableUserRateLimit.limitAction error in "
-                            + inv.getController().getClass().getName() + "." + inv.getMethodName()
-                            + ",  limitAction support text,json,render,redirect only, not support " + userRateLimit.renderType());
-            }
-
-        }
-
-
-        return true;
+        return false;
     }
 
 
-    /**
-     * ip请求频率拦截
-     *
-     * @param inv
-     * @param ipRateLimit
-     * @return
-     */
-    private boolean ipIntercept(FixedInvocation inv, EnableIpRateLimit ipRateLimit) {
+    private void renderLimitation(Controller controller, LimitationInfo limitationInfo) {
+
         LimitationManager manager = LimitationManager.me();
-        String ipaddress = RequestUtils.getIpAddress(inv.getController().getRequest());
-        long currentTime = System.currentTimeMillis();
-        long userFlagTime = manager.getIpflag(ipaddress);
-        manager.flagIpRequest(ipaddress);
-
-        //第一次访问，可能manager里还未对此IP进行标识
-        if (userFlagTime >= currentTime) {
-            return false;
-        }
-
-        double rate = ipRateLimit.rate();
-        if (rate <= 0 || rate >= 1000) {
-            throw new IllegalArgumentException("@EnableIpRateLimit.rate must > 0 and < 1000");
-        }
-
-        double interval = 1000 / rate;
-        if ((currentTime - userFlagTime) >= interval) {
-            return false;
-        }
-
 
         /**
          * 注解上没有设置 Action , 使用jboot.properties配置文件的
          */
-        if (StringUtils.isBlank(ipRateLimit.renderType())) {
+        if (StringUtils.isBlank(limitationInfo.getRenderType())) {
             //ajax 请求
-            if (RequestUtils.isAjaxRequest(inv.getController().getRequest())) {
-                inv.getController().renderJson(manager.getAjaxJsonMap());
+            if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+                controller.renderJson(manager.getAjaxJsonMap());
             }
             //非ajax的正常请求
             else {
                 String limitView = manager.getLimitView();
                 if (limitView != null) {
-                    inv.getController().render(limitView);
+                    controller.render(limitView);
                 } else {
-                    inv.getController().renderText("reqeust limit by @EnableIpRateLimit.");
+                    controller.renderText("reqeust limit.");
                 }
             }
         }
@@ -255,29 +173,22 @@ public class LimitationInterceptor implements FixedInterceptor {
          * 设置了 Action , 用用户自己配置的
          */
         else {
-            switch (ipRateLimit.renderType()) {
+            switch (limitationInfo.getRenderType()) {
                 case LimitRenderType.JSON:
-                    inv.getController().renderJson(ipRateLimit.renderContent());
+                    controller.renderJson(limitationInfo.getRenderContent());
                     break;
                 case LimitRenderType.TEXT:
-                    inv.getController().renderText(ipRateLimit.renderContent());
+                    controller.renderText(limitationInfo.getRenderContent());
                     break;
                 case LimitRenderType.RENDER:
-                    inv.getController().render(ipRateLimit.renderContent());
+                    controller.render(limitationInfo.getRenderContent());
                     break;
                 case LimitRenderType.REDIRECT:
-                    inv.getController().redirect(ipRateLimit.renderContent(), true);
+                    controller.redirect(limitationInfo.getRenderContent(), true);
                     break;
-                default:
-                    throw new IllegalArgumentException("annotation @EnableIpRateLimit.limitAction error in "
-                            + inv.getController().getClass().getName() + "." + inv.getMethodName()
-                            + ",  limitAction support text,json,render,redirect only, not support " + ipRateLimit.renderType());
             }
 
         }
-
-
-        return true;
     }
 
 
