@@ -30,7 +30,7 @@ import java.util.concurrent.Semaphore;
 public class LimitationInterceptor implements FixedInterceptor {
 
 
-    private ThreadLocal<Semaphore> SEMAPHORE_THREAD_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<Semaphore> SEMAPHORE_THREAD_LOCAL = new ThreadLocal<>();
 
     @Override
     public void intercept(FixedInvocation inv) {

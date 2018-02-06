@@ -52,7 +52,7 @@ public class LimitationDemo extends JbootController {
     @EnableConcurrencyRateLimit(rate = 1)
     public void con() {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
