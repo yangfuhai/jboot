@@ -52,7 +52,7 @@ public class LimitationInterceptor implements FixedInterceptor {
         try {
             inv.invoke();
         } finally {
-            if (info.getType() == LimitationInfo.TYPE_CONCURRENCY) {
+            if (LimitationInfo.TYPE_CONCURRENCY.equals(info.getType())) {
                 SEMAPHORE_THREAD_LOCAL.get().release();
                 SEMAPHORE_THREAD_LOCAL.remove();
             }
