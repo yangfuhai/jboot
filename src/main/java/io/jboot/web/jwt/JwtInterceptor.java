@@ -71,7 +71,7 @@ public class JwtInterceptor implements FixedInterceptor {
         }
 
         JbootController jbootController = (JbootController) inv.getController();
-        Map<String, Object> jwts = jbootController.geJwtAttrs();
+        Map<String, Object> jwts = jbootController.getJwtAttrs();
 
         if (jwts == null || jwts.isEmpty()) {
             return;

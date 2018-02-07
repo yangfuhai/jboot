@@ -191,7 +191,7 @@ public class JbootController extends Controller {
 
 
     @Before(NotAction.class)
-    public HashMap<String, Object> geJwtAttrs() {
+    public HashMap<String, Object> getJwtAttrs() {
         return jwts;
     }
 
