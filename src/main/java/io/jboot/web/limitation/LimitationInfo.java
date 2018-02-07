@@ -15,10 +15,10 @@
  */
 package io.jboot.web.limitation;
 
-import io.jboot.web.limitation.annotation.EnableConcurrencyRateLimit;
-import io.jboot.web.limitation.annotation.EnableIpRateLimit;
-import io.jboot.web.limitation.annotation.EnableRequestRateLimit;
-import io.jboot.web.limitation.annotation.EnableUserRateLimit;
+import io.jboot.web.limitation.annotation.EnableConcurrencyLimit;
+import io.jboot.web.limitation.annotation.EnablePerIpLimit;
+import io.jboot.web.limitation.annotation.EnableRequestLimit;
+import io.jboot.web.limitation.annotation.EnablePerUserLimit;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -53,28 +53,28 @@ public class LimitationInfo {
 
     public LimitationInfo(){}
 
-    public LimitationInfo(EnableConcurrencyRateLimit limit){
+    public LimitationInfo(EnableConcurrencyLimit limit){
         this.type = TYPE_CONCURRENCY;
         this.rate = limit.rate();
         this.renderType = limit.renderType();
         this.renderContent = limit.renderContent();
     }
 
-    public LimitationInfo(EnableIpRateLimit limit){
+    public LimitationInfo(EnablePerIpLimit limit){
         this.type = TYPE_IP;
         this.rate = limit.rate();
         this.renderType = limit.renderType();
         this.renderContent = limit.renderContent();
     }
 
-    public LimitationInfo(EnableRequestRateLimit limit){
+    public LimitationInfo(EnableRequestLimit limit){
         this.type = TYPE_REQUEST;
         this.rate = limit.rate();
         this.renderType = limit.renderType();
         this.renderContent = limit.renderContent();
     }
 
-    public LimitationInfo(EnableUserRateLimit limit){
+    public LimitationInfo(EnablePerUserLimit limit){
         this.type = TYPE_USER;
         this.rate = limit.rate();
         this.renderType = limit.renderType();

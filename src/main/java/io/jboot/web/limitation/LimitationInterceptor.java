@@ -113,7 +113,7 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         double rate = info.getRate();
         if (rate <= 0 || rate >= 1000) {
-            throw new IllegalArgumentException("@EnableIpRateLimit.rate must > 0 and < 1000");
+            throw new IllegalArgumentException("@EnablePerIpLimit.rate must > 0 and < 1000");
         }
 
         double interval = 1000 / rate;
@@ -140,7 +140,7 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         double rate = info.getRate();
         if (rate <= 0 || rate >= 1000) {
-            throw new IllegalArgumentException("@EnableIpRateLimit.rate must > 0 and < 1000");
+            throw new IllegalArgumentException("@EnablePerUserLimit.rate must > 0 and < 1000");
         }
 
         double interval = 1000 / rate;
