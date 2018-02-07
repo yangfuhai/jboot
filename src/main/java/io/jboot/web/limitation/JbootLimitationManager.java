@@ -122,27 +122,28 @@ public class JbootLimitationManager {
         }
     }
 
-    public LimitationInfo getLimitationInfo(String actionKey){
+    public LimitationInfo getLimitationInfo(String actionKey) {
         LimitationInfo info = concurrencyRates.get(actionKey);
 
-        if(info != null){
+        if (info != null) {
             return info;
         }
 
         info = requestRates.get(actionKey);
 
-        if(info != null){
+        if (info != null) {
             return info;
         }
 
         info = ipRates.get(actionKey);
 
-        if(info != null){
+        if (info != null) {
             return info;
         }
 
         return userRates.get(actionKey);
     }
+
 
 
     private JbootLimitationManager() {
@@ -177,7 +178,7 @@ public class JbootLimitationManager {
     }
 
     public Semaphore initSemaphore(String target, double rate) {
-        Semaphore semaphore = new Semaphore((int)rate);
+        Semaphore semaphore = new Semaphore((int) rate);
         concurrencyRateLimiterMap.put(target, semaphore);
         return semaphore;
     }
@@ -222,5 +223,22 @@ public class JbootLimitationManager {
 
     public String getLimitView() {
         return limitView;
+    }
+
+
+    public Map<String, LimitationInfo> getConcurrencyRates() {
+        return concurrencyRates;
+    }
+
+    public Map<String, LimitationInfo> getIpRates() {
+        return ipRates;
+    }
+
+    public Map<String, LimitationInfo> getRequestRates() {
+        return requestRates;
+    }
+
+    public Map<String, LimitationInfo> getUserRates() {
+        return userRates;
     }
 }

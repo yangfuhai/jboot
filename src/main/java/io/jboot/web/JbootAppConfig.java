@@ -43,6 +43,7 @@ import io.jboot.schedule.JbootScheduleManager;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
+import io.jboot.utils.StringUtils;
 import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -53,6 +54,8 @@ import io.jboot.web.fixedinterceptor.FixedInterceptors;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.limitation.JbootLimitationManager;
+import io.jboot.web.limitation.LimitationConfig;
+import io.jboot.web.limitation.web.LimitationController;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
@@ -122,6 +125,11 @@ public class JbootAppConfig extends JFinalConfig {
         JbootSwaggerConfig swaggerConfig = Jboot.config(JbootSwaggerConfig.class);
         if (swaggerConfig.isConfigOk()) {
             routes.add(swaggerConfig.getPath(), JbootSwaggerController.class, swaggerConfig.getPath());
+        }
+
+        LimitationConfig limitationConfig = Jboot.config(LimitationConfig.class);
+        if (StringUtils.isNotBlank(limitationConfig.getWebPath())) {
+            routes.add(limitationConfig.getWebPath(), LimitationController.class);
         }
 
         JbootAppListenerManager.me().onJfinalRouteConfig(routes);

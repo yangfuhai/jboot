@@ -20,12 +20,14 @@ import io.jboot.web.limitation.annotation.EnablePerIpLimit;
 import io.jboot.web.limitation.annotation.EnableRequestLimit;
 import io.jboot.web.limitation.annotation.EnablePerUserLimit;
 
+import java.io.Serializable;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package io.jboot.web.limitation
  */
-public class LimitationInfo {
+public class LimitationInfo implements Serializable {
 
     public static final int TYPE_IP = 1;
     public static final int TYPE_REQUEST = 2;
@@ -51,30 +53,31 @@ public class LimitationInfo {
      */
     private String renderContent;
 
-    public LimitationInfo(){}
+    public LimitationInfo() {
+    }
 
-    public LimitationInfo(EnableConcurrencyLimit limit){
+    public LimitationInfo(EnableConcurrencyLimit limit) {
         this.type = TYPE_CONCURRENCY;
         this.rate = limit.rate();
         this.renderType = limit.renderType();
         this.renderContent = limit.renderContent();
     }
 
-    public LimitationInfo(EnablePerIpLimit limit){
+    public LimitationInfo(EnablePerIpLimit limit) {
         this.type = TYPE_IP;
         this.rate = limit.rate();
         this.renderType = limit.renderType();
         this.renderContent = limit.renderContent();
     }
 
-    public LimitationInfo(EnableRequestLimit limit){
+    public LimitationInfo(EnableRequestLimit limit) {
         this.type = TYPE_REQUEST;
         this.rate = limit.rate();
         this.renderType = limit.renderType();
         this.renderContent = limit.renderContent();
     }
 
-    public LimitationInfo(EnablePerUserLimit limit){
+    public LimitationInfo(EnablePerUserLimit limit) {
         this.type = TYPE_USER;
         this.rate = limit.rate();
         this.renderType = limit.renderType();
