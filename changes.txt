@@ -1,3 +1,16 @@
+jboot-1.3.3:
+新增：流量控制开关，当网站上线的时候不用重启自由开启关闭。
+新增：流量控制设置，当网站上线的时候可以自由设置流量控制大小。
+新增：@EnableConcurrencyLimit注解，用于多并发量的控制和限制。
+新增：数据源DataSource支持druid，同时可以通过SPI进行扩展。
+新增：添加ehcache默认cache的配置
+优化：通过 @Before 注解后，若抛出异常获得不到原始异常。
+优化：修改 geJwtAttrs() 笔误，修改为 getJwtAttrs()
+优化：更新依赖：fastjson->1.2.46，j2cache->2.3.8
+优化：重命名流量控制的相关注解，使之更加直观
+
+
+
 jboot-1.3.2:
 新增：JbootModelConfig的配置，全局配置是否缓存及缓存时间等
 新增：@Cacheevict 新增允许移除整个cacheName的配置
