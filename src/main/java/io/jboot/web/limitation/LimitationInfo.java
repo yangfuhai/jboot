@@ -29,12 +29,12 @@ import java.io.Serializable;
  */
 public class LimitationInfo implements Serializable {
 
-    public static final int TYPE_IP = 1;
-    public static final int TYPE_REQUEST = 2;
-    public static final int TYPE_USER = 3;
-    public static final int TYPE_CONCURRENCY = 4;
+    public static final String TYPE_IP = "ip";
+    public static final String TYPE_REQUEST = "request";
+    public static final String TYPE_USER = "user";
+    public static final String TYPE_CONCURRENCY = "concurrency";
 
-    private int type;
+    private String type;
 
     private double rate; //每秒钟允许通过的次数
 
@@ -52,6 +52,8 @@ public class LimitationInfo implements Serializable {
      * @return
      */
     private String renderContent;
+
+    private boolean enable = true;
 
     public LimitationInfo() {
     }
@@ -85,11 +87,11 @@ public class LimitationInfo implements Serializable {
     }
 
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -115,5 +117,13 @@ public class LimitationInfo implements Serializable {
 
     public void setRenderContent(String renderContent) {
         this.renderContent = renderContent;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 }

@@ -38,10 +38,11 @@ public class LimitationInterceptor implements FixedInterceptor {
         JbootLimitationManager manager = JbootLimitationManager.me();
 
         LimitationInfo info = manager.getLimitationInfo(inv.getActionKey());
-        if (info == null) {
+        if (info == null || !info.isEnable()) {
             inv.invoke();
             return;
         }
+
 
         if (doIntercept(inv, info)) {
             renderLimitation(inv.getController(), info);
@@ -50,8 +51,8 @@ public class LimitationInterceptor implements FixedInterceptor {
 
         try {
             inv.invoke();
-        }finally {
-            if (info.getType() == LimitationInfo.TYPE_CONCURRENCY){
+        } finally {
+            if (info.getType() == LimitationInfo.TYPE_CONCURRENCY) {
                 SEMAPHORE_THREAD_LOCAL.get().release();
                 SEMAPHORE_THREAD_LOCAL.remove();
             }
