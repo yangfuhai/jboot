@@ -642,7 +642,7 @@ jboot.web.jwt.secret = your_secret
 | setJwtAttr()| 设置 jwt 的 key 和 value |
 | setJwtMap()| 把整个 map的key和value 设置到 jwt |
 | getJwtAttr()| 获取 已经设置进去的 jwt 信息 |
-| geJwtAttrs()| 获取 所有已经设置进去的 jwt 信息|
+| getJwtAttrs()| 获取 所有已经设置进去的 jwt 信息|
 | getJwtPara()| 获取客户端传进来的 jwt 信息，若 jwt 超时或者不被信任，那么获取到的内容为null |
 
 #### 在客户端使用JWT
@@ -960,9 +960,7 @@ jboot.datasource.shardingEnable=true
 @RequestMapping("/sharding")
 public class ShardingController extends JbootController {
 
-
     public void index() {
-
         UserModel user = new UserModel();
         user.setId(StringUtils.uuid());
         user.setName("Michael yang");
@@ -973,12 +971,10 @@ public class ShardingController extends JbootController {
 
     }
 
-
     public static void main(String[] args) {
         Jboot.run(args);
     }
 }
-
 ```
 
 具体demo请参考：
@@ -990,8 +986,124 @@ https://gitee.com/fuhai/jboot/tree/master/src/test/java/sharding
 
 ## Google Guice
 Jboot 的AOP功能，是使用了Google的Guice框架来完成的，通过AOP，我们可以轻易的在微服务体系中监控api的调用，轻易的使用@Cacheable，@CachePut，@CacheEvict等注解完成对代码的配置。
-## @Inject
-## @Bean
+
+## @Inject 和 @Bean
+和Spring一样，Jboot是通过注解 `@Inject` 来对变量进行赋值注入的，例如：
+
+```java
+public class AopDemo extends JbootController {
+
+    @Inject
+    CategoryService service;
+
+    public void index() {
+        renderHtml("service:" + service.hello(""));
+    }
+      
+    public static void main(String[] args) {
+        Jboot.run(args);
+    }
+}
+```
+但是，必须强调的是：`CategoryService`接口能够被注入，其实必须有实现类，同时实现类必须通过 `@Bean` 进行配置，例如：
+
+
+接口代码：
+
+```java
+public interface CategoryService {
+    public String hello(String text);
+}
+```
+
+实现类代码：
+
+```java
+@Bean //必须通过 @Bean 进行配置，让CategoryServiceImpl处于自动暴露状态
+public class CategoryServiceImpl implements CategoryService {
+    @Override
+    public String hello(String text) {
+        return "CategoryServiceImpl say hello " + text;
+    }
+
+}
+```
+
+但是，当`@Inject`注入的不是一个接口类，而是一个普通类，那么无需 `@Bean` 的配合。例如：
+
+```java
+public class AopDemo extends JbootController {
+
+    @Inject
+    MyServiceImpl myService;
+
+    public void index() {
+        renderHtml("service:" + myService);
+    }
+      
+    public static void main(String[] args) {
+        Jboot.run(args);
+    }
+}
+```
+在以上代码中，由于 `MyServiceImpl` 不是已经接口，而是一个类，此时无需在 `MyServiceImpl` 这个类上配置
+`@Bean` 注解。
+
+
+
+当一个接口有多个实现类的时候，可以通过配合`@Named`配合进行注入，例如：
+
+```java
+public class AopDemo extends JbootController {
+
+    @Inject
+    CategoryService service;
+
+    @Inject
+    @Named("myCategory") //通过@Named指定使用哪个实现类
+    CategoryService nameservice;
+
+    public void index() {
+        renderHtml("service:" + service.hello("") 
+        + "<br /> nameservice:" + nameservice.hello(""));
+    }
+      
+    public static void main(String[] args) {
+        Jboot.run(args);
+    }
+}
+```
+
+以下是实现类的代码：
+
+```java
+@Bean
+public class CategoryServiceImpl implements CategoryService {
+    @Override
+    public String hello(String text) {
+        return "CategoryServiceImpl say hello " + text;
+    }
+}
+```
+
+```java
+@Bean(name = "myCategory")
+public class NamedCategoryServiceImpl implements CategoryService {
+    @Override
+    public String hello(String text) {
+        return "NamedCategoryServiceImpl say hello " + text;
+    }
+}
+```
+
+两个类都实现了`CategoryService`接口，不同的是 `NamedCategoryServiceImpl` 实现类在配置 `@Bean` 的时候传了参数 `name = "myCategory"`，这样，注入的时候就可以配合 `@Named` 进行对实现类的选择。
+
+## @RpcService
+通过以上 `@Inject` 和 `@Bean` 的配合，我们很方便的在项目中自由的对代码进行注入，但是，如果注入的是一个RPC的服务，那么需要通过 `@RpcService` 进行注入。更多关于RPC部分，请查看RPC章节。
+
+
+
+
 
 # RPC远程调用
 在Jboot中，RPC远程调用是通过新浪的motan、或阿里的dubbo来完成的。计划会支持 grpc和thrift等。
