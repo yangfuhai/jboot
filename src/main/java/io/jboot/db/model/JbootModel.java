@@ -20,6 +20,7 @@ import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
@@ -36,6 +37,19 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private static final String COLUMN_CREATED = "created";
     private static final String COLUMN_MODIFIED = "modified";
+    private static final ThreadLocal<Object> THREAD_LOCAL = new ThreadLocal<>();
+
+    public void setThreadData(Object data) {
+        THREAD_LOCAL.set(data);
+    }
+
+    public <T> T getThreadData() {
+        return (T) THREAD_LOCAL.get();
+    }
+
+    public void clearThreadData() {
+        THREAD_LOCAL.remove();
+    }
 
     /**
      * 是否启用自动缓存
@@ -682,8 +696,27 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public List<M> find(String sql, Object... paras) {
+
         debugPrintParas(paras);
-        return super.find(sql, paras);
+
+        if (!JbootModelConfig.getConfig().isHystrixEnable()) {
+            return super.find(sql, paras);
+        }
+
+        //copy threadData to hystrix thread
+        final Object threadData = getThreadData();
+
+        return Jboot.hystrix(new JbootHystrixCommand("sql:" + sql, JbootModelConfig.getConfig().getHystrixTimeout()) {
+            @Override
+            protected Object run() throws Exception {
+                try {
+                    setThreadData(threadData);
+                    return JbootModel.super.find(sql, paras);
+                } finally {
+                    clearThreadData();
+                }
+            }
+        });
     }
 
     @Override

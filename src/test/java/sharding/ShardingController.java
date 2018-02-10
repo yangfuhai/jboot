@@ -50,6 +50,10 @@ public class ShardingController extends JbootController {
         Jboot.setBootArg("jboot.datasource.password", "");
         Jboot.setBootArg("jboot.datasource.shardingEnable", "true");
 
+        //hystrix配置
+        Jboot.setBootArg("jboot.hystrix.url", "/hystrix.html");//配置 Hystrix Dashboard 的监控路径,方便查看hystrix对sql的监控
+
+
 
         Jboot.run(args);
     }

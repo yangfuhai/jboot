@@ -29,6 +29,8 @@ public class JbootModelConfig {
     private boolean cacheEnable = true;
     private int cacheTime = 60 * 60 * 24; // 1day
     private String scan;
+    private boolean hystrixEnable = true;
+    private int hystrixTimeout = 1000 * 10; //单位：毫秒
 
 
     public boolean isCacheEnable() {
@@ -55,6 +57,21 @@ public class JbootModelConfig {
         this.scan = scan;
     }
 
+    public boolean isHystrixEnable() {
+        return hystrixEnable;
+    }
+
+    public void setHystrixEnable(boolean hystrixEnable) {
+        this.hystrixEnable = hystrixEnable;
+    }
+
+    public int getHystrixTimeout() {
+        return hystrixTimeout;
+    }
+
+    public void setHystrixTimeout(int hystrixTimeout) {
+        this.hystrixTimeout = hystrixTimeout;
+    }
 
     private static JbootModelConfig config;
 
