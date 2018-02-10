@@ -46,8 +46,6 @@ public class DataSourceConfig {
 
     private String sqlTemplatePath;
     private String sqlTemplate;
-    private String table;
-    private String excludeTable;
     private String factory; //HikariDataSourceFactory.class.getName();
 
     private boolean shardingEnable = false;
@@ -197,22 +195,6 @@ public class DataSourceConfig {
 
     public void setSqlTemplate(String sqlTemplate) {
         this.sqlTemplate = sqlTemplate;
-    }
-
-    public String getTable() {
-        return table;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public String getExcludeTable() {
-        return excludeTable;
-    }
-
-    public void setExcludeTable(String excludeTable) {
-        this.excludeTable = excludeTable;
     }
 
     public String getFactory() {

@@ -38,4 +38,8 @@ public @interface Table {
 
     Class keyGeneratorClass() default Void.class;
 
+    String datasource() default "";
+    
+    String exDatasource() default "";
+
 }

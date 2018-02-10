@@ -185,8 +185,6 @@ public class JbootDbManager {
 
         String configName = config.getName();
         DataSource dataSource = new DataSourceBuilder(config).build();
-        String configTableString = config.getTable();
-        String excludeTableString = config.getExcludeTable();
 
         ActiveRecordPlugin activeRecordPlugin = StringUtils.isNotBlank(configName)
                 ? new ActiveRecordPlugin(configName, dataSource)
@@ -212,7 +210,7 @@ public class JbootDbManager {
             return activeRecordPlugin;
         }
 
-        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(configTableString, excludeTableString);
+        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(config.getName());
         if (ArrayUtils.isNullOrEmpty(tableInfos)) {
             return activeRecordPlugin;
         }

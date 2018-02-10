@@ -18,13 +18,15 @@ package io.jboot.db;
 import com.jfinal.plugin.activerecord.Model;
 import io.shardingjdbc.core.api.config.strategy.ShardingStrategyConfiguration;
 
+import java.util.Set;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package io.jboot.db
  */
 public class TableInfo {
-    
+
     private String tableName;
     private String primaryKey;
     private Class<? extends Model> modelClass;
@@ -33,6 +35,7 @@ public class TableInfo {
     private String actualDataNodes;
     private String keyGeneratorColumnName;
     private String keyGeneratorClass;
+    private Set<String> datasources;
 
 
     public String getTableName() {
@@ -98,4 +101,13 @@ public class TableInfo {
     public void setKeyGeneratorClass(String keyGeneratorClass) {
         this.keyGeneratorClass = keyGeneratorClass;
     }
+
+    public Set<String> getDatasources() {
+        return datasources;
+    }
+
+    public void setDatasources(Set<String> datasources) {
+        this.datasources = datasources;
+    }
+
 }

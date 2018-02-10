@@ -17,12 +17,14 @@ package io.jboot.db;
 
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.db.annotation.Table;
+import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.model.JbootModelConfig;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,25 +45,11 @@ public class TableInfoManager {
     }
 
 
-    public List<TableInfo> getTablesInfos(String includeTables, String excludeTables) {
+    public List<TableInfo> getTablesInfos(String datasourceName) {
         List<TableInfo> tableInfos = new ArrayList<>();
 
-        Set<String> includeTableSet = includeTables == null ? null : StringUtils.splitToSet(includeTables, ",");
-        Set<String> excludeTableSet = excludeTables == null ? null : StringUtils.splitToSet(excludeTables, ",");
-
         for (TableInfo tableInfo : getAllTableInfos()) {
-            boolean isAdd = false;
-            if (includeTableSet == null || includeTableSet.isEmpty()) {
-                isAdd = true;
-            } else if (includeTableSet.contains(tableInfo.getTableName())) {
-                isAdd = true;
-            }
-
-            if (isAdd == true && excludeTableSet != null && excludeTableSet.contains(tableInfo.getTableName())) {
-                isAdd = false;
-            }
-
-            if (isAdd) {
+            if (tableInfo.getDatasources().contains(datasourceName)) {
                 tableInfos.add(tableInfo);
             }
         }
@@ -95,11 +83,25 @@ public class TableInfoManager {
                 continue;
             }
 
+            Set<String> datasources = new HashSet<>();
+            if (StringUtils.isNotBlank(tb.datasource())) {
+                datasources.addAll(StringUtils.splitToSet(tb.datasource(), ","));
+            } else {
+                datasources.add(DataSourceConfig.NAME_DEFAULT);
+            }
+
+            if (StringUtils.isNotBlank(tb.exDatasource())) {
+                Set<String> exDatasources = StringUtils.splitToSet(tb.exDatasource(), ",");
+                for (String exDatasource : exDatasources) {
+                    datasources.remove(exDatasource);
+                }
+            }
 
             TableInfo tableInfo = new TableInfo();
             tableInfo.setModelClass(clazz);
             tableInfo.setPrimaryKey(tb.primaryKey());
             tableInfo.setTableName(tb.tableName());
+            tableInfo.setDatasources(datasources);
 
             tableInfo.setActualDataNodes(tb.actualDataNodes());
             tableInfo.setDatabaseShardingStrategyConfig(tb.databaseShardingStrategyConfig());
