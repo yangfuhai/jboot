@@ -11,7 +11,8 @@ import io.jboot.db.model.JbootModel;
 
 @Table(tableName = "tb_user",
         primaryKey = "id",
-        actualDataNodes = "main.tb_user${0..2}",//main 是默认数据源的名称，tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2
+        datasource = "sharding",
+        actualDataNodes = "sharding.tb_user${0..2}",//main 是默认数据源的名称，tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2
         tableShardingStrategyConfig = UserTableShardingStrategyConfig.class //分表策略
 )
 public class UserModel extends JbootModel<UserModel> {

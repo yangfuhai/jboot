@@ -621,17 +621,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    @JSONField(serialize = false)
+    protected String getTableName() {
+        return getTable().getName();
+    }
+
     private transient Table table;
 
     @JSONField(serialize = false)
-    protected String getTableName() {
+    protected Table getTable() {
         if (table == null) {
             table = TableMapping.me().getTable(getUsefulClass());
             if (table == null) {
-                throw new JbootException(String.format("table for class[%s] is null! \n maybe cannot connection to database，please check your propertie files.", getUsefulClass()));
+                throw new JbootException(String.format("table of class %s is null, maybe cannot connection to database or not use correct datasource, " +
+                        "please check your properties file or correct config @Table(datasourc=xxx) in class %s.", getUsefulClass().getName(),getUsefulClass().getName()));
             }
         }
-        return table.getName();
+        return table;
     }
 
 
@@ -674,7 +680,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     protected boolean hasColumn(String columnLabel) {
-        return TableMapping.me().getTable(getUsefulClass()).hasColumnLabel(columnLabel);
+        return getTable().hasColumnLabel(columnLabel);
     }
 
     // -----------------------------Override----------------------------
