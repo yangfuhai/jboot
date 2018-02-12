@@ -86,7 +86,7 @@ public class JbootrpcConfig {
      */
     // keys 的值为  key1:method1,method2;key2:method3,method4
     private boolean hystrixEnable = true;
-    private int hystrixTimeout = 1000 * 3; //单位：毫秒
+    private int hystrixTimeout = 5000; //单位：毫秒
     private String hystrixKeys;
     private boolean hystrixAutoConfig = true;
     private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();

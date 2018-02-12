@@ -19,7 +19,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.google.common.collect.Maps;
 import io.jboot.Jboot;
-import io.jboot.core.serializer.SwaggerRefPropertySerializer;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.cors.EnableCORS;
 import io.swagger.models.Swagger;
@@ -69,7 +68,7 @@ public class JbootSwaggerController extends JbootController {
 
         // 适配swaggerUI, 解决页面"Unknown Type : ref"问题。
         SerializeConfig serializeConfig = new SerializeConfig();
-        serializeConfig.put(RefProperty.class, new SwaggerRefPropertySerializer());
+        serializeConfig.put(RefProperty.class, new RefPropertySerializer());
         renderJson(JSON.toJSONString(swagger, serializeConfig));
     }
 
