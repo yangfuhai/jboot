@@ -1,3 +1,11 @@
+jboot-1.3.4:
+新增：model 查询的时候默认通过hystrix进行管理
+新增：db查询Record的时候，默认通过Hystrix进行管理
+新增：在多数据源的情况下，@Table注解添加DataSource配置的支持，可以指定在哪些数据源下
+文档：更新aop相关文档
+其他：更新相关依赖，hikariCP->2.7.7;druid->1.1.8;metrics->4.0.2;zipkin-sender->2.3.2
+
+
 jboot-1.3.3:
 新增：流量控制开关，当网站上线的时候不用重启自由开启关闭。
 新增：流量控制设置，当网站上线的时候可以自由设置流量控制大小。
@@ -26,7 +34,7 @@ jboot-1.3.1:
 新增：JWT 的支持，具体查看：https://gitee.com/fuhai/jboot/tree/master/src/test/java/jwt
 
 
-jboot-1.3.0:
+jboot-1.3.0:hy
 新增：注解 @EnableCORS 用于跨域配置的支持
 新增：Sharding-jdbc的注释说明，同时更新Sharding-jdbc到最新版本
 新增：代码生成器生成代码默认添加 FindAll() 方法
