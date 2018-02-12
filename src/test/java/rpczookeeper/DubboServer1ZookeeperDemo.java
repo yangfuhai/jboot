@@ -28,6 +28,8 @@ public class DubboServer1ZookeeperDemo {
 
     public static void main(String[] args) throws InterruptedException {
 
+        //jboot端口号配置
+        Jboot.setBootArg("jboot.server.port", "8081");
 
         Jboot.setBootArg("jboot.rpc.type", "dubbo");
         Jboot.setBootArg("jboot.rpc.callMode", "registry");//注册中心模式
