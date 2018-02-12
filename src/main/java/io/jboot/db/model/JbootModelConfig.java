@@ -17,6 +17,7 @@ package io.jboot.db.model;
 
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.db.JbootDbHystrixFallbackListenerDefault;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -32,7 +33,7 @@ public class JbootModelConfig {
 
     private boolean hystrixEnable = true;
     private int hystrixTimeout = 1000 * 10; //单位：毫秒
-    private String hystrixFallbackListener = JbootModelHystrixFallbackListenerDefault.class.getName();
+    private String hystrixFallbackListener = JbootDbHystrixFallbackListenerDefault.class.getName();
 
 
     public boolean isCacheEnable() {

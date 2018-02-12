@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.db.model;
+package io.jboot.db;
 
 import com.netflix.hystrix.exception.HystrixTimeoutException;
 import io.jboot.component.hystrix.JbootHystrixCommand;
 
 
-public class JbootModelHystrixFallbackListenerDefault implements JbootModelHystrixFallbackListener {
+public class JbootDbHystrixFallbackListenerDefault implements JbootDbHystrixFallbackListener {
 
 
     @Override

@@ -24,6 +24,8 @@ import com.jfinal.plugin.activerecord.TableMapping;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.JbootHystrixCommand;
+import io.jboot.db.JbootDbHystrixFallbackListener;
+import io.jboot.db.JbootDbHystrixFallbackListenerDefault;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
@@ -735,10 +737,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         });
     }
 
-    private transient JbootModelHystrixFallbackListener fallbackListener = null;
+    private transient JbootDbHystrixFallbackListener fallbackListener = null;
 
     @JSONField(serialize = false)
-    public JbootModelHystrixFallbackListener getHystrixFallbackListener() {
+    public JbootDbHystrixFallbackListener getHystrixFallbackListener() {
 
         if (fallbackListener != null) {
             return fallbackListener;
@@ -749,7 +751,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         if (fallbackListener == null) {
-            fallbackListener = new JbootModelHystrixFallbackListenerDefault();
+            fallbackListener = new JbootDbHystrixFallbackListenerDefault();
         }
 
         return fallbackListener;

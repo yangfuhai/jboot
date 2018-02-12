@@ -24,6 +24,7 @@ import io.jboot.core.cache.JbootCache;
 import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.datasource.DataSourceConfigManager;
+import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtils;
@@ -97,6 +98,7 @@ public class JbootDbManager {
 
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
                 activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
+                activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
 
                 JbootCache jbootCache = Jboot.me().getCache();
                 if (jbootCache != null) {

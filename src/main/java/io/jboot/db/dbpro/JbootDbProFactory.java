@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.db.model;
+package io.jboot.db.dbpro;
 
-import io.jboot.component.hystrix.JbootHystrixCommand;
+import com.jfinal.plugin.activerecord.DbPro;
+import com.jfinal.plugin.activerecord.IDbProFactory;
 
 /**
- * Hystrix 降级监听器
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.db
  */
-public interface JbootModelHystrixFallbackListener {
+public class JbootDbProFactory implements IDbProFactory {
 
-    public Object onFallback(String sql, Object[] paras, JbootHystrixCommand command, Throwable exception);
+    @Override
+    public DbPro getDbPro(String configName) {
+        return new JbootDbPro();
+    }
+
 
 }
+
