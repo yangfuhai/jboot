@@ -40,6 +40,4 @@ public @interface Table {
 
     String datasource() default "";
     
-    String exDatasource() default "";
-
 }

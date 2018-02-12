@@ -90,12 +90,6 @@ public class TableInfoManager {
                 datasources.add(DataSourceConfig.NAME_DEFAULT);
             }
 
-            if (StringUtils.isNotBlank(tb.exDatasource())) {
-                Set<String> exDatasources = StringUtils.splitToSet(tb.exDatasource(), ",");
-                for (String exDatasource : exDatasources) {
-                    datasources.remove(exDatasource);
-                }
-            }
 
             TableInfo tableInfo = new TableInfo();
             tableInfo.setModelClass(clazz);
