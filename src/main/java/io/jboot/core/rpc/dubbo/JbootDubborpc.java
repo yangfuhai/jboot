@@ -91,6 +91,7 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setApplication(applicationConfig);
         reference.setInterface(serviceClass);
         reference.setVersion(version);
+        reference.setTimeout(jbootrpcConfig.getRequestTimeOut());
 
         if (StringUtils.isNotBlank(jbootrpcConfig.getProxy())) {
             reference.setProxy(jbootrpcConfig.getProxy());
