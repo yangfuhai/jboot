@@ -23,14 +23,16 @@ import io.jboot.config.annotation.PropertyConfig;
  * @version V1.0
  * @Package io.jboot.db.model
  */
-@PropertyConfig(prefix = "jboot.model.config")
+@PropertyConfig(prefix = "jboot.model")
 public class JbootModelConfig {
 
     private boolean cacheEnable = true;
     private int cacheTime = 60 * 60 * 24; // 1day
     private String scan;
+
     private boolean hystrixEnable = true;
     private int hystrixTimeout = 1000 * 10; //单位：毫秒
+    private String hystrixFallbackListener = JbootModelHystrixFallbackListenerDefault.class.getName();
 
 
     public boolean isCacheEnable() {
@@ -71,6 +73,14 @@ public class JbootModelConfig {
 
     public void setHystrixTimeout(int hystrixTimeout) {
         this.hystrixTimeout = hystrixTimeout;
+    }
+
+    public String getHystrixFallbackListener() {
+        return hystrixFallbackListener;
+    }
+
+    public void setHystrixFallbackListener(String hystrixFallbackListener) {
+        this.hystrixFallbackListener = hystrixFallbackListener;
     }
 
     private static JbootModelConfig config;

@@ -17,7 +17,10 @@ package io.jboot.db.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.*;
+import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Table;
+import com.jfinal.plugin.activerecord.TableMapping;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.JbootHystrixCommand;
@@ -25,6 +28,7 @@ import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 
 import java.util.*;
@@ -634,7 +638,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             table = TableMapping.me().getTable(getUsefulClass());
             if (table == null) {
                 throw new JbootException(String.format("table of class %s is null, maybe cannot connection to database or not use correct datasource, " +
-                        "please check your properties file or correct config @Table(datasourc=xxx) in class %s.", getUsefulClass().getName(),getUsefulClass().getName()));
+                        "please check your properties file or correct config @Table(datasourc=xxx) in class %s.", getUsefulClass().getName(), getUsefulClass().getName()));
             }
         }
         return table;
@@ -722,8 +726,35 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                     clearThreadData();
                 }
             }
+
+            @Override
+            public Object getFallback() {
+                return getHystrixFallbackListener().onFallback(sql, paras, this, this.getExecutionException());
+            }
+
         });
     }
+
+    private transient JbootModelHystrixFallbackListener fallbackListener = null;
+
+    @JSONField(serialize = false)
+    public JbootModelHystrixFallbackListener getHystrixFallbackListener() {
+
+        if (fallbackListener != null) {
+            return fallbackListener;
+        }
+
+        if (!StringUtils.isBlank(JbootModelConfig.getConfig().getHystrixFallbackListener())) {
+            fallbackListener = ClassKits.newInstance(JbootModelConfig.getConfig().getHystrixFallbackListener());
+        }
+
+        if (fallbackListener == null) {
+            fallbackListener = new JbootModelHystrixFallbackListenerDefault();
+        }
+
+        return fallbackListener;
+    }
+
 
     @Override
     public M findFirst(String sql, Object... paras) {

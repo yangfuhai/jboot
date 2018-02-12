@@ -120,7 +120,6 @@ public class JbootrpcManager {
             return fallbackListener;
         }
 
-
         if (!StringUtils.isBlank(config.getHystrixFallbackListener())) {
             fallbackListener = ClassKits.newInstance(config.getHystrixFallbackListener());
 

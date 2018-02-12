@@ -1,0 +1,35 @@
+/**
+ * Copyright (c) 2015-2018, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.jboot.db.model;
+
+import com.netflix.hystrix.exception.HystrixTimeoutException;
+import io.jboot.component.hystrix.JbootHystrixCommand;
+
+
+public class JbootModelHystrixFallbackListenerDefault implements JbootModelHystrixFallbackListener {
+
+
+    @Override
+    public Object onFallback(String sql, Object[] paras, JbootHystrixCommand command, Throwable exception) {
+        if (exception instanceof HystrixTimeoutException) {
+            System.err.println("database request timeout, the defalut timeout value is  10000 milliseconds, " +
+                    "you can config jboot.model.hystrixTimeout to set the value, " +
+                    "or config \"jboot.model.hystrixEnable = false\" to close hystrix.");
+        }
+        exception.printStackTrace();
+        return null;
+    }
+}
