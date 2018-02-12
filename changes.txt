@@ -3,6 +3,7 @@ jboot-1.3.4:
 新增：db查询Record的时候，默认通过Hystrix进行管理
 新增：在多数据源的情况下，@Table注解添加DataSource配置的支持，可以指定在哪些数据源下
 修复：jboot.rpc.requestTimeout 对dubbo无效的问题
+修复：swagger页面出现 "Unknown Type : ref" 问题。
 文档：更新aop相关文档
 其他：更新相关依赖，hikariCP->2.7.7;druid->1.1.8;metrics->4.0.2;zipkin-sender->2.3.2
 
