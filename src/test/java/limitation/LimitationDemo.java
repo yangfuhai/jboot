@@ -30,7 +30,7 @@ public class LimitationDemo extends JbootController {
 
 
     public static void main(String[] args) {
-        Jboot.setBootArg("jboot.limitation.webPath","/limitation/view");
+        Jboot.setBootArg("jboot.limitation.webPath","/jboot/limitation");
         Jboot.run(args);
     }
 

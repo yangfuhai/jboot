@@ -180,10 +180,13 @@ Jboot的主要核心组件有以下几个。
 # MVC
 ## MVC的概念
 略
-## JbootController
-MVC中的C是Controller的简写，在Jboot应用中，所有的控制器Controller都应该继承至JbootController，JbootController扩展了JFinal 中 Controller 的许多方法。
 
-**新增的普通方法：**
+## Controller
+Controller是JFinal核心类之一，该类作为MVC模式中的控制器。基于JFinal的Web应用的控制器需要继承该类。Controller是定义Action方法的地点，是组织Action的一种方式，一个Controller可以包含多个Action。Controller是线程安全的。
+### JbootController
+JbootController是扩展了JFinal Controller，在Jboot应用中，所有的控制器都应该继承至JbootController。
+
+**JbootController新增的普通方法：**
 
 |方法调用 | 描述 |
 | ------------- | -----|
@@ -223,11 +226,12 @@ setFlashAttr 是用于对 redirect 之后的页面进行渲染。
 
 **JWT简介：**  Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（[RFC 7519](https://tools.ietf.org/html/rfc7519)).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。
 
-## @RquestMapping
+### @RquestMapping
 RquestMapping是请求映射，也就是通过@RquestMapping注解，可以让某个请求映射到指定的控制器Controller里去。
 
 
-### 使用@RquestMapping
+**使用@RquestMapping**
+
 使用@RquestMapping非常简单。只需要在Controller类添加上@RquestMapping注解即可。
 
 例如：
@@ -247,8 +251,11 @@ public class HelloController extend JbootController{
 * 访问`http://127.0.0.1`等同于`http://127.0.0.1/`。
 * `@RquestMapping` 可以使用在任何的 Controller，并 **不需要** 这个Controller继承至JbootController。
 
-## Action
+### Action
 在 Controller 之中定义的 public 方法称为 Action。Action 是请求的最小单位。Action 方法 必须在 Controller 中定义，且必须是 public 可见性。
+
+每个Action对应一个URL地址的映射：
+
 
 ```java
 public class HelloController extends Controller { 
@@ -267,9 +274,9 @@ public class HelloController extends Controller {
 	} 
 }
 ```
-以上代码中定义了三个 Action，分表是 HelloController.index()、 HelloController.test() 和 HelloController.save(User user)。
+以上代码中定义了三个 Action，分表是 `HelloController.index()`、 `HelloController.test()` 和 `HelloController.save(User user)`。
 
-Action 可以有返回值，返回值可在拦截器中通过 invocation.getReturnValue() 获取到，以便 进行 render 控制。
+Action 可以有返回值，返回值可在拦截器中通过 invocation.getReturnValue() 获取到，以便进行 render 控制。
 
 Action 可以带参数，可以代替 getPara、getBean、getModel 系列方法获取参数，使用 UploadFile 参数时可以代替 getFile 方法实现文件上传。这种传参方式还有一个好处是便于与 swagger 这类 第三方无缝集成，生成 API 文档。
 
@@ -352,7 +359,7 @@ public class BlogController extends JbootController {
 
 上面代码中，表单域采用了”blog.title”、”blog.content”作为表单域的 name 属性，”blog”是类 文件名称”Blog”的首字母变小写，”title”是 blog 数据库表的 title 字段，如果希望表单域使用任 意的 modelName ，只需要在 getModel 时多添加一个参数来指定，例如: getModel(Blog.class, ”otherName”)。
 
-## render
+### render
 渲染器，负责把内容输出到浏览器，在Controller中，提供了如下一些列render方法。
 
 | 指令         |  描述  |
@@ -376,11 +383,11 @@ public class BlogController extends JbootController {
 | renderNull() |不渲染，即不向客户端返回数据。|
 | render(new MyRender()) |使用自定义渲染器 MyRender 来渲染。 |
 
-## session 与 分布式session
+### session 与 分布式session
 
 使用session非常简单，直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 就可以。
 
-### 分布式session
+#### 分布式session
 在Jboot的设计中，分布式的session是依赖分布式缓存的，jboot中，分布式缓存提供了3种方式：
 
 1. ehcache
@@ -400,6 +407,216 @@ jboot.cache.redis.database = 1
 配置好缓存后，直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 即可。
 
 *注意：* session都是走缓存，如果jboot配置的缓存是ehcache（或者 ehredis）,请注意在ehcache.xml上添加名为 `SESSION` 的缓存节点。
+
+### 限流和流量控制
+在Jboot中，默认提供了4个注解进行流量管控。4个注解代表着四个不同的流量管控方案，他们分别是：
+
+| 指令         |  描述  |
+| ------------- | -----|
+| EnableConcurrencyLimit | 限制当前Action的并发量 |
+| EnablePerIpLimit  |限制每个IP的每秒访问量|
+| EnablePerUserLimit  |限制每个用户的访问量|
+| EnableRequestLimit  |限制总体每秒钟可以通过的访问量|
+
+例如：
+
+```java
+@RequestMapping("/limitation")
+public class LimitationDemo extends JbootController {
+
+
+    public static void main(String[] args) {
+        Jboot.setBootArg("jboot.limitation.webPath","/limitation/view");
+        Jboot.run(args);
+    }
+
+
+    public void index() {
+        renderText("render ok");
+    }
+
+    /**
+     * 所有的请求，每1秒钟只能访问一次
+     */
+    @EnableRequestLimit(rate = 1)
+    public void request() {
+        renderText("request() render ok");
+    }
+
+    /**
+     * 所有的请求，并发量为1个
+     */
+    @EnableConcurrencyLimit(rate = 1)
+    public void con() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        renderText("con() render ok");
+    }
+
+    /**
+     * 所有的请求，每1秒钟只能访问一次
+     * 被限制的请求，自动跳转到 /limitation/request2
+     */
+    @EnableRequestLimit(rate = 1, renderType = LimitRenderType.REDIRECT, renderContent = "/limitation/request2")
+    public void request1() {
+        renderText("request1() render ok");
+    }
+
+
+    public void request2() {
+        renderText("request2() render ok");
+    }
+
+
+    /**
+     * 每个用户，每5秒钟只能访问一次
+     */
+    @EnablePerUserLimit(rate = 0.2)
+    public void user() {
+        renderText("user() render ok");
+    }
+
+    /**
+     * 每个用户，每5秒钟只能访问一次
+     * 被限制的请求，渲染文本内容 "被限制啦"
+     */
+    @EnablePerUserLimit(rate = 0.2, renderType = LimitRenderType.TEXT, renderContent = "被限制啦")
+    public void user1() {
+        renderText("user1() render ok");
+    }
+
+
+    /**
+     * 每个IP地址，每5秒钟只能访问一次
+     */
+    @EnablePerIpLimit(rate = 0.2)
+    public void ip() {
+        renderText("ip() render ok");
+    }
+}
+```
+
+以上代码和注释已经很清楚的描述了每个注解的意义，但是，针对已经上线的项目，使用@EnableXXXLimit进行流量控制并一定是有效的，很多时候我们需要针对突发流量进行限制和管控，因此，除了以上注解意外，Jboot提供了在线流量管理功能。
+
+使用Jboot在线流量管理，首先配置上流量管理的URL地址，例如：
+
+```
+jboot.limitation.webPath = /jboot/limitation
+```
+
+配置好，启动项目，访问 `http://127.0.0.1:8080/jboot/limitation` 我们可以看到如下内容：
+
+```json
+{
+"ipRates": {
+	"/limitation/ip": {
+		"enable": true,
+		"rate": 0.2,
+		"renderContent": "",
+		"renderType": "",
+		"type": "ip"
+	}
+},
+"userRates": {
+	"/limitation/user": {
+		"enable": true,
+		"rate": 0.2,
+		"renderContent": "",
+		"renderType": "",
+		"type": "user"
+	},
+	"/limitation/user1": {
+		"enable": true,
+		"rate": 0.2,
+		"renderContent": "被限制啦",
+		"renderType": "text",
+		"type": "user"
+	}
+},
+"concurrencyRates": {
+	"/limitation/con": {
+		"enable": true,
+		"rate": 1,
+		"renderContent": "",
+		"renderType": "",
+		"type": "concurrency"
+	}
+},
+"requestRates": {
+	"/limitation/request1": {
+		"enable": true,
+		"rate": 1,
+		"renderContent": "/limitation/request2",
+		"renderType": "redirect",
+		"type": "request"
+	},
+	"/limitation/request": {
+		"enable": true,
+		"rate": 1,
+		"renderContent": "",
+		"renderType": "",
+		"type": "request"
+	}
+}
+}
+```
+
+#### 限流API
+
+1. 限流设置
+	* 接口：`/jboot/limitation/set`
+	* 参数：
+	
+		| 参数         |  描述  |
+		| ------------- | -----|
+		| type | 限流类型：支持有 `ip`,`user`,`request`,`concurrency`，分别代表：单个IP每秒钟限流、单个用户每秒钟限流、每秒钟允许请求的数量，总体并发量设置 |
+		| path  |要对那个路径进行设置，例如 `/user/aabb`|
+		| rate  |设置的数值是多少|
+	
+1. 关闭限流管控
+	* 接口：`/jboot/limitation/close`
+	* 参数：
+	
+		| 参数         |  描述  |
+		| ------------- | -----|
+		| type | 限流类型：支持有 `ip`,`user`,`request`,`concurrency`，分别代表：单个IP每秒钟限流、单个用户每秒钟限流、每秒钟允许请求的数量，总体并发量设置 |
+		| path  |要对那个路径进行设置，例如 `/user/aabb`|
+		
+1. 开启限流管控
+	* 接口：`/jboot/limitation/close`
+	* 参数：
+	
+		| 参数         |  描述  |
+		| ------------- | -----|
+		| type | 限流类型：支持有 `ip`,`user`,`request`,`concurrency`，分别代表：单个IP每秒钟限流、单个用户每秒钟限流、每秒钟允许请求的数量，总体并发量设置 |
+		| path  |要对那个路径进行设置，例如 `/user/aabb`|
+
+
+**注意：** 
+
+1. 通过限流API进行限流，所有的设置都会保存在内存里，因此如果重启服务器后，通过限流API进行限流的所有设置将会失效。
+2. 接口的前缀 `/jboot/limitation`是通过jboot.properties的`jboot.limitation.webPath = /jboot/limitation`进行设置的。
+
+**限流API安全设置**
+
+由于限流功能对系统至关重要，为了防止恶意用户猜出限流API对系统进行恶意操作，因此Jboot提供了限流API的权限设置功能，需要通过 通过jboot.properties的`jboot.limitation.webAuthorizer = com.xxx.MyAuthorizer`进行设置，其中`MyAuthorizer`需要实现`io.jboot.web.limitation.web.Authorizer`接口。
+
+例如：
+
+```java
+public class MyAuthorizer implements Authorizer {
+    @Override
+    public boolean onAuthorize(Controller controller) {
+        return true;
+    }
+}
+```
+
+当限流API被请求的时候，会通过 `MyAuthorizer` 进行权限认证，只有`MyAuthorizer`通过(onAuthorize返回`true`)的时候，请求API才会生效。
+
 
 # 安全控制 
 ## shiro简介
