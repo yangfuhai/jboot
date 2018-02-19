@@ -32,6 +32,8 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
+import io.shardingjdbc.core.api.HintManager;
+import io.shardingjdbc.core.hint.HintManagerHolder;
 
 import java.util.*;
 
@@ -43,19 +45,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private static final String COLUMN_CREATED = "created";
     private static final String COLUMN_MODIFIED = "modified";
-    private static final ThreadLocal<Object> THREAD_LOCAL = new ThreadLocal<>();
-
-    public void setThreadData(Object data) {
-        THREAD_LOCAL.set(data);
-    }
-
-    public <T> T getThreadData() {
-        return (T) THREAD_LOCAL.get();
-    }
-
-    public void clearThreadData() {
-        THREAD_LOCAL.remove();
-    }
 
     /**
      * 是否启用自动缓存
@@ -715,17 +704,16 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return super.find(sql, paras);
         }
 
-        //copy threadData to hystrix thread
-        final Object threadData = getThreadData();
+        final HintManager hintManager = HintManagerHolder.get();
 
         return Jboot.hystrix(new JbootHystrixCommand("sql:" + sql, JbootModelConfig.getConfig().getHystrixTimeout()) {
             @Override
             protected Object run() throws Exception {
                 try {
-                    setThreadData(threadData);
+                    HintManagerHolder.setHintManager(hintManager);
                     return JbootModel.super.find(sql, paras);
                 } finally {
-                    clearThreadData();
+                    HintManagerHolder.clear();
                 }
             }
 

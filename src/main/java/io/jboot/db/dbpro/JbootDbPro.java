@@ -24,6 +24,8 @@ import io.jboot.db.JbootDbHystrixFallbackListenerDefault;
 import io.jboot.db.model.JbootModelConfig;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
+import io.shardingjdbc.core.api.HintManager;
+import io.shardingjdbc.core.hint.HintManagerHolder;
 
 import java.util.List;
 
@@ -41,10 +43,17 @@ public class JbootDbPro extends DbPro {
             return super.find(sql, paras);
         }
 
+        final HintManager hintManager = HintManagerHolder.get();
+
         return Jboot.hystrix(new JbootHystrixCommand("sql:" + sql, JbootModelConfig.getConfig().getHystrixTimeout()) {
             @Override
             protected Object run() throws Exception {
-                return JbootDbPro.super.find(sql, paras);
+                try {
+                    HintManagerHolder.setHintManager(hintManager);
+                    return JbootDbPro.super.find(sql, paras);
+                } finally {
+                    HintManagerHolder.clear();
+                }
             }
 
             @Override
