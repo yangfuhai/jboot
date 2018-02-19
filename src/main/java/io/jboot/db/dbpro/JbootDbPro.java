@@ -36,6 +36,13 @@ import java.util.List;
  */
 public class JbootDbPro extends DbPro {
 
+    public JbootDbPro() {
+    }
+
+    public JbootDbPro(String configName) {
+        super(configName);
+    }
+
     @Override
     public List<Record> find(String sql, Object... paras) {
 

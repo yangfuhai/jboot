@@ -27,7 +27,7 @@ public class JbootDbProFactory implements IDbProFactory {
 
     @Override
     public DbPro getDbPro(String configName) {
-        return new JbootDbPro();
+        return new JbootDbPro(configName);
     }
 
 
