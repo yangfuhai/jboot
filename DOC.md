@@ -9,6 +9,7 @@
 		- 使用@RquestMapping
 		- render
 	- session 与 分布式session
+	- websocket
 - [安全控制](#安全控制)
 	- shiro简介
 	- shiro的配置
@@ -616,6 +617,96 @@ public class MyAuthorizer implements Authorizer {
 ```
 
 当限流API被请求的时候，会通过 `MyAuthorizer` 进行权限认证，只有`MyAuthorizer`通过(onAuthorize返回`true`)的时候，请求API才会生效。
+
+## websocket
+在使用websocket之前，需要在jboot.properties文件上配置启动websocket，例如：
+
+```java
+jboot.web.websocketEnable = true
+jboot.web.websocketBufferPoolSize = 100  
+```
+
+`jboot.web.websocketBufferPoolSize` 在没有配置的情况下，默认值是`100`。
+
+当做好以上配置后，就可以开始编写websocket的相关代码了。
+
+html代码：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+服务器返回的信息：
+<input type="text" id="show"/>
+
+浏览器发送的信息：
+<input type="text" id="msg"/>
+<input type="button" value="send" id="send" onclick="send()"/>
+
+
+<script>
+    var ws = null ;
+    var target="ws://localhost:8080/websocket/test";
+    if ('WebSocket' in window) {
+        ws = new WebSocket(target);
+    } else if ('MozWebSocket' in window) {
+        ws = new MozWebSocket(target);
+    } else {
+        alert('WebSocket is not supported by this browser.');
+    }
+
+    ws.onopen = function(obj){
+        console.info('open') ;
+        console.info(obj) ;
+    } ;
+    
+    ws.onclose = function (obj) {
+        console.info('close') ;
+        console.info(obj) ;
+    } ;
+    ws.onmessage = function(obj){
+        console.info(obj) ;
+        document.getElementById('show').value=obj.data;
+    } ;
+    function send(){
+    	ws.send(document.getElementById('msg').value);
+    }
+</script>
+</body>
+</html>
+```
+
+java代码：
+
+```java
+@ServerEndpoint("/websocket/test")
+public class Test {
+	@OnOpen
+	public void onOpen(){
+		System.out.println("WEBopen");
+	}
+	@OnClose
+	public void onClose(){
+		System.out.println("WEBCLOSE");
+	}
+	@OnMessage
+	public void onMessage(Session session,String msg){
+		System.out.println("receive message : "+msg);
+		if(session.isOpen()){
+			try {
+				//发送消息的html页面
+				session.getBasicRemote().sendText(msg);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+```
 
 
 # 安全控制 
