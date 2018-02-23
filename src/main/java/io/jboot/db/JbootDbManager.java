@@ -212,7 +212,7 @@ public class JbootDbManager {
             return activeRecordPlugin;
         }
 
-        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(config.getName());
+        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(config);
         if (ArrayUtils.isNullOrEmpty(tableInfos)) {
             return activeRecordPlugin;
         }

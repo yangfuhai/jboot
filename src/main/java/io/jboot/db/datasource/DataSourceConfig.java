@@ -59,6 +59,9 @@ public class DataSourceConfig {
     private String containerFactory;
     private Integer transactionLevel;
 
+    private String table; //此数据源包含哪些表，这个配置会覆盖@Table注解的配置
+    private String exTable; //该数据源排除哪些表，这个配置会修改掉@Table上的配置
+
     /**
      * 是否需要添加到映射
      * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了，
@@ -275,5 +278,21 @@ public class DataSourceConfig {
 
     public void setTransactionLevel(Integer transactionLevel) {
         this.transactionLevel = transactionLevel;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
+
+    public String getExTable() {
+        return exTable;
+    }
+
+    public void setExTable(String exTable) {
+        this.exTable = exTable;
     }
 }
