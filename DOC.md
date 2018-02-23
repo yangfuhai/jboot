@@ -687,11 +687,11 @@ java代码：
 public class Test {
 	@OnOpen
 	public void onOpen(){
-		System.out.println("WEBopen");
+		System.out.println("onOpen");
 	}
 	@OnClose
 	public void onClose(){
-		System.out.println("WEBCLOSE");
+		System.out.println("onClose");
 	}
 	@OnMessage
 	public void onMessage(Session session,String msg){
