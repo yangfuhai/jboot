@@ -1,3 +1,12 @@
+jboot-1.3.5:
+修复：Db.use() 总是使用最后一个的问题
+修复：jboot.datasource.table 和 jboot.datasource.extable 配置无效的问题
+修复：sharding-jdbc 使用 hintManager 必须关闭 hystrix，否则无法使用的问题
+文档：新增websocket相关的文档
+其他：更新依赖，升级sharding-jdbc到最新版本
+
+
+
 jboot-1.3.4:
 新增：model 查询的时候默认通过hystrix进行管理
 新增：db查询Record的时候，默认通过Hystrix进行管理
