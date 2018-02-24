@@ -53,9 +53,11 @@ public class JbootMetricManager {
     private JbootMetricManager() {
         metricRegistry = new MetricRegistry();
         healthCheckRegistry = new HealthCheckRegistry();
+
+        init();
     }
 
-    
+
     public void init() {
         List<JbootMetricReporter> reporters = getReporters();
         if (ArrayUtils.isNullOrEmpty(reporters)) {

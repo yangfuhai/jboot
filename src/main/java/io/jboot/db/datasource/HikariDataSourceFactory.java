@@ -17,6 +17,7 @@ package io.jboot.db.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.jboot.Jboot;
 
 import javax.sql.DataSource;
 
@@ -49,6 +50,9 @@ public class HikariDataSourceFactory implements DataSourceFactory {
 
         hikariConfig.setMaximumPoolSize(dataSourceConfig.getMaximumPoolSize());
 
-        return new HikariDataSource(hikariConfig);
+        HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+        dataSource.setMetricRegistry(Jboot.me().getMetric());
+
+        return dataSource;
     }
 }
