@@ -157,15 +157,15 @@ public class JbootController extends Controller {
     }
 
 
-    protected HashMap<String, Object> jwts;
+    private HashMap<String, Object> jwtMap;
 
     @Before(NotAction.class)
     public Controller setJwtAttr(String name, Object value) {
-        if (jwts == null) {
-            jwts = new HashMap<>();
+        if (jwtMap == null) {
+            jwtMap = new HashMap<>();
         }
 
-        jwts.put(name, value);
+        jwtMap.put(name, value);
         return this;
     }
 
@@ -175,24 +175,24 @@ public class JbootController extends Controller {
         if (map == null) {
             throw new NullPointerException("map is null");
         }
-        if (jwts == null) {
-            jwts = new HashMap<>();
+        if (jwtMap == null) {
+            jwtMap = new HashMap<>();
         }
 
-        jwts.putAll(map);
+        jwtMap.putAll(map);
         return this;
     }
 
 
     @Before(NotAction.class)
     public <T> T getJwtAttr(String name) {
-        return jwts == null ? null : (T) jwts.get(name);
+        return jwtMap == null ? null : (T) jwtMap.get(name);
     }
 
 
     @Before(NotAction.class)
     public HashMap<String, Object> getJwtAttrs() {
-        return jwts;
+        return jwtMap;
     }
 
     @Before(NotAction.class)
@@ -207,7 +207,10 @@ public class JbootController extends Controller {
 
     @Before(NotAction.class)
     public String createJwtToken() {
-        return JwtManager.me().createJwtToken(getJwtAttrs());
+        if (jwtMap == null) {
+            throw new NullPointerException("jwt attrs is null");
+        }
+        return JwtManager.me().createJwtToken(jwtMap);
     }
 
     /**
