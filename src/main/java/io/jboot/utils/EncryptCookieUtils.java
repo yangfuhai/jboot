@@ -19,6 +19,8 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.Base64Kit;
 import com.jfinal.kit.HashKit;
 import com.jfinal.log.Log;
+import io.jboot.Jboot;
+import io.jboot.web.JbootWebConfig;
 
 import java.math.BigInteger;
 
@@ -35,8 +37,7 @@ public class EncryptCookieUtils {
 
     private final static String COOKIE_SEPARATOR = "#";
 
-    private static final String DEFAULT_COOKIE_ENCRYPT_KEY = "JBOOT_DEFAULT_ENCRYPT_KEY";
-    private static String COOKIE_ENCRYPT_KEY = DEFAULT_COOKIE_ENCRYPT_KEY;
+    private static String COOKIE_ENCRYPT_KEY = Jboot.config(JbootWebConfig.class).getCookieEncryptKey();
     private static Log log = Log.getLog(EncryptCookieUtils.class);
 
     /**
@@ -113,8 +114,8 @@ public class EncryptCookieUtils {
     }
 
     private static String encrypt(String encrypt_key, long saveTime, String maxAgeInSeconds, String value) {
-        if (DEFAULT_COOKIE_ENCRYPT_KEY.equals(encrypt_key)) {
-            log.warn("warn!!! encrypt key is defalut value. please invoke EncryptCookieUtils.initEncryptKey(key) method before.");
+        if (JbootWebConfig.DEFAULT_COOKIE_ENCRYPT_KEY.equals(encrypt_key)) {
+            log.warn("warn!!! encrypt key is defalut value. please config \"jboot.web.cookieEncryptKey = xxx\" in jboot.properties ");
         }
         return HashKit.md5(encrypt_key + saveTime + maxAgeInSeconds + value);
     }
