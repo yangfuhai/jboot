@@ -94,9 +94,6 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         try {
             inv.invoke();
         } finally {
-            if (counter != null) {
-                counter.dec();
-            }
             if (timerContext != null) {
                 timerContext.stop();
             }
