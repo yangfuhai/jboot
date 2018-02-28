@@ -1,3 +1,11 @@
+jboot-1.3.6:
+新增：hikaricp 支持 metrics 监控的功能
+修复：MetricManager 初始化可能出现空指针异常的问题
+优化：Jwt 的相关方法，新增直接创建token在json返回
+更新：undertow 到最新版本 2.0
+更新：JWT 的相关文档
+
+
 jboot-1.3.5:
 修复：Db.use() 总是使用最后一个的问题
 修复：jboot.datasource.table 和 jboot.datasource.extable 配置无效的问题

@@ -22,7 +22,7 @@ import io.jboot.web.JbootAppConfig;
 public class JbootConfig {
 
 
-    private String version = "1.3.5";
+    private String version = "1.3.6";
     private String mode = Jboot.MODE.DEV.getValue();
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
