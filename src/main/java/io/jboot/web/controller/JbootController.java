@@ -200,6 +200,15 @@ public class JbootController extends Controller {
         return JwtManager.me().getPara(name);
     }
 
+    @Before(NotAction.class)
+    public Map getJwtParas() {
+        return JwtManager.me().getParas();
+    }
+
+    @Before(NotAction.class)
+    public String createJwtToken() {
+        return JwtManager.me().createJwtToken(getJwtAttrs());
+    }
 
     /**
      * 获取当前网址

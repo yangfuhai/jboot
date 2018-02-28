@@ -71,13 +71,13 @@ public class JwtInterceptor implements FixedInterceptor {
         }
 
         JbootController jbootController = (JbootController) inv.getController();
-        Map<String, Object> jwts = jbootController.getJwtAttrs();
+        Map<String, Object> jwtMap = jbootController.getJwtAttrs();
 
-        if (jwts == null || jwts.isEmpty()) {
+        if (jwtMap == null || jwtMap.isEmpty()) {
             return;
         }
 
-        String token = JwtManager.me().createJwtToken(jwts);
+        String token = JwtManager.me().createJwtToken(jwtMap);
         HttpServletResponse response = inv.getController().getResponse();
         response.addHeader(JwtManager.me().getHttpHeaderName(), token);
     }
