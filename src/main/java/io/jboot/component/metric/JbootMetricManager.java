@@ -39,9 +39,12 @@ public class JbootMetricManager {
 
     private static final Log LOG = Log.getLog(JbootMetricManager.class);
 
-    private static JbootMetricManager me = new JbootMetricManager();
+    private static JbootMetricManager me;
 
     public static JbootMetricManager me() {
+        if (me == null) {
+            me = new JbootMetricManager();
+        }
         return me;
     }
 
