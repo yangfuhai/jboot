@@ -100,6 +100,7 @@ QQ交流群： 601440615
 * Rlax（EMAIL:popkids@qq.com，GITHUB:[@pkanyue](https://github.com/pkanyue)，QQ:441420519，WECHAT:RlaxUC)
 * 徐海峰（EMAIL:xhf6731202@126.com，GITHUB:[@xhf6731202](https://github.com/xhf6731202)，QQ:27533892，WECHAT:atm27533892）
 * 周洛熙 (EMAIL:78793093@qq.com，GITHUB:[@zhoufengjob](https://github.com/zhoufengjob)，QQ:78793093)
+* lsup (EMAIL:egox.vip@gmail.com，GITHUB:[@lsup](https://github.com/lsup))
 
 ## QQ群
 

@@ -971,9 +971,9 @@ jboot.web.jwt.secret = your_secret
 
 # ORM
 ## 配置
-在使用数据库之前，需要给Jboot应用做一些配置，实际上，在任何的需要到数据库的应用中，都需要给应用程序做一些配置，让应用程序知道去哪里读取数据。
+在使用数据库之前，需要给Jboot应用做一些配置，实际上，在任何需要用到数据库的应用中，都需要给应用程序做一些配置，让应用程序知道去哪里读取数据。
 
-由于Jboot的数据库读取是依赖于JFinal，所以实际上JFinal只是的数据库类型，Jboot都会支持，比如常用的数据库类型有：
+由于Jboot的数据库读取是依赖于JFinal，所以实际上只要是JFinal支持的数据库类型，Jboot都会支持，比如常用的数据库类型有：
 
 * Mysql
 * Oracle
@@ -1487,7 +1487,7 @@ https://www.consul.io
 ##### 启动consul
 
 ```java
-consul -agent dev
+consul agent -dev
 ```
 
 #### zookeeper
@@ -2467,14 +2467,4 @@ core framework:
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
+	
