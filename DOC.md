@@ -248,7 +248,7 @@ RquestMapping是请求映射，也就是通过@RquestMapping注解，可以让�
 
 ```java
 @RequestMapping("/")
-public class HelloController extend JbootController{
+public class HelloController extends JbootController{
    public void index(){
         renderText("hello jboot");
    }
