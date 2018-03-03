@@ -259,7 +259,7 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>1.7.4.Final</version>
+            <version>1.7.1.Final</version>
             <scope>provided</scope>
         </dependency>
 
@@ -717,6 +717,5 @@
             <url>http://maven-server:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
 
 </project>
