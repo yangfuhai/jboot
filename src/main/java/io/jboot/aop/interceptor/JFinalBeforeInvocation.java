@@ -28,13 +28,15 @@ public class JFinalBeforeInvocation extends Invocation {
 
     private Interceptor[] inters;
     private MethodInvocation methodInvocation;
+    private Object[] args;
 
     private int index = 0;
 
 
-    public JFinalBeforeInvocation(MethodInvocation methodInvocation, Interceptor[] inters) {
+    public JFinalBeforeInvocation(MethodInvocation methodInvocation, Interceptor[] inters, Object[] args) {
         this.methodInvocation = methodInvocation;
         this.inters = inters;
+        this.args = args;
     }
 
 
@@ -69,6 +71,20 @@ public class JFinalBeforeInvocation extends Invocation {
     @Override
     public <T> T getTarget() {
         return (T) methodInvocation.getThis();
+    }
+
+    @Override
+    public Object getArg(int index) {
+        if (index >= args.length)
+            throw new ArrayIndexOutOfBoundsException();
+        return args[index];
+    }
+
+    @Override
+    public void setArg(int index, Object value) {
+        if (index >= args.length)
+            throw new ArrayIndexOutOfBoundsException();
+        args[index] = value;
     }
 
 

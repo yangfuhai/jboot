@@ -46,7 +46,7 @@ public class JFinalBeforeInterceptor implements MethodInterceptor {
         Method method = methodInvocation.getMethod();
 
         Interceptor[] finalInters = manger.buildServiceMethodInterceptor(InterceptorManager.NULL_INTERS, targetClass, method);
-        JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, finalInters);
+        JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, finalInters, methodInvocation.getArguments());
         invocation.invoke();
         return invocation.getReturnValue();
     }
