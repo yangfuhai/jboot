@@ -22,6 +22,7 @@ import io.jboot.Jboot;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
+import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
 
 import java.io.IOException;
@@ -38,8 +39,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     private Map<String, Channel> channelMap = Maps.newConcurrentMap();
 
     public JbootRabbitmqImpl() {
-
-        initChannels();
+        super();
 
         JbootmqRabbitmqConfig rabbitmqConfig = Jboot.config(JbootmqRabbitmqConfig.class);
 
@@ -64,10 +64,16 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             throw new JbootException("can not connection rabbitmq server", e);
         }
 
+        if (ArrayUtils.isNotEmpty(this.channels)) {
+            initChannelSubscribe();
+        }
+
+    }
+
+    private void initChannelSubscribe() {
         for (String toChannel : channels) {
             registerListner(getChannel(toChannel), toChannel);
         }
-
     }
 
     private void registerListner(final Channel channel, String toChannel) {
@@ -129,9 +135,6 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void enqueue(Object message, String toChannel) {
-
-        ensureChannelExist(toChannel);
-
         Channel channel = getChannel(toChannel);
         try {
             byte[] bytes = Jboot.me().getSerializer().serialize(message);
@@ -143,9 +146,6 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void publish(Object message, String toChannel) {
-
-        ensureChannelExist(toChannel);
-
         Channel channel = getChannel(toChannel);
         try {
             byte[] bytes = Jboot.me().getSerializer().serialize(message);

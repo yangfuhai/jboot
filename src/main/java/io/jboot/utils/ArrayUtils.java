@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,13 @@
 package io.jboot.utils;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 
 public class ArrayUtils {
 
-    public static boolean isNotEmpty(List list) {
+    public static boolean isNotEmpty(Collection list) {
         return list != null && list.size() > 0;
     }
 
@@ -34,7 +34,7 @@ public class ArrayUtils {
         return objects != null && objects.length > 0;
     }
 
-    public static boolean isNullOrEmpty(List list) {
+    public static boolean isNullOrEmpty(Collection list) {
         return list == null || list.size() == 0;
     }
 

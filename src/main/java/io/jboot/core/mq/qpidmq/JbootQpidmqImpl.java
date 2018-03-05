@@ -20,6 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
+import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
 import org.apache.qpid.client.AMQAnyDestination;
 import org.apache.qpid.client.AMQConnection;
@@ -40,7 +41,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
     private boolean serializerEnable = true;
 
     public JbootQpidmqImpl() {
-        initChannels();
+        super();
 
         JbootQpidmqConfig qpidConfig = Jboot.config(JbootQpidmqConfig.class);
         serializerEnable = qpidConfig.isSerializerEnable();
@@ -48,6 +49,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         try {
             String url = getConnectionUrl();
             connection = new AMQConnection(url);
+            connection.start();
 
             startReceiveMsgThread();
 
@@ -58,21 +60,17 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void enqueue(Object message, String toChannel) {
-        ensureChannelExist(toChannel);
-
         String addr = getQueueAddr(toChannel);
         sendMsg(addr, message);
     }
 
     @Override
     public void publish(Object message, String toChannel) {
-        ensureChannelExist(toChannel);
-
         String addr = getTopicAddr(toChannel);
         sendMsg(addr, message);
     }
 
-    public void  sendMsg(String addr, Object message) {
+    public void sendMsg(String addr, Object message) {
         try {
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Destination destination = new AMQAnyDestination(addr.toString());
@@ -86,7 +84,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
                 byte[] data = Jboot.me().getSerializer().serialize(message);
                 m = session.createBytesMessage();
                 m.setIntProperty("data-len", data.length);
-                ((BytesMessage)m).writeBytes(data);
+                ((BytesMessage) m).writeBytes(data);
             }
 
             producer.send(m);
@@ -141,8 +139,10 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         return addr.toString();
     }
 
-    private void startReceiveMsgThread() throws Exception{
-        connection.start();
+    private void startReceiveMsgThread() throws Exception {
+        if (ArrayUtils.isNullOrEmpty(this.channels)) {
+            return;
+        }
 
         for (String channel : this.channels) {
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -181,7 +181,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
 
                     Object object = null;
                     if (!serializerEnable) {
-                        TextMessage textMessage = (TextMessage)message;
+                        TextMessage textMessage = (TextMessage) message;
                         object = textMessage.getText();
                     } else {
                         BytesMessage bytesMessage = (BytesMessage) message;

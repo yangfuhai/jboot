@@ -16,23 +16,21 @@
 package io.jboot.core.mq.aliyunmq;
 
 import com.aliyun.openservices.ons.api.*;
-import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
+import io.jboot.utils.ArrayUtils;
 
 import java.util.Properties;
 
 
 public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageListener {
 
-    private static final Log LOG = Log.getLog(JbootAliyunmqImpl.class);
     private Producer producer;
     private Consumer consumer;
 
-    public void JbootAliyunmq() {
-
-        initChannels();
+    public JbootAliyunmqImpl() {
+        super();
 
         JbootAliyunmqConfig aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
 
@@ -44,25 +42,30 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
         properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, aliyunmqConfig.getSendMsgTimeoutMillis());//设置发送超时时间，单位毫秒
 
         producer = ONSFactory.createProducer(properties);
-        consumer = ONSFactory.createConsumer(properties);
+        producer.start();
 
+        if (ArrayUtils.isNotEmpty(this.channels)) {
+            initChannelSubscribe(properties);
+        }
+
+
+    }
+
+    private void initChannelSubscribe(Properties properties) {
+        consumer = ONSFactory.createConsumer(properties);
         for (String c : channels) {
             consumer.subscribe(c, "*", this);
         }
-
-        producer.start();
         consumer.start();
     }
 
     @Override
     public void enqueue(Object message, String toChannel) {
-        ensureChannelExist(toChannel);
         throw new RuntimeException("not finished!");
     }
 
     @Override
     public void publish(Object message, String toChannel) {
-        ensureChannelExist(toChannel);
         byte[] bytes = Jboot.me().getSerializer().serialize(message);
         Message onsMessage = new Message(toChannel, "*", bytes);
         producer.send(onsMessage);
