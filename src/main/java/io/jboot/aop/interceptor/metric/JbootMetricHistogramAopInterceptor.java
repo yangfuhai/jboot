@@ -28,6 +28,7 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public class JbootMetricHistogramAopInterceptor implements MethodInterceptor {
 
+    private static final String suffix = ".histogram";
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
@@ -35,7 +36,7 @@ public class JbootMetricHistogramAopInterceptor implements MethodInterceptor {
         EnableMetricHistogram annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricHistogram.class);
 
         String name = StringUtils.isBlank(annotation.value())
-                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName()
+                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName() + suffix
                 : annotation.value();
 
         Histogram histogram = Jboot.me().getMetric().histogram(name);

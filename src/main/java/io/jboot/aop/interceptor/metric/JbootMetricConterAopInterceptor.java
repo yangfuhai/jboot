@@ -28,6 +28,7 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public class JbootMetricConterAopInterceptor implements MethodInterceptor {
 
+    private static final String suffix = ".counter";
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
@@ -35,16 +36,12 @@ public class JbootMetricConterAopInterceptor implements MethodInterceptor {
         EnableMetricCounter annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricCounter.class);
 
         String name = StringUtils.isBlank(annotation.value())
-                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName()
+                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName() + suffix
                 : annotation.value();
 
         Counter counter = Jboot.me().getMetric().counter(name);
-        try {
-            counter.inc();
-            return methodInvocation.proceed();
-        } finally {
-            counter.dec();
-        }
+        counter.inc();
+        return methodInvocation.proceed();
 
     }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,7 +46,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         EnableMetricCounter counterAnnotation = inv.getMethod().getAnnotation(EnableMetricCounter.class);
         if (counterAnnotation != null) {
             String name = StringUtils.isBlank(counterAnnotation.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".counter"
                     : counterAnnotation.value();
 
 
@@ -58,7 +58,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         EnableMetricMeter meterAnnotation = inv.getMethod().getAnnotation(EnableMetricMeter.class);
         if (meterAnnotation != null) {
             String name = StringUtils.isBlank(meterAnnotation.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".meter"
                     : meterAnnotation.value();
 
 
@@ -70,7 +70,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         EnableMetricHistogram histogramAnnotation = inv.getMethod().getAnnotation(EnableMetricHistogram.class);
         if (histogramAnnotation != null) {
             String name = StringUtils.isBlank(histogramAnnotation.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".histogram"
                     : histogramAnnotation.value();
 
 
@@ -82,7 +82,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         EnableMetricTimer timerAnnotation = inv.getMethod().getAnnotation(EnableMetricTimer.class);
         if (timerAnnotation != null) {
             String name = StringUtils.isBlank(timerAnnotation.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".timer"
                     : timerAnnotation.value();
 
 
