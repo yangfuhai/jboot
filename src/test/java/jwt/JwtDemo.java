@@ -26,6 +26,7 @@ public class JwtDemo extends JbootController {
 
     public static void main(String[] args) {
         Jboot.setBootArg("jboot.web.jwt.secret", "mySecret");
+        Jboot.setBootArg("jboot.server.port", "8888");
         Jboot.run(args);
     }
 

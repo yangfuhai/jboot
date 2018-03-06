@@ -58,9 +58,9 @@ public class JwtInterceptor implements FixedInterceptor {
         try {
             JwtManager.me().holdJwts(map);
             inv.invoke();
+            processInvokeAfter(inv);
         } finally {
             JwtManager.me().releaseJwts();
-            processInvokeAfter(inv);
         }
     }
 
