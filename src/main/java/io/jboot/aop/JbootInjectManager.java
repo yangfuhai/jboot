@@ -89,7 +89,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
 
 
         // 设置 Metrics 相关的统计拦截
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricCounter.class), new JbootMetricConterAopInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricCounter.class), new JbootMetricCounterAopInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricConcurrency.class), new JbootMetricConcurrencyAopInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricHistogram.class), new JbootMetricHistogramAopInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricMeter.class), new JbootMetricMeterAopInterceptor());

@@ -26,7 +26,7 @@ import org.aopalliance.intercept.MethodInvocation;
 /**
  * 用于在AOP拦截，并通过Metrics的Conter进行统计
  */
-public class JbootMetricConterAopInterceptor implements MethodInterceptor {
+public class JbootMetricCounterAopInterceptor implements MethodInterceptor {
 
     private static final String suffix = ".counter";
 
