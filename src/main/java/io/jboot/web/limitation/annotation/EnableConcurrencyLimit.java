@@ -25,7 +25,7 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface EnableUserRateLimit {
+public @interface EnableConcurrencyLimit {
 
     double rate(); //每秒钟允许通过的次数
 
@@ -35,13 +35,13 @@ public @interface EnableUserRateLimit {
      *
      * @return
      */
-    String limitAction() default "";
+    String renderType() default "";
 
     /**
      * 被限流后给客户端的响应，响应的内容根据 action 的类型来渲染
      *
      * @return
      */
-    String limitContent() default "";
+    String renderContent() default "";
 
 }

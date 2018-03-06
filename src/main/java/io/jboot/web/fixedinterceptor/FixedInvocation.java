@@ -68,5 +68,7 @@ public class FixedInvocation {
         return invocation.getMethodName();
     }
 
-
+    public Invocation getInvocation() {
+        return invocation;
+    }
 }

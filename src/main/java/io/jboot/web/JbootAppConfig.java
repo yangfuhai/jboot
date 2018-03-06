@@ -31,7 +31,6 @@ import io.jboot.JbootConstants;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.component.log.Slf4jLogFactory;
-import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.component.swagger.JbootSwaggerConfig;
 import io.jboot.component.swagger.JbootSwaggerController;
@@ -43,6 +42,7 @@ import io.jboot.schedule.JbootScheduleManager;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
+import io.jboot.utils.StringUtils;
 import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -52,6 +52,9 @@ import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
+import io.jboot.web.limitation.JbootLimitationManager;
+import io.jboot.web.limitation.LimitationConfig;
+import io.jboot.web.limitation.web.LimitationController;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
@@ -121,6 +124,11 @@ public class JbootAppConfig extends JFinalConfig {
         JbootSwaggerConfig swaggerConfig = Jboot.config(JbootSwaggerConfig.class);
         if (swaggerConfig.isConfigOk()) {
             routes.add(swaggerConfig.getPath(), JbootSwaggerController.class, swaggerConfig.getPath());
+        }
+
+        LimitationConfig limitationConfig = Jboot.config(LimitationConfig.class);
+        if (StringUtils.isNotBlank(limitationConfig.getWebPath())) {
+            routes.add(limitationConfig.getWebPath(), LimitationController.class);
         }
 
         JbootAppListenerManager.me().onJfinalRouteConfig(routes);
@@ -212,8 +220,8 @@ public class JbootAppConfig extends JFinalConfig {
          */
         JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
+        JbootLimitationManager.me().init(routeList);
         JbootScheduleManager.me().init();
-        JbootMetricManager.me().init();
         JbootSwaggerManager.me().init();
 
         /**

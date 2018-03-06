@@ -35,6 +35,9 @@ public class JbootWebConfig {
     private boolean websocketEnable = false;
     private int websocketBufferPoolSize = 100;
 
+    public static final String DEFAULT_COOKIE_ENCRYPT_KEY = "JBOOT_DEFAULT_ENCRYPT_KEY";
+    private String cookieEncryptKey = DEFAULT_COOKIE_ENCRYPT_KEY;
+
 
     public boolean isActionCacheEnable() {
         return actionCacheEnable;
@@ -68,6 +71,14 @@ public class JbootWebConfig {
         this.websocketBufferPoolSize = websocketBufferPoolSize;
     }
 
+    public String getCookieEncryptKey() {
+        return cookieEncryptKey;
+    }
+
+    public void setCookieEncryptKey(String cookieEncryptKey) {
+        this.cookieEncryptKey = cookieEncryptKey;
+    }
+
     @Override
     public String toString() {
         return "JbootWebConfig {" +
@@ -75,6 +86,7 @@ public class JbootWebConfig {
                 ", actionCacheKeyGeneratorType='" + actionCacheKeyGeneratorType + '\'' +
                 ", websocketEnable=" + websocketEnable +
                 ", websocketBufferPoolSize=" + websocketBufferPoolSize +
+                ", cookieEncryptKey='" + cookieEncryptKey + '\'' +
                 '}';
     }
 }

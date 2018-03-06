@@ -16,6 +16,7 @@
 package io.jboot.web.limitation;
 
 import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.web.limitation.web.NoneAuthorizer;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -29,6 +30,9 @@ public class LimitationConfig {
     private String limitAjaxMessage = "request limit";
 
     private String limitView;
+
+    private String webPath;
+    private String webAuthorizer = NoneAuthorizer.class.getName();
 
 
     public int getLimitAjaxCode() {
@@ -53,5 +57,21 @@ public class LimitationConfig {
 
     public void setLimitView(String limitView) {
         this.limitView = limitView;
+    }
+
+    public String getWebPath() {
+        return webPath;
+    }
+
+    public void setWebPath(String webPath) {
+        this.webPath = webPath;
+    }
+
+    public String getWebAuthorizer() {
+        return webAuthorizer;
+    }
+
+    public void setWebAuthorizer(String webAuthorizer) {
+        this.webAuthorizer = webAuthorizer;
     }
 }

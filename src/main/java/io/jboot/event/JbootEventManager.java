@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,7 +37,7 @@ public class JbootEventManager {
 
     public JbootEventManager() {
         threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-                60L, TimeUnit.MINUTES,
+                60L, TimeUnit.SECONDS,
                 new SynchronousQueue<Runnable>());
         asyncListenerMap = new ConcurrentHashMap<>();
         listenerMap = new ConcurrentHashMap<>();
@@ -201,17 +201,14 @@ public class JbootEventManager {
 
     private void invokeListenersAsync(final JbootEvent event, List<JbootEventListener> listeners) {
         for (final JbootEventListener listener : listeners) {
-            threadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (Jboot.me().isDevMode()) {
-                            System.out.println(String.format("listener[%s]-->>onEvent(%s) in async", listener, event));
-                        }
-                        listener.onEvent(event);
-                    } catch (Throwable e) {
-                        log.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
+            threadPool.execute(() -> {
+                try {
+                    if (Jboot.me().isDevMode()) {
+                        System.out.println(String.format("listener[%s]-->>onEvent(%s) in async", listener, event));
                     }
+                    listener.onEvent(event);
+                } catch (Throwable e) {
+                    log.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
                 }
             });
         }

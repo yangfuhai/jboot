@@ -1,4 +1,4 @@
-
+![](./docs/files/logo.png)
 ## [English document](./README.md)
 ## JBoot 是什么
 
@@ -12,7 +12,7 @@ QQ交流群： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.2.9</version>
+    <version>1.3.7</version>
 </dependency>
 
 ```
@@ -25,6 +25,7 @@ QQ交流群： 601440615
 * [x] AOP （基于guice）
 * 安全控制
     * [x] shiro
+    * [x] jwt
 * RPC远程调用 
     * [x] motan
     * [x] dubbo
@@ -99,6 +100,7 @@ QQ交流群： 601440615
 * Rlax（EMAIL:popkids@qq.com，GITHUB:[@pkanyue](https://github.com/pkanyue)，QQ:441420519，WECHAT:RlaxUC)
 * 徐海峰（EMAIL:xhf6731202@126.com，GITHUB:[@xhf6731202](https://github.com/xhf6731202)，QQ:27533892，WECHAT:atm27533892）
 * 周洛熙 (EMAIL:78793093@qq.com，GITHUB:[@zhoufengjob](https://github.com/zhoufengjob)，QQ:78793093)
+* lsup (EMAIL:egox.vip@gmail.com，GITHUB:[@lsup](https://github.com/lsup))
 
 ## QQ群
 

@@ -16,15 +16,14 @@
 package io.jboot.component.shiro;
 
 import com.jfinal.config.Routes;
-import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 import io.jboot.component.shiro.processer.*;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.web.utils.ControllerUtils;
 import org.apache.shiro.authz.annotation.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,7 +42,6 @@ public class JbootShiroManager {
         return me;
     }
 
-    private static final String SLASH = "/";
     private ConcurrentHashMap<String, ShiroAuthorizeProcesserInvoker> invokers = new ConcurrentHashMap<>();
 
     private ShiroRequiresAuthenticationProcesser requiresAuthenticationProcesser = new ShiroRequiresAuthenticationProcesser();
@@ -59,7 +57,7 @@ public class JbootShiroManager {
      * 初始化 invokers 变量
      */
     private void initInvokers(List<Routes.Route> routes) {
-        Set<String> excludedMethodName = buildExcludedMethodName();
+        Set<String> excludedMethodName = ControllerUtils.buildExcludedMethodName();
 
         for (Routes.Route route : routes) {
             Class<? extends Controller> controllerClass = route.getControllerClass();
@@ -83,7 +81,7 @@ public class JbootShiroManager {
                 Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
 
 
-                String actionKey = createActionKey(controllerClass, method, controllerKey);
+                String actionKey = ControllerUtils.createActionKey(controllerClass, method, controllerKey);
                 ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
 
 
@@ -111,46 +109,6 @@ public class JbootShiroManager {
         }
     }
 
-
-    /**
-     * 参考ActionMapping中的实现。
-     *
-     * @param controllerClass
-     * @param method
-     * @param controllerKey
-     * @return
-     */
-
-    private String createActionKey(Class<? extends Controller> controllerClass,
-                                   Method method, String controllerKey) {
-        String methodName = method.getName();
-        String actionKey;
-
-        ActionKey ak = method.getAnnotation(ActionKey.class);
-        if (ak != null) {
-            actionKey = ak.value().trim();
-            if ("".equals(actionKey))
-                throw new IllegalArgumentException(controllerClass.getName() + "." + methodName + "(): The argument of ActionKey can not be blank.");
-            if (!actionKey.startsWith(SLASH))
-                actionKey = SLASH + actionKey;
-        } else if (methodName.equals("index")) {
-            actionKey = controllerKey;
-        } else {
-            actionKey = controllerKey.equals(SLASH) ? SLASH + methodName : controllerKey + SLASH + methodName;
-        }
-        return actionKey;
-    }
-
-
-    private Set<String> buildExcludedMethodName() {
-        Set<String> excludedMethodName = new HashSet<String>();
-        Method[] methods = Controller.class.getMethods();
-        for (Method m : methods) {
-            if (m.getParameterTypes().length == 0)
-                excludedMethodName.add(m.getName());
-        }
-        return excludedMethodName;
-    }
 
 
     public AuthorizeResult invoke(String actionKey) {

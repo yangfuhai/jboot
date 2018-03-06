@@ -47,11 +47,11 @@ public class MqTest {
             }
         });
 
-//        Jboot.me().getMq().publish("hello" , "myChannel1");
-        Jboot.me().getMq().enqueue("hello", "myChannel1");
+        Jboot.me().getMq().publish("hello" , "myChannel1");
+//        Jboot.me().getMq().enqueue("hello", "myChannel1");
 
 
-        sleep(1000 * 3);
+        sleep(1000 * 5);
     }
 
 

@@ -26,7 +26,7 @@ public class JbootrpcHystrixFallbackListenerDefault implements JbootrpcHystrixFa
     @Override
     public Object onFallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception) {
         if (exception instanceof HystrixTimeoutException) {
-            System.err.println("rpc request timeout, the defalut timeout value is  3000 milliseconds, " +
+            System.err.println("rpc request timeout, the defalut timeout value is 5000 milliseconds, " +
                     "you can config jboot.rpc.hystrixTimeout to set the value, " +
                     "or config \"jboot.rpc.hystrixEnable = false\" to close hystrix.");
         }

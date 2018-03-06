@@ -13,35 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.limitation.annotation;
+package io.jboot.web.limitation.web;
 
-import java.lang.annotation.*;
+import com.jfinal.core.Controller;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.web.limitation.annotation
+ * @Package io.jboot.web.limitation.web
  */
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface EnableIpRateLimit {
-
-    double rate(); //每秒钟允许通过的次数
-
-    /**
-     * 被限流后给用户的反馈操作
-     * 支持：json，render，text，redirect
-     *
-     * @return
-     */
-    String limitAction() default "";
-
-    /**
-     * 被限流后给客户端的响应，响应的内容根据 action 的类型来渲染
-     *
-     * @return
-     */
-    String limitContent() default "";
-
+public class NoneAuthorizer implements Authorizer {
+    @Override
+    public boolean onAuthorize(Controller controller) {
+        return true;
+    }
 }

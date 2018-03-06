@@ -30,6 +30,8 @@ public @interface CaptchaValidate {
 
     String message() default "";
 
-    String errorRedirect() default "";
+    String flashMessage() default "";
+
+    String renderType() default ValidateRenderType.DEFAULT;
 
 }

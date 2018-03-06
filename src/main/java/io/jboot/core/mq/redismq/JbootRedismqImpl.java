@@ -22,6 +22,7 @@ import io.jboot.component.redis.JbootRedisManager;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.utils.ArrayUtils;
 import redis.clients.jedis.BinaryJedisPubSub;
 
 
@@ -33,8 +34,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     private Thread dequeueThread;
 
     public JbootRedismqImpl() {
-
-        initChannels();
+        super();
 
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
         if (redisConfig.isConfigOk()) {
@@ -49,7 +49,13 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
                     "or use other mq component. ");
         }
 
-        Object[] channels = this.channels.toArray();
+        if (ArrayUtils.isNotEmpty(this.channels)) {
+            initChannelSubscribe();
+        }
+    }
+
+    private void initChannelSubscribe() {
+        String[] channels = this.channels.toArray(new String[]{});
 
         redis.subscribe(new BinaryJedisPubSub() {
             @Override
@@ -65,14 +71,12 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     @Override
     public void enqueue(Object message, String toChannel) {
-        ensureChannelExist(toChannel);
         redis.lpush(toChannel, message);
     }
 
 
     @Override
     public void publish(Object message, String toChannel) {
-        ensureChannelExist(toChannel);
         redis.publish(redis.keyToBytes(toChannel), Jboot.me().getSerializer().serialize(message));
     }
 

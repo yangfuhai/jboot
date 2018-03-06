@@ -15,6 +15,7 @@
  */
 package io.jboot.db.datasource;
 
+import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.db.TableInfo;
 import io.jboot.db.TableInfoManager;
 import io.jboot.exception.JbootException;
@@ -74,7 +75,7 @@ public class DataSourceBuilder {
         ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
 
         //通过数据源配置，获取所有的表信息
-        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(datasourceConfig.getTable(), datasourceConfig.getExcludeTable());
+        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(datasourceConfig);
 
         //具体的表，例如："t_order, t_order_item"
         StringBuilder bindTableGroups = new StringBuilder();
@@ -141,14 +142,26 @@ public class DataSourceBuilder {
     }
 
 
-    private DataSource createDataSource(DataSourceConfig dataSourceConfig) {
-        
-        //支持自定义 数据源，默认为hikariCP，可以通过这个扩展druid、c3p0等
-        DataSourceFactory factory = ClassKits.newInstance(dataSourceConfig.getFactory());
-        if (factory == null) {
-            factory = new HikariDataSourceFactory();
+    private DataSource createDataSource(DataSourceConfig dsc) {
+
+        String factory = dsc.getFactory();
+        if (StringUtils.isBlank(factory)) {
+            return new HikariDataSourceFactory().createDataSource(dsc);
         }
 
-        return factory.createDataSource(dataSourceConfig);
+        switch (factory) {
+            case "hikari":
+            case "hikariCP":
+            case "hikaricp":
+                return new HikariDataSourceFactory().createDataSource(dsc);
+            case "druid":
+                return new DruidDataSourceFactory().createDataSource(dsc);
+            default:
+                DataSourceFactory dataSourceFactory = JbootSpiLoader.load(DataSourceFactory.class, factory);
+                if (dataSourceFactory == null) {
+                    throw new NullPointerException("can not load DataSourceFactory spi for name : " + factory);
+                }
+                return dataSourceFactory.createDataSource(dsc);
+        }
     }
 }

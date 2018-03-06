@@ -36,5 +36,8 @@ public @interface Table {
 
     String keyGeneratorColumnName() default "";
 
-    String keyGeneratorClass() default "";
+    Class keyGeneratorClass() default Void.class;
+
+    String datasource() default "";
+    
 }

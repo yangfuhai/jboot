@@ -76,16 +76,15 @@ public class JbootCacheInterceptor implements MethodInterceptor {
                     return r;
                 }
 
-                return Cacheable.DEFAULT_NULL_VALUE.equals(cacheable.nullValue()) ? null : cacheable.nullValue();
+                return cacheable.nullCacheEnable() ? new NullObject() : null;
             }
         };
 
-        if (cacheable.liveSeconds() > 0) {
-            return Jboot.me().getCache().get(cacheName, cacheKey, dataLoader, cacheable.liveSeconds());
-        } else {
-            return Jboot.me().getCache().get(cacheName, cacheKey, dataLoader);
-        }
+        Object data = cacheable.liveSeconds() > 0
+                ? Jboot.me().getCache().get(cacheName, cacheKey, dataLoader, cacheable.liveSeconds())
+                : Jboot.me().getCache().get(cacheName, cacheKey, dataLoader);
 
+        return data == null || data instanceof NullObject ? null : data;
     }
 
 

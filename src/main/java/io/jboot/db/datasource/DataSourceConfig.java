@@ -46,15 +46,21 @@ public class DataSourceConfig {
 
     private String sqlTemplatePath;
     private String sqlTemplate;
-    private String table;
-    private String excludeTable;
-    private String factory = HikariDataSourceFactory.class.getName();
+    private String factory; //HikariDataSourceFactory.class.getName();
 
     private boolean shardingEnable = false;
     private String shardingDatabase;
 
 
     private List<DataSourceConfig> childDatasourceConfigs;
+
+
+    private String dbProFactory;
+    private String containerFactory;
+    private Integer transactionLevel;
+
+    private String table; //此数据源包含哪些表，这个配置会覆盖@Table注解的配置
+    private String exTable; //该数据源排除哪些表，这个配置会修改掉@Table上的配置
 
     /**
      * 是否需要添加到映射
@@ -153,7 +159,7 @@ public class DataSourceConfig {
     }
 
     public boolean isConfigOk() {
-        return (StringUtils.isNotBlank(url) && StringUtils.isNotBlank(user))
+        return (StringUtils.isNotBlank(url))
                 || shardingEnable == true;
     }
 
@@ -192,22 +198,6 @@ public class DataSourceConfig {
 
     public void setSqlTemplate(String sqlTemplate) {
         this.sqlTemplate = sqlTemplate;
-    }
-
-    public String getTable() {
-        return table;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public String getExcludeTable() {
-        return excludeTable;
-    }
-
-    public void setExcludeTable(String excludeTable) {
-        this.excludeTable = excludeTable;
     }
 
     public String getFactory() {
@@ -264,5 +254,45 @@ public class DataSourceConfig {
         }
 
         this.childDatasourceConfigs.add(config);
+    }
+
+    public String getDbProFactory() {
+        return dbProFactory;
+    }
+
+    public void setDbProFactory(String dbProFactory) {
+        this.dbProFactory = dbProFactory;
+    }
+
+    public String getContainerFactory() {
+        return containerFactory;
+    }
+
+    public void setContainerFactory(String containerFactory) {
+        this.containerFactory = containerFactory;
+    }
+
+    public Integer getTransactionLevel() {
+        return transactionLevel;
+    }
+
+    public void setTransactionLevel(Integer transactionLevel) {
+        this.transactionLevel = transactionLevel;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
+
+    public String getExTable() {
+        return exTable;
+    }
+
+    public void setExTable(String exTable) {
+        this.exTable = exTable;
     }
 }

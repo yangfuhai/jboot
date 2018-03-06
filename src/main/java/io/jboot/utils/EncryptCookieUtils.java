@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,8 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.Base64Kit;
 import com.jfinal.kit.HashKit;
 import com.jfinal.log.Log;
+import io.jboot.Jboot;
+import io.jboot.web.JbootWebConfig;
 
 import java.math.BigInteger;
 
@@ -33,8 +35,9 @@ import java.math.BigInteger;
  */
 public class EncryptCookieUtils {
 
-    private final static String COOKIE_SEPARATOR = "#JBOOT#";
-    private static String COOKIE_ENCRYPT_KEY = "#JBOOT#";
+    private final static String COOKIE_SEPARATOR = "#";
+
+    private static String COOKIE_ENCRYPT_KEY = Jboot.config(JbootWebConfig.class).getCookieEncryptKey();
     private static Log log = Log.getLog(EncryptCookieUtils.class);
 
     /**
@@ -105,14 +108,14 @@ public class EncryptCookieUtils {
         stringBuilder.append(COOKIE_SEPARATOR);
         stringBuilder.append(maxAgeInSeconds);
         stringBuilder.append(COOKIE_SEPARATOR);
-        stringBuilder.append(value);
+        stringBuilder.append(Base64Kit.encode(value));
 
         return Base64Kit.encode(stringBuilder.toString());
     }
 
     private static String encrypt(String encrypt_key, long saveTime, String maxAgeInSeconds, String value) {
-        if ("#JBOOT#".equals(encrypt_key)) {
-            log.warn("warn!!! encrypt key is defalut value. please invoke EncryptCookieUtils.initEncryptKey(key) method before.");
+        if (JbootWebConfig.DEFAULT_COOKIE_ENCRYPT_KEY.equals(encrypt_key)) {
+            log.warn("warn!!! encrypt key is defalut value. please config \"jboot.web.cookieEncryptKey = xxx\" in jboot.properties ");
         }
         return HashKit.md5(encrypt_key + saveTime + maxAgeInSeconds + value);
     }
@@ -135,7 +138,7 @@ public class EncryptCookieUtils {
                     long maxtime = Long.parseLong(maxAgeInSeconds) * 1000;
                     // 查看是否过时
                     if ((stime + maxtime) - System.currentTimeMillis() > 0) {
-                        return value;
+                        return Base64Kit.decodeToStr(value);
                     }
                 }
             }

@@ -32,7 +32,7 @@ public class FlashMessageManager {
     private static final String FLASH_SESSION_ATTR = "_JFM_"; // JFM : jboot flash message
 
     private static final String FLASH_COOKIE_ATTR = "_JFM_"; // JFM : jboot flash message
-    private static final String FLASH_COOKIE_VALUE = "1";
+    private static final String FLASH_COOKIE_VALUE = "true";
 
 
     private static final FlashMessageManager ME = new FlashMessageManager();

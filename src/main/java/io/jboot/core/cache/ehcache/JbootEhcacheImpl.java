@@ -15,9 +15,12 @@
  */
 package io.jboot.core.cache.ehcache;
 
+import com.jfinal.kit.PathKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
+import io.jboot.Jboot;
 import io.jboot.core.cache.JbootCacheBase;
+import io.jboot.utils.StringUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -36,11 +39,20 @@ public class JbootEhcacheImpl extends JbootCacheBase {
     private CacheEventListener cacheEventListener;
 
     public JbootEhcacheImpl() {
-        cacheManager = CacheManager.create();
+        JbootEhCacheConfig config = Jboot.config(JbootEhCacheConfig.class);
+        if (StringUtils.isBlank(config.getConfigFileName())) {
+            cacheManager = CacheManager.create();
+        } else {
+            String configPath = config.getConfigFileName();
+            if (!configPath.startsWith("/")){
+                configPath = PathKit.getRootClassPath()+"/"+configPath;
+            }
+            cacheManager = CacheManager.create(configPath);
+        }
     }
 
     public JbootEhcacheImpl(CacheManager cacheManager) {
-        cacheManager = cacheManager;
+        this.cacheManager = cacheManager;
     }
 
     public CacheEventListener getCacheEventListener() {

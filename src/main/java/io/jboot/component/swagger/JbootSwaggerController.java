@@ -16,11 +16,13 @@
 package io.jboot.component.swagger;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.google.common.collect.Maps;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.cors.EnableCORS;
 import io.swagger.models.Swagger;
+import io.swagger.models.properties.RefProperty;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -58,16 +60,16 @@ public class JbootSwaggerController extends JbootController {
      */
     @EnableCORS
     public void json() {
-
-
         Swagger swagger = JbootSwaggerManager.me().getSwagger();
         if (swagger == null) {
             renderText("swagger config error.");
             return;
         }
 
-        // 此处如果为 jfianl json 序列化 swagger 会报错
-        renderJson(JSON.toJSONString(swagger));
+        // 适配swaggerUI, 解决页面"Unknown Type : ref"问题。
+        SerializeConfig serializeConfig = new SerializeConfig();
+        serializeConfig.put(RefProperty.class, new RefPropertySerializer());
+        renderJson(JSON.toJSONString(swagger, serializeConfig));
     }
 
 }

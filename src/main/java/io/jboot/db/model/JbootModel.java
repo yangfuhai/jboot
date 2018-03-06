@@ -17,14 +17,23 @@ package io.jboot.db.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.*;
+import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Table;
+import com.jfinal.plugin.activerecord.TableMapping;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.component.hystrix.JbootHystrixCommand;
+import io.jboot.db.JbootDbHystrixFallbackListener;
+import io.jboot.db.JbootDbHystrixFallbackListenerDefault;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
+import io.shardingjdbc.core.api.HintManager;
+import io.shardingjdbc.core.hint.HintManagerHolder;
 
 import java.util.*;
 
@@ -40,8 +49,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     /**
      * 是否启用自动缓存
      */
-    private boolean cacheEnable = true;
-    private int cacheTime = 60 * 60 * 24; // 1day
+    private boolean cacheEnable = JbootModelConfig.getConfig().isCacheEnable();
+    private int cacheTime = JbootModelConfig.getConfig().getCacheTime();
 
 
     /**
@@ -136,71 +145,30 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     /**
-     * 可以再DAO中调用此方法使用proxy数据源进行连接数据库
-     * 例如：DAO.useProxy().findById("123")
-     * 注意：使用此方法，需要配置名称为 proxy 的数据源
+     * 修复 jfinal use 可能造成的线程安全问题
      *
+     * @param configName
      * @return
      */
-    public M useProxy() {
-        M proxy = get("__proxy__");
-        if (proxy != null) {
-            return proxy;
+    @Override
+    public M use(String configName) {
+        M m = this.get("__ds__" + configName);
+        if (m == null) {
+
+            m = this.copy()
+                    .cacheEnable(this.cacheEnable)
+                    .cacheTime(this.cacheTime)
+                    .useSuper(configName);
+
+            this.put("__ds__" + configName, m);
         }
-
-        proxy = copy().use("proxy").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
-
-        if (proxy._getConfig() == null) {
-            proxy.use(null);
-        }
-
-        set("__proxy__", proxy);
-        return proxy;
+        return m;
     }
 
 
-    /**
-     * 同 useProxy
-     *
-     * @return
-     */
-    public M useSlave() {
-        M proxy = get("__slave__");
-        if (proxy != null) {
-            return proxy;
-        }
-
-        proxy = copy().use("slave").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
-
-        if (proxy._getConfig() == null) {
-            proxy.use(null);
-        }
-
-        set("__slave__", proxy);
-        return proxy;
+    M useSuper(String configName) {
+        return super.use(configName);
     }
-
-    /**
-     * 同 useProxy
-     *
-     * @return
-     */
-    public M useMaster() {
-        M proxy = get("__master__");
-        if (proxy != null) {
-            return proxy;
-        }
-
-        proxy = copy().use("master").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
-
-        if (proxy._getConfig() == null) {
-            proxy.use(null);
-        }
-
-        set("__master__", proxy);
-        return proxy;
-    }
-
 
     /**
      * 是否启用自动缓存
@@ -338,7 +306,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        boolean updateSuccess = (autoCopyModel != null && autoCopyModel) ? copyModel().updateNormal() : updateNormal();
+        boolean updateSuccess = (autoCopyModel != null && autoCopyModel == true) ? copyModel().updateNormal() : this.updateNormal();
         if (updateSuccess) {
             Object id = get(getPrimaryKey());
             if (cacheEnable) {
@@ -347,6 +315,21 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             Jboot.sendEvent(updateAction(), findById(id));
         }
         return updateSuccess;
+    }
+
+
+    /**
+     * 更新，但是不发送Action通知
+     *
+     * @return
+     */
+    public boolean updateWithoutEvent() {
+        if (hasColumn(COLUMN_MODIFIED)) {
+            set(COLUMN_MODIFIED, new Date());
+        }
+
+        Boolean autoCopyModel = get(AUTO_COPY_MODEL);
+        return (autoCopyModel != null && autoCopyModel == true) ? copyModel().updateNormal() : this.updateNormal();
     }
 
     boolean updateNormal() {
@@ -607,17 +590,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    @JSONField(serialize = false)
+    protected String getTableName() {
+        return getTable().getName();
+    }
+
     private transient Table table;
 
     @JSONField(serialize = false)
-    protected String getTableName() {
+    protected Table getTable() {
         if (table == null) {
             table = TableMapping.me().getTable(getUsefulClass());
             if (table == null) {
-                throw new JbootException(String.format("table for class[%s] is null! \n maybe cannot connection to database，please check your propertie files.", getUsefulClass()));
+                throw new JbootException(String.format("table of class %s is null, maybe cannot connection to database or not use correct datasource, " +
+                        "please check your properties file or correct config @Table(datasourc=xxx) in class %s.", getUsefulClass().getName(), getUsefulClass().getName()));
             }
         }
-        return table.getName();
+        return table;
     }
 
 
@@ -660,7 +649,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     protected boolean hasColumn(String columnLabel) {
-        return TableMapping.me().getTable(getUsefulClass()).hasColumnLabel(columnLabel);
+        return getTable().hasColumnLabel(columnLabel);
     }
 
     // -----------------------------Override----------------------------
@@ -682,9 +671,54 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public List<M> find(String sql, Object... paras) {
+
         debugPrintParas(paras);
-        return super.find(sql, paras);
+
+        if (!JbootModelConfig.getConfig().isHystrixEnable()) {
+            return super.find(sql, paras);
+        }
+
+        final HintManager hintManager = HintManagerHolder.get();
+
+        return Jboot.hystrix(new JbootHystrixCommand("sql:" + sql, JbootModelConfig.getConfig().getHystrixTimeout()) {
+            @Override
+            protected Object run() throws Exception {
+                try {
+                    HintManagerHolder.setHintManager(hintManager);
+                    return JbootModel.super.find(sql, paras);
+                } finally {
+                    HintManagerHolder.clear();
+                }
+            }
+
+            @Override
+            public Object getFallback() {
+                return getHystrixFallbackListener().onFallback(sql, paras, this, this.getExecutionException());
+            }
+
+        });
     }
+
+    private transient JbootDbHystrixFallbackListener fallbackListener = null;
+
+    @JSONField(serialize = false)
+    public JbootDbHystrixFallbackListener getHystrixFallbackListener() {
+
+        if (fallbackListener != null) {
+            return fallbackListener;
+        }
+
+        if (!StringUtils.isBlank(JbootModelConfig.getConfig().getHystrixFallbackListener())) {
+            fallbackListener = ClassKits.newInstance(JbootModelConfig.getConfig().getHystrixFallbackListener());
+        }
+
+        if (fallbackListener == null) {
+            fallbackListener = new JbootDbHystrixFallbackListenerDefault();
+        }
+
+        return fallbackListener;
+    }
+
 
     @Override
     public M findFirst(String sql, Object... paras) {

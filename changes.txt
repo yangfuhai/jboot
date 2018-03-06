@@ -1,3 +1,81 @@
+jboot-1.3.7:
+优化：@EnableMetricCounter 为记录次数而不是并发量
+优化：model.use 可能造成的线程安全问题
+优化：AOP 框架 guice 升级到最新版本, 支持 java9 和 JPMS
+优化：重构mq模块，支持客户端不需要配置channel单独使用
+优化：更新undertow到最新版本，和其他依赖更新
+
+
+jboot-1.3.6:
+新增：hikaricp 支持 metrics 监控的功能
+修复：MetricManager 初始化可能出现空指针异常的问题
+优化：Jwt 的相关方法，新增直接创建token在json返回
+更新：undertow 到最新版本 2.0
+更新：JWT 的相关文档
+
+
+jboot-1.3.5:
+修复：Db.use() 总是使用最后一个的问题
+修复：jboot.datasource.table 和 jboot.datasource.extable 配置无效的问题
+修复：sharding-jdbc 使用 hintManager 必须关闭 hystrix，否则无法使用的问题
+文档：新增websocket相关的文档
+其他：更新依赖，升级sharding-jdbc到最新版本
+
+
+
+jboot-1.3.4:
+新增：model 查询的时候默认通过hystrix进行管理
+新增：db查询Record的时候，默认通过Hystrix进行管理
+新增：在多数据源的情况下，@Table注解添加DataSource配置的支持，可以指定在哪些数据源下
+修复：jboot.rpc.requestTimeout 对dubbo无效的问题
+修复：swagger页面出现 "Unknown Type : ref" 问题。
+文档：更新aop相关文档
+其他：更新相关依赖，hikariCP->2.7.7;druid->1.1.8;metrics->4.0.2;zipkin-sender->2.3.2
+
+
+jboot-1.3.3:
+新增：流量控制开关，当网站上线的时候不用重启自由开启关闭。
+新增：流量控制设置，当网站上线的时候可以自由设置流量控制大小。
+新增：@EnableConcurrencyLimit注解，用于多并发量的控制和限制。
+新增：数据源DataSource支持druid，同时可以通过SPI进行扩展。
+新增：添加ehcache默认cache的配置
+优化：通过 @Before 注解后，若抛出异常获得不到原始异常。
+优化：修改 geJwtAttrs() 笔误，修改为 getJwtAttrs()
+优化：更新依赖：fastjson->1.2.46，j2cache->2.3.8
+优化：重命名流量控制的相关注解，使之更加直观
+
+
+
+jboot-1.3.2:
+新增：JbootModelConfig的配置，全局配置是否缓存及缓存时间等
+新增：@Cacheevict 新增允许移除整个cacheName的配置
+新增：@Cacheable 注解添加允许存储 null 数据的配置 nullCacheEnabl
+修复：在多数据源的情况下无法使用 sqlite 当中数据源的问题
+修复：修改常量错别字
+优化：重构 Jboot 请求数据验证模块，使用更加灵活自由
+其他：更新 jwt 相关文档
+
+
+jboot-1.3.1:
+新增：自定义 dbProFactory、containerFactory、transactionLevel 等配置的支持
+新增：JWT 的支持，具体查看：https://gitee.com/fuhai/jboot/tree/master/src/test/java/jwt
+
+
+jboot-1.3.0:
+新增：注解 @EnableCORS 用于跨域配置的支持
+新增：Sharding-jdbc的注释说明，同时更新Sharding-jdbc到最新版本
+新增：代码生成器生成代码默认添加 FindAll() 方法
+修复：JFinal 的 findByCache、paginateByCache等方法没有走 JbootCache 的问题
+修复：RPC model作为参数，缓存配置没有序列化导致保持的时候无法更新缓存的问题
+修复：当使用auto_copy_model 模式的时候，保持成功无法自动赋值主键的问题
+修复：@Before(Interceptor.class)注解在Controller时，可能会触发两次的问题
+修复：多次调用 getBodyString() 只有第一次能正常获取数据的问题
+修复：文档相关的多处错误信息
+优化：MQ接受消息后，触发监听器改为异步的方式触发
+优化：FixedInvocation新增getInvocation()方法，用于底层自由控制
+其他：更新Jboot相关依赖到最新版本
+
+
 jboot-1.2.9:
 新增：dubbo qos 端口的配置支持
 新增：分布式配置中心可以按应用名获取配置信息

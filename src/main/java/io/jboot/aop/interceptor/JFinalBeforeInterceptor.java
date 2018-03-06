@@ -18,6 +18,7 @@ package io.jboot.aop.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
+import com.jfinal.core.Controller;
 import io.jboot.utils.ClassKits;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -35,12 +36,17 @@ public class JFinalBeforeInterceptor implements MethodInterceptor {
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
         Class targetClass = methodInvocation.getThis().getClass();
-        Method method = methodInvocation.getMethod();
+
+        //过滤掉controller，因为controller由action去执行@Before相关注解了
+        if (Controller.class.isAssignableFrom(targetClass)) {
+            return methodInvocation.proceed();
+        }
 
         targetClass = ClassKits.getUsefulClass(targetClass);
+        Method method = methodInvocation.getMethod();
 
         Interceptor[] finalInters = manger.buildServiceMethodInterceptor(InterceptorManager.NULL_INTERS, targetClass, method);
-        JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, finalInters);
+        JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, finalInters, methodInvocation.getArguments());
         invocation.invoke();
         return invocation.getReturnValue();
     }

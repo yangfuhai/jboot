@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,15 +16,17 @@
 package io.jboot.component.opentracing;
 
 import io.opentracing.Tracer;
+//import org.skywalking.apm.toolkit.opentracing.SkywalkingTracer;
 
 public class SkywalkingTracerFactory implements TracerFactory {
 
 
-    final Tracer tracer = null;
+    private Tracer tracer;
 
     public SkywalkingTracerFactory() {
 
-        // doc : https://github.com/OpenSkywalking/skywalking/wiki/skywalking-opentracing-chn
+        // doc : https://github.com/apache/incubator-skywalking/blob/master/docs/cn/skywalking-opentracing-CN.md
+//        tracer = new SkywalkingTracer();
     }
 
 

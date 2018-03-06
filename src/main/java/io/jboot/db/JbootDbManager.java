@@ -17,12 +17,14 @@ package io.jboot.db;
 
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.Jboot;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.datasource.DataSourceConfigManager;
+import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtils;
@@ -96,7 +98,12 @@ public class JbootDbManager {
 
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
                 activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
-                activeRecordPlugin.setCache(Jboot.me().getCache());
+                activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
+
+                JbootCache jbootCache = Jboot.me().getCache();
+                if (jbootCache != null) {
+                    activeRecordPlugin.setCache(jbootCache);
+                }
 
                 configSqlTemplate(datasourceConfig, activeRecordPlugin);
                 configDialect(activeRecordPlugin, datasourceConfig);
@@ -147,6 +154,9 @@ public class JbootDbManager {
                 activeRecordPlugin.setDialect(new JbootMysqlDialect());
                 break;
             case DataSourceConfig.TYPE_ORACLE:
+                if (StringUtils.isBlank(datasourceConfig.getContainerFactory())) {
+                    activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory());
+                }
                 activeRecordPlugin.setDialect(new JbootOracleDialect());
                 break;
             case DataSourceConfig.TYPE_SQLSERVER:
@@ -177,20 +187,23 @@ public class JbootDbManager {
 
         String configName = config.getName();
         DataSource dataSource = new DataSourceBuilder(config).build();
-        String configTableString = config.getTable();
-        String excludeTableString = config.getExcludeTable();
 
         ActiveRecordPlugin activeRecordPlugin = StringUtils.isNotBlank(configName)
                 ? new ActiveRecordPlugin(configName, dataSource)
                 : new ActiveRecordPlugin(dataSource);
 
 
-        // 设置JFinal使用的cache为jbootCache
-        JbootCache jbootCache = Jboot.me().getCache();
-        if (jbootCache != null) {
-            activeRecordPlugin.setCache(jbootCache);
+        if (StringUtils.isNotBlank(config.getDbProFactory())) {
+            activeRecordPlugin.setDbProFactory(ClassKits.newInstance(config.getDbProFactory()));
         }
 
+        if (StringUtils.isNotBlank(config.getContainerFactory())) {
+            activeRecordPlugin.setContainerFactory(ClassKits.newInstance(config.getContainerFactory()));
+        }
+
+        if (config.getTransactionLevel() != null) {
+            activeRecordPlugin.setTransactionLevel(config.getTransactionLevel());
+        }
 
         /**
          * 不需要添加映射的直接返回
@@ -199,7 +212,7 @@ public class JbootDbManager {
             return activeRecordPlugin;
         }
 
-        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(configTableString, excludeTableString);
+        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(config);
         if (ArrayUtils.isNullOrEmpty(tableInfos)) {
             return activeRecordPlugin;
         }

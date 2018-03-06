@@ -18,10 +18,11 @@ package limitation;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
-import io.jboot.web.limitation.LimitAction;
-import io.jboot.web.limitation.annotation.EnableIpRateLimit;
-import io.jboot.web.limitation.annotation.EnableRequestRateLimit;
-import io.jboot.web.limitation.annotation.EnableUserRateLimit;
+import io.jboot.web.limitation.LimitRenderType;
+import io.jboot.web.limitation.annotation.EnableConcurrencyLimit;
+import io.jboot.web.limitation.annotation.EnablePerIpLimit;
+import io.jboot.web.limitation.annotation.EnableRequestLimit;
+import io.jboot.web.limitation.annotation.EnablePerUserLimit;
 
 
 @RequestMapping("/limitation")
@@ -29,6 +30,7 @@ public class LimitationDemo extends JbootController {
 
 
     public static void main(String[] args) {
+        Jboot.setBootArg("jboot.limitation.webPath","/jboot/limitation");
         Jboot.run(args);
     }
 
@@ -40,16 +42,29 @@ public class LimitationDemo extends JbootController {
     /**
      * 所有的请求，每1秒钟只能访问一次
      */
-    @EnableRequestRateLimit(rate = 1)
+    @EnableRequestLimit(rate = 1)
     public void request() {
         renderText("request() render ok");
+    }
+
+    /**
+     * 所有的请求，并发量为1个
+     */
+    @EnableConcurrencyLimit(rate = 1)
+    public void con() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        renderText("con() render ok");
     }
 
     /**
      * 所有的请求，每1秒钟只能访问一次
      * 被限制的请求，自动跳转到 /limitation/request2
      */
-    @EnableRequestRateLimit(rate = 1, limitAction = LimitAction.REDIRECT, limitContent = "/limitation/request2")
+    @EnableRequestLimit(rate = 1, renderType = LimitRenderType.REDIRECT, renderContent = "/limitation/request2")
     public void request1() {
         renderText("request1() render ok");
     }
@@ -63,7 +78,7 @@ public class LimitationDemo extends JbootController {
     /**
      * 每个用户，每5秒钟只能访问一次
      */
-    @EnableUserRateLimit(rate = 0.2)
+    @EnablePerUserLimit(rate = 0.2)
     public void user() {
         renderText("user() render ok");
     }
@@ -72,7 +87,7 @@ public class LimitationDemo extends JbootController {
      * 每个用户，每5秒钟只能访问一次
      * 被限制的请求，渲染文本内容 "被限制啦"
      */
-    @EnableUserRateLimit(rate = 0.2, limitAction = LimitAction.TEXT, limitContent = "被限制啦")
+    @EnablePerUserLimit(rate = 0.2, renderType = LimitRenderType.TEXT, renderContent = "被限制啦")
     public void user1() {
         renderText("user1() render ok");
     }
@@ -81,7 +96,7 @@ public class LimitationDemo extends JbootController {
     /**
      * 每个IP地址，每5秒钟只能访问一次
      */
-    @EnableIpRateLimit(rate = 0.2)
+    @EnablePerIpLimit(rate = 0.2)
     public void ip() {
         renderText("ip() render ok");
     }

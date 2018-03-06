@@ -28,6 +28,9 @@ public @interface EmptyValidate {
 
     Form[] value();
 
-    String errorRedirect() default "";
+    String message() default "";
 
+    String flashMessage() default "";
+
+    String renderType() default ValidateRenderType.DEFAULT;
 }
