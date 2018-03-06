@@ -16,12 +16,12 @@
 package io.jboot.web.fixedinterceptor;
 
 import io.jboot.Jboot;
+import io.jboot.component.jwt.JwtInterceptor;
 import io.jboot.component.metric.JbootMetricInterceptor;
 import io.jboot.component.opentracing.OpentracingInterceptor;
 import io.jboot.component.shiro.JbootShiroInterceptor;
 import io.jboot.web.controller.validate.ParaValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
-import io.jboot.web.jwt.JwtInterceptor;
 import io.jboot.web.limitation.LimitationInterceptor;
 
 import java.util.ArrayList;
@@ -52,6 +52,7 @@ public class FixedInterceptors {
             new JbootShiroInterceptor(),
             new OpentracingInterceptor(),
             new JbootMetricInterceptor()};
+
     private List<FixedInterceptor> userInters = new ArrayList<>();
 
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.jwt;
+package io.jboot.component.jwt;
 
 import com.jfinal.json.FastJson;
 import com.jfinal.kit.Base64Kit;

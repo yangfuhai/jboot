@@ -22,7 +22,7 @@ import com.jfinal.kit.HttpKit;
 import com.jfinal.upload.UploadFile;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
-import io.jboot.web.jwt.JwtManager;
+import io.jboot.component.jwt.JwtManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
