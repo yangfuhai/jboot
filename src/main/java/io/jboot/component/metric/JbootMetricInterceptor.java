@@ -20,10 +20,7 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Timer;
 import io.jboot.Jboot;
-import io.jboot.component.metric.annotation.EnableMetricCounter;
-import io.jboot.component.metric.annotation.EnableMetricHistogram;
-import io.jboot.component.metric.annotation.EnableMetricMeter;
-import io.jboot.component.metric.annotation.EnableMetricTimer;
+import io.jboot.component.metric.annotation.*;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
@@ -39,7 +36,6 @@ public class JbootMetricInterceptor implements FixedInterceptor {
     public void intercept(FixedInvocation inv) {
 
 
-        Counter counter = null;
         Timer.Context timerContext = null;
 
 
@@ -50,8 +46,21 @@ public class JbootMetricInterceptor implements FixedInterceptor {
                     : counterAnnotation.value();
 
 
-            counter = Jboot.me().getMetric().counter(name);
+            Counter counter = Jboot.me().getMetric().counter(name);
             counter.inc();
+        }
+
+
+        Counter concurrencyRecord = null;
+        EnableMetricConcurrency concurrencyAnnotation = inv.getMethod().getAnnotation(EnableMetricConcurrency.class);
+        if (concurrencyAnnotation != null) {
+            String name = StringUtils.isBlank(concurrencyAnnotation.value())
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".concurrency"
+                    : concurrencyAnnotation.value();
+
+
+            concurrencyRecord = Jboot.me().getMetric().counter(name);
+            concurrencyRecord.inc();
         }
 
 
@@ -94,6 +103,9 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         try {
             inv.invoke();
         } finally {
+            if (concurrencyRecord != null) {
+                concurrencyRecord.dec();
+            }
             if (timerContext != null) {
                 timerContext.stop();
             }

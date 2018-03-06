@@ -32,15 +32,9 @@ import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
-import io.jboot.aop.interceptor.metric.JbootMetricConterAopInterceptor;
-import io.jboot.aop.interceptor.metric.JbootMetricHistogramAopInterceptor;
-import io.jboot.aop.interceptor.metric.JbootMetricMeterAopInterceptor;
-import io.jboot.aop.interceptor.metric.JbootMetricTimerAopInterceptor;
+import io.jboot.aop.interceptor.metric.*;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
-import io.jboot.component.metric.annotation.EnableMetricCounter;
-import io.jboot.component.metric.annotation.EnableMetricHistogram;
-import io.jboot.component.metric.annotation.EnableMetricMeter;
-import io.jboot.component.metric.annotation.EnableMetricTimer;
+import io.jboot.component.metric.annotation.*;
 import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.core.cache.annotation.CachePut;
 import io.jboot.core.cache.annotation.Cacheable;
@@ -96,6 +90,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
 
         // 设置 Metrics 相关的统计拦截
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricCounter.class), new JbootMetricConterAopInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricConcurrency.class), new JbootMetricConcurrencyAopInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricHistogram.class), new JbootMetricHistogramAopInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricMeter.class), new JbootMetricMeterAopInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricTimer.class), new JbootMetricTimerAopInterceptor());
