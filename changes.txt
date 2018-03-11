@@ -1,3 +1,11 @@
+jboot-1.3.8:
+新增：@EnableMetricConcurrency 注解，用于通过Metrics监控当前Action的并发量
+修复：@Befor注解在AOP中无法获取参数的问题
+修复：上个版本优化cookie代码后无法获取加密cookie的问题
+修复：同一个方法不能使用多个不带参数的Metricx维度监控的问题
+修复：类单词拼写错误，重命名JbootMetricConterAopInterceptor为JbootMetricCounterAopInterceptor
+
+
 jboot-1.3.7:
 优化：@EnableMetricCounter 为记录次数而不是并发量
 优化：model.use 可能造成的线程安全问题
