@@ -1490,6 +1490,12 @@ https://www.consul.io
 consul agent -dev
 ```
 
+允许其他机器访问consul:
+
+```java
+consul agent -dev -bind=0.0.0.0
+```
+
 #### zookeeper
 ##### 下载zookeeper
 http://zookeeper.apache.org/releases.html
