@@ -19,6 +19,8 @@ import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +55,14 @@ public class JwtInterceptor implements FixedInterceptor {
             inv.invoke();
             processInvokeAfter(inv);
             return;
+        }
+
+        JwtShiroBridge jwtShiroBridge = JwtManager.me().getJwtShiroBridge();
+        if (jwtShiroBridge != null) {
+            Subject subject = jwtShiroBridge.buildSubject(map, inv.getController());
+            if (subject != null) {
+                ThreadContext.bind(subject);
+            }
         }
 
         try {
