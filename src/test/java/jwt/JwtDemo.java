@@ -32,10 +32,12 @@ public class JwtDemo extends JbootController {
 
 
     public void index() {
-        setJwtAttr("key1", "test");
+        setJwtAttr("key1", "test111");
         setJwtAttr("key2", "test");
         setJwtAttr("key3", "test");
-        renderText("ok，请查看http header");
+
+        String token = createJwtToken();
+        renderText(token);
     }
 
     public void show() {
