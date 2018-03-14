@@ -1171,12 +1171,86 @@ company.save();
 
 
 ## 分库和分表
+在Jboot中，分表是通过sharding-jdbc（ 网址：https://github.com/shardingjdbc/sharding-jdbc） 来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
 
 ### 分库
-暂无内容
+分库意味你有多个数据库，每个数据库会对应一个数据源。
+
+例如，我们的应用有三个数据库，分别是 db1,db2,db3，那么需要我们在 jboot.properties 配置文件里配置上三个数据，配置如下：
+
+```
+jboot.datasource.db1.url = jdbc:mysql://127.0.0.1:3306/db1
+jboot.datasource.db1.user = root
+jboot.datasource.db1.password = 
+
+jboot.datasource.db2.url = jdbc:mysql://127.0.0.1:3306/db2
+jboot.datasource.db2.user = root
+jboot.datasource.db2.password = 
+
+jboot.datasource.db3.url = jdbc:mysql://127.0.0.1:3306/db3
+jboot.datasource.db3.user = root
+jboot.datasource.db3.password = 
+
+```
+
+我们希望在分库的时候，通过Model的主键ID进行hashcode进行取模，决定分库。因此需要编写分库策略，代码如下：
+
+```java
+public class UserDatabaseShardingStrategyConfig implements ShardingStrategyConfiguration {
+
+    @Override
+    public ShardingStrategy build() {
+        return shardingStrategy;
+    }
+
+
+    private ShardingStrategy shardingStrategy = new ShardingStrategy() {
+
+        @Override
+        public Collection<String> getShardingColumns() {
+            //根据id进行分库
+            return Sets.newHashSet("id");
+        }
+
+        @Override
+        public Collection<String> doSharding(Collection<String> availableTargetNames, Collection<ShardingValue> shardingValues) {
+            ListShardingValue shardingValue = (ListShardingValue) shardingValues.stream().findFirst().get();
+
+            String dbName = "db" + Math.abs(shardingValue.getValues().iterator().next().toString().hashCode()) % 3;
+
+            System.out.println("插入数据到库：" + dbName);
+
+            //返回通过计算得到的表
+            return Sets.newHashSet(dbName);
+
+        }
+    };
+
+}
+```
+
+编写好分库策略后，需要给Model配置上分库策略：
+```java
+
+@Table(tableName = "tb_user",
+        primaryKey = "id",
+         // 具体的表tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2,
+         // main 是默认数据源的名称
+        actualDataNodes = "main.tb_user${0..2}",
+        //分表策略
+        databaseShardingStrategyConfig = UserDatabaseShardingStrategyConfig.class 
+)
+public class UserModel extends JbootModel<UserModel> {
+
+
+   //geter setter
+}
+
+```
+
 
 ### 分表
-在Jboot中，分表是通过sharding-jdbc（ 网址：https://github.com/shardingjdbc/sharding-jdbc） 来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
+
 
 
 
@@ -1197,30 +1271,7 @@ company.save();
 public class UserModel extends JbootModel<UserModel> {
 
 
-    public UserModel(String id, String name) {
-        setId(id);
-        setName(name);
-    }
-
-    public UserModel() {
-    }
-
-
-    public String getId() {
-        return get("id");
-    }
-
-    public void setId(String id) {
-        set("id", id);
-    }
-
-    public String getName() {
-        return get("name");
-    }
-
-    public void setName(String name) {
-        set("name", name);
-    }
+    //geter setter
 }
 
 ```
@@ -1493,7 +1544,7 @@ consul agent -dev
 允许其他机器访问consul:
 
 ```java
-consul agent -dev -bind=0.0.0.0
+consul agent -dev -client=本机局域网IP
 ```
 
 #### zookeeper
@@ -2474,3 +2525,4 @@ core framework:
 		
 		
 	
+
