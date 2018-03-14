@@ -1173,6 +1173,8 @@ company.save();
 ## 分库和分表
 在Jboot中，分表是通过sharding-jdbc（ 网址：https://github.com/shardingjdbc/sharding-jdbc） 来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
 
+分库分表相关demo: [点击这里](./src/test/java/sharding)
+
 ### 分库
 分库意味你有多个数据库，每个数据库会对应一个数据源。
 
