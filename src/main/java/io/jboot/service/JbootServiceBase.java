@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,7 +33,7 @@ import java.util.List;
 public class JbootServiceBase<M extends JbootModel<M>> {
 
 
-    public M DAO = null;
+    protected M DAO = null;
 
     public JbootServiceBase() {
         Class<M> modelClass = null;
@@ -47,9 +47,8 @@ public class JbootServiceBase<M extends JbootModel<M>> {
             throw new JbootException("can not get parameterizedType in JbootServiceBase");
         }
 
-        DAO = ClassKits.newInstance(modelClass).dao();
+        DAO = ClassKits.newInstance(modelClass);
     }
-
 
 
     public M getDao() {
