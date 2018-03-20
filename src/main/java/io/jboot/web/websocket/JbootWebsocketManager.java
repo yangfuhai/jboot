@@ -56,8 +56,8 @@ public class JbootWebsocketManager {
             return false;
         }
 
-        if (config.getWebsocketBasePath() != null && endPointValue.startsWith(config.getWebsocketBasePath())) {
-            return true;
+        if (config.getWebsocketBasePath() != null) {
+            return endPointValue.startsWith(config.getWebsocketBasePath());
         }
 
         if (websocketEndPoints.isEmpty()) {
