@@ -1,3 +1,9 @@
+jboot-1.4.0:
+新增：websocket 相关demo
+新增：websocket base path 配置
+优化：调整 @EnableCORS 顺序
+
+
 jboot-1.3.9:
 修复：Dao.use(datasource) 无法使用的问题
 修复：Before注解中拦截器getArgs() 数据不正确的问题
