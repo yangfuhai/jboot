@@ -45,8 +45,8 @@ public class FixedInterceptors {
      * 默认的 Jboot 系统拦截器
      */
     private FixedInterceptor[] defaultInters = new FixedInterceptor[]{
-            new LimitationInterceptor(),
             new CORSInterceptor(),
+            new LimitationInterceptor(),
             new ParaValidateInterceptor(),
             new JwtInterceptor(),
             new JbootShiroInterceptor(),
