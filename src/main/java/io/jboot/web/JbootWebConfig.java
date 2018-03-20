@@ -33,6 +33,7 @@ public class JbootWebConfig {
     //websocket 的相关配置
     //具体使用请参考：https://github.com/undertow-io/undertow/tree/master/examples/src/main/java/io/undertow/examples/jsrwebsockets
     private boolean websocketEnable = false;
+    private String websocketBasePath;
     private int websocketBufferPoolSize = 100;
 
     public static final String DEFAULT_COOKIE_ENCRYPT_KEY = "JBOOT_DEFAULT_ENCRYPT_KEY";
@@ -77,6 +78,14 @@ public class JbootWebConfig {
 
     public void setCookieEncryptKey(String cookieEncryptKey) {
         this.cookieEncryptKey = cookieEncryptKey;
+    }
+
+    public String getWebsocketBasePath() {
+        return websocketBasePath;
+    }
+
+    public void setWebsocketBasePath(String websocketBasePath) {
+        this.websocketBasePath = websocketBasePath;
     }
 
     @Override
