@@ -101,7 +101,7 @@ public class WebSocketServer {
      */
     @OnError
     public void onError(Throwable throwable, Session session) {
-        System.out.print("onError" + throwable.toString());
+        System.out.print("onError : " + session.getId() + throwable.toString());
         close(session);
     }
 
@@ -112,7 +112,7 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose(Session session) {
-        System.out.print("onClose " + session);
+        System.out.print("onClose :  " + session.getId());
         close(session);
     }
 }
