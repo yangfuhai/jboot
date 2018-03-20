@@ -1,3 +1,9 @@
+jboot-1.3.9:
+修复：Dao.use(datasource) 无法使用的问题
+修复：Before注解中拦截器getArgs() 数据不正确的问题
+新增：分库分表的demo和文档
+
+
 jboot-1.3.8:
 新增：@EnableMetricConcurrency 注解，用于通过Metrics监控当前Action的并发量
 新增：JwtShiroBridge接口，用于Jwt和shiro之间的整合，通过Jwt判断其Shiro权限
