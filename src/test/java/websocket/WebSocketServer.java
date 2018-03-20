@@ -4,6 +4,7 @@ import io.jboot.utils.ArrayUtils;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -16,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @Package websocket
  */
 @ServerEndpoint("/myWebsocketServer")
-public class SocketServer {
+public class WebSocketServer {
 
 
     static Map<String, CopyOnWriteArraySet<Session>> rooms = new ConcurrentHashMap<>();
@@ -27,8 +28,35 @@ public class SocketServer {
         if (ArrayUtils.isNullOrEmpty(sessions)) {
             return;
         }
-        for (Session s : sessions) {
-            s.getAsyncRemote().sendObject(message);
+        for (Session session : sessions) {
+            if (session.isOpen()) {
+                session.getAsyncRemote().sendObject(message);
+            } else {
+                sessions.remove(session);
+                quietClose(session);
+            }
+        }
+    }
+
+    public static void close(Session session) {
+
+        String roomId = session.getRequestParameterMap().get("roomId").toString();
+        CopyOnWriteArraySet<Session> sessions = rooms.get(roomId);
+
+        if (ArrayUtils.isNotEmpty(sessions)) {
+            sessions.remove(session);
+        }
+
+        quietClose(session);
+
+
+    }
+
+    private static void quietClose(Session session) {
+        try {
+            session.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -39,8 +67,6 @@ public class SocketServer {
     @OnOpen
     public void onOpen(Session session) {
         String roomId = session.getRequestParameterMap().get("roomId").toString();
-        System.out.println("room id: " + roomId);
-
         CopyOnWriteArraySet<Session> sessions = rooms.get(roomId);
         if (sessions == null) {
             synchronized (roomId) {
@@ -76,6 +102,7 @@ public class SocketServer {
     @OnError
     public void onError(Throwable throwable, Session session) {
         System.out.print("onError" + throwable.toString());
+        close(session);
     }
 
     /**
@@ -85,6 +112,7 @@ public class SocketServer {
      */
     @OnClose
     public void onClose(Session session) {
-        System.out.print("onClose ");
+        System.out.print("onClose " + session);
+        close(session);
     }
 }
