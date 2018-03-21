@@ -2481,6 +2481,94 @@ cd yourProjectPath/target/generated-resources/appassembler/jsw/jboot/bin
 此时，启动的应用为后台程序了。
 
 
+## Jboot部署到tomcat
+首先，需要配置的自己的pom文件的packaging为war，并配置上maven编译插件：
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-war-plugin</artifactId>
+    <configuration>
+        <attachClasses>true</attachClasses>
+        <packagingExcludes>WEB-INF/web.xml</packagingExcludes>
+    </configuration>
+</plugin>
+
+```
+这个过程和普通的java web工程没什么区别。
+
+最最重要的是配置web.xml，在WEB-INF下创建 web.xml，起内容如下：
+
+```xml
+<filter>
+    <filter-name>jfinal</filter-name>
+    <filter-class>com.jfinal.core.JFinalFilter</filter-class>
+    <init-param>
+        <param-name>configClass</param-name>
+        <param-value>io.jboot.web.JbootAppConfig</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>jfinal</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+这里注意：param-value一定使用io.jboot.web.JbootAppConfig，或者是其子类。
+
+ 
+
+如果用到shiro，再配置上：
+
+```xml
+<filter>
+    <filter-name>shiro</filter-name>
+    <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>shiro</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+<listener>
+    <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+</listener>
+```
+一般情况下，shiro的配置内容要放到jfinal的配置之上。
+
+ 
+
+如果项目还用到hystrix，需要添加如下配置：
+
+```xml
+<servlet>
+    <servlet-name>hystrix</servlet-name>
+    <servlet-class>com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>hystrix</servlet-name>
+    <url-pattern>/hystrix</url-pattern>
+</servlet-mapping>
+ ```
+
+如果还用到Metrics，添加如下配置：
+
+```xml
+<servlet>
+    <servlet-name>metrics</servlet-name>
+    <servlet-class>com.codahale.metrics.servlets.AdminServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>metrics</servlet-name>
+    <url-pattern>/metrics</url-pattern>
+</servlet-mapping>
+<listener>
+    <listener-class>io.jboot.component.metric.JbootMetricServletContextListener</listener-class>
+</listener>
+<listener>
+    <listener-class>io.jboot.component.metric.JbootHealthCheckServletContextListener</listener-class>
+</listener>
+ ```
+
+
 # 鸣谢
 rpc framework: 
 
