@@ -82,13 +82,10 @@ public class JbootrpcManager {
             //对某些系统的类 进行排除，例如：Serializable 等
             Class[] excludes = ArrayUtils.concat(default_excludes, rpcService.exclude());
             for (Class inter : inters) {
-                boolean exclude = false;
                 for (Class ex : excludes) {
-                    if (ex == inter) exclude = true;
+                    if (ex == inter) continue;
                 }
-                if (!exclude) {
-                    getJbootrpc().serviceExport(inter, Jboot.bean(clazz), group, version, port);
-                }
+                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), group, version, port);
             }
         }
 
