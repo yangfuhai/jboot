@@ -59,8 +59,6 @@ public class JbootCacheManager {
                 return new JbootRedisCacheImpl();
             case JbootCacheConfig.TYPE_EHREDIS:
                 return new JbootEhredisCacheImpl();
-            case JbootCacheConfig.TYPE_NONE_CACHE:
-                return new NoneCacheImpl();
             case JbootCacheConfig.TYPE_J2CACHE:
                 return new J2cacheImpl();
             default:
