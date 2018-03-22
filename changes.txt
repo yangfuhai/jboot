@@ -1,3 +1,11 @@
+jboot-1.4.1:
+修复：分布式session可能存在刷新session无效而造成session数据丢失的问题
+修复：缓存的ttl设置可能造成分布式多节点不同步的问题
+修复：JbootEventListener多个实现会造成Guice错误的问题
+优化：移除NoneCacheImpl
+优化：RPC暴露代码逻辑同
+
+
 jboot-1.4.0:
 新增：websocket 相关demo
 新增：websocket base path 配置
