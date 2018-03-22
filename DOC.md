@@ -284,7 +284,7 @@ public class HelloController extends Controller {
 	} 
 }
 ```
-以上代码中定义了三个 Action，分表是 `HelloController.index()`、 `HelloController.test()` 和 `HelloController.save(User user)`。
+以上代码中定义了三个 Action，分别是 `HelloController.index()`、 `HelloController.test()` 和 `HelloController.save(User user)`。
 
 Action 可以有返回值，返回值可在拦截器中通过 invocation.getReturnValue() 获取到，以便进行 render 控制。
 
