@@ -63,18 +63,17 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
         String sessionId = getCookie(cookieName);
         if (sessionId != null) {
-
             httpSession = new JbootHttpSession(sessionId, originHttpServletRequest.getServletContext(), createHttpSessionStore(sessionId));
         } else if (create) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
             httpSession = new JbootHttpSession(sessionId, originHttpServletRequest.getServletContext(), createHttpSessionStore(sessionId));
+            setCookie(cookieName, sessionId, maxInactiveInterval);
         }
         return httpSession;
     }
 
     private Map<String, Object> createHttpSessionStore(String sessionId) {
         Map<String, Object> store = jbootCache.get(cacheName, sessionId);
-        ;
         if (store == null) {
             store = Collections.emptyMap();
         }

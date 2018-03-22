@@ -56,6 +56,8 @@ import java.util.List;
  */
 public class JbootInjectManager implements com.google.inject.Module, TypeListener {
 
+    private static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
+
     /**
      * 这个manager的创建不能来之ClassNewer
      * 因为 ClassKits 需要 JbootInjectManager，会造成循环调用。
@@ -121,7 +123,6 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
         JbootAppListenerManager.me().onGuiceConfigure(binder);
     }
 
-    static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
 
     /**
      * auto bind interface impl
@@ -140,7 +141,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
 
             //对某些系统的类 进行排除，例如：Serializable 等
             Class[] excludes = beanExclude == null ? default_excludes : ArrayUtils.concat(default_excludes, beanExclude.value());
-            
+
             for (Class interfaceClass : interfaceClasses) {
                 for (Class ex : excludes) {
                     if (ex == interfaceClass) continue;
