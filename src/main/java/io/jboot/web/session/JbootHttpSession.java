@@ -26,68 +26,31 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Title: (请输入文件名称)
- * @Description: (用一句话描述该文件做什么)
- * @Package io.jboot.web.session
- */
 public class JbootHttpSession implements HttpSession {
 
-    /**
-     * session id
-     */
     private final String id;
 
-    /**
-     * session created time
-     */
     private final long createdAt;
 
-    /**
-     * session last access time
-     */
     private volatile long lastAccessedAt;
 
-    /**
-     * session max active
-     */
     private int maxInactiveInterval;
 
     private final ServletContext servletContext;
 
-    /**
-     * the new attributes of the current request
-     */
     private final Map<String, Object> newAttributes = Maps.newHashMap();
-
-    /**
-     * the deleted attributes of the current request
-     */
     private final Set<String> deleteAttribute = Sets.newHashSet();
-
-    /**
-     * session attributes store
-     */
     private final Map<String, Object> sessionStore;
 
-    /**
-     * true if session invoke invalidate()
-     */
     private volatile boolean invalid;
-
-    /**
-     * true if session attrs updated
-     */
-    private volatile boolean dirty;
+    private volatile boolean dataChanged;
 
     public JbootHttpSession(String id, ServletContext servletContext, Map<String, Object> sessionStore) {
         this.id = id;
         this.servletContext = servletContext;
+        this.sessionStore = sessionStore;
         this.createdAt = System.currentTimeMillis();
         this.lastAccessedAt = createdAt;
-        this.sessionStore = sessionStore;
     }
 
     @Override
@@ -169,7 +132,7 @@ public class JbootHttpSession implements HttpSession {
             deleteAttribute.add(name);
             newAttributes.remove(name);
         }
-        dirty = true;
+        dataChanged = true;
     }
 
     @Override
@@ -182,19 +145,19 @@ public class JbootHttpSession implements HttpSession {
         checkValid();
         deleteAttribute.add(name);
         newAttributes.remove(name);
-        dirty = true;
+        dataChanged = true;
     }
 
     @Override
     public void removeValue(String name) {
         removeAttribute(name);
-        dirty = true;
+        dataChanged = true;
     }
 
     @Override
     public void invalidate() {
         invalid = true;
-        dirty = true;
+        dataChanged = true;
     }
 
     public boolean isNew() {
@@ -202,15 +165,11 @@ public class JbootHttpSession implements HttpSession {
     }
 
 
-    public boolean isDirty() {
-        return dirty;
+    public boolean isDataChanged() {
+        return dataChanged;
     }
 
-    /**
-     * get session attributes' snapshot
-     *
-     * @return session attributes' map object
-     */
+
     public Map<String, Object> snapshot() {
         Map<String, Object> snap = Maps.newHashMap();
         snap.putAll(sessionStore);
@@ -221,11 +180,6 @@ public class JbootHttpSession implements HttpSession {
         return snap;
     }
 
-    /**
-     * the session is valid or not
-     *
-     * @return return true if the session is valid, or false
-     */
     public boolean isValid() {
         return !invalid;
     }

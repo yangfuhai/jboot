@@ -25,7 +25,7 @@ public class JbootSessionConfig {
     public final static int DEFAULT_MAX_INACTIVE_INTERVAL = 60 * 60;
     public final static String DEFAULT_COOKIE_CONTEXT_PATH = "/";
     public final static int DEFAULT_COOKIE_MAX_AGE = -1;
-    public final static String DEFAULT_SESSION_COOKIE_NAME = "__JSID";
+    public final static String DEFAULT_SESSION_COOKIE_NAME = "_JSID";
     public final static String DEFAULT_SESSION_CACHE_NAME = "JBOOTSESSION";
 
 

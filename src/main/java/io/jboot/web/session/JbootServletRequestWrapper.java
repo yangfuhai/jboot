@@ -86,15 +86,20 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
             return;
         }
 
-        //session已经被删除
+        //session已经被整体删除，调用了session.invalidate()
         if (!httpSession.isValid()) {
             jbootCache.remove(cacheName, httpSession.getId());
             setCookie(cookieName, null, 0);
         }
-        //session 已经被修改
-        else if (httpSession.isDirty()) {
+        //session 已经被修改(单数据的增删改查)
+        else if (httpSession.isDataChanged()) {
             Map<String, Object> snapshot = httpSession.snapshot();
-            jbootCache.put(cacheName, httpSession.getId(), snapshot, maxInactiveInterval);
+            if (snapshot.isEmpty()) {
+                jbootCache.remove(cacheName, httpSession.getId());
+                setCookie(cookieName, null, 0);
+            } else {
+                jbootCache.put(cacheName, httpSession.getId(), snapshot, maxInactiveInterval);
+            }
         }
         //更新session存储时间
         else {
