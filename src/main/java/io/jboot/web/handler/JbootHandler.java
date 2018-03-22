@@ -65,6 +65,7 @@ public class JbootHandler extends Handler {
             JbootExceptionHolder.release();
             context.shutdown();
             JbootRequestContext.release();
+            jbootServletRequest.finish();
         }
 
     }

@@ -40,6 +40,7 @@ public class JbootWebConfig {
     private String cookieEncryptKey = DEFAULT_COOKIE_ENCRYPT_KEY;
 
 
+
     public boolean isActionCacheEnable() {
         return actionCacheEnable;
     }
