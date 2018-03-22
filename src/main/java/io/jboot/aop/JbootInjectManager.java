@@ -26,6 +26,7 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.jfinal.aop.Before;
 import io.jboot.aop.annotation.Bean;
+import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
 import io.jboot.aop.interceptor.JFinalBeforeInterceptor;
 import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
@@ -38,8 +39,11 @@ import io.jboot.component.metric.annotation.*;
 import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.core.cache.annotation.CachePut;
 import io.jboot.core.cache.annotation.Cacheable;
+import io.jboot.core.mq.JbootmqMessageListener;
 import io.jboot.core.rpc.annotation.JbootrpcService;
+import io.jboot.event.JbootEventListener;
 import io.jboot.server.listener.JbootAppListenerManager;
+import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StringUtils;
 
@@ -117,6 +121,8 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
         JbootAppListenerManager.me().onGuiceConfigure(binder);
     }
 
+    static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
+
     /**
      * auto bind interface impl
      *
@@ -129,9 +135,15 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
             Class<?>[] interfaceClasses = impl.getInterfaces();
             Bean bean = (Bean) impl.getAnnotation(Bean.class);
             String name = bean.name();
+
+            BeanExclude beanExclude = (BeanExclude) impl.getAnnotation(BeanExclude.class);
+
+            //对某些系统的类 进行排除，例如：Serializable 等
+            Class[] excludes = beanExclude == null ? default_excludes : ArrayUtils.concat(default_excludes, beanExclude.value());
+            
             for (Class interfaceClass : interfaceClasses) {
-                if (interfaceClass == Serializable.class) {
-                    continue;
+                for (Class ex : excludes) {
+                    if (ex == interfaceClass) continue;
                 }
                 try {
                     if (StringUtils.isBlank(name)) {
