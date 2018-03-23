@@ -1,3 +1,6 @@
+jboot-1.4.2:
+修复：Inject 和 RPC 接口过滤无效的问题
+
 jboot-1.4.1:
 修复：分布式session可能存在刷新session无效而造成session数据丢失的问题
 修复：缓存的ttl设置可能造成分布式多节点不同步的问题
