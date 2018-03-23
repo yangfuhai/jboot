@@ -30,7 +30,6 @@ import java.util.UUID;
 
 public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
-    private HttpServletRequest originHttpServletRequest;
     private JbootHttpSession httpSession;
     private JbootCache jbootCache;
 
@@ -45,7 +44,6 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     public JbootServletRequestWrapper(HttpServletRequest request) {
         super(request);
-        this.originHttpServletRequest = request;
         this.jbootCache = JbootCacheManager.me().getCache(cacheType);
     }
 
@@ -63,16 +61,16 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
         String sessionId = getCookie(cookieName);
         if (sessionId != null) {
-            httpSession = new JbootHttpSession(sessionId, originHttpServletRequest.getServletContext(), createHttpSessionStore(sessionId));
+            httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
         } else if (create) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
-            httpSession = new JbootHttpSession(sessionId, originHttpServletRequest.getServletContext(), createHttpSessionStore(sessionId));
+            httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
             setCookie(cookieName, sessionId, maxInactiveInterval);
         }
         return httpSession;
     }
 
-    private Map<String, Object> createHttpSessionStore(String sessionId) {
+    private Map<String, Object> createSessionStore(String sessionId) {
         Map<String, Object> store = jbootCache.get(cacheName, sessionId);
         if (store == null) {
             store = Collections.emptyMap();
@@ -81,6 +79,9 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
 
+    /**
+     * http请求技术时，更新session信息，包括：刷新session的存储时间，更新session数据，清空session数据等
+     */
     public void finish() {
         if (httpSession == null) {
             return;
@@ -91,9 +92,11 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
             jbootCache.remove(cacheName, httpSession.getId());
             setCookie(cookieName, null, 0);
         }
-        //session 已经被修改(单数据的增删改查)
+        //session 已经被修改(session数据的增删改查)
         else if (httpSession.isDataChanged()) {
             Map<String, Object> snapshot = httpSession.snapshot();
+
+            // 数据已经全部被删除了
             if (snapshot.isEmpty()) {
                 jbootCache.remove(cacheName, httpSession.getId());
                 setCookie(cookieName, null, 0);
