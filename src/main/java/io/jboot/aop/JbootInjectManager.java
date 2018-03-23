@@ -143,8 +143,15 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
             Class[] excludes = beanExclude == null ? default_excludes : ArrayUtils.concat(default_excludes, beanExclude.value());
 
             for (Class interfaceClass : interfaceClasses) {
+                boolean isContinue = false;
                 for (Class ex : excludes) {
-                    if (ex == interfaceClass) continue;
+                    if (ex.isAssignableFrom(interfaceClass)) {
+                        isContinue = true;
+                        break;
+                    }
+                }
+                if (isContinue) {
+                    continue;
                 }
                 try {
                     if (StringUtils.isBlank(name)) {
