@@ -1,3 +1,6 @@
+jboot-1.4.3:
+修复：RPC 由于默认排除是Object导致无法暴露的问题
+
 jboot-1.4.2:
 修复：Inject 和 RPC 接口过滤无效的问题
 
