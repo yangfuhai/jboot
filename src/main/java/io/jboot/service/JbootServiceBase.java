@@ -192,7 +192,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     public void join(Model model, String joinOnField) {
         if (model == null)
             return;
-        String id = model.getStr(joinOnField);
+        Object id = model.get(joinOnField);
         if (id == null) {
             return;
         }
@@ -212,7 +212,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     public void join(Model model, String joinOnField, String[] attrs) {
         if (model == null)
             return;
-        String id = model.getStr(joinOnField);
+        Object id = model.get(joinOnField);
         if (id == null) {
             return;
         }
@@ -235,7 +235,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     public void join(Model model, String joinOnField, String joinName) {
         if (model == null)
             return;
-        String id = model.getStr(joinOnField);
+        Object id = model.get(joinOnField);
         if (id == null) {
             return;
         }
@@ -257,7 +257,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     public void join(Model model, String joinOnField, String joinName, String[] attrs) {
         if (model == null)
             return;
-        String id = model.getStr(joinOnField);
+        Object id = model.get(joinOnField);
         if (id == null) {
             return;
         }
