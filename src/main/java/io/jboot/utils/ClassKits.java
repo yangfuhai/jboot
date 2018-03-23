@@ -22,6 +22,7 @@ import io.jboot.Jboot;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -130,16 +131,18 @@ public class ClassKits {
      */
     public static Collection<Method> getClassSetMethods(Class clazz) {
         Collection<Method> setMethods = classMethodsCache.get(clazz);
-        if (setMethods == null || setMethods.isEmpty()) {
-            Method[] methods = clazz.getMethods();
-            for (Method method : methods) {
-                if (method.getName().startsWith("set")
-                        && method.getName().length() > 3
-                        && method.getParameterCount() == 1) {
 
-                    classMethodsCache.put(clazz, method);
+        if (ArrayUtils.isNotEmpty(setMethods)) {
+            return new ArrayList<>(setMethods);
+        }
 
-                }
+        Method[] methods = clazz.getMethods();
+        for (Method method : methods) {
+            if (method.getName().startsWith("set")
+                    && method.getName().length() > 3
+                    && method.getParameterCount() == 1) {
+
+                classMethodsCache.put(clazz, method);
             }
         }
         return setMethods;
