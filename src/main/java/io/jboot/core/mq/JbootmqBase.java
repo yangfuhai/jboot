@@ -118,7 +118,7 @@ public abstract class JbootmqBase implements Jbootmq {
                 try {
                     listener.onMessage(channel, message);
                 } catch (Throwable ex) {
-                    LOG.warn("listener[" + listener.getClass() + "] execute mq message is error. channel:" +
+                    LOG.warn("listener[" + listener.getClass().getName() + "] execute mq message is error. channel:" +
                             channel + "  message:" + String.valueOf(message));
                 }
             }
