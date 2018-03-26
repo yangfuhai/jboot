@@ -92,22 +92,16 @@ public class JbootJsonRender extends JsonRender {
 
         RenderHelpler.actionCacheExec(jsonText, forIE ? contentTypeForIE : contentType);
 
-        PrintWriter writer = null;
         try {
             response.setHeader("Pragma", "no-cache");    // HTTP/1.0 caches might not implement Cache-Control and might only implement Pragma: no-cache
             response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Expires", 0);
 
             response.setContentType(forIE ? contentTypeForIE : contentType);
-            writer = response.getWriter();
+            PrintWriter writer = response.getWriter();
             writer.write(jsonText);
-            writer.flush();
         } catch (IOException e) {
             throw new RenderException(e);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 

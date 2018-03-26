@@ -44,6 +44,7 @@ public class JbootHttpSession implements HttpSession {
 
     private volatile boolean invalid;
     private volatile boolean dataChanged;
+    private volatile boolean empty;
 
     public JbootHttpSession(String id, ServletContext servletContext, Map<String, Object> sessionStore) {
         this.id = id;
@@ -51,6 +52,7 @@ public class JbootHttpSession implements HttpSession {
         this.sessionStore = sessionStore;
         this.createdAt = System.currentTimeMillis();
         this.lastAccessedAt = createdAt;
+        this.empty = sessionStore.isEmpty();
     }
 
     @Override
@@ -128,11 +130,11 @@ public class JbootHttpSession implements HttpSession {
         if (value != null) {
             newAttributes.put(name, value);
             deleteAttribute.remove(name);
+            empty = false;
+            dataChanged = true;
         } else {
-            deleteAttribute.add(name);
-            newAttributes.remove(name);
+            removeAttribute(name);
         }
-        dataChanged = true;
     }
 
     @Override
@@ -143,6 +145,14 @@ public class JbootHttpSession implements HttpSession {
     @Override
     public void removeAttribute(String name) {
         checkValid();
+        if (empty && newAttributes.isEmpty()) {
+            return;
+        }
+
+        if (!newAttributes.containsKey(name) && !sessionStore.containsKey(name)){
+            return;
+        }
+
         deleteAttribute.add(name);
         newAttributes.remove(name);
         dataChanged = true;
@@ -151,7 +161,6 @@ public class JbootHttpSession implements HttpSession {
     @Override
     public void removeValue(String name) {
         removeAttribute(name);
-        dataChanged = true;
     }
 
     @Override
@@ -188,5 +197,9 @@ public class JbootHttpSession implements HttpSession {
         if (invalid) {
             throw new IllegalStateException("http session has invalidate");
         }
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

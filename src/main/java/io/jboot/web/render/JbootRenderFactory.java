@@ -102,4 +102,5 @@ public class JbootRenderFactory extends RenderFactory {
     public Render getXmlRender(String view) {
         return new JbootXmlRender(view);
     }
+
 }

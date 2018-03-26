@@ -48,16 +48,11 @@ public class RenderHelpler {
 
     public static void renderHtml(HttpServletResponse response, String html, String contentType) {
         response.setContentType(contentType);
-        PrintWriter responseWriter = null;
         try {
-            responseWriter = response.getWriter();
+            PrintWriter responseWriter = response.getWriter();
             responseWriter.write(html);
-            responseWriter.flush();
         } catch (Exception e) {
             throw new RenderException(e);
-        } finally {
-            if (responseWriter != null)
-                responseWriter.close();
         }
     }
 

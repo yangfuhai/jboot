@@ -31,10 +31,6 @@ public class FlashMessageManager {
 
     private static final String FLASH_SESSION_ATTR = "_JFM_"; // JFM : jboot flash message
 
-    private static final String FLASH_COOKIE_ATTR = "_JFM_"; // JFM : jboot flash message
-    private static final String FLASH_COOKIE_VALUE = "true";
-
-
     private static final FlashMessageManager ME = new FlashMessageManager();
 
     public static FlashMessageManager me() {
@@ -42,9 +38,6 @@ public class FlashMessageManager {
     }
 
     public void renderTo(Controller controller) {
-        if (!hasFlashMessage(controller)) {
-            return;
-        }
         HashMap<String, Object> flash = controller.getSessionAttr(FLASH_SESSION_ATTR);
         if (flash == null || flash.isEmpty()) {
             return;
@@ -63,25 +56,14 @@ public class FlashMessageManager {
             return;
         }
         controller.setSessionAttr(FLASH_SESSION_ATTR, flash);
-        controller.setCookie(FLASH_COOKIE_ATTR, FLASH_COOKIE_VALUE, 60);
     }
 
+
     public void release(Controller controller) {
-        if (!hasFlashMessage(controller)) {
+        if (controller.getSessionAttr(FLASH_SESSION_ATTR) == null) {
             return;
         }
         controller.removeSessionAttr(FLASH_SESSION_ATTR);
-        controller.removeCookie(FLASH_COOKIE_ATTR);
     }
 
-    /**
-     * 查看是否有 FlashMessage
-     * 因为对 FlashMessage操作是有"代价的"，需要去操作redis 等缓存
-     * 所以应该先通过 cookie来判断，再执行
-     *
-     * @return
-     */
-    private boolean hasFlashMessage(Controller controller) {
-        return FLASH_COOKIE_VALUE.equals(controller.getCookie(FLASH_COOKIE_ATTR));
-    }
 }
