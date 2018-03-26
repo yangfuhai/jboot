@@ -141,6 +141,7 @@ public class ClassScanner {
         excludeJars.add("resteasy-");
         excludeJars.add("activation-");
         excludeJars.add("jcip-annotations-");
+        excludeJars.add("jjwt-");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();
