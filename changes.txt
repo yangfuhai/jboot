@@ -1,5 +1,7 @@
 jboot-1.4.4:
-
+新增：MQ 接收消息时可以按顺序同步接收的配置
+修复：ClassKits可能会休闲ConcurrentModificationException异常的问题
+修复：join 系列方法不支持非String类型的主键的bug
 
 
 jboot-1.4.3:
