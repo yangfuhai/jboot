@@ -1,7 +1,10 @@
 jboot-1.4.4:
 新增：MQ 接收消息时可以按顺序同步接收的配置
+优化：response的关闭有容器负责处理，Controller不再进行干涉
+优化：FlashMessage 不再依赖cookie的处理
 修复：ClassKits可能会休闲ConcurrentModificationException异常的问题
 修复：join 系列方法不支持非String类型的主键的bug
+修复：由于JFinal render之后会关闭response，导致handler的执行之后无法设置cookie的问题
 
 
 jboot-1.4.3:
