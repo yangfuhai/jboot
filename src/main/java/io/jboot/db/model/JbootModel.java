@@ -32,6 +32,8 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
+import io.shardingjdbc.core.api.HintManager;
+import io.shardingjdbc.core.hint.HintManagerHolder;
 
 import java.util.*;
 
@@ -43,19 +45,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private static final String COLUMN_CREATED = "created";
     private static final String COLUMN_MODIFIED = "modified";
-    private static final ThreadLocal<Object> THREAD_LOCAL = new ThreadLocal<>();
-
-    public void setThreadData(Object data) {
-        THREAD_LOCAL.set(data);
-    }
-
-    public <T> T getThreadData() {
-        return (T) THREAD_LOCAL.get();
-    }
-
-    public void clearThreadData() {
-        THREAD_LOCAL.remove();
-    }
 
     /**
      * 是否启用自动缓存
@@ -156,71 +145,30 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     /**
-     * 可以再DAO中调用此方法使用proxy数据源进行连接数据库
-     * 例如：DAO.useProxy().findById("123")
-     * 注意：使用此方法，需要配置名称为 proxy 的数据源
+     * 修复 jfinal use 可能造成的线程安全问题
      *
+     * @param configName
      * @return
      */
-    public M useProxy() {
-        M proxy = get("__proxy__");
-        if (proxy != null) {
-            return proxy;
+    @Override
+    public M use(String configName) {
+        M m = this.get("__ds__" + configName);
+        if (m == null) {
+
+            m = this.copy()
+                    .cacheEnable(this.cacheEnable)
+                    .cacheTime(this.cacheTime)
+                    .useSuper(configName);
+
+            this.put("__ds__" + configName, m);
         }
-
-        proxy = copy().use("proxy").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
-
-        if (proxy._getConfig() == null) {
-            proxy.use(null);
-        }
-
-        set("__proxy__", proxy);
-        return proxy;
+        return m;
     }
 
 
-    /**
-     * 同 useProxy
-     *
-     * @return
-     */
-    public M useSlave() {
-        M proxy = get("__slave__");
-        if (proxy != null) {
-            return proxy;
-        }
-
-        proxy = copy().use("slave").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
-
-        if (proxy._getConfig() == null) {
-            proxy.use(null);
-        }
-
-        set("__slave__", proxy);
-        return proxy;
+    M useSuper(String configName) {
+        return super.use(configName);
     }
-
-    /**
-     * 同 useProxy
-     *
-     * @return
-     */
-    public M useMaster() {
-        M proxy = get("__master__");
-        if (proxy != null) {
-            return proxy;
-        }
-
-        proxy = copy().use("master").cacheEnable(this.cacheEnable).cacheTime(cacheTime);
-
-        if (proxy._getConfig() == null) {
-            proxy.use(null);
-        }
-
-        set("__master__", proxy);
-        return proxy;
-    }
-
 
     /**
      * 是否启用自动缓存
@@ -367,6 +315,21 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             Jboot.sendEvent(updateAction(), findById(id));
         }
         return updateSuccess;
+    }
+
+
+    /**
+     * 更新，但是不发送Action通知
+     *
+     * @return
+     */
+    public boolean updateWithoutEvent() {
+        if (hasColumn(COLUMN_MODIFIED)) {
+            set(COLUMN_MODIFIED, new Date());
+        }
+
+        Boolean autoCopyModel = get(AUTO_COPY_MODEL);
+        return (autoCopyModel != null && autoCopyModel == true) ? copyModel().updateNormal() : this.updateNormal();
     }
 
     boolean updateNormal() {
@@ -715,17 +678,16 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return super.find(sql, paras);
         }
 
-        //copy threadData to hystrix thread
-        final Object threadData = getThreadData();
+        final HintManager hintManager = HintManagerHolder.get();
 
         return Jboot.hystrix(new JbootHystrixCommand("sql:" + sql, JbootModelConfig.getConfig().getHystrixTimeout()) {
             @Override
             protected Object run() throws Exception {
                 try {
-                    setThreadData(threadData);
+                    HintManagerHolder.setHintManager(hintManager);
                     return JbootModel.super.find(sql, paras);
                 } finally {
-                    clearThreadData();
+                    HintManagerHolder.clear();
                 }
             }
 

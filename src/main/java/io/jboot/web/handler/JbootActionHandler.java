@@ -109,6 +109,9 @@ public class JbootActionHandler extends ActionHandler {
 
             boolean isRedirect = render instanceof RedirectRender;
 
+
+
+
             /**
              * 如果当前是redirect
              * 尝试设置 FlashMessage 数据到 session
@@ -125,7 +128,6 @@ public class JbootActionHandler extends ActionHandler {
             }
 
             render.setContext(request, response, action.getViewPath()).render();
-
 
             /**
              * 如果当前不是redirect，那么尝试去清空FlashMessage数据

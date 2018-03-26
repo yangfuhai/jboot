@@ -40,7 +40,7 @@ public class JbootHandler extends Handler {
          * 通过 JbootRequestContext 去保存 request，然后可以在当前线程的任何地方
          * 通过 JbootRequestContext.getRequest() 去获取。
          */
-        JbootServletRequestWrapper jbootServletRequest = new JbootServletRequestWrapper(request);
+        JbootServletRequestWrapper jbootServletRequest = new JbootServletRequestWrapper(request,response);
         JbootRequestContext.handle(jbootServletRequest, response);
 
 
@@ -65,6 +65,7 @@ public class JbootHandler extends Handler {
             JbootExceptionHolder.release();
             context.shutdown();
             JbootRequestContext.release();
+            jbootServletRequest.refreshSession();
         }
 
     }

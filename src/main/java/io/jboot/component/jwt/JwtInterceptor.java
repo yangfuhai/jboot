@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.jwt;
+package io.jboot.component.jwt;
 
 import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,12 +57,20 @@ public class JwtInterceptor implements FixedInterceptor {
             return;
         }
 
+        JwtShiroBridge jwtShiroBridge = JwtManager.me().getJwtShiroBridge();
+        if (jwtShiroBridge != null) {
+            Subject subject = jwtShiroBridge.buildSubject(map, inv.getController());
+            if (subject != null) {
+                ThreadContext.bind(subject);
+            }
+        }
+
         try {
             JwtManager.me().holdJwts(map);
             inv.invoke();
+            processInvokeAfter(inv);
         } finally {
             JwtManager.me().releaseJwts();
-            processInvokeAfter(inv);
         }
     }
 
@@ -71,13 +81,13 @@ public class JwtInterceptor implements FixedInterceptor {
         }
 
         JbootController jbootController = (JbootController) inv.getController();
-        Map<String, Object> jwts = jbootController.getJwtAttrs();
+        Map<String, Object> jwtMap = jbootController.getJwtAttrs();
 
-        if (jwts == null || jwts.isEmpty()) {
+        if (jwtMap == null || jwtMap.isEmpty()) {
             return;
         }
 
-        String token = JwtManager.me().createJwtToken(jwts);
+        String token = JwtManager.me().createJwtToken(jwtMap);
         HttpServletResponse response = inv.getController().getResponse();
         response.addHeader(JwtManager.me().getHttpHeaderName(), token);
     }

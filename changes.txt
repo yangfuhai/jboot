@@ -1,8 +1,78 @@
+jboot-1.4.4:
+新增：MQ 接收消息时可以按顺序同步接收的配置
+优化：response的关闭有容器负责处理，Controller不再进行干涉
+优化：FlashMessage 不再依赖cookie的处理
+修复：ClassKits可能会休闲ConcurrentModificationException异常的问题
+修复：join 系列方法不支持非String类型的主键的bug
+修复：由于JFinal render之后会关闭response，导致handler的执行之后无法设置cookie的问题
+
+
+jboot-1.4.3:
+修复：RPC 由于默认排除是Object导致无法暴露的问题
+
+jboot-1.4.2:
+修复：Inject 和 RPC 接口过滤无效的问题
+
+jboot-1.4.1:
+修复：分布式session可能存在刷新session无效而造成session数据丢失的问题
+修复：缓存的ttl设置可能造成分布式多节点不同步的问题
+修复：JbootEventListener多个实现会造成Guice错误的问题
+优化：移除NoneCacheImpl
+优化：RPC暴露代码逻辑同
+
+
+jboot-1.4.0:
+新增：websocket 相关demo
+新增：websocket base path 配置
+优化：调整 @EnableCORS 顺序
+
+
+jboot-1.3.9:
+修复：Dao.use(datasource) 无法使用的问题
+修复：Before注解中拦截器getArgs() 数据不正确的问题
+新增：分库分表的demo和文档
+
+
+jboot-1.3.8:
+新增：@EnableMetricConcurrency 注解，用于通过Metrics监控当前Action的并发量
+新增：JwtShiroBridge接口，用于Jwt和shiro之间的整合，通过Jwt判断其Shiro权限
+修复：@Before注解在AOP中无法获取参数的问题
+修复：上个版本优化cookie代码后无法获取加密cookie的问题
+修复：同一个方法不能使用多个不带参数的Metricx维度监控的问题
+修复：类单词拼写错误，重命名JbootMetricConterAopInterceptor为JbootMetricCounterAopInterceptor
+
+
+jboot-1.3.7:
+优化：@EnableMetricCounter 为记录次数而不是并发量
+优化：model.use 可能造成的线程安全问题
+优化：AOP 框架 guice 升级到最新版本, 支持 java9 和 JPMS
+优化：重构mq模块，支持客户端不需要配置channel单独使用
+优化：更新undertow到最新版本，和其他依赖更新
+
+
+jboot-1.3.6:
+新增：hikaricp 支持 metrics 监控的功能
+修复：MetricManager 初始化可能出现空指针异常的问题
+优化：Jwt 的相关方法，新增直接创建token在json返回
+更新：undertow 到最新版本 2.0
+更新：JWT 的相关文档
+
+
+jboot-1.3.5:
+修复：Db.use() 总是使用最后一个的问题
+修复：jboot.datasource.table 和 jboot.datasource.extable 配置无效的问题
+修复：sharding-jdbc 使用 hintManager 必须关闭 hystrix，否则无法使用的问题
+文档：新增websocket相关的文档
+其他：更新依赖，升级sharding-jdbc到最新版本
+
+
+
 jboot-1.3.4:
 新增：model 查询的时候默认通过hystrix进行管理
 新增：db查询Record的时候，默认通过Hystrix进行管理
 新增：在多数据源的情况下，@Table注解添加DataSource配置的支持，可以指定在哪些数据源下
 修复：jboot.rpc.requestTimeout 对dubbo无效的问题
+修复：swagger页面出现 "Unknown Type : ref" 问题。
 文档：更新aop相关文档
 其他：更新相关依赖，hikariCP->2.7.7;druid->1.1.8;metrics->4.0.2;zipkin-sender->2.3.2
 

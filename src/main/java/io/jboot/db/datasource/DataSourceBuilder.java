@@ -75,7 +75,7 @@ public class DataSourceBuilder {
         ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
 
         //通过数据源配置，获取所有的表信息
-        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(datasourceConfig.getName());
+        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(datasourceConfig);
 
         //具体的表，例如："t_order, t_order_item"
         StringBuilder bindTableGroups = new StringBuilder();

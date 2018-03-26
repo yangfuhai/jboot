@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.jwt;
+package io.jboot.component.jwt;
 
 import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.utils.StringUtils;
@@ -29,6 +29,7 @@ public class JwtConfig {
     private String httpHeaderName = "Jwt";
     private String secret;
     private long validityPeriod = 0;
+    private String jwtShiroBridge;
 
     public String getHttpHeaderName() {
         return httpHeaderName;
@@ -57,4 +58,13 @@ public class JwtConfig {
     public boolean isEnable() {
         return StringUtils.isNotBlank(secret);
     }
+
+    public String getJwtShiroBridge() {
+        return jwtShiroBridge;
+    }
+
+    public void setJwtShiroBridge(String jwtShiroBridge) {
+        this.jwtShiroBridge = jwtShiroBridge;
+    }
+
 }

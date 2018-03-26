@@ -31,7 +31,6 @@ import io.jboot.JbootConstants;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.component.log.Slf4jLogFactory;
-import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.component.swagger.JbootSwaggerConfig;
 import io.jboot.component.swagger.JbootSwaggerController;
@@ -223,7 +222,6 @@ public class JbootAppConfig extends JFinalConfig {
         JbootShiroManager.me().init(routeList);
         JbootLimitationManager.me().init(routeList);
         JbootScheduleManager.me().init();
-        JbootMetricManager.me().init();
         JbootSwaggerManager.me().init();
 
         /**

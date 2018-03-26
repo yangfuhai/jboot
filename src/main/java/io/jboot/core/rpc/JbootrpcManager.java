@@ -79,16 +79,20 @@ public class JbootrpcManager {
             JbootAssert.assertFalse(inters == null || inters.length == 0,
                     String.format("class[%s] has no interface, can not use @JbootrpcService", clazz));
 
-            //对某些系统的类 进行排查，例如：Serializable 等
+            //对某些系统的类 进行排除，例如：Serializable 等
             Class[] excludes = ArrayUtils.concat(default_excludes, rpcService.exclude());
             for (Class inter : inters) {
-                boolean exclude = false;
+                boolean isContinue = false;
                 for (Class ex : excludes) {
-                    if (ex == inter) exclude = true;
+                    if (ex.isAssignableFrom(inter)) {
+                        isContinue = true;
+                        break;
+                    }
                 }
-                if (!exclude) {
-                    getJbootrpc().serviceExport(inter, Jboot.bean(clazz), group, version, port);
+                if (isContinue) {
+                    continue;
                 }
+                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), group, version, port);
             }
         }
 

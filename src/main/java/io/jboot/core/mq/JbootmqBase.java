@@ -20,7 +20,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 
 import java.util.Collection;
@@ -38,10 +37,22 @@ public abstract class JbootmqBase implements Jbootmq {
     protected JbootmqConfig config = Jboot.config(JbootmqConfig.class);
 
     protected Set<String> channels = Sets.newHashSet();
+    protected Set<String> syncRecevieMessageChannels = Sets.newHashSet();
 
     private final ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
             60L, TimeUnit.SECONDS,
             new SynchronousQueue<Runnable>());
+
+
+    public JbootmqBase() {
+        String channelString = config.getChannel();
+        if (StringUtils.isBlank(channelString)) {
+            return;
+        }
+
+        this.channels.addAll(StringUtils.splitToSet(channelString, ","));
+        this.syncRecevieMessageChannels.addAll(StringUtils.splitToSet(config.getSyncRecevieMessageChannel(), ","));
+    }
 
 
     @Override
@@ -74,22 +85,6 @@ public abstract class JbootmqBase implements Jbootmq {
         listenersMap.clear();
     }
 
-    protected void initChannels() {
-        String channelString = config.getChannel();
-        if (StringUtils.isBlank(channelString)) {
-            LOG.warn("jboot.mq.channel is blank or null, please config mq channels when you use.");
-            return;
-        }
-
-        this.channels.addAll(StringUtils.splitToSet(channelString, ","));
-    }
-
-    protected void ensureChannelExist(String toChannel) {
-        if (!this.channels.contains(toChannel)) {
-            throw new JbootIllegalConfigException(toChannel + " not exist, please config jboot.mq.channel to set the channel.");
-        }
-    }
-
 
     @Override
     public Collection<JbootmqMessageListener> getAllChannelListeners() {
@@ -103,20 +98,38 @@ public abstract class JbootmqBase implements Jbootmq {
     }
 
     public void notifyListeners(String channel, Object message) {
-        notifyAll(channel, message, allChannelListeners);
-        notifyAll(channel, message, listenersMap.get(channel));
+        boolean globalResult = notifyAll(channel, message, allChannelListeners);
+        boolean channelResult = notifyAll(channel, message, listenersMap.get(channel));
+
+        if (!globalResult && !channelResult) {
+            LOG.warn("recevie mq message, bug has not mq listener to process. channel:" +
+                    channel + "  message:" + String.valueOf(message));
+        }
     }
 
 
-    private void notifyAll(String channel, Object message, Collection<JbootmqMessageListener> listeners) {
+    private boolean notifyAll(String channel, Object message, Collection<JbootmqMessageListener> listeners) {
         if (listeners == null || listeners.size() == 0) {
-            return;
+            return false;
         }
 
-        for (JbootmqMessageListener listener : listeners) {
-            threadPool.execute(() -> {
-                listener.onMessage(channel, message);
-            });
+        if (syncRecevieMessageChannels.contains(channel)) {
+            for (JbootmqMessageListener listener : listeners) {
+                try {
+                    listener.onMessage(channel, message);
+                } catch (Throwable ex) {
+                    LOG.warn("listener[" + listener.getClass().getName() + "] execute mq message is error. channel:" +
+                            channel + "  message:" + String.valueOf(message));
+                }
+            }
+        } else {
+            for (JbootmqMessageListener listener : listeners) {
+                threadPool.execute(() -> {
+                    listener.onMessage(channel, message);
+                });
+            }
         }
+
+        return true;
     }
 }

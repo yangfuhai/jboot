@@ -1,7 +1,7 @@
 import com.jfinal.json.FastJson;
 import com.jfinal.json.JFinalJson;
 import org.junit.Test;
-import service.User;
+import service.MyUser;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -12,7 +12,7 @@ public class JsonTest {
     @Test
     public void testJFinalJson() {
 
-        User user = new User();
+        MyUser user = new MyUser();
         user.setId(100);
         user.setName("michael");
 
@@ -20,7 +20,7 @@ public class JsonTest {
         System.out.println(json);
 
 
-        User user1 = new User();
+        MyUser user1 = new MyUser();
         user1.setId(100);
         user1.setName(null);
 
@@ -33,7 +33,7 @@ public class JsonTest {
     @Test
     public void testFastJson() {
 
-        User user = new User();
+        MyUser user = new MyUser();
         user.setId(100);
         user.setName("michael");
 
@@ -41,7 +41,7 @@ public class JsonTest {
         System.out.println(json);
 
 
-        User user1 = new User();
+        MyUser user1 = new MyUser();
         user1.setId(100);
         user1.setName(null);
 

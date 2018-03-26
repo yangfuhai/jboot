@@ -25,7 +25,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
 public @interface JbootrpcService {
     
-    Class[] exclude() default Object.class;
+    Class[] exclude() default Void.class;
 
     String group() default "";
 

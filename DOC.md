@@ -9,6 +9,7 @@
 		- 使用@RquestMapping
 		- render
 	- session 与 分布式session
+	- websocket
 - [安全控制](#安全控制)
 	- shiro简介
 	- shiro的配置
@@ -110,7 +111,7 @@
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.3.4</version>
+    <version>1.4.4</version>
 </dependency>
 ```
 #### 编写helloworld
@@ -180,10 +181,13 @@ Jboot的主要核心组件有以下几个。
 # MVC
 ## MVC的概念
 略
-## JbootController
-MVC中的C是Controller的简写，在Jboot应用中，所有的控制器Controller都应该继承至JbootController，JbootController扩展了JFinal 中 Controller 的许多方法。
 
-**新增的普通方法：**
+## Controller
+Controller是JFinal核心类之一，该类作为MVC模式中的控制器。基于JFinal的Web应用的控制器需要继承该类。Controller是定义Action方法的地点，是组织Action的一种方式，一个Controller可以包含多个Action。Controller是线程安全的。
+### JbootController
+JbootController是扩展了JFinal Controller，在Jboot应用中，所有的控制器都应该继承至JbootController。
+
+**JbootController新增的普通方法：**
 
 |方法调用 | 描述 |
 | ------------- | -----|
@@ -223,18 +227,28 @@ setFlashAttr 是用于对 redirect 之后的页面进行渲染。
 
 **JWT简介：**  Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（[RFC 7519](https://tools.ietf.org/html/rfc7519)).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。
 
-## @RquestMapping
+*JWT的相关配置*
+
+|配置属性 | 描述 |
+| ------------- | -----|
+| jboot.web.jwt.httpHeaderName| 配置JWT的http头的key，默认为JWT |
+| jboot.web.jwt.secret | 配置JWT的密钥 |
+| jboot.web.jwt.validityPeriod | 配置JWT的过期时间，默认不过期 |
+
+
+### @RquestMapping
 RquestMapping是请求映射，也就是通过@RquestMapping注解，可以让某个请求映射到指定的控制器Controller里去。
 
 
-### 使用@RquestMapping
+**使用@RquestMapping**
+
 使用@RquestMapping非常简单。只需要在Controller类添加上@RquestMapping注解即可。
 
 例如：
 
 ```java
 @RequestMapping("/")
-public class HelloController extend JbootController{
+public class HelloController extends JbootController{
    public void index(){
         renderText("hello jboot");
    }
@@ -247,8 +261,11 @@ public class HelloController extend JbootController{
 * 访问`http://127.0.0.1`等同于`http://127.0.0.1/`。
 * `@RquestMapping` 可以使用在任何的 Controller，并 **不需要** 这个Controller继承至JbootController。
 
-## Action
+### Action
 在 Controller 之中定义的 public 方法称为 Action。Action 是请求的最小单位。Action 方法 必须在 Controller 中定义，且必须是 public 可见性。
+
+每个Action对应一个URL地址的映射：
+
 
 ```java
 public class HelloController extends Controller { 
@@ -267,9 +284,9 @@ public class HelloController extends Controller {
 	} 
 }
 ```
-以上代码中定义了三个 Action，分表是 HelloController.index()、 HelloController.test() 和 HelloController.save(User user)。
+以上代码中定义了三个 Action，分别是 `HelloController.index()`、 `HelloController.test()` 和 `HelloController.save(User user)`。
 
-Action 可以有返回值，返回值可在拦截器中通过 invocation.getReturnValue() 获取到，以便 进行 render 控制。
+Action 可以有返回值，返回值可在拦截器中通过 invocation.getReturnValue() 获取到，以便进行 render 控制。
 
 Action 可以带参数，可以代替 getPara、getBean、getModel 系列方法获取参数，使用 UploadFile 参数时可以代替 getFile 方法实现文件上传。这种传参方式还有一个好处是便于与 swagger 这类 第三方无缝集成，生成 API 文档。
 
@@ -352,7 +369,7 @@ public class BlogController extends JbootController {
 
 上面代码中，表单域采用了”blog.title”、”blog.content”作为表单域的 name 属性，”blog”是类 文件名称”Blog”的首字母变小写，”title”是 blog 数据库表的 title 字段，如果希望表单域使用任 意的 modelName ，只需要在 getModel 时多添加一个参数来指定，例如: getModel(Blog.class, ”otherName”)。
 
-## render
+### render
 渲染器，负责把内容输出到浏览器，在Controller中，提供了如下一些列render方法。
 
 | 指令         |  描述  |
@@ -376,11 +393,11 @@ public class BlogController extends JbootController {
 | renderNull() |不渲染，即不向客户端返回数据。|
 | render(new MyRender()) |使用自定义渲染器 MyRender 来渲染。 |
 
-## session 与 分布式session
+### session 与 分布式session
 
 使用session非常简单，直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 就可以。
 
-### 分布式session
+#### 分布式session
 在Jboot的设计中，分布式的session是依赖分布式缓存的，jboot中，分布式缓存提供了3种方式：
 
 1. ehcache
@@ -400,6 +417,306 @@ jboot.cache.redis.database = 1
 配置好缓存后，直接在Controller里调用`getSessionAttr(key)` 或 `setSessionAttr(key,value)` 即可。
 
 *注意：* session都是走缓存，如果jboot配置的缓存是ehcache（或者 ehredis）,请注意在ehcache.xml上添加名为 `SESSION` 的缓存节点。
+
+### 限流和流量控制
+在Jboot中，默认提供了4个注解进行流量管控。4个注解代表着四个不同的流量管控方案，他们分别是：
+
+| 指令         |  描述  |
+| ------------- | -----|
+| EnableConcurrencyLimit | 限制当前Action的并发量 |
+| EnablePerIpLimit  |限制每个IP的每秒访问量|
+| EnablePerUserLimit  |限制每个用户的访问量|
+| EnableRequestLimit  |限制总体每秒钟可以通过的访问量|
+
+例如：
+
+```java
+@RequestMapping("/limitation")
+public class LimitationDemo extends JbootController {
+
+
+    public static void main(String[] args) {
+        Jboot.setBootArg("jboot.limitation.webPath","/limitation/view");
+        Jboot.run(args);
+    }
+
+
+    public void index() {
+        renderText("render ok");
+    }
+
+    /**
+     * 所有的请求，每1秒钟只能访问一次
+     */
+    @EnableRequestLimit(rate = 1)
+    public void request() {
+        renderText("request() render ok");
+    }
+
+    /**
+     * 所有的请求，并发量为1个
+     */
+    @EnableConcurrencyLimit(rate = 1)
+    public void con() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        renderText("con() render ok");
+    }
+
+    /**
+     * 所有的请求，每1秒钟只能访问一次
+     * 被限制的请求，自动跳转到 /limitation/request2
+     */
+    @EnableRequestLimit(rate = 1, renderType = LimitRenderType.REDIRECT, renderContent = "/limitation/request2")
+    public void request1() {
+        renderText("request1() render ok");
+    }
+
+
+    public void request2() {
+        renderText("request2() render ok");
+    }
+
+
+    /**
+     * 每个用户，每5秒钟只能访问一次
+     */
+    @EnablePerUserLimit(rate = 0.2)
+    public void user() {
+        renderText("user() render ok");
+    }
+
+    /**
+     * 每个用户，每5秒钟只能访问一次
+     * 被限制的请求，渲染文本内容 "被限制啦"
+     */
+    @EnablePerUserLimit(rate = 0.2, renderType = LimitRenderType.TEXT, renderContent = "被限制啦")
+    public void user1() {
+        renderText("user1() render ok");
+    }
+
+
+    /**
+     * 每个IP地址，每5秒钟只能访问一次
+     */
+    @EnablePerIpLimit(rate = 0.2)
+    public void ip() {
+        renderText("ip() render ok");
+    }
+}
+```
+
+以上代码和注释已经很清楚的描述了每个注解的意义，但是，针对已经上线的项目，使用@EnableXXXLimit进行流量控制并一定是有效的，很多时候我们需要针对突发流量进行限制和管控，因此，除了以上注解意外，Jboot提供了在线流量管理功能。
+
+使用Jboot在线流量管理，首先配置上流量管理的URL地址，例如：
+
+```
+jboot.limitation.webPath = /jboot/limitation
+```
+
+配置好，启动项目，访问 `http://127.0.0.1:8080/jboot/limitation` 我们可以看到如下内容：
+
+```json
+{
+"ipRates": {
+	"/limitation/ip": {
+		"enable": true,
+		"rate": 0.2,
+		"renderContent": "",
+		"renderType": "",
+		"type": "ip"
+	}
+},
+"userRates": {
+	"/limitation/user": {
+		"enable": true,
+		"rate": 0.2,
+		"renderContent": "",
+		"renderType": "",
+		"type": "user"
+	},
+	"/limitation/user1": {
+		"enable": true,
+		"rate": 0.2,
+		"renderContent": "被限制啦",
+		"renderType": "text",
+		"type": "user"
+	}
+},
+"concurrencyRates": {
+	"/limitation/con": {
+		"enable": true,
+		"rate": 1,
+		"renderContent": "",
+		"renderType": "",
+		"type": "concurrency"
+	}
+},
+"requestRates": {
+	"/limitation/request1": {
+		"enable": true,
+		"rate": 1,
+		"renderContent": "/limitation/request2",
+		"renderType": "redirect",
+		"type": "request"
+	},
+	"/limitation/request": {
+		"enable": true,
+		"rate": 1,
+		"renderContent": "",
+		"renderType": "",
+		"type": "request"
+	}
+}
+}
+```
+
+#### 限流API
+
+1. 限流设置
+	* 接口：`/jboot/limitation/set`
+	* 参数：
+	
+		| 参数         |  描述  |
+		| ------------- | -----|
+		| type | 限流类型：支持有 `ip`,`user`,`request`,`concurrency`，分别代表：单个IP每秒钟限流、单个用户每秒钟限流、每秒钟允许请求的数量，总体并发量设置 |
+		| path  |要对那个路径进行设置，例如 `/user/aabb`|
+		| rate  |设置的数值是多少|
+	
+1. 关闭限流管控
+	* 接口：`/jboot/limitation/close`
+	* 参数：
+	
+		| 参数         |  描述  |
+		| ------------- | -----|
+		| type | 限流类型：支持有 `ip`,`user`,`request`,`concurrency`，分别代表：单个IP每秒钟限流、单个用户每秒钟限流、每秒钟允许请求的数量，总体并发量设置 |
+		| path  |要对那个路径进行设置，例如 `/user/aabb`|
+		
+1. 开启限流管控
+	* 接口：`/jboot/limitation/close`
+	* 参数：
+	
+		| 参数         |  描述  |
+		| ------------- | -----|
+		| type | 限流类型：支持有 `ip`,`user`,`request`,`concurrency`，分别代表：单个IP每秒钟限流、单个用户每秒钟限流、每秒钟允许请求的数量，总体并发量设置 |
+		| path  |要对那个路径进行设置，例如 `/user/aabb`|
+
+
+**注意：** 
+
+1. 通过限流API进行限流，所有的设置都会保存在内存里，因此如果重启服务器后，通过限流API进行限流的所有设置将会失效。
+2. 接口的前缀 `/jboot/limitation`是通过jboot.properties的`jboot.limitation.webPath = /jboot/limitation`进行设置的。
+
+**限流API安全设置**
+
+由于限流功能对系统至关重要，为了防止恶意用户猜出限流API对系统进行恶意操作，因此Jboot提供了限流API的权限设置功能，需要通过 通过jboot.properties的`jboot.limitation.webAuthorizer = com.xxx.MyAuthorizer`进行设置，其中`MyAuthorizer`需要实现`io.jboot.web.limitation.web.Authorizer`接口。
+
+例如：
+
+```java
+public class MyAuthorizer implements Authorizer {
+    @Override
+    public boolean onAuthorize(Controller controller) {
+        return true;
+    }
+}
+```
+
+当限流API被请求的时候，会通过 `MyAuthorizer` 进行权限认证，只有`MyAuthorizer`通过(onAuthorize返回`true`)的时候，请求API才会生效。
+
+## websocket
+在使用websocket之前，需要在jboot.properties文件上配置启动websocket，例如：
+
+```java
+jboot.web.websocketEnable = true
+jboot.web.websocketBufferPoolSize = 100  
+```
+
+`jboot.web.websocketBufferPoolSize` 在没有配置的情况下，默认值是`100`。
+
+当做好以上配置后，就可以开始编写websocket的相关代码了。
+
+html代码：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+服务器返回的信息：
+<input type="text" id="show"/>
+
+浏览器发送的信息：
+<input type="text" id="msg"/>
+<input type="button" value="send" id="send" onclick="send()"/>
+
+
+<script>
+    var ws = null ;
+    var target="ws://localhost:8080/websocket/test";
+    if ('WebSocket' in window) {
+        ws = new WebSocket(target);
+    } else if ('MozWebSocket' in window) {
+        ws = new MozWebSocket(target);
+    } else {
+        alert('WebSocket is not supported by this browser.');
+    }
+
+    ws.onopen = function(obj){
+        console.info('open') ;
+        console.info(obj) ;
+    } ;
+    
+    ws.onclose = function (obj) {
+        console.info('close') ;
+        console.info(obj) ;
+    } ;
+    ws.onmessage = function(obj){
+        console.info(obj) ;
+        document.getElementById('show').value=obj.data;
+    } ;
+    function send(){
+    	ws.send(document.getElementById('msg').value);
+    }
+</script>
+</body>
+</html>
+```
+
+java代码：
+
+```java
+@ServerEndpoint("/websocket/test")
+public class Test {
+	@OnOpen
+	public void onOpen(){
+		System.out.println("onOpen");
+	}
+	@OnClose
+	public void onClose(){
+		System.out.println("onClose");
+	}
+	@OnMessage
+	public void onMessage(Session session,String msg){
+		System.out.println("receive message : "+msg);
+		if(session.isOpen()){
+			try {
+				//发送消息的html页面
+				session.getBasicRemote().sendText(msg);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+```
+
 
 # 安全控制 
 ## shiro简介
@@ -654,9 +971,9 @@ jboot.web.jwt.secret = your_secret
 
 # ORM
 ## 配置
-在使用数据库之前，需要给Jboot应用做一些配置，实际上，在任何的需要到数据库的应用中，都需要给应用程序做一些配置，让应用程序知道去哪里读取数据。
+在使用数据库之前，需要给Jboot应用做一些配置，实际上，在任何需要用到数据库的应用中，都需要给应用程序做一些配置，让应用程序知道去哪里读取数据。
 
-由于Jboot的数据库读取是依赖于JFinal，所以实际上JFinal只是的数据库类型，Jboot都会支持，比如常用的数据库类型有：
+由于Jboot的数据库读取是依赖于JFinal，所以实际上只要是JFinal支持的数据库类型，Jboot都会支持，比如常用的数据库类型有：
 
 * Mysql
 * Oracle
@@ -854,12 +1171,88 @@ company.save();
 
 
 ## 分库和分表
+在Jboot中，分表是通过sharding-jdbc（ 网址：https://github.com/shardingjdbc/sharding-jdbc） 来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
+
+分库分表相关demo: [点击这里](./src/test/java/sharding)
 
 ### 分库
-暂无内容
+分库意味你有多个数据库，每个数据库会对应一个数据源。
+
+例如，我们的应用有三个数据库，分别是 db1,db2,db3，那么需要我们在 jboot.properties 配置文件里配置上三个数据，配置如下：
+
+```
+jboot.datasource.db1.url = jdbc:mysql://127.0.0.1:3306/db1
+jboot.datasource.db1.user = root
+jboot.datasource.db1.password = 
+
+jboot.datasource.db2.url = jdbc:mysql://127.0.0.1:3306/db2
+jboot.datasource.db2.user = root
+jboot.datasource.db2.password = 
+
+jboot.datasource.db3.url = jdbc:mysql://127.0.0.1:3306/db3
+jboot.datasource.db3.user = root
+jboot.datasource.db3.password = 
+
+```
+
+我们希望在分库的时候，通过Model的主键ID进行hashcode进行取模，决定分库。因此需要编写分库策略，代码如下：
+
+```java
+public class UserDatabaseShardingStrategyConfig implements ShardingStrategyConfiguration {
+
+    @Override
+    public ShardingStrategy build() {
+        return shardingStrategy;
+    }
+
+
+    private ShardingStrategy shardingStrategy = new ShardingStrategy() {
+
+        @Override
+        public Collection<String> getShardingColumns() {
+            //根据id进行分库
+            return Sets.newHashSet("id");
+        }
+
+        @Override
+        public Collection<String> doSharding(Collection<String> availableTargetNames, Collection<ShardingValue> shardingValues) {
+            ListShardingValue shardingValue = (ListShardingValue) shardingValues.stream().findFirst().get();
+
+            String dbName = "db" + Math.abs(shardingValue.getValues().iterator().next().toString().hashCode()) % 3;
+
+            System.out.println("插入数据到库：" + dbName);
+
+            //返回通过计算得到的表
+            return Sets.newHashSet(dbName);
+
+        }
+    };
+
+}
+```
+
+编写好分库策略后，需要给Model配置上分库策略：
+```java
+
+@Table(tableName = "tb_user",
+        primaryKey = "id",
+         // 具体的表tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2,
+         // main 是默认数据源的名称
+        actualDataNodes = "main.tb_user${0..2}",
+        //分表策略
+        databaseShardingStrategyConfig = UserDatabaseShardingStrategyConfig.class 
+)
+public class UserModel extends JbootModel<UserModel> {
+
+
+   //geter setter
+}
+
+```
+
 
 ### 分表
-在Jboot中，分表是通过sharding-jdbc（ 网址：https://github.com/shardingjdbc/sharding-jdbc） 来实现的，所以，在了解Jboot的分表之前，请先阅读了解sharding-jdbc的配置信息。
+
 
 
 
@@ -880,30 +1273,7 @@ company.save();
 public class UserModel extends JbootModel<UserModel> {
 
 
-    public UserModel(String id, String name) {
-        setId(id);
-        setName(name);
-    }
-
-    public UserModel() {
-    }
-
-
-    public String getId() {
-        return get("id");
-    }
-
-    public void setId(String id) {
-        set("id", id);
-    }
-
-    public String getName() {
-        return get("name");
-    }
-
-    public void setName(String name) {
-        set("name", name);
-    }
+    //geter setter
 }
 
 ```
@@ -1170,7 +1540,13 @@ https://www.consul.io
 ##### 启动consul
 
 ```java
-consul -agent dev
+consul agent -dev
+```
+
+允许其他机器访问consul:
+
+```java
+consul agent -dev -client=本机局域网IP
 ```
 
 #### zookeeper
@@ -2105,6 +2481,94 @@ cd yourProjectPath/target/generated-resources/appassembler/jsw/jboot/bin
 此时，启动的应用为后台程序了。
 
 
+## Jboot部署到tomcat
+首先，需要配置的自己的pom文件的packaging为war，并配置上maven编译插件：
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-war-plugin</artifactId>
+    <configuration>
+        <attachClasses>true</attachClasses>
+        <packagingExcludes>WEB-INF/web.xml</packagingExcludes>
+    </configuration>
+</plugin>
+
+```
+这个过程和普通的java web工程没什么区别。
+
+最最重要的是配置web.xml，在WEB-INF下创建 web.xml，起内容如下：
+
+```xml
+<filter>
+    <filter-name>jfinal</filter-name>
+    <filter-class>com.jfinal.core.JFinalFilter</filter-class>
+    <init-param>
+        <param-name>configClass</param-name>
+        <param-value>io.jboot.web.JbootAppConfig</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>jfinal</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+这里注意：param-value一定使用io.jboot.web.JbootAppConfig，或者是其子类。
+
+ 
+
+如果用到shiro，再配置上：
+
+```xml
+<filter>
+    <filter-name>shiro</filter-name>
+    <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>shiro</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+<listener>
+    <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+</listener>
+```
+一般情况下，shiro的配置内容要放到jfinal的配置之上。
+
+ 
+
+如果项目还用到hystrix，需要添加如下配置：
+
+```xml
+<servlet>
+    <servlet-name>hystrix</servlet-name>
+    <servlet-class>com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>hystrix</servlet-name>
+    <url-pattern>/hystrix</url-pattern>
+</servlet-mapping>
+ ```
+
+如果还用到Metrics，添加如下配置：
+
+```xml
+<servlet>
+    <servlet-name>metrics</servlet-name>
+    <servlet-class>com.codahale.metrics.servlets.AdminServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>metrics</servlet-name>
+    <url-pattern>/metrics</url-pattern>
+</servlet-mapping>
+<listener>
+    <listener-class>io.jboot.component.metric.JbootMetricServletContextListener</listener-class>
+</listener>
+<listener>
+    <listener-class>io.jboot.component.metric.JbootHealthCheckServletContextListener</listener-class>
+</listener>
+ ```
+
+
 # 鸣谢
 rpc framework: 
 
@@ -2150,14 +2614,5 @@ core framework:
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	
 

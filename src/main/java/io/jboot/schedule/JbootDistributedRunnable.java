@@ -46,7 +46,7 @@ public class JbootDistributedRunnable implements Runnable {
         this.key = "jbootRunnable:" + this.getClass().getName();
 
         if (redis == null) {
-            LOG.error("redis is null, " +
+            LOG.warn("redis is null, " +
                     "can not use @EnableDistributedRunnable in your Class[" + this.getClass().getName() + "], " +
                     "or config redis info in jboot.properties");
         }
@@ -58,7 +58,7 @@ public class JbootDistributedRunnable implements Runnable {
         this.key = "jbootRunnable:" + runnable.getClass().getName();
         this.redis = Jboot.me().getRedis();
         if (redis == null) {
-            LOG.error("redis is null, " +
+            LOG.warn("redis is null, " +
                     "can not use @EnableDistributedRunnable in your Class[" + runnable.getClass().getName() + "], " +
                     "or config redis info in jboot.properties");
         }
@@ -70,7 +70,7 @@ public class JbootDistributedRunnable implements Runnable {
         this.key = "jbootRunnable:" + runnable.getClass().getName();
         this.redis = Jboot.me().getRedis();
         if (redis == null) {
-            LOG.error("redis is null, " +
+            LOG.warn("redis is null, " +
                     "can not use @EnableDistributedRunnable in your Class[" + runnable.getClass().getName() + "], " +
                     "or config redis info in jboot.properties");
         }

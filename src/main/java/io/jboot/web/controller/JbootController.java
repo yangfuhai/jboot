@@ -22,7 +22,7 @@ import com.jfinal.kit.HttpKit;
 import com.jfinal.upload.UploadFile;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
-import io.jboot.web.jwt.JwtManager;
+import io.jboot.component.jwt.JwtManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -157,15 +157,15 @@ public class JbootController extends Controller {
     }
 
 
-    protected HashMap<String, Object> jwts;
+    private HashMap<String, Object> jwtMap;
 
     @Before(NotAction.class)
     public Controller setJwtAttr(String name, Object value) {
-        if (jwts == null) {
-            jwts = new HashMap<>();
+        if (jwtMap == null) {
+            jwtMap = new HashMap<>();
         }
 
-        jwts.put(name, value);
+        jwtMap.put(name, value);
         return this;
     }
 
@@ -175,24 +175,24 @@ public class JbootController extends Controller {
         if (map == null) {
             throw new NullPointerException("map is null");
         }
-        if (jwts == null) {
-            jwts = new HashMap<>();
+        if (jwtMap == null) {
+            jwtMap = new HashMap<>();
         }
 
-        jwts.putAll(map);
+        jwtMap.putAll(map);
         return this;
     }
 
 
     @Before(NotAction.class)
     public <T> T getJwtAttr(String name) {
-        return jwts == null ? null : (T) jwts.get(name);
+        return jwtMap == null ? null : (T) jwtMap.get(name);
     }
 
 
     @Before(NotAction.class)
     public HashMap<String, Object> getJwtAttrs() {
-        return jwts;
+        return jwtMap;
     }
 
     @Before(NotAction.class)
@@ -200,6 +200,18 @@ public class JbootController extends Controller {
         return JwtManager.me().getPara(name);
     }
 
+    @Before(NotAction.class)
+    public Map getJwtParas() {
+        return JwtManager.me().getParas();
+    }
+
+    @Before(NotAction.class)
+    public String createJwtToken() {
+        if (jwtMap == null) {
+            throw new NullPointerException("jwt attrs is null");
+        }
+        return JwtManager.me().createJwtToken(jwtMap);
+    }
 
     /**
      * 获取当前网址

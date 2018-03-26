@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,10 +20,7 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Timer;
 import io.jboot.Jboot;
-import io.jboot.component.metric.annotation.EnableMetricCounter;
-import io.jboot.component.metric.annotation.EnableMetricHistogram;
-import io.jboot.component.metric.annotation.EnableMetricMeter;
-import io.jboot.component.metric.annotation.EnableMetricTimer;
+import io.jboot.component.metric.annotation.*;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
@@ -39,26 +36,38 @@ public class JbootMetricInterceptor implements FixedInterceptor {
     public void intercept(FixedInvocation inv) {
 
 
-        Counter counter = null;
         Timer.Context timerContext = null;
 
 
         EnableMetricCounter counterAnnotation = inv.getMethod().getAnnotation(EnableMetricCounter.class);
         if (counterAnnotation != null) {
             String name = StringUtils.isBlank(counterAnnotation.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".counter"
                     : counterAnnotation.value();
 
 
-            counter = Jboot.me().getMetric().counter(name);
+            Counter counter = Jboot.me().getMetric().counter(name);
             counter.inc();
+        }
+
+
+        Counter concurrencyRecord = null;
+        EnableMetricConcurrency concurrencyAnnotation = inv.getMethod().getAnnotation(EnableMetricConcurrency.class);
+        if (concurrencyAnnotation != null) {
+            String name = StringUtils.isBlank(concurrencyAnnotation.value())
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".concurrency"
+                    : concurrencyAnnotation.value();
+
+
+            concurrencyRecord = Jboot.me().getMetric().counter(name);
+            concurrencyRecord.inc();
         }
 
 
         EnableMetricMeter meterAnnotation = inv.getMethod().getAnnotation(EnableMetricMeter.class);
         if (meterAnnotation != null) {
             String name = StringUtils.isBlank(meterAnnotation.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".meter"
                     : meterAnnotation.value();
 
 
@@ -70,7 +79,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         EnableMetricHistogram histogramAnnotation = inv.getMethod().getAnnotation(EnableMetricHistogram.class);
         if (histogramAnnotation != null) {
             String name = StringUtils.isBlank(histogramAnnotation.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".histogram"
                     : histogramAnnotation.value();
 
 
@@ -82,7 +91,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         EnableMetricTimer timerAnnotation = inv.getMethod().getAnnotation(EnableMetricTimer.class);
         if (timerAnnotation != null) {
             String name = StringUtils.isBlank(timerAnnotation.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                    ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".timer"
                     : timerAnnotation.value();
 
 
@@ -94,8 +103,8 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         try {
             inv.invoke();
         } finally {
-            if (counter != null) {
-                counter.dec();
+            if (concurrencyRecord != null) {
+                concurrencyRecord.dec();
             }
             if (timerContext != null) {
                 timerContext.stop();

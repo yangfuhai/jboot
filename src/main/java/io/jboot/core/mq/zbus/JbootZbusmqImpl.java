@@ -33,8 +33,7 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
     private Broker broker;
 
     public JbootZbusmqImpl() {
-
-        initChannels();
+        super();
 
         JbootZbusmqConfig zbusmqConfig = Jboot.config(JbootZbusmqConfig.class);
         broker = new Broker(zbusmqConfig.getBroker());
@@ -82,9 +81,7 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
 
     @Override
     public void publish(Object message, String toChannel) {
-        ensureChannelExist(toChannel);
         Producer producer = getProducer(toChannel);
-
         Message msg = new Message();
         msg.setTopic(toChannel);
         msg.setBody(Jboot.me().getSerializer().serialize(message));

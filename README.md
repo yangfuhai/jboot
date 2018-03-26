@@ -13,7 +13,7 @@ QQ-Group： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.3.4</version>
+    <version>1.4.4</version>
 </dependency>
 
 ```
@@ -100,6 +100,7 @@ document url ： [click here](./DOC.md)
 * Rlax（EMAIL:popkids@qq.com，GITHUB:[@pkanyue](https://github.com/pkanyue))
 * 徐海峰（EMAIL:xhf6731202@126.com，GITHUB:[@xhf6731202](https://github.com/xhf6731202)）
 * 周洛熙 (EMAIL:78793093@qq.com，GITHUB:[@zhoufengjob](https://github.com/zhoufengjob))
+* lsup (EMAIL:egox.vip@gmail.com，GITHUB:[@lsup](https://github.com/lsup))
 
 
 

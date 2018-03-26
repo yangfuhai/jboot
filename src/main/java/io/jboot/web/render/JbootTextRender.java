@@ -54,7 +54,6 @@ public class JbootTextRender extends TextRender {
     }
 
     public void render() {
-        PrintWriter writer = null;
         try {
 
             RenderHelpler.actionCacheExec(text, contentType);
@@ -66,9 +65,8 @@ public class JbootTextRender extends TextRender {
             response.setContentType(contentType);
             response.setCharacterEncoding(getEncoding());    // 与 contentType 分开设置
 
-            writer = response.getWriter();
+            PrintWriter writer = response.getWriter();
             writer.write(text);
-            writer.flush();
         } catch (IOException e) {
             throw new RenderException(e);
         }

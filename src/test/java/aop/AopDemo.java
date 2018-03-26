@@ -29,7 +29,7 @@ public class AopDemo extends JbootController {
 
 
     public static void main(String[] args) {
-        Jboot.setBootArg("jboot.server.type", "jetty");
+//        Jboot.setBootArg("jboot.server.type", "jetty");
         Jboot.run(args);
     }
 
