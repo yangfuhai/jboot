@@ -43,8 +43,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public static final String AUTO_COPY_MODEL = "_auto_copy_model_";
 
-    private static final String COLUMN_CREATED = "created";
-    private static final String COLUMN_MODIFIED = "modified";
+    private static final String COLUMN_CREATED = JbootModelConfig.getConfig().getColumnCreated();
+    private static final String COLUMN_MODIFIED = JbootModelConfig.getConfig().getColumnModified();
 
     /**
      * 是否启用自动缓存

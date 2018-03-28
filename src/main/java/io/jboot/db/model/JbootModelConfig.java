@@ -35,6 +35,8 @@ public class JbootModelConfig {
     private int hystrixTimeout = 1000 * 10; //单位：毫秒
     private String hystrixFallbackListener = JbootDbHystrixFallbackListenerDefault.class.getName();
 
+    private String columnCreated = "created";
+    private String columnModified = "modified";
 
     public boolean isCacheEnable() {
         return cacheEnable;
@@ -78,6 +80,22 @@ public class JbootModelConfig {
 
     public String getHystrixFallbackListener() {
         return hystrixFallbackListener;
+    }
+
+    public String getColumnCreated() {
+        return columnCreated;
+    }
+
+    public void setColumnCreated(String columnCreated) {
+        this.columnCreated = columnCreated;
+    }
+
+    public String getColumnModified() {
+        return columnModified;
+    }
+
+    public void setColumnModified(String columnModified) {
+        this.columnModified = columnModified;
     }
 
     public void setHystrixFallbackListener(String hystrixFallbackListener) {
