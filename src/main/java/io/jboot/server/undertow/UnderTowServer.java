@@ -193,7 +193,7 @@ public class UnderTowServer extends JbootServer {
             JbootAppListenerManager.me().onAppStartBefore(this);
             undertow.start();
         } catch (Throwable ex) {
-            log.error(ex.toString(), ex);
+            log.error("can not start undertow with port:" + config.getPort(), ex);
             stop();
             return false;
         }

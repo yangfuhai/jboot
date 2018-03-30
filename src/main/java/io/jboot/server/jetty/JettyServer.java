@@ -153,7 +153,7 @@ public class JettyServer extends JbootServer {
             jettyServer.stop();
             return true;
         } catch (Exception ex) {
-            log.error(ex.toString(), ex);
+            log.error("can not start jetty with port:" + config.getPort(), ex);
         }
         return false;
     }
