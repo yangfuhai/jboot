@@ -145,7 +145,6 @@ public class JbootLimitationManager {
     }
 
 
-
     private JbootLimitationManager() {
         LimitationConfig config = Jboot.config(LimitationConfig.class);
         ajaxJsonMap.put("code", config.getLimitAjaxCode());

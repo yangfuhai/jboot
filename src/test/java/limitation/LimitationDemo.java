@@ -47,6 +47,16 @@ public class LimitationDemo extends JbootController {
         renderText("request() render ok");
     }
 
+
+    /**
+     * 所有的请求，每1秒钟只能访问一次
+     */
+    @EnableRequestLimit(rate = 1)
+    public void ra(int a) {
+        renderText("request() render ok");
+    }
+
+
     /**
      * 所有的请求，并发量为1个
      */
