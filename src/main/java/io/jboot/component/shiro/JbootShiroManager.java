@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -116,7 +116,6 @@ public class JbootShiroManager {
     }
 
 
-
     public AuthorizeResult invoke(String actionKey) {
         ShiroAuthorizeProcesserInvoker invoker = invokers.get(actionKey);
         if (invoker == null) {
@@ -144,13 +143,14 @@ public class JbootShiroManager {
     private ShiroErrorProcess shiroErrorProcess;
 
     public ShiroErrorProcess getShiroErrorProcess() {
-        if (shiroErrorProcess == null && jbootShiroConfig.getErrorProcess() != null) {
-            shiroErrorProcess = ClassKits.newInstance(jbootShiroConfig.getErrorProcess());
+        if (shiroErrorProcess != null) {
+            return shiroErrorProcess;
+        }
 
-            if (shiroErrorProcess == null) {
-                throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getErrorProcess() +
-                        " please config jboot.shiro.errorProcess correct. ");
-            }
+        shiroErrorProcess = ClassKits.newInstance(jbootShiroConfig.getErrorProcess());
+        if (shiroErrorProcess == null) {
+            throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getErrorProcess() +
+                    " please config jboot.shiro.errorProcess correct. ");
         }
 
         return shiroErrorProcess;

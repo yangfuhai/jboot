@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,24 +15,18 @@
  */
 package io.jboot.component.shiro;
 
-import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.component.shiro.error.ShiroErrorProcess;
 import io.jboot.component.shiro.processer.AuthorizeResult;
-import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
 
 /**
  * Shiro 拦截器
  */
 public class JbootShiroInterceptor implements FixedInterceptor {
 
-
-    private JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
-
+    private static JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
 
     @Override
     public void intercept(FixedInvocation inv) {
@@ -53,19 +47,9 @@ public class JbootShiroInterceptor implements FixedInterceptor {
             return;
         }
 
-        int errorCode = result.getErrorCode();
-
         ShiroErrorProcess shiroErrorProcess = JbootShiroManager.me().getShiroErrorProcess();
-        switch (errorCode) {
-            case AuthorizeResult.ERROR_CODE_UNAUTHENTICATED:
-                shiroErrorProcess.doProcessUnauthenticated(inv.getController());
-                break;
-            case AuthorizeResult.ERROR_CODE_UNAUTHORIZATION:
-                shiroErrorProcess.doProcessuUnauthorization(inv.getController());
-                break;
-            default:
-                inv.getController().renderError(404);
-        }
+        shiroErrorProcess.doProcessError(inv, result.getErrorCode());
+
     }
 
 }
