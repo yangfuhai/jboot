@@ -148,6 +148,8 @@ public class JbootConfigManager {
             return obj;
         }
 
+        // 不能通过RPC创建
+        // 原因：很多场景下回使用到配置，包括Guice，如果此时又通过Guice来创建Config，会出现循环调用的问题
         obj = ClassKits.newInstance(clazz, false);
         Collection<Method> setMethods = ClassKits.getClassSetMethods(clazz);
 
