@@ -51,7 +51,10 @@ public abstract class JbootmqBase implements Jbootmq {
         }
 
         this.channels.addAll(StringUtils.splitToSet(channelString, ","));
-        this.syncRecevieMessageChannels.addAll(StringUtils.splitToSet(config.getSyncRecevieMessageChannel(), ","));
+
+        if (StringUtils.isNotBlank(config.getSyncRecevieMessageChannel())){
+            this.syncRecevieMessageChannels.addAll(StringUtils.splitToSet(config.getSyncRecevieMessageChannel(), ","));
+        }
     }
 
 
