@@ -76,8 +76,8 @@ public class ClassKits {
     }
 
 
-    public static <T> T newInstance(Class<T> clazz, boolean createdByGuice) {
-        if (createdByGuice) {
+    public static <T> T newInstance(Class<T> clazz, boolean createByGuice) {
+        if (createByGuice) {
             return Jboot.bean(clazz);
         } else {
             try {
