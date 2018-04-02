@@ -362,6 +362,13 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
+
         <!-- 用于支持 dubbo 的 restful 注解 start -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
