@@ -1,4 +1,4 @@
-![](./docs/files/logo.png)
+![](./docs/files/logo01.png)
 ## [English document](./README.md)
 ## JBoot 是什么
 
