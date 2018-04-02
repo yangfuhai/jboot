@@ -1,3 +1,13 @@
+jboot-1.4.5:
+新增：支持 jboot model 创建、更新时间列名自定义
+修复：带参数的action限流不起作用的bug
+修复：当使用cache注解后，无法抛出异常的问题
+修复：由于dubbo2.6x zookeeper客户端切换为curator造成使用zookeeper会出现缺少类的问题
+修复：注解 @JbootrpcService 定义rpc接口同时，又通过@JbootrpcService引入第三方rpc时出错的问题
+优化：当服务器无法启动的时候，指明哪个端口被占用了
+优化：排除不必要的包扫描，更新依赖
+
+
 jboot-1.4.4:
 新增：MQ 接收消息时可以按顺序同步接收的配置
 优化：response的关闭有容器负责处理，Controller不再进行干涉
