@@ -5,6 +5,7 @@ jboot-1.4.5:
 修复：由于dubbo2.6x zookeeper客户端切换为curator造成使用zookeeper会出现缺少类的问题
 修复：注解 @JbootrpcService 定义rpc接口同时，又通过@JbootrpcService引入第三方rpc时出错的问题
 优化：当服务器无法启动的时候，指明哪个端口被占用了
+优化：Druid连接池默认添加stat过滤器查看sql统计情况
 优化：排除不必要的包扫描，更新依赖
 
 
