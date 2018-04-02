@@ -17,8 +17,12 @@ package io.jboot.component.shiro;
 
 import com.jfinal.config.Routes;
 import com.jfinal.core.Controller;
+import io.jboot.Jboot;
+import io.jboot.component.shiro.error.ShiroErrorProcess;
 import io.jboot.component.shiro.processer.*;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.ClassKits;
 import io.jboot.web.utils.ControllerUtils;
 import org.apache.shiro.authz.annotation.*;
 
@@ -33,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JbootShiroManager {
     private static JbootShiroManager me = new JbootShiroManager();
+
+    private JbootShiroConfig jbootShiroConfig = Jboot.config(JbootShiroConfig.class);
 
     private JbootShiroManager() {
     }
@@ -120,5 +126,33 @@ public class JbootShiroManager {
         return invoker.invoke();
     }
 
+    private SsoShiroBridge ssoShiroBridge;
 
+    public SsoShiroBridge getSsoShiroBridge() {
+        if (ssoShiroBridge == null && jbootShiroConfig.getSsoShiroBridge() != null) {
+            ssoShiroBridge = ClassKits.newInstance(jbootShiroConfig.getSsoShiroBridge());
+
+            if (ssoShiroBridge == null) {
+                throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getSsoShiroBridge() +
+                        " please config jboot.shiro.ssoShiroBridge correct. ");
+            }
+        }
+
+        return ssoShiroBridge;
+    }
+
+    private ShiroErrorProcess shiroErrorProcess;
+
+    public ShiroErrorProcess getShiroErrorProcess() {
+        if (shiroErrorProcess == null && jbootShiroConfig.getErrorProcess() != null) {
+            shiroErrorProcess = ClassKits.newInstance(jbootShiroConfig.getErrorProcess());
+
+            if (shiroErrorProcess == null) {
+                throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getErrorProcess() +
+                        " please config jboot.shiro.errorProcess correct. ");
+            }
+        }
+
+        return shiroErrorProcess;
+    }
 }

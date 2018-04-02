@@ -16,6 +16,7 @@
 package io.jboot.component.shiro;
 
 import com.jfinal.kit.PathKit;
+import io.jboot.component.shiro.error.ShiroDefaultErrorProcess;
 import io.jboot.config.annotation.PropertyConfig;
 
 import java.io.File;
@@ -28,6 +29,8 @@ public class JbootShiroConfig {
     private String unauthorizedUrl;
     private String shiroIniFile = "shiro.ini";
 
+    private String errorProcess = ShiroDefaultErrorProcess.class.getName();
+    private String ssoShiroBridge;
 
     public String getLoginUrl() {
         return loginUrl;
@@ -61,6 +64,21 @@ public class JbootShiroConfig {
         this.shiroIniFile = shiroIniFile;
     }
 
+    public String getErrorProcess() {
+        return errorProcess;
+    }
+
+    public void setErrorProcess(String errorProcess) {
+        this.errorProcess = errorProcess;
+    }
+
+    public String getSsoShiroBridge() {
+        return ssoShiroBridge;
+    }
+
+    public void setSsoShiroBridge(String ssoShiroBridge) {
+        this.ssoShiroBridge = ssoShiroBridge;
+    }
 
     private Boolean config;
 

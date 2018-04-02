@@ -17,10 +17,13 @@ package io.jboot.component.shiro;
 
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
+import io.jboot.component.shiro.error.ShiroErrorProcess;
 import io.jboot.component.shiro.processer.AuthorizeResult;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 
 /**
  * Shiro 拦截器
@@ -38,6 +41,11 @@ public class JbootShiroInterceptor implements FixedInterceptor {
             return;
         }
 
+        SsoShiroBridge ssoShiroBridge = JbootShiroManager.me().getSsoShiroBridge();
+        if (ssoShiroBridge != null && ssoShiroBridge.isSsoCallBackRequest(inv.getController())) {
+            ssoShiroBridge.subjectLogin(inv.getController());
+        }
+
         AuthorizeResult result = JbootShiroManager.me().invoke(inv.getActionKey());
 
         if (result == null || result.isOk()) {
@@ -46,45 +54,18 @@ public class JbootShiroInterceptor implements FixedInterceptor {
         }
 
         int errorCode = result.getErrorCode();
+
+        ShiroErrorProcess shiroErrorProcess = JbootShiroManager.me().getShiroErrorProcess();
         switch (errorCode) {
             case AuthorizeResult.ERROR_CODE_UNAUTHENTICATED:
-                doProcessUnauthenticated(inv.getController());
+                shiroErrorProcess.doProcessUnauthenticated(inv.getController());
                 break;
             case AuthorizeResult.ERROR_CODE_UNAUTHORIZATION:
-                doProcessuUnauthorization(inv.getController());
+                shiroErrorProcess.doProcessuUnauthorization(inv.getController());
                 break;
             default:
                 inv.getController().renderError(404);
         }
     }
-
-
-    /**
-     * 未认证处理
-     *
-     * @param controller
-     */
-    private void doProcessUnauthenticated(Controller controller) {
-        if (StringUtils.isBlank(config.getLoginUrl())) {
-            controller.renderError(401);
-            return;
-        }
-        controller.redirect(config.getLoginUrl());
-    }
-
-
-    /**
-     * 未授权处理
-     *
-     * @param controller
-     */
-    private void doProcessuUnauthorization(Controller controller) {
-        if (StringUtils.isBlank(config.getUnauthorizedUrl())) {
-            controller.renderError(403);
-            return;
-        }
-        controller.redirect(config.getUnauthorizedUrl());
-    }
-
 
 }
