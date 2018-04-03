@@ -33,10 +33,4 @@ public interface SsoShiroBridge {
      */
     public void subjectLogin(Controller controller);
 
-    /**
-     * 是否 sso 回调请求
-     * @param controller
-     * @return
-     */
-    public boolean isSsoCallBackRequest(Controller controller);
 }

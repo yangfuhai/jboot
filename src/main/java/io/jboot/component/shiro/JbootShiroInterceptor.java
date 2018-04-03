@@ -36,7 +36,7 @@ public class JbootShiroInterceptor implements FixedInterceptor {
         }
 
         SsoShiroBridge ssoShiroBridge = JbootShiroManager.me().getSsoShiroBridge();
-        if (ssoShiroBridge != null && ssoShiroBridge.isSsoCallBackRequest(inv.getController())) {
+        if (ssoShiroBridge != null) {
             ssoShiroBridge.subjectLogin(inv.getController());
         }
 
