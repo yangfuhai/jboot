@@ -18,11 +18,11 @@ package io.jboot.component.shiro;
 import com.jfinal.config.Routes;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
-import io.jboot.component.shiro.error.ShiroErrorProcess;
 import io.jboot.component.shiro.processer.*;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
+import io.jboot.utils.StringUtils;
 import io.jboot.web.utils.ControllerUtils;
 import org.apache.shiro.authz.annotation.*;
 
@@ -125,34 +125,25 @@ public class JbootShiroManager {
         return invoker.invoke();
     }
 
-    private SsoShiroBridge ssoShiroBridge;
+    private JbootShiroInvokeListener invokeListener;
 
-    public SsoShiroBridge getSsoShiroBridge() {
-        if (ssoShiroBridge == null && jbootShiroConfig.getSsoShiroBridge() != null) {
-            ssoShiroBridge = ClassKits.newInstance(jbootShiroConfig.getSsoShiroBridge());
+    public JbootShiroInvokeListener getInvokeListener() {
 
-            if (ssoShiroBridge == null) {
-                throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getSsoShiroBridge() +
-                        " please config jboot.shiro.ssoShiroBridge correct. ");
+        if (invokeListener != null) {
+            return invokeListener;
+        }
+
+        invokeListener = JbootShiroInvokeListener.DEFAULT;
+
+        if (StringUtils.isNotBlank(jbootShiroConfig.getInvokeListener())) {
+            invokeListener = ClassKits.newInstance(jbootShiroConfig.getInvokeListener());
+            if (invokeListener == null) {
+                throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getInvokeListener() +
+                        " please config jboot.shiro.invokeListener correct. ");
             }
         }
 
-        return ssoShiroBridge;
+        return invokeListener;
     }
 
-    private ShiroErrorProcess shiroErrorProcess;
-
-    public ShiroErrorProcess getShiroErrorProcess() {
-        if (shiroErrorProcess != null) {
-            return shiroErrorProcess;
-        }
-
-        shiroErrorProcess = ClassKits.newInstance(jbootShiroConfig.getErrorProcess());
-        if (shiroErrorProcess == null) {
-            throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getErrorProcess() +
-                    " please config jboot.shiro.errorProcess correct. ");
-        }
-
-        return shiroErrorProcess;
-    }
 }

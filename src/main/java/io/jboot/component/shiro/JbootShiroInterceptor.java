@@ -16,7 +16,6 @@
 package io.jboot.component.shiro;
 
 import io.jboot.Jboot;
-import io.jboot.component.shiro.error.ShiroErrorProcess;
 import io.jboot.component.shiro.processer.AuthorizeResult;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
@@ -35,21 +34,9 @@ public class JbootShiroInterceptor implements FixedInterceptor {
             return;
         }
 
-        SsoShiroBridge ssoShiroBridge = JbootShiroManager.me().getSsoShiroBridge();
-        if (ssoShiroBridge != null) {
-            ssoShiroBridge.subjectLogin(inv.getController());
-        }
-
+        JbootShiroManager.me().getInvokeListener().onInvokeBefore(inv);
         AuthorizeResult result = JbootShiroManager.me().invoke(inv.getActionKey());
-
-        if (result == null || result.isOk()) {
-            inv.invoke();
-            return;
-        }
-
-        ShiroErrorProcess shiroErrorProcess = JbootShiroManager.me().getShiroErrorProcess();
-        shiroErrorProcess.doProcessError(inv, result.getErrorCode());
-
+        JbootShiroManager.me().getInvokeListener().onInvokeAfter(inv, result);
     }
 
 }

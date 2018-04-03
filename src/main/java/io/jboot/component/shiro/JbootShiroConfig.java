@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 package io.jboot.component.shiro;
 
 import com.jfinal.kit.PathKit;
-import io.jboot.component.shiro.error.ShiroDefaultErrorProcess;
 import io.jboot.config.annotation.PropertyConfig;
 
 import java.io.File;
@@ -29,8 +28,7 @@ public class JbootShiroConfig {
     private String unauthorizedUrl;
     private String shiroIniFile = "shiro.ini";
 
-    private String errorProcess = ShiroDefaultErrorProcess.class.getName();
-    private String ssoShiroBridge;
+    private String invokeListener;
 
     public String getLoginUrl() {
         return loginUrl;
@@ -64,20 +62,12 @@ public class JbootShiroConfig {
         this.shiroIniFile = shiroIniFile;
     }
 
-    public String getErrorProcess() {
-        return errorProcess;
+    public String getInvokeListener() {
+        return invokeListener;
     }
 
-    public void setErrorProcess(String errorProcess) {
-        this.errorProcess = errorProcess;
-    }
-
-    public String getSsoShiroBridge() {
-        return ssoShiroBridge;
-    }
-
-    public void setSsoShiroBridge(String ssoShiroBridge) {
-        this.ssoShiroBridge = ssoShiroBridge;
+    public void setInvokeListener(String invokeListener) {
+        this.invokeListener = invokeListener;
     }
 
     private Boolean config;
