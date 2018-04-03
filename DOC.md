@@ -971,43 +971,94 @@ jboot.web.jwt.secret = your_secret
 
 ## shiro的其他使用
 
-### shiro 错误处理接口 ShiroErrorProcess
-通过扩展实现io.jboot.component.shiro.error.ShiroErrorProcess接口，可以接管认证、授权失败以后的流程处理，默认实现为io.jboot.component.shiro.error.ShiroDefaultErrorProcess。
+### 自定义shiro错误处理
+编写一个类实现 实现接口 io.jboot.component.shiro.JbootShiroInvokeListener，例如：
 
-首先实现ShiroErrorProcess接口：
 
 ```java
-public class MyShiroErrorProcess implements ShiroErrorProcess {
+  public class MyshiroListener implements  JbootShiroInvokeListener {
 
-    @Override
-    public void doProcessError(FixedInvocation inv, int errorCode) {
-        switch (errorCode) {
-            case AuthorizeResult.ERROR_CODE_UNAUTHENTICATED:
-                System.out.println("没有认证的处理");
-                break;
-            case AuthorizeResult.ERROR_CODE_UNAUTHORIZATION:
-                System.out.println("没有授权的处理");
-                break;
-            default:
-                System.out.println("其他的处理");
+
+        private JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
+
+
+        @Override
+        public void onInvokeBefore(FixedInvocation inv) {
+            //do nothing
         }
-    }
-}
+
+        @Override
+        public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
+            if (result == null || result.isOk()) {
+                inv.invoke();
+                return;
+            }
+
+            int errorCode = result.getErrorCode();
+            switch (errorCode) {
+                case AuthorizeResult.ERROR_CODE_UNAUTHENTICATED:
+                    doProcessUnauthenticated(inv.getController());
+                    break;
+                case AuthorizeResult.ERROR_CODE_UNAUTHORIZATION:
+                    doProcessuUnauthorization(inv.getController());
+                    break;
+                default:
+                    inv.getController().renderError(404);
+            }
+        }
+
+
+        public void doProcessUnauthenticated(Controller controller) {
+            // 处理认证失败
+        }
+
+        public void doProcessuUnauthorization(Controller controller) {
+            // 处理授权失败
+        }
+
+    };
 ```
 
 其次在jboot.properties中配置即可
 
 ```xml
-jboot.shiro.errorProcess=com.xxx.MyShiroErrorProcess
+jboot.shiro.invokeListener=com.xxx.MyshiroListener
 ```
 
-### shiro jwt 桥接器 JwtShiroBridge
-通过扩展实现io.jboot.component.jwt.JwtShiroBridge接口，可以将jwt纳入到shiro的安全体系，从而实现目前流行的分布式的无状态的服务认证授权，当然还需要对shiro做一定配置。
+### shiro 和 jwt 整合
+和自定义shiro错误处理一样。 编写一个类实现 实现接口 io.jboot.component.shiro.JbootShiroInvokeListener，例如：
 
-以下是具体实现的一个基于jwt的分布式无状态应用认证 demo
+```java
+  public class MyshiroListener implements  JbootShiroInvokeListener {
+
+        @Override
+        public void onInvokeBefore(FixedInvocation inv) {
+            String userId = String.valueOf(inv.getController.getJwtPara(USER_ID));
+
+            JwtAuthenticationToken token = new JwtAuthenticationToken();
+            token.setUserId(userId);
+            token.setToken(userId);
+    
+            Subject subject = SecurityUtils.getSubject();
+            subject.login(token);
+    
+            return subject;
+        }
+
+        @Override
+        public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
+            // ....
+        }
+
+    };
+```
+同时在jboot.properties中配置即可
+
+```xml
+jboot.shiro.invokeListener=com.xxx.MyshiroListener
+```
 
 
-#### 认证客户端配置
 自定义JwtAuthenticationToken
 
 ```java
@@ -1031,28 +1082,7 @@ public class JwtAuthenticationToken implements AuthenticationToken {
 }
 ```
 
-实现JwtShiroBridge接口：
 
-```java
-public class JwtShiroAuthzBridge implements JwtShiroBridge {
-
-    private final static String USER_ID = "userId";
-
-    @Override
-    public Subject buildSubject(Map jwtParas, Controller controller) {
-        String userId = String.valueOf(jwtParas.get(USER_ID));
-
-        JwtAuthenticationToken token = new JwtAuthenticationToken();
-        token.setUserId(userId);
-        token.setToken(userId);
-
-        Subject subject = SecurityUtils.getSubject();
-        subject.login(token);
-
-        return subject;
-    }
-}
-```
 
 实现shiro realm JwtAuthorizingRealm
 
@@ -1106,36 +1136,36 @@ jboot.properties中配置
 jboot.web.jwt.httpHeaderName=Jwt
 jboot.web.jwt.secret=xxxxxxxxx
 jboot.web.jwt.validityPeriod=1800000
-jboot.web.jwt.jwtShiroBridge=xxx.JwtShiroAuthzBridge
 #---------------------------------------------------------------------------------#```
 ```
 
 shiro.ini中配置
 
 ```xml
-[main]
-#cache Manager
-shiroCacheManager = io.jboot.component.shiro.cache.JbootShiroCacheManager
-securityManager.cacheManager = $shiroCacheManager
 
-#realm
-dbRealm=xxx.JwtAuthorizingRealm
-dbRealm.authorizationCacheName=shiro-authorizationCache
+    [main]
+    #cache Manager
+    shiroCacheManager = io.jboot.component.shiro.cache.JbootShiroCacheManager
+    securityManager.cacheManager = $shiroCacheManager
 
-securityManager.realm=$dbRealm
+    #realm
+    dbRealm=xxx.JwtAuthorizingRealm
+    dbRealm.authorizationCacheName=shiro-authorizationCache
+    
+    securityManager.realm=$dbRealm
 
-#session manager
-sessionManager=org.apache.shiro.session.mgt.DefaultSessionManager
-sessionManager.sessionValidationSchedulerEnabled=false
+    #session manager
+    sessionManager=org.apache.shiro.session.mgt.DefaultSessionManager
+    sessionManager.sessionValidationSchedulerEnabled=false
 
-#use jwt
-subjectFactory=xxx.JwtSubjectFactory
-securityManager.subjectFactory=$subjectFactory
-securityManager.sessionManager=$sessionManager
+    #use jwt
+    subjectFactory=xxx.JwtSubjectFactory
+    securityManager.subjectFactory=$subjectFactory
+    securityManager.sessionManager=$sessionManager
 
-#session storage false
-securityManager.subjectDAO.sessionStorageEvaluator.sessionStorageEnabled=false
-
+    #session storage false
+    securityManager.subjectDAO.sessionStorageEvaluator.sessionStorageEnabled=false
+    
 ```
 
 #### 认证服务端配置
@@ -1158,8 +1188,8 @@ public class MainController extends BaseController {
 }
 ```
 
-### shiro sso 桥接器 SsoShiroBridge
-SsoShiroBridge 与上面介绍的 jwt 的桥接器类似，主要作用是接收 sso 请求，完成客户端应用的局部认证与授权。
+### shiro 和 sso 整合
+和上面介绍的 jwt 的桥接器类似，主要作用是接收 sso 请求，完成客户端应用的局部认证与授权。
 
 以下是一个基于jboot 实现 sso服务端 与 sso客户端的 demo
 
@@ -1187,17 +1217,15 @@ public class SSOAuthenticationToken implements AuthenticationToken {
     ... getter setter
 ```
 
-实现 SSOShiroBridge 接口：
+实现 JbootShiroInvokeListener 接口：
 
 ```java
-public class SSOShiroBridge implements SsoShiroBridge {
+ public class MyshiroListener implements  JbootShiroInvokeListener {
 
-    private final static Log log = Log.getLog(SSOShiroBridge.class);
-
-    @Override
-    public void subjectLogin(Controller controller) {
-        String ssoCode = controller.getPara("ssoCode");
-        String userId = controller.getPara("userId");
+        @Override
+        public void onInvokeBefore(FixedInvocation inv) {
+        String ssoCode = inv.getController().getPara("ssoCode");
+        String userId = inv.getController().getPara("userId");
 
         if (StringUtils.isBlank(ssoCode) || StringUtils.isBlank(userId)) {
             return;
@@ -1252,10 +1280,16 @@ public class SSOAuthorizingRealm extends AuthorizingRealm {
 实现 shiro 无认证请求重定向到 sso系统，SSOShiroErrorProcess
 
 ```java
-public class SSOShiroErrorProcess implements ShiroErrorProcess {
+public class MyshiroListener implements  JbootShiroInvokeListener {
 
-    @Override
-    public void doProcessError(FixedInvocation inv, int errorCode) {
+        @Override
+        public void onInvokeAfter(FixedInvocation inv) {
+        if (result == null || result.isOk()) {
+                inv.invoke();
+                return;
+            }
+        int errorCode = inv.getErrorCode();
+            
         switch (errorCode) {
             case AuthorizeResult.ERROR_CODE_UNAUTHENTICATED:
                 doProcessUnauthenticated(inv.getController());
@@ -1292,17 +1326,6 @@ public class SSOShiroErrorProcess implements ShiroErrorProcess {
 }
 ```
 
-jboot.properties中配置
-
-```xml
-
-#---------------------------------------------------------------------------------#
-jboot.shiro.errorProcess=xxxx.SSOShiroErrorProcess
-jboot.shiro.ssoShiroBridge=xxxx.SSOShiroBridge
-#---------------------------------------------------------------------------------#
-
-
-```
 
 shiro.ini中配置
 
