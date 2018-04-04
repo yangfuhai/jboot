@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,9 @@ package io.jboot.component.redis;
 
 
 import io.jboot.Jboot;
-import io.jboot.component.redis.impl.JbootClusterRedisImpl;
-import io.jboot.component.redis.impl.JbootRedisImpl;
+import io.jboot.component.redis.jedis.JbootJedisClusterImpl;
+import io.jboot.component.redis.jedis.JbootJedisImpl;
+import io.jboot.exception.JbootException;
 
 /**
  * 参考： com.jfinal.plugin.redis
@@ -50,11 +51,35 @@ public class JbootRedisManager {
         if (config == null || !config.isConfigOk()) {
             return null;
         }
-        if (config.isCluster()) {
-            return new JbootClusterRedisImpl(config);
-        } else {
-            return new JbootRedisImpl(config);
+
+        switch (config.getType()) {
+            case JbootRedisConfig.TYPE_JEDIS:
+                return getJedisClinet(config);
+            case JbootRedisConfig.TYPE_LETTUCE:
+                return getLettuceClient(config);
+            case JbootRedisConfig.TYPE_REDISSON:
+                return getRedissonClient(config);
         }
+
+        return null;
+
+    }
+
+
+    private JbootRedis getJedisClinet(JbootRedisConfig config) {
+        if (config.isCluster()) {
+            return new JbootJedisClusterImpl(config);
+        } else {
+            return new JbootJedisImpl(config);
+        }
+    }
+
+    private JbootRedis getLettuceClient(JbootRedisConfig config) {
+        throw new JbootException("lettuce is not finished.");
+    }
+
+    private JbootRedis getRedissonClient(JbootRedisConfig config) {
+        throw new JbootException("redisson is not finished.");
     }
 
 

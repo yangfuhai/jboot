@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.redis.impl;
+package io.jboot.component.redis.jedis;
 
 import com.jfinal.log.Log;
 import io.jboot.component.redis.JbootRedisBase;
 import io.jboot.component.redis.JbootRedisConfig;
-import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
@@ -31,26 +30,29 @@ import java.util.Map.Entry;
  * 参考： com.jfinal.plugin.redis
  * JbootRedis 命令文档: http://redisdoc.com/
  */
-public class JbootClusterRedisImpl extends JbootRedisBase {
+public class JbootJedisImpl extends JbootRedisBase {
 
-    protected JedisCluster jedisCluster;
-    private int timeout = 2000;
+    protected JedisPool jedisPool;
+    protected JbootRedisConfig config;
+    private static final Log LOG = Log.getLog(JbootJedisImpl.class);
 
-    static final Log LOG = Log.getLog(JbootClusterRedisImpl.class);
+    public JbootJedisImpl(JbootRedisConfig config) {
 
+        this.config = config;
 
-    public JbootClusterRedisImpl(JbootRedisConfig config) {
-
+        String host = config.getHost();
+        Integer port = config.getPort();
         Integer timeout = config.getTimeout();
         String password = config.getPassword();
-        Integer maxAttempts = config.getMaxAttempts();
+        Integer database = config.getDatabase();
+        String clientName = config.getClientName();
 
-        if (timeout != null) {
-            this.timeout = timeout;
+        if (host.contains(":")) {
+            port = Integer.valueOf(host.split(":")[1]);
         }
 
 
-        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
 
         if (StringUtils.isNotBlank(config.getTestWhileIdle())) {
             poolConfig.setTestWhileIdle(config.getTestWhileIdle());
@@ -80,32 +82,31 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
             poolConfig.setNumTestsPerEvictionRun(config.getNumTestsPerEvictionRun());
         }
 
-        this.jedisCluster = newJedisCluster(config.getHostAndPorts(), timeout, maxAttempts, password, poolConfig);
+        this.jedisPool = newJedisPool(poolConfig, host, port, timeout, password, database, clientName);
 
     }
 
-    public static JedisCluster newJedisCluster(Set<HostAndPort> haps, Integer timeout,
-                                               Integer maxAttempts, String password, GenericObjectPoolConfig poolConfig) {
-        JedisCluster jedisCluster;
+    public static JedisPool newJedisPool(JedisPoolConfig jedisPoolConfig, String host, Integer port, Integer timeout, String password, Integer database, String clientName) {
+        JedisPool jedisPool;
+        if (port != null && timeout != null && password != null && database != null && clientName != null)
+            jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password, database, clientName);
+        else if (port != null && timeout != null && password != null && database != null)
+            jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password, database);
+        else if (port != null && timeout != null && password != null)
+            jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
+        else if (port != null && timeout != null)
+            jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout);
+        else if (port != null)
+            jedisPool = new JedisPool(jedisPoolConfig, host, port);
+        else
+            jedisPool = new JedisPool(jedisPoolConfig, host);
 
-        if (timeout != null && maxAttempts != null && password != null && poolConfig != null) {
-            jedisCluster = new JedisCluster(haps, timeout, timeout, maxAttempts, password, poolConfig);
-        } else if (timeout != null && maxAttempts != null && poolConfig != null) {
-            jedisCluster = new JedisCluster(haps, timeout, maxAttempts, poolConfig);
-        } else if (timeout != null && maxAttempts != null) {
-            jedisCluster = new JedisCluster(haps, timeout, maxAttempts);
-        } else if (timeout != null && poolConfig != null) {
-            jedisCluster = new JedisCluster(haps, timeout, poolConfig);
-        } else if (timeout != null) {
-            jedisCluster = new JedisCluster(haps, timeout);
-        } else {
-            jedisCluster = new JedisCluster(haps);
-        }
-        return jedisCluster;
+
+        return jedisPool;
     }
 
-    public JbootClusterRedisImpl(JedisCluster jedisCluster) {
-        this.jedisCluster = jedisCluster;
+    public JbootJedisImpl(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
     }
 
     /**
@@ -114,12 +115,23 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 对于某个原本带有生存时间（TTL）的键来说， 当 SET 命令成功在这个键上执行时， 这个键原有的 TTL 将被清除。
      */
     public String set(Object key, Object value) {
-        return jedisCluster.set(keyToBytes(key), valueToBytes(value));
+        Jedis jedis = getJedis();
+        try {
+            return jedis.set(keyToBytes(key), valueToBytes(value));
+        } finally {
+            returnResource(jedis);
+        }
     }
+
 
     @Override
     public Long setnx(Object key, Object value) {
-        return jedisCluster.setnx(keyToBytes(key), valueToBytes(value));
+        Jedis jedis = getJedis();
+        try {
+            return jedis.setnx(keyToBytes(key), valueToBytes(value));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -128,7 +140,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 此方法用了修改 incr 等的值
      */
     public String setWithoutSerialize(Object key, Object value) {
-        return jedisCluster.set(keyToBytes(key), value.toString().getBytes());
+        Jedis jedis = getJedis();
+        try {
+            return jedis.set(keyToBytes(key), value.toString().getBytes());
+        } finally {
+            returnResource(jedis);
+        }
     }
 
 
@@ -137,9 +154,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 如果 key 已经存在， SETEX 命令将覆写旧值。
      */
     public String setex(Object key, int seconds, Object value) {
-
-        return jedisCluster.setex(keyToBytes(key), seconds, valueToBytes(value));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.setex(keyToBytes(key), seconds, valueToBytes(value));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -148,26 +168,40 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(Object key) {
-
-        return (T) valueFromBytes(jedisCluster.get(keyToBytes(key)));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.get(keyToBytes(key)));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     @Override
     public String getWithoutSerialize(Object key) {
-        byte[] bytes = jedisCluster.get(keyToBytes(key));
-        if (bytes == null || bytes.length == 0) {
-            return null;
+        Jedis jedis = getJedis();
+        try {
+            byte[] bytes = jedis.get(keyToBytes(key));
+            if (bytes == null || bytes.length == 0) {
+                return null;
+            }
+            return new String(bytes);
+        } finally {
+            returnResource(jedis);
         }
-        return new String(jedisCluster.get(keyToBytes(key)));
     }
+
 
     /**
      * 删除给定的一个 key
      * 不存在的 key 会被忽略。
      */
     public Long del(Object key) {
-        return jedisCluster.del(keyToBytes(key));
+        Jedis jedis = getJedis();
+        try {
+            return jedis.del(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -175,9 +209,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 不存在的 key 会被忽略。
      */
     public Long del(Object... keys) {
-
-        return jedisCluster.del(keysToBytesArray(keys));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.del(keysToBytesArray(keys));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -189,22 +226,13 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 特殊符号用 \ 隔开
      */
     public Set<String> keys(String pattern) {
-        HashSet<String> keys = new HashSet<>();
-        Map<String, JedisPool> clusterNodes = jedisCluster.getClusterNodes();
-        for (String k : clusterNodes.keySet()) {
-            JedisPool jp = clusterNodes.get(k);
-            Jedis jedis = jp.getResource();
-            try {
-                keys.addAll(jedis.keys(pattern));
-            } catch (Exception e) {
-                LOG.error(e.toString(), e);
-            } finally {
-                jedis.close(); //用完一定要close这个链接！！！
-            }
+        Jedis jedis = getJedis();
+        try {
+            return jedis.keys(pattern);
+        } finally {
+            returnResource(jedis);
         }
-        return keys;
     }
-
 
     /**
      * 同时设置一个或多个 key-value 对。
@@ -220,16 +248,19 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     public String mset(Object... keysValues) {
         if (keysValues.length % 2 != 0)
             throw new IllegalArgumentException("wrong number of arguments for met, keysValues length can not be odd");
-
-        byte[][] kv = new byte[keysValues.length][];
-        for (int i = 0; i < keysValues.length; i++) {
-            if (i % 2 == 0)
-                kv[i] = keyToBytes(keysValues[i]);
-            else
-                kv[i] = valueToBytes(keysValues[i]);
+        Jedis jedis = getJedis();
+        try {
+            byte[][] kv = new byte[keysValues.length][];
+            for (int i = 0; i < keysValues.length; i++) {
+                if (i % 2 == 0)
+                    kv[i] = keyToBytes(keysValues[i]);
+                else
+                    kv[i] = valueToBytes(keysValues[i]);
+            }
+            return jedis.mset(kv);
+        } finally {
+            returnResource(jedis);
         }
-        return jedisCluster.mset(kv);
-
     }
 
     /**
@@ -238,11 +269,14 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List mget(Object... keys) {
-
-        byte[][] keysBytesArray = keysToBytesArray(keys);
-        List<byte[]> data = jedisCluster.mget(keysBytesArray);
-        return valueListFromBytesList(data);
-
+        Jedis jedis = getJedis();
+        try {
+            byte[][] keysBytesArray = keysToBytesArray(keys);
+            List<byte[]> data = jedis.mget(keysBytesArray);
+            return valueListFromBytesList(data);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -253,9 +287,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 关于递增(increment) / 递减(decrement)操作的更多信息，请参见 INCR 命令。
      */
     public Long decr(Object key) {
-
-        return jedisCluster.decr(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.decr(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -266,9 +303,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 关于更多递增(increment) / 递减(decrement)操作的更多信息，请参见 INCR 命令。
      */
     public Long decrBy(Object key, long longValue) {
-
-        return jedisCluster.decrBy(keyToBytes(key), longValue);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.decrBy(keyToBytes(key), longValue);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -278,9 +318,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 本操作的值限制在 64 位(bit)有符号数字表示之内。
      */
     public Long incr(Object key) {
-
-        return jedisCluster.incr(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.incr(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -291,26 +334,36 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 关于递增(increment) / 递减(decrement)操作的更多信息，参见 INCR 命令。
      */
     public Long incrBy(Object key, long longValue) {
-        return jedisCluster.incrBy(keyToBytes(key), longValue);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.incrBy(keyToBytes(key), longValue);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 检查给定 key 是否存在。
      */
     public boolean exists(Object key) {
-
-        return jedisCluster.exists(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.exists(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 从当前数据库中随机返回(不删除)一个 key 。
      */
     public String randomKey() {
-
-        throw new JbootException("not support randomKey commmand in redis cluster.");
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.randomKey();
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -319,9 +372,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 当 newkey 已经存在时， RENAME 命令将覆盖旧值。
      */
     public String rename(Object oldkey, Object newkey) {
-
-        return jedisCluster.rename(keyToBytes(oldkey), keyToBytes(newkey));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.rename(keyToBytes(oldkey), keyToBytes(newkey));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -330,19 +386,24 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 因此，也可以利用这一特性，将 MOVE 当作锁(locking)原语(primitive)。
      */
     public Long move(Object key, int dbIndex) {
-
-//        return jedisCluster.move(keyToBytes(key), dbIndex);
-        throw new JbootException("not support move commmand in redis cluster.");
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.move(keyToBytes(key), dbIndex);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 将 key 原子性地从当前实例传送到目标实例的指定数据库上，一旦传送成功， key 保证会出现在目标实例上，而当前实例上的 key 会被删除。
      */
     public String migrate(String host, int port, Object key, int destinationDb, int timeout) {
-
-        throw new JbootException("not support migrate commmand in redis cluster.");
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.migrate(valueToBytes(host), port, keyToBytes(key), destinationDb, timeout);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -355,9 +416,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 3：自行获取 Jedis 对象进行操作
      */
     public String select(int databaseIndex) {
-
-        return jedisCluster.select(databaseIndex);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.select(databaseIndex);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -365,36 +429,48 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 在 JbootRedis 中，带有生存时间的 key 被称为『易失的』(volatile)。
      */
     public Long expire(Object key, int seconds) {
-
-        return jedisCluster.expire(keyToBytes(key), seconds);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.expire(keyToBytes(key), seconds);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * EXPIREAT 的作用和 EXPIRE 类似，都用于为 key 设置生存时间。不同在于 EXPIREAT 命令接受的时间参数是 UNIX 时间戳(unix timestamp)。
      */
     public Long expireAt(Object key, long unixTime) {
-
-        return jedisCluster.expireAt(keyToBytes(key), unixTime);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.expireAt(keyToBytes(key), unixTime);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 这个命令和 EXPIRE 命令的作用类似，但是它以毫秒为单位设置 key 的生存时间，而不像 EXPIRE 命令那样，以秒为单位。
      */
     public Long pexpire(Object key, long milliseconds) {
-
-        return jedisCluster.pexpire(keyToBytes(key), milliseconds);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.pexpire(keyToBytes(key), milliseconds);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 这个命令和 EXPIREAT 命令类似，但它以毫秒为单位设置 key 的过期 unix 时间戳，而不是像 EXPIREAT 那样，以秒为单位。
      */
     public Long pexpireAt(Object key, long millisecondsTimestamp) {
-
-        return jedisCluster.pexpireAt(keyToBytes(key), millisecondsTimestamp);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.pexpireAt(keyToBytes(key), millisecondsTimestamp);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -403,64 +479,84 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("unchecked")
     public <T> T getSet(Object key, Object value) {
-
-        return (T) valueFromBytes(jedisCluster.getSet(keyToBytes(key), valueToBytes(value)));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.getSet(keyToBytes(key), valueToBytes(value)));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 移除给定 key 的生存时间，将这个 key 从『易失的』(带生存时间 key )转换成『持久的』(一个不带生存时间、永不过期的 key )。
      */
     public Long persist(Object key) {
-
-        return jedisCluster.persist(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.persist(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 返回 key 所储存的值的类型。
      */
     public String type(Object key) {
-
-        return jedisCluster.type(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.type(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 以秒为单位，返回给定 key 的剩余生存时间(TTL, time to live)。
      */
     public Long ttl(Object key) {
-
-        return jedisCluster.ttl(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.ttl(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 这个命令类似于 TTL 命令，但它以毫秒为单位返回 key 的剩余生存时间，而不是像 TTL 命令那样，以秒为单位。
      */
     public Long pttl(Object key) {
-
-        return jedisCluster.pttl(key.toString());
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.pttl(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 对象被引用的数量
      */
     public Long objectRefcount(Object key) {
-
-//        return jedisCluster.objectRefcount(keyToBytes(key));
-        throw new JbootException("not support move objectRefcount in redis cluster.");
+        Jedis jedis = getJedis();
+        try {
+            return jedis.objectRefcount(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 对象没有被访问的空闲时间
      */
     public Long objectIdletime(Object key) {
-
-//        return jedisCluster.objectIdletime(keyToBytes(key));
-        throw new JbootException("not support move objectIdletime in redis cluster.");
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.objectIdletime(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -469,9 +565,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 如果域 field 已经存在于哈希表中，旧值将被覆盖。
      */
     public Long hset(Object key, Object field, Object value) {
-
-        return jedisCluster.hset(keyToBytes(key), valueToBytes(field), valueToBytes(value));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.hset(keyToBytes(key), valueToBytes(field), valueToBytes(value));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -480,12 +579,15 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 如果 key 不存在，一个空哈希表被创建并执行 HMSET 操作。
      */
     public String hmset(Object key, Map<Object, Object> hash) {
-
-        Map<byte[], byte[]> para = new HashMap<byte[], byte[]>();
-        for (Entry<Object, Object> e : hash.entrySet())
-            para.put(valueToBytes(e.getKey()), valueToBytes(e.getValue()));
-        return jedisCluster.hmset(keyToBytes(key), para);
-
+        Jedis jedis = getJedis();
+        try {
+            Map<byte[], byte[]> para = new HashMap<byte[], byte[]>();
+            for (Entry<Object, Object> e : hash.entrySet())
+                para.put(valueToBytes(e.getKey()), valueToBytes(e.getValue()));
+            return jedis.hmset(keyToBytes(key), para);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -493,9 +595,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("unchecked")
     public <T> T hget(Object key, Object field) {
-
-        return (T) valueFromBytes(jedisCluster.hget(keyToBytes(key), valueToBytes(field)));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.hget(keyToBytes(key), valueToBytes(field)));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -505,28 +610,37 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List hmget(Object key, Object... fields) {
-
-        List<byte[]> data = jedisCluster.hmget(keyToBytes(key), valuesToBytesArray(fields));
-        return valueListFromBytesList(data);
-
+        Jedis jedis = getJedis();
+        try {
+            List<byte[]> data = jedis.hmget(keyToBytes(key), valuesToBytesArray(fields));
+            return valueListFromBytesList(data);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 删除哈希表 key 中的一个或多个指定域，不存在的域将被忽略。
      */
     public Long hdel(Object key, Object... fields) {
-
-        return jedisCluster.hdel(keyToBytes(key), valuesToBytesArray(fields));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.hdel(keyToBytes(key), valuesToBytesArray(fields));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 查看哈希表 key 中，给定域 field 是否存在。
      */
     public boolean hexists(Object key, Object field) {
-
-        return jedisCluster.hexists(keyToBytes(key), valueToBytes(field));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.hexists(keyToBytes(key), valueToBytes(field));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -535,13 +649,16 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public Map hgetAll(Object key) {
-
-        Map<byte[], byte[]> data = jedisCluster.hgetAll(keyToBytes(key));
-        Map<Object, Object> result = new HashMap<Object, Object>();
-        for (Entry<byte[], byte[]> e : data.entrySet())
-            result.put(valueFromBytes(e.getKey()), valueFromBytes(e.getValue()));
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Map<byte[], byte[]> data = jedis.hgetAll(keyToBytes(key));
+            Map<Object, Object> result = new HashMap<Object, Object>();
+            for (Entry<byte[], byte[]> e : data.entrySet())
+                result.put(valueFromBytes(e.getKey()), valueFromBytes(e.getValue()));
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -549,10 +666,13 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List hvals(Object key) {
-
-        Collection<byte[]> data = jedisCluster.hvals(keyToBytes(key));
-        return valueListFromBytesList(data);
-
+        Jedis jedis = getJedis();
+        try {
+            List<byte[]> data = jedis.hvals(keyToBytes(key));
+            return valueListFromBytesList(data);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -560,21 +680,27 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 底层实现此方法取名为 hfields 更为合适，在此仅为与底层保持一致
      */
     public Set<Object> hkeys(Object key) {
-
-        Set<byte[]> fieldSet = jedisCluster.hkeys(keyToBytes(key));
-        Set<Object> result = new HashSet<Object>();
-        fieldSetFromBytesSet(fieldSet, result);
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Set<byte[]> fieldSet = jedis.hkeys(keyToBytes(key));
+            Set<Object> result = new HashSet<Object>();
+            fieldSetFromBytesSet(fieldSet, result);
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 返回哈希表 key 中域的数量。
      */
     public Long hlen(Object key) {
-
-        return jedisCluster.hlen(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.hlen(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -586,9 +712,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 本操作的值被限制在 64 位(bit)有符号数字表示之内。
      */
     public Long hincrBy(Object key, Object field, long value) {
-
-        return jedisCluster.hincrBy(keyToBytes(key), valueToBytes(field), value);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.hincrBy(keyToBytes(key), valueToBytes(field), value);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -601,9 +730,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * HINCRBYFLOAT 命令的详细功能和 INCRBYFLOAT 命令类似，请查看 INCRBYFLOAT 命令获取更多相关信息。
      */
     public Double hincrByFloat(Object key, Object field, double value) {
-
-        return jedisCluster.hincrByFloat(keyToBytes(key), valueToBytes(field), value);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.hincrByFloat(keyToBytes(key), valueToBytes(field), value);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -622,19 +754,25 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 如果 key 不是列表类型，返回一个错误。
      */
     public <T> T lindex(Object key, long index) {
-
-        return (T) valueFromBytes(jedisCluster.lindex(keyToBytes(key), index));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.lindex(keyToBytes(key), index));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 获取记数器的值
      */
     public Long getCounter(Object key) {
-
-        String value = jedisCluster.get(key.toString());
-        return StringUtils.isNotBlank(value) ? Long.parseLong(value) : null;
-
+        Jedis jedis = getJedis();
+        try {
+            String value = jedis.get(key.toString());
+            return StringUtils.isNotBlank(value) ? Long.parseLong(value) : null;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -643,9 +781,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 如果 key 不是列表类型，返回一个错误。
      */
     public Long llen(Object key) {
-
-        return jedisCluster.llen(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.llen(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -653,9 +794,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("unchecked")
     public <T> T lpop(Object key) {
-
-        return (T) valueFromBytes(jedisCluster.lpop(keyToBytes(key)));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.lpop(keyToBytes(key)));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -667,9 +811,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 当 key 存在但不是列表类型时，返回一个错误。
      */
     public Long lpush(Object key, Object... values) {
-
-        return jedisCluster.lpush(keyToBytes(key), valuesToBytesArray(values));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.lpush(keyToBytes(key), valuesToBytesArray(values));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -678,9 +825,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 关于列表下标的更多信息，请参考 LINDEX 命令。
      */
     public String lset(Object key, long index, Object value) {
-
-        return jedisCluster.lset(keyToBytes(key), index, valueToBytes(value));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.lset(keyToBytes(key), index, valueToBytes(value));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -691,9 +841,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * count 等于 0 : 移除表中所有与 value 相等的值。
      */
     public Long lrem(Object key, long count, Object value) {
-
-        return jedisCluster.lrem(keyToBytes(key), count, valueToBytes(value));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.lrem(keyToBytes(key), count, valueToBytes(value));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -708,14 +861,17 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List lrange(Object key, long start, long end) {
-
-        List<byte[]> data = jedisCluster.lrange(keyToBytes(key), start, end);
-        if (data != null) {
-            return valueListFromBytesList(data);
-        } else {
-            return new ArrayList<byte[]>(0);
+        Jedis jedis = getJedis();
+        try {
+            List<byte[]> data = jedis.lrange(keyToBytes(key), start, end);
+            if (data != null) {
+                return valueListFromBytesList(data);
+            } else {
+                return new ArrayList<byte[]>(0);
+            }
+        } finally {
+            returnResource(jedis);
         }
-
     }
 
     /**
@@ -726,9 +882,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 当 key 不是列表类型时，返回一个错误。
      */
     public String ltrim(Object key, long start, long end) {
-
-        return jedisCluster.ltrim(keyToBytes(key), start, end);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.ltrim(keyToBytes(key), start, end);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -736,9 +895,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("unchecked")
     public <T> T rpop(Object key) {
-
-        return (T) valueFromBytes(jedisCluster.rpop(keyToBytes(key)));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.rpop(keyToBytes(key)));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -748,9 +910,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("unchecked")
     public <T> T rpoplpush(Object srcKey, Object dstKey) {
-
-        return (T) valueFromBytes(jedisCluster.rpoplpush(keyToBytes(srcKey), keyToBytes(dstKey)));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.rpoplpush(keyToBytes(srcKey), keyToBytes(dstKey)));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -762,9 +927,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 当 key 存在但不是列表类型时，返回一个错误。
      */
     public Long rpush(Object key, Object... values) {
-
-        return jedisCluster.rpush(keyToBytes(key), valuesToBytesArray(values));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.rpush(keyToBytes(key), valuesToBytesArray(values));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -774,13 +942,13 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List blpop(Object... keys) {
-//        String[] keysStrings = new String[keys.length];
-//        for (int i = 0; i < keys.length; i++) {
-//            keysStrings[i] = keys[i].toString();
-//        }
-        List<byte[]> data = jedisCluster.blpop(timeout, keysToBytesArray(keys));
-        return valueListFromBytesList(data);
-
+        Jedis jedis = getJedis();
+        try {
+            List<byte[]> data = jedis.blpop(keysToBytesArray(keys));
+            return valueListFromBytesList(data);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -790,10 +958,13 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List blpop(Integer timeout, Object... keys) {
-
-        List<byte[]> data = jedisCluster.blpop(timeout, keysToBytesArray(keys));
-        return valueListFromBytesList(data);
-
+        Jedis jedis = getJedis();
+        try {
+            List<byte[]> data = jedis.blpop(timeout, keysToBytesArray(keys));
+            return valueListFromBytesList(data);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -804,10 +975,13 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List brpop(Object... keys) {
-
-        List<byte[]> data = jedisCluster.brpop(timeout, keysToBytesArray(keys));
-        return valueListFromBytesList(data);
-
+        Jedis jedis = getJedis();
+        try {
+            List<byte[]> data = jedis.brpop(keysToBytesArray(keys));
+            return valueListFromBytesList(data);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -818,10 +992,13 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List brpop(Integer timeout, Object... keys) {
-
-        List<byte[]> data = jedisCluster.brpop(timeout, keysToBytesArray(keys));
-        return valueListFromBytesList(data);
-
+        Jedis jedis = getJedis();
+        try {
+            List<byte[]> data = jedis.brpop(timeout, keysToBytesArray(keys));
+            return valueListFromBytesList(data);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -829,9 +1006,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 通常用于测试与服务器的连接是否仍然生效，或者用于测量延迟值。
      */
     public String ping() {
-
-        return jedisCluster.ping();
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.ping();
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -840,18 +1020,24 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 当 key 不是集合类型时，返回一个错误。
      */
     public Long sadd(Object key, Object... members) {
-
-        return jedisCluster.sadd(keyToBytes(key), valuesToBytesArray(members));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.sadd(keyToBytes(key), valuesToBytesArray(members));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 返回集合 key 的基数(集合中元素的数量)。
      */
     public Long scard(Object key) {
-
-        return jedisCluster.scard(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.scard(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -860,9 +1046,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("unchecked")
     public <T> T spop(Object key) {
-
-        return (T) valueFromBytes(jedisCluster.spop(keyToBytes(key)));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.spop(keyToBytes(key)));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -871,21 +1060,27 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public Set smembers(Object key) {
-
-        Set<byte[]> data = jedisCluster.smembers(keyToBytes(key));
-        Set<Object> result = new HashSet<Object>();
-        valueSetFromBytesSet(data, result);
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Set<byte[]> data = jedis.smembers(keyToBytes(key));
+            Set<Object> result = new HashSet<Object>();
+            valueSetFromBytesSet(data, result);
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 判断 member 元素是否集合 key 的成员。
      */
     public boolean sismember(Object key, Object member) {
-
-        return jedisCluster.sismember(keyToBytes(key), valueToBytes(member));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.sismember(keyToBytes(key), valueToBytes(member));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -893,12 +1088,15 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public Set sinter(Object... keys) {
-
-        Set<byte[]> data = jedisCluster.sinter(keysToBytesArray(keys));
-        Set<Object> result = new HashSet<Object>();
-        valueSetFromBytesSet(data, result);
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Set<byte[]> data = jedis.sinter(keysToBytesArray(keys));
+            Set<Object> result = new HashSet<Object>();
+            valueSetFromBytesSet(data, result);
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -906,9 +1104,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("unchecked")
     public <T> T srandmember(Object key) {
-
-        return (T) valueFromBytes(jedisCluster.srandmember(keyToBytes(key)));
-
+        Jedis jedis = getJedis();
+        try {
+            return (T) valueFromBytes(jedis.srandmember(keyToBytes(key)));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -921,19 +1122,25 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public List srandmember(Object key, int count) {
-
-        List<byte[]> data = jedisCluster.srandmember(keyToBytes(key), count);
-        return valueListFromBytesList(data);
-
+        Jedis jedis = getJedis();
+        try {
+            List<byte[]> data = jedis.srandmember(keyToBytes(key), count);
+            return valueListFromBytesList(data);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 移除集合 key 中的一个或多个 member 元素，不存在的 member 元素会被忽略。
      */
     public Long srem(Object key, Object... members) {
-
-        return jedisCluster.srem(keyToBytes(key), valuesToBytesArray(members));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.srem(keyToBytes(key), valuesToBytesArray(members));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -942,12 +1149,15 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public Set sunion(Object... keys) {
-
-        Set<byte[]> data = jedisCluster.sunion(keysToBytesArray(keys));
-        Set<Object> result = new HashSet<Object>();
-        valueSetFromBytesSet(data, result);
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Set<byte[]> data = jedis.sunion(keysToBytesArray(keys));
+            Set<Object> result = new HashSet<Object>();
+            valueSetFromBytesSet(data, result);
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -956,12 +1166,15 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public Set sdiff(Object... keys) {
-
-        Set<byte[]> data = jedisCluster.sdiff(keysToBytesArray(keys));
-        Set<Object> result = new HashSet<Object>();
-        valueSetFromBytesSet(data, result);
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Set<byte[]> data = jedis.sdiff(keysToBytesArray(keys));
+            Set<Object> result = new HashSet<Object>();
+            valueSetFromBytesSet(data, result);
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -970,27 +1183,36 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 并通过重新插入这个 member 元素，来保证该 member 在正确的位置上。
      */
     public Long zadd(Object key, double score, Object member) {
-
-        return jedisCluster.zadd(keyToBytes(key), score, valueToBytes(member));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.zadd(keyToBytes(key), score, valueToBytes(member));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     public Long zadd(Object key, Map<Object, Double> scoreMembers) {
-
-        Map<byte[], Double> para = new HashMap<byte[], Double>();
-        for (Entry<Object, Double> e : scoreMembers.entrySet())
-            para.put(valueToBytes(e.getKey()), e.getValue());    // valueToBytes is important
-        return jedisCluster.zadd(keyToBytes(key), para);
-
+        Jedis jedis = getJedis();
+        try {
+            Map<byte[], Double> para = new HashMap<byte[], Double>();
+            for (Entry<Object, Double> e : scoreMembers.entrySet())
+                para.put(valueToBytes(e.getKey()), e.getValue());    // valueToBytes is important
+            return jedis.zadd(keyToBytes(key), para);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 返回有序集 key 的基数。
      */
     public Long zcard(Object key) {
-
-        return jedisCluster.zcard(keyToBytes(key));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.zcard(keyToBytes(key));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -998,18 +1220,24 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 关于参数 min 和 max 的详细使用方法，请参考 ZRANGEBYSCORE 命令。
      */
     public Long zcount(Object key, double min, double max) {
-
-        return jedisCluster.zcount(keyToBytes(key), min, max);
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.zcount(keyToBytes(key), min, max);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
      * 为有序集 key 的成员 member 的 score 值加上增量 increment 。
      */
     public Double zincrby(Object key, double score, Object member) {
-
-        return jedisCluster.zincrby(keyToBytes(key), score, valueToBytes(member));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.zincrby(keyToBytes(key), score, valueToBytes(member));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1020,12 +1248,15 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public Set zrange(Object key, long start, long end) {
-
-        Set<byte[]> data = jedisCluster.zrange(keyToBytes(key), start, end);
-        Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-        valueSetFromBytesSet(data, result);
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Set<byte[]> data = jedis.zrange(keyToBytes(key), start, end);
+            Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
+            valueSetFromBytesSet(data, result);
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1036,12 +1267,15 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public Set zrevrange(Object key, long start, long end) {
-
-        Set<byte[]> data = jedisCluster.zrevrange(keyToBytes(key), start, end);
-        Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-        valueSetFromBytesSet(data, result);
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Set<byte[]> data = jedis.zrevrange(keyToBytes(key), start, end);
+            Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
+            valueSetFromBytesSet(data, result);
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1050,12 +1284,15 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      */
     @SuppressWarnings("rawtypes")
     public Set zrangeByScore(Object key, double min, double max) {
-
-        Set<byte[]> data = jedisCluster.zrangeByScore(keyToBytes(key), min, max);
-        Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-        valueSetFromBytesSet(data, result);
-        return result;
-
+        Jedis jedis = getJedis();
+        try {
+            Set<byte[]> data = jedis.zrangeByScore(keyToBytes(key), min, max);
+            Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
+            valueSetFromBytesSet(data, result);
+            return result;
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1064,9 +1301,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 使用 ZREVRANK 命令可以获得成员按 score 值递减(从大到小)排列的排名。
      */
     public Long zrank(Object key, Object member) {
-
-        return jedisCluster.zrank(keyToBytes(key), valueToBytes(member));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.zrank(keyToBytes(key), valueToBytes(member));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1075,9 +1315,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 使用 ZRANK 命令可以获得成员按 score 值递增(从小到大)排列的排名。
      */
     public Long zrevrank(Object key, Object member) {
-
-        return jedisCluster.zrevrank(keyToBytes(key), valueToBytes(member));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.zrevrank(keyToBytes(key), valueToBytes(member));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1085,9 +1328,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 当 key 存在但不是有序集类型时，返回一个错误。
      */
     public Long zrem(Object key, Object... members) {
-
-        return jedisCluster.zrem(keyToBytes(key), valuesToBytesArray(members));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.zrem(keyToBytes(key), valuesToBytesArray(members));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1095,9 +1341,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * 如果 member 元素不是有序集 key 的成员，或 key 不存在，返回 nil 。
      */
     public Double zscore(Object key, Object member) {
-
-        return jedisCluster.zscore(keyToBytes(key), valueToBytes(member));
-
+        Jedis jedis = getJedis();
+        try {
+            return jedis.zscore(keyToBytes(key), valueToBytes(member));
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1107,9 +1356,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * @param message
      */
     public void publish(String channel, String message) {
-
-        jedisCluster.publish(channel, message);
-
+        Jedis jedis = getJedis();
+        try {
+            jedis.publish(channel, message);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
     /**
@@ -1119,9 +1371,12 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
      * @param message
      */
     public void publish(byte[] channel, byte[] message) {
-
-        jedisCluster.publish(channel, message);
-
+        Jedis jedis = getJedis();
+        try {
+            jedis.publish(channel, message);
+        } finally {
+            returnResource(jedis);
+        }
     }
 
 
@@ -1138,24 +1393,29 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
          * A single JedisPubSub instance can be used to subscribe to multiple channels.
          * You can call subscribe or psubscribe on an existing JedisPubSub instance to change your subscriptions.
          */
-        new Thread("jboot-redisCluster-subscribe-JedisPubSub") {
+        new Thread("jboot-redis-subscribe-JedisPubSub") {
             @Override
             public void run() {
                 while (true) {
-                    //订阅线程断开连接，需要进行重连
+                    Jedis jedis = getJedis();
                     try {
-                        jedisCluster.subscribe(listener, channels);
-                        LOG.warn("Disconnect to redis channel in subscribe JedisPubSub!");
+                        // subscribe 方法是阻塞的，不用担心会走到returnResource，除非异常
+                        jedis.subscribe(listener, channels);
+                        LOG.warn("Disconnect to redis channels : " + Arrays.toString(channels));
                         break;
                     } catch (JedisConnectionException e) {
-                        LOG.error("failed connect to redis, reconnect it.", e);
+                        LOG.error("Failed connect to redis, reconnect it.", e);
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException ie) {
                             break;
                         }
+                    } finally {
+                        returnResource(jedis);
                     }
                 }
+
+
             }
         }.start();
     }
@@ -1173,22 +1433,26 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
          * A single JedisPubSub instance can be used to subscribe to multiple channels.
          * You can call subscribe or psubscribe on an existing JedisPubSub instance to change your subscriptions.
          */
-        new Thread("jboot-redisCluster-subscribe-BinaryJedisPubSub") {
+        new Thread("jboot-redis-subscribe-BinaryJedisPubSub") {
             @Override
             public void run() {
+                //订阅线程断开连接，需要进行重连
                 while (true) {
-                    //订阅线程断开连接，需要进行重连
+                    Jedis jedis = getJedis();
                     try {
-                        jedisCluster.subscribe(binaryListener, channels);
-                        LOG.warn("Disconnect to redis channel in subscribe BinaryJedisPubSub!");
+                        // subscribe 方法是阻塞的，不用担心会走到returnResource，除非异常
+                        jedis.subscribe(binaryListener, channels);
+                        LOG.warn("Disconnect to redis channel in subscribe binaryListener!");
                         break;
                     } catch (JedisConnectionException e) {
-                        LOG.error("failed connect to redis, reconnect it.", e);
+                        LOG.error("Failed connect to redis, reconnect it.", e);
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException ie) {
                             break;
                         }
+                    } finally {
+                        returnResource(jedis);
                     }
                 }
             }
@@ -1196,9 +1460,24 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
     }
 
 
-    public JedisCluster getJedisCluster() {
-        return jedisCluster;
+    public Jedis getJedis() {
+        try {
+            return jedisPool.getResource();
+        } catch (JedisConnectionException e) {
+            throw new JbootIllegalConfigException("can not connect to redis host  " + config.getHost() + ":" + config.getPort() + " ," +
+                    " cause : " + e.toString(), e);
+        }
     }
+
+    public void returnResource(Jedis jedis) {
+        if (jedis != null) {
+            /**
+             * close 实际上是 returnResource，查看源码
+             */
+            jedis.close();
+        }
+    }
+
 
 }
 
