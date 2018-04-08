@@ -28,7 +28,9 @@ public class JbootDubborpcConfig {
     private String protocolTransporter;
     private int protocolThreads = 200;
 
-    private int qosPort;
+    private Boolean qosEnable = false;
+    private Integer qosPort;
+    private Boolean qosAcceptForeignIp;
 
     public String getProtocolName() {
         return protocolName;
@@ -70,11 +72,27 @@ public class JbootDubborpcConfig {
         this.protocolThreads = protocolThreads;
     }
 
-    public int getQosPort() {
+    public Boolean getQosEnable() {
+        return qosEnable;
+    }
+
+    public void setQosEnable(Boolean qosEnable) {
+        this.qosEnable = qosEnable;
+    }
+
+    public Integer getQosPort() {
         return qosPort;
     }
 
-    public void setQosPort(int qosPort) {
+    public void setQosPort(Integer qosPort) {
         this.qosPort = qosPort;
+    }
+
+    public Boolean getQosAcceptForeignIp() {
+        return qosAcceptForeignIp;
+    }
+
+    public void setQosAcceptForeignIp(Boolean qosAcceptForeignIp) {
+        this.qosAcceptForeignIp = qosAcceptForeignIp;
     }
 }
