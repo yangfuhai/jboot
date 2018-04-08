@@ -16,6 +16,12 @@
 package io.jboot.component.redis.lettuce;
 
 import io.jboot.component.redis.JbootRedis;
+import io.jboot.component.redis.JbootRedisConfig;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.support.ConnectionPoolSupport;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.JedisPubSub;
 
@@ -30,9 +36,31 @@ import java.util.Set;
  */
 public class JbootLettuceImpl implements JbootRedis {
 
+    protected JbootRedisConfig config;
+    protected RedisClient redisClient;
+    protected GenericObjectPool<StatefulRedisConnection<Object, Object>> pool;
+
+    public JbootLettuceImpl(JbootRedisConfig config) {
+        this.config = config;
+        this.redisClient = RedisClient.create();
+        this.pool = ConnectionPoolSupport.createGenericObjectPool(() -> redisClient.connect(new JbootLettuceCodec()), new GenericObjectPoolConfig());
+
+
+    }
+
     @Override
     public String set(Object key, Object value) {
-        return null;
+        StatefulRedisConnection<Object, Object> connection = null;
+        try {
+            connection = pool.borrowObject();
+            return connection.sync().set(key, value);
+        } catch (Exception e) {
+            throw new LettuceException(e);
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
     }
 
     @Override
