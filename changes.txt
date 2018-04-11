@@ -1,3 +1,10 @@
+jboot-1.4.6:
+新增：支持自定义 shiro 认证授权错误处理
+新增：新增 skywalking 手动埋点的支持
+新增：dubbo qos 相关配置的支持
+重构: 第三方模块比如jwt、sso等和shiro的整合
+
+
 jboot-1.4.5:
 新增：支持 jboot model 创建、更新时间列名自定义
 修复：带参数的action限流不起作用的bug
