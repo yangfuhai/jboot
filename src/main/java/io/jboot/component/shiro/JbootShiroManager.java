@@ -74,7 +74,7 @@ public class JbootShiroManager {
 
             Method[] methods = controllerClass.getMethods();
             for (Method method : methods) {
-                if (excludedMethodName.contains(method.getName()) || method.getParameterTypes().length != 0) {
+                if (excludedMethodName.contains(method.getName())) {
                     continue;
                 }
 
