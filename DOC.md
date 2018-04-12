@@ -3041,6 +3041,7 @@ cd yourProjectPath/target/generated-resources/appassembler/jsw/jboot/bin
     <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 </listener>
 ```
+
 一般情况下，shiro的配置内容要放到jfinal的配置之上。
 
  
@@ -3075,6 +3076,29 @@ cd yourProjectPath/target/generated-resources/appassembler/jsw/jboot/bin
 <listener>
     <listener-class>io.jboot.component.metric.JbootHealthCheckServletContextListener</listener-class>
 </listener>
+ ```
+ 
+ 注意：因为项目的html文件都放在resource下，如果war解压后只有 META-INF 和 WEB-INF 这两个文件夹，html文件被打包在 WEB-INF/clasess 下，是不会被正确渲染的。所以需要通过pom文件配置插件，把resource下的html文件copy到war的根目录下，才能被正常渲染。
+ 
+ 假设你的html文件都放在 resource下的htmls目录，配置内容如下：
+ 
+ ```xml
+  <plugin>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <executions>
+        <execution>
+            <phase>compile</phase>
+            <goals>
+                <goal>run</goal>
+            </goals>
+            <configuration>
+                <tasks>
+                    <move file="${project.build.directory}/classes/htmls"  tofile="${project.build.directory}/${project.build.finalName}/htmls"/>
+                </tasks>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
  ```
 
 
