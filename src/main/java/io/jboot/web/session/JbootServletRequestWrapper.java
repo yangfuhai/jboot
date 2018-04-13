@@ -17,7 +17,6 @@ package io.jboot.web.session;
 
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
-import io.jboot.web.JbootRequestContext;
 
 import javax.servlet.http.*;
 import java.util.Collections;
@@ -117,6 +116,8 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
 
+
+
     /**
      * Get cookie value by cookie name.
      */
@@ -129,7 +130,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
      * Get cookie object by cookie name.
      */
     private Cookie getCookieObject(String name) {
-        Cookie[] cookies = JbootRequestContext.getRequest().getCookies();
+        Cookie[] cookies = ((HttpServletRequest)getRequest()).getCookies();
         if (cookies != null)
             for (Cookie cookie : cookies)
                 if (cookie.getName().equals(name))
