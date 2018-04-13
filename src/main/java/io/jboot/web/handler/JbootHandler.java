@@ -36,11 +36,17 @@ public class JbootHandler extends Handler {
             return;
         }
 
+
+        /**
+         * 可能在shiro拦截器里进行request转换了
+         */
+        boolean isJbootRequestWrapper = request instanceof JbootServletRequestWrapper;
+
         /**
          * 通过 JbootRequestContext 去保存 request，然后可以在当前线程的任何地方
          * 通过 JbootRequestContext.getRequest() 去获取。
          */
-        JbootServletRequestWrapper jbootServletRequest = new JbootServletRequestWrapper(request,response);
+        JbootServletRequestWrapper jbootServletRequest = isJbootRequestWrapper ? (JbootServletRequestWrapper) request : new JbootServletRequestWrapper(request, response);
         JbootRequestContext.handle(jbootServletRequest, response);
 
 
@@ -65,7 +71,10 @@ public class JbootHandler extends Handler {
             JbootExceptionHolder.release();
             context.shutdown();
             JbootRequestContext.release();
-            jbootServletRequest.refreshSession();
+
+            if (!isJbootRequestWrapper) {
+                jbootServletRequest.refreshSession();
+            }
         }
 
     }

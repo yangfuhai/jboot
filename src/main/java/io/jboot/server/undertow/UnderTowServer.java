@@ -25,10 +25,11 @@ import io.jboot.component.metric.JbootHealthCheckServletContextListener;
 import io.jboot.component.metric.JbootMetricConfig;
 import io.jboot.component.metric.JbootMetricServletContextListener;
 import io.jboot.component.shiro.JbootShiroConfig;
+import io.jboot.component.shiro.JbootShiroFilter;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
-import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerClassloader;
+import io.jboot.server.JbootServerConfig;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.JbootWebConfig;
@@ -46,7 +47,6 @@ import io.undertow.servlet.api.ServletContainer;
 import io.undertow.servlet.api.ServletInfo;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
-import org.apache.shiro.web.servlet.ShiroFilter;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContextListener;
@@ -132,7 +132,7 @@ public class UnderTowServer extends JbootServer {
         if (shiroConfig.isConfigOK()) {
             deploymentInfo.addListeners(Servlets.listener(EnvironmentLoaderListener.class));
             deploymentInfo.addFilter(
-                    Servlets.filter("shiro", ShiroFilter.class))
+                    Servlets.filter("shiro", JbootShiroFilter.class))
                     .addFilterUrlMapping("shiro", shiroConfig.getUrlMapping(), DispatcherType.REQUEST);
         }
 

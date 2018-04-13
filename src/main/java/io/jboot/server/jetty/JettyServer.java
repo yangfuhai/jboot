@@ -26,16 +26,16 @@ import io.jboot.component.metric.JbootHealthCheckServletContextListener;
 import io.jboot.component.metric.JbootMetricConfig;
 import io.jboot.component.metric.JbootMetricServletContextListener;
 import io.jboot.component.shiro.JbootShiroConfig;
+import io.jboot.component.shiro.JbootShiroFilter;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
-import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerClassloader;
+import io.jboot.server.JbootServerConfig;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.JbootWebConfig;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
-import org.apache.shiro.web.servlet.ShiroFilter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -89,7 +89,7 @@ public class JettyServer extends JbootServer {
         JbootShiroConfig shiroConfig = Jboot.config(JbootShiroConfig.class);
         if (shiroConfig.isConfigOK()) {
             handler.addEventListener(new EnvironmentLoaderListener());
-            handler.addFilter(ShiroFilter.class, shiroConfig.getUrlMapping(), EnumSet.of(DispatcherType.REQUEST));
+            handler.addFilter(JbootShiroFilter.class, shiroConfig.getUrlMapping(), EnumSet.of(DispatcherType.REQUEST));
         }
 
         //JFinal

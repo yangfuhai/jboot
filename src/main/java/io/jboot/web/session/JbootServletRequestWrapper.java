@@ -59,7 +59,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
         }
 
         String sessionId = getCookie(cookieName);
-        if (sessionId != null ) {
+        if (sessionId != null) {
             httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
         } else if (create) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
