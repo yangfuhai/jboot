@@ -133,7 +133,7 @@ public class UnderTowServer extends JbootServer {
             deploymentInfo.addListeners(Servlets.listener(EnvironmentLoaderListener.class));
             deploymentInfo.addFilter(
                     Servlets.filter("shiro", ShiroFilter.class))
-                    .addFilterUrlMapping("shiro", "/*", DispatcherType.REQUEST);
+                    .addFilterUrlMapping("shiro", shiroConfig.getUrlMapping(), DispatcherType.REQUEST);
         }
 
 

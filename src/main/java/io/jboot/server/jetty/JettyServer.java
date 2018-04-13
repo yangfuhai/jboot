@@ -89,7 +89,7 @@ public class JettyServer extends JbootServer {
         JbootShiroConfig shiroConfig = Jboot.config(JbootShiroConfig.class);
         if (shiroConfig.isConfigOK()) {
             handler.addEventListener(new EnvironmentLoaderListener());
-            handler.addFilter(ShiroFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+            handler.addFilter(ShiroFilter.class, shiroConfig.getUrlMapping(), EnumSet.of(DispatcherType.REQUEST));
         }
 
         //JFinal

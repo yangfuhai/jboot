@@ -27,6 +27,7 @@ public class JbootShiroConfig {
     private String successUrl;
     private String unauthorizedUrl;
     private String shiroIniFile = "shiro.ini";
+    private String urlMapping = "/*";
 
     private String invokeListener;
 
@@ -60,6 +61,14 @@ public class JbootShiroConfig {
 
     public void setShiroIniFile(String shiroIniFile) {
         this.shiroIniFile = shiroIniFile;
+    }
+
+    public String getUrlMapping() {
+        return urlMapping;
+    }
+
+    public void setUrlMapping(String urlMapping) {
+        this.urlMapping = urlMapping;
     }
 
     public String getInvokeListener() {
