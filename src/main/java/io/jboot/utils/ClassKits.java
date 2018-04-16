@@ -17,6 +17,7 @@ package io.jboot.utils;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 
@@ -121,7 +122,7 @@ public class ClassKits {
     /**
      * 类的set方法缓存，用于减少对类的反射工作
      */
-    private static Multimap<Class<?>, Method> classMethodsCache = ArrayListMultimap.create();
+    private static Multimap<Class<?>, Method> classMethodsCache = Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
 
     /**
      * 获取 某class 下的所有set 方法
