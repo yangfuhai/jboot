@@ -521,6 +521,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @param pageSize
      * @return
      */
+    public Page<M> paginate(int pageNumber, int pageSize) {
+        return paginateByColumns(pageNumber, pageSize, null, null);
+    }
+
+    /**
+     * 分页查询数据
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     public Page<M> paginate(int pageNumber, int pageSize, String orderBy) {
         return paginateByColumns(pageNumber, pageSize, null, orderBy);
     }
