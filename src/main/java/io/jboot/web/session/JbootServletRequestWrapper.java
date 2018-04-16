@@ -60,10 +60,12 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
         String sessionId = getCookie(cookieName);
         if (sessionId != null) {
             httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
+            httpSession.setMaxInactiveInterval(maxInactiveInterval);
         } else if (create) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
             httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
-            setCookie(cookieName, sessionId, maxInactiveInterval);
+            httpSession.setMaxInactiveInterval(maxInactiveInterval);
+            setCookie(cookieName, sessionId, cookieMaxAge);
         }
         return httpSession;
     }

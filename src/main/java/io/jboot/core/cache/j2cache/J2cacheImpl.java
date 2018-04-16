@@ -92,11 +92,11 @@ public class J2cacheImpl implements JbootCache {
 
     @Override
     public Integer getTtl(String cacheName, Object key) {
-        throw new JbootException("not support in j2cache");
+        throw new JbootException("getTtl not support in j2cache");
     }
 
     @Override
     public void setTtl(String cacheName, Object key, int seconds) {
-        throw new JbootException("not support in j2cache");
+        throw new JbootException("setTtl not support in j2cache");
     }
 }
