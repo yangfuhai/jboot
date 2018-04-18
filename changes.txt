@@ -1,3 +1,17 @@
+jboot-1.4.7:
+新增：Shiro FilterUrlMapping自定义的支持
+新增：Shiro 默认使用Jboot分布式Session的支持
+新增：paginate分页查询不需要传orderby的方法
+修复：Shiro自定义注解无法使用在带参数的Action的问题
+修复：使用Shiro的时候使用websocket配置过于复杂的问题
+修复：JbootReqeustWrapper可能会出现空指针的问题
+修复：Classkits 可能会出现 ConcurrentModificationException 的问题
+修复：JbootModel在构建Sql的时候如果 orderby 参数为空字符串会出现 Sql 错误的问题
+优化：J2cache异常信息优化
+优化：更新undertow、HikariCP等到最新版本
+
+
+
 jboot-1.4.6:
 新增：支持自定义 shiro 认证授权错误处理
 新增：新增 skywalking 手动埋点的支持
