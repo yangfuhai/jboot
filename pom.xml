@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.4.6</version>
+    <version>1.4.7</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -429,12 +429,12 @@
             <groupId>io.opentracing.brave</groupId>
             <artifactId>brave-opentracing</artifactId>
             <version>0.30.1</version>
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>io.zipkin.brave</groupId>-->
-                    <!--<artifactId>brave-tests</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>io.zipkin.brave</groupId>
+                    <artifactId>brave-tests</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
