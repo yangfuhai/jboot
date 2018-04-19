@@ -17,7 +17,6 @@ package io.jboot.db.model;
 
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertyConfig;
-import io.jboot.db.JbootDbHystrixFallbackListenerDefault;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -30,10 +29,6 @@ public class JbootModelConfig {
     private boolean cacheEnable = true;
     private int cacheTime = 60 * 60 * 24; // 1day
     private String scan;
-
-    private boolean hystrixEnable = true;
-    private int hystrixTimeout = 1000 * 10; //单位：毫秒
-    private String hystrixFallbackListener = JbootDbHystrixFallbackListenerDefault.class.getName();
 
     private String columnCreated = "created";
     private String columnModified = "modified";
@@ -62,25 +57,6 @@ public class JbootModelConfig {
         this.scan = scan;
     }
 
-    public boolean isHystrixEnable() {
-        return hystrixEnable;
-    }
-
-    public void setHystrixEnable(boolean hystrixEnable) {
-        this.hystrixEnable = hystrixEnable;
-    }
-
-    public int getHystrixTimeout() {
-        return hystrixTimeout;
-    }
-
-    public void setHystrixTimeout(int hystrixTimeout) {
-        this.hystrixTimeout = hystrixTimeout;
-    }
-
-    public String getHystrixFallbackListener() {
-        return hystrixFallbackListener;
-    }
 
     public String getColumnCreated() {
         return columnCreated;
@@ -98,9 +74,6 @@ public class JbootModelConfig {
         this.columnModified = columnModified;
     }
 
-    public void setHystrixFallbackListener(String hystrixFallbackListener) {
-        this.hystrixFallbackListener = hystrixFallbackListener;
-    }
 
     private static JbootModelConfig config;
 

@@ -23,17 +23,11 @@ import com.jfinal.plugin.activerecord.Table;
 import com.jfinal.plugin.activerecord.TableMapping;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
-import io.jboot.component.hystrix.JbootHystrixCommand;
-import io.jboot.db.JbootDbHystrixFallbackListener;
-import io.jboot.db.JbootDbHystrixFallbackListenerDefault;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
-import io.shardingjdbc.core.api.HintManager;
-import io.shardingjdbc.core.hint.HintManagerHolder;
 
 import java.util.*;
 
@@ -684,50 +678,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public List<M> find(String sql, Object... paras) {
 
         debugPrintParas(paras);
-
-        if (!JbootModelConfig.getConfig().isHystrixEnable()) {
-            return super.find(sql, paras);
-        }
-
-        final HintManager hintManager = HintManagerHolder.get();
-
-        return Jboot.hystrix(new JbootHystrixCommand("sql:" + sql, JbootModelConfig.getConfig().getHystrixTimeout()) {
-            @Override
-            protected Object run() throws Exception {
-                try {
-                    HintManagerHolder.setHintManager(hintManager);
-                    return JbootModel.super.find(sql, paras);
-                } finally {
-                    HintManagerHolder.clear();
-                }
-            }
-
-            @Override
-            public Object getFallback() {
-                return getHystrixFallbackListener().onFallback(sql, paras, this, this.getExecutionException());
-            }
-
-        });
-    }
-
-    private transient JbootDbHystrixFallbackListener fallbackListener = null;
-
-    @JSONField(serialize = false)
-    public JbootDbHystrixFallbackListener getHystrixFallbackListener() {
-
-        if (fallbackListener != null) {
-            return fallbackListener;
-        }
-
-        if (!StringUtils.isBlank(JbootModelConfig.getConfig().getHystrixFallbackListener())) {
-            fallbackListener = ClassKits.newInstance(JbootModelConfig.getConfig().getHystrixFallbackListener());
-        }
-
-        if (fallbackListener == null) {
-            fallbackListener = new JbootDbHystrixFallbackListenerDefault();
-        }
-
-        return fallbackListener;
+        return super.find(sql, paras);
     }
 
 
