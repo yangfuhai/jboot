@@ -1,3 +1,8 @@
+jboot-1.4.8:
+修复：使用Shiro会造成静态文件无法正常读取的问题
+修复：数据库使用hystrix在事务的时候获取错误数据的问题
+
+
 jboot-1.4.7:
 新增：Shiro FilterUrlMapping自定义的支持
 新增：Shiro 默认使用Jboot分布式Session的支持
