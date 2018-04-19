@@ -65,7 +65,7 @@ public class JbootShiroFilter extends ShiroFilter {
         }
 
         if (target.indexOf('.') != -1 || JbootWebsocketManager.me().isWebsokcetEndPoint(target)) {
-            chain.doFilter(request,response);
+            chain.doFilter(request, response);
             return;
         }
 
