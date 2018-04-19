@@ -15,7 +15,6 @@
  */
 package io.jboot.component.shiro;
 
-import io.jboot.web.session.JbootServletRequestWrapper;
 import io.jboot.web.websocket.JbootWebsocketManager;
 import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -66,14 +65,10 @@ public class JbootShiroFilter extends ShiroFilter {
         }
 
         if (target.indexOf('.') != -1 || JbootWebsocketManager.me().isWebsokcetEndPoint(target)) {
+            chain.doFilter(request,response);
             return;
         }
 
-        JbootServletRequestWrapper jbootServletRequest = new JbootServletRequestWrapper(request, response);
-        try {
-            super.doFilterInternal(jbootServletRequest, servletResponse, chain);
-        } finally {
-            jbootServletRequest.refreshSession();
-        }
+        super.doFilterInternal(request, response, chain);
     }
 }
