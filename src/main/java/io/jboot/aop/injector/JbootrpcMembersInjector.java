@@ -40,25 +40,25 @@ public class JbootrpcMembersInjector implements MembersInjector {
 
     @Override
     public void injectMembers(Object instance) {
-        Object rpcImpl = null;
+        Object impl = null;
         JbootrpcService jbootrpcService = field.getAnnotation(JbootrpcService.class);
 
         String group = StringUtils.isBlank(jbootrpcService.group()) ? config.getDefaultGroup() : jbootrpcService.group();
         String version = StringUtils.isBlank(jbootrpcService.version()) ? config.getDefaultVersion() : jbootrpcService.version();
         
         try {
-            rpcImpl = Jboot.service(field.getType(), group, version);
+            impl = Jboot.service(field.getType(), group, version);
         } catch (Throwable e) {
             log.error(e.toString(), e);
         }
 
-        if (rpcImpl == null) {
+        if (impl == null) {
             return;
         }
 
         try {
             field.setAccessible(true);
-            field.set(instance, rpcImpl);
+            field.set(instance, impl);
         } catch (Throwable e) {
             log.error(e.toString(), e);
         }
