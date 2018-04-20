@@ -596,7 +596,7 @@ jboot.limitation.webPath = /jboot/limitation
 		| path  |要对那个路径进行设置，例如 `/user/aabb`|
 		
 1. 开启限流管控
-	* 接口：`/jboot/limitation/close`
+	* 接口：`/jboot/limitation/enable`
 	* 参数：
 	
 		| 参数         |  描述  |
@@ -1741,8 +1741,8 @@ public class UserDatabaseShardingStrategyConfig implements ShardingStrategyConfi
 ```
 
 编写好分库策略后，需要给Model配置上分库策略：
-```java
 
+```java
 @Table(tableName = "tb_user",
         primaryKey = "id",
          // 具体的表tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2,
@@ -1768,6 +1768,7 @@ public class UserModel extends JbootModel<UserModel> {
 #### demos
 
 例如：有一个userModel，我们希望能进行分为三张表，通过id的hashcode进行取模，代码如下：
+
 
 ```java
 
