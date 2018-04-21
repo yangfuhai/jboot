@@ -24,6 +24,7 @@ import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.config.client.ConfigRemoteReader;
 import io.jboot.config.server.ConfigFileScanner;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 
@@ -152,6 +153,11 @@ public class JbootConfigManager {
         // 原因：很多场景下回使用到配置，包括Guice，如果此时又通过Guice来创建Config，会出现循环调用的问题
         obj = ClassKits.newInstance(clazz, false);
         Collection<Method> setMethods = ClassKits.getClassSetMethods(clazz);
+
+        if (ArrayUtils.isNullOrEmpty(setMethods)) {
+            configs.put(clazz.getName() + prefix, obj);
+            return obj;
+        }
 
         for (Method method : setMethods) {
 

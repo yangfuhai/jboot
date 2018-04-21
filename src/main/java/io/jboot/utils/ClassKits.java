@@ -131,22 +131,28 @@ public class ClassKits {
      * @return
      */
     public static Collection<Method> getClassSetMethods(Class clazz) {
-        Collection<Method> setMethods = classMethodsCache.get(clazz);
 
-        if (ArrayUtils.isNotEmpty(setMethods)) {
-            return new ArrayList<>(setMethods);
+        Collection<Method> setMethods = classMethodsCache.get(clazz);
+        if (ArrayUtils.isNullOrEmpty(setMethods)) {
+            initSetMethodsCache(clazz);
+            setMethods = classMethodsCache.get(clazz);
         }
 
-        Method[] methods = clazz.getMethods();
-        for (Method method : methods) {
-            if (method.getName().startsWith("set")
-                    && method.getName().length() > 3
-                    && method.getParameterCount() == 1) {
+        return setMethods != null ? new ArrayList<>(setMethods) : null;
+    }
 
-                classMethodsCache.put(clazz, method);
+    private static void initSetMethodsCache(Class clazz) {
+        synchronized (clazz) {
+            Method[] methods = clazz.getMethods();
+            for (Method method : methods) {
+                if (method.getName().startsWith("set")
+                        && method.getName().length() > 3
+                        && method.getParameterCount() == 1) {
+
+                    classMethodsCache.put(clazz, method);
+                }
             }
         }
-        return setMethods;
     }
 
 
