@@ -36,7 +36,7 @@ public class JbootShiroInterceptor implements FixedInterceptor {
 
         JbootShiroManager.me().getInvokeListener().onInvokeBefore(inv);
         AuthorizeResult result = JbootShiroManager.me().invoke(inv.getActionKey());
-        JbootShiroManager.me().getInvokeListener().onInvokeAfter(inv, result);
+        JbootShiroManager.me().getInvokeListener().onInvokeAfter(inv, result == null ? AuthorizeResult.ok() : result);
     }
 
 }

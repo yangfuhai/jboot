@@ -57,7 +57,7 @@ public interface JbootShiroInvokeListener {
 
         @Override
         public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
-            if (result == null || result.isOk()) {
+            if (result.isOk()) {
                 inv.invoke();
                 return;
             }
