@@ -1283,12 +1283,12 @@ public class SSOAuthorizingRealm extends AuthorizingRealm {
 public class MyshiroListener implements  JbootShiroInvokeListener {
 
         @Override
-        public void onInvokeAfter(FixedInvocation inv) {
-        if (result == null || result.isOk()) {
+        public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
+        if (result.isOk()) {
                 inv.invoke();
                 return;
             }
-        int errorCode = inv.getErrorCode();
+        int errorCode = result.getErrorCode();
             
         switch (errorCode) {
             case AuthorizeResult.ERROR_CODE_UNAUTHENTICATED:
