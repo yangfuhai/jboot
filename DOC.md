@@ -743,7 +743,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，同时支持shiro的
 | shiroHasRole  |有相应角色 |
 | shiroNoAuthenticated  |未进行身份验证时，即没有调用Subject.login进行登录。 |
 | shiroNotHasPermission  |没有该权限 |
-| shiroNotHasRole  |没没有该角色 |
+| shiroNotHasRole  |没有该角色 |
 | shiroPrincipal  |获取Subject Principal 身份信息 |
 
 
