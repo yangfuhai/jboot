@@ -80,6 +80,21 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
             poolConfig.setNumTestsPerEvictionRun(config.getNumTestsPerEvictionRun());
         }
 
+        if (StringUtils.isNotBlank(config.getMaxTotal())) {
+            poolConfig.setMaxTotal(config.getMaxTotal());
+        }
+
+        if (StringUtils.isNotBlank(config.getMaxIdle())) {
+            poolConfig.setMaxIdle(config.getMaxIdle());
+        }
+
+        if (StringUtils.isNotBlank(config.getMinIdle())) {
+            poolConfig.setMinIdle(config.getMinIdle());
+        }
+
+        if (StringUtils.isNotBlank(config.getMaxWaitMillis())) {
+            poolConfig.setMaxWaitMillis(config.getMaxWaitMillis());
+        }
         this.jedisCluster = newJedisCluster(config.getHostAndPorts(), timeout, maxAttempts, password, poolConfig);
 
     }

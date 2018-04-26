@@ -44,6 +44,10 @@ public class JbootRedisConfig {
     private Integer numTestsPerEvictionRun;
     private Integer maxAttempts;
     private String type = TYPE_JEDIS;
+    private Integer maxTotal;
+    private Integer maxIdle;
+    private Integer minIdle;
+    private Integer maxWaitMillis;
 
 
     public String getHost() {
@@ -176,6 +180,38 @@ public class JbootRedisConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Integer getMaxTotal() {
+        return maxTotal;
+    }
+
+    public void setMaxTotal(Integer maxTotal) {
+        this.maxTotal = maxTotal;
+    }
+
+    public Integer getMaxIdle() {
+        return maxIdle;
+    }
+
+    public void setMaxIdle(Integer maxIdle) {
+        this.maxIdle = maxIdle;
+    }
+
+    public Integer getMinIdle() {
+        return minIdle;
+    }
+
+    public void setMinIdle(Integer minIdle) {
+        this.minIdle = minIdle;
+    }
+
+    public Integer getMaxWaitMillis() {
+        return maxWaitMillis;
+    }
+
+    public void setMaxWaitMillis(Integer maxWaitMillis) {
+        this.maxWaitMillis = maxWaitMillis;
     }
 
     public Set<HostAndPort> getHostAndPorts() {
