@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.jwt;
+package io.jboot.component.jwt;
 
 import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
@@ -58,9 +58,9 @@ public class JwtInterceptor implements FixedInterceptor {
         try {
             JwtManager.me().holdJwts(map);
             inv.invoke();
+            processInvokeAfter(inv);
         } finally {
             JwtManager.me().releaseJwts();
-            processInvokeAfter(inv);
         }
     }
 

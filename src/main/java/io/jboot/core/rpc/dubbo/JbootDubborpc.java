@@ -42,12 +42,15 @@ public class JbootDubborpc extends JbootrpcBase {
         jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
         dubboConfig = Jboot.config(JbootDubborpcConfig.class);
 
-        if (StringUtils.isNotBlank(dubboConfig.getQosPort())) {
-            System.setProperty("dubbo.qos.port", String.valueOf(dubboConfig.getQosPort()));
-        }
 
         applicationConfig = new ApplicationConfig();
         applicationConfig.setName("jboot");
+        applicationConfig.setQosEnable(dubboConfig.getQosEnable());
+
+        if (dubboConfig.getQosEnable()) {
+            applicationConfig.setQosPort(dubboConfig.getQosPort());
+            applicationConfig.setQosAcceptForeignIp(dubboConfig.getQosAcceptForeignIp());
+        }
 
         registryConfig = new RegistryConfig();
         registryConfig.setCheck(jbootrpcConfig.isRegistryCheck());

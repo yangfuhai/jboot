@@ -9,21 +9,21 @@ import io.jboot.core.cache.annotation.Cacheable;
 public class CacheServiceImpl implements CacheService {
 
     @Override
-    @Cacheable(name = "mycache", key = "#(key)")
+    @Cacheable(name = "mycache", key = "#(key)",unless = "#(key =='zhangsan')")
     public String cacheAble(String key) {
         System.out.println("cacheAble invoked!!!!");
         return key + " from CacheServiceImpl.cacheAble";
     }
 
     @Override
-    @Cacheable(name = "mycache", key = "#(key)", liveSeconds = 30)
+    @Cacheable(name = "mycache", key = "#(key)", liveSeconds = 5)
     public String cacheAbleLive(String key) {
         System.out.println("cacheAbleLive invoked!!!!");
         return key + " from CacheServiceImpl.cacheAbleLive";
     }
 
     @Override
-    @CachePut(name = "mycache", key = "#(key)", liveSeconds = 30)
+    @CachePut(name = "mycache", key = "#(key)", liveSeconds = 5)
     public String putCache(String key) {
         return key + " from CacheServiceImpl.putCache";
     }

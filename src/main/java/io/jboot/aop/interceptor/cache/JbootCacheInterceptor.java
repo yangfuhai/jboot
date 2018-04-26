@@ -21,6 +21,7 @@ import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.exception.JbootAssert;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -47,14 +48,9 @@ public class JbootCacheInterceptor implements MethodInterceptor {
         }
 
         String unlessString = cacheable.unless();
-        if (StringUtils.isNotBlank(unlessString)) {
-            unlessString = String.format("#(%s)", unlessString);
-            String unlessBoolString = Kits.engineRender(unlessString, method, methodInvocation.getArguments());
-            if ("true".equals(unlessBoolString)) {
-                return methodInvocation.proceed();
-            }
+        if (Kits.isUnless(unlessString, method, methodInvocation.getArguments())) {
+            return methodInvocation.proceed();
         }
-
 
         String cacheName = cacheable.name();
         JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
@@ -68,10 +64,13 @@ public class JbootCacheInterceptor implements MethodInterceptor {
                 Object r = null;
                 try {
                     r = methodInvocation.proceed();
-                } catch (Throwable e) {
-                    LOG.error(e.toString(), e);
+                } catch (Throwable throwable) {
+                    if (throwable instanceof RuntimeException) {
+                        throw (RuntimeException) throwable;
+                    } else {
+                        throw new JbootException(throwable);
+                    }
                 }
-
                 if (r != null) {
                     return r;
                 }

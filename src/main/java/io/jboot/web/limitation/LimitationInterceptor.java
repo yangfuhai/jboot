@@ -44,7 +44,7 @@ public class LimitationInterceptor implements FixedInterceptor {
         }
 
 
-        if (doIntercept(inv, info)) {
+        if (tryToIntercept(inv, info)) {
             renderLimitation(inv.getController(), info);
             return;
         }
@@ -60,7 +60,7 @@ public class LimitationInterceptor implements FixedInterceptor {
     }
 
 
-    private boolean doIntercept(FixedInvocation inv, LimitationInfo limitationInfo) {
+    private boolean tryToIntercept(FixedInvocation inv, LimitationInfo limitationInfo) {
 
         switch (limitationInfo.getType()) {
             case LimitationInfo.TYPE_CONCURRENCY:

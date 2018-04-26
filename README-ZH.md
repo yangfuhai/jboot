@@ -1,4 +1,4 @@
-![](./docs/files/logo.png)
+![](./docs/files/logo01.png)
 ## [English document](./README.md)
 ## JBoot 是什么
 
@@ -12,7 +12,7 @@ QQ交流群： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.3.7</version>
+    <version>1.4.8</version>
 </dependency>
 
 ```

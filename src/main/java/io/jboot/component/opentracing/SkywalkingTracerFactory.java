@@ -16,17 +16,19 @@
 package io.jboot.component.opentracing;
 
 import io.opentracing.Tracer;
-//import org.skywalking.apm.toolkit.opentracing.SkywalkingTracer;
+import org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer;
 
+/**
+ * Skywalking 手动埋点支撑
+ * https://github.com/apache/incubator-skywalking/blob/master/docs/cn/Opentracing-CN.md
+ */
 public class SkywalkingTracerFactory implements TracerFactory {
 
 
     private Tracer tracer;
 
     public SkywalkingTracerFactory() {
-
-        // doc : https://github.com/apache/incubator-skywalking/blob/master/docs/cn/skywalking-opentracing-CN.md
-//        tracer = new SkywalkingTracer();
+        tracer = new SkywalkingTracer();
     }
 
 

@@ -42,12 +42,8 @@ public class JbootCacheEvictInterceptor implements MethodInterceptor {
         }
 
         String unlessString = cacheEvict.unless();
-        if (StringUtils.isNotBlank(unlessString)) {
-            unlessString = String.format("#(%s)", unlessString);
-            String unlessBoolString = Kits.engineRender(unlessString, method, methodInvocation.getArguments());
-            if ("true".equals(unlessBoolString)) {
-                return methodInvocation.proceed();
-            }
+        if (Kits.isUnless(unlessString, method, methodInvocation.getArguments())) {
+            return methodInvocation.proceed();
         }
 
 

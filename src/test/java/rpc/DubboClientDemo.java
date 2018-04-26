@@ -32,8 +32,6 @@ public class DubboClientDemo extends JbootController {
      */
     public static void main(String[] args)  {
 
-        //设置qos的端口号，否则在同一个机器下测试会造成端口冲突，dubbo目前暂时无法关闭qos server
-        System.setProperty("dubbo.qos.port","22222");
 
         //jboot端口号配置
         Jboot.setBootArg("jboot.server.port", "8088");

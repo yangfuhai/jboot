@@ -96,7 +96,7 @@ public class EncryptCookieUtils {
     }
 
 
-    private static String buildCookieValue(String value, int maxAgeInSeconds) {
+    public static String buildCookieValue(String value, int maxAgeInSeconds) {
         String encrypt_key = COOKIE_ENCRYPT_KEY;
         long saveTime = System.currentTimeMillis();
         String encrypt_value = encrypt(encrypt_key, saveTime, maxAgeInSeconds + "", value);
@@ -128,7 +128,7 @@ public class EncryptCookieUtils {
                 String encrypt_value = cookieStrings[0];
                 String saveTime = cookieStrings[1];
                 String maxAgeInSeconds = cookieStrings[2];
-                String value = cookieStrings[3];
+                String value = Base64Kit.decodeToStr(cookieStrings[3]);
 
                 String encrypt = encrypt(encrypt_key, Long.valueOf(saveTime), maxAgeInSeconds, value);
 
@@ -138,7 +138,7 @@ public class EncryptCookieUtils {
                     long maxtime = Long.parseLong(maxAgeInSeconds) * 1000;
                     // 查看是否过时
                     if ((stime + maxtime) - System.currentTimeMillis() > 0) {
-                        return Base64Kit.decodeToStr(value);
+                        return value;
                     }
                 }
             }

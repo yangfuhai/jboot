@@ -17,11 +17,13 @@ package io.jboot.utils;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -75,8 +77,8 @@ public class ClassKits {
     }
 
 
-    public static <T> T newInstance(Class<T> clazz, boolean createdByGuice) {
-        if (createdByGuice) {
+    public static <T> T newInstance(Class<T> clazz, boolean createByGuice) {
+        if (createByGuice) {
             return Jboot.bean(clazz);
         } else {
             try {
@@ -120,7 +122,7 @@ public class ClassKits {
     /**
      * 类的set方法缓存，用于减少对类的反射工作
      */
-    private static Multimap<Class<?>, Method> classMethodsCache = ArrayListMultimap.create();
+    private static Multimap<Class<?>, Method> classMethodsCache = Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
 
     /**
      * 获取 某class 下的所有set 方法
@@ -129,8 +131,18 @@ public class ClassKits {
      * @return
      */
     public static Collection<Method> getClassSetMethods(Class clazz) {
+
         Collection<Method> setMethods = classMethodsCache.get(clazz);
-        if (setMethods == null || setMethods.isEmpty()) {
+        if (ArrayUtils.isNullOrEmpty(setMethods)) {
+            initSetMethodsCache(clazz);
+            setMethods = classMethodsCache.get(clazz);
+        }
+
+        return setMethods != null ? new ArrayList<>(setMethods) : null;
+    }
+
+    private static void initSetMethodsCache(Class clazz) {
+        synchronized (clazz) {
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
                 if (method.getName().startsWith("set")
@@ -138,11 +150,9 @@ public class ClassKits {
                         && method.getParameterCount() == 1) {
 
                     classMethodsCache.put(clazz, method);
-
                 }
             }
         }
-        return setMethods;
     }
 
 

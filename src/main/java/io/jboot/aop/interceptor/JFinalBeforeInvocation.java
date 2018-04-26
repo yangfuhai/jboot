@@ -87,5 +87,8 @@ public class JFinalBeforeInvocation extends Invocation {
         args[index] = value;
     }
 
-
+    @Override
+    public Object[] getArgs() {
+        return args;
+    }
 }

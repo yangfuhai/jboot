@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,12 @@ package io.jboot.component.shiro;
 
 import com.jfinal.config.Routes;
 import com.jfinal.core.Controller;
+import io.jboot.Jboot;
 import io.jboot.component.shiro.processer.*;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.ClassKits;
+import io.jboot.utils.StringUtils;
 import io.jboot.web.utils.ControllerUtils;
 import org.apache.shiro.authz.annotation.*;
 
@@ -33,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JbootShiroManager {
     private static JbootShiroManager me = new JbootShiroManager();
+
+    private JbootShiroConfig jbootShiroConfig = Jboot.config(JbootShiroConfig.class);
 
     private JbootShiroManager() {
     }
@@ -68,7 +74,7 @@ public class JbootShiroManager {
 
             Method[] methods = controllerClass.getMethods();
             for (Method method : methods) {
-                if (excludedMethodName.contains(method.getName()) || method.getParameterTypes().length != 0) {
+                if (excludedMethodName.contains(method.getName())) {
                     continue;
                 }
 
@@ -110,7 +116,6 @@ public class JbootShiroManager {
     }
 
 
-
     public AuthorizeResult invoke(String actionKey) {
         ShiroAuthorizeProcesserInvoker invoker = invokers.get(actionKey);
         if (invoker == null) {
@@ -120,5 +125,25 @@ public class JbootShiroManager {
         return invoker.invoke();
     }
 
+    private JbootShiroInvokeListener invokeListener;
+
+    public JbootShiroInvokeListener getInvokeListener() {
+
+        if (invokeListener != null) {
+            return invokeListener;
+        }
+
+        invokeListener = JbootShiroInvokeListener.DEFAULT;
+
+        if (StringUtils.isNotBlank(jbootShiroConfig.getInvokeListener())) {
+            invokeListener = ClassKits.newInstance(jbootShiroConfig.getInvokeListener());
+            if (invokeListener == null) {
+                throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getInvokeListener() +
+                        " please config jboot.shiro.invokeListener correct. ");
+            }
+        }
+
+        return invokeListener;
+    }
 
 }

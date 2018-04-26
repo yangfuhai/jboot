@@ -37,6 +37,7 @@ public abstract class JbootmqBase implements Jbootmq {
     protected JbootmqConfig config = Jboot.config(JbootmqConfig.class);
 
     protected Set<String> channels = Sets.newHashSet();
+    protected Set<String> syncRecevieMessageChannels = Sets.newHashSet();
 
     private final ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
             60L, TimeUnit.SECONDS,
@@ -50,6 +51,10 @@ public abstract class JbootmqBase implements Jbootmq {
         }
 
         this.channels.addAll(StringUtils.splitToSet(channelString, ","));
+
+        if (StringUtils.isNotBlank(config.getSyncRecevieMessageChannel())){
+            this.syncRecevieMessageChannels.addAll(StringUtils.splitToSet(config.getSyncRecevieMessageChannel(), ","));
+        }
     }
 
 
@@ -111,13 +116,23 @@ public abstract class JbootmqBase implements Jbootmq {
             return false;
         }
 
-        boolean notifySuccess = false;
-        for (JbootmqMessageListener listener : listeners) {
-            notifySuccess = true;
-            threadPool.execute(() -> {
-                listener.onMessage(channel, message);
-            });
+        if (syncRecevieMessageChannels.contains(channel)) {
+            for (JbootmqMessageListener listener : listeners) {
+                try {
+                    listener.onMessage(channel, message);
+                } catch (Throwable ex) {
+                    LOG.warn("listener[" + listener.getClass().getName() + "] execute mq message is error. channel:" +
+                            channel + "  message:" + String.valueOf(message));
+                }
+            }
+        } else {
+            for (JbootmqMessageListener listener : listeners) {
+                threadPool.execute(() -> {
+                    listener.onMessage(channel, message);
+                });
+            }
         }
-        return notifySuccess;
+
+        return true;
     }
 }

@@ -19,6 +19,7 @@ import com.jfinal.plugin.activerecord.dialect.OracleDialect;
 import io.jboot.db.model.Column;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.StringUtils;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class JbootOracleDialect extends OracleDialect implements IJbootModelDial
         appIfNotEmpty(columns, sqlBuilder);
 
 
-        if (orderBy != null) {
+        if (StringUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
@@ -80,7 +81,7 @@ public class JbootOracleDialect extends OracleDialect implements IJbootModelDial
 
         appIfNotEmpty(columns, sqlBuilder);
 
-        if (orderBy != null) {
+        if (StringUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 

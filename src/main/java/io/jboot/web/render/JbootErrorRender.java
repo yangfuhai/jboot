@@ -64,17 +64,12 @@ public class JbootErrorRender extends Render {
             return;
         }
 
-        PrintWriter writer = null;
         try {
             response.setContentType(contentType);
-            writer = response.getWriter();
+            PrintWriter writer = response.getWriter();
             writer.write(getErrorHtml());
-            writer.flush();
         } catch (IOException e) {
             throw new RenderException(e);
-        } finally {
-            if (writer != null)
-                writer.close();
         }
     }
 

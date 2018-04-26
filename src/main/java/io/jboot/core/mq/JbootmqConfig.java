@@ -27,9 +27,9 @@ public class JbootmqConfig {
     public static final String TYPE_ZBUS = "zbus";
     public static final String TYPE_QPID = "qpid";
 
-    public String type = TYPE_REDIS;
-
+    private String type = TYPE_REDIS;
     private String channel;
+    private String syncRecevieMessageChannel; //可同步接收消息的channel配置
 
     public String getChannel() {
         return channel;
@@ -45,5 +45,13 @@ public class JbootmqConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getSyncRecevieMessageChannel() {
+        return syncRecevieMessageChannel;
+    }
+
+    public void setSyncRecevieMessageChannel(String syncRecevieMessageChannel) {
+        this.syncRecevieMessageChannel = syncRecevieMessageChannel;
     }
 }

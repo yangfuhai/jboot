@@ -28,6 +28,7 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public class JbootMetricTimerAopInterceptor implements MethodInterceptor {
 
+    private static final String suffix = ".timer";
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
@@ -35,7 +36,7 @@ public class JbootMetricTimerAopInterceptor implements MethodInterceptor {
         EnableMetricTimer annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricTimer.class);
 
         String name = StringUtils.isBlank(annotation.value())
-                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName()
+                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName() + suffix
                 : annotation.value();
 
         Timer meter = Jboot.me().getMetric().timer(name);

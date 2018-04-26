@@ -1,3 +1,84 @@
+jboot-1.4.8:
+修复：使用Shiro会造成静态文件无法正常读取的问题
+修复：数据库使用hystrix在事务的时候获取错误数据的问题
+
+
+jboot-1.4.7:
+新增：Shiro FilterUrlMapping自定义的支持
+新增：Shiro 默认使用Jboot分布式Session的支持
+新增：paginate分页查询不需要传orderby的方法
+修复：Shiro自定义注解无法使用在带参数的Action的问题
+修复：使用Shiro的时候使用websocket配置过于复杂的问题
+修复：JbootReqeustWrapper可能会出现空指针的问题
+修复：Classkits 可能会出现 ConcurrentModificationException 的问题
+修复：JbootModel在构建Sql的时候如果 orderby 参数为空字符串会出现 Sql 错误的问题
+优化：J2cache异常信息优化
+优化：更新undertow、HikariCP等到最新版本
+
+
+
+jboot-1.4.6:
+新增：支持自定义 shiro 认证授权错误处理
+新增：新增 skywalking 手动埋点的支持
+新增：dubbo qos 相关配置的支持
+重构: 第三方模块比如jwt、sso等和shiro的整合
+
+
+jboot-1.4.5:
+新增：支持 jboot model 创建、更新时间列名自定义
+修复：带参数的action限流不起作用的bug
+修复：当使用cache注解后，无法抛出异常的问题
+修复：由于dubbo2.6x zookeeper客户端切换为curator造成使用zookeeper会出现缺少类的问题
+修复：注解 @JbootrpcService 定义rpc接口同时，又通过@JbootrpcService引入第三方rpc时出错的问题
+优化：当服务器无法启动的时候，指明哪个端口被占用了
+优化：Druid连接池默认添加stat过滤器查看sql统计情况
+优化：排除不必要的包扫描，更新依赖
+
+
+jboot-1.4.4:
+新增：MQ 接收消息时可以按顺序同步接收的配置
+优化：response的关闭有容器负责处理，Controller不再进行干涉
+优化：FlashMessage 不再依赖cookie的处理
+修复：ClassKits可能会休闲ConcurrentModificationException异常的问题
+修复：join 系列方法不支持非String类型的主键的bug
+修复：由于JFinal render之后会关闭response，导致handler的执行之后无法设置cookie的问题
+
+
+jboot-1.4.3:
+修复：RPC 由于默认排除是Object导致无法暴露的问题
+
+jboot-1.4.2:
+修复：Inject 和 RPC 接口过滤无效的问题
+
+jboot-1.4.1:
+修复：分布式session可能存在刷新session无效而造成session数据丢失的问题
+修复：缓存的ttl设置可能造成分布式多节点不同步的问题
+修复：JbootEventListener多个实现会造成Guice错误的问题
+优化：移除NoneCacheImpl
+优化：RPC暴露代码逻辑同
+
+
+jboot-1.4.0:
+新增：websocket 相关demo
+新增：websocket base path 配置
+优化：调整 @EnableCORS 顺序
+
+
+jboot-1.3.9:
+修复：Dao.use(datasource) 无法使用的问题
+修复：Before注解中拦截器getArgs() 数据不正确的问题
+新增：分库分表的demo和文档
+
+
+jboot-1.3.8:
+新增：@EnableMetricConcurrency 注解，用于通过Metrics监控当前Action的并发量
+新增：JwtShiroBridge接口，用于Jwt和shiro之间的整合，通过Jwt判断其Shiro权限
+修复：@Before注解在AOP中无法获取参数的问题
+修复：上个版本优化cookie代码后无法获取加密cookie的问题
+修复：同一个方法不能使用多个不带参数的Metricx维度监控的问题
+修复：类单词拼写错误，重命名JbootMetricConterAopInterceptor为JbootMetricCounterAopInterceptor
+
+
 jboot-1.3.7:
 优化：@EnableMetricCounter 为记录次数而不是并发量
 优化：model.use 可能造成的线程安全问题

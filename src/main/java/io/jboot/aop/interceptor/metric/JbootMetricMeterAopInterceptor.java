@@ -28,6 +28,7 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public class JbootMetricMeterAopInterceptor implements MethodInterceptor {
 
+    private static final String suffix = ".meter";
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
@@ -35,7 +36,7 @@ public class JbootMetricMeterAopInterceptor implements MethodInterceptor {
         EnableMetricMeter annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricMeter.class);
 
         String name = StringUtils.isBlank(annotation.value())
-                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName()
+                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName() + suffix
                 : annotation.value();
 
         Meter meter = Jboot.me().getMetric().meter(name);

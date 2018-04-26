@@ -1,4 +1,4 @@
-![](./docs/files/logo.png)
+![](./docs/files/logo01.png)
 
 ## [中文文档](./README-ZH.md)
 ## what is JBoot 
@@ -13,7 +13,7 @@ QQ-Group： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.3.7</version>
+    <version>1.4.8</version>
 </dependency>
 
 ```

@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  * 基于 ehcache和redis做的二级缓存
  * 优点是：减少高并发下redis的io瓶颈
  */
-public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventListener{
+public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventListener {
 
     public static final String DEFAULT_NOTIFY_CHANNEL = "jboot_ehredis_channel";
 
@@ -80,10 +80,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
         List list = keysCache.getIfPresent(cacheName);
         if (list == null) {
             list = redisCacheImpl.getKeys(cacheName);
-            if (list  == null) {
+            if (list == null) {
                 list = new ArrayList();
             }
-            keysCache.put(cacheName,list);
+            keysCache.put(cacheName, list);
         }
         return list;
     }
@@ -194,8 +194,13 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
 
     @Override
     public void setTtl(String cacheName, Object key, int seconds) {
-        ehcacheImpl.setTtl(cacheName, key, seconds);
-        redisCacheImpl.setTtl(cacheName, key, seconds);
+        try {
+            ehcacheImpl.setTtl(cacheName, key, seconds);
+            redisCacheImpl.setTtl(cacheName, key, seconds);
+        } finally {
+            publishMessage(JbootEhredisMessage.ACTION_REMOVE, cacheName, key);
+        }
+
     }
 
 
@@ -205,7 +210,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
         redis.publish(serializer.serialize(channel), serializer.serialize(message));
     }
 
-    private void clearKeysCache(String cacheName){
+    private void clearKeysCache(String cacheName) {
         keysCache.invalidate(cacheName);
     }
 
@@ -248,10 +253,12 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     }
 
     @Override
-    public void notifyElementPut(Ehcache cache, Element element) throws CacheException { }
+    public void notifyElementPut(Ehcache cache, Element element) throws CacheException {
+    }
 
     @Override
-    public void notifyElementUpdated(Ehcache cache, Element element) throws CacheException {}
+    public void notifyElementUpdated(Ehcache cache, Element element) throws CacheException {
+    }
 
     @Override
     public void notifyElementExpired(Ehcache cache, Element element) {
@@ -259,10 +266,12 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     }
 
     @Override
-    public void notifyElementEvicted(Ehcache cache, Element element) {}
+    public void notifyElementEvicted(Ehcache cache, Element element) {
+    }
 
     @Override
-    public void notifyRemoveAll(Ehcache cache) {}
+    public void notifyRemoveAll(Ehcache cache) {
+    }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -270,5 +279,6 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+    }
 }
