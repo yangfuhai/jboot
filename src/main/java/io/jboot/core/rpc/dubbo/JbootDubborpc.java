@@ -32,12 +32,11 @@ public class JbootDubborpc extends JbootrpcBase {
 
     private static final Map<String, Object> singletons = new ConcurrentHashMap<>();
 
-    private RegistryConfig registryConfig;
     private JbootDubborpcConfig dubboConfig;
+    private RegistryConfig registryConfig;
 
     public JbootDubborpc() {
         dubboConfig = Jboot.config(JbootDubborpcConfig.class);
-
 
         registryConfig = new RegistryConfig();
         registryConfig.setCheck(getRpcConfig().isRegistryCheck());
@@ -99,6 +98,7 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setInterface(serviceClass);
         reference.setVersion(version);
         reference.setTimeout(getRpcConfig().getRequestTimeOut());
+        reference.setGroup(group);
 
         if (StringUtils.isNotBlank(getRpcConfig().getProxy())) {
             reference.setProxy(getRpcConfig().getProxy());
@@ -140,6 +140,7 @@ public class JbootDubborpc extends JbootrpcBase {
         if (object != null) {
             singletons.put(key, object);
         }
+
         return object;
     }
 
@@ -177,7 +178,7 @@ public class JbootDubborpc extends JbootrpcBase {
         //此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏
         ServiceConfig<T> service = new ServiceConfig<T>();
         service.setApplication(createApplicationConfig(group));
-
+        service.setGroup(group);
         service.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
 
         service.setProtocol(protocolConfig); // 多个协议可以用setProtocols()
