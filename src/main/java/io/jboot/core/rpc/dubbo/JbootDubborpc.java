@@ -34,7 +34,6 @@ public class JbootDubborpc extends JbootrpcBase {
     private static final Map<String, Object> singletons = new ConcurrentHashMap<>();
 
     private JbootrpcConfig jbootrpcConfig;
-    private ApplicationConfig applicationConfig;
     private RegistryConfig registryConfig;
     private JbootDubborpcConfig dubboConfig;
 
@@ -42,15 +41,6 @@ public class JbootDubborpc extends JbootrpcBase {
         jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
         dubboConfig = Jboot.config(JbootDubborpcConfig.class);
 
-
-        applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("jboot");
-        applicationConfig.setQosEnable(dubboConfig.getQosEnable());
-
-        if (dubboConfig.getQosEnable()) {
-            applicationConfig.setQosPort(dubboConfig.getQosPort());
-            applicationConfig.setQosAcceptForeignIp(dubboConfig.getQosAcceptForeignIp());
-        }
 
         registryConfig = new RegistryConfig();
         registryConfig.setCheck(jbootrpcConfig.isRegistryCheck());
@@ -71,8 +61,21 @@ public class JbootDubborpc extends JbootrpcBase {
         else if (jbootrpcConfig.isRedirectCallMode()) {
             registryConfig.setAddress(RegistryConfig.NO_AVAILABLE);
         }
+    }
 
 
+    private ApplicationConfig createApplicationConfig(String group) {
+        ApplicationConfig applicationConfig = new ApplicationConfig();
+        applicationConfig.setName(group);
+        if (dubboConfig.getQosEnable() != null && dubboConfig.getQosEnable()) {
+            applicationConfig.setQosEnable(true);
+            applicationConfig.setQosPort(dubboConfig.getQosPort());
+            applicationConfig.setQosAcceptForeignIp(dubboConfig.getQosAcceptForeignIp());
+        } else {
+            applicationConfig.setQosEnable(false);
+        }
+
+        return applicationConfig;
     }
 
 
@@ -91,7 +94,7 @@ public class JbootDubborpc extends JbootrpcBase {
         // 引用远程服务
         // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
         ReferenceConfig<T> reference = new ReferenceConfig<T>();
-        reference.setApplication(applicationConfig);
+        reference.setApplication(createApplicationConfig(group));
         reference.setInterface(serviceClass);
         reference.setVersion(version);
         reference.setTimeout(jbootrpcConfig.getRequestTimeOut());
@@ -168,7 +171,7 @@ public class JbootDubborpc extends JbootrpcBase {
 
         //此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏
         ServiceConfig<T> service = new ServiceConfig<T>();
-        service.setApplication(applicationConfig);
+        service.setApplication(createApplicationConfig(group));
 
         service.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
 
