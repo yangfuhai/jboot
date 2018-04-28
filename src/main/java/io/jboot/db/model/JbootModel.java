@@ -101,7 +101,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public M copy() {
         M m = null;
         try {
-            m = (M) getUsefulClass().newInstance();
+            m = (M) _getUsefulClass().newInstance();
             m.put(_getAttrs());
         } catch (Throwable e) {
             e.printStackTrace();
@@ -119,10 +119,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public M copyModel() {
         M m = null;
         try {
-            m = (M) getUsefulClass().newInstance();
-            Table table = TableMapping.me().getTable(getUsefulClass());
+            m = (M) _getUsefulClass().newInstance();
+            Table table = TableMapping.me().getTable(_getUsefulClass());
             if (table == null) {
-                throw new JbootException("can't get table of " + getUsefulClass() + " , maybe config incorrect");
+                throw new JbootException("can't get table of " + _getUsefulClass() + " , maybe config incorrect");
             }
             Set<String> attrKeys = table.getColumnTypeMap().keySet();
             for (String attrKey : attrKeys) {
@@ -605,10 +605,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @JSONField(serialize = false)
     protected Table getTable() {
         if (table == null) {
-            table = TableMapping.me().getTable(getUsefulClass());
+            table = TableMapping.me().getTable(_getUsefulClass());
             if (table == null) {
                 throw new JbootException(String.format("table of class %s is null, maybe cannot connection to database or not use correct datasource, " +
-                        "please check your properties file or correct config @Table(datasourc=xxx) in class %s.", getUsefulClass().getName(), getUsefulClass().getName()));
+                        "please check your properties file or correct config @Table(datasourc=xxx) in class %s.", _getUsefulClass().getName(), _getUsefulClass().getName()));
             }
         }
         return table;
@@ -637,7 +637,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @JSONField(serialize = false)
     protected Class<?> getPrimaryType() {
         if (primaryType == null) {
-            primaryType = TableMapping.me().getTable(getUsefulClass()).getColumnType(getPrimaryKey());
+            primaryType = TableMapping.me().getTable(_getUsefulClass()).getColumnType(getPrimaryKey());
         }
         return primaryType;
     }
@@ -645,9 +645,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @JSONField(serialize = false)
     protected String[] getPrimaryKeys() {
-        Table t = TableMapping.me().getTable(getUsefulClass());
+        Table t = TableMapping.me().getTable(_getUsefulClass());
         if (t == null) {
-            throw new RuntimeException("can't get table of " + getUsefulClass() + " , maybe jboot install incorrect");
+            throw new RuntimeException("can't get table of " + _getUsefulClass() + " , maybe jboot install incorrect");
         }
         return t.getPrimaryKey();
     }
