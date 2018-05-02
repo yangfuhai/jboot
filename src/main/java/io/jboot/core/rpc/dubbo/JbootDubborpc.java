@@ -41,6 +41,10 @@ public class JbootDubborpc extends JbootrpcBase {
         registryConfig = new RegistryConfig();
         registryConfig.setCheck(getRpcConfig().isRegistryCheck());
 
+        if (getRpcConfig().getRegistryFile() != null) {
+            registryConfig.setFile(getRpcConfig().getRegistryFile());
+        }
+
         /**
          * 注册中心的调用模式
          */

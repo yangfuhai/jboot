@@ -53,6 +53,7 @@ public class JbootrpcConfig {
     private String registryName = "jboot";
     private String registryUserName;
     private String registryPassword;
+    private String registryFile;
 
     /**
      * 启动检查
@@ -177,6 +178,14 @@ public class JbootrpcConfig {
 
     public void setRegistryPassword(String registryPassword) {
         this.registryPassword = registryPassword;
+    }
+
+    public String getRegistryFile() {
+        return registryFile;
+    }
+
+    public void setRegistryFile(String registryFile) {
+        this.registryFile = registryFile;
     }
 
     public String getCallMode() {
