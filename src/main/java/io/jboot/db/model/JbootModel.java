@@ -19,7 +19,6 @@ import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Table;
-import com.jfinal.plugin.activerecord.TableMapping;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.db.dialect.IJbootModelDialect;
@@ -618,7 +617,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (primaryKey != null) {
             return primaryKey;
         }
-        String[] primaryKeys = _getPrimaryKeys();
+        String[] primaryKeys =  _getTable().getPrimaryKey();
         if (null != primaryKeys && primaryKeys.length == 1) {
             primaryKey = primaryKeys[0];
         }
@@ -630,18 +629,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private transient Class<?> primaryType;
     protected Class<?> _getPrimaryType() {
         if (primaryType == null) {
-            primaryType = TableMapping.me().getTable(_getUsefulClass()).getColumnType(_getPrimaryKey());
+            primaryType = _getTable().getColumnType(_getPrimaryKey());
         }
         return primaryType;
-    }
-
-
-    protected String[] _getPrimaryKeys() {
-        Table t = _getTable();//TableMapping.me().getTable(_getUsefulClass());
-        if (t == null) {
-            throw new RuntimeException("can't get table of " + _getUsefulClass() + " , maybe jboot install incorrect");
-        }
-        return t.getPrimaryKey();
     }
 
 
