@@ -15,7 +15,6 @@
  */
 package io.jboot.db.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
@@ -54,7 +53,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @param value
      */
     public void putCache(Object key, Object value) {
-        Jboot.me().getCache().put(getTableName(), key, value, cacheTime);
+        Jboot.me().getCache().put(_getTableName(), key, value, cacheTime);
     }
 
     /**
@@ -65,7 +64,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public <T> T getCache(Object key) {
-        return Jboot.me().getCache().get(getTableName(), key);
+        return Jboot.me().getCache().get(_getTableName(), key);
     }
 
     /**
@@ -77,7 +76,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public <T> T getCache(Object key, IDataLoader dataloader) {
-        return Jboot.me().getCache().get(getTableName(), key, dataloader, cacheTime);
+        return Jboot.me().getCache().get(_getTableName(), key, dataloader, cacheTime);
     }
 
     /**
@@ -87,7 +86,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     public void removeCache(Object key) {
         if (key == null) return;
-        Jboot.me().getCache().remove(getTableName(), key);
+        Jboot.me().getCache().remove(_getTableName(), key);
     }
 
 
@@ -120,7 +119,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         M m = null;
         try {
             m = (M) _getUsefulClass().newInstance();
-            Table table = TableMapping.me().getTable(_getUsefulClass());
+            Table table = _getTable();
             if (table == null) {
                 throw new JbootException("can't get table of " + _getUsefulClass() + " , maybe config incorrect");
             }
@@ -202,7 +201,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public boolean saveOrUpdate() {
-        if (null == get(getPrimaryKey())) {
+        if (null == get(_getPrimaryKey())) {
             return this.save();
         }
         return this.update();
@@ -220,10 +219,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(COLUMN_CREATED, new Date());
         }
 
-        boolean needInitPrimaryKey = (String.class == getPrimaryType() && null == get(getPrimaryKey()));
+        boolean needInitPrimaryKey = (String.class == _getPrimaryType() && null == get(_getPrimaryKey()));
 
         if (needInitPrimaryKey) {
-            set(getPrimaryKey(), generatePrimaryValue());
+            set(_getPrimaryKey(), generatePrimaryValue());
         }
 
         boolean saveSuccess = false;
@@ -234,7 +233,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             saveSuccess = copyModel.saveNormal();
 
             if (saveSuccess && !needInitPrimaryKey) {
-                this.set(getPrimaryKey(), copyModel.get(getPrimaryKey()));
+                this.set(_getPrimaryKey(), copyModel.get(_getPrimaryKey()));
             }
         } else {
             saveSuccess = this.saveNormal();
@@ -267,7 +266,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         boolean deleted = super.delete();
         if (deleted) {
             if (cacheEnable) {
-                removeCache(get(getPrimaryKey()));
+                removeCache(get(_getPrimaryKey()));
             }
             Jboot.sendEvent(deleteAction(), this);
         }
@@ -302,7 +301,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
         boolean updateSuccess = (autoCopyModel != null && autoCopyModel == true) ? copyModel().updateNormal() : this.updateNormal();
         if (updateSuccess) {
-            Object id = get(getPrimaryKey());
+            Object id = get(_getPrimaryKey());
             if (cacheEnable) {
                 removeCache(id);
             }
@@ -331,15 +330,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public String addAction() {
-        return getTableName() + ":add";
+        return _getTableName() + ":add";
     }
 
     public String deleteAction() {
-        return getTableName() + ":delete";
+        return _getTableName() + ":delete";
     }
 
     public String updateAction() {
-        return getTableName() + ":update";
+        return _getTableName() + ":update";
     }
 
     /**
@@ -376,7 +375,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public M findFirstByColumn(String column, Object value) {
-        String sql = getDialect().forFindByColumns(getTableName(), "*", Columns.create(column, value).getList(), null, 1);
+        String sql = getDialect().forFindByColumns(_getTableName(), "*", Columns.create(column, value).getList(), null, 1);
         return findFirst(sql, value);
     }
 
@@ -387,7 +386,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public M findFirstByColumn(Column column) {
-        String sql = getDialect().forFindByColumns(getTableName(), "*", Columns.create(column).getList(), null, 1);
+        String sql = getDialect().forFindByColumns(_getTableName(), "*", Columns.create(column).getList(), null, 1);
         return findFirst(sql, column.getValue());
     }
 
@@ -398,7 +397,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public M findFirstByColumns(Columns columns) {
-        String sql = getDialect().forFindByColumns(getTableName(), "*", columns.getList(), null, 1);
+        String sql = getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), null, 1);
         LinkedList<Object> params = new LinkedList<Object>();
 
         if (ArrayUtils.isNotEmpty(columns.getList())) {
@@ -416,7 +415,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public List<M> findAll() {
-        String sql = getDialect().forFindByColumns(getTableName(), "*", null, null, null);
+        String sql = getDialect().forFindByColumns(_getTableName(), "*", null, null, null);
         return find(sql);
     }
 
@@ -503,7 +502,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             }
         }
 
-        String sql = getDialect().forFindByColumns(getTableName(), "*", columns, orderBy, count);
+        String sql = getDialect().forFindByColumns(_getTableName(), "*", columns, orderBy, count);
         return params.isEmpty() ? find(sql) : find(sql, params.toArray());
     }
 
@@ -581,7 +580,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns, String orderBy) {
         String selectPartSql = getDialect().forPaginateSelect("*");
-        String fromPartSql = getDialect().forPaginateFrom(getTableName(), columns, orderBy);
+        String fromPartSql = getDialect().forPaginateFrom(_getTableName(), columns, orderBy);
 
         LinkedList<Object> params = new LinkedList<Object>();
 
@@ -595,20 +594,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    @JSONField(serialize = false)
-    protected String getTableName() {
-        return getTable().getName();
+    protected String _getTableName() {
+        return _getTable().getName();
     }
 
     private transient Table table;
 
-    @JSONField(serialize = false)
-    protected Table getTable() {
+    protected Table _getTable() {
         if (table == null) {
-            table = TableMapping.me().getTable(_getUsefulClass());
+            table = super._getTable();
             if (table == null) {
                 throw new JbootException(String.format("table of class %s is null, maybe cannot connection to database or not use correct datasource, " +
-                        "please check your properties file or correct config @Table(datasourc=xxx) in class %s.", _getUsefulClass().getName(), _getUsefulClass().getName()));
+                        "please check jboot.properties or correct config @Table(datasource=xxx) if you use multi datasource.", _getUsefulClass().getName()));
             }
         }
         return table;
@@ -617,12 +614,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private transient String primaryKey;
 
-    @JSONField(serialize = false)
-    protected String getPrimaryKey() {
+    protected String _getPrimaryKey() {
         if (primaryKey != null) {
             return primaryKey;
         }
-        String[] primaryKeys = getPrimaryKeys();
+        String[] primaryKeys = _getPrimaryKeys();
         if (null != primaryKeys && primaryKeys.length == 1) {
             primaryKey = primaryKeys[0];
         }
@@ -632,20 +628,16 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     private transient Class<?> primaryType;
-
-
-    @JSONField(serialize = false)
-    protected Class<?> getPrimaryType() {
+    protected Class<?> _getPrimaryType() {
         if (primaryType == null) {
-            primaryType = TableMapping.me().getTable(_getUsefulClass()).getColumnType(getPrimaryKey());
+            primaryType = TableMapping.me().getTable(_getUsefulClass()).getColumnType(_getPrimaryKey());
         }
         return primaryType;
     }
 
 
-    @JSONField(serialize = false)
-    protected String[] getPrimaryKeys() {
-        Table t = TableMapping.me().getTable(_getUsefulClass());
+    protected String[] _getPrimaryKeys() {
+        Table t = _getTable();//TableMapping.me().getTable(_getUsefulClass());
         if (t == null) {
             throw new RuntimeException("can't get table of " + _getUsefulClass() + " , maybe jboot install incorrect");
         }
@@ -654,7 +646,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     protected boolean hasColumn(String columnLabel) {
-        return getTable().hasColumnLabel(columnLabel);
+        return _getTable().hasColumnLabel(columnLabel);
     }
 
     // -----------------------------Override----------------------------
@@ -735,12 +727,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return false;
         }
 
-        Object id = ((JbootModel) o).get(getPrimaryKey());
+        Object id = ((JbootModel) o).get(_getPrimaryKey());
         if (id == null) {
             return false;
         }
 
-        return id.equals(get(getPrimaryKey()));
+        return id.equals(get(_getPrimaryKey()));
     }
 
 }
