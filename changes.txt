@@ -5,7 +5,7 @@ jboot-1.4.9:
 优化：更新 guava、zipkin等模块
 修复：group 的配置在dubbo rpc下不起作用的问题
 新增：rpc registryFile 的配置支持
-核心升级：升级 JFinal 到最新版本 3.4 ，并由于JbootModel以适配JFinal
+核心升级：升级 JFinal 到最新版本 3.4 ，并优化JbootModel以适配JFinal
 
 
 jboot-1.4.8:
