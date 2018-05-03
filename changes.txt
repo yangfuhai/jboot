@@ -1,3 +1,13 @@
+jboot-1.4.9:
+优化：Shiro模块代码，使之更加简单易用
+优化：ClassKits，防止在多线程下出现的异常问题
+优化：Redis模块，新增更多的关于Redis配置
+优化：更新 guava、zipkin等模块
+修复：group 的配置在dubbo rpc下不起作用的问题
+新增：rpc registryFile 的配置支持
+核心升级：升级 JFinal 到最新版本 3.4 ，并由于JbootModel以适配JFinal
+
+
 jboot-1.4.8:
 修复：使用Shiro会造成静态文件无法正常读取的问题
 修复：数据库使用hystrix在事务的时候获取错误数据的问题
