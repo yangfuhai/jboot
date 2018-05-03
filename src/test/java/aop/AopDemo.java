@@ -34,18 +34,17 @@ public class AopDemo extends JbootController {
     }
 
     @Inject
-    CategoryService service;
+    private CategoryService service;
 
     @Inject
     @Named("myCategory")
-    CategoryService nameservice;
+    private CategoryService nameservice;
 
 
     public void index() {
 
         renderHtml("service:" + service.hello("") + "<br /> nameservice:" + nameservice.hello(""));
     }
-
 
 
 }
