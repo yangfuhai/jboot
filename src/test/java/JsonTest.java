@@ -24,7 +24,6 @@ public class JsonTest {
         user1.setId(100);
         user1.setName(null);
 
-
         String json1 = JFinalJson.getJson().toJson(user1);
         System.out.println(json1);
 

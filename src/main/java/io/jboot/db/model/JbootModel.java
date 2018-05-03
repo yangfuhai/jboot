@@ -118,10 +118,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         M m = null;
         try {
             m = (M) _getUsefulClass().newInstance();
-            Table table = _getTable();
-            if (table == null) {
-                throw new JbootException("can't get table of " + _getUsefulClass() + " , maybe config incorrect");
-            }
+            Table table = _getTable(true);
             Set<String> attrKeys = table.getColumnTypeMap().keySet();
             for (String attrKey : attrKeys) {
                 Object o = this.get(attrKey);
@@ -597,16 +594,20 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     protected String _getTableName() {
-        return _getTable().getName();
+        return _getTable(true).getName();
+    }
+
+
+    protected Table _getTable() {
+        return _getTable(false);
     }
 
     private transient Table table;
-
-    protected Table _getTable() {
+    protected Table _getTable(boolean validateNull) {
         if (table == null) {
             table = super._getTable();
-            if (table == null) {
-                throw new JbootException(String.format("table of class %s is null, maybe cannot connection to database or not use correct datasource, " +
+            if (table == null && validateNull) {
+                throw new JbootException(String.format("class %s can not mapping to database table, maybe cannot connection to database or not use correct datasource, " +
                         "please check jboot.properties or correct config @Table(datasource=xxx) if you use multi datasource.", _getUsefulClass().getName()));
             }
         }
@@ -620,7 +621,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (primaryKey != null) {
             return primaryKey;
         }
-        String[] primaryKeys = _getTable().getPrimaryKey();
+        String[] primaryKeys = _getTable(true).getPrimaryKey();
         if (null != primaryKeys && primaryKeys.length == 1) {
             primaryKey = primaryKeys[0];
         }
@@ -633,14 +634,14 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     protected Class<?> _getPrimaryType() {
         if (primaryType == null) {
-            primaryType = _getTable().getColumnType(_getPrimaryKey());
+            primaryType = _getTable(true).getColumnType(_getPrimaryKey());
         }
         return primaryType;
     }
 
 
     protected boolean hasColumn(String columnLabel) {
-        return _getTable().hasColumnLabel(columnLabel);
+        return _getTable(true).hasColumnLabel(columnLabel);
     }
 
     // -----------------------------Override----------------------------
