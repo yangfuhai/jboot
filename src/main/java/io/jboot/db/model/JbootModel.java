@@ -348,6 +348,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     @Override
     public M findById(final Object idValue) {
+        if (idValue == null) {
+            throw new IllegalArgumentException("id must not be null");
+        }
         return cacheEnable ? getCache(idValue, new IDataLoader() {
             @Override
             public Object load() {
@@ -617,7 +620,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (primaryKey != null) {
             return primaryKey;
         }
-        String[] primaryKeys =  _getTable().getPrimaryKey();
+        String[] primaryKeys = _getTable().getPrimaryKey();
         if (null != primaryKeys && primaryKeys.length == 1) {
             primaryKey = primaryKeys[0];
         }
@@ -627,6 +630,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     private transient Class<?> primaryType;
+
     protected Class<?> _getPrimaryType() {
         if (primaryType == null) {
             primaryType = _getTable().getColumnType(_getPrimaryKey());
