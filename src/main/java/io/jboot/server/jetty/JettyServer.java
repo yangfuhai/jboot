@@ -103,10 +103,10 @@ public class JettyServer extends JbootServer {
 
 
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
-        if (StringUtils.isNotBlank(metricsConfig.getUrl())) {
+        if (StringUtils.isNotBlank(metricsConfig.getMappingUrl())) {
             handler.addEventListener(new JbootMetricServletContextListener());
             handler.addEventListener(new JbootHealthCheckServletContextListener());
-            handler.addServlet(AdminServlet.class, metricsConfig.getUrl());
+            handler.addServlet(AdminServlet.class, metricsConfig.getMappingUrl());
         }
 
         io.jboot.server.Servlets jbootServlets = new io.jboot.server.Servlets();
