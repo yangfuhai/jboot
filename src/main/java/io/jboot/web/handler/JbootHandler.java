@@ -17,7 +17,9 @@ package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import io.jboot.Jboot;
 import io.jboot.JbootConstants;
+import io.jboot.component.metric.JbootMetricConfig;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.web.JbootRequestContext;
 import io.jboot.web.session.JbootServletRequestWrapper;
@@ -29,10 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 
 public class JbootHandler extends Handler {
 
+
+    private static JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
+
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
 
-        if (target.indexOf('.') != -1 || JbootWebsocketManager.me().isWebsokcetEndPoint(target)) {
+        if (target.indexOf('.') != -1
+                || JbootWebsocketManager.me().isWebsokcetEndPoint(target)
+                || metricsConfig.getUrl() != null && target.startsWith(metricsConfig.getUrl())) {
             return;
         }
 

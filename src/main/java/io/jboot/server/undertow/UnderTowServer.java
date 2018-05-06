@@ -152,10 +152,10 @@ public class UnderTowServer extends JbootServer {
 
 
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
-        if (StringUtils.isNotBlank(metricsConfig.getUrl())) {
+        if (StringUtils.isNotBlank(metricsConfig.getMappingUrl())) {
             deploymentInfo.addServlets(
                     Servlets.servlet("MetricsAdminServlet", AdminServlet.class)
-                            .addMapping(metricsConfig.getUrl()));
+                            .addMapping(metricsConfig.getMappingUrl()));
 
             deploymentInfo.addListeners(Servlets.listener(JbootMetricServletContextListener.class));
             deploymentInfo.addListeners(Servlets.listener(JbootHealthCheckServletContextListener.class));
