@@ -19,8 +19,6 @@ import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Table;
-import com.jfinal.plugin.ehcache.IDataLoader;
-import io.jboot.Jboot;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
@@ -37,56 +35,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private static final String COLUMN_CREATED = JbootModelConfig.getConfig().getColumnCreated();
     private static final String COLUMN_MODIFIED = JbootModelConfig.getConfig().getColumnModified();
-
-    /**
-     * 是否启用自动缓存
-     */
-    private boolean cacheEnable = JbootModelConfig.getConfig().isCacheEnable();
-    private int cacheTime = JbootModelConfig.getConfig().getCacheTime();
-
-
-    /**
-     * 添加数据到缓存
-     *
-     * @param key
-     * @param value
-     */
-    public void putCache(Object key, Object value) {
-        Jboot.me().getCache().put(_getTableName(), key, value, cacheTime);
-    }
-
-    /**
-     * 获取缓存中的数据
-     *
-     * @param key
-     * @param <T>
-     * @return
-     */
-    public <T> T getCache(Object key) {
-        return Jboot.me().getCache().get(_getTableName(), key);
-    }
-
-    /**
-     * 获取缓存中的数据 ， 如果缓存不存在，则通过dataloader 去加载
-     *
-     * @param key
-     * @param dataloader
-     * @param <T>
-     * @return
-     */
-    public <T> T getCache(Object key, IDataLoader dataloader) {
-        return Jboot.me().getCache().get(_getTableName(), key, dataloader, cacheTime);
-    }
-
-    /**
-     * 移除缓存数据
-     *
-     * @param key
-     */
-    public void removeCache(Object key) {
-        if (key == null) return;
-        Jboot.me().getCache().remove(_getTableName(), key);
-    }
 
 
     /**
@@ -145,9 +93,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (m == null) {
 
             m = this.copy()
-                    .cacheEnable(this.cacheEnable)
-                    .cacheTime(this.cacheTime)
-                    .useSuper(configName);
+                    .superUse(configName);
 
             this.put("__ds__" + configName, m);
         }
@@ -155,38 +101,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    M useSuper(String configName) {
+    M superUse(String configName) {
         return super.use(configName);
-    }
-
-    /**
-     * 是否启用自动缓存
-     *
-     * @param enable
-     * @return
-     */
-    public M cacheEnable(boolean enable) {
-        this.cacheEnable = enable;
-        return (M) this;
-    }
-
-    public boolean cacheEnable() {
-        return cacheEnable;
-    }
-
-    /**
-     * 设置默认的缓存时间
-     *
-     * @param time 缓存时间，单位：秒
-     * @return
-     */
-    public M cacheTime(int time) {
-        this.cacheTime = time;
-        return (M) this;
-    }
-
-    public int cacheTime() {
-        return cacheTime;
     }
 
 
@@ -226,60 +142,26 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
         if (autoCopyModel != null && autoCopyModel == true) {
             M copyModel = copyModel();
-            saveSuccess = copyModel.saveNormal();
+            saveSuccess = copyModel.superSave();
 
             if (saveSuccess && !needInitPrimaryKey) {
                 this.set(_getPrimaryKey(), copyModel.get(_getPrimaryKey()));
             }
         } else {
-            saveSuccess = this.saveNormal();
+            saveSuccess = this.superSave();
         }
 
-        if (saveSuccess) {
-            Jboot.sendEvent(addAction(), this);
-        }
         return saveSuccess;
     }
 
 
-    protected boolean saveNormal() {
+    protected boolean superSave() {
         return super.save();
     }
 
 
     protected String generatePrimaryValue() {
         return StringUtils.uuid();
-    }
-
-
-    /**
-     * 删除
-     *
-     * @return
-     */
-    @Override
-    public boolean delete() {
-        boolean deleted = super.delete();
-        if (deleted) {
-            if (cacheEnable) {
-                removeCache(get(_getPrimaryKey()));
-            }
-            Jboot.sendEvent(deleteAction(), this);
-        }
-        return deleted;
-    }
-
-
-    /**
-     * 根据ID删除
-     *
-     * @param idValue the id value of the model
-     * @return
-     */
-    @Override
-    public boolean deleteById(Object idValue) {
-        JbootModel<?> model = findById(idValue);
-        return model == null ? true : model.delete();
     }
 
 
@@ -295,70 +177,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        boolean updateSuccess = (autoCopyModel != null && autoCopyModel == true) ? copyModel().updateNormal() : this.updateNormal();
-        if (updateSuccess) {
-            Object id = get(_getPrimaryKey());
-            if (cacheEnable) {
-                removeCache(id);
-            }
-            Jboot.sendEvent(updateAction(), findById(id));
-        }
-        return updateSuccess;
-    }
-
-
-    /**
-     * 更新，但是不发送Action通知
-     *
-     * @return
-     */
-    public boolean updateWithoutEvent() {
-        if (hasColumn(COLUMN_MODIFIED)) {
-            set(COLUMN_MODIFIED, new Date());
-        }
-
-        Boolean autoCopyModel = get(AUTO_COPY_MODEL);
         return (autoCopyModel != null && autoCopyModel == true) ? copyModel().updateNormal() : this.updateNormal();
     }
 
+
     boolean updateNormal() {
         return super.update();
-    }
-
-    public String addAction() {
-        return _getTableName() + ":add";
-    }
-
-    public String deleteAction() {
-        return _getTableName() + ":delete";
-    }
-
-    public String updateAction() {
-        return _getTableName() + ":update";
-    }
-
-    /**
-     * 根据ID查找model
-     *
-     * @param idValue the id value of the model
-     * @return
-     */
-    @Override
-    public M findById(final Object idValue) {
-        if (idValue == null) {
-            throw new IllegalArgumentException("id must not be null");
-        }
-        return cacheEnable ? getCache(idValue, new IDataLoader() {
-            @Override
-            public Object load() {
-                return findByIdWithoutCache(idValue);
-            }
-        }) : findByIdWithoutCache(idValue);
-    }
-
-
-    public M findByIdWithoutCache(Object idValue) {
-        return super.findById(idValue);
     }
 
 
@@ -603,6 +427,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     private transient Table table;
+
     protected Table _getTable(boolean validateNull) {
         if (table == null) {
             table = super._getTable();

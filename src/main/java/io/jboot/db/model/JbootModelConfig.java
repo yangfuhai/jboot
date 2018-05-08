@@ -26,28 +26,11 @@ import io.jboot.config.annotation.PropertyConfig;
 @PropertyConfig(prefix = "jboot.model")
 public class JbootModelConfig {
 
-    private boolean cacheEnable = true;
-    private int cacheTime = 60 * 60 * 24; // 1day
     private String scan;
 
     private String columnCreated = "created";
     private String columnModified = "modified";
 
-    public boolean isCacheEnable() {
-        return cacheEnable;
-    }
-
-    public void setCacheEnable(boolean cacheEnable) {
-        this.cacheEnable = cacheEnable;
-    }
-
-    public int getCacheTime() {
-        return cacheTime;
-    }
-
-    public void setCacheTime(int cacheTime) {
-        this.cacheTime = cacheTime;
-    }
 
     public String getScan() {
         return scan;
