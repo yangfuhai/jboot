@@ -26,8 +26,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * 类扫描器
@@ -49,13 +51,25 @@ public class ClassScanner {
         excludeJars.add("assertj-core-");
         excludeJars.add("brave-");
         excludeJars.add("cglib-nodep-");
-        excludeJars.add("commons-");
         excludeJars.add("consul-api-");
         excludeJars.add("cos-2017.5.jar");
         excludeJars.add("druid-");
         excludeJars.add("ehcache-");
         excludeJars.add("error_prone_annotations-");
         excludeJars.add("fastjson-");
+        excludeJars.add("commons-beanutils");
+        excludeJars.add("commons-codec");
+        excludeJars.add("commons-collections");
+        excludeJars.add("commons-configuration");
+        excludeJars.add("commons-lang");
+        excludeJars.add("commons-logging");
+        excludeJars.add("commons-pool");
+        excludeJars.add("commons-io");
+        excludeJars.add("commons-httpclient");
+        excludeJars.add("commons-fileupload");
+        excludeJars.add("commons-configuration");
+        excludeJars.add("commons-validator");
+        excludeJars.add("commons-email");
         excludeJars.add("fst-");
         excludeJars.add("gson-");
         excludeJars.add("guava-");
@@ -91,13 +105,10 @@ public class ClassScanner {
         excludeJars.add("shiro-");
         excludeJars.add("slf4j-");
         excludeJars.add("spring-");
-        excludeJars.add("undertow-");
-        excludeJars.add("xnio-");
         excludeJars.add("zipkin-");
         excludeJars.add("jcommander-");
         excludeJars.add("jackson-");
         excludeJars.add("org.eclipse.");
-        excludeJars.add("javax.servlet.jsp-");
         excludeJars.add("jetty-");
         excludeJars.add("freemarker-");
         excludeJars.add("dom4j-");
@@ -142,6 +153,12 @@ public class ClassScanner {
         excludeJars.add("activation-");
         excludeJars.add("jcip-annotations-");
         excludeJars.add("jjwt-");
+        excludeJars.add("undertow-");
+        excludeJars.add("reactor-core-");
+        excludeJars.add("reactive-streams-");
+        excludeJars.add("lettuce-core-");
+        excludeJars.add("xnio-");
+        excludeJars.add("wrapper.jar");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();
@@ -246,6 +263,9 @@ public class ClassScanner {
             JarFile jarFile = null;
             try {
                 jarFile = new JarFile(path);
+                if (isExcluedeJar(jarFile.getManifest())) {
+                    continue;
+                }
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     JarEntry jarEntry = entries.nextElement();
@@ -265,6 +285,44 @@ public class ClassScanner {
             }
 
         }
+    }
+
+    private static boolean isExcluedeJar(Manifest manifest) {
+        Attributes mainAttributes = manifest.getMainAttributes();
+        if (mainAttributes == null) {
+            return false;
+        }
+
+        String exportPackage = mainAttributes.getValue("Export-Package");
+        if (exportPackage != null) {
+            if (exportPackage.startsWith("com.google.")
+                    || exportPackage.startsWith("org.apache.")
+                    || exportPackage.startsWith("org.jboss.")
+                    || exportPackage.startsWith("com.netflix.")
+                    || exportPackage.startsWith("com.github.")
+                    || exportPackage.startsWith("org.eclipse.")
+                    || exportPackage.startsWith("com.fasterxml.")
+                    || exportPackage.startsWith("org.slf4j")
+                    || exportPackage.startsWith("net.sf")
+                    ) {
+                return true;
+            }
+        }
+
+        String vendor = mainAttributes.getValue("Implementation-Vendor");
+        if (vendor != null) {
+            vendor = vendor.toLowerCase();
+            if (vendor.indexOf("jboss") > -1
+                    || vendor.indexOf("apache") > -1
+                    || vendor.indexOf("oracle") > -1
+                    || vendor.indexOf("netty") > -1
+                    || vendor.indexOf("dubbo") > -1
+                    ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static boolean isExcludeJar(String path) {
