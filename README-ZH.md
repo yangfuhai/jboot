@@ -12,7 +12,7 @@ QQ交流群： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.4.9</version>
+    <version>1.5.0</version>
 </dependency>
 
 ```

@@ -1,3 +1,10 @@
+jboot-1.5.0:
+修复：metrics 访问 404 的问题
+优化：删除 jboot model 自动缓存的功能（目前需要缓存自行通过 service 层添加 @Cacheable 进行缓存）
+优化：删除 jboot model 自动发送数据库操作事件的功能
+优化：ClassScanner 在某些情况下扫描不到类的问题
+
+
 jboot-1.4.9:
 优化：Shiro模块代码，使之更加简单易用
 优化：ClassKits，防止在多线程下出现的异常问题
