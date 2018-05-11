@@ -1,3 +1,6 @@
+jboot-1.5.1:
+修复：Event事件机制可能出现空指针异常的问题
+
 jboot-1.5.0:
 修复：metrics 访问 404 的问题
 优化：删除 jboot model 自动缓存的功能（目前需要缓存自行通过 service 层添加 @Cacheable 进行缓存）
