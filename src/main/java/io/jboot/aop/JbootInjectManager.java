@@ -33,12 +33,14 @@ import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
+import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
 import io.jboot.aop.interceptor.metric.*;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.component.metric.annotation.*;
 import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.core.cache.annotation.CachePut;
 import io.jboot.core.cache.annotation.Cacheable;
+import io.jboot.core.cache.annotation.CachesEvict;
 import io.jboot.core.mq.JbootmqMessageListener;
 import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.event.JbootEventListener;
@@ -112,6 +114,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
         // 设置缓存相关的拦截器
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Cacheable.class), new JbootCacheInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CacheEvict.class), new JbootCacheEvictInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CachesEvict.class), new JbootCachesEvictInterceptor());
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CachePut.class), new JbootCachePutInterceptor());
 
         /**

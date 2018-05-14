@@ -169,7 +169,7 @@ class Kits {
     }
 
 
-    static boolean isUnless(String unlessString, Method method, Object[] arguments) throws Throwable {
+    static boolean isUnless(String unlessString, Method method, Object[] arguments) {
 
         if (StringUtils.isBlank(unlessString)) {
             return false;
