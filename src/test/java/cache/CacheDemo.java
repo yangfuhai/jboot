@@ -32,8 +32,8 @@ public class CacheDemo extends JbootController {
 
         //jboot端口号配置
         Jboot.setBootArg("jboot.server.port", "8088");
-        Jboot.setBootArg("jboot.cache.type", "redis");
-        Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
+//        Jboot.setBootArg("jboot.cache.type", "redis");
+//        Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
 
 
         Jboot.run(args);
