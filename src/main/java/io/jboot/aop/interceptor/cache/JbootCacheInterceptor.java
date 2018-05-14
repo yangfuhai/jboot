@@ -16,7 +16,6 @@
 package io.jboot.aop.interceptor.cache;
 
 
-import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.Cacheable;
@@ -33,7 +32,7 @@ import java.lang.reflect.Method;
  */
 public class JbootCacheInterceptor implements MethodInterceptor {
 
-    static final Log LOG = Log.getLog(JbootCacheInterceptor.class);
+    private static final String NULL_VALUE = "null_value";
 
 
     @Override
@@ -61,9 +60,9 @@ public class JbootCacheInterceptor implements MethodInterceptor {
         IDataLoader dataLoader = new IDataLoader() {
             @Override
             public Object load() {
-                Object r = null;
+                Object proceedData = null;
                 try {
-                    r = methodInvocation.proceed();
+                    proceedData = methodInvocation.proceed();
                 } catch (Throwable throwable) {
                     if (throwable instanceof RuntimeException) {
                         throw (RuntimeException) throwable;
@@ -71,11 +70,10 @@ public class JbootCacheInterceptor implements MethodInterceptor {
                         throw new JbootException(throwable);
                     }
                 }
-                if (r != null) {
-                    return r;
+                if (proceedData != null) {
+                    return proceedData;
                 }
-
-                return cacheable.nullCacheEnable() ? new NullObject() : null;
+                return cacheable.nullCacheEnable() ? NULL_VALUE : null;
             }
         };
 
@@ -83,7 +81,7 @@ public class JbootCacheInterceptor implements MethodInterceptor {
                 ? Jboot.me().getCache().get(cacheName, cacheKey, dataLoader, cacheable.liveSeconds())
                 : Jboot.me().getCache().get(cacheName, cacheKey, dataLoader);
 
-        return data == null || data instanceof NullObject ? null : data;
+        return (data == null || NULL_VALUE.equals(data)) ? null : data;
     }
 
 
