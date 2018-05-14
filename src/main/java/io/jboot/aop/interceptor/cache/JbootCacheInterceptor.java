@@ -32,7 +32,7 @@ import java.lang.reflect.Method;
  */
 public class JbootCacheInterceptor implements MethodInterceptor {
 
-    private static final String NULL_VALUE = "null_value";
+    private static final String NULL_VALUE = "NULL_VALUE";
 
 
     @Override
