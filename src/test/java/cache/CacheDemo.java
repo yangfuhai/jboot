@@ -67,5 +67,9 @@ public class CacheDemo extends JbootController {
         service.cacheEvict("mykey");
         renderText("evict ok");
     }
+    public void evict1() {
+        service.cacheEvict1("mykey");
+        renderText("evict ok");
+    }
 
 }

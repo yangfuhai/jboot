@@ -9,4 +9,5 @@ public interface CacheService {
     String putCache(String key);
 
     void cacheEvict(String key);
+    void cacheEvict1(String key);
 }

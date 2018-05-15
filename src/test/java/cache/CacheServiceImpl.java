@@ -39,4 +39,15 @@ public class CacheServiceImpl implements CacheService {
     public void cacheEvict(String key) {
 
     }
+
+    /**
+     * 只能删除指定name，key的缓存
+     *
+     * @param key
+     */
+    @Override
+    @CacheEvict(name = "mycache", key = "*")
+    public void cacheEvict1(String key) {
+        throw new NullPointerException("xxxx");
+    }
 }
