@@ -17,15 +17,14 @@ package io.jboot.aop.interceptor.cache;
 
 
 import com.jfinal.log.Log;
-import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.core.cache.annotation.CachesEvict;
-import io.jboot.exception.JbootAssert;
-import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 清除缓存操作的拦截器
@@ -46,36 +45,33 @@ public class JbootCachesEvictInterceptor implements MethodInterceptor {
 
         CacheEvict[] evicts = cachesEvict.value();
 
+        List<CacheEvict> beforeInvocations = new ArrayList<>();
+        List<CacheEvict> afterInvocations = new ArrayList<>();
+
         for (CacheEvict evict : evicts) {
+            if (evict.beforeInvocation()) {
+                beforeInvocations.add(evict);
+            } else {
+                afterInvocations.add(evict);
+            }
+        }
+
+        doCachesEvict(methodInvocation, targetClass, method, beforeInvocations);
+        Object proceedData = methodInvocation.proceed();
+        doCachesEvict(methodInvocation, targetClass, method, afterInvocations);
+
+        return proceedData;
+    }
+
+    private void doCachesEvict(MethodInvocation methodInvocation, Class targetClass, Method method, List<CacheEvict> cacheEvicts) {
+        for (CacheEvict evict : cacheEvicts) {
             Object[] arguments = methodInvocation.getArguments();
             try {
-                doCacheEvict(arguments, targetClass, method, evict);
+                Kits.doCacheEvict(arguments, targetClass, method, evict);
             } catch (Exception ex) {
                 LOG.error(ex.toString(), ex);
             }
         }
-
-        return methodInvocation.proceed();
     }
-
-    private void doCacheEvict(Object[] arguments, Class targetClass, Method method, CacheEvict evict) {
-        String unlessString = evict.unless();
-        if (Kits.isUnless(unlessString, method, arguments)) {
-            return;
-        }
-
-        String cacheName = evict.name();
-        JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
-                String.format("CacheEvict.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
-
-        if ("*".equals(evict.key().trim())) {
-            Jboot.me().getCache().removeAll(cacheName);
-            return;
-        }
-
-        String cacheKey = Kits.buildCacheKey(evict.key(), targetClass, method, arguments);
-        Jboot.me().getCache().remove(cacheName, cacheKey);
-    }
-
 
 }

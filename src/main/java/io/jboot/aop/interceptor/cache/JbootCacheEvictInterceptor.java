@@ -16,10 +16,7 @@
 package io.jboot.aop.interceptor.cache;
 
 
-import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CacheEvict;
-import io.jboot.exception.JbootAssert;
-import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -41,25 +38,17 @@ public class JbootCacheEvictInterceptor implements MethodInterceptor {
             return methodInvocation.proceed();
         }
 
-        String unlessString = cacheEvict.unless();
-        if (Kits.isUnless(unlessString, method, methodInvocation.getArguments())) {
-            return methodInvocation.proceed();
+        if (cacheEvict.beforeInvocation()) {
+            Kits.doCacheEvict(methodInvocation.getArguments(), targetClass, method, cacheEvict);
         }
 
+        Object proceedData = methodInvocation.proceed();
 
-        String cacheName = cacheEvict.name();
-        JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
-                String.format("CacheEvict.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
-
-        if ("*".equals(cacheEvict.key())) {
-            Jboot.me().getCache().removeAll(cacheName);
-            return methodInvocation.proceed();
+        if (!cacheEvict.beforeInvocation()) {
+            Kits.doCacheEvict(methodInvocation.getArguments(), targetClass, method, cacheEvict);
         }
 
-        String cacheKey = Kits.buildCacheKey(cacheEvict.key(), targetClass, method, methodInvocation.getArguments());
-        Jboot.me().getCache().remove(cacheName, cacheKey);
-        return methodInvocation.proceed();
+        return proceedData;
+
     }
-
-
 }

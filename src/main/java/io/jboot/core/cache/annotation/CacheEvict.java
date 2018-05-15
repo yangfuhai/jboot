@@ -26,4 +26,6 @@ public @interface CacheEvict {
     String key() default "";
 
     String unless() default "";
+
+    boolean beforeInvocation() default false;
 }
