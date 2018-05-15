@@ -30,7 +30,6 @@ import java.lang.reflect.Method;
  */
 public class JFinalBeforeInterceptor implements MethodInterceptor {
 
-    InterceptorManager manger = InterceptorManager.me();
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
@@ -45,8 +44,9 @@ public class JFinalBeforeInterceptor implements MethodInterceptor {
         targetClass = ClassKits.getUsefulClass(targetClass);
         Method method = methodInvocation.getMethod();
 
-        Interceptor[] finalInters = manger.buildServiceMethodInterceptor(InterceptorManager.NULL_INTERS, targetClass, method);
-        JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, finalInters, methodInvocation.getArguments());
+        //service层的所有拦截器，包含了全局的拦截器 和 @Before 的拦截器
+        Interceptor[] serviceInterceptors = InterceptorManager.me().buildServiceMethodInterceptor(InterceptorManager.NULL_INTERS, targetClass, method);
+        JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, serviceInterceptors, methodInvocation.getArguments());
         invocation.invoke();
         return invocation.getReturnValue();
     }
