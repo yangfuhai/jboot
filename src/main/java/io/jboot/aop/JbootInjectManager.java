@@ -24,7 +24,6 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
-import com.jfinal.aop.Before;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
@@ -108,8 +107,9 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
 
         // 设置 Jfinal AOP 相关的拦截器
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new JFinalBeforeInterceptor());
-        binder.bindInterceptor(Matchers.annotatedWith(Before.class), Matchers.any(), new JFinalBeforeInterceptor());
+//        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new JFinalBeforeInterceptor());
+//        binder.bindInterceptor(Matchers.annotatedWith(Before.class), Matchers.any(), new JFinalBeforeInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.any(), new JFinalBeforeInterceptor());
 
         // 设置缓存相关的拦截器
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Cacheable.class), new JbootCacheInterceptor());
