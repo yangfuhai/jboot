@@ -19,6 +19,7 @@ package io.jboot.aop.interceptor.metric;
 import com.codahale.metrics.Counter;
 import io.jboot.Jboot;
 import io.jboot.component.metric.annotation.EnableMetricConcurrency;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -33,10 +34,12 @@ public class JbootMetricConcurrencyAopInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
-        EnableMetricConcurrency annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricConcurrency.class);
+        Class targetClass = ClassKits.getUsefulClass(methodInvocation.getThis().getClass());
+        EnableMetricConcurrency annotation = methodInvocation.getMethod().getAnnotation(EnableMetricConcurrency.class);
+
 
         String name = StringUtils.isBlank(annotation.value())
-                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName() + suffix
+                ? targetClass + "." + methodInvocation.getMethod().getName() + suffix
                 : annotation.value();
 
         Counter counter = Jboot.me().getMetric().counter(name);

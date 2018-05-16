@@ -19,6 +19,7 @@ package io.jboot.aop.interceptor.metric;
 import com.codahale.metrics.Timer;
 import io.jboot.Jboot;
 import io.jboot.component.metric.annotation.EnableMetricTimer;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -33,10 +34,12 @@ public class JbootMetricTimerAopInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
-        EnableMetricTimer annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricTimer.class);
+        Class targetClass = ClassKits.getUsefulClass(methodInvocation.getThis().getClass());
+        EnableMetricTimer annotation = methodInvocation.getMethod().getAnnotation(EnableMetricTimer.class);
+
 
         String name = StringUtils.isBlank(annotation.value())
-                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName() + suffix
+                ? targetClass + "." + methodInvocation.getMethod().getName() + suffix
                 : annotation.value();
 
         Timer meter = Jboot.me().getMetric().timer(name);

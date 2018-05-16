@@ -19,6 +19,7 @@ package io.jboot.aop.interceptor.metric;
 import com.codahale.metrics.Histogram;
 import io.jboot.Jboot;
 import io.jboot.component.metric.annotation.EnableMetricHistogram;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -33,11 +34,14 @@ public class JbootMetricHistogramAopInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
-        EnableMetricHistogram annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricHistogram.class);
+        Class targetClass = ClassKits.getUsefulClass(methodInvocation.getThis().getClass());
+        EnableMetricHistogram annotation = methodInvocation.getMethod().getAnnotation(EnableMetricHistogram.class);
+
 
         String name = StringUtils.isBlank(annotation.value())
-                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName() + suffix
+                ? targetClass + "." + methodInvocation.getMethod().getName() + suffix
                 : annotation.value();
+
 
         Histogram histogram = Jboot.me().getMetric().histogram(name);
         histogram.update(annotation.update());
