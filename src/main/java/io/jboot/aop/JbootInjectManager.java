@@ -20,10 +20,13 @@ import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.Model;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
@@ -80,7 +83,12 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
 
         // 设置 TypeListener
         binder.bindListener(Matchers.any(), this);
-        binder.bindInterceptor(Matchers.any(), Matchers.any(), new AopInterceptor());
+
+        Matcher matcher = Matchers.annotatedWith(Bean.class)
+                .or(Matchers.annotatedWith(JbootrpcService.class))
+                .or(Matchers.annotatedWith(Before.class));
+
+        binder.bindInterceptor(matcher.or(Matchers.subclassesOf(Model.class)), Matchers.any(), new AopInterceptor());
 
         /**
          * Bean 注解
@@ -102,6 +110,11 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class implClass : classes) {
             Class<?>[] interfaceClasses = implClass.getInterfaces();
+
+            if (interfaceClasses == null || interfaceClasses.length == 0) {
+                continue;
+            }
+
             Bean bean = (Bean) implClass.getAnnotation(Bean.class);
             String name = bean.name();
 
