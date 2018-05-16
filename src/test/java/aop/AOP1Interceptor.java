@@ -10,11 +10,11 @@ import com.jfinal.aop.Invocation;
  * @Description: (用一句话描述该文件做什么)
  * @Package aop
  */
-public class AOPInterceptor implements Interceptor {
+public class AOP1Interceptor implements Interceptor {
     @Override
     public void intercept(Invocation inv) {
-        System.out.println("AOPInterceptor invoked before:"+inv.getMethodName());
+        System.out.println("AOP1Interceptor invoked before:"+inv.getMethodName());
         inv.invoke();
-        System.out.println("AOPInterceptor invoked after:"+inv.getMethodName());
+        System.out.println("AOP1Interceptor invoked after:"+inv.getMethodName());
     }
 }

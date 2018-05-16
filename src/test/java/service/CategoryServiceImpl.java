@@ -16,15 +16,22 @@
 package service;
 
 
+import aop.AOP1Interceptor;
+import com.jfinal.aop.Before;
 import io.jboot.aop.annotation.Bean;
+import io.jboot.component.metric.annotation.EnableMetricCounter;
+import io.jboot.core.cache.annotation.CacheEvict;
 
 @Bean
 public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-//    @Before(AOPInterceptor.class)
+    @Before(AOP1Interceptor.class)
+    @CacheEvict(name = "xxx")
+    @EnableMetricCounter
     public String hello(String text) {
+        System.out.println("hello invoked in CategoryServiceImpl");
         return "CategoryServiceImpl say hello " + text;
     }
 
