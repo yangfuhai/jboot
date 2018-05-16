@@ -155,27 +155,22 @@ public class JbootDubborpc extends JbootrpcBase {
             group = getRpcConfig().getDefaultGroup();
         }
 
-        ProtocolConfig protocolConfig = new ProtocolConfig();
-        protocolConfig.setPort(port <= 0 ? getRpcConfig().getDefaultPort() : port);
-        protocolConfig.setThreads(dubboConfig.getProtocolThreads());
+        ProtocolConfig protocolConfig = dubboConfig.newProtocolConfig();
 
-        protocolConfig.setName(dubboConfig.getProtocolName());
-        protocolConfig.setServer(dubboConfig.getProtocolServer());
-
-        if (StringUtils.isNotBlank(dubboConfig.getProtocolContextPath())) {
-            protocolConfig.setContextpath(dubboConfig.getProtocolContextPath());
-        }
-
-        if (StringUtils.isNotBlank(dubboConfig.getProtocolTransporter())) {
-            protocolConfig.setTransporter(dubboConfig.getProtocolTransporter());
-        }
-
-        if (StringUtils.isNotBlank(getRpcConfig().getHost())) {
+        if (protocolConfig.getHost() == null && getRpcConfig().getHost() != null) {
             protocolConfig.setHost(getRpcConfig().getHost());
         }
 
-        if (StringUtils.isNotBlank(getRpcConfig().getSerialization())) {
+        if (protocolConfig.getSerialization() == null && getRpcConfig().getSerialization() != null) {
             protocolConfig.setSerialization(getRpcConfig().getSerialization());
+        }
+
+        if (protocolConfig.getPort() == null && getRpcConfig().getDefaultPort() != null){
+            protocolConfig.setPort(getRpcConfig().getDefaultPort());
+        }
+
+        if (port > 0 ){
+            protocolConfig.setPort(port);
         }
 
 

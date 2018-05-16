@@ -73,7 +73,7 @@ public class JbootrpcConfig {
      * 对外暴露服务的相关配置
      */
     private String host;
-    private int defaultPort = 8088;
+    private Integer defaultPort = 8088;
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
 
@@ -140,7 +140,7 @@ public class JbootrpcConfig {
         this.registryName = registryName;
     }
 
-    public int getDefaultPort() {
+    public Integer getDefaultPort() {
         return defaultPort;
     }
 
