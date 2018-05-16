@@ -168,6 +168,7 @@ public class ClassScanner {
         excludeJarPackages.add("oro.oro");
         excludeJarPackages.add("org.eclipse");
         excludeJarPackages.add("org.apache");
+        excludeJarPackages.add("org.osgi");
     }
 
     public static <T> List<Class<T>> scanSubClass(Class<T> pclazz, boolean mustCanNewInstance) {
