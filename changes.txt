@@ -2,7 +2,7 @@ jboot-1.5.3:
 新增：给 @CacheEvict 新增 beforeInvocation 配置
 新增：支持 Dubbo 的整体配置
 修复：不支持 JFinal 全局 AOP 配置的问题
-
+修复：MetricInterceptors 可能会出现空指针异常的问题
 
 jboot-1.5.2:
 新增：@CachesEvict 注解，用于删除多个缓存

@@ -20,6 +20,7 @@ import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
@@ -41,6 +42,7 @@ import io.jboot.utils.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -80,7 +82,6 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
     @Override
     public void configure(Binder binder) {
 
-
         // 设置 TypeListener
         binder.bindListener(Matchers.any(), this);
 
@@ -88,7 +89,15 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
                 .or(Matchers.annotatedWith(JbootrpcService.class))
                 .or(Matchers.annotatedWith(Before.class));
 
-        binder.bindInterceptor(matcher.or(Matchers.subclassesOf(Model.class)), Matchers.any(), new AopInterceptor());
+
+        Matcher notSynthetic = new AbstractMatcher<Method>() {
+            @Override
+            public boolean matches(Method method) {
+                return !method.isSynthetic();
+            }
+        };
+
+        binder.bindInterceptor(matcher.or(Matchers.subclassesOf(Model.class)), notSynthetic, new AopInterceptor());
 
         /**
          * Bean 注解
