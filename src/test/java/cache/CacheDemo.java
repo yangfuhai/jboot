@@ -54,7 +54,7 @@ public class CacheDemo extends JbootController {
     }
 
     public void enableLive() {
-        String result = service.cacheAble("mykey");
+        String result = service.cacheAbleLive("mykey1");
         renderText(result);
     }
 

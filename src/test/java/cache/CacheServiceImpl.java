@@ -17,7 +17,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    @Cacheable(name = "mycache", key = "#(key)", liveSeconds = 15)
+    @Cacheable(name = "mycache", key = "#(key)", liveSeconds = 5)
     public String cacheAbleLive(String key) {
         System.out.println("cacheAbleLive invoked!!!!");
         return key + " from CacheServiceImpl.cacheAbleLive";

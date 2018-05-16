@@ -16,39 +16,38 @@
 package io.jboot.aop.interceptor.cache;
 
 
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import io.jboot.core.cache.annotation.CacheEvict;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
 
 /**
  * 清除缓存操作的拦截器
  */
-public class JbootCacheEvictInterceptor implements MethodInterceptor {
+public class JbootCacheEvictInterceptor implements Interceptor {
 
     @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    public void intercept(Invocation inv) {
 
-        Class targetClass = methodInvocation.getThis().getClass();
-        Method method = methodInvocation.getMethod();
+        Method method = inv.getMethod();
 
         CacheEvict cacheEvict = method.getAnnotation(CacheEvict.class);
         if (cacheEvict == null) {
-            return methodInvocation.proceed();
+            inv.invoke();
+            return;
         }
+
+        Class targetClass = inv.getTarget().getClass();
 
         if (cacheEvict.beforeInvocation()) {
-            Kits.doCacheEvict(methodInvocation.getArguments(), targetClass, method, cacheEvict);
+            Kits.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
         }
 
-        Object proceedData = methodInvocation.proceed();
+        inv.invoke();
 
         if (!cacheEvict.beforeInvocation()) {
-            Kits.doCacheEvict(methodInvocation.getArguments(), targetClass, method, cacheEvict);
+            Kits.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
         }
-
-        return proceedData;
-
     }
 }

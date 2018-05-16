@@ -24,23 +24,10 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
-import com.jfinal.aop.Before;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
-import io.jboot.aop.interceptor.JFinalBeforeInterceptor;
-import io.jboot.aop.interceptor.JbootHystrixCommandInterceptor;
-import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
-import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
-import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
-import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
-import io.jboot.aop.interceptor.metric.*;
-import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
-import io.jboot.component.metric.annotation.*;
-import io.jboot.core.cache.annotation.CacheEvict;
-import io.jboot.core.cache.annotation.CachePut;
-import io.jboot.core.cache.annotation.Cacheable;
-import io.jboot.core.cache.annotation.CachesEvict;
+import io.jboot.aop.interceptor.AopInterceptor;
 import io.jboot.core.mq.JbootmqMessageListener;
 import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.event.JbootEventListener;
@@ -93,33 +80,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
 
         // 设置 TypeListener
         binder.bindListener(Matchers.any(), this);
-
-
-        // 设置 Metrics 相关的统计拦截
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricCounter.class), new JbootMetricCounterAopInterceptor());
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricConcurrency.class), new JbootMetricConcurrencyAopInterceptor());
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricHistogram.class), new JbootMetricHistogramAopInterceptor());
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricMeter.class), new JbootMetricMeterAopInterceptor());
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableMetricTimer.class), new JbootMetricTimerAopInterceptor());
-
-
-        // 设置 hystricx 的拦截器
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(EnableHystrixCommand.class), new JbootHystrixCommandInterceptor());
-
-        // 设置 Jfinal AOP 相关的拦截器
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new JFinalBeforeInterceptor());
-        binder.bindInterceptor(Matchers.annotatedWith(Before.class), Matchers.any(), new JFinalBeforeInterceptor());
-
-        // 用于 解决 JFinal 全局 AOP 的问题
-        binder.bindInterceptor(Matchers.annotatedWith(Bean.class).and(Matchers.not(Matchers.annotatedWith(Before.class))),
-                Matchers.not(Matchers.annotatedWith(Before.class)), new JFinalBeforeInterceptor());
-
-
-        // 设置缓存相关的拦截器
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Cacheable.class), new JbootCacheInterceptor());
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CacheEvict.class), new JbootCacheEvictInterceptor());
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CachesEvict.class), new JbootCachesEvictInterceptor());
-        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(CachePut.class), new JbootCachePutInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.any(), new AopInterceptor());
 
         /**
          * Bean 注解
@@ -139,12 +100,12 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
     private void beanBind(Binder binder) {
 
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
-        for (Class impl : classes) {
-            Class<?>[] interfaceClasses = impl.getInterfaces();
-            Bean bean = (Bean) impl.getAnnotation(Bean.class);
+        for (Class implClass : classes) {
+            Class<?>[] interfaceClasses = implClass.getInterfaces();
+            Bean bean = (Bean) implClass.getAnnotation(Bean.class);
             String name = bean.name();
 
-            BeanExclude beanExclude = (BeanExclude) impl.getAnnotation(BeanExclude.class);
+            BeanExclude beanExclude = (BeanExclude) implClass.getAnnotation(BeanExclude.class);
 
             //对某些系统的类 进行排除，例如：Serializable 等
             Class[] excludes = beanExclude == null ? default_excludes : ArrayUtils.concat(default_excludes, beanExclude.value());
@@ -162,12 +123,12 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
                 }
                 try {
                     if (StringUtils.isBlank(name)) {
-                        binder.bind(interfaceClass).to(impl);
+                        binder.bind(interfaceClass).to(implClass);
                     } else {
-                        binder.bind(interfaceClass).annotatedWith(Names.named(name)).to(impl);
+                        binder.bind(interfaceClass).annotatedWith(Names.named(name)).to(implClass);
                     }
                 } catch (Throwable ex) {
-                    System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, impl));
+                    System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, implClass));
                 }
             }
         }

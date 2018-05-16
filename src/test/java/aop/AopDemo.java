@@ -30,6 +30,8 @@ public class AopDemo extends JbootController {
 
     public static void main(String[] args) {
 //        Jboot.setBootArg("jboot.server.type", "jetty");
+        Jboot.setBootArg("jboot.metric.url", "/metrics_admin");
+        Jboot.setBootArg("jboot.metric.reporter", "slf4j");
         Jboot.run(args);
     }
 

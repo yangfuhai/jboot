@@ -16,11 +16,11 @@
 package io.jboot.aop.interceptor.cache;
 
 
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import com.jfinal.log.Log;
 import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.core.cache.annotation.CachesEvict;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,18 +29,28 @@ import java.util.List;
 /**
  * 清除缓存操作的拦截器
  */
-public class JbootCachesEvictInterceptor implements MethodInterceptor {
+public class JbootCachesEvictInterceptor implements Interceptor {
     private static final Log LOG = Log.getLog(JbootCachesEvictInterceptor.class);
 
-    @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    private void doCachesEvict(Object[] arguments, Class targetClass, Method method, List<CacheEvict> cacheEvicts) {
+        for (CacheEvict evict : cacheEvicts) {
+            try {
+                Kits.doCacheEvict(arguments, targetClass, method, evict);
+            } catch (Exception ex) {
+                LOG.error(ex.toString(), ex);
+            }
+        }
+    }
 
-        Class targetClass = methodInvocation.getThis().getClass();
-        Method method = methodInvocation.getMethod();
+    @Override
+    public void intercept(Invocation inv) {
+
+        Method method = inv.getMethod();
 
         CachesEvict cachesEvict = method.getAnnotation(CachesEvict.class);
         if (cachesEvict == null) {
-            return methodInvocation.proceed();
+            inv.invoke();
+            return;
         }
 
         CacheEvict[] evicts = cachesEvict.value();
@@ -56,22 +66,11 @@ public class JbootCachesEvictInterceptor implements MethodInterceptor {
             }
         }
 
-        doCachesEvict(methodInvocation, targetClass, method, beforeInvocations);
-        Object proceedData = methodInvocation.proceed();
-        doCachesEvict(methodInvocation, targetClass, method, afterInvocations);
 
-        return proceedData;
+        Class targetClass = inv.getTarget().getClass();
+
+        doCachesEvict(inv.getArgs(), targetClass, method, beforeInvocations);
+        inv.invoke();
+        doCachesEvict(inv.getArgs(), targetClass, method, afterInvocations);
     }
-
-    private void doCachesEvict(MethodInvocation methodInvocation, Class targetClass, Method method, List<CacheEvict> cacheEvicts) {
-        for (CacheEvict evict : cacheEvicts) {
-            Object[] arguments = methodInvocation.getArguments();
-            try {
-                Kits.doCacheEvict(arguments, targetClass, method, evict);
-            } catch (Exception ex) {
-                LOG.error(ex.toString(), ex);
-            }
-        }
-    }
-
 }

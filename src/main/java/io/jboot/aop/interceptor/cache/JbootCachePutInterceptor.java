@@ -16,56 +16,92 @@
 package io.jboot.aop.interceptor.cache;
 
 
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CachePut;
 import io.jboot.exception.JbootAssert;
 import io.jboot.utils.StringUtils;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
 
 /**
  * 缓存设置拦截器
  */
-public class JbootCachePutInterceptor implements MethodInterceptor {
+public class JbootCachePutInterceptor implements Interceptor {
+
+//    @Override
+//    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+//
+//        Class targetClass = methodInvocation.getThis().getClass();
+//        Method method = methodInvocation.getMethod();
+//
+//        Object result = methodInvocation.proceed();
+//
+//        CachePut cachePut = method.getAnnotation(CachePut.class);
+//        if (cachePut == null) {
+//            return result;
+//        }
+//
+//        String unlessString = cachePut.unless();
+//        if (StringUtils.isNotBlank(unlessString)) {
+//            unlessString = String.format("#(%s)", unlessString);
+//            String unlessBoolString = Kits.engineRender(unlessString, method, methodInvocation.getArguments());
+//            if ("true".equals(unlessBoolString)) {
+//                return result;
+//            }
+//        }
+//
+//
+//        String cacheName = cachePut.name();
+//        JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
+//                String.format("CachePut.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
+//
+//        String cacheKey = Kits.buildCacheKey(cachePut.key(), targetClass, method, methodInvocation.getArguments());
+//
+//        if (cachePut.liveSeconds() > 0) {
+//            Jboot.me().getCache().put(cacheName, cacheKey, result, cachePut.liveSeconds());
+//        } else {
+//            Jboot.me().getCache().put(cacheName, cacheKey, result);
+//        }
+//        return result;
+//    }
+
 
     @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    public void intercept(Invocation inv) {
 
-        Class targetClass = methodInvocation.getThis().getClass();
-        Method method = methodInvocation.getMethod();
+        inv.invoke();
 
-        Object result = methodInvocation.proceed();
-
+        Method method = inv.getMethod();
         CachePut cachePut = method.getAnnotation(CachePut.class);
         if (cachePut == null) {
-            return result;
+            return;
         }
+
+        Object result = inv.getReturnValue();
 
         String unlessString = cachePut.unless();
         if (StringUtils.isNotBlank(unlessString)) {
             unlessString = String.format("#(%s)", unlessString);
-            String unlessBoolString = Kits.engineRender(unlessString, method, methodInvocation.getArguments());
+            String unlessBoolString = Kits.engineRender(unlessString, method, inv.getArgs());
             if ("true".equals(unlessBoolString)) {
-                return result;
+                return;
             }
         }
 
 
+        Class targetClass = inv.getTarget().getClass();
         String cacheName = cachePut.name();
         JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
                 String.format("CachePut.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
 
-        String cacheKey = Kits.buildCacheKey(cachePut.key(), targetClass, method, methodInvocation.getArguments());
+        String cacheKey = Kits.buildCacheKey(cachePut.key(), targetClass, method, inv.getArgs());
 
         if (cachePut.liveSeconds() > 0) {
             Jboot.me().getCache().put(cacheName, cacheKey, result, cachePut.liveSeconds());
         } else {
             Jboot.me().getCache().put(cacheName, cacheKey, result);
         }
-        return result;
     }
-
-
 }

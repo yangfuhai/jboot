@@ -17,38 +17,41 @@ package io.jboot.aop.interceptor.metric;
 
 
 import com.codahale.metrics.Timer;
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.component.metric.annotation.EnableMetricTimer;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * 用于在AOP拦截，并通过Metrics的Timer进行统计
  */
-public class JbootMetricTimerAopInterceptor implements MethodInterceptor {
+public class JbootMetricTimerAopInterceptor implements Interceptor {
 
     private static final String suffix = ".timer";
 
     @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    public void intercept(Invocation inv) {
 
-        Class targetClass = ClassKits.getUsefulClass(methodInvocation.getThis().getClass());
-        EnableMetricTimer annotation = methodInvocation.getMethod().getAnnotation(EnableMetricTimer.class);
+        EnableMetricTimer annotation = inv.getMethod().getAnnotation(EnableMetricTimer.class);
 
+        if (annotation == null){
+            inv.invoke();
+            return;
+        }
 
+        Class targetClass = ClassKits.getUsefulClass(inv.getTarget().getClass());
         String name = StringUtils.isBlank(annotation.value())
-                ? targetClass + "." + methodInvocation.getMethod().getName() + suffix
+                ? targetClass + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 
         Timer meter = Jboot.me().getMetric().timer(name);
         Timer.Context timerContext = meter.time();
         try {
-            return methodInvocation.proceed();
+            inv.invoke();
         } finally {
             timerContext.stop();
         }
-
     }
 }
