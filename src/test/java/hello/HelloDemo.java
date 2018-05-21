@@ -16,6 +16,7 @@
 package hello;
 
 import io.jboot.Jboot;
+import io.jboot.web.cache.EnableActionCache;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -31,6 +32,7 @@ public class HelloDemo extends JbootController {
     }
 
 
+    @EnableActionCache
     public void index() {
 
        renderText("hello jboot ...");

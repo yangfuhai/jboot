@@ -17,7 +17,10 @@ package io.jboot.config;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.jfinal.kit.*;
+import com.jfinal.kit.LogKit;
+import com.jfinal.kit.Prop;
+import com.jfinal.kit.PropKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertyConfig;
@@ -145,13 +148,22 @@ public class JbootConfigManager {
     public <T> T get(Class<T> clazz, String prefix, String file) {
 
         T obj = (T) configs.get(clazz.getName() + prefix);
-        if (obj != null) {
-            return obj;
+        if (obj == null) {
+            synchronized (clazz) {
+                if (obj == null) {
+                    obj = newConfigObject(clazz, prefix, file);
+                    configs.put(clazz.getName() + prefix, obj);
+                }
+            }
         }
 
+        return obj;
+    }
+
+    public <T> T newConfigObject(Class<T> clazz, String prefix, String file) {
         // 不能通过RPC创建
         // 原因：很多场景下回使用到配置，包括Guice，如果此时又通过Guice来创建Config，会出现循环调用的问题
-        obj = ClassKits.newInstance(clazz, false);
+        T obj = ClassKits.newInstance(clazz, false);
         Collection<Method> setMethods = ClassKits.getClassSetMethods(clazz);
 
         if (ArrayUtils.isNullOrEmpty(setMethods)) {
@@ -196,8 +208,6 @@ public class JbootConfigManager {
                 LogKit.error(ex.toString(), ex);
             }
         }
-
-        configs.put(clazz.getName() + prefix, obj);
 
         return obj;
     }

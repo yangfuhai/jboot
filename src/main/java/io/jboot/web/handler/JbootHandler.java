@@ -17,14 +17,10 @@ package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
-import io.jboot.Jboot;
 import io.jboot.JbootConstants;
-import io.jboot.component.hystrix.JbootHystrixConfig;
-import io.jboot.component.metric.JbootMetricConfig;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.web.JbootRequestContext;
 import io.jboot.web.session.JbootServletRequestWrapper;
-import io.jboot.web.websocket.JbootWebsocketManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,20 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 public class JbootHandler extends Handler {
 
 
-    private static JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
-    private static JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
-
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-
-        if (target.indexOf('.') != -1 //static files
-                || JbootWebsocketManager.me().isWebsokcetEndPoint(target) //websocket
-                || (metricsConfig.getUrl() != null && target.startsWith(metricsConfig.getUrl())) // metrics
-                || (hystrixConfig.getUrl() != null && target.startsWith(hystrixConfig.getUrl()))) // hystrix
-        {
-            return;
-        }
-
 
         /**
          * 通过 JbootRequestContext 去保存 request，然后可以在当前线程的任何地方
