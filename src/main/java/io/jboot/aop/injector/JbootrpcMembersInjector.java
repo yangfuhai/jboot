@@ -30,9 +30,10 @@ import java.lang.reflect.Field;
 public class JbootrpcMembersInjector implements MembersInjector {
 
     private static Log log = Log.getLog(JbootrpcMembersInjector.class);
+    private static JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
+
 
     private Field field;
-    private static JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
 
     public JbootrpcMembersInjector(Field field) {
         this.field = field;
@@ -40,25 +41,26 @@ public class JbootrpcMembersInjector implements MembersInjector {
 
     @Override
     public void injectMembers(Object instance) {
-        Object impl = null;
-        JbootrpcService jbootrpcService = field.getAnnotation(JbootrpcService.class);
 
-        String group = StringUtils.isBlank(jbootrpcService.group()) ? config.getDefaultGroup() : jbootrpcService.group();
-        String version = StringUtils.isBlank(jbootrpcService.version()) ? config.getDefaultVersion() : jbootrpcService.version();
-        
+        JbootrpcService annotation = field.getAnnotation(JbootrpcService.class);
+
+        String group = StringUtils.isBlank(annotation.group()) ? config.getDefaultGroup() : annotation.group();
+        String version = StringUtils.isBlank(annotation.version()) ? config.getDefaultVersion() : annotation.version();
+
+        Object implObject = null;
         try {
-            impl = Jboot.service(field.getType(), group, version);
+            implObject = Jboot.service(field.getType(), group, version);
         } catch (Throwable e) {
             log.error(e.toString(), e);
         }
 
-        if (impl == null) {
+        if (implObject == null) {
             return;
         }
 
         try {
             field.setAccessible(true);
-            field.set(instance, impl);
+            field.set(instance, implObject);
         } catch (Throwable e) {
             log.error(e.toString(), e);
         }

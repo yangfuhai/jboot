@@ -493,7 +493,7 @@
         <dependency>
             <groupId>org.apache.qpid</groupId>
             <artifactId>qpid-client</artifactId>
-            <version>6.3.0</version>
+            <version>6.3.1</version>
             <scope>provided</scope>
         </dependency>
 
