@@ -1,8 +1,20 @@
+jboot-1.5.4:
+优化：JbootConfigManager 高并发下可能造成的 Config 多个实例的问题
+优化：ActionCache 代码逻辑优化，提高性能
+优化：新增 JbootFilterHandler 用于过滤静态等数据，防止自动缓存的问题
+优化：FixedInterceptors 高并发下可能造成的空指针异常的问题
+优化：JbootShiroManager 在 shiro 功能关闭是还去初始化 shiro 路由的问题
+优化：JbootLimitationManager 在多个限流策略的时候，只有第一个生效的问题
+优化：JbootLimitationManager 代码逻辑，提高性能
+优化：升级 motan 到最新版本 v1.1.1 ，并修改 JbootMotanProxyFactory 代码逻辑
+
+
 jboot-1.5.3:
 新增：给 @CacheEvict 新增 beforeInvocation 配置
 新增：支持 Dubbo 的整体配置
 修复：不支持 JFinal 全局 AOP 配置的问题
 修复：MetricInterceptors 可能会出现空指针异常的问题
+
 
 jboot-1.5.2:
 新增：@CachesEvict 注解，用于删除多个缓存
