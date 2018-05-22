@@ -29,9 +29,14 @@ import io.jboot.web.limitation.LimitationConfig;
  */
 public class LimitationControllerInter implements Interceptor {
 
+    private static LimitationConfig config = Jboot.config(LimitationConfig.class);
 
     @Override
     public void intercept(Invocation inv) {
+        if (!config.isLimitationEnable()) {
+            inv.getController().renderError(404);
+            return;
+        }
 
         if (!getAuthorizer().onAuthorize(inv.getController())) {
             inv.getController().renderError(404);

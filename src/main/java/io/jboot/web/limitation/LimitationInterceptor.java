@@ -17,6 +17,7 @@ package io.jboot.web.limitation;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.core.Controller;
+import io.jboot.Jboot;
 import io.jboot.utils.RequestUtils;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
@@ -31,9 +32,14 @@ public class LimitationInterceptor implements FixedInterceptor {
 
 
     private static final ThreadLocal<Semaphore> SEMAPHORE_THREAD_LOCAL = new ThreadLocal<>();
+    private static LimitationConfig config = Jboot.config(LimitationConfig.class);
 
     @Override
     public void intercept(FixedInvocation inv) {
+        if (!config.isLimitationEnable()) {
+            inv.invoke();
+            return;
+        }
 
         JbootLimitationManager manager = JbootLimitationManager.me();
 

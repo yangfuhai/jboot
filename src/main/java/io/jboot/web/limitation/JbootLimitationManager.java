@@ -57,6 +57,7 @@ public class JbootLimitationManager {
     private Map<String, RateLimiter> requestRateLimiterMap = new ConcurrentHashMap<>();
     private Map<String, Object> ajaxJsonMap = new HashMap();
     private String limitView;
+    private LimitationConfig config = Jboot.config(LimitationConfig.class);
 
 
     /**
@@ -81,6 +82,9 @@ public class JbootLimitationManager {
 
 
     public void init(List<Routes.Route> routes) {
+        if (!config.isLimitationEnable()) {
+            return;
+        }
         initRates(routes);
     }
 
