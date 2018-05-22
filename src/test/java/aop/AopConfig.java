@@ -2,6 +2,7 @@ package aop;
 
 import com.jfinal.config.Interceptors;
 import io.jboot.server.listener.JbootAppListenerBase;
+import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -16,5 +17,10 @@ public class AopConfig extends JbootAppListenerBase {
     public void onInterceptorConfig(Interceptors interceptors) {
         interceptors.addGlobalServiceInterceptor(new AOPInterceptor());
         System.out.println("onInterceptorConfig");
+    }
+
+    @Override
+    public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors) {
+        fixedInterceptors.add(new FixedTestInterceptor());
     }
 }
