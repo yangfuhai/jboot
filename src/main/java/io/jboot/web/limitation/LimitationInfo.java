@@ -126,4 +126,21 @@ public class LimitationInfo implements Serializable {
     public void setEnable(boolean enable) {
         this.enable = enable;
     }
+
+    public boolean isIpType() {
+        return TYPE_IP.equals(type);
+    }
+
+    public boolean isRequestType() {
+        return TYPE_REQUEST.equals(type);
+    }
+
+    public boolean isUserType() {
+        return TYPE_USER.equals(type);
+    }
+
+    public boolean isConcurrencyType() {
+        return TYPE_CONCURRENCY.equals(type);
+    }
+
 }

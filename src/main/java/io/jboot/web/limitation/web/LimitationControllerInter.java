@@ -33,7 +33,7 @@ public class LimitationControllerInter implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
-        if (!config.isLimitationEnable()) {
+        if (!config.isEnable()) {
             inv.getController().renderError(404);
             return;
         }

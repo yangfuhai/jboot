@@ -15,11 +15,13 @@
  */
 package io.jboot.web.limitation.web;
 
+import com.google.common.collect.Multimap;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.Ret;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.limitation.JbootLimitationManager;
+import io.jboot.web.limitation.LimitationInfo;
 
 import java.util.HashMap;
 
@@ -48,10 +50,10 @@ public class LimitationController extends JbootController {
 
         HashMap info = new HashMap();
 
-        info.put("ipRates", manager.getIpRates());
-        info.put("userRates", manager.getUserRates());
-        info.put("requestRates", manager.getRequestRates());
-        info.put("concurrencyRates", manager.getConcurrencyRates());
+        Multimap<String, LimitationInfo> limitationInfoMultimap = manager.getLimitationRates();
+        for (String key : limitationInfoMultimap.keySet()){
+            info.put(key,limitationInfoMultimap.get(key));
+        }
 
         renderJson(info);
     }
@@ -80,16 +82,10 @@ public class LimitationController extends JbootController {
 
         switch (type) {
             case "ip":
-                manager.setIpRates(path, rate);
-                break;
             case "user":
-                manager.setUserRates(path, rate);
-                break;
             case "request":
-                manager.setRequestRates(path, rate);
-                break;
             case "concurrency":
-                manager.setConcurrencyRates(path, rate);
+                manager.setRates(path, rate, type);
                 break;
             default:
                 renderJson(Ret.fail().set("message", "type is error"));

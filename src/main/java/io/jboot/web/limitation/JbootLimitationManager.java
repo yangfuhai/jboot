@@ -17,6 +17,9 @@ package io.jboot.web.limitation;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.config.Routes;
 import com.jfinal.core.Controller;
@@ -26,16 +29,13 @@ import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.limitation.annotation.EnableConcurrencyLimit;
 import io.jboot.web.limitation.annotation.EnablePerIpLimit;
-import io.jboot.web.limitation.annotation.EnableRequestLimit;
 import io.jboot.web.limitation.annotation.EnablePerUserLimit;
+import io.jboot.web.limitation.annotation.EnableRequestLimit;
 import io.jboot.web.utils.ControllerUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -75,14 +75,11 @@ public class JbootLimitationManager {
             .build(key -> System.currentTimeMillis());
 
 
-    private Map<String, LimitationInfo> concurrencyRates = new ConcurrentHashMap<>();
-    private Map<String, LimitationInfo> ipRates = new ConcurrentHashMap<>();
-    private Map<String, LimitationInfo> requestRates = new ConcurrentHashMap<>();
-    private Map<String, LimitationInfo> userRates = new ConcurrentHashMap<>();
+    private Multimap<String, LimitationInfo> limitationRates = Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
 
 
     public void init(List<Routes.Route> routes) {
-        if (!config.isLimitationEnable()) {
+        if (!config.isEnable()) {
             return;
         }
         initRates(routes);
@@ -115,41 +112,26 @@ public class JbootLimitationManager {
 
                 for (Annotation annotation : allAnnotations) {
                     if (annotation.annotationType() == EnableConcurrencyLimit.class) {
-                        concurrencyRates.put(actionKey, new LimitationInfo((EnableConcurrencyLimit) annotation));
+                        limitationRates.put(actionKey, new LimitationInfo((EnableConcurrencyLimit) annotation));
                     } else if (annotation.annotationType() == EnablePerIpLimit.class) {
-                        ipRates.put(actionKey, new LimitationInfo((EnablePerIpLimit) annotation));
+                        limitationRates.put(actionKey, new LimitationInfo((EnablePerIpLimit) annotation));
                     } else if (annotation.annotationType() == EnableRequestLimit.class) {
-                        requestRates.put(actionKey, new LimitationInfo((EnableRequestLimit) annotation));
+                        limitationRates.put(actionKey, new LimitationInfo((EnableRequestLimit) annotation));
                     } else if (annotation.annotationType() == EnablePerUserLimit.class) {
-                        userRates.put(actionKey, new LimitationInfo((EnablePerUserLimit) annotation));
+                        limitationRates.put(actionKey, new LimitationInfo((EnablePerUserLimit) annotation));
                     }
                 }
             }
         }
     }
 
-    public LimitationInfo getLimitationInfo(String actionKey) {
-        LimitationInfo info = concurrencyRates.get(actionKey);
-
-        if (info != null) {
-            return info;
-        }
-
-        info = requestRates.get(actionKey);
-
-        if (info != null) {
-            return info;
-        }
-
-        info = ipRates.get(actionKey);
-
-        if (info != null) {
-            return info;
-        }
-
-        return userRates.get(actionKey);
+    public Collection<LimitationInfo> getLimitationInfo(String actionKey) {
+        return limitationRates.get(actionKey);
     }
 
+    public Multimap<String, LimitationInfo> getLimitationRates() {
+        return limitationRates;
+    }
 
     private JbootLimitationManager() {
         LimitationConfig config = Jboot.config(LimitationConfig.class);
@@ -231,23 +213,6 @@ public class JbootLimitationManager {
     }
 
 
-    public Map<String, LimitationInfo> getConcurrencyRates() {
-        return concurrencyRates;
-    }
-
-    public Map<String, LimitationInfo> getIpRates() {
-        return ipRates;
-    }
-
-    public Map<String, LimitationInfo> getRequestRates() {
-        return requestRates;
-    }
-
-    public Map<String, LimitationInfo> getUserRates() {
-        return userRates;
-    }
-
-
     public Ret doProcessEnable(String path, String type, boolean enable) {
 
         if (StringUtils.isBlank(type)) {
@@ -260,36 +225,32 @@ public class JbootLimitationManager {
 
         switch (type) {
             case "ip":
-                LimitationInfo info = this.getIpRates().get(path);
-                if (info == null) {
-                    return Ret.fail("message", "path not set");
+                for (LimitationInfo limitationInfo : getLimitationInfo(path)) {
+                    if (limitationInfo.isIpType()) {
+                        limitationInfo.setEnable(enable);
+                    }
                 }
-                info.setEnable(enable);
-                this.getIpRates().put(path, info);
                 break;
             case "user":
-                LimitationInfo userInfo = this.getIpRates().get(path);
-                if (userInfo == null) {
-                    return Ret.fail("message", "path not set");
+                for (LimitationInfo limitationInfo : getLimitationInfo(path)) {
+                    if (limitationInfo.isUserType()) {
+                        limitationInfo.setEnable(enable);
+                    }
                 }
-                userInfo.setEnable(enable);
-                this.getIpRates().put(path, userInfo);
                 break;
             case "request":
-                LimitationInfo requestInfo = this.getIpRates().get(path);
-                if (requestInfo == null) {
-                    return Ret.fail("message", "path not set");
+                for (LimitationInfo limitationInfo : getLimitationInfo(path)) {
+                    if (limitationInfo.isRequestType()) {
+                        limitationInfo.setEnable(enable);
+                    }
                 }
-                requestInfo.setEnable(enable);
-                this.getIpRates().put(path, requestInfo);
                 break;
             case "concurrency":
-                LimitationInfo concurrencyInfo = this.getIpRates().get(path);
-                if (concurrencyInfo == null) {
-                    return Ret.fail("message", "path not set");
+                for (LimitationInfo limitationInfo : getLimitationInfo(path)) {
+                    if (limitationInfo.isConcurrencyType()) {
+                        limitationInfo.setEnable(enable);
+                    }
                 }
-                concurrencyInfo.setEnable(enable);
-                this.getIpRates().put(path, concurrencyInfo);
                 break;
             default:
                 return Ret.fail().set("message", "type is error");
@@ -299,46 +260,18 @@ public class JbootLimitationManager {
     }
 
 
-    public void setIpRates(String path, double rate) {
-        LimitationInfo info = this.getIpRates().get(path);
-        if (info == null) {
-            info = new LimitationInfo();
-            info.setType(LimitationInfo.TYPE_IP);
+    public void setRates(String path, double rate, String type) {
+
+        for (LimitationInfo limitationInfo : getLimitationInfo(path)) {
+            if (type.equals(limitationInfo.getType())) {
+                limitationInfo.setRate(rate);
+                return;
+            }
         }
+
+        LimitationInfo info = new LimitationInfo();
+        info.setType(type);
         info.setRate(rate);
-        this.getIpRates().put(path, info);
-    }
-
-
-    public void setUserRates(String path, double rate) {
-        LimitationInfo info = this.getUserRates().get(path);
-        if (info == null) {
-            info = new LimitationInfo();
-            info.setType(LimitationInfo.TYPE_USER);
-        }
-        info.setRate(rate);
-        this.getUserRates().put(path, info);
-    }
-
-
-    public void setRequestRates(String path, double rate) {
-        LimitationInfo info = this.getRequestRates().get(path);
-        if (info == null) {
-            info = new LimitationInfo();
-            info.setType(LimitationInfo.TYPE_REQUEST);
-        }
-        info.setRate(rate);
-        this.getRequestRates().put(path, info);
-    }
-
-
-    public void setConcurrencyRates(String path, double rate) {
-        LimitationInfo info = this.getConcurrencyRates().get(path);
-        if (info == null) {
-            info = new LimitationInfo();
-            info.setType(LimitationInfo.TYPE_CONCURRENCY);
-        }
-        info.setRate(rate);
-        this.getConcurrencyRates().put(path, info);
+        this.limitationRates.put(path, info);
     }
 }

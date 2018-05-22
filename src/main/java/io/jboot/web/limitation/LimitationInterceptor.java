@@ -23,6 +23,7 @@ import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
+import java.util.Collection;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -36,31 +37,35 @@ public class LimitationInterceptor implements FixedInterceptor {
 
     @Override
     public void intercept(FixedInvocation inv) {
-        if (!config.isLimitationEnable()) {
+        if (!config.isEnable()) {
             inv.invoke();
             return;
         }
 
         JbootLimitationManager manager = JbootLimitationManager.me();
 
-        LimitationInfo info = manager.getLimitationInfo(inv.getActionKey());
-        if (info == null || !info.isEnable()) {
+        Collection<LimitationInfo> infos = manager.getLimitationInfo(inv.getActionKey());
+        if (infos == null || infos.isEmpty()) {
             inv.invoke();
             return;
         }
 
-
-        if (tryToIntercept(inv, info)) {
-            renderLimitation(inv.getController(), info);
-            return;
+        for (LimitationInfo info : infos) {
+            if (tryToIntercept(inv, info)) {
+                renderLimitation(inv.getController(), info);
+                return;
+            }
         }
+
 
         try {
             inv.invoke();
         } finally {
-            if (LimitationInfo.TYPE_CONCURRENCY.equals(info.getType())) {
-                SEMAPHORE_THREAD_LOCAL.get().release();
-                SEMAPHORE_THREAD_LOCAL.remove();
+            for (LimitationInfo info : infos) {
+                if (info.isConcurrencyType()) {
+                    SEMAPHORE_THREAD_LOCAL.get().release();
+                    SEMAPHORE_THREAD_LOCAL.remove();
+                }
             }
         }
     }
