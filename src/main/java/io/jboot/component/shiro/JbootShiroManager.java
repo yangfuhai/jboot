@@ -56,6 +56,9 @@ public class JbootShiroManager {
 
 
     public void init(List<Routes.Route> routes) {
+        if (!jbootShiroConfig.isConfigOK()) {
+            return;
+        }
         initInvokers(routes);
     }
 
