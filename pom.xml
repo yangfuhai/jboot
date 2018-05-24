@@ -216,7 +216,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>25.0-jre</version>
+            <version>25.1-jre</version>
         </dependency>
 
         <dependency>
@@ -428,7 +428,7 @@
         <dependency>
             <groupId>io.opentracing.brave</groupId>
             <artifactId>brave-opentracing</artifactId>
-            <version>0.30.3</version>
+            <version>0.31.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.zipkin.brave</groupId>
@@ -440,7 +440,7 @@
         <dependency>
             <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-sender-urlconnection</artifactId>
-            <version>2.6.0</version>
+            <version>2.6.1</version>
         </dependency>
 
         <dependency>
@@ -486,7 +486,7 @@
         <dependency>
             <groupId>net.oschina.j2cache</groupId>
             <artifactId>j2cache-core</artifactId>
-            <version>2.3.16-release</version>
+            <version>2.3.20-release</version>
             <scope>provided</scope>
         </dependency>
 
