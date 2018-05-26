@@ -289,6 +289,9 @@ public class ClassScanner {
     }
 
     private static boolean isExcluedeJar(Manifest manifest) {
+        if (manifest == null) {
+            return false;
+        }
         Attributes mainAttributes = manifest.getMainAttributes();
         if (mainAttributes == null) {
             return false;
