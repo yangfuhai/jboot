@@ -46,7 +46,7 @@ public class ShiroHasAnyPermissionDirective extends JbootShiroDirectiveBase {
     public void onRender(Env env, Scope scope, Writer writer) {
         if (getSubject() != null && ArrayUtils.isNotEmpty(exprList.getExprArray())) {
             for (Expr expr : exprList.getExprArray()) {
-                if (getSubject().isPermitted(expr.toString())) {
+                if (getSubject().isPermitted(expr.eval(scope).toString())) {
                     renderBody(env, scope, writer);
                     break;
                 }
