@@ -159,6 +159,7 @@ public class ClassScanner {
         excludeJars.add("lettuce-core-");
         excludeJars.add("xnio-");
         excludeJars.add("wrapper.jar");
+        excludeJars.add("checker-qual-");
     }
 
     private static final Set<String> excludeJarPackages = new HashSet<>();
@@ -392,7 +393,7 @@ public class ClassScanner {
                     }
 
                     if (!path.startsWith(JAVA_HOME) && !isExcludeJar(path)) {
-                        set.add(url.getPath());
+                        set.add(path);
                     }
                 }
             }
