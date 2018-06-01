@@ -1,3 +1,10 @@
+jboot-1.5.5:
+修复：JWT 的 Secret 设置带有特殊符号会出现Base64编码错误的问题
+修复：ClassScanner 可能会出现空指针异常的问题
+修复：Shiro 指令无法使用JFinal表达式的问题
+修复：Guava 升级到最新版本后出现 NoClassDefFoundError 异常的问题
+
+
 jboot-1.5.4:
 优化：JbootConfigManager 高并发下可能造成的 Config 多个实例的问题
 优化：ActionCache 代码逻辑优化，提高性能
