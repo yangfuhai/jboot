@@ -47,7 +47,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public HttpSession getSession() {
-        return getSession(true);
+        return getSession(false);
     }
 
 
@@ -118,8 +118,6 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
 
-
-
     /**
      * Get cookie value by cookie name.
      */
@@ -132,7 +130,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
      * Get cookie object by cookie name.
      */
     private Cookie getCookieObject(String name) {
-        Cookie[] cookies = ((HttpServletRequest)getRequest()).getCookies();
+        Cookie[] cookies = ((HttpServletRequest) getRequest()).getCookies();
         if (cookies != null)
             for (Cookie cookie : cookies)
                 if (cookie.getName().equals(name))
