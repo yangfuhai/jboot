@@ -34,7 +34,7 @@ public class J2cacheImpl implements JbootCache {
 
     @Override
     public <T> T get(String cacheName, Object key) {
-        CacheObject cacheObject = J2Cache.getChannel().get(cacheName, key.toString());
+        CacheObject cacheObject = J2Cache.getChannel().get(cacheName, key.toString(), false);
         return cacheObject != null ? (T) cacheObject.getValue() : null;
     }
 
