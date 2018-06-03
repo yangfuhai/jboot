@@ -138,12 +138,12 @@ public class LimitationInterceptor implements FixedInterceptor {
 
     private boolean userIntercept(FixedInvocation inv, LimitationInfo info) {
         JbootLimitationManager manager = JbootLimitationManager.me();
-        String sesssionId = inv.getController().getSession(true).getId();
+        String userId = getUserId(inv); //inv.getController().getSession(true).getId();
 
         long currentTime = System.currentTimeMillis();
-        long userFlagTime = manager.getUserflag(sesssionId);
+        long userFlagTime = manager.getUserflag(userId);
 
-        manager.flagUserRequest(sesssionId);
+        manager.flagUserRequest(userId);
 
         //第一次访问，可能manager里还未对此用户进行标识
         if (userFlagTime >= currentTime) {
@@ -161,6 +161,15 @@ public class LimitationInterceptor implements FixedInterceptor {
         }
 
         return true;
+    }
+
+    private String getUserId(FixedInvocation inv) {
+        String userId = inv.getController().getCookie("_jboot_luser_id");
+        if (StringUtils.isBlank(userId)) {
+            userId = StringUtils.uuid();
+            inv.getController().setCookie("_jboot_luser_id", userId, Integer.MAX_VALUE);
+        }
+        return userId;
     }
 
 
