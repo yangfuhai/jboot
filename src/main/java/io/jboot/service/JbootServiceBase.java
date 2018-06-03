@@ -84,8 +84,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @return
      */
     public boolean deleteById(Object id) {
-        JbootModel model = findById(id);
-        return model == null ? false : model.delete();
+        return DAO.deleteById(id);
     }
 
     /**
