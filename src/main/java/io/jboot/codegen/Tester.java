@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,50 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.codegen.model;
+package io.jboot.codegen;
 
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import io.jboot.Jboot;
-import io.jboot.codegen.CodeGenHelpler;
+import io.jboot.codegen.model.JbootBaseModelGenerator;
+import io.jboot.codegen.model.JbootModelnfoGenerator;
+import io.jboot.codegen.service.JbootServiceImplGenerator;
+import io.jboot.codegen.service.JbootServiceInterfaceGenerator;
 
 import java.util.List;
 
-public class JbootModelGenerator {
-
+/**
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.codegen
+ */
+public class Tester {
 
     public static void main(String[] args) {
 
         Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
         Jboot.setBootArg("jboot.datasource.user", "root");
 
+        String modelPackage = "io.jboot.codegen.test.model";
 
-        String modelPackage = "io.jboot.codegen.model.test";
-        run(modelPackage);
-    }
-
-
-    public static void run(String modelPackage) {
-        new JbootModelGenerator(modelPackage).doGenerate(null);
-    }
-
-    public static void run(String modelPackage, String excludeTables) {
-        new JbootModelGenerator(modelPackage).doGenerate(excludeTables);
-    }
-
-
-    private final String basePackage;
-
-
-    public JbootModelGenerator(String basePackage) {
-        this.basePackage = basePackage;
-    }
-
-
-    public void doGenerate(String excludeTables) {
-
-        String modelPackage = basePackage;
-        String baseModelPackage = basePackage + ".base";
+        String baseModelPackage = modelPackage + ".base";
 
         String modelDir = PathKit.getWebRootPath() + "/src/main/java/" + modelPackage.replace(".", "/");
         String baseModelDir = PathKit.getWebRootPath() + "/src/main/java/" + baseModelPackage.replace(".", "/");
@@ -65,15 +48,16 @@ public class JbootModelGenerator {
         System.out.println("generate dir:" + modelDir);
 
         List<TableMeta> tableMetaList = CodeGenHelpler.createMetaBuilder().build();
-        CodeGenHelpler.excludeTables(tableMetaList, excludeTables);
+        CodeGenHelpler.excludeTables(tableMetaList, null);
 
 
         new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
         new JbootModelnfoGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
 
-        System.out.println("model generate finished !!!");
+
+        String baseServicePackage = "io.jboot.codegen.test.service";
+        new JbootServiceInterfaceGenerator(baseServicePackage, modelPackage).generate(tableMetaList);
+        new JbootServiceImplGenerator(baseServicePackage , modelPackage).generate(tableMetaList);
 
     }
-
-
 }
