@@ -1,3 +1,14 @@
+jboot-1.5.6:
+优化：JbootServiceBase.deleteById() 方法
+优化：升级 Dubbo 到最新版本 2.6.2
+优化：代码生成器的代码逻辑
+修复：J2Cache 可能产生错误的问题
+修复：限流功能在针对单个用户限制时，不设置session内容会出现无效的问题
+修复：getSession() 默认会创建 session 对象的问题
+修复：错别字，ModelPacket 修改为 ModelPakage
+
+
+
 jboot-1.5.5:
 修复：JWT 的 Secret 设置带有特殊符号会出现Base64编码错误的问题
 修复：ClassScanner 可能会出现空指针异常的问题

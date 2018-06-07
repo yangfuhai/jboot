@@ -13,7 +13,7 @@ QQ-Group： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.5.5</version>
+    <version>1.5.6</version>
 </dependency>
 
 ```
