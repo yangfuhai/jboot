@@ -51,6 +51,12 @@ public class Columns implements Serializable {
         if (this.cols == null) {
             this.cols = new ArrayList<>();
         }
+
+        //do not add null value column
+        if (column.getValue() == null) {
+            return;
+        }
+
         this.cols.add(column);
     }
 
