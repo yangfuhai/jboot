@@ -338,7 +338,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public Page<M> paginate(int pageNumber, int pageSize) {
-        return paginateByColumns(pageNumber, pageSize, null, null);
+        return paginateByColumns(pageNumber, pageSize, Columns.create(), null);
     }
 
     /**
@@ -349,7 +349,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public Page<M> paginate(int pageNumber, int pageSize, String orderBy) {
-        return paginateByColumns(pageNumber, pageSize, null, orderBy);
+        return paginateByColumns(pageNumber, pageSize, Columns.create(), orderBy);
     }
 
 
@@ -379,6 +379,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns) {
+        return paginateByColumns(pageNumber, pageSize, columns.getList(), null);
+    }
+
     /**
      * 根据列信息，分页查询数据
      *
@@ -391,6 +395,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return paginateByColumns(pageNumber, pageSize, columns, null);
     }
 
+
+    public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy) {
+        return paginateByColumns(pageNumber, pageSize, columns.getList(), orderBy);
+    }
 
     /**
      * 根据列信息，分页查询数据

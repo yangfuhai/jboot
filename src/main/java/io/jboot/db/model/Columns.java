@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class Columns implements Serializable {
 
-    private List<Column> cols = new ArrayList<>();
+    private List<Column> cols;
 
 
     public static Columns create() {
@@ -33,13 +33,25 @@ public class Columns implements Serializable {
 
     public static Columns create(Column column) {
         Columns that = new Columns();
-        that.cols.add(column);
+        that.add(column);
         return that;
 
     }
 
     public static Columns create(String name, Object value) {
         return create().eq(name, value);
+    }
+
+    /**
+     * add new column in Columns
+     *
+     * @param column
+     */
+    public void add(Column column) {
+        if (this.cols == null) {
+            this.cols = new ArrayList<>();
+        }
+        this.cols.add(column);
     }
 
     /**
@@ -50,7 +62,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns eq(String name, Object value) {
-        cols.add(Column.create(name, value));
+        this.add(Column.create(name, value));
         return this;
     }
 
@@ -62,7 +74,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns ne(String name, Object value) {
-        cols.add(Column.create(name, value, Column.LOGIC_NOT_EQUALS));
+        this.add(Column.create(name, value, Column.LOGIC_NOT_EQUALS));
         return this;
     }
 
@@ -76,7 +88,7 @@ public class Columns implements Serializable {
      */
 
     public Columns like(String name, Object value) {
-        cols.add(Column.create(name, value, Column.LOGIC_LIKE));
+        this.add(Column.create(name, value, Column.LOGIC_LIKE));
         return this;
     }
 
@@ -88,7 +100,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns gt(String name, Object value) {
-        cols.add(Column.create(name, value, Column.LOGIC_GT));
+        this.add(Column.create(name, value, Column.LOGIC_GT));
         return this;
     }
 
@@ -100,7 +112,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns ge(String name, Object value) {
-        cols.add(Column.create(name, value, Column.LOGIC_GE));
+        this.add(Column.create(name, value, Column.LOGIC_GE));
         return this;
     }
 
@@ -112,7 +124,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns lt(String name, Object value) {
-        cols.add(Column.create(name, value, Column.LOGIC_LT));
+        this.add(Column.create(name, value, Column.LOGIC_LT));
         return this;
     }
 
@@ -124,7 +136,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns le(String name, Object value) {
-        cols.add(Column.create(name, value, Column.LOGIC_LE));
+        this.add(Column.create(name, value, Column.LOGIC_LE));
         return this;
     }
 

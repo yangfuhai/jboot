@@ -1,3 +1,3 @@
 # Jboot Demos
 
- https://gitee.com/fuhai/jbootdemo
+https://gitee.com/fuhai/jboot/tree/master/src/test/java
