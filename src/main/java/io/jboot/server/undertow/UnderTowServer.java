@@ -54,7 +54,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class UnderTowServer extends JbootServer {
+public class UnderTowServer implements JbootServer {
 
     static Log log = Log.getLog(UnderTowServer.class);
 
