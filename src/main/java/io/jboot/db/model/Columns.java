@@ -147,6 +147,11 @@ public class Columns implements Serializable {
     }
 
 
+    public boolean isEmpty() {
+        return cols == null || cols.isEmpty();
+    }
+
+
     public List<Column> getList() {
         return cols;
     }
