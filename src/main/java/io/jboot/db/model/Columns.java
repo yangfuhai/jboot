@@ -38,6 +38,13 @@ public class Columns implements Serializable {
 
     }
 
+    public static Columns create(List<Column> columns) {
+        Columns that = new Columns();
+        that.cols = columns;
+        return that;
+
+    }
+
     public static Columns create(String name, Object value) {
         return create().eq(name, value);
     }
@@ -149,6 +156,19 @@ public class Columns implements Serializable {
 
     public boolean isEmpty() {
         return cols == null || cols.isEmpty();
+    }
+
+    public Object[] getValueArray() {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        Object[] values = new Object[cols.size()];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = cols.get(i);
+        }
+        return values;
     }
 
 

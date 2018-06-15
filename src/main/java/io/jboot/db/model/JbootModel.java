@@ -22,10 +22,12 @@ import com.jfinal.plugin.activerecord.Table;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 
 @SuppressWarnings("serial")
@@ -106,12 +108,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    /**
-     * 更新或者保存
-     * 有主键就更新，没有就保存
-     *
-     * @return
-     */
     public boolean saveOrUpdate() {
         if (null == get(_getPrimaryKey())) {
             return this.save();
@@ -120,11 +116,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    /**
-     * 保存数据
-     *
-     * @return
-     */
     @Override
     public boolean save() {
         if (hasColumn(COLUMN_CREATED) && get(COLUMN_CREATED) == null) {
@@ -165,11 +156,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    /**
-     * 更新
-     *
-     * @return
-     */
     @Override
     public boolean update() {
         if (hasColumn(COLUMN_MODIFIED)) {
@@ -190,80 +176,35 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return (IJbootModelDialect) _getConfig().getDialect();
     }
 
-    /**
-     * 根据列名和值，查找1条数据
-     *
-     * @param column
-     * @param value
-     * @return
-     */
+
     public M findFirstByColumn(String column, Object value) {
         String sql = getDialect().forFindByColumns(_getTableName(), "*", Columns.create(column, value).getList(), null, 1);
         return findFirst(sql, value);
     }
 
-    /**
-     * 根据 列和值 查询1条数据
-     *
-     * @param column
-     * @return
-     */
+
     public M findFirstByColumn(Column column) {
         String sql = getDialect().forFindByColumns(_getTableName(), "*", Columns.create(column).getList(), null, 1);
         return findFirst(sql, column.getValue());
     }
 
-    /**
-     * 根据 多列和值，查询1条数据
-     *
-     * @param columns
-     * @return
-     */
     public M findFirstByColumns(Columns columns) {
         String sql = getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), null, 1);
-        LinkedList<Object> params = new LinkedList<Object>();
-
-        if (ArrayUtils.isNotEmpty(columns.getList())) {
-            for (Column column : columns.getList()) {
-                params.add(column.getValue());
-            }
-        }
-        return findFirst(sql, params.toArray());
+        return columns.isEmpty() ? findFirst(sql) : findFirst(sql, columns.getValueArray());
     }
 
 
-    /**
-     * 查找全部数据
-     *
-     * @return
-     */
     public List<M> findAll() {
         String sql = getDialect().forFindByColumns(_getTableName(), "*", null, null, null);
         return find(sql);
     }
 
-    /**
-     * 根据列名和值 查询一个列表
-     *
-     * @param column
-     * @param value
-     * @param count  最多查询多少条数据
-     * @return
-     */
+
     public List<M> findListByColumn(String column, Object value, Integer count) {
-        List<Column> columns = new ArrayList<>();
-        columns.add(Column.create(column, value));
-        return findListByColumns(columns, count);
+        return findListByColumns(Columns.create(column, value).getList(), count);
     }
 
 
-    /**
-     * 根据 列信息 查找数据列表
-     *
-     * @param column
-     * @param count
-     * @return
-     */
     public List<M> findListByColumn(Column column, Integer count) {
         return findListByColumns(Columns.create(column).getList(), count);
     }
@@ -304,124 +245,56 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
-        return findListByColumns(columns.getList(), orderBy, count);
+        String sql = getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), orderBy, count);
+        return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 
 
-    /**
-     * 根据列信心查询列表
-     *
-     * @param columns
-     * @param orderBy
-     * @param count
-     * @return
-     */
     public List<M> findListByColumns(List<Column> columns, String orderBy, Integer count) {
-        LinkedList<Object> params = new LinkedList<Object>();
-
-        if (ArrayUtils.isNotEmpty(columns)) {
-            for (Column column : columns) {
-                params.add(column.getValue());
-            }
-        }
-
-        String sql = getDialect().forFindByColumns(_getTableName(), "*", columns, orderBy, count);
-        return params.isEmpty() ? find(sql) : find(sql, params.toArray());
+        return findListByColumns(Columns.create(columns), orderBy, count);
     }
 
 
-    /**
-     * 分页查询数据
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @return
-     */
     public Page<M> paginate(int pageNumber, int pageSize) {
         return paginateByColumns(pageNumber, pageSize, Columns.create(), null);
     }
 
-    /**
-     * 分页查询数据
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @return
-     */
+
     public Page<M> paginate(int pageNumber, int pageSize, String orderBy) {
         return paginateByColumns(pageNumber, pageSize, Columns.create(), orderBy);
     }
 
 
-    /**
-     * 根据某列信息，分页查询数据
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param column
-     * @return
-     */
     public Page<M> paginateByColumn(int pageNumber, int pageSize, Column column) {
         return paginateByColumns(pageNumber, pageSize, Columns.create(column).getList(), null);
     }
 
 
-    /**
-     * 根据某列信息，分页查询数据
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param column
-     * @return
-     */
     public Page<M> paginateByColumn(int pageNumber, int pageSize, Column column, String orderBy) {
-        return paginateByColumns(pageNumber, pageSize, Columns.create(column).getList(), orderBy);
+        return paginateByColumns(pageNumber, pageSize, Columns.create(column), orderBy);
     }
 
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns) {
-        return paginateByColumns(pageNumber, pageSize, columns.getList(), null);
-    }
-
-    /**
-     * 根据列信息，分页查询数据
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param columns
-     * @return
-     */
-    public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns) {
         return paginateByColumns(pageNumber, pageSize, columns, null);
     }
 
 
-    public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy) {
-        return paginateByColumns(pageNumber, pageSize, columns.getList(), orderBy);
+    public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns) {
+        return paginateByColumns(pageNumber, pageSize, columns, null);
     }
 
-    /**
-     * 根据列信息，分页查询数据
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param columns
-     * @param orderBy
-     * @return
-     */
-    public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns, String orderBy) {
+    public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy) {
         String selectPartSql = getDialect().forPaginateSelect("*");
-        String fromPartSql = getDialect().forPaginateFrom(_getTableName(), columns, orderBy);
+        String fromPartSql = getDialect().forPaginateFrom(_getTableName(), columns.getList(), orderBy);
 
-        LinkedList<Object> params = new LinkedList<Object>();
+        return columns.isEmpty()
+                ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)
+                : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
+    }
 
-        if (ArrayUtils.isNotEmpty(columns)) {
-            for (Column column : columns) {
-                params.add(column.getValue());
-            }
-        }
-        return params.isEmpty() ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)
-                : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, params.toArray());
+    public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns, String orderBy) {
+        return paginateByColumns(pageNumber, pageSize, Columns.create(columns), orderBy);
     }
 
 
