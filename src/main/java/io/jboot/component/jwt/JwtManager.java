@@ -60,9 +60,9 @@ public class JwtManager {
         return jwtThreadLocal.get();
     }
 
-    public boolean isEnable() {
-        return jwtConfig.isEnable();
-    }
+//    public boolean isEnable() {
+//        return jwtConfig.isEnable();
+//    }
 
     public String getHttpHeaderName() {
         return jwtConfig.getHttpHeaderName();
@@ -97,12 +97,15 @@ public class JwtManager {
 
     public String createJwtToken(Map map) {
 
-        String subject = FastJson.getJson().toJson(map);
+
         SecretKey secretKey = generalKey();
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
+
+        map.put("isuuedAt", nowMillis);
+        String subject = FastJson.getJson().toJson(map);
 
         JwtBuilder builder = Jwts.builder()
                 .setIssuedAt(now)
