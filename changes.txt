@@ -1,3 +1,7 @@
+jboot-1.5.7:
+
+
+
 jboot-1.5.6:
 优化：JbootServiceBase.deleteById() 方法
 优化：升级 Dubbo 到最新版本 2.6.2
