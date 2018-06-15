@@ -60,10 +60,6 @@ public class JwtManager {
         return jwtThreadLocal.get();
     }
 
-//    public boolean isEnable() {
-//        return jwtConfig.isEnable();
-//    }
-
     public String getHttpHeaderName() {
         return jwtConfig.getHttpHeaderName();
     }

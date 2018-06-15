@@ -178,14 +178,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public M findFirstByColumn(String column, Object value) {
-        String sql = getDialect().forFindByColumns(_getTableName(), "*", Columns.create(column, value).getList(), null, 1);
-        return findFirst(sql, value);
+        return findFirstByColumn(Column.create(column, value));
     }
 
 
     public M findFirstByColumn(Column column) {
-        String sql = getDialect().forFindByColumns(_getTableName(), "*", Columns.create(column).getList(), null, 1);
-        return findFirst(sql, column.getValue());
+        return findFirstByColumns(Columns.create(column));
     }
 
     public M findFirstByColumns(Columns columns) {
@@ -201,12 +199,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findListByColumn(String column, Object value, Integer count) {
-        return findListByColumns(Columns.create(column, value).getList(), count);
+        return findListByColumns(Columns.create(column, value), count);
     }
 
 
     public List<M> findListByColumn(Column column, Integer count) {
-        return findListByColumns(Columns.create(column).getList(), count);
+        return findListByColumns(Columns.create(column), count);
     }
 
 
@@ -232,15 +230,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findListByColumns(Columns columns) {
-        return findListByColumns(columns.getList());
+        return findListByColumns(columns, null, null);
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy) {
-        return findListByColumns(columns.getList(), orderBy);
+        return findListByColumns(columns, orderBy, null);
     }
 
     public List<M> findListByColumns(Columns columns, Integer count) {
-        return findListByColumns(columns.getList(), count);
+        return findListByColumns(columns, null, count);
     }
 
 
@@ -266,7 +264,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public Page<M> paginateByColumn(int pageNumber, int pageSize, Column column) {
-        return paginateByColumns(pageNumber, pageSize, Columns.create(column).getList(), null);
+        return paginateByColumns(pageNumber, pageSize, Columns.create(column), null);
     }
 
 
