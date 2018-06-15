@@ -13,32 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.codegen;
+package io.jboot.codegen.model;
 
 import com.jfinal.kit.PathKit;
+import com.jfinal.plugin.activerecord.generator.ModelGenerator;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import io.jboot.Jboot;
-import io.jboot.codegen.model.JbootBaseModelGenerator;
-import io.jboot.codegen.model.JbootModeGenerator;
-import io.jboot.codegen.service.JbootServiceImplGenerator;
-import io.jboot.codegen.service.JbootServiceInterfaceGenerator;
+import io.jboot.codegen.CodeGenHelpler;
 
 import java.util.List;
 
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Package io.jboot.codegen
- */
-public class Tester {
+public class JbootModeGenerator extends ModelGenerator {
 
     public static void main(String[] args) {
 
         Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
         Jboot.setBootArg("jboot.datasource.user", "root");
 
-        String modelPackage = "io.jboot.codegen.test.model";
+        String basePackage = "io.jboot.codegen.test";
+        run(basePackage);
+    }
 
+
+
+    public static void run(String modelPackage) {
+        run(modelPackage, null);
+    }
+
+
+    public static void run(String modelPackage, String excludeTables) {
         String baseModelPackage = modelPackage + ".base";
 
         String modelDir = PathKit.getWebRootPath() + "/src/main/java/" + modelPackage.replace(".", "/");
@@ -48,16 +51,24 @@ public class Tester {
         System.out.println("generate dir:" + modelDir);
 
         List<TableMeta> tableMetaList = CodeGenHelpler.createMetaBuilder().build();
-        CodeGenHelpler.excludeTables(tableMetaList, null);
+        CodeGenHelpler.excludeTables(tableMetaList, excludeTables);
 
 
         new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
         new JbootModeGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
 
+    }
 
-        String baseServicePackage = "io.jboot.codegen.test.service";
-        new JbootServiceInterfaceGenerator(baseServicePackage, modelPackage).generate(tableMetaList);
-        new JbootServiceImplGenerator(baseServicePackage , modelPackage).generate(tableMetaList);
+
+
+
+    public JbootModeGenerator(String modelPackageName,
+                              String baseModelPackageName, String modelOutputDir) {
+        super(modelPackageName, baseModelPackageName, modelOutputDir);
+
+        this.template = "/io/jboot/codegen/model/model_template.jf";
 
     }
+
+
 }
