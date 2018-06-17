@@ -30,6 +30,8 @@ public class ShardingController extends JbootController {
 
         user.setName("fuhai yang");
 
+//        DAO.findFirstByColumn("name","fuhaiyang");
+
         //更新
         user.update();
 

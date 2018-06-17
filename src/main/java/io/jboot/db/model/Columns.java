@@ -166,7 +166,7 @@ public class Columns implements Serializable {
 
         Object[] values = new Object[cols.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = cols.get(i);
+            values[i] = cols.get(i).getValue();
         }
         return values;
     }
