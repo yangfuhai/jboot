@@ -1,3 +1,7 @@
+jboot-1.5.8:
+修复：紧急修复 无法使用 Columns 进行查询的bug
+
+
 jboot-1.5.7:
 新增：JbootServer 的 SPI 扩展支持
 新增：Jwt 自动更新过期时间的支持
