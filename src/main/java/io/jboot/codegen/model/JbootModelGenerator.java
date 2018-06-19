@@ -23,7 +23,7 @@ import io.jboot.codegen.CodeGenHelpler;
 
 import java.util.List;
 
-public class JbootModeGenerator extends ModelGenerator {
+public class JbootModelGenerator extends ModelGenerator {
 
     public static void main(String[] args) {
 
@@ -33,7 +33,6 @@ public class JbootModeGenerator extends ModelGenerator {
         String basePackage = "io.jboot.codegen.test";
         run(basePackage);
     }
-
 
 
     public static void run(String modelPackage) {
@@ -55,15 +54,13 @@ public class JbootModeGenerator extends ModelGenerator {
 
 
         new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
-        new JbootModeGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
+        new JbootModelGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
 
     }
 
 
-
-
-    public JbootModeGenerator(String modelPackageName,
-                              String baseModelPackageName, String modelOutputDir) {
+    public JbootModelGenerator(String modelPackageName,
+                               String baseModelPackageName, String modelOutputDir) {
         super(modelPackageName, baseModelPackageName, modelOutputDir);
 
         this.template = "/io/jboot/codegen/model/model_template.jf";

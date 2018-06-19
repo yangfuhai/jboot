@@ -19,7 +19,7 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import io.jboot.Jboot;
 import io.jboot.codegen.model.JbootBaseModelGenerator;
-import io.jboot.codegen.model.JbootModeGenerator;
+import io.jboot.codegen.model.JbootModelGenerator;
 import io.jboot.codegen.service.JbootServiceImplGenerator;
 import io.jboot.codegen.service.JbootServiceInterfaceGenerator;
 
@@ -52,7 +52,7 @@ public class Tester {
 
 
         new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
-        new JbootModeGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
+        new JbootModelGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
 
 
         String baseServicePackage = "io.jboot.codegen.test.service";
