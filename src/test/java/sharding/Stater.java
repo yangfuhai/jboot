@@ -22,6 +22,9 @@ public class Stater {
     public static void main(String[] args) {
 
 
+        Jboot.setBootArg("jboot.model.idCacheEnable", true);
+
+
         /**
          * 数据源1
          */

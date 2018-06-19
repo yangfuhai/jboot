@@ -41,6 +41,11 @@ public class ShardingController extends JbootController {
 
     }
 
+    public void id(){
+        UserModel findModel = DAO.findById(getPara());
+        renderJson(findModel);
+    }
+
 
 
 }
