@@ -19,6 +19,7 @@ import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Table;
+import io.jboot.Jboot;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
@@ -37,6 +38,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private static final String COLUMN_CREATED = JbootModelConfig.getConfig().getColumnCreated();
     private static final String COLUMN_MODIFIED = JbootModelConfig.getConfig().getColumnModified();
+
+
+    private boolean idCacheEnable = JbootModelConfig.getConfig().isIdCacheEnable();
+    private int idCacheTime = JbootModelConfig.getConfig().getIdCacheTime();
 
 
     /**
@@ -155,6 +160,49 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return StringUtils.uuid();
     }
 
+    @Override
+    public M findById(Object idValue) {
+        return idCacheEnable ? loadIdCache(idValue) : super.findById(idValue);
+    }
+
+    @Override
+    public M findById(Object... idValues) {
+        return idCacheEnable ? loadIdCache(idValues) : super.findById(idValues);
+    }
+
+    protected M loadIdCache(Object... idValues) {
+        return Jboot.me().getCache().get(_getTableName()
+                , buildCacheKey(idValues)
+                , () -> JbootModel.super.findById(idValues)
+                , idCacheTime);
+    }
+
+    @Override
+    public boolean delete() {
+        boolean success = super.delete();
+        if (success && idCacheEnable) {
+            deleteIdCache();
+        }
+        return success;
+    }
+
+    @Override
+    public boolean deleteById(Object idValue) {
+        boolean success = super.deleteById(idValue);
+        if (success && idCacheEnable) {
+            deleteIdCache(idValue);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean deleteById(Object... idValues) {
+        boolean success = super.deleteById(idValues);
+        if (success && idCacheEnable) {
+            deleteIdCache(idValues);
+        }
+        return success;
+    }
 
     @Override
     public boolean update() {
@@ -162,13 +210,60 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(COLUMN_MODIFIED, new Date());
         }
 
+        boolean success = isAutoCopyModel() ? copyModel().superUpdate() : this.superUpdate();
+
+        if (success && idCacheEnable) {
+            deleteIdCache();
+        }
+
+        return success;
+    }
+
+    private boolean isAutoCopyModel() {
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        return (autoCopyModel != null && autoCopyModel == true) ? copyModel().updateNormal() : this.updateNormal();
+        return autoCopyModel != null && autoCopyModel == true;
+    }
+
+    
+    protected boolean superUpdate() {
+        return super.update();
+    }
+
+    protected void deleteIdCache() {
+        if (_getPrimaryKeys().length == 1) {
+            String idValue = get(_getPrimaryKey());
+            deleteIdCache(idValue);
+        } else {
+            Object[] idvalues = new Object[_getPrimaryKeys().length];
+            for (int i = 0; i < idvalues.length; i++) {
+                idvalues[i] = get(_getPrimaryKeys()[i]);
+            }
+            deleteIdCache(idvalues);
+        }
+    }
+
+    private void deleteIdCache(Object... idvalues) {
+        Jboot.me().getCache().remove(_getTableName(), buildCacheKey(idvalues));
     }
 
 
-    boolean updateNormal() {
-        return super.update();
+    private static String buildCacheKey(Object... idValues) {
+        if (idValues == null || idValues.length == 0) {
+            return null;
+        }
+
+        if (idValues.length == 1) {
+            return idValues[0].toString();
+        }
+
+        StringBuilder key = new StringBuilder();
+        for (int i = 0; i < idValues.length; i++) {
+            key.append(idValues[i]);
+            if (i < idValues.length - 1) {
+                key.append(":");
+            }
+        }
+        return key.toString();
     }
 
 
@@ -319,20 +414,21 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    private transient String primaryKey;
-
     protected String _getPrimaryKey() {
-        if (primaryKey != null) {
-            return primaryKey;
-        }
-        String[] primaryKeys = _getTable(true).getPrimaryKey();
-        if (null != primaryKeys && primaryKeys.length == 1) {
-            primaryKey = primaryKeys[0];
-        }
-
-        JbootAssert.assertTrue(primaryKey != null, String.format("get PrimaryKey is error in[%s]", getClass()));
-        return primaryKey;
+        return _getPrimaryKeys()[0];
     }
+
+    private transient String[] primaryKeys;
+
+    protected String[] _getPrimaryKeys() {
+        if (primaryKeys != null) {
+            return primaryKeys;
+        }
+        primaryKeys = _getTable(true).getPrimaryKey();
+        JbootAssert.assertTrue(primaryKeys != null, String.format("get PrimaryKey is error in[%s]", getClass()));
+        return primaryKeys;
+    }
+
 
     private transient Class<?> primaryType;
 

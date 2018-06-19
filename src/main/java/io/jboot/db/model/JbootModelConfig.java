@@ -30,6 +30,8 @@ public class JbootModelConfig {
 
     private String columnCreated = "created";
     private String columnModified = "modified";
+    private int idCacheTime = 60 * 60 * 24 * 2; // id 缓存默认缓存2天的时间
+    private boolean idCacheEnable = false; // 是否启用ID自动缓存
 
 
     public String getScan() {
@@ -57,6 +59,21 @@ public class JbootModelConfig {
         this.columnModified = columnModified;
     }
 
+    public int getIdCacheTime() {
+        return idCacheTime;
+    }
+
+    public void setIdCacheTime(int idCacheTime) {
+        this.idCacheTime = idCacheTime;
+    }
+
+    public boolean isIdCacheEnable() {
+        return idCacheEnable;
+    }
+
+    public void setIdCacheEnable(boolean idCacheEnable) {
+        this.idCacheEnable = idCacheEnable;
+    }
 
     private static JbootModelConfig config;
 
