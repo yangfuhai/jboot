@@ -1,6 +1,6 @@
 jboot-1.5.9:
 新增：jboot.model.idCacheEnable 配置的支持，方便根据ID查询的时候自动缓存
-优化：重命名 JbootModeGeneratro 修改为 JbootModelGeneratro
+优化：重命名 JbootModeGenerator 修改为 JbootModelGenerator
 
 jboot-1.5.8:
 修复：紧急修复 无法使用 Columns 进行查询的bug
