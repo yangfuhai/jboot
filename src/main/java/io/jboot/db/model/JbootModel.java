@@ -162,20 +162,27 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public M findById(Object idValue) {
-        return idCacheEnable ? loadIdCache(idValue) : super.findById(idValue);
+        if (idValue == null) {
+            throw new IllegalArgumentException("idValue can not be null");
+        }
+        return idCacheEnable ? loadByCache(idValue) : super.findById(idValue);
     }
 
     @Override
     public M findById(Object... idValues) {
-        return idCacheEnable ? loadIdCache(idValues) : super.findById(idValues);
+        if (idValues == null || idValues.length != _getPrimaryKeys().length) {
+            throw new IllegalArgumentException("primary key nubmer must equals id value number and can not be null");
+        }
+        return idCacheEnable ? loadByCache(idValues) : super.findById(idValues);
     }
 
-    protected M loadIdCache(Object... idValues) {
+    protected M loadByCache(Object... idValues) {
         return Jboot.me().getCache().get(_getTableName()
                 , buildCacheKey(idValues)
                 , () -> JbootModel.super.findById(idValues)
                 , idCacheTime);
     }
+
 
     @Override
     public boolean delete() {
@@ -204,6 +211,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return success;
     }
 
+
     @Override
     public boolean update() {
         if (hasColumn(COLUMN_MODIFIED)) {
@@ -219,12 +227,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return success;
     }
 
+
     private boolean isAutoCopyModel() {
         Boolean autoCopyModel = get(AUTO_COPY_MODEL);
         return autoCopyModel != null && autoCopyModel == true;
     }
 
-    
+
     protected boolean superUpdate() {
         return super.update();
     }
