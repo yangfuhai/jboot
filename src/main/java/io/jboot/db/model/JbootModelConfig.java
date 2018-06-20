@@ -17,6 +17,9 @@ package io.jboot.db.model;
 
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.core.cache.JbootCache;
+import io.jboot.core.cache.JbootCacheConfig;
+import io.jboot.core.cache.JbootCacheManager;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -32,6 +35,7 @@ public class JbootModelConfig {
     private String columnModified = "modified";
     private int idCacheTime = 60 * 60 * 24 * 2; // id 缓存默认缓存2天的时间
     private boolean idCacheEnable = false; // 是否启用ID自动缓存
+    private String idCacheType = Jboot.config(JbootCacheConfig.class).getType();
 
 
     public String getScan() {
@@ -75,6 +79,14 @@ public class JbootModelConfig {
         this.idCacheEnable = idCacheEnable;
     }
 
+    public String getIdCacheType() {
+        return idCacheType;
+    }
+
+    public void setIdCacheType(String idCacheType) {
+        this.idCacheType = idCacheType;
+    }
+
     private static JbootModelConfig config;
 
     public static JbootModelConfig getConfig() {
@@ -84,4 +96,12 @@ public class JbootModelConfig {
         return config;
     }
 
+    private JbootCache jbootCache;
+
+    public JbootCache getCache() {
+        if (jbootCache == null) {
+            jbootCache = JbootCacheManager.me().getCache(idCacheType);
+        }
+        return jbootCache;
+    }
 }

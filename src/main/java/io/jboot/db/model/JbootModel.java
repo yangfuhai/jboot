@@ -19,7 +19,6 @@ import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Table;
-import io.jboot.Jboot;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
@@ -36,18 +35,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public static final String AUTO_COPY_MODEL = "_auto_copy_model_";
 
-    private static final String COLUMN_CREATED = JbootModelConfig.getConfig().getColumnCreated();
-    private static final String COLUMN_MODIFIED = JbootModelConfig.getConfig().getColumnModified();
-
-
-    private boolean idCacheEnable = JbootModelConfig.getConfig().isIdCacheEnable();
-    private int idCacheTime = JbootModelConfig.getConfig().getIdCacheTime();
+    private static JbootModelConfig config = JbootModelConfig.getConfig();
+    private static String COLUMN_CREATED = config.getColumnCreated();
+    private static String COLUMN_MODIFIED = config.getColumnModified();
 
 
     /**
-     * 复制一个新的model
-     * 主要是用在 从缓存取出数据的时候，如果直接修改，在ehcache会抛异常
-     * 如果要对model进行修改，可以先copy一份新的，然后再修改
+     * copy new model with all attrs
      *
      * @return
      */
@@ -63,10 +57,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     /**
-     * 在 RPC 传输的时候，通过 Controller 传入到Service
-     * 不同的序列化方案 可能导致 getModifyFlag 并未设置，可能造成无法保存到数据库
-     * 因此需要 通过这个方法 拷贝数据库对于字段，然后再进行更新或保存
-     *
+     * copy new model with db attrs and fill modifyFlag
      * @return
      */
     public M copyModel() {
@@ -165,7 +156,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (idValue == null) {
             throw new IllegalArgumentException("idValue can not be null");
         }
-        return idCacheEnable ? loadByCache(idValue) : super.findById(idValue);
+        return config.isIdCacheEnable() ? loadByCache(idValue) : super.findById(idValue);
     }
 
     @Override
@@ -173,21 +164,21 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (idValues == null || idValues.length != _getPrimaryKeys().length) {
             throw new IllegalArgumentException("primary key nubmer must equals id value number and can not be null");
         }
-        return idCacheEnable ? loadByCache(idValues) : super.findById(idValues);
+        return config.isIdCacheEnable() ? loadByCache(idValues) : super.findById(idValues);
     }
 
     protected M loadByCache(Object... idValues) {
-        return Jboot.me().getCache().get(_getTableName()
+        return config.getCache().get(_getTableName()
                 , buildCacheKey(idValues)
                 , () -> JbootModel.super.findById(idValues)
-                , idCacheTime);
+                , config.getIdCacheTime());
     }
 
 
     @Override
     public boolean delete() {
         boolean success = super.delete();
-        if (success && idCacheEnable) {
+        if (success && config.isIdCacheEnable()) {
             deleteIdCache();
         }
         return success;
@@ -196,7 +187,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public boolean deleteById(Object idValue) {
         boolean success = super.deleteById(idValue);
-        if (success && idCacheEnable) {
+        if (success && config.isIdCacheEnable()) {
             deleteIdCache(idValue);
         }
         return success;
@@ -205,7 +196,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public boolean deleteById(Object... idValues) {
         boolean success = super.deleteById(idValues);
-        if (success && idCacheEnable) {
+        if (success && config.isIdCacheEnable()) {
             deleteIdCache(idValues);
         }
         return success;
@@ -220,7 +211,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
         boolean success = isAutoCopyModel() ? copyModel().superUpdate() : this.superUpdate();
 
-        if (success && idCacheEnable) {
+        if (success && config.isIdCacheEnable()) {
             deleteIdCache();
         }
 
@@ -252,7 +243,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     private void deleteIdCache(Object... idvalues) {
-        Jboot.me().getCache().remove(_getTableName(), buildCacheKey(idvalues));
+        config.getCache().remove(_getTableName(), buildCacheKey(idvalues));
     }
 
 
