@@ -47,7 +47,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
             throw new JbootException("can not get parameterizedType in JbootServiceBase");
         }
 
-        DAO = ClassKits.newInstance(modelClass);
+        DAO = ClassKits.newInstance(modelClass, false);
     }
 
 

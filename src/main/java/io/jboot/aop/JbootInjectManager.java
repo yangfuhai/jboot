@@ -27,7 +27,6 @@ import com.google.inject.name.Names;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.Model;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.injector.JbootrpcMembersInjector;
@@ -97,7 +96,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
             }
         };
 
-        binder.bindInterceptor(matcher.or(Matchers.subclassesOf(Model.class)), notSynthetic, new AopInterceptor());
+        binder.bindInterceptor(matcher, notSynthetic, new AopInterceptor());
 
         /**
          * Bean 注解
