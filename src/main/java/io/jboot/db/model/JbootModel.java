@@ -58,6 +58,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     /**
      * copy new model with db attrs and fill modifyFlag
+     *
      * @return
      */
     public M copyModel() {
@@ -231,7 +232,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     protected void deleteIdCache() {
         if (_getPrimaryKeys().length == 1) {
-            String idValue = get(_getPrimaryKey());
+            Object idValue = get(_getPrimaryKey());
             deleteIdCache(idValue);
         } else {
             Object[] idvalues = new Object[_getPrimaryKeys().length];
