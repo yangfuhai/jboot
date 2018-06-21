@@ -36,8 +36,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public static final String AUTO_COPY_MODEL = "_auto_copy_model_";
 
     private static JbootModelConfig config = JbootModelConfig.getConfig();
-    private static String COLUMN_CREATED = config.getColumnCreated();
-    private static String COLUMN_MODIFIED = config.getColumnModified();
+    private static String column_created = config.getColumnCreated();
+    private static String column_modified = config.getColumnModified();
+    private static boolean idCacheEnable = config.isIdCacheEnable();
 
 
     /**
@@ -115,8 +116,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public boolean save() {
-        if (hasColumn(COLUMN_CREATED) && get(COLUMN_CREATED) == null) {
-            set(COLUMN_CREATED, new Date());
+        if (hasColumn(column_created) && get(column_created) == null) {
+            set(column_created, new Date());
         }
 
         boolean needInitPrimaryKey = (String.class == _getPrimaryType() && null == get(_getPrimaryKey()));
@@ -157,7 +158,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (idValue == null) {
             throw new IllegalArgumentException("idValue can not be null");
         }
-        return config.isIdCacheEnable() ? loadByCache(idValue) : super.findById(idValue);
+        return idCacheEnable ? loadByCache(idValue) : super.findById(idValue);
     }
 
     @Override
@@ -165,7 +166,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (idValues == null || idValues.length != _getPrimaryKeys().length) {
             throw new IllegalArgumentException("primary key nubmer must equals id value number and can not be null");
         }
-        return config.isIdCacheEnable() ? loadByCache(idValues) : super.findById(idValues);
+        return idCacheEnable ? loadByCache(idValues) : super.findById(idValues);
     }
 
     protected M loadByCache(Object... idValues) {
@@ -179,7 +180,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public boolean delete() {
         boolean success = super.delete();
-        if (success && config.isIdCacheEnable()) {
+        if (success && idCacheEnable) {
             deleteIdCache();
         }
         return success;
@@ -188,7 +189,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public boolean deleteById(Object idValue) {
         boolean success = super.deleteById(idValue);
-        if (success && config.isIdCacheEnable()) {
+        if (success && idCacheEnable) {
             deleteIdCache(idValue);
         }
         return success;
@@ -197,7 +198,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public boolean deleteById(Object... idValues) {
         boolean success = super.deleteById(idValues);
-        if (success && config.isIdCacheEnable()) {
+        if (success && idCacheEnable) {
             deleteIdCache(idValues);
         }
         return success;
@@ -206,13 +207,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public boolean update() {
-        if (hasColumn(COLUMN_MODIFIED)) {
-            set(COLUMN_MODIFIED, new Date());
+        if (hasColumn(column_modified)) {
+            set(column_modified, new Date());
         }
 
         boolean success = isAutoCopyModel() ? copyModel().superUpdate() : this.superUpdate();
 
-        if (success && config.isIdCacheEnable()) {
+        if (success && idCacheEnable) {
             deleteIdCache();
         }
 
