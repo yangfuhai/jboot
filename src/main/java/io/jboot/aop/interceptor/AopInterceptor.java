@@ -27,6 +27,7 @@ import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
 import io.jboot.aop.interceptor.metric.*;
 import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
+import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -114,7 +115,7 @@ public class AopInterceptor implements MethodInterceptor {
     }
 
 
-    public static final Interceptor[] INTERS = {
+    private static final Interceptor[] ALL_INTERS = {
             new JbootMetricCounterAopInterceptor(),
             new JbootMetricConcurrencyAopInterceptor(),
             new JbootMetricMeterAopInterceptor(),
@@ -125,6 +126,15 @@ public class AopInterceptor implements MethodInterceptor {
             new JbootCachePutInterceptor(),
             new JbootCacheInterceptor()
     };
+
+    private static final Interceptor[] NO_METRIC_INTERS = {
+            new JbootCacheEvictInterceptor(),
+            new JbootCachesEvictInterceptor(),
+            new JbootCachePutInterceptor(),
+            new JbootCacheInterceptor()
+    };
+
+    private static boolean metricConfigOk = JbootMetricManager.me().isConfigOk();
 
     private Object doJFinalAOPInvoke(MethodInvocation methodInvocation) throws Throwable {
 
@@ -139,9 +149,13 @@ public class AopInterceptor implements MethodInterceptor {
         Method method = methodInvocation.getMethod();
 
         //service层的所有拦截器，包含了全局的拦截器 和 @Before 的拦截器
-        Interceptor[] serviceInterceptors = InterceptorManager.me().buildServiceMethodInterceptor(INTERS, targetClass, method);
+        Interceptor[] serviceInterceptors = metricConfigOk
+                ? InterceptorManager.me().buildServiceMethodInterceptor(ALL_INTERS, targetClass, method)
+                : InterceptorManager.me().buildServiceMethodInterceptor(NO_METRIC_INTERS, targetClass, method);
+
         JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, serviceInterceptors, methodInvocation.getArguments());
         invocation.invoke();
+        
         return invocation.getReturnValue();
     }
 

@@ -36,8 +36,8 @@ public class JbootFilterHandler extends Handler {
 
         if (target.indexOf('.') != -1 //static files
                 || JbootWebsocketManager.me().isWebsokcetEndPoint(target) //websocket
-                || (metricsConfig.getUrl() != null && target.startsWith(metricsConfig.getUrl())) // metrics
-                || (hystrixConfig.getUrl() != null && target.startsWith(hystrixConfig.getUrl()))) // hystrix
+                || (metricsConfig.isConfigOk() && target.startsWith(metricsConfig.getUrl())) // metrics
+                || (hystrixConfig.isConfigOk() && target.startsWith(hystrixConfig.getUrl()))) // hystrix
         {
             return;
         }

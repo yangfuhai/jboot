@@ -56,6 +56,10 @@ public class JbootMetricConfig {
     public void setReporter(String reporter) {
         this.reporter = reporter;
     }
+
+    public boolean isConfigOk() {
+        return url != null && reporter != null;
+    }
 }
 
 

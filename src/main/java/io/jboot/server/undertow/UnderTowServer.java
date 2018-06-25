@@ -144,7 +144,7 @@ public class UnderTowServer implements JbootServer {
 
 
         JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
-        if (StringUtils.isNotBlank(hystrixConfig.getUrl())) {
+        if (hystrixConfig.isConfigOk()) {
             deploymentInfo.addServlets(
                     Servlets.servlet("HystrixMetricsStreamServlet", HystrixMetricsStreamServlet.class)
                             .addMapping(hystrixConfig.getUrl()));
@@ -152,7 +152,7 @@ public class UnderTowServer implements JbootServer {
 
 
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
-        if (StringUtils.isNotBlank(metricsConfig.getMappingUrl())) {
+        if (metricsConfig.isConfigOk()) {
             deploymentInfo.addServlets(
                     Servlets.servlet("MetricsAdminServlet", AdminServlet.class)
                             .addMapping(metricsConfig.getMappingUrl()));

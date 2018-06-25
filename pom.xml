@@ -322,6 +322,7 @@
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-graphite</artifactId>
             <version>4.0.2</version>
+            <scope>provided</scope>
         </dependency>
 
 
