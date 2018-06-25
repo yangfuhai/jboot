@@ -18,7 +18,6 @@ package io.jboot.aop.interceptor.cache;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CacheEvict;
-import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
@@ -191,8 +190,10 @@ class Kits {
         }
 
         String cacheName = evict.name();
-        JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
-                String.format("CacheEvict.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
+        if (StringUtils.isBlank(cacheName)) {
+            throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
+                    ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
+        }
 
         if ("*".equals(evict.key().trim())) {
             Jboot.me().getCache().removeAll(cacheName);

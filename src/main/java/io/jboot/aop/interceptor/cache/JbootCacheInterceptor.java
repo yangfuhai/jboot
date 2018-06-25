@@ -20,7 +20,8 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.Cacheable;
-import io.jboot.exception.JbootAssert;
+import io.jboot.exception.JbootException;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 
 import java.lang.reflect.Method;
@@ -51,8 +52,11 @@ public class JbootCacheInterceptor implements Interceptor {
 
         Class targetClass = inv.getTarget().getClass();
         String cacheName = cacheable.name();
-        JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
-                String.format("Cacheable.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
+
+        if (StringUtils.isBlank(cacheName)) {
+            throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
+                    ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
+        }
 
         String cacheKey = Kits.buildCacheKey(cacheable.key(), targetClass, method, inv.getArgs());
 

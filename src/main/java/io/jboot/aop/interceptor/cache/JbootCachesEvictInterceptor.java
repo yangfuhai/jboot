@@ -32,15 +32,6 @@ import java.util.List;
 public class JbootCachesEvictInterceptor implements Interceptor {
     private static final Log LOG = Log.getLog(JbootCachesEvictInterceptor.class);
 
-    private void doCachesEvict(Object[] arguments, Class targetClass, Method method, List<CacheEvict> cacheEvicts) {
-        for (CacheEvict evict : cacheEvicts) {
-            try {
-                Kits.doCacheEvict(arguments, targetClass, method, evict);
-            } catch (Exception ex) {
-                LOG.error(ex.toString(), ex);
-            }
-        }
-    }
 
     @Override
     public void intercept(Invocation inv) {
@@ -54,7 +45,6 @@ public class JbootCachesEvictInterceptor implements Interceptor {
         }
 
         CacheEvict[] evicts = cachesEvict.value();
-
         List<CacheEvict> beforeInvocations = new ArrayList<>();
         List<CacheEvict> afterInvocations = new ArrayList<>();
 
@@ -66,11 +56,29 @@ public class JbootCachesEvictInterceptor implements Interceptor {
             }
         }
 
-
         Class targetClass = inv.getTarget().getClass();
 
         doCachesEvict(inv.getArgs(), targetClass, method, beforeInvocations);
-        inv.invoke();
-        doCachesEvict(inv.getArgs(), targetClass, method, afterInvocations);
+        try {
+            inv.invoke();
+        } finally {
+            doCachesEvict(inv.getArgs(), targetClass, method, afterInvocations);
+        }
+    }
+
+
+    private void doCachesEvict(Object[] arguments, Class targetClass, Method method, List<CacheEvict> cacheEvicts) {
+
+        if (cacheEvicts == null || cacheEvicts.isEmpty()) {
+            return;
+        }
+
+        for (CacheEvict evict : cacheEvicts) {
+            try {
+                Kits.doCacheEvict(arguments, targetClass, method, evict);
+            } catch (Exception ex) {
+                LOG.error(ex.toString(), ex);
+            }
+        }
     }
 }
