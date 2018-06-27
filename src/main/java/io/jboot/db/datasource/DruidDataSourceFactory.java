@@ -32,22 +32,28 @@ public class DruidDataSourceFactory implements DataSourceFactory {
     static Log log = Log.getLog(DruidDataSourceFactory.class);
 
     @Override
-    public DataSource createDataSource(DataSourceConfig dataSourceConfig) {
+    public DataSource createDataSource(DataSourceConfig config) {
 
         DruidDataSource druidDataSource = new DruidDataSource();
-        druidDataSource.setUrl(dataSourceConfig.getUrl());
-        druidDataSource.setUsername(dataSourceConfig.getUser());
-        druidDataSource.setPassword(dataSourceConfig.getPassword());
-        druidDataSource.setDriverClassName(dataSourceConfig.getDriverClassName());
+        druidDataSource.setUrl(config.getUrl());
+        druidDataSource.setUsername(config.getUser());
+        druidDataSource.setPassword(config.getPassword());
+        druidDataSource.setDriverClassName(config.getDriverClassName());
+
+        if (config.getMinimumIdle() != null) {
+            druidDataSource.setMinIdle(config.getMinimumIdle());
+        }
+        if (config.getConnectionInitSql() != null) {
+            druidDataSource.setConnectionInitSqls(Sets.newHashSet(config.getConnectionInitSql()));
+        }
+
+
         try {
             druidDataSource.setFilters("stat");
         } catch (SQLException e) {
             log.error("DruidDataSourceFactory is error", e);
         }
 
-        if (dataSourceConfig.getConnectionInitSql() != null) {
-            druidDataSource.setConnectionInitSqls(Sets.newHashSet(dataSourceConfig.getConnectionInitSql()));
-        }
 
         return druidDataSource;
     }

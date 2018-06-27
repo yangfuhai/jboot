@@ -29,26 +29,34 @@ import javax.sql.DataSource;
 public class HikariDataSourceFactory implements DataSourceFactory {
 
     @Override
-    public DataSource createDataSource(DataSourceConfig dataSourceConfig) {
+    public DataSource createDataSource(DataSourceConfig config) {
 
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(dataSourceConfig.getUrl());
-        hikariConfig.setUsername(dataSourceConfig.getUser());
-        hikariConfig.setPassword(dataSourceConfig.getPassword());
-        hikariConfig.addDataSourceProperty("cachePrepStmts", dataSourceConfig.isCachePrepStmts());
-        hikariConfig.addDataSourceProperty("prepStmtCacheSize", dataSourceConfig.getPrepStmtCacheSize());
-        hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", dataSourceConfig.getPrepStmtCacheSqlLimit());
+        hikariConfig.setJdbcUrl(config.getUrl());
+        hikariConfig.setUsername(config.getUser());
+        hikariConfig.setPassword(config.getPassword());
+        hikariConfig.addDataSourceProperty("cachePrepStmts", config.isCachePrepStmts());
+        hikariConfig.addDataSourceProperty("prepStmtCacheSize", config.getPrepStmtCacheSize());
+        hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", config.getPrepStmtCacheSqlLimit());
+        hikariConfig.setDriverClassName(config.getDriverClassName());
+        hikariConfig.setPoolName(config.getPoolName());
+        hikariConfig.setMaximumPoolSize(config.getMaximumPoolSize());
 
-        hikariConfig.setDriverClassName(dataSourceConfig.getDriverClassName());
-        hikariConfig.setPoolName(dataSourceConfig.getPoolName());
-
-
-        if (dataSourceConfig.getConnectionInitSql() != null) {
-            hikariConfig.setConnectionInitSql(dataSourceConfig.getConnectionInitSql());
+        if (config.getMaxLifetime() != null) {
+            hikariConfig.setMaxLifetime(config.getMaxLifetime());
+        }
+        if (config.getIdleTimeout() != null) {
+            hikariConfig.setIdleTimeout(config.getIdleTimeout());
         }
 
+        if (config.getMinimumIdle() != null) {
+            hikariConfig.setMinimumIdle(config.getMinimumIdle());
+        }
 
-        hikariConfig.setMaximumPoolSize(dataSourceConfig.getMaximumPoolSize());
+        if (config.getConnectionInitSql() != null) {
+            hikariConfig.setConnectionInitSql(config.getConnectionInitSql());
+        }
+
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 

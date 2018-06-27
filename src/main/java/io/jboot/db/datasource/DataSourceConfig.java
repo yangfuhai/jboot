@@ -44,6 +44,10 @@ public class DataSourceConfig {
     private int prepStmtCacheSqlLimit = 2048;
     private int maximumPoolSize = 100;
 
+    private Long maxLifetime;
+    private Long idleTimeout;
+    private Integer minimumIdle;
+
     private String sqlTemplatePath;
     private String sqlTemplate;
     private String factory; //HikariDataSourceFactory.class.getName();
@@ -294,5 +298,29 @@ public class DataSourceConfig {
 
     public void setExTable(String exTable) {
         this.exTable = exTable;
+    }
+
+    public Long getMaxLifetime() {
+        return maxLifetime;
+    }
+
+    public void setMaxLifetime(Long maxLifetime) {
+        this.maxLifetime = maxLifetime;
+    }
+
+    public Long getIdleTimeout() {
+        return idleTimeout;
+    }
+
+    public void setIdleTimeout(Long idleTimeout) {
+        this.idleTimeout = idleTimeout;
+    }
+
+    public Integer getMinimumIdle() {
+        return minimumIdle;
+    }
+
+    public void setMinimumIdle(Integer minimumIdle) {
+        this.minimumIdle = minimumIdle;
     }
 }
