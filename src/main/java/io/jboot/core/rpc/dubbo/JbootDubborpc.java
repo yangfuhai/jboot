@@ -18,7 +18,6 @@ package io.jboot.core.rpc.dubbo;
 import com.alibaba.dubbo.config.*;
 import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
-import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 
@@ -33,48 +32,59 @@ public class JbootDubborpc extends JbootrpcBase {
 
     private static final Map<String, Object> singletons = new ConcurrentHashMap<>();
 
-    private JbootrpcConfig jbootrpcConfig;
-    private ApplicationConfig applicationConfig;
-    private RegistryConfig registryConfig;
     private JbootDubborpcConfig dubboConfig;
+    private RegistryConfig registryConfig;
 
     public JbootDubborpc() {
-        jbootrpcConfig = Jboot.config(JbootrpcConfig.class);
         dubboConfig = Jboot.config(JbootDubborpcConfig.class);
 
-        if (StringUtils.isNotBlank(dubboConfig.getQosPort())) {
-            System.setProperty("dubbo.qos.port", String.valueOf(dubboConfig.getQosPort()));
-        }
-
-        applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("jboot");
-
         registryConfig = new RegistryConfig();
-        registryConfig.setCheck(jbootrpcConfig.isRegistryCheck());
+        registryConfig.setCheck(getRpcConfig().isRegistryCheck());
+
+        if (getRpcConfig().getRegistryFile() != null) {
+            registryConfig.setFile(getRpcConfig().getRegistryFile());
+        }
 
         /**
          * 注册中心的调用模式
          */
-        if (jbootrpcConfig.isRegistryCallMode()) {
+        if (getRpcConfig().isRegistryCallMode()) {
 
-            registryConfig.setProtocol(jbootrpcConfig.getRegistryType());
-            registryConfig.setAddress(jbootrpcConfig.getRegistryAddress());
-            registryConfig.setUsername(jbootrpcConfig.getRegistryUserName());
-            registryConfig.setPassword(jbootrpcConfig.getRegistryPassword());
+            registryConfig.setProtocol(getRpcConfig().getRegistryType());
+            registryConfig.setAddress(getRpcConfig().getRegistryAddress());
+            registryConfig.setUsername(getRpcConfig().getRegistryUserName());
+            registryConfig.setPassword(getRpcConfig().getRegistryPassword());
         }
         /**
          * 直连模式
          */
-        else if (jbootrpcConfig.isRedirectCallMode()) {
+        else if (getRpcConfig().isRedirectCallMode()) {
             registryConfig.setAddress(RegistryConfig.NO_AVAILABLE);
         }
+    }
 
 
+    private ApplicationConfig createApplicationConfig(String group) {
+        ApplicationConfig applicationConfig = new ApplicationConfig();
+        applicationConfig.setName(group);
+        if (dubboConfig.getQosEnable() != null && dubboConfig.getQosEnable()) {
+            applicationConfig.setQosEnable(true);
+            applicationConfig.setQosPort(dubboConfig.getQosPort());
+            applicationConfig.setQosAcceptForeignIp(dubboConfig.getQosAcceptForeignIp());
+        } else {
+            applicationConfig.setQosEnable(false);
+        }
+
+        return applicationConfig;
     }
 
 
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
+
+        if (StringUtils.isBlank(group)) {
+            group = getRpcConfig().getDefaultGroup();
+        }
 
         String key = String.format("%s:%s:%s", serviceClass.getName(), group, version);
 
@@ -88,43 +98,44 @@ public class JbootDubborpc extends JbootrpcBase {
         // 引用远程服务
         // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
         ReferenceConfig<T> reference = new ReferenceConfig<T>();
-        reference.setApplication(applicationConfig);
+        reference.setApplication(createApplicationConfig(group));
         reference.setInterface(serviceClass);
         reference.setVersion(version);
-        reference.setTimeout(jbootrpcConfig.getRequestTimeOut());
+        reference.setTimeout(getRpcConfig().getRequestTimeOut());
+        reference.setGroup(group);
 
-        if (StringUtils.isNotBlank(jbootrpcConfig.getProxy())) {
-            reference.setProxy(jbootrpcConfig.getProxy());
+        if (StringUtils.isNotBlank(getRpcConfig().getProxy())) {
+            reference.setProxy(getRpcConfig().getProxy());
         } else {
             //设置 jboot 代理，目的是为了方便 Hystrix 的降级控制和统计
             reference.setProxy("jboot");
         }
 
-        if (StringUtils.isNotBlank(jbootrpcConfig.getFilter())) {
-            reference.setFilter(jbootrpcConfig.getFilter());
+        if (StringUtils.isNotBlank(getRpcConfig().getFilter())) {
+            reference.setFilter(getRpcConfig().getFilter());
         } else {
             //默认情况下用于 OpenTracing 的追踪
             reference.setFilter("jbootConsumerOpentracing");
         }
 
-        reference.setCheck(jbootrpcConfig.isConsumerCheck());
+        reference.setCheck(getRpcConfig().isConsumerCheck());
 
 
         /**
          * 注册中心的调用模式
          */
-        if (jbootrpcConfig.isRegistryCallMode()) {
+        if (getRpcConfig().isRegistryCallMode()) {
             reference.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
         }
 
         /**
          * 直连调用模式
          */
-        else if (jbootrpcConfig.isRedirectCallMode()) {
-            if (StringUtils.isBlank(jbootrpcConfig.getDirectUrl())) {
+        else if (getRpcConfig().isRedirectCallMode()) {
+            if (StringUtils.isBlank(getRpcConfig().getDirectUrl())) {
                 throw new JbootIllegalConfigException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
             }
-            reference.setUrl(jbootrpcConfig.getDirectUrl());
+            reference.setUrl(getRpcConfig().getDirectUrl());
         }
 
         // 注意：此代理对象内部封装了所有通讯细节，对象较重，请缓存复用
@@ -133,47 +144,47 @@ public class JbootDubborpc extends JbootrpcBase {
         if (object != null) {
             singletons.put(key, object);
         }
+
         return object;
     }
 
     @Override
     public <T> boolean serviceExport(Class<T> interfaceClass, Object object, String group, String version, int port) {
 
-        ProtocolConfig protocolConfig = new ProtocolConfig();
-        protocolConfig.setPort(port <= 0 ? jbootrpcConfig.getDefaultPort() : port);
-        protocolConfig.setThreads(dubboConfig.getProtocolThreads());
-
-        protocolConfig.setName(dubboConfig.getProtocolName());
-        protocolConfig.setServer(dubboConfig.getProtocolServer());
-
-        if (StringUtils.isNotBlank(dubboConfig.getProtocolContextPath())) {
-            protocolConfig.setContextpath(dubboConfig.getProtocolContextPath());
+        if (StringUtils.isBlank(group)) {
+            group = getRpcConfig().getDefaultGroup();
         }
 
-        if (StringUtils.isNotBlank(dubboConfig.getProtocolTransporter())) {
-            protocolConfig.setTransporter(dubboConfig.getProtocolTransporter());
+        ProtocolConfig protocolConfig = dubboConfig.newProtocolConfig();
+
+        if (protocolConfig.getHost() == null && getRpcConfig().getHost() != null) {
+            protocolConfig.setHost(getRpcConfig().getHost());
         }
 
-        if (StringUtils.isNotBlank(jbootrpcConfig.getHost())) {
-            protocolConfig.setHost(jbootrpcConfig.getHost());
+        if (protocolConfig.getSerialization() == null && getRpcConfig().getSerialization() != null) {
+            protocolConfig.setSerialization(getRpcConfig().getSerialization());
         }
 
-        if (StringUtils.isNotBlank(jbootrpcConfig.getSerialization())) {
-            protocolConfig.setSerialization(jbootrpcConfig.getSerialization());
+        if (protocolConfig.getPort() == null && getRpcConfig().getDefaultPort() != null){
+            protocolConfig.setPort(getRpcConfig().getDefaultPort());
+        }
+
+        if (port > 0 ){
+            protocolConfig.setPort(port);
         }
 
 
         //此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏
         ServiceConfig<T> service = new ServiceConfig<T>();
-        service.setApplication(applicationConfig);
-
+        service.setApplication(createApplicationConfig(group));
+        service.setGroup(group);
         service.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
 
         service.setProtocol(protocolConfig); // 多个协议可以用setProtocols()
         service.setInterface(interfaceClass);
         service.setRef((T) object);
         service.setVersion(version);
-        service.setProxy(jbootrpcConfig.getProxy());
+        service.setProxy(getRpcConfig().getProxy());
         service.setFilter("jbootProviderOpentracing");
 
 

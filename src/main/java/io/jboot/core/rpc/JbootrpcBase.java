@@ -20,10 +20,10 @@ import io.jboot.Jboot;
 
 public abstract class JbootrpcBase implements Jbootrpc {
 
-    JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
+    private JbootrpcConfig rpcConfig = Jboot.config(JbootrpcConfig.class);
 
-    public JbootrpcConfig getConfig() {
-        return config;
+    public JbootrpcConfig getRpcConfig() {
+        return rpcConfig;
     }
 
     @Override

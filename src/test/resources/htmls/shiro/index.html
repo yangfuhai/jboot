@@ -7,9 +7,26 @@
 <body>
 
 
-shiro..... <br/>
+用户的登陆状态是：<br/>
 #shiroPrincipal()
-aaa
+用户已登陆了，用户信息是：#(principal)
 #end
+
+#shiroGuest()
+用户还未登陆...
+#end
+
+
+<br />
+<br />
+<br />
+点击 登陆 或 退出 后，刷新当前页面：
+<br />
+
+<a href="/shiro/login" target="_blank">登陆</a>
+
+<br />
+<a href="/shiro/logout" target="_blank">退出</a>
+
 </body>
 </html>

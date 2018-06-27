@@ -50,6 +50,7 @@ import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
+import io.jboot.web.handler.JbootFilterHandler;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.limitation.JbootLimitationManager;
@@ -200,6 +201,7 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configHandler(Handlers handlers) {
 
+        handlers.add(new JbootFilterHandler());
         handlers.add(new ActionCacheHandler());
         handlers.add(new JbootHandler());
 

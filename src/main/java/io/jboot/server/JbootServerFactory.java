@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 package io.jboot.server;
 
 import io.jboot.Jboot;
+import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.server.jetty.JettyServer;
 import io.jboot.server.tomcat.TomcatServer;
 import io.jboot.server.undertow.UnderTowServer;
@@ -33,10 +34,9 @@ public class JbootServerFactory {
 
     public JbootServer buildServer() {
 
-        JbootServerConfig jbootServerConfig = Jboot.config(JbootServerConfig.class);
+        JbootServerConfig serverConfig = Jboot.config(JbootServerConfig.class);
 
-
-        switch (jbootServerConfig.getType()) {
+        switch (serverConfig.getType()) {
             case JbootServerConfig.TYPE_UNDERTOW:
                 return new UnderTowServer();
             case JbootServerConfig.TYPE_TOMCAT:
@@ -44,7 +44,7 @@ public class JbootServerFactory {
             case JbootServerConfig.TYPE_JETTY:
                 return new JettyServer();
             default:
-                return new UnderTowServer();
+                return JbootSpiLoader.load(JbootServer.class, serverConfig.getType());
         }
     }
 

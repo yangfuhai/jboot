@@ -29,7 +29,6 @@ public class JwtConfig {
     private String httpHeaderName = "Jwt";
     private String secret;
     private long validityPeriod = 0;
-    private String jwtShiroBridge;
 
     public String getHttpHeaderName() {
         return httpHeaderName;
@@ -59,12 +58,5 @@ public class JwtConfig {
         return StringUtils.isNotBlank(secret);
     }
 
-    public String getJwtShiroBridge() {
-        return jwtShiroBridge;
-    }
-
-    public void setJwtShiroBridge(String jwtShiroBridge) {
-        this.jwtShiroBridge = jwtShiroBridge;
-    }
 
 }

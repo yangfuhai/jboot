@@ -42,7 +42,7 @@ public class ShiroNotHasPermissionDirective extends JbootShiroDirectiveBase {
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
         if (getSubject() != null && ArrayUtils.isNotEmpty(exprList.getExprArray()))
-            if (!getSubject().isPermitted(exprList.getExprArray()[0].toString()))
+            if (!getSubject().isPermitted(exprList.getExpr(0).eval(scope).toString()))
                 renderBody(env, scope, writer);
     }
 

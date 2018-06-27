@@ -404,7 +404,7 @@ public class ControllerReaderExtension {
                     BodyParameter parameter = new BodyParameter();
                     parameter.setAccess(apiParam.access());
                     parameter.setName(apiParam.name());
-                    parameter.setAllowEmptyValue(apiParam.allowEmptyValue());
+//                    parameter.setAllowEmptyValue(apiParam.allowEmptyValue());
                     parameter.setRequired(apiParam.required());
                     parameter.setDescription(apiParam.value());
 

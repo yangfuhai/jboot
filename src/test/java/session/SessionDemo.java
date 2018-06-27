@@ -21,6 +21,7 @@ import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
+import io.jboot.web.limitation.annotation.EnablePerUserLimit;
 import service.User;
 
 
@@ -30,12 +31,14 @@ public class SessionDemo extends JbootController {
 
     public static void main(String[] args) {
         Jboot.setBootArg("jboot.server.type", "jetty");
-        Jboot.setBootArg("jboot.cache.type", "ehredis");
+        Jboot.setBootArg("jboot.cache.type", "ehcache");
         Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
+        Jboot.setBootArg("jboot.limitation.enable", true);
         Jboot.run(args);
     }
 
 
+    @EnablePerUserLimit(rate = 20)
     public void index() {
 
         User user = new User();

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,8 +24,6 @@ public class JbootHystrixConfig {
     private String propertie;
 
 
-
-
     public String getUrl() {
         return url;
     }
@@ -40,6 +38,10 @@ public class JbootHystrixConfig {
 
     public void setPropertie(String propertie) {
         this.propertie = propertie;
+    }
+
+    public boolean isConfigOk() {
+        return url != null;
     }
 
 }

@@ -17,32 +17,38 @@ package io.jboot.aop.interceptor.metric;
 
 
 import com.codahale.metrics.Histogram;
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.component.metric.annotation.EnableMetricHistogram;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * 用于在AOP拦截，并通过Metrics的Hsitogram进行统计
  */
-public class JbootMetricHistogramAopInterceptor implements MethodInterceptor {
+public class JbootMetricHistogramAopInterceptor implements Interceptor {
 
     private static final String suffix = ".histogram";
 
     @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    public void intercept(Invocation inv) {
 
-        EnableMetricHistogram annotation = methodInvocation.getThis().getClass().getAnnotation(EnableMetricHistogram.class);
+        EnableMetricHistogram annotation = inv.getMethod().getAnnotation(EnableMetricHistogram.class);
 
+        if (annotation == null) {
+            inv.invoke();
+            return;
+        }
+
+        Class targetClass = ClassKits.getUsefulClass(inv.getTarget().getClass());
         String name = StringUtils.isBlank(annotation.value())
-                ? methodInvocation.getThis().getClass().getName() + "." + methodInvocation.getMethod().getName() + suffix
+                ? targetClass + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
+
 
         Histogram histogram = Jboot.me().getMetric().histogram(name);
         histogram.update(annotation.update());
-        return methodInvocation.proceed();
-
-
+        inv.invoke();
     }
 }

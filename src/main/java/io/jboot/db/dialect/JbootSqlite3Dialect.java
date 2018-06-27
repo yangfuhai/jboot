@@ -18,6 +18,7 @@ package io.jboot.db.dialect;
 import com.jfinal.plugin.activerecord.dialect.Sqlite3Dialect;
 import io.jboot.db.model.Column;
 import io.jboot.utils.ArrayUtils;
+import io.jboot.utils.StringUtils;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
         appIfNotEmpty(columns, sqlBuilder);
 
 
-        if (orderBy != null) {
+        if (StringUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
@@ -59,7 +60,7 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
 
         appIfNotEmpty(columns, sqlBuilder);
 
-        if (orderBy != null) {
+        if (StringUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 

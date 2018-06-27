@@ -15,23 +15,36 @@
  */
 package io.jboot.core.rpc;
 
+import com.jfinal.core.JFinal;
+import com.jfinal.log.Log;
 import com.netflix.hystrix.exception.HystrixTimeoutException;
 import io.jboot.component.hystrix.JbootHystrixCommand;
+import io.jboot.exception.JbootRpcException;
 
 import java.lang.reflect.Method;
 
 
 public class JbootrpcHystrixFallbackListenerDefault implements JbootrpcHystrixFallbackListener {
 
+    private static boolean isDevMode = JFinal.me().getConstants().getDevMode();
+    private static final Log LOG = Log.getLog(JbootrpcHystrixFallbackListenerDefault.class);
+
     @Override
     public Object onFallback(Object proxy, Method method, Object[] args, JbootHystrixCommand command, Throwable exception) {
+
         if (exception instanceof HystrixTimeoutException) {
-            System.err.println("rpc request timeout, the defalut timeout value is 5000 milliseconds, " +
-                    "you can config jboot.rpc.hystrixTimeout to set the value, " +
-                    "or config \"jboot.rpc.hystrixEnable = false\" to close hystrix.");
+            LOG.error("rpc request timeout, the defalut timeout value is 5000 milliseconds, " +
+                    " you can config jboot.rpc.hystrixTimeout to set the value, " +
+                    " or config \"jboot.rpc.hystrixEnable = false\" to close hystrix."
+            );
         }
-        exception.printStackTrace();
-        return null;
+
+        if (isDevMode) {
+            throw new JbootRpcException(exception);
+        } else {
+            exception.printStackTrace();
+            return null;
+        }
     }
 
 }

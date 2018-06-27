@@ -54,12 +54,16 @@ public class JbootMetricManager {
 
 
     private JbootMetricManager() {
+
+        if (!metricsConfig.isConfigOk()) {
+            return;
+        }
+
         metricRegistry = new MetricRegistry();
         healthCheckRegistry = new HealthCheckRegistry();
 
         List<JbootMetricReporter> reporters = getReporters();
         if (ArrayUtils.isNullOrEmpty(reporters)) {
-            LOG.warn("metrics reporter is empty . please config \"jboot.metric.reporter = xxx\" in jboot.properties ");
             return;
         }
 
@@ -70,6 +74,10 @@ public class JbootMetricManager {
                 LOG.error(ex.toString(), ex);
             }
         }
+    }
+
+    public boolean isConfigOk() {
+        return metricsConfig.isConfigOk();
     }
 
 

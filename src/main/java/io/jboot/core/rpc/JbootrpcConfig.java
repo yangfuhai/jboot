@@ -53,6 +53,7 @@ public class JbootrpcConfig {
     private String registryName = "jboot";
     private String registryUserName;
     private String registryPassword;
+    private String registryFile;
 
     /**
      * 启动检查
@@ -72,7 +73,7 @@ public class JbootrpcConfig {
      * 对外暴露服务的相关配置
      */
     private String host;
-    private int defaultPort = 8088;
+    private Integer defaultPort = 8088;
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
 
@@ -139,7 +140,7 @@ public class JbootrpcConfig {
         this.registryName = registryName;
     }
 
-    public int getDefaultPort() {
+    public Integer getDefaultPort() {
         return defaultPort;
     }
 
@@ -177,6 +178,14 @@ public class JbootrpcConfig {
 
     public void setRegistryPassword(String registryPassword) {
         this.registryPassword = registryPassword;
+    }
+
+    public String getRegistryFile() {
+        return registryFile;
+    }
+
+    public void setRegistryFile(String registryFile) {
+        this.registryFile = registryFile;
     }
 
     public String getCallMode() {

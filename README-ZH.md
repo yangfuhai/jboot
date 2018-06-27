@@ -1,10 +1,15 @@
-![](./docs/files/logo.png)
+## 官网
+
+http://jboot.io
 ## [English document](./README.md)
+
 ## JBoot 是什么
 
 Jboot，专为大型分布式项目和微服务而生。
 
 QQ交流群： 601440615
+
+Jboot Demos ： https://gitee.com/fuhai/jboot/tree/master/src/test/java
 
 ## maven 依赖
 
@@ -12,7 +17,7 @@ QQ交流群： 601440615
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.4.4</version>
+    <version>1.6.0</version>
 </dependency>
 
 ```

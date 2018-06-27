@@ -14,10 +14,10 @@ public class RedisTest {
 ////        Jboot.setBootArg("jboot.redis.password", "123456");
 //
 //        JbootRedis redis = Jboot.me().getRedis();
-//        redis.set("mykey", "");
+////        redis.set("mykey", "");
 //
 //        redis.set("user",user);
-//
+////
 //        redis.lpush("list", 1,2,3,4,5,6);
 //
 //        System.out.println(redis.get("mykey").toString());

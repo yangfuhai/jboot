@@ -60,25 +60,32 @@ public class FixedInterceptors {
 
     FixedInterceptor[] all() {
         if (allInters == null) {
-            initInters();
+            synchronized (this) {
+                if (allInters == null) {
+                    initInters();
+                }
+            }
         }
         return allInters;
     }
 
 
     private void initInters() {
-        allInters = new FixedInterceptor[defaultInters.length + userInters.size()];
+
+        FixedInterceptor[] interceptors = new FixedInterceptor[defaultInters.length + userInters.size()];
 
         int i = 0;
         for (FixedInterceptor interceptor : defaultInters) {
             Jboot.injectMembers(interceptor);
-            allInters[i++] = interceptor;
+            interceptors[i++] = interceptor;
         }
 
         for (FixedInterceptor interceptor : userInters) {
             Jboot.injectMembers(interceptor);
-            allInters[i++] = interceptor;
+            interceptors[i++] = interceptor;
         }
+
+        allInters = interceptors;
     }
 
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +15,15 @@
  */
 package io.jboot.core.serializer;
 
+import com.jfinal.log.Log;
 import org.nustaq.serialization.FSTConfiguration;
 
 
 public class FstSerializer implements ISerializer {
 
-    static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
+
+    private static final Log LOG = Log.getLog(FstSerializer.class);
+    private static FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
 
     @Override
     public byte[] serialize(Object obj) {
@@ -30,8 +33,15 @@ public class FstSerializer implements ISerializer {
 
     @Override
     public Object deserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
-        return fst.asObject(bytes);
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        try {
+            return fst.asObject(bytes);
+        } catch (Throwable ex) {
+            LOG.error(ex.toString(), ex);
+        }
+        return null;
     }
 
 

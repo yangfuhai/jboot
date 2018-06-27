@@ -34,6 +34,8 @@ public class LimitationConfig {
     private String webPath;
     private String webAuthorizer = NoneAuthorizer.class.getName();
 
+    private boolean enable = false;
+
 
     public int getLimitAjaxCode() {
         return limitAjaxCode;
@@ -73,5 +75,13 @@ public class LimitationConfig {
 
     public void setWebAuthorizer(String webAuthorizer) {
         this.webAuthorizer = webAuthorizer;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 }

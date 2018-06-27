@@ -16,15 +16,13 @@
 package io.jboot.component.jwt;
 
 import com.jfinal.json.FastJson;
-import com.jfinal.kit.Base64Kit;
 import io.jboot.Jboot;
-import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,10 +60,6 @@ public class JwtManager {
         return jwtThreadLocal.get();
     }
 
-    public boolean isEnable() {
-        return jwtConfig.isEnable();
-    }
-
     public String getHttpHeaderName() {
         return jwtConfig.getHttpHeaderName();
     }
@@ -99,12 +93,15 @@ public class JwtManager {
 
     public String createJwtToken(Map map) {
 
-        String subject = FastJson.getJson().toJson(map);
+
         SecretKey secretKey = generalKey();
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
+
+        map.put("isuuedAt", nowMillis);
+        String subject = FastJson.getJson().toJson(map);
 
         JwtBuilder builder = Jwts.builder()
                 .setIssuedAt(now)
@@ -121,27 +118,9 @@ public class JwtManager {
 
 
     private SecretKey generalKey() {
-        byte[] encodedKey = Base64Kit.decode(jwtConfig.getSecret());
+        byte[] encodedKey = DatatypeConverter.parseBase64Binary(jwtConfig.getSecret());
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return key;
-    }
-
-
-
-
-    private JwtShiroBridge jwtShiroBridge;
-
-    public JwtShiroBridge getJwtShiroBridge() {
-        if (jwtShiroBridge == null && jwtConfig.getJwtShiroBridge() != null) {
-            jwtShiroBridge = ClassKits.newInstance(jwtConfig.getJwtShiroBridge());
-
-            if (jwtShiroBridge == null) {
-                throw new JbootIllegalConfigException("can not find Class : " + jwtConfig.getJwtShiroBridge() +
-                        " please config jboot.web.jwt.jwtShiroBridge correct. ");
-            }
-        }
-
-        return jwtShiroBridge;
     }
 
 

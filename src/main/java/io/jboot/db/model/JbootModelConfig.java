@@ -17,7 +17,9 @@ package io.jboot.db.model;
 
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertyConfig;
-import io.jboot.db.JbootDbHystrixFallbackListenerDefault;
+import io.jboot.core.cache.JbootCache;
+import io.jboot.core.cache.JbootCacheConfig;
+import io.jboot.core.cache.JbootCacheManager;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -27,30 +29,14 @@ import io.jboot.db.JbootDbHystrixFallbackListenerDefault;
 @PropertyConfig(prefix = "jboot.model")
 public class JbootModelConfig {
 
-    private boolean cacheEnable = true;
-    private int cacheTime = 60 * 60 * 24; // 1day
     private String scan;
 
-    private boolean hystrixEnable = true;
-    private int hystrixTimeout = 1000 * 10; //单位：毫秒
-    private String hystrixFallbackListener = JbootDbHystrixFallbackListenerDefault.class.getName();
+    private String columnCreated = "created";
+    private String columnModified = "modified";
+    private int idCacheTime = 60 * 60 * 24 * 2; // id 缓存默认缓存2天的时间
+    private boolean idCacheEnable = false; // 是否启用ID自动缓存
+    private String idCacheType = Jboot.config(JbootCacheConfig.class).getType();
 
-
-    public boolean isCacheEnable() {
-        return cacheEnable;
-    }
-
-    public void setCacheEnable(boolean cacheEnable) {
-        this.cacheEnable = cacheEnable;
-    }
-
-    public int getCacheTime() {
-        return cacheTime;
-    }
-
-    public void setCacheTime(int cacheTime) {
-        this.cacheTime = cacheTime;
-    }
 
     public String getScan() {
         return scan;
@@ -60,28 +46,45 @@ public class JbootModelConfig {
         this.scan = scan;
     }
 
-    public boolean isHystrixEnable() {
-        return hystrixEnable;
+
+    public String getColumnCreated() {
+        return columnCreated;
     }
 
-    public void setHystrixEnable(boolean hystrixEnable) {
-        this.hystrixEnable = hystrixEnable;
+    public void setColumnCreated(String columnCreated) {
+        this.columnCreated = columnCreated;
     }
 
-    public int getHystrixTimeout() {
-        return hystrixTimeout;
+    public String getColumnModified() {
+        return columnModified;
     }
 
-    public void setHystrixTimeout(int hystrixTimeout) {
-        this.hystrixTimeout = hystrixTimeout;
+    public void setColumnModified(String columnModified) {
+        this.columnModified = columnModified;
     }
 
-    public String getHystrixFallbackListener() {
-        return hystrixFallbackListener;
+    public int getIdCacheTime() {
+        return idCacheTime;
     }
 
-    public void setHystrixFallbackListener(String hystrixFallbackListener) {
-        this.hystrixFallbackListener = hystrixFallbackListener;
+    public void setIdCacheTime(int idCacheTime) {
+        this.idCacheTime = idCacheTime;
+    }
+
+    public boolean isIdCacheEnable() {
+        return idCacheEnable;
+    }
+
+    public void setIdCacheEnable(boolean idCacheEnable) {
+        this.idCacheEnable = idCacheEnable;
+    }
+
+    public String getIdCacheType() {
+        return idCacheType;
+    }
+
+    public void setIdCacheType(String idCacheType) {
+        this.idCacheType = idCacheType;
     }
 
     private static JbootModelConfig config;
@@ -93,4 +96,12 @@ public class JbootModelConfig {
         return config;
     }
 
+    private JbootCache jbootCache;
+
+    public JbootCache getCache() {
+        if (jbootCache == null) {
+            jbootCache = JbootCacheManager.me().getCache(idCacheType);
+        }
+        return jbootCache;
+    }
 }

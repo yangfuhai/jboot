@@ -51,7 +51,7 @@ public class DubboRestfulDemo {
 
         Jbootrpc factory = Jboot.me().getRpc();
 
-        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
+        factory.serviceExport(UserService.class, Jboot.bean(UserServiceImpl.class), "jboot", "1.0", 8002);
 
 
         System.out.println("server started...");

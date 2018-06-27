@@ -17,11 +17,13 @@ package io.jboot.web.limitation;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.core.Controller;
+import io.jboot.Jboot;
 import io.jboot.utils.RequestUtils;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
+import java.util.Collection;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -31,36 +33,45 @@ public class LimitationInterceptor implements FixedInterceptor {
 
 
     private static final ThreadLocal<Semaphore> SEMAPHORE_THREAD_LOCAL = new ThreadLocal<>();
+    private static LimitationConfig config = Jboot.config(LimitationConfig.class);
 
     @Override
     public void intercept(FixedInvocation inv) {
-
-        JbootLimitationManager manager = JbootLimitationManager.me();
-
-        LimitationInfo info = manager.getLimitationInfo(inv.getActionKey());
-        if (info == null || !info.isEnable()) {
+        if (!config.isEnable()) {
             inv.invoke();
             return;
         }
 
+        JbootLimitationManager manager = JbootLimitationManager.me();
 
-        if (doIntercept(inv, info)) {
-            renderLimitation(inv.getController(), info);
+        Collection<LimitationInfo> infos = manager.getLimitationInfo(inv.getActionKey());
+        if (infos == null || infos.isEmpty()) {
+            inv.invoke();
             return;
         }
+
+        for (LimitationInfo info : infos) {
+            if (tryToIntercept(inv, info)) {
+                renderLimitation(inv.getController(), info);
+                return;
+            }
+        }
+
 
         try {
             inv.invoke();
         } finally {
-            if (LimitationInfo.TYPE_CONCURRENCY.equals(info.getType())) {
-                SEMAPHORE_THREAD_LOCAL.get().release();
-                SEMAPHORE_THREAD_LOCAL.remove();
+            for (LimitationInfo info : infos) {
+                if (info.isConcurrencyType()) {
+                    SEMAPHORE_THREAD_LOCAL.get().release();
+                    SEMAPHORE_THREAD_LOCAL.remove();
+                }
             }
         }
     }
 
 
-    private boolean doIntercept(FixedInvocation inv, LimitationInfo limitationInfo) {
+    private boolean tryToIntercept(FixedInvocation inv, LimitationInfo limitationInfo) {
 
         switch (limitationInfo.getType()) {
             case LimitationInfo.TYPE_CONCURRENCY:
@@ -127,12 +138,12 @@ public class LimitationInterceptor implements FixedInterceptor {
 
     private boolean userIntercept(FixedInvocation inv, LimitationInfo info) {
         JbootLimitationManager manager = JbootLimitationManager.me();
-        String sesssionId = inv.getController().getSession(true).getId();
+        String userId = getUserId(inv); //inv.getController().getSession(true).getId();
 
         long currentTime = System.currentTimeMillis();
-        long userFlagTime = manager.getUserflag(sesssionId);
+        long userFlagTime = manager.getUserflag(userId);
 
-        manager.flagUserRequest(sesssionId);
+        manager.flagUserRequest(userId);
 
         //第一次访问，可能manager里还未对此用户进行标识
         if (userFlagTime >= currentTime) {
@@ -150,6 +161,15 @@ public class LimitationInterceptor implements FixedInterceptor {
         }
 
         return true;
+    }
+
+    private String getUserId(FixedInvocation inv) {
+        String userId = inv.getController().getCookie("_jboot_luser_id");
+        if (StringUtils.isBlank(userId)) {
+            userId = StringUtils.uuid();
+            inv.getController().setCookie("_jboot_luser_id", userId, Integer.MAX_VALUE);
+        }
+        return userId;
     }
 
 

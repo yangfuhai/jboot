@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.redis.impl;
+package io.jboot.component.redis.jedis;
 
 import com.jfinal.log.Log;
 import io.jboot.component.redis.JbootRedisBase;
@@ -30,13 +30,13 @@ import java.util.Map.Entry;
  * 参考： com.jfinal.plugin.redis
  * JbootRedis 命令文档: http://redisdoc.com/
  */
-public class JbootRedisImpl extends JbootRedisBase {
+public class JbootJedisImpl extends JbootRedisBase {
 
     protected JedisPool jedisPool;
     protected JbootRedisConfig config;
-    private static final Log LOG = Log.getLog(JbootRedisImpl.class);
+    private static final Log LOG = Log.getLog(JbootJedisImpl.class);
 
-    public JbootRedisImpl(JbootRedisConfig config) {
+    public JbootJedisImpl(JbootRedisConfig config) {
 
         this.config = config;
 
@@ -82,6 +82,22 @@ public class JbootRedisImpl extends JbootRedisBase {
             poolConfig.setNumTestsPerEvictionRun(config.getNumTestsPerEvictionRun());
         }
 
+        if (StringUtils.isNotBlank(config.getMaxTotal())) {
+            poolConfig.setMaxTotal(config.getMaxTotal());
+        }
+
+        if (StringUtils.isNotBlank(config.getMaxIdle())) {
+            poolConfig.setMaxIdle(config.getMaxIdle());
+        }
+
+        if (StringUtils.isNotBlank(config.getMinIdle())) {
+            poolConfig.setMinIdle(config.getMinIdle());
+        }
+
+        if (StringUtils.isNotBlank(config.getMaxWaitMillis())) {
+            poolConfig.setMaxWaitMillis(config.getMaxWaitMillis());
+        }
+
         this.jedisPool = newJedisPool(poolConfig, host, port, timeout, password, database, clientName);
 
     }
@@ -105,7 +121,7 @@ public class JbootRedisImpl extends JbootRedisBase {
         return jedisPool;
     }
 
-    public JbootRedisImpl(JedisPool jedisPool) {
+    public JbootJedisImpl(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
     }
 

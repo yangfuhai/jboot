@@ -1,3 +1,123 @@
+jboot-1.6.0:
+优化：JbootModel的代码逻辑
+优化：防止DAO 的 AOP 代理，提升 DAO 增删改查的效率
+修复：当 JbootModel 启用 id 默认缓存的时候，有时出现数据类型转化错误的问题
+
+
+jboot-1.5.9:
+新增：jboot.model.idCacheEnable 配置的支持，方便根据ID查询的时候自动缓存
+优化：重命名 JbootModeGenerator 修改为 JbootModelGenerator
+
+
+jboot-1.5.8:
+修复：紧急修复 无法使用 Columns 进行查询的bug
+
+
+jboot-1.5.7:
+新增：JbootServer 的 SPI 扩展支持
+新增：Jwt 自动更新过期时间的支持
+优化：大量的细节优化
+
+
+jboot-1.5.6:
+优化：JbootServiceBase.deleteById() 方法
+优化：升级 Dubbo 到最新版本 2.6.2
+优化：代码生成器的代码逻辑
+修复：J2Cache 可能产生错误的问题
+修复：限流功能在针对单个用户限制时，不设置session内容会出现无效的问题
+修复：getSession() 默认会创建 session 对象的问题
+修复：错别字，ModelPacket 修改为 ModelPakage
+
+
+
+jboot-1.5.5:
+修复：JWT 的 Secret 设置带有特殊符号会出现Base64编码错误的问题
+修复：ClassScanner 可能会出现空指针异常的问题
+修复：Shiro 指令无法使用JFinal表达式的问题
+修复：Guava 升级到最新版本后出现 NoClassDefFoundError 异常的问题
+
+
+jboot-1.5.4:
+优化：JbootConfigManager 高并发下可能造成的 Config 多个实例的问题
+优化：ActionCache 代码逻辑优化，提高性能
+优化：新增 JbootFilterHandler 用于过滤静态等数据，防止自动缓存的问题
+优化：FixedInterceptors 高并发下可能造成的空指针异常的问题
+优化：JbootShiroManager 在 shiro 功能关闭是还去初始化 shiro 路由的问题
+优化：JbootLimitationManager 在多个限流策略的时候，只有第一个生效的问题
+优化：JbootLimitationManager 代码逻辑，提高性能
+优化：升级 motan 到最新版本 v1.1.1 ，并修改 JbootMotanProxyFactory 代码逻辑
+
+
+jboot-1.5.3:
+新增：给 @CacheEvict 新增 beforeInvocation 配置
+新增：支持 Dubbo 的整体配置
+修复：不支持 JFinal 全局 AOP 配置的问题
+修复：MetricInterceptors 可能会出现空指针异常的问题
+
+
+jboot-1.5.2:
+新增：@CachesEvict 注解，用于删除多个缓存
+优化：缓存逻辑和代码
+
+
+jboot-1.5.1:
+修复：Event事件机制可能出现空指针异常的问题
+
+
+jboot-1.5.0:
+修复：metrics 访问 404 的问题
+优化：删除 jboot model 自动缓存的功能（目前需要缓存自行通过 service 层添加 @Cacheable 进行缓存）
+优化：删除 jboot model 自动发送数据库操作事件的功能
+优化：ClassScanner 在某些情况下扫描不到类的问题
+
+
+jboot-1.4.9:
+优化：Shiro模块代码，使之更加简单易用
+优化：ClassKits，防止在多线程下出现的异常问题
+优化：Redis模块，新增更多的关于Redis配置
+优化：更新 guava、zipkin等模块
+修复：group 的配置在dubbo rpc下不起作用的问题
+新增：rpc registryFile 的配置支持
+核心升级：升级 JFinal 到最新版本 3.4 ，并优化JbootModel以适配JFinal
+
+
+jboot-1.4.8:
+修复：使用Shiro会造成静态文件无法正常读取的问题
+修复：数据库使用hystrix在事务的时候获取错误数据的问题
+
+
+jboot-1.4.7:
+新增：Shiro FilterUrlMapping自定义的支持
+新增：Shiro 默认使用Jboot分布式Session的支持
+新增：paginate分页查询不需要传orderby的方法
+修复：Shiro自定义注解无法使用在带参数的Action的问题
+修复：使用Shiro的时候使用websocket配置过于复杂的问题
+修复：JbootReqeustWrapper可能会出现空指针的问题
+修复：Classkits 可能会出现 ConcurrentModificationException 的问题
+修复：JbootModel在构建Sql的时候如果 orderby 参数为空字符串会出现 Sql 错误的问题
+优化：J2cache异常信息优化
+优化：更新undertow、HikariCP等到最新版本
+
+
+
+jboot-1.4.6:
+新增：支持自定义 shiro 认证授权错误处理
+新增：新增 skywalking 手动埋点的支持
+新增：dubbo qos 相关配置的支持
+重构: 第三方模块比如jwt、sso等和shiro的整合
+
+
+jboot-1.4.5:
+新增：支持 jboot model 创建、更新时间列名自定义
+修复：带参数的action限流不起作用的bug
+修复：当使用cache注解后，无法抛出异常的问题
+修复：由于dubbo2.6x zookeeper客户端切换为curator造成使用zookeeper会出现缺少类的问题
+修复：注解 @JbootrpcService 定义rpc接口同时，又通过@JbootrpcService引入第三方rpc时出错的问题
+优化：当服务器无法启动的时候，指明哪个端口被占用了
+优化：Druid连接池默认添加stat过滤器查看sql统计情况
+优化：排除不必要的包扫描，更新依赖
+
+
 jboot-1.4.4:
 新增：MQ 接收消息时可以按顺序同步接收的配置
 优化：response的关闭有容器负责处理，Controller不再进行干涉

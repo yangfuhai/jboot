@@ -15,12 +15,11 @@
  */
 package io.jboot.component.jwt;
 
+import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,9 +33,11 @@ import java.util.Map;
  */
 public class JwtInterceptor implements FixedInterceptor {
 
+    private static JwtConfig jwtConfig = Jboot.config(JwtConfig.class);
+
     @Override
     public void intercept(FixedInvocation inv) {
-        if (!JwtManager.me().isEnable()) {
+        if (!jwtConfig.isEnable()) {
             inv.invoke();
             return;
         }
@@ -46,36 +47,28 @@ public class JwtInterceptor implements FixedInterceptor {
 
         if (StringUtils.isBlank(token)) {
             inv.invoke();
-            processInvokeAfter(inv);
+            processInvokeAfter(inv, null);
             return;
         }
 
         Map map = JwtManager.me().parseJwtToken(token);
         if (map == null) {
             inv.invoke();
-            processInvokeAfter(inv);
+            processInvokeAfter(inv, null);
             return;
-        }
-
-        JwtShiroBridge jwtShiroBridge = JwtManager.me().getJwtShiroBridge();
-        if (jwtShiroBridge != null) {
-            Subject subject = jwtShiroBridge.buildSubject(map, inv.getController());
-            if (subject != null) {
-                ThreadContext.bind(subject);
-            }
         }
 
         try {
             JwtManager.me().holdJwts(map);
             inv.invoke();
-            processInvokeAfter(inv);
+            processInvokeAfter(inv, map);
         } finally {
             JwtManager.me().releaseJwts();
         }
     }
 
 
-    private void processInvokeAfter(FixedInvocation inv) {
+    private void processInvokeAfter(FixedInvocation inv, Map oldData) {
         if (!(inv.getController() instanceof JbootController)) {
             return;
         }
@@ -83,12 +76,36 @@ public class JwtInterceptor implements FixedInterceptor {
         JbootController jbootController = (JbootController) inv.getController();
         Map<String, Object> jwtMap = jbootController.getJwtAttrs();
 
+
         if (jwtMap == null || jwtMap.isEmpty()) {
+            refreshOldJwtIfNecessary(inv, oldData);
             return;
         }
 
         String token = JwtManager.me().createJwtToken(jwtMap);
         HttpServletResponse response = inv.getController().getResponse();
         response.addHeader(JwtManager.me().getHttpHeaderName(), token);
+    }
+
+    
+    private void refreshOldJwtIfNecessary(FixedInvocation inv, Map oldData) {
+        if (oldData == null) {
+            return;
+        }
+
+        Long isuuedAtMillis = (Long) oldData.get("isuuedAt");
+        if (isuuedAtMillis == null || jwtConfig.getValidityPeriod() <= 0) {
+            return;
+        }
+
+        Long nowMillis = System.currentTimeMillis();
+        long savedMillis = nowMillis - isuuedAtMillis;
+
+        if (savedMillis > jwtConfig.getValidityPeriod() / 2) {
+            String token = JwtManager.me().createJwtToken(oldData);
+            HttpServletResponse response = inv.getController().getResponse();
+            response.addHeader(JwtManager.me().getHttpHeaderName(), token);
+        }
+
     }
 }

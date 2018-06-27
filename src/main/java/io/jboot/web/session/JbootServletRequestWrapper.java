@@ -17,7 +17,6 @@ package io.jboot.web.session;
 
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
-import io.jboot.web.JbootRequestContext;
 
 import javax.servlet.http.*;
 import java.util.Collections;
@@ -48,7 +47,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public HttpSession getSession() {
-        return getSession(true);
+        return getSession(false);
     }
 
 
@@ -59,12 +58,14 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
         }
 
         String sessionId = getCookie(cookieName);
-        if (sessionId != null ) {
+        if (sessionId != null) {
             httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
+            httpSession.setMaxInactiveInterval(maxInactiveInterval);
         } else if (create) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
             httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
-            setCookie(cookieName, sessionId, maxInactiveInterval);
+            httpSession.setMaxInactiveInterval(maxInactiveInterval);
+            setCookie(cookieName, sessionId, cookieMaxAge);
         }
         return httpSession;
     }
@@ -129,7 +130,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
      * Get cookie object by cookie name.
      */
     private Cookie getCookieObject(String name) {
-        Cookie[] cookies = JbootRequestContext.getRequest().getCookies();
+        Cookie[] cookies = ((HttpServletRequest) getRequest()).getCookies();
         if (cookies != null)
             for (Cookie cookie : cookies)
                 if (cookie.getName().equals(name))

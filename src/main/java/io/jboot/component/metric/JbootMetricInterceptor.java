@@ -31,14 +31,18 @@ import io.jboot.web.fixedinterceptor.FixedInvocation;
  */
 public class JbootMetricInterceptor implements FixedInterceptor {
 
+    private static JbootMetricConfig config = Jboot.config(JbootMetricConfig.class);
 
     @Override
     public void intercept(FixedInvocation inv) {
 
+        if (!config.isConfigOk()) {
+            inv.invoke();
+            return;
+        }
+
 
         Timer.Context timerContext = null;
-
-
         EnableMetricCounter counterAnnotation = inv.getMethod().getAnnotation(EnableMetricCounter.class);
         if (counterAnnotation != null) {
             String name = StringUtils.isBlank(counterAnnotation.value())

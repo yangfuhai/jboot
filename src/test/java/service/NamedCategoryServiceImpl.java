@@ -16,10 +16,12 @@
 package service;
 
 import io.jboot.aop.annotation.Bean;
+import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
 
 @Bean(name = "myCategory")
 public class NamedCategoryServiceImpl implements CategoryService {
     @Override
+    @EnableHystrixCommand(key = "hello")
     public String hello(String text) {
         return "NamedCategoryServiceImpl say hello " + text;
     }

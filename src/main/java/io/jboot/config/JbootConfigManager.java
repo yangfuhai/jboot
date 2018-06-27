@@ -17,13 +17,17 @@ package io.jboot.config;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.jfinal.kit.*;
+import com.jfinal.kit.LogKit;
+import com.jfinal.kit.Prop;
+import com.jfinal.kit.PropKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.config.annotation.PropertyConfig;
 import io.jboot.config.client.ConfigRemoteReader;
 import io.jboot.config.server.ConfigFileScanner;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 
@@ -144,12 +148,28 @@ public class JbootConfigManager {
     public <T> T get(Class<T> clazz, String prefix, String file) {
 
         T obj = (T) configs.get(clazz.getName() + prefix);
-        if (obj != null) {
-            return obj;
+        if (obj == null) {
+            synchronized (clazz) {
+                if (obj == null) {
+                    obj = newConfigObject(clazz, prefix, file);
+                    configs.put(clazz.getName() + prefix, obj);
+                }
+            }
         }
 
-        obj = ClassKits.newInstance(clazz);
+        return obj;
+    }
+
+    public <T> T newConfigObject(Class<T> clazz, String prefix, String file) {
+        // 不能通过RPC创建
+        // 原因：很多场景下回使用到配置，包括Guice，如果此时又通过Guice来创建Config，会出现循环调用的问题
+        T obj = ClassKits.newInstance(clazz, false);
         Collection<Method> setMethods = ClassKits.getClassSetMethods(clazz);
+
+        if (ArrayUtils.isNullOrEmpty(setMethods)) {
+            configs.put(clazz.getName() + prefix, obj);
+            return obj;
+        }
 
         for (Method method : setMethods) {
 
@@ -188,8 +208,6 @@ public class JbootConfigManager {
                 LogKit.error(ex.toString(), ex);
             }
         }
-
-        configs.put(clazz.getName() + prefix, obj);
 
         return obj;
     }
@@ -323,9 +341,9 @@ public class JbootConfigManager {
     private void initConfigRemoteReader() {
         configRemoteReader = new ConfigRemoteReader(config.getRemoteUrl(), config.getAppName(), 5) {
             @Override
-            public void onChange(String appName,String key, String oldValue, String value) {
+            public void onChange(String appName, String key, String oldValue, String value) {
 
-                if(!appName.equals(name))
+                if (!appName.equals(name))
                     return;
                 /**
                  * 过滤掉系统启动参数设置
@@ -358,17 +376,16 @@ public class JbootConfigManager {
         configRemoteReader.start();
     }
 
-    private static String getKeyName(String file){
+    private static String getKeyName(String file) {
         File fileio = new File(file);
         file = fileio.getName();
         int index = file.lastIndexOf('.');
-        file = file.substring(0,index);
+        file = file.substring(0, index);
         index = file.lastIndexOf('-');
-        if(index<0)
-        {
+        if (index < 0) {
             return "jboot";
-        }else{
-            file = file.substring(index+1);
+        } else {
+            file = file.substring(index + 1);
             return file;
         }
     }

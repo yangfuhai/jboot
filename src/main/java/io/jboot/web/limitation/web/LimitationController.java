@@ -15,6 +15,7 @@
  */
 package io.jboot.web.limitation.web;
 
+import com.google.common.collect.Multimap;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.Ret;
 import io.jboot.utils.StringUtils;
@@ -28,14 +29,14 @@ import java.util.HashMap;
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package io.jboot.web.limitation
- *
+ * <p>
  * 使用步骤：
  * 1、通过 jboot.limitation.viewPaht 设置词controller 的访问路径，例如：设置为 /limitation
  * 2、浏览器访问 /limitation 查看所有限流情况
  * 3、浏览器访问 /limitation/set?path=/aaa/bbb/ccc&rate=111&type=ip 来这是单个ip限流情况
  * 4、浏览器访问 /limitation/close?path=/aaa/bbb/ccc&type=ip 来关闭/aaa/bbb/ccc对ip的限流情况
  * 5、浏览器访问 /limitation/enable?path=/aaa/bbb/ccc&type=ip 来开启/aaa/bbb/ccc对ip的限流情况
- *
+ * <p>
  * 其他：
  * 由于设置限流非常重要，可以通过 jboot.limitation.webAuthorizer = com.xxx.MyAuthorizer 来设置访问的 /limitation 的授权控制
  * MyAuthorizer 要实现接口 io.jboot.web.limitation.web.Authorizer
@@ -49,10 +50,10 @@ public class LimitationController extends JbootController {
 
         HashMap info = new HashMap();
 
-        info.put("ipRates", manager.getIpRates());
-        info.put("userRates", manager.getUserRates());
-        info.put("requestRates", manager.getRequestRates());
-        info.put("concurrencyRates", manager.getConcurrencyRates());
+        Multimap<String, LimitationInfo> limitationInfoMultimap = manager.getLimitationRates();
+        for (String key : limitationInfoMultimap.keySet()){
+            info.put(key,limitationInfoMultimap.get(key));
+        }
 
         renderJson(info);
     }
@@ -81,16 +82,10 @@ public class LimitationController extends JbootController {
 
         switch (type) {
             case "ip":
-                setIpRates(path, rate);
-                break;
             case "user":
-                setUserRates(path, rate);
-                break;
             case "request":
-                setRequestRates(path, rate);
-                break;
             case "concurrency":
-                setConcurrencyRates(path, rate);
+                manager.setRates(path, rate, type);
                 break;
             default:
                 renderJson(Ret.fail().set("message", "type is error"));
@@ -102,7 +97,7 @@ public class LimitationController extends JbootController {
 
 
     public void enable() {
-        Ret ret = doProcessEnable(true);
+        Ret ret = manager.doProcessEnable(getPara("path"), getPara("type"), true);
         if (ret.isOk()) {
             ret.set("message", "enable ok");
         }
@@ -110,106 +105,12 @@ public class LimitationController extends JbootController {
     }
 
     public void close() {
-        Ret ret = doProcessEnable(false);
+        Ret ret = manager.doProcessEnable(getPara("path"), getPara("type"), false);
         if (ret.isOk()) {
             ret.set("message", "close ok");
         }
         renderJson(ret);
     }
 
-    private Ret doProcessEnable(boolean enable) {
-        String path = getPara("path");
-        String type = getPara("type");
 
-        if (StringUtils.isBlank(type)) {
-            return Ret.fail().set("message", "type is empty");
-        }
-
-        if (StringUtils.isBlank(path)) {
-            return Ret.fail().set("message", "path is empty");
-        }
-
-        switch (type) {
-            case "ip":
-                LimitationInfo info = manager.getIpRates().get(path);
-                if (info == null) {
-                    return Ret.fail("message", "path not set");
-                }
-                info.setEnable(enable);
-                manager.getIpRates().put(path, info);
-                break;
-            case "user":
-                LimitationInfo userInfo = manager.getIpRates().get(path);
-                if (userInfo == null) {
-                    return Ret.fail("message", "path not set");
-                }
-                userInfo.setEnable(enable);
-                manager.getIpRates().put(path, userInfo);
-                break;
-            case "request":
-                LimitationInfo requestInfo = manager.getIpRates().get(path);
-                if (requestInfo == null) {
-                    return Ret.fail("message", "path not set");
-                }
-                requestInfo.setEnable(enable);
-                manager.getIpRates().put(path, requestInfo);
-                break;
-            case "concurrency":
-                LimitationInfo concurrencyInfo = manager.getIpRates().get(path);
-                if (concurrencyInfo == null) {
-                    return Ret.fail("message", "path not set");
-                }
-                concurrencyInfo.setEnable(enable);
-                manager.getIpRates().put(path, concurrencyInfo);
-                break;
-            default:
-                return Ret.fail().set("message", "type is error");
-        }
-
-        return Ret.ok();
-    }
-
-
-    private void setIpRates(String path, double rate) {
-        LimitationInfo info = manager.getIpRates().get(path);
-        if (info == null) {
-            info = new LimitationInfo();
-            info.setType(LimitationInfo.TYPE_IP);
-        }
-        info.setRate(rate);
-        manager.getIpRates().put(path, info);
-    }
-
-
-    private void setUserRates(String path, double rate) {
-        LimitationInfo info = manager.getUserRates().get(path);
-        if (info == null) {
-            info = new LimitationInfo();
-            info.setType(LimitationInfo.TYPE_USER);
-        }
-        info.setRate(rate);
-        manager.getUserRates().put(path, info);
-    }
-
-
-    private void setRequestRates(String path, double rate) {
-        LimitationInfo info = manager.getRequestRates().get(path);
-        if (info == null) {
-            info = new LimitationInfo();
-            info.setType(LimitationInfo.TYPE_REQUEST);
-        }
-        info.setRate(rate);
-        manager.getRequestRates().put(path, info);
-    }
-
-
-    private void setConcurrencyRates(String path, double rate) {
-        LimitationInfo info = manager.getConcurrencyRates().get(path);
-        if (info == null) {
-            info = new LimitationInfo();
-            info.setType(LimitationInfo.TYPE_CONCURRENCY);
-        }
-        info.setRate(rate);
-        manager.getConcurrencyRates().put(path, info);
-    }
 }
