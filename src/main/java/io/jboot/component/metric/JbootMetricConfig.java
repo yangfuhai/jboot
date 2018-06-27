@@ -32,11 +32,15 @@ public class JbootMetricConfig {
     private String url;
     private String reporter;
 
-    public String getUrl() {
+    public String getMappingUrl() {
         //在metrics中，会访问到配置的二级目录，必须添加下 /* 才能正常访问
         if (url != null && !url.endsWith("/*")) {
             return url + "/*";
         }
+        return url;
+    }
+
+    public String getUrl() {
         return url;
     }
 
@@ -51,6 +55,10 @@ public class JbootMetricConfig {
 
     public void setReporter(String reporter) {
         this.reporter = reporter;
+    }
+
+    public boolean isConfigOk() {
+        return url != null && reporter != null;
     }
 }
 

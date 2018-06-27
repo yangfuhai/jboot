@@ -13,27 +13,6 @@ import com.jfinal.plugin.activerecord.IBean;
 #end
 public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModelName)<M>> extends JbootModel<M> implements IBean {
 
-    public static final String ACTION_ADD = "#(tableMeta.modelName):add";
-    public static final String ACTION_DELETE = "#(tableMeta.modelName):delete";
-    public static final String ACTION_UPDATE = "#(tableMeta.modelName):update";
-
-
-    @Override
-    public String addAction() {
-        return ACTION_ADD;
-    }
-
-    @Override
-    public String deleteAction() {
-        return ACTION_DELETE;
-    }
-
-    @Override
-    public String updateAction() {
-        return ACTION_UPDATE;
-    }
-
-
 #set(b = generateChainSetter)
 #for(cm : tableMeta.columnMetas)
 	#set(argName = javaKeyword.contains(cm.attrName) ? '_' + cm.attrName : cm.attrName)

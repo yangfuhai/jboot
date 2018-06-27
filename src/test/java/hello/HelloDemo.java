@@ -13,15 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.db;
+package hello;
 
-import io.jboot.component.hystrix.JbootHystrixCommand;
+import io.jboot.Jboot;
+import io.jboot.web.controller.JbootController;
+import io.jboot.web.controller.annotation.RequestMapping;
 
-/**
- * Hystrix 降级监听器
- */
-public interface JbootDbHystrixFallbackListener {
 
-    public Object onFallback(String sql, Object[] paras, JbootHystrixCommand command, Throwable exception);
+@RequestMapping("/")
+public class HelloDemo extends JbootController {
+
+
+    public static void main(String[] args) {
+        Jboot.setBootArg("jboot.mode","product");
+//        Jboot.setBootArg("jboot.server.type", "jetty");
+        Jboot.run(args);
+    }
+
+
+    public void index() {
+
+       renderText("hello jboot ...");
+    }
+
 
 }
+
+
+

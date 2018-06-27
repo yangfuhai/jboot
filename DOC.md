@@ -111,7 +111,7 @@
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.4.4</version>
+    <version>1.6.0</version>
 </dependency>
 ```
 #### 编写helloworld
@@ -596,7 +596,7 @@ jboot.limitation.webPath = /jboot/limitation
 		| path  |要对那个路径进行设置，例如 `/user/aabb`|
 		
 1. 开启限流管控
-	* 接口：`/jboot/limitation/close`
+	* 接口：`/jboot/limitation/enable`
 	* 参数：
 	
 		| 参数         |  描述  |
@@ -743,7 +743,7 @@ Jboot的shiro模块为您提供了以下12个模板指令，同时支持shiro的
 | shiroHasRole  |有相应角色 |
 | shiroNoAuthenticated  |未进行身份验证时，即没有调用Subject.login进行登录。 |
 | shiroNotHasPermission  |没有该权限 |
-| shiroNotHasRole  |没没有该角色 |
+| shiroNotHasRole  |没有该角色 |
 | shiroPrincipal  |获取Subject Principal 身份信息 |
 
 
@@ -968,6 +968,515 @@ jboot.web.jwt.secret = your_secret
 
 例如，在登录后，服务器Server会通过 `setJwtAttr()` 设置上用户数据，客户端可以去获取 HTTP 响应头中的 Jwt，就可以获取 服务器渲染的 Jwt 信息，此时，应该把 Jwt 的信息保存下来，比如保存到 cookie 或 保存在storage等，
 在客户每次请求服务器 API 的时候，应该把 Jwt 设置在请求的 http 头中的 Jwt（注意，第一个字母大写），服务器就可以获取到具体是哪个 “用户” 进行请求了。
+
+## shiro的其他使用
+
+### 自定义shiro错误处理
+编写一个类实现 实现接口 io.jboot.component.shiro.JbootShiroInvokeListener，例如：
+
+
+```java
+  public class MyshiroListener implements  JbootShiroInvokeListener {
+
+
+        private JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
+
+
+        @Override
+        public void onInvokeBefore(FixedInvocation inv) {
+            //do nothing
+        }
+
+        @Override
+        public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
+            if (result == null || result.isOk()) {
+                inv.invoke();
+                return;
+            }
+
+            int errorCode = result.getErrorCode();
+            switch (errorCode) {
+                case AuthorizeResult.ERROR_CODE_UNAUTHENTICATED:
+                    doProcessUnauthenticated(inv.getController());
+                    break;
+                case AuthorizeResult.ERROR_CODE_UNAUTHORIZATION:
+                    doProcessuUnauthorization(inv.getController());
+                    break;
+                default:
+                    inv.getController().renderError(404);
+            }
+        }
+
+
+        public void doProcessUnauthenticated(Controller controller) {
+            // 处理认证失败
+        }
+
+        public void doProcessuUnauthorization(Controller controller) {
+            // 处理授权失败
+        }
+
+    };
+```
+
+其次在jboot.properties中配置即可
+
+```xml
+jboot.shiro.invokeListener=com.xxx.MyshiroListener
+```
+
+### shiro 和 jwt 整合
+和自定义shiro错误处理一样。 编写一个类实现 实现接口 io.jboot.component.shiro.JbootShiroInvokeListener，例如：
+
+```java
+  public class MyshiroListener implements  JbootShiroInvokeListener {
+
+        @Override
+        public void onInvokeBefore(FixedInvocation inv) {
+            String userId = String.valueOf(inv.getController.getJwtPara(USER_ID));
+
+            JwtAuthenticationToken token = new JwtAuthenticationToken();
+            token.setUserId(userId);
+            token.setToken(userId);
+    
+            Subject subject = SecurityUtils.getSubject();
+            subject.login(token);
+    
+            return subject;
+        }
+
+        @Override
+        public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
+            // ....
+        }
+
+    };
+```
+同时在jboot.properties中配置即可
+
+```xml
+jboot.shiro.invokeListener=com.xxx.MyshiroListener
+```
+
+
+自定义JwtAuthenticationToken
+
+```java
+public class JwtAuthenticationToken implements AuthenticationToken {
+    /** 用户id */
+    private String userId;
+    /** token */
+    private String token;
+    
+    @Override
+    public Object getPrincipal() {
+        return userId;
+    }
+
+    @Override
+    public Object getCredentials() {
+        return token;
+    }
+    
+    ... getter setter
+}
+```
+
+
+
+实现shiro realm JwtAuthorizingRealm
+
+```java
+public class JwtAuthorizingRealm extends AuthorizingRealm {
+
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof JwtAuthenticationToken;
+    }
+
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) token;
+        String uid = (String) jwtToken.getPrincipal();
+
+        // 此处判断 uid 是否存在，可以访问等操作
+       
+        return new SimpleAuthenticationInfo(uid, jwtToken.getCredentials(), this.getName());
+    }
+
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        // 此处获取 uid 角色权限
+        return null;
+    }
+}
+```
+
+实现jwt 无状态化，JwtSubjectFactory
+
+```java
+public class JwtSubjectFactory extends DefaultWebSubjectFactory {
+
+    @Override
+    public Subject createSubject(SubjectContext context) {
+        if (context.getAuthenticationToken() instanceof JwtAuthenticationToken) {
+            // jwt 不创建 session
+            context.setSessionCreationEnabled(false);
+        }
+
+        return super.createSubject(context);
+    }
+}
+```
+
+jboot.properties中配置
+
+```xml
+#---------------------------------------------------------------------------------#
+jboot.web.jwt.httpHeaderName=Jwt
+jboot.web.jwt.secret=xxxxxxxxx
+jboot.web.jwt.validityPeriod=1800000
+#---------------------------------------------------------------------------------#```
+```
+
+shiro.ini中配置
+
+```xml
+
+    [main]
+    #cache Manager
+    shiroCacheManager = io.jboot.component.shiro.cache.JbootShiroCacheManager
+    securityManager.cacheManager = $shiroCacheManager
+
+    #realm
+    dbRealm=xxx.JwtAuthorizingRealm
+    dbRealm.authorizationCacheName=shiro-authorizationCache
+    
+    securityManager.realm=$dbRealm
+
+    #session manager
+    sessionManager=org.apache.shiro.session.mgt.DefaultSessionManager
+    sessionManager.sessionValidationSchedulerEnabled=false
+
+    #use jwt
+    subjectFactory=xxx.JwtSubjectFactory
+    securityManager.subjectFactory=$subjectFactory
+    securityManager.sessionManager=$sessionManager
+
+    #session storage false
+    securityManager.subjectDAO.sessionStorageEvaluator.sessionStorageEnabled=false
+    
+```
+
+#### 认证服务端配置
+服务端主要作用为对用户名密码做认证，通过后构建jwt，与正常认证无太大区别，所以下面只给出认证后构建jwt的demo
+
+```java
+@RequestMapping("/")
+public class MainController extends BaseController {
+
+    /**
+     * 登录 基于 jwt
+     */
+    public void postLogin(String loginName, String pwd) {
+        // 此处判断用户名密码是否正确
+        
+        String userId = "userId"; //返回用户ID
+        setJwtAttr("userId", userId); //构建jwt
+        renderJson(); //返回成功
+    }
+}
+```
+
+### shiro 和 sso 整合
+和上面介绍的 jwt 的桥接器类似，主要作用是接收 sso 请求，完成客户端应用的局部认证与授权。
+
+以下是一个基于jboot 实现 sso服务端 与 sso客户端的 demo
+
+#### SSO客户端配置
+自定义 SSOAuthenticationToken
+
+```java
+public class SSOAuthenticationToken implements AuthenticationToken {
+
+    /** 用户id */
+    private String userId;
+
+    /** 全局会话 code */
+    private String ssoCode;
+
+    @Override
+    public Object getPrincipal() {
+        return userId;
+    }
+
+    @Override
+    public Object getCredentials() {
+        return ssoCode;
+    }
+    ... getter setter
+```
+
+实现 JbootShiroInvokeListener 接口：
+
+```java
+ public class MyshiroListener implements  JbootShiroInvokeListener {
+
+        @Override
+        public void onInvokeBefore(FixedInvocation inv) {
+        String ssoCode = inv.getController().getPara("ssoCode");
+        String userId = inv.getController().getPara("userId");
+
+        if (StringUtils.isBlank(ssoCode) || StringUtils.isBlank(userId)) {
+            return;
+        }
+
+        SSOAuthenticationToken token = new SSOAuthenticationToken();
+        token.setUserId(userId);
+        token.setSsoCode(ssoCode);
+
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            subject.login(token);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+        }
+    }
+}
+```
+
+实现shiro realm SSOAuthorizingRealm
+
+```java
+public class SSOAuthorizingRealm extends AuthorizingRealm {
+
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof SSOAuthenticationToken;
+    }
+
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        SSOAuthenticationToken ssoToken = (SSOAuthenticationToken) token;
+        String uid = (String) ssoToken.getPrincipal();
+        String ssoCode = token.getCredentials().toString();
+
+        //判断ssoCode是否为 sso 系统颁发
+
+        // 此处判断 uid 是否存在，可以访问等操作
+       
+        return new SimpleAuthenticationInfo(uid, ssoToken.getCredentials(), this.getName());
+    }
+
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        // 此处获取 uid 角色权限
+        return null;
+    }
+}
+```
+
+实现 shiro 无认证请求重定向到 sso系统，SSOShiroErrorProcess
+
+```java
+public class MyshiroListener implements  JbootShiroInvokeListener {
+
+        @Override
+        public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
+        if (result.isOk()) {
+                inv.invoke();
+                return;
+            }
+        int errorCode = result.getErrorCode();
+            
+        switch (errorCode) {
+            case AuthorizeResult.ERROR_CODE_UNAUTHENTICATED:
+                doProcessUnauthenticated(inv.getController());
+                break;
+            case AuthorizeResult.ERROR_CODE_UNAUTHORIZATION:
+                doProcessuUnauthorization(inv.getController());
+                break;
+            default:
+                inv.getController().renderError(404);
+        }
+    }
+
+
+    public void doProcessUnauthenticated(Controller controller) {
+        UpmsConfig upmsConfig = Jboot.config(UpmsConfig.class);
+
+        StringBuilder ssoServerUrl = new StringBuilder(upmsConfig.getServerUrl());
+        ssoServerUrl.append("/sso/index").append("?").append("appid").append("=").append(upmsConfig.getAppId()).append("sysid").append("=").append(upmsConfig.getSystemId());
+
+        // 回跳地址
+        StringBuffer backurl = controller.getRequest().getRequestURL();
+        String queryString = controller.getRequest().getQueryString();
+        if (StringUtils.isNotBlank(queryString)) {
+            backurl.append("?").append(queryString);
+        }
+        ssoServerUrl.append("&").append("backurl").append("=").append(StringUtils.urlEncode(backurl.toString()));
+
+        controller.redirect(ssoServerUrl.toString());
+    }
+
+    public void doProcessuUnauthorization(Controller controller) {
+        controller.renderError(403);
+    }
+}
+```
+
+
+shiro.ini中配置
+
+```xml
+[main]
+
+#cache Manager
+shiroCacheManager = io.jboot.component.shiro.cache.JbootShiroCacheManager
+securityManager.cacheManager = $shiroCacheManager
+
+#realm
+dbRealm=xxx.SSOAuthorizingRealm
+dbRealm.authorizationCacheName=shiro-authorizationCache
+
+securityManager.realm=$dbRealm
+
+#session 基于缓存sessionDao，如果缓存已经实现共享，那么session也同样实现共享
+sessionDAO=xxx.SessionDAO
+sessionDAO.activeSessionsCacheName=shiro-active-session
+
+#设置sessionCookie
+sessionIdCookie=org.apache.shiro.web.servlet.SimpleCookie
+sessionIdCookie.name=ssotestaid
+#sessionIdCookie.domain=demo.com
+#sessionIdCookie.path=
+#cookie最大有效期，单位秒，默认30天
+sessionIdCookie.maxAge=1800
+sessionIdCookie.httpOnly=true
+
+#设置session会话管理
+sessionManager=org.apache.shiro.web.session.mgt.DefaultWebSessionManager
+sessionManager.sessionDAO=$sessionDAO
+sessionManager.sessionIdCookie=$sessionIdCookie
+sessionManager.sessionIdCookieEnabled=true
+sessionManager.sessionIdUrlRewritingEnabled=false
+securityManager.sessionManager=$sessionManager
+#session过期时间，单位毫秒，默认两天
+securityManager.sessionManager.globalSessionTimeout=1800000
+
+```
+
+#### SSO服务端配置
+SSO服务端，主要包括登录认证、全局code认证、退出等操作。
+
+```java
+@RequestMapping("/sso")
+@EnableCORS
+public class SSOController extends BaseController {
+
+    public void index(String appid, String backurl) {
+        // 判断 appid 是否正确，backurl 是否正确
+
+        redirect("/sso/login?backurl=" + StringUtils.urlEncode(backurl));
+    }
+
+    @Before(GET.class)
+    public void login() {
+        Subject subject = SecurityUtils.getSubject();
+        String backurl = getPara("backurl");
+
+        if (subject.isAuthenticated()) {
+            String loginName = (String) subject.getPrincipal();
+
+            // 判断用户id
+
+            String code = (String) subject.getSession(false).getId().toString();
+
+            if (StringUtils.isBlank(backurl)) {
+                renderJson(JsonResult.buildSuccess(code));
+            } else {
+                if (backurl.contains("?")) {
+                    backurl += "&ssoCode=" + code + "&userId=" + upmsUser.getId();
+                } else {
+                    backurl += "?ssoCode=" + code + "&userId=" + upmsUser.getId();
+                }
+            }
+
+            redirect(backurl);
+        } else {
+            setAttr("backurl", backurl);
+            render("login.html");
+        }
+    }
+
+    @Before(POST.class)
+    @EmptyValidate(value = {
+            @Form(name = "loginName", message = "用户名不能为空"),
+            @Form(name = "password", message = "密码不能为空"),
+    }, renderType = ValidateRenderType.JSON)
+    public void postLogin(String loginName, String password) {
+        Subject subject = SecurityUtils.getSubject();
+
+        String backUrl = getPara("backUrl", "");
+        Ret ret = JsonResult.buildSuccess("登录成功", backUrl);
+
+        if (!subject.isAuthenticated()) {
+            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(loginName, password);
+            subject.login(usernamePasswordToken);
+
+            // 获取用户 id
+            
+            Session session = subject.getSession(true);
+            String code = session.getId().toString();
+
+            String backurl = getPara("backurl");
+            if (StringUtils.isBlank(backurl)) {
+                renderJson(JsonResult.buildSuccess(code));
+            } else {
+                if (backurl.contains("?")) {
+                    backurl += "&ssoCode=" + code + "&userId=" + upmsUser.getId();
+                } else {
+                    backurl += "?ssoCode=" + code + "&userId=" + upmsUser.getId();
+                }
+            }
+
+            redirect(backurl);
+            return;
+
+        }
+
+        renderJson(ret);
+    }
+
+    @Before(POST.class)
+    @EmptyValidate(value = {
+            @Form(name = "code", message = "参数错误"),
+    }, renderType = ValidateRenderType.JSON)
+    public void code(String code) {
+        Object codeCache = null; // 获取缓存全局code
+
+        if (codeCache == null) {
+            renderJson(JsonResult.buildError("invalid"));
+        } else {
+            renderJson(JsonResult.buildSuccess("success"));
+        }
+    }
+
+
+    public void logout() {
+        // shiro退出登录
+        SecurityUtils.getSubject().logout();
+        // 跳回原地址
+        String redirectUrl = getRequest().getHeader("Referer");
+        if (null == redirectUrl) {
+            redirectUrl = "/";
+        }
+
+        redirect(redirectUrl);
+    }
+}
+```
 
 # ORM
 ## 配置
@@ -1232,8 +1741,8 @@ public class UserDatabaseShardingStrategyConfig implements ShardingStrategyConfi
 ```
 
 编写好分库策略后，需要给Model配置上分库策略：
-```java
 
+```java
 @Table(tableName = "tb_user",
         primaryKey = "id",
          // 具体的表tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2,
@@ -1259,6 +1768,7 @@ public class UserModel extends JbootModel<UserModel> {
 #### demos
 
 例如：有一个userModel，我们希望能进行分为三张表，通过id的hashcode进行取模，代码如下：
+
 
 ```java
 
@@ -2532,6 +3042,7 @@ cd yourProjectPath/target/generated-resources/appassembler/jsw/jboot/bin
     <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 </listener>
 ```
+
 一般情况下，shiro的配置内容要放到jfinal的配置之上。
 
  
@@ -2566,6 +3077,29 @@ cd yourProjectPath/target/generated-resources/appassembler/jsw/jboot/bin
 <listener>
     <listener-class>io.jboot.component.metric.JbootHealthCheckServletContextListener</listener-class>
 </listener>
+ ```
+ 
+ 注意：因为项目的html文件都放在resource下，如果war解压后只有 META-INF 和 WEB-INF 这两个文件夹，html文件被打包在 WEB-INF/clasess 下，是不会被正确渲染的。所以需要通过pom文件配置插件，把resource下的html文件copy到war的根目录下，才能被正常渲染。
+ 
+ 假设你的html文件都放在 resource下的htmls目录，配置内容如下：
+ 
+ ```xml
+  <plugin>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <executions>
+        <execution>
+            <phase>compile</phase>
+            <goals>
+                <goal>run</goal>
+            </goals>
+            <configuration>
+                <tasks>
+                    <move file="${project.build.directory}/classes/htmls"  tofile="${project.build.directory}/${project.build.finalName}/htmls"/>
+                </tasks>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
  ```
 
 

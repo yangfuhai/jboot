@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop.interceptor.cache;
+package io.jboot.core.cache.annotation;
 
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Package io.jboot.aop.interceptor.cache
- */
-public class NullObject {
+import java.lang.annotation.*;
+
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface CachesEvict {
+    CacheEvict[] value();
 }

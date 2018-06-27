@@ -15,6 +15,7 @@
  */
 package io.jboot.component.opentracing;
 
+import io.jboot.Jboot;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
@@ -23,35 +24,46 @@ import io.opentracing.Tracer;
 
 public class OpentracingInterceptor implements FixedInterceptor {
 
+    private static JbootOpentracingConfig config = Jboot.config(JbootOpentracingConfig.class);
 
     @Override
     public void intercept(FixedInvocation inv) {
 
-        EnableTracing enableOpentracing = inv.getMethod().getAnnotation(EnableTracing.class);
-        Tracer tracer = JbootOpentracingManager.me().getTracer();
-        Span span = null;
-
-        if (enableOpentracing != null && tracer != null) {
-            String spanName = StringUtils.isBlank(enableOpentracing.value())
-                    ? inv.getController().getClass().getName() + "." + inv.getMethodName()
-                    : enableOpentracing.value();
-
-            Tracer.SpanBuilder spanBuilder = tracer.buildSpan(spanName);
-
-            span = spanBuilder.startManual();
-
-            span.setTag("requestId", StringUtils.uuid());
-            JbootSpanContext.add(span);
+        if (!config.isConfigOk()) {
+            inv.invoke();
+            return;
         }
+
+
+        Tracer tracer = JbootOpentracingManager.me().getTracer();
+        if (tracer == null) {
+            inv.invoke();
+            return;
+        }
+
+        EnableTracing enableOpentracing = inv.getMethod().getAnnotation(EnableTracing.class);
+        if (enableOpentracing == null) {
+            inv.invoke();
+            return;
+        }
+
+        String spanName = StringUtils.isBlank(enableOpentracing.value())
+                ? inv.getController().getClass().getName() + "." + inv.getMethodName()
+                : enableOpentracing.value();
+
+        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(spanName);
+
+        Span span = spanBuilder.startManual();
+
+        span.setTag("requestId", StringUtils.uuid());
+        JbootSpanContext.add(span);
 
 
         try {
             inv.invoke();
         } finally {
-            if (span != null) {
-                span.finish();
-                JbootSpanContext.release();
-            }
+            span.finish();
+            JbootSpanContext.release();
         }
 
     }

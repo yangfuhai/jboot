@@ -51,7 +51,10 @@ public class HikariDataSourceFactory implements DataSourceFactory {
         hikariConfig.setMaximumPoolSize(dataSourceConfig.getMaximumPoolSize());
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-        dataSource.setMetricRegistry(Jboot.me().getMetric());
+
+        if (Jboot.me().getMetric() != null) {
+            dataSource.setMetricRegistry(Jboot.me().getMetric());
+        }
 
         return dataSource;
     }

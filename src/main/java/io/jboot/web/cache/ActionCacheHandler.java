@@ -98,6 +98,7 @@ public class ActionCacheHandler extends Handler {
         return actionCache != null ? actionCache : action.getControllerClass().getAnnotation(EnableActionCache.class);
     }
 
+
     private void exec(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, EnableActionCache actionCacheEnable) {
 
         //缓存名称
@@ -118,26 +119,31 @@ public class ActionCacheHandler extends Handler {
             return;
         }
 
+        ActionCacheContent actionCache = Jboot.me().getCache().get(cacheName, cacheKey);
+        if (actionCache != null) {
+            renderCache(request, response, actionCache, action);
+            isHandled[0] = true;
+            return;
+        }
+
         ActionCacheInfo info = new ActionCacheInfo();
         info.setGroup(cacheName);
         info.setKey(cacheKey);
         info.setLiveSeconds(actionCacheEnable.liveSeconds());
-
         ActionCacheContext.hold(info);
 
-        ActionCacheContent actionCache = Jboot.me().getCache().get(cacheName, cacheKey);
-        if (actionCache == null) {
-            next.handle(target, request, response, isHandled);
-            return;
-        }
+        next.handle(target, request, response, isHandled);
 
+    }
+
+    private void renderCache(HttpServletRequest request, HttpServletResponse response, ActionCacheContent actionCache, Action action) {
         response.setContentType(actionCache.getContentType());
         PrintWriter writer = null;
         try {
             writer = response.getWriter();
             writer.write(actionCache.getContent());
             writer.flush();
-            isHandled[0] = true;
+
         } catch (Exception e) {
             LOG.error(e.toString(), e);
             RenderManager.me()

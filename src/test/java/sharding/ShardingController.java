@@ -30,6 +30,8 @@ public class ShardingController extends JbootController {
 
         user.setName("fuhai yang");
 
+//        DAO.findFirstByColumn("name","fuhaiyang");
+
         //更新
         user.update();
 
@@ -37,6 +39,11 @@ public class ShardingController extends JbootController {
         UserModel findModel = DAO.findById(id);
         renderJson(findModel);
 
+    }
+
+    public void id(){
+        UserModel findModel = DAO.findById(getPara());
+        renderJson(findModel);
     }
 
 

@@ -16,75 +16,78 @@
 package io.jboot.aop.interceptor.cache;
 
 
-import com.jfinal.log.Log;
-import com.jfinal.plugin.ehcache.IDataLoader;
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.Cacheable;
-import io.jboot.exception.JbootAssert;
+import io.jboot.exception.JbootException;
+import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
 
 /**
  * 缓存操作的拦截器
  */
-public class JbootCacheInterceptor implements MethodInterceptor {
+public class JbootCacheInterceptor implements Interceptor {
 
-    static final Log LOG = Log.getLog(JbootCacheInterceptor.class);
+    private static final String NULL_VALUE = "NULL_VALUE";
 
 
     @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    public void intercept(Invocation inv) {
 
-        Class targetClass = methodInvocation.getThis().getClass();
-        Method method = methodInvocation.getMethod();
-
+        Method method = inv.getMethod();
         Cacheable cacheable = method.getAnnotation(Cacheable.class);
         if (cacheable == null) {
-            return methodInvocation.proceed();
+            inv.invoke();
+            return;
         }
 
         String unlessString = cacheable.unless();
-        if (StringUtils.isNotBlank(unlessString)) {
-            unlessString = String.format("#(%s)", unlessString);
-            String unlessBoolString = Kits.engineRender(unlessString, method, methodInvocation.getArguments());
-            if ("true".equals(unlessBoolString)) {
-                return methodInvocation.proceed();
-            }
+        if (Kits.isUnless(unlessString, method, inv.getArgs())) {
+            inv.invoke();
+            return;
         }
 
-
+        Class targetClass = inv.getTarget().getClass();
         String cacheName = cacheable.name();
-        JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
-                String.format("Cacheable.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
 
-        String cacheKey = Kits.buildCacheKey(cacheable.key(), targetClass, method, methodInvocation.getArguments());
+        if (StringUtils.isBlank(cacheName)) {
+            throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
+                    ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
+        }
 
-        IDataLoader dataLoader = new IDataLoader() {
-            @Override
-            public Object load() {
-                Object r = null;
-                try {
-                    r = methodInvocation.proceed();
-                } catch (Throwable e) {
-                    LOG.error(e.toString(), e);
-                }
+        String cacheKey = Kits.buildCacheKey(cacheable.key(), targetClass, method, inv.getArgs());
 
-                if (r != null) {
-                    return r;
-                }
 
-                return cacheable.nullCacheEnable() ? new NullObject() : null;
+        Object data = Jboot.me().getCache().get(cacheName, cacheKey);
+        if (data != null) {
+            if (NULL_VALUE.equals(data)) {
+                inv.setReturnValue(null);
+            } else {
+                inv.setReturnValue(data);
             }
-        };
+            return;
+        }
 
-        Object data = cacheable.liveSeconds() > 0
-                ? Jboot.me().getCache().get(cacheName, cacheKey, dataLoader, cacheable.liveSeconds())
-                : Jboot.me().getCache().get(cacheName, cacheKey, dataLoader);
+        inv.invoke();
 
-        return data == null || data instanceof NullObject ? null : data;
+        data = inv.getReturnValue();
+
+        if (data != null) {
+            cacheData(cacheable, cacheName, cacheKey, data);
+        } else if (data == null && cacheable.nullCacheEnable()) {
+            cacheData(cacheable, cacheName, cacheKey, NULL_VALUE);
+        }
+    }
+
+    private void cacheData(Cacheable cacheable, String cacheName, String cacheKey, Object data) {
+        if (cacheable.liveSeconds() > 0) {
+            Jboot.me().getCache().put(cacheName, cacheKey, data, cacheable.liveSeconds());
+        } else {
+            Jboot.me().getCache().put(cacheName, cacheKey, data);
+        }
     }
 
 

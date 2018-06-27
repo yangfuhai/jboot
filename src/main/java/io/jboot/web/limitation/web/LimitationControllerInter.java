@@ -29,15 +29,16 @@ import io.jboot.web.limitation.LimitationConfig;
  */
 public class LimitationControllerInter implements Interceptor {
 
-
-    private static Authorizer authorizer;
+    private static LimitationConfig config = Jboot.config(LimitationConfig.class);
 
     @Override
     public void intercept(Invocation inv) {
+        if (!config.isEnable()) {
+            inv.getController().renderError(404);
+            return;
+        }
 
-        initAuthorizer();
-
-        if (!authorizer.onAuthorize(inv.getController())) {
+        if (!getAuthorizer().onAuthorize(inv.getController())) {
             inv.getController().renderError(404);
             return;
         }
@@ -45,16 +46,19 @@ public class LimitationControllerInter implements Interceptor {
         inv.invoke();
     }
 
-    private void initAuthorizer() {
-        if (authorizer != null) {
-            return;
+    private static Authorizer authorizer;
+
+    private Authorizer getAuthorizer() {
+
+        if (authorizer == null) {
+            String authorizerClass = Jboot.config(LimitationConfig.class).getWebAuthorizer();
+            authorizer = ClassKits.newInstance(authorizerClass);
+            if (authorizer == null) {
+                throw new JbootException("can not init authorizer for class : " + authorizerClass);
+            }
         }
 
-        String authorizerClass = Jboot.config(LimitationConfig.class).getWebAuthorizer();
-        authorizer = ClassKits.newInstance(authorizerClass);
-        if (authorizer == null) {
-            throw new JbootException("can not init authorizer for class : " + authorizerClass);
-        }
+        return authorizer;
     }
 
 

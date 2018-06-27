@@ -45,7 +45,7 @@ public class ShiroHasAllPermissionDirective extends JbootShiroDirectiveBase {
         if (getSubject() != null && ArrayUtils.isNotEmpty(exprList.getExprArray())) {
             boolean hasAllPermission = true;
             for (Expr expr : exprList.getExprArray())
-                if (!getSubject().isPermitted(expr.toString())) {
+                if (!getSubject().isPermitted(expr.eval(scope).toString())) {
                     hasAllPermission = false;
                     break;
                 }

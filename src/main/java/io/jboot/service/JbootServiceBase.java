@@ -47,7 +47,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
             throw new JbootException("can not get parameterizedType in JbootServiceBase");
         }
 
-        DAO = ClassKits.newInstance(modelClass);
+        DAO = ClassKits.newInstance(modelClass, false);
     }
 
 
@@ -84,8 +84,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @return
      */
     public boolean deleteById(Object id) {
-        JbootModel model = findById(id);
-        return model == null ? false : model.delete();
+        return DAO.deleteById(id);
     }
 
     /**

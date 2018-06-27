@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.redis.impl;
+package io.jboot.component.redis.jedis;
 
 import com.jfinal.log.Log;
 import io.jboot.component.redis.JbootRedisBase;
@@ -31,15 +31,15 @@ import java.util.Map.Entry;
  * 参考： com.jfinal.plugin.redis
  * JbootRedis 命令文档: http://redisdoc.com/
  */
-public class JbootClusterRedisImpl extends JbootRedisBase {
+public class JbootJedisClusterImpl extends JbootRedisBase {
 
     protected JedisCluster jedisCluster;
     private int timeout = 2000;
 
-    static final Log LOG = Log.getLog(JbootClusterRedisImpl.class);
+    static final Log LOG = Log.getLog(JbootJedisClusterImpl.class);
 
 
-    public JbootClusterRedisImpl(JbootRedisConfig config) {
+    public JbootJedisClusterImpl(JbootRedisConfig config) {
 
         Integer timeout = config.getTimeout();
         String password = config.getPassword();
@@ -80,6 +80,21 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
             poolConfig.setNumTestsPerEvictionRun(config.getNumTestsPerEvictionRun());
         }
 
+        if (StringUtils.isNotBlank(config.getMaxTotal())) {
+            poolConfig.setMaxTotal(config.getMaxTotal());
+        }
+
+        if (StringUtils.isNotBlank(config.getMaxIdle())) {
+            poolConfig.setMaxIdle(config.getMaxIdle());
+        }
+
+        if (StringUtils.isNotBlank(config.getMinIdle())) {
+            poolConfig.setMinIdle(config.getMinIdle());
+        }
+
+        if (StringUtils.isNotBlank(config.getMaxWaitMillis())) {
+            poolConfig.setMaxWaitMillis(config.getMaxWaitMillis());
+        }
         this.jedisCluster = newJedisCluster(config.getHostAndPorts(), timeout, maxAttempts, password, poolConfig);
 
     }
@@ -104,7 +119,7 @@ public class JbootClusterRedisImpl extends JbootRedisBase {
         return jedisCluster;
     }
 
-    public JbootClusterRedisImpl(JedisCluster jedisCluster) {
+    public JbootJedisClusterImpl(JedisCluster jedisCluster) {
         this.jedisCluster = jedisCluster;
     }
 

@@ -49,8 +49,7 @@ public class ControllerUtils {
         Set<String> excludedMethodName = new HashSet<String>();
         Method[] methods = Controller.class.getMethods();
         for (Method m : methods) {
-            if (m.getParameterTypes().length == 0)
-                excludedMethodName.add(m.getName());
+            excludedMethodName.add(m.getName());
         }
         return excludedMethodName;
     }

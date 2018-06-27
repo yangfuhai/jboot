@@ -26,16 +26,16 @@ import io.jboot.component.metric.JbootHealthCheckServletContextListener;
 import io.jboot.component.metric.JbootMetricConfig;
 import io.jboot.component.metric.JbootMetricServletContextListener;
 import io.jboot.component.shiro.JbootShiroConfig;
+import io.jboot.component.shiro.JbootShiroFilter;
 import io.jboot.server.ContextListeners;
 import io.jboot.server.JbootServer;
-import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerClassloader;
+import io.jboot.server.JbootServerConfig;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.JbootWebConfig;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
-import org.apache.shiro.web.servlet.ShiroFilter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -48,7 +48,7 @@ import java.net.URISyntaxException;
 import java.util.EnumSet;
 import java.util.Map;
 
-public class JettyServer extends JbootServer {
+public class JettyServer implements JbootServer {
 
     private static Log log = Log.getLog(JettyServer.class);
 
@@ -89,7 +89,7 @@ public class JettyServer extends JbootServer {
         JbootShiroConfig shiroConfig = Jboot.config(JbootShiroConfig.class);
         if (shiroConfig.isConfigOK()) {
             handler.addEventListener(new EnvironmentLoaderListener());
-            handler.addFilter(ShiroFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+            handler.addFilter(JbootShiroFilter.class, shiroConfig.getUrlMapping(), EnumSet.of(DispatcherType.REQUEST));
         }
 
         //JFinal
@@ -103,10 +103,10 @@ public class JettyServer extends JbootServer {
 
 
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
-        if (StringUtils.isNotBlank(metricsConfig.getUrl())) {
+        if (metricsConfig.isConfigOk()) {
             handler.addEventListener(new JbootMetricServletContextListener());
             handler.addEventListener(new JbootHealthCheckServletContextListener());
-            handler.addServlet(AdminServlet.class, metricsConfig.getUrl());
+            handler.addServlet(AdminServlet.class, metricsConfig.getMappingUrl());
         }
 
         io.jboot.server.Servlets jbootServlets = new io.jboot.server.Servlets();
@@ -153,7 +153,7 @@ public class JettyServer extends JbootServer {
             jettyServer.stop();
             return true;
         } catch (Exception ex) {
-            log.error(ex.toString(), ex);
+            log.error("can not start jetty with port:" + config.getPort(), ex);
         }
         return false;
     }

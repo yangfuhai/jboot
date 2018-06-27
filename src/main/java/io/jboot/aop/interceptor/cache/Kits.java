@@ -16,6 +16,8 @@
 package io.jboot.aop.interceptor.cache;
 
 import com.jfinal.template.Engine;
+import io.jboot.Jboot;
+import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
@@ -166,6 +168,40 @@ class Kits {
 
         return String.valueOf(object);
 
+    }
+
+
+    static boolean isUnless(String unlessString, Method method, Object[] arguments) {
+
+        if (StringUtils.isBlank(unlessString)) {
+            return false;
+        }
+
+        unlessString = String.format("#(%s)", unlessString);
+        String unlessBoolString = engineRender(unlessString, method, arguments);
+        return "true".equals(unlessBoolString);
+    }
+
+
+    static void doCacheEvict(Object[] arguments, Class targetClass, Method method, CacheEvict evict) {
+        String unlessString = evict.unless();
+        if (Kits.isUnless(unlessString, method, arguments)) {
+            return;
+        }
+
+        String cacheName = evict.name();
+        if (StringUtils.isBlank(cacheName)) {
+            throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
+                    ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
+        }
+
+        if ("*".equals(evict.key().trim())) {
+            Jboot.me().getCache().removeAll(cacheName);
+            return;
+        }
+
+        String cacheKey = Kits.buildCacheKey(evict.key(), targetClass, method, arguments);
+        Jboot.me().getCache().remove(cacheName, cacheKey);
     }
 
 }

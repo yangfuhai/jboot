@@ -16,54 +16,38 @@
 package io.jboot.aop.interceptor.cache;
 
 
-import io.jboot.Jboot;
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import io.jboot.core.cache.annotation.CacheEvict;
-import io.jboot.exception.JbootAssert;
-import io.jboot.utils.StringUtils;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
 
 /**
  * 清除缓存操作的拦截器
  */
-public class JbootCacheEvictInterceptor implements MethodInterceptor {
+public class JbootCacheEvictInterceptor implements Interceptor {
 
     @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    public void intercept(Invocation inv) {
 
-        Class targetClass = methodInvocation.getThis().getClass();
-        Method method = methodInvocation.getMethod();
+        Method method = inv.getMethod();
 
         CacheEvict cacheEvict = method.getAnnotation(CacheEvict.class);
         if (cacheEvict == null) {
-            return methodInvocation.proceed();
+            inv.invoke();
+            return;
         }
 
-        String unlessString = cacheEvict.unless();
-        if (StringUtils.isNotBlank(unlessString)) {
-            unlessString = String.format("#(%s)", unlessString);
-            String unlessBoolString = Kits.engineRender(unlessString, method, methodInvocation.getArguments());
-            if ("true".equals(unlessBoolString)) {
-                return methodInvocation.proceed();
-            }
+        Class targetClass = inv.getTarget().getClass();
+
+        if (cacheEvict.beforeInvocation()) {
+            Kits.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
         }
 
+        inv.invoke();
 
-        String cacheName = cacheEvict.name();
-        JbootAssert.assertTrue(StringUtils.isNotBlank(cacheName),
-                String.format("CacheEvict.name()  must not empty in method [%s]!!!", targetClass.getName() + "#" + method.getName()));
-
-        if ("*".equals(cacheEvict.key())) {
-            Jboot.me().getCache().removeAll(cacheName);
-            return methodInvocation.proceed();
+        if (!cacheEvict.beforeInvocation()) {
+            Kits.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
         }
-
-        String cacheKey = Kits.buildCacheKey(cacheEvict.key(), targetClass, method, methodInvocation.getArguments());
-        Jboot.me().getCache().remove(cacheName, cacheKey);
-        return methodInvocation.proceed();
     }
-
-
 }

@@ -25,7 +25,6 @@ public class JbootBaseModelGenerator extends BaseModelGenerator {
 
         this.template = "/io/jboot/codegen/model/base_model_template.jf";
 
-
     }
 
 

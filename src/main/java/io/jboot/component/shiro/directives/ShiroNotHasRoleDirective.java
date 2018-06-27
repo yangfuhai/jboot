@@ -46,7 +46,7 @@ public class ShiroNotHasRoleDirective extends JbootShiroDirectiveBase {
         boolean hasAnyRole = false;
         if (getSubject() != null && ArrayUtils.isNotEmpty(exprList.getExprArray())) {
             for (Expr expr : exprList.getExprArray()) {
-                if (getSubject().hasRole(expr.toString())) {
+                if (getSubject().hasRole(expr.eval(scope).toString())) {
                     hasAnyRole = true;
                     break;
                 }

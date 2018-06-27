@@ -17,8 +17,10 @@ package io.jboot.db.datasource;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.collect.Sets;
+import com.jfinal.log.Log;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -26,6 +28,8 @@ import javax.sql.DataSource;
  * @Package io.jboot.db.datasource
  */
 public class DruidDataSourceFactory implements DataSourceFactory {
+
+    static Log log = Log.getLog(DruidDataSourceFactory.class);
 
     @Override
     public DataSource createDataSource(DataSourceConfig dataSourceConfig) {
@@ -35,6 +39,11 @@ public class DruidDataSourceFactory implements DataSourceFactory {
         druidDataSource.setUsername(dataSourceConfig.getUser());
         druidDataSource.setPassword(dataSourceConfig.getPassword());
         druidDataSource.setDriverClassName(dataSourceConfig.getDriverClassName());
+        try {
+            druidDataSource.setFilters("stat");
+        } catch (SQLException e) {
+            log.error("DruidDataSourceFactory is error", e);
+        }
 
         if (dataSourceConfig.getConnectionInitSql() != null) {
             druidDataSource.setConnectionInitSqls(Sets.newHashSet(dataSourceConfig.getConnectionInitSql()));

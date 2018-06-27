@@ -35,12 +35,12 @@ public class JbootServiceGenerator {
 
     }
 
-    public static void run(String basePackage, String modelPacket) {
-        new JbootServiceGenerator(basePackage, modelPacket).doGenerate(null);
+    public static void run(String basePackage, String modelPackage) {
+        new JbootServiceGenerator(basePackage, modelPackage).doGenerate(null);
     }
 
-    public static void run(String basePackage, String modelPacket, String excludeTables) {
-        new JbootServiceGenerator(basePackage, modelPacket).doGenerate(excludeTables);
+    public static void run(String basePackage, String modelPackage, String excludeTables) {
+        new JbootServiceGenerator(basePackage, modelPackage).doGenerate(excludeTables);
     }
 
 

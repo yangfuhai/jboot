@@ -1,4 +1,6 @@
-![](./docs/files/logo.png)
+## website
+
+http://jboot.io
 
 ## [中文文档](./README-ZH.md)
 ## what is JBoot 
@@ -7,13 +9,15 @@ Jboot，she is born for distributed project and micro service.
 
 QQ-Group： 601440615
 
+Jboot Demos ： https://gitee.com/fuhai/jboot/tree/master/src/test/java
+
 ## Jboot maven dependency
 
 ```xml
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.4.4</version>
+    <version>1.6.0</version>
 </dependency>
 
 ```

@@ -131,8 +131,8 @@ public class JbootEventManager {
             Collections.sort(list, new Comparator<JbootEventListener>() {
                 @Override
                 public int compare(JbootEventListener o1, JbootEventListener o2) {
-                    EventConfig c1 = o1.getClass().getAnnotation(EventConfig.class);
-                    EventConfig c2 = o2.getClass().getAnnotation(EventConfig.class);
+                    EventConfig c1 = ClassKits.getUsefulClass(o1.getClass()).getAnnotation(EventConfig.class);
+                    EventConfig c2 = ClassKits.getUsefulClass(o2.getClass()).getAnnotation(EventConfig.class);
                     return c1.weight() - c2.weight();
                 }
             });

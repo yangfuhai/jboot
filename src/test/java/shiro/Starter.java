@@ -2,9 +2,6 @@ package shiro;
 
 import io.jboot.Jboot;
 import io.jboot.server.listener.JbootAppListenerBase;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -15,14 +12,10 @@ import org.apache.shiro.mgt.SecurityManager;
  */
 public class Starter extends JbootAppListenerBase {
 
-    @Override
-    public void onJFinalStarted() {
-        IniSecurityManagerFactory factory= new IniSecurityManagerFactory("classpath:shiro.ini");
-        SecurityManager securityManager = factory.getInstance();
-        SecurityUtils.setSecurityManager(securityManager);
-    }
 
     public static void main(String[] args) {
+
+        Jboot.setBootArg("jboot.shiro.loginUrl","/shiro/doLogin");
 
         Jboot.run(args);
     }
