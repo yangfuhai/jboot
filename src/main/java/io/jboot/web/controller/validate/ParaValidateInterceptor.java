@@ -24,6 +24,8 @@ import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
+import java.lang.reflect.Method;
+
 /**
  * 验证拦截器
  */
@@ -33,13 +35,18 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
     @Override
     public void intercept(FixedInvocation inv) {
+        Controller controller = inv.getController();
+        if (RequestUtils.isMultipartRequest(controller.getRequest())) {
+            controller.getFiles();
+        }
 
-        EmptyValidate emptyParaValidate = inv.getMethod().getAnnotation(EmptyValidate.class);
+        Method method = inv.getMethod();
+        EmptyValidate emptyParaValidate = method.getAnnotation(EmptyValidate.class);
         if (emptyParaValidate != null && !validateEmpty(inv, emptyParaValidate)) {
             return;
         }
 
-        CaptchaValidate captchaValidate = inv.getMethod().getAnnotation(CaptchaValidate.class);
+        CaptchaValidate captchaValidate = method.getAnnotation(CaptchaValidate.class);
         if (captchaValidate != null && !validateCaptache(inv, captchaValidate)) {
             return;
         }
