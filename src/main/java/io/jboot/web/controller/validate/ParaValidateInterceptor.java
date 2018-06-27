@@ -35,12 +35,9 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
     @Override
     public void intercept(FixedInvocation inv) {
-        Controller controller = inv.getController();
-        if (RequestUtils.isMultipartRequest(controller.getRequest())) {
-            controller.getFiles();
-        }
 
         Method method = inv.getMethod();
+        
         EmptyValidate emptyParaValidate = method.getAnnotation(EmptyValidate.class);
         if (emptyParaValidate != null && !validateEmpty(inv, emptyParaValidate)) {
             return;
@@ -53,6 +50,18 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
         inv.invoke();
 
+    }
+
+    /**
+     * 当 有文件上传的时候，需要通过 controller.getFiles() 才能正常通过 getParam 获取数据
+     *
+     * @param inv
+     */
+    private void parseMultpartRequestIfNecessary(FixedInvocation inv) {
+        Controller controller = inv.getController();
+        if (RequestUtils.isMultipartRequest(controller.getRequest())) {
+            controller.getFiles();
+        }
     }
 
 
@@ -68,6 +77,8 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         if (StringUtils.isBlank(formName)) {
             throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
         }
+
+        parseMultpartRequestIfNecessary(inv);
 
         Controller controller = inv.getController();
         if (controller.validateCaptcha(formName)) {
@@ -117,6 +128,8 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         if (ArrayUtils.isNullOrEmpty(forms)) {
             return true;
         }
+
+        parseMultpartRequestIfNecessary(inv);
 
         for (Form form : forms) {
             String formName = form.name();
