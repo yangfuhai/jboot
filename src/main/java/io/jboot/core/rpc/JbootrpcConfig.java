@@ -82,6 +82,9 @@ public class JbootrpcConfig {
     private String serialization;
 
 
+    private Integer retries;//重试次数，不配置默认使用框架默认配置 motan和dubbo可能不一样
+
+
     /**
      * RPC Hystrix 相关的配置
      */
@@ -298,6 +301,14 @@ public class JbootrpcConfig {
 
     public void setSerialization(String serialization) {
         this.serialization = serialization;
+    }
+
+    public Integer getRetries() {
+        return retries;
+    }
+
+    public void setRetries(Integer retries) {
+        this.retries = retries;
     }
 
     private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();

@@ -104,6 +104,10 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setTimeout(getRpcConfig().getRequestTimeOut());
         reference.setGroup(group);
 
+        if (getRpcConfig().getRetries() != null) {
+            reference.setRetries(getRpcConfig().getRetries());
+        }
+
         if (StringUtils.isNotBlank(getRpcConfig().getProxy())) {
             reference.setProxy(getRpcConfig().getProxy());
         } else {
@@ -165,11 +169,11 @@ public class JbootDubborpc extends JbootrpcBase {
             protocolConfig.setSerialization(getRpcConfig().getSerialization());
         }
 
-        if (protocolConfig.getPort() == null && getRpcConfig().getDefaultPort() != null){
+        if (protocolConfig.getPort() == null && getRpcConfig().getDefaultPort() != null) {
             protocolConfig.setPort(getRpcConfig().getDefaultPort());
         }
 
-        if (port > 0 ){
+        if (port > 0) {
             protocolConfig.setPort(port);
         }
 

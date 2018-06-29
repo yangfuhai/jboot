@@ -103,6 +103,10 @@ public class JbootMotanrpc extends JbootrpcBase {
         refererConfig.setRequestTimeout(getRpcConfig().getRequestTimeOut());
         refererConfig.setProtocol(protocolConfig);
 
+        if (getRpcConfig().getRetries() != null) {
+            refererConfig.setRetries(getRpcConfig().getRetries());
+        }
+
         if (StringUtils.isNotBlank(getRpcConfig().getProxy())) {
             refererConfig.setProxy(getRpcConfig().getProxy());
         } else {
