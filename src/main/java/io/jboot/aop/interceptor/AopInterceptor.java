@@ -19,6 +19,7 @@ package io.jboot.aop.interceptor;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
 import com.jfinal.core.Controller;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
@@ -40,21 +41,27 @@ import java.lang.reflect.Method;
  */
 public class AopInterceptor implements MethodInterceptor {
 
+    private static final Log LOG = Log.getLog(AopInterceptor.class);
+
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
-        EnableHystrixCommand enableHystrixCommand = methodInvocation.getMethod().getAnnotation(EnableHystrixCommand.class);
+        Class targetClass = methodInvocation.getThis().getClass();
 
+        //过滤掉controller，因为controller由action去执行@Before相关注解了
+        if (Controller.class.isAssignableFrom(targetClass)) {
+            return methodInvocation.proceed();
+        }
+
+
+        EnableHystrixCommand enableHystrixCommand = methodInvocation.getMethod().getAnnotation(EnableHystrixCommand.class);
         if (enableHystrixCommand == null) {
             return doJFinalAOPInvoke(methodInvocation);
         }
 
 
-        Class targetClass = ClassKits.getUsefulClass(methodInvocation.getThis().getClass());
-        String faillMethod = enableHystrixCommand.failMethod();
         String commandKey = enableHystrixCommand.key();
-
         if (StringUtils.isBlank(commandKey)) {
             commandKey = methodInvocation.getMethod().getName();
         }
@@ -71,45 +78,24 @@ public class AopInterceptor implements MethodInterceptor {
 
             @Override
             protected Object getFallback() {
+
+                String faillMethod = enableHystrixCommand.failMethod();
+
                 if (StringUtils.isBlank(faillMethod)) {
-                    getExecutionException().printStackTrace();
+                    LOG.error(getExecutionException().toString(), getExecutionException());
                     return null;
                 }
 
 
-                Method method = null;
                 try {
-                    method = targetClass.getMethod(faillMethod, JbootHystrixCommand.class);
-                } catch (NoSuchMethodException ex) {
+                    Method method = ClassKits.getUsefulClass(targetClass).getMethod(faillMethod);
+                    method.setAccessible(true);
+                    return method.invoke(methodInvocation.getThis());
+                } catch (Exception e) {
+                    LOG.error(e.toString(), e);
                 }
 
-                if (method != null) {
-                    try {
-                        method.setAccessible(true);
-                        return method.invoke(methodInvocation.getThis(), this);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                try {
-                    method = targetClass.getMethod(faillMethod);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-
-
-                if (method != null) {
-                    try {
-                        method.setAccessible(true);
-                        return method.invoke(methodInvocation.getThis());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-
-                return super.getFallback();
+                return null;
             }
         });
     }
@@ -138,14 +124,7 @@ public class AopInterceptor implements MethodInterceptor {
 
     private Object doJFinalAOPInvoke(MethodInvocation methodInvocation) throws Throwable {
 
-        Class targetClass = methodInvocation.getThis().getClass();
-
-        //过滤掉controller，因为controller由action去执行@Before相关注解了
-        if (Controller.class.isAssignableFrom(targetClass)) {
-            return methodInvocation.proceed();
-        }
-
-        targetClass = ClassKits.getUsefulClass(targetClass);
+        Class targetClass = ClassKits.getUsefulClass(methodInvocation.getThis().getClass());
         Method method = methodInvocation.getMethod();
 
         //service层的所有拦截器，包含了全局的拦截器 和 @Before 的拦截器
@@ -155,7 +134,7 @@ public class AopInterceptor implements MethodInterceptor {
 
         JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(methodInvocation, serviceInterceptors, methodInvocation.getArguments());
         invocation.invoke();
-        
+
         return invocation.getReturnValue();
     }
 
