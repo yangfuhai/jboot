@@ -35,12 +35,12 @@ public class DubboClientDemo extends JbootController {
 
 
         //jboot端口号配置
-        Jboot.setBootArg("jboot.server.port", "8088");
+        Jboot.setBootArg("jboot.server.port", "8888");
 
         //RPC配置
         Jboot.setBootArg("jboot.rpc.type", "dubbo");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
+        Jboot.setBootArg("jboot.rpc.directUrl", "127.0.0.1:8000");//直连模式的url地址
 
         Jboot.run(args);
     }

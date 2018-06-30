@@ -90,6 +90,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         RefererConfig<T> refererConfig = new RefererConfig<T>();
 
         // 设置接口及实现类
+        refererConfig.setProtocol(protocolConfig);
         refererConfig.setInterface(serviceClass);
         refererConfig.setCheck(String.valueOf(getRpcConfig().isConsumerCheck()));
 

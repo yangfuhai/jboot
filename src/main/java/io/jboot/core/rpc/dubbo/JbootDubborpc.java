@@ -96,14 +96,11 @@ public class JbootDubborpc extends JbootrpcBase {
         // 引用远程服务
         // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
         ReferenceConfig<T> reference = new ReferenceConfig<T>();
-
-        initReference(reference, serviceConfig);
-
-
         reference.setApplication(createApplicationConfig(serviceConfig.getGroup()));
         reference.setInterface(serviceClass);
         reference.setCheck(getRpcConfig().isConsumerCheck());
 
+        initReference(reference, serviceConfig);
 
         /**
          * 注册中心的调用模式
@@ -164,6 +161,8 @@ public class JbootDubborpc extends JbootrpcBase {
         service.setRef((T) object);
 
         initService(service, serviceConfig);
+
+
 
         // 暴露及注册服务
         service.export();
