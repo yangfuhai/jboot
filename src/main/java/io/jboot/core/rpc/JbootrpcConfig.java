@@ -72,23 +72,24 @@ public class JbootrpcConfig {
     /**
      * 对外暴露服务的相关配置
      */
-    private String host;
+    private String host; //当有多个IP的时候可以指定某个IP
     private Integer defaultPort = 8000;
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
 
     private String proxy;
-    private String filter;  //多个过滤器请用英文逗号（,）隔开，默认添加opentracing过滤器，用于对rpc分布式调用的追踪
+
+    //多个过滤器请用英文逗号（,）隔开，默认添加opentracing过滤器，用于对rpc分布式调用的追踪
+    private String filter;
+
     private String serialization;
 
-
-    private Integer retries;//重试次数，不配置默认使用框架默认配置 motan和dubbo可能不一样
-
+    //重试次数，不配置默认使用框架默认配置 motan和dubbo可能不一样
+    private Integer retries;
 
     /**
      * RPC Hystrix 相关的配置
      */
-    // keys 的值为  key1:method1,method2;key2:method3,method4
     private boolean hystrixEnable = true;
     private int hystrixTimeout = 5000; //单位：毫秒
     private String hystrixKeys;

@@ -36,6 +36,16 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     protected M DAO = null;
 
     public JbootServiceBase() {
+        DAO = initDao();
+    }
+
+    /**
+     * 初始化 DAO
+     * 子类可以复写 自定义自己的DAO
+     *
+     * @return
+     */
+    protected M initDao() {
         Class<M> modelClass = null;
         Type t = ClassKits.getUsefulClass(getClass()).getGenericSuperclass();
         if (t instanceof ParameterizedType) {
@@ -47,7 +57,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
             throw new JbootException("can not get parameterizedType in JbootServiceBase");
         }
 
-        DAO = ClassKits.newInstance(modelClass, false);
+        return ClassKits.newInstance(modelClass, false);
     }
 
 

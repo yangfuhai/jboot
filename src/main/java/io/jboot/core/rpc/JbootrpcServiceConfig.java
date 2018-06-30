@@ -45,7 +45,8 @@ public class JbootrpcServiceConfig implements Serializable {
     private String proxy;
     private String filter;
 
-    //用于扩展，用户通过SPI扩展获取自定义的 Service的时候，以上已经定义的字段可能不够 或者 不满足，此时通过 params 自行扩展
+    // 用于扩展，用户通过SPI扩展获取自定义的 Service的时候，
+    // 若以字段不满足，此时通过 params 自行扩展
     private Map<Object, Object> params;
 
     private static JbootrpcConfig defaultConfig = Jboot.config(JbootrpcConfig.class);
@@ -70,7 +71,7 @@ public class JbootrpcServiceConfig implements Serializable {
             this.group = annotation.group();
         }
 
-        if (StringUtils.isBlank(annotation.version())) {
+        if (StringUtils.isNotBlank(annotation.version())) {
             this.version = annotation.version();
         }
 

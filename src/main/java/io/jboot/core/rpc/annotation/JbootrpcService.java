@@ -22,17 +22,10 @@ import java.lang.annotation.*;
 @Inherited
 @BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.FIELD})
 public @interface JbootrpcService {
 
-    Class[] exclude() default Void.class;
-
-    String group() default "";
-
-    String version() default "";
-
     int port() default 0;
-
 
     int timeout() default -1;
 
@@ -40,9 +33,16 @@ public @interface JbootrpcService {
 
     int actives() default -1;
 
+    String group() default "";
+
+    String version() default "";
+
     String loadbalance() default "";
 
     String async() default "";
 
     String check() default "";
+
+    //当一个Service类实现对个接口的时候，可以通过这个排除不暴露某个实现接口
+    Class[] exclude() default Void.class;
 }
