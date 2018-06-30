@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@ package hystrix;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import service.UserService;
@@ -54,7 +55,7 @@ public class ClientDemo extends JbootController {
         Jbootrpc jbootrpc = Jboot.me().getRpc();
 
         long time = System.currentTimeMillis();
-        UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
+        UserService service = jbootrpc.serviceObtain(UserService.class, new JbootrpcServiceConfig());
         System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
 

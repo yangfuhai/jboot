@@ -17,6 +17,7 @@ package rpczookeeper;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import service.CategoryService;
 import service.CategoryServiceImpl;
 import service.UserService;
@@ -41,8 +42,8 @@ public class DubboServer1ZookeeperDemo {
 
         Jbootrpc factory = Jboot.me().getRpc();
 
-        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot", "1.0", 8002);
-        factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot", "1.0", 8002);
+        factory.serviceExport(UserService.class, new UserServiceImpl(), new JbootrpcServiceConfig());
+        factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), new JbootrpcServiceConfig());
 
 
         System.out.println("DubboServer1ZookeeperDemo started...");

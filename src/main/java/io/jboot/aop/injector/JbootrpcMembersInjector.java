@@ -17,10 +17,9 @@ package io.jboot.aop.injector;
 
 import com.google.inject.MembersInjector;
 import com.jfinal.log.Log;
-import io.jboot.Jboot;
-import io.jboot.core.rpc.JbootrpcConfig;
+import io.jboot.core.rpc.JbootrpcManager;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.core.rpc.annotation.JbootrpcService;
-import io.jboot.utils.StringUtils;
 
 import java.lang.reflect.Field;
 
@@ -30,9 +29,6 @@ import java.lang.reflect.Field;
 public class JbootrpcMembersInjector implements MembersInjector {
 
     private static Log log = Log.getLog(JbootrpcMembersInjector.class);
-    private static JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
-
-
     private Field field;
 
     public JbootrpcMembersInjector(Field field) {
@@ -44,12 +40,9 @@ public class JbootrpcMembersInjector implements MembersInjector {
 
         JbootrpcService annotation = field.getAnnotation(JbootrpcService.class);
 
-        String group = StringUtils.isBlank(annotation.group()) ? config.getDefaultGroup() : annotation.group();
-        String version = StringUtils.isBlank(annotation.version()) ? config.getDefaultVersion() : annotation.version();
-
         Object implObject = null;
         try {
-            implObject = Jboot.service(field.getType(), group, version);
+            implObject = JbootrpcManager.me().getJbootrpc().serviceObtain(field.getType(), new JbootrpcServiceConfig(annotation));
         } catch (Throwable e) {
             log.error(e.toString(), e);
         }

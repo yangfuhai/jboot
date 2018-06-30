@@ -17,6 +17,7 @@ package rpczookeeper;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import service.CategoryService;
 import service.CategoryServiceImpl;
 import service.UserService;
@@ -40,8 +41,8 @@ public class MotanServer2ZookeeperDemo {
 
         Jbootrpc factory = Jboot.me().getRpc();
 
-        factory.serviceExport(UserService.class, new UserServiceImpl(), "jboot2", "1.0", 8003);
-        factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), "jboot2", "1.0", 8003);
+        factory.serviceExport(UserService.class, new UserServiceImpl(), new JbootrpcServiceConfig());
+        factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), new JbootrpcServiceConfig());
 
 
         System.out.println("MotanServer2ZookeeperDemo started...");

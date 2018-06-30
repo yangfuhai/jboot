@@ -18,6 +18,7 @@ package io.jboot.core.rpc.dubbo;
 import com.alibaba.dubbo.config.*;
 import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StringUtils;
 
@@ -80,13 +81,10 @@ public class JbootDubborpc extends JbootrpcBase {
 
 
     @Override
-    public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
+//    public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
+    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
 
-        if (StringUtils.isBlank(group)) {
-            group = getRpcConfig().getDefaultGroup();
-        }
-
-        String key = String.format("%s:%s:%s", serviceClass.getName(), group, version);
+        String key = String.format("%s:%s:%s", serviceClass.getName(), serviceConfig.getGroup(), serviceConfig.getVersion());
 
         T object = (T) singletons.get(key);
         if (object != null) {
@@ -98,30 +96,12 @@ public class JbootDubborpc extends JbootrpcBase {
         // 引用远程服务
         // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
         ReferenceConfig<T> reference = new ReferenceConfig<T>();
-        reference.setApplication(createApplicationConfig(group));
+
+        initReference(reference, serviceConfig);
+
+
+        reference.setApplication(createApplicationConfig(serviceConfig.getGroup()));
         reference.setInterface(serviceClass);
-        reference.setVersion(version);
-        reference.setTimeout(getRpcConfig().getRequestTimeOut());
-        reference.setGroup(group);
-
-        if (getRpcConfig().getRetries() != null) {
-            reference.setRetries(getRpcConfig().getRetries());
-        }
-
-        if (StringUtils.isNotBlank(getRpcConfig().getProxy())) {
-            reference.setProxy(getRpcConfig().getProxy());
-        } else {
-            //设置 jboot 代理，目的是为了方便 Hystrix 的降级控制和统计
-            reference.setProxy("jboot");
-        }
-
-        if (StringUtils.isNotBlank(getRpcConfig().getFilter())) {
-            reference.setFilter(getRpcConfig().getFilter());
-        } else {
-            //默认情况下用于 OpenTracing 的追踪
-            reference.setFilter("jbootConsumerOpentracing");
-        }
-
         reference.setCheck(getRpcConfig().isConsumerCheck());
 
 
@@ -142,6 +122,7 @@ public class JbootDubborpc extends JbootrpcBase {
             reference.setUrl(getRpcConfig().getDirectUrl());
         }
 
+
         // 注意：此代理对象内部封装了所有通讯细节，对象较重，请缓存复用
         object = reference.get();
 
@@ -152,12 +133,10 @@ public class JbootDubborpc extends JbootrpcBase {
         return object;
     }
 
-    @Override
-    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, String group, String version, int port) {
 
-        if (StringUtils.isBlank(group)) {
-            group = getRpcConfig().getDefaultGroup();
-        }
+    @Override
+//    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, String group, String version, int port) {
+    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig) {
 
         ProtocolConfig protocolConfig = dubboConfig.newProtocolConfig();
 
@@ -173,28 +152,107 @@ public class JbootDubborpc extends JbootrpcBase {
             protocolConfig.setPort(getRpcConfig().getDefaultPort());
         }
 
-        if (port > 0) {
-            protocolConfig.setPort(port);
-        }
 
+        protocolConfig.setPort(serviceConfig.getPort());
 
         //此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏
         ServiceConfig<T> service = new ServiceConfig<T>();
-        service.setApplication(createApplicationConfig(group));
-        service.setGroup(group);
+        service.setApplication(createApplicationConfig(serviceConfig.getGroup()));
         service.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
-
         service.setProtocol(protocolConfig); // 多个协议可以用setProtocols()
         service.setInterface(interfaceClass);
         service.setRef((T) object);
-        service.setVersion(version);
-        service.setProxy(getRpcConfig().getProxy());
-        service.setFilter("jbootProviderOpentracing");
 
+        initService(service, serviceConfig);
 
         // 暴露及注册服务
         service.export();
 
         return true;
     }
+
+
+    private static void initReference(ReferenceConfig reference, JbootrpcServiceConfig config) {
+        reference.setGroup(config.getGroup());
+        reference.setVersion(config.getVersion());
+        reference.setTimeout(config.getTimeout());
+
+        if (config.getRetries() != null) {
+            reference.setRetries(config.getRetries());
+        }
+
+        if (config.getActives() != null) {
+            reference.setActives(config.getActives());
+        }
+
+        if (config.getLoadbalance() != null) {
+            reference.setLoadbalance(config.getLoadbalance());
+        }
+
+        if (config.getAsync() != null) {
+            reference.setAsync(config.getAsync());
+        }
+
+        if (config.getCheck() != null) {
+            reference.setCheck(config.getCheck());
+        }
+
+
+        if (StringUtils.isNotBlank(config.getProxy())) {
+            reference.setProxy(config.getProxy());
+        } else {
+            //默认情况下用于 hystrix 代理
+            reference.setProxy("jboot");
+        }
+
+
+        if (StringUtils.isNotBlank(config.getFilter())) {
+            reference.setFilter(config.getFilter());
+        } else {
+            //默认情况下用于 OpenTracing 的追踪
+            reference.setFilter("jbootConsumerOpentracing");
+        }
+    }
+
+
+    private static void initService(ServiceConfig service, JbootrpcServiceConfig config) {
+
+        service.setGroup(config.getGroup());
+        service.setVersion(config.getVersion());
+        service.setTimeout(config.getTimeout());
+
+        if (config.getRetries() != null) {
+            service.setRetries(config.getRetries());
+        }
+
+        if (config.getActives() != null) {
+            service.setActives(config.getActives());
+        }
+
+        if (config.getLoadbalance() != null) {
+            service.setLoadbalance(config.getLoadbalance());
+        }
+
+        if (config.getAsync() != null) {
+            service.setAsync(config.getAsync());
+        }
+
+
+        if (StringUtils.isNotBlank(config.getProxy())) {
+            service.setProxy(config.getProxy());
+        } else {
+            //默认情况下用于 hystrix 代理
+            service.setProxy("jboot");
+        }
+
+
+        if (StringUtils.isNotBlank(config.getFilter())) {
+            service.setFilter(config.getFilter());
+        } else {
+            //默认情况下用于 OpenTracing 的追踪
+            service.setFilter("jbootProviderOpentracing");
+        }
+    }
+
+
 }

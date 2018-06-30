@@ -17,6 +17,7 @@ package hystrixexception;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import service.UserService;
@@ -51,7 +52,7 @@ public class ClientDemo extends JbootController {
     public void index() {
         Jbootrpc jbootrpc = Jboot.me().getRpc();
 
-        UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
+        UserService service = jbootrpc.serviceObtain(UserService.class,  new JbootrpcServiceConfig());
 
 
         System.out.println(service.hello("海哥"));

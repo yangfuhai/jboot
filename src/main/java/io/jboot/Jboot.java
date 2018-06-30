@@ -34,6 +34,7 @@ import io.jboot.core.mq.JbootmqManager;
 import io.jboot.core.rpc.Jbootrpc;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
 import io.jboot.event.JbootEvent;
@@ -404,30 +405,14 @@ public class Jboot {
     private JbootrpcConfig rpcConfig;
 
     /**
-     * 获取 RPC服务
+     * 获取 RPC 服务
      *
      * @param clazz
      * @param <T>
      * @return
      */
     public static <T> T service(Class<T> clazz) {
-        if (jboot.rpcConfig == null) {
-            jboot.rpcConfig = config(JbootrpcConfig.class);
-        }
-        return service(clazz, jboot.rpcConfig.getDefaultGroup(), jboot.rpcConfig.getDefaultVersion());
-    }
-
-    /**
-     * 获取 RPC 服务
-     *
-     * @param clazz
-     * @param group
-     * @param version
-     * @param <T>
-     * @return
-     */
-    public static <T> T service(Class<T> clazz, String group, String version) {
-        return jboot.getRpc().serviceObtain(clazz, group, version);
+        return jboot.getRpc().serviceObtain(clazz, new JbootrpcServiceConfig());
     }
 
     /**

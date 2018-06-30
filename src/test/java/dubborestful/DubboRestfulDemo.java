@@ -17,6 +17,7 @@ package dubborestful;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 
 
 public class DubboRestfulDemo {
@@ -51,7 +52,7 @@ public class DubboRestfulDemo {
 
         Jbootrpc factory = Jboot.me().getRpc();
 
-        factory.serviceExport(UserService.class, Jboot.bean(UserServiceImpl.class), "jboot", "1.0", 8002);
+        factory.serviceExport(UserService.class, Jboot.bean(UserServiceImpl.class), new JbootrpcServiceConfig());
 
 
         System.out.println("server started...");

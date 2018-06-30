@@ -18,9 +18,9 @@ package io.jboot.core.rpc;
 
 public interface Jbootrpc {
 
-    public <T> T serviceObtain(Class<T> serviceClass, String group, String version);
+    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig);
 
-    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, String group, String version, int port);
+    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig);
 
 
     public void onInitBefore();

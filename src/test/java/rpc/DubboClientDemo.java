@@ -17,6 +17,7 @@ package rpc;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import service.UserService;
@@ -49,7 +50,7 @@ public class DubboClientDemo extends JbootController {
         Jbootrpc jbootrpc = Jboot.me().getRpc();
 
         long time = System.currentTimeMillis();
-        UserService service = jbootrpc.serviceObtain(UserService.class, "jboot", "1.0");
+        UserService service = jbootrpc.serviceObtain(UserService.class,  new JbootrpcServiceConfig());
         System.out.println("obtain:" + (System.currentTimeMillis() - time) + "---" + service);
 
 

@@ -24,7 +24,7 @@ import io.jboot.core.rpc.motan.JbootMotanrpc;
 import io.jboot.core.rpc.zbus.JbootZbusrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.event.JbootEventListener;
-import io.jboot.exception.JbootAssert;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
@@ -69,15 +69,14 @@ public class JbootrpcManager {
 
         for (Class clazz : classes) {
             JbootrpcService rpcService = (JbootrpcService) clazz.getAnnotation(JbootrpcService.class);
-            if (rpcService == null) continue;
-
-            String group = StringUtils.isBlank(rpcService.group()) ? config.getDefaultGroup() : rpcService.group();
-            String version = StringUtils.isBlank(rpcService.version()) ? config.getDefaultVersion() : rpcService.version();
-            int port = rpcService.port() <= 0 ? config.getDefaultPort() : rpcService.port();
+            if (rpcService == null) {
+                continue;
+            }
 
             Class[] inters = clazz.getInterfaces();
-            JbootAssert.assertFalse(inters == null || inters.length == 0,
-                    String.format("class[%s] has no interface, can not use @JbootrpcService", clazz));
+            if (inters == null || inters.length == 0) {
+                throw new JbootException(String.format("class[%s] has no interface, can not use @JbootrpcService", clazz));
+            }
 
             //对某些系统的类 进行排除，例如：Serializable 等
             Class[] excludes = ArrayUtils.concat(default_excludes, rpcService.exclude());
@@ -92,7 +91,7 @@ public class JbootrpcManager {
                 if (isContinue) {
                     continue;
                 }
-                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), group, version, port);
+                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), new JbootrpcServiceConfig(rpcService));
             }
         }
 

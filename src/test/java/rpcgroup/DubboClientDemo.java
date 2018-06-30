@@ -17,6 +17,7 @@ package rpcgroup;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.Jbootrpc;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import service.UserService;
@@ -28,6 +29,7 @@ public class DubboClientDemo extends JbootController {
 
     /**
      * 请先启动 DubboServerDemo 后，再启动
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -48,14 +50,20 @@ public class DubboClientDemo extends JbootController {
     public void index() {
         Jbootrpc jbootrpc = Jboot.me().getRpc();
 
-        UserService service1 = jbootrpc.serviceObtain(UserService.class, "mygroup", "1.0");
-        UserService service2 = jbootrpc.serviceObtain(UserService.class, "jbobbot", "1.0");
+        JbootrpcServiceConfig config1 = new JbootrpcServiceConfig();
+        config1.setGroup("mygroup");
+
+        JbootrpcServiceConfig config2 = new JbootrpcServiceConfig();
+        config2.setGroup("jbobbot");
+
+        UserService service1 = jbootrpc.serviceObtain(UserService.class, config1);
+        UserService service2 = jbootrpc.serviceObtain(UserService.class, config2);
 
         // 使用服务
-        System.out.println(service1.hello("service1" ));
+        System.out.println(service1.hello("service1"));
 
         //这个会抛异常，因为没有叫jbobbot的组
-        System.out.println(service2.hello("service2" ));
+        System.out.println(service2.hello("service2"));
 
 
         renderText("ok");

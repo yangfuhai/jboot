@@ -17,6 +17,7 @@ package io.jboot.core.rpc.zbus;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.utils.StringUtils;
 
 
@@ -43,16 +44,14 @@ public class JbootZbusrpc extends JbootrpcBase {
     }
 
     @Override
-    public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
-        if (StringUtils.isBlank(group)) {
-            group = getRpcConfig().getDefaultGroup();
-        }
-        return clientBootstrap.serviceObtain(serviceClass, group, version);
+    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
+        String group = StringUtils.isBlank(serviceConfig.getGroup()) ? getRpcConfig().getDefaultGroup() : serviceConfig.getGroup();
+        return clientBootstrap.serviceObtain(serviceClass, group, serviceConfig.getVersion());
     }
 
     @Override
-    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, String group, String version, int port) {
-        serviceBootstrap.addModule(interfaceClass, object, group, version);
+    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig) {
+        serviceBootstrap.addModule(interfaceClass, object, serviceConfig.getGroup(), serviceConfig.getVersion());
         return true;
     }
 

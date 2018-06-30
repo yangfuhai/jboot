@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
 public @interface JbootrpcService {
-    
+
     Class[] exclude() default Void.class;
 
     String group() default "";
@@ -32,4 +32,17 @@ public @interface JbootrpcService {
     String version() default "";
 
     int port() default 0;
+
+
+    int timeout() default -1;
+
+    int retries() default -1;
+
+    int actives() default -1;
+
+    String loadbalance() default "";
+
+    String async() default "";
+
+    String check() default "";
 }
