@@ -66,7 +66,7 @@ public class JbootrpcServiceConfig implements Serializable {
             this.port = annotation.port();
         }
 
-        if (StringUtils.isBlank(annotation.group())) {
+        if (StringUtils.isNotBlank(annotation.group())) {
             this.group = annotation.group();
         }
 

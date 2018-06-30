@@ -94,6 +94,8 @@ public class JbootMotanrpc extends JbootrpcBase {
         refererConfig.setInterface(serviceClass);
         refererConfig.setCheck(String.valueOf(getRpcConfig().isConsumerCheck()));
 
+        initInterface(refererConfig, serviceConfig);
+
         /**
          * 注册中心模式
          */
@@ -111,7 +113,6 @@ public class JbootMotanrpc extends JbootrpcBase {
             refererConfig.setDirectUrl(getRpcConfig().getDirectUrl());
         }
 
-        initInterface(refererConfig, serviceConfig);
 
         object = refererConfig.getRef();
 

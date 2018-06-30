@@ -40,13 +40,13 @@ public class MotanClientDemo extends JbootController {
         //RPC配置
         Jboot.setBootArg("jboot.rpc.type", "motan");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
+        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8000");//直连模式的url地址
 
         Jboot.run(args);
     }
 
 
-    @JbootrpcService
+    @JbootrpcService()
     UserService service;
 
 
