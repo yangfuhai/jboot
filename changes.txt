@@ -1,3 +1,16 @@
+jboot-1.6.1:
+优化：FST序列化在Model发送变化的时候回出现序列化异常的问题
+优化：Hystrix onFallback 默认情况下，在 RPC 异常的时候不对外抛出的问题
+优化：@EmptyValidate 在有文件上传的时候解析不了的问题
+优化：简化 AOP 关于 Hystrix 降级配置的功能
+优化：RPC 默认端口修改为 8000，通过简化代码更加通俗易懂
+优化：@JbootrpcService 添加关于超时、并发量、重试次数和是否异步等配置支持
+优化：JbootServiceBase， 方便复写初始化DAO的逻辑
+优化：AOP 在未启用 Metric 时，不执行方法进行统计，提高性能
+优化：默认情况下 不对数据库查询的 DAO 进行 AOP 代理，提高性能
+优化：缓存注解相关逻辑，使之性能更高和对阅读更加友好
+
+
 jboot-1.6.0:
 优化：JbootModel的代码逻辑
 优化：防止DAO 的 AOP 代理，提升 DAO 增删改查的效率
