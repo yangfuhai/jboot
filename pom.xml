@@ -61,13 +61,7 @@
         <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal-weixin</artifactId>
-            <version>1.9</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.jfinal</groupId>
-                    <artifactId>jfinal</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>2.1</version>
         </dependency>
 
         <dependency>
@@ -642,6 +636,22 @@
                             </generatorConfigurations>
                         </daemon>
                     </daemons>
+
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>0.9.2</version>
+                <configuration>
+                    <to>
+                        <image>registry.hub.docker.com/fuhai/jboot</image>
+                    </to>
+                    <container>
+                        <mainClass>io.jboot.Jboot</mainClass>
+                    </container>
 
                 </configuration>
             </plugin>
