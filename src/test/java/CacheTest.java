@@ -1,4 +1,5 @@
 import io.jboot.Jboot;
+import io.jboot.core.cache.JbootCache;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,7 +16,10 @@ public class CacheTest {
 
         Jboot.setBootArg("jboot.cache.type", "ehcache");
 
-        Jboot.me().getCache().put("test", "mykey", "abc");
+        JbootCache cache = Jboot.me().getCache();
+
+        cache.put("test", "mykey", "abc");
+        cache.get("test","mykey");
 
         System.out.println((String) Jboot.me().getCache().get("test", "mykey"));
     }

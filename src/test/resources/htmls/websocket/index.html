@@ -18,8 +18,6 @@ Welcome<br/><input id="text" type="text"/>
     //判断当前浏览器是否支持WebSocket
     if ('WebSocket' in window) {
         //websocket = new WebSocket("ws://localhost:8080/myWebsocketServer?roomId=123");
-        websocket = new WebSocket("wss://lejiaoyuapi.lezhibo.com/ws/websocket?courseClassId=c43b554f7901467d97ae990729c6d993");
-        //websocket = new WebSocket("ws://47.104.214.54/ws/websocket?courseClassId=c43b554f7901467d97ae990729c6d993");
     }
     else {
         alert('当前浏览器 Not support websocket')

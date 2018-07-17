@@ -21,6 +21,10 @@ import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.cache.j2cache.J2cacheImpl;
 import io.jboot.core.cache.redis.JbootRedisCacheImpl;
 import io.jboot.core.spi.JbootSpiLoader;
+import io.jboot.utils.StringUtils;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class JbootCacheManager {
@@ -30,25 +34,39 @@ public class JbootCacheManager {
     private JbootCacheManager() {
     }
 
-    private JbootCache jbootCache;
+    private Map<String, JbootCache> cacheMap = new ConcurrentHashMap<>();
+    private JbootCacheConfig config = Jboot.config(JbootCacheConfig.class);
 
     public static JbootCacheManager me() {
         return me;
     }
 
     public JbootCache getCache() {
-        if (jbootCache == null) {
-            JbootCacheConfig config = Jboot.config(JbootCacheConfig.class);
-            jbootCache = buildCache(config);
-        }
-        return jbootCache;
+        return getCache(config.getType());
     }
 
     public JbootCache getCache(String type) {
-        JbootCacheConfig cacheConfig = new JbootCacheConfig();
-        cacheConfig.setType(type);
-        return buildCache(cacheConfig);
+        if (StringUtils.isBlank(type)) {
+            throw new IllegalArgumentException("type must not be null or blank.");
+        }
+
+        JbootCache cache = cacheMap.get(type);
+        if (cache != null) {
+            return cache;
+        }
+
+        synchronized (type) {
+            if (cache == null) {
+                JbootCacheConfig cacheConfig = new JbootCacheConfig();
+                cacheConfig.setType(type);
+                cache = buildCache(cacheConfig);
+                cacheMap.put(type, cache);
+            }
+        }
+
+        return cache;
     }
+
 
     private JbootCache buildCache(JbootCacheConfig config) {
 
