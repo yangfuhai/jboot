@@ -31,7 +31,7 @@ public class ServerDemo {
      * 在启用之前，请先提起启动zipkin
      * 启动zipkin的步骤：
      * 1、下载 zipkin 的jar包：https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec
-     * 2、执行 java -jar 下载的jar包路径
+     * 2、执行 java -jar 下载的jar包路径 例如：java -jar /Users/michael/Downloads/zipkin-server-2.4.0-exec.jar
      * 3、执行后，浏览器可以访问 http://127.0.0.1:9411 来查看zipkin收集的数据
      *
      * @param args
@@ -43,7 +43,7 @@ public class ServerDemo {
 
         Jboot.setBootArg("jboot.rpc.type", "motan");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8002");//直连模式的url地址
+        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8000");//直连模式的url地址
 
 
         Jboot.setBootArg("jboot.tracing.type", "zipkin");

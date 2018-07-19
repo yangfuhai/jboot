@@ -1,3 +1,7 @@
+jboot-1.6.2:
+修复：分布式session在使用redis缓存的时候会创建多个redis客户端的bug
+优化：升级 undertow 和 jfinal-wexin 等依赖
+
 jboot-1.6.1:
 优化：FST序列化在Model发送变化的时候回出现序列化异常的问题
 优化：Hystrix onFallback 默认情况下，在 RPC 异常的时候不对外抛出的问题
