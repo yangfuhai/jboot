@@ -94,12 +94,4 @@ public class JbootSessionConfig {
         this.cacheType = cacheType;
     }
 
-    private static JbootSessionConfig me;
-
-    public static JbootSessionConfig get() {
-        if (me == null) {
-            me = Jboot.config(JbootSessionConfig.class);
-        }
-        return me;
-    }
 }

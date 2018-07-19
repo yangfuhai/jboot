@@ -15,6 +15,7 @@
  */
 package io.jboot.web.session;
 
+import io.jboot.Jboot;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
 
@@ -26,17 +27,21 @@ import java.util.UUID;
 
 public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
+    private static JbootSessionConfig config = Jboot.config(JbootSessionConfig.class);
+    
+    private static int maxInactiveInterval = config.getMaxInactiveInterval();
+    private static String cookieName = config.getCookieName();
+    private static String cookiePath = config.getCookieContextPath();
+    private static String cookieDomain = config.getCookieDomain();
+    private static int cookieMaxAge = config.getCookieMaxAge();
+    private static String cacheName = config.getCacheName();
+    private static String cacheType = config.getCacheType();
+
+    private static JbootCache jbootCache = JbootCacheManager.me().getCache(cacheType);
+
+
     private HttpServletResponse response;
     private JbootHttpSession httpSession;
-
-
-    private int maxInactiveInterval = JbootSessionConfig.get().getMaxInactiveInterval();
-    private String cookieName = JbootSessionConfig.get().getCookieName();
-    private String cookiePath = JbootSessionConfig.get().getCookieContextPath();
-    private String cookieDomain = JbootSessionConfig.get().getCookieDomain();
-    private int cookieMaxAge = JbootSessionConfig.get().getCookieMaxAge();
-    private String cacheName = JbootSessionConfig.get().getCacheName();
-    private String cacheType = JbootSessionConfig.get().getCacheType();
 
 
     public JbootServletRequestWrapper(HttpServletRequest request, HttpServletResponse response) {
@@ -70,20 +75,11 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
     private Map<String, Object> createSessionStore(String sessionId) {
-        Map<String, Object> store = getJbootCache().get(cacheName, sessionId);
+        Map<String, Object> store = jbootCache.get(cacheName, sessionId);
         if (store == null) {
             store = Collections.emptyMap();
         }
         return store;
-    }
-
-    private JbootCache cache;
-
-    private JbootCache getJbootCache() {
-        if (cache == null) {
-            cache = JbootCacheManager.me().getCache(cacheType);
-        }
-        return cache;
     }
 
 
@@ -94,8 +90,6 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
         if (httpSession == null) {
             return;
         }
-
-        JbootCache jbootCache = getJbootCache();
 
         //session已经被整体删除，调用了session.invalidate()
         if (!httpSession.isValid()) {
