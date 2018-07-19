@@ -42,11 +42,11 @@ public class DataSourceConfig {
     private boolean cachePrepStmts = true;
     private int prepStmtCacheSize = 500;
     private int prepStmtCacheSqlLimit = 2048;
-    private int maximumPoolSize = 100;
+    private int maximumPoolSize = 10;
 
     private Long maxLifetime;
     private Long idleTimeout;
-    private Integer minimumIdle;
+    private Integer minimumIdle = 0;
 
     private String sqlTemplatePath;
     private String sqlTemplate;

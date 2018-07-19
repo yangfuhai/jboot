@@ -39,14 +39,15 @@ public class DruidDataSourceFactory implements DataSourceFactory {
         druidDataSource.setUsername(config.getUser());
         druidDataSource.setPassword(config.getPassword());
         druidDataSource.setDriverClassName(config.getDriverClassName());
+        druidDataSource.setMaxActive(config.getMaximumPoolSize());
 
         if (config.getMinimumIdle() != null) {
             druidDataSource.setMinIdle(config.getMinimumIdle());
         }
+
         if (config.getConnectionInitSql() != null) {
             druidDataSource.setConnectionInitSqls(Sets.newHashSet(config.getConnectionInitSql()));
         }
-
 
         try {
             druidDataSource.setFilters("stat");
