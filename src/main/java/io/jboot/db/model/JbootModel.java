@@ -408,8 +408,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (table == null) {
             table = super._getTable();
             if (table == null && validateNull) {
-                throw new JbootException(String.format("class %s can not mapping to database table, maybe cannot connection to database or not use correct datasource, " +
-                        "please check jboot.properties or correct config @Table(datasource=xxx) if you use multi datasource.", _getUsefulClass().getName()));
+                throw new JbootException(String.format("class %s can not mapping to database table, maybe application cannot connect to database , " +
+                        "please check jboot.properties or config @Table(datasource=xxx) correct if you use multi datasource.", _getUsefulClass().getName()));
             }
         }
         return table;
