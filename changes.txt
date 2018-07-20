@@ -1,6 +1,12 @@
 jboot-1.6.2:
+修复：Hikaricp当不设置最小连接数的时候，最小连接数默认等于最大连接数的问题
+新增：自定义数据库dialect方言的问题，解决分库分表的时候，JFinal启动会自动全表扫描的问题
+
+
+jboot-1.6.2:
 修复：分布式session在使用redis缓存的时候会创建多个redis客户端的bug
 优化：升级 undertow 和 jfinal-wexin 等依赖
+
 
 jboot-1.6.1:
 优化：FST序列化在Model发送变化的时候回出现序列化异常的问题
