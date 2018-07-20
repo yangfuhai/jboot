@@ -101,9 +101,20 @@ public class ClassKits {
      * @return
      */
     public static <T> T newInstance(String clazzName) {
+        return newInstance(clazzName, true);
+    }
+
+    /**
+     * 创建新的实例
+     *
+     * @param <T>
+     * @param clazzName
+     * @return
+     */
+    public static <T> T newInstance(String clazzName, boolean createByGuice) {
         try {
             Class<T> clazz = (Class<T>) Class.forName(clazzName, false, Thread.currentThread().getContextClassLoader());
-            return newInstance(clazz);
+            return newInstance(clazz, createByGuice);
         } catch (Exception e) {
             log.error("can not newInstance class:" + clazzName + "\n" + e.toString(), e);
         }

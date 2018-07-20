@@ -19,6 +19,7 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.Jboot;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.db.datasource.DataSourceBuilder;
@@ -149,6 +150,16 @@ public class JbootDbManager {
      * @param datasourceConfig
      */
     private void configDialect(ActiveRecordPlugin activeRecordPlugin, DataSourceConfig datasourceConfig) {
+
+        if (datasourceConfig.getDialectClass() != null) {
+            Dialect dialect = ClassKits.newInstance(datasourceConfig.getDialectClass(), false);
+            if (dialect == null) {
+                throw new NullPointerException("can not new instance by class:" + datasourceConfig.getDialectClass());
+            }
+            activeRecordPlugin.setDialect(dialect);
+            return;
+        }
+
         switch (datasourceConfig.getType()) {
             case DataSourceConfig.TYPE_MYSQL:
                 activeRecordPlugin.setDialect(new JbootMysqlDialect());
