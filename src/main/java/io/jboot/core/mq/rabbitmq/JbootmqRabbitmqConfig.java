@@ -26,7 +26,7 @@ public class JbootmqRabbitmqConfig {
     private String password = "guest";
 
     private String host = "127.0.0.1";
-    private String port = "5672";
+    private int port = 5672;
     private String virtualHost;
 
 
@@ -54,15 +54,11 @@ public class JbootmqRabbitmqConfig {
         this.host = host;
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 
-    public int getPortAsInt() {
-        return Integer.valueOf(port);
-    }
-
-    public void setPort(String port) {
+    public void setPort(int port) {
         this.port = port;
     }
 

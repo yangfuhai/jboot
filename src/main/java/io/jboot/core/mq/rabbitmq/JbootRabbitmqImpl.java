@@ -16,7 +16,6 @@
 package io.jboot.core.mq.rabbitmq;
 
 import com.google.common.collect.Maps;
-import com.jfinal.log.Log;
 import com.rabbitmq.client.*;
 import io.jboot.Jboot;
 import io.jboot.core.mq.Jbootmq;
@@ -34,7 +33,6 @@ import java.util.Map;
 public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
 
-    private static final Log LOG = Log.getLog(JbootRabbitmqImpl.class);
     private Connection connection;
     private Map<String, Channel> channelMap = Maps.newConcurrentMap();
 
@@ -45,7 +43,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(rabbitmqConfig.getHost());
-        factory.setPort(rabbitmqConfig.getPortAsInt());
+        factory.setPort(rabbitmqConfig.getPort());
 
         if (StringUtils.isNotBlank(rabbitmqConfig.getVirtualHost())) {
             factory.setVirtualHost(rabbitmqConfig.getVirtualHost());
