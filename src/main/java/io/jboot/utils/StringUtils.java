@@ -158,7 +158,7 @@ public class StringUtils {
     }
 
     public static boolean isMobileNumber(String phoneNumber) {
-        return Pattern.matches("^(1[3,4,5,7,8])\\d{9}$", phoneNumber);
+        return Pattern.matches("^(1[3,4,5,7,8,9])\\d{9}$", phoneNumber);
     }
 
     public static String escapeHtml(String text) {
