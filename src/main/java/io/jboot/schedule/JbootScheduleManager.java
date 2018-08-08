@@ -118,7 +118,7 @@ public class JbootScheduleManager {
             } else if (Task.class.isAssignableFrom(clazz)) {
                 cron4jPlugin.addTask(cron.value(), (Task) ClassKits.newInstance(clazz), cron.daemon());
             } else {
-                throw new JbootException("annotation Cron can not use for class : " + clazz);
+                throw new RuntimeException("annotation Cron can not use for class : " + clazz);
             }
         }
     }
