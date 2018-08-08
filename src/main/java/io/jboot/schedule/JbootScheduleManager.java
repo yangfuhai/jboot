@@ -20,7 +20,6 @@ import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import io.jboot.Jboot;
-import io.jboot.exception.JbootException;
 import io.jboot.schedule.annotation.Cron;
 import io.jboot.schedule.annotation.EnableDistributedRunnable;
 import io.jboot.schedule.annotation.FixedDelay;
