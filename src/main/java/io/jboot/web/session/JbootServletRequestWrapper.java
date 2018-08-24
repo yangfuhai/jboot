@@ -71,6 +71,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
             httpSession.setMaxInactiveInterval(maxInactiveInterval);
             setCookie(cookieName, sessionId, cookieMaxAge);
         }
+
         return httpSession;
     }
 
