@@ -1,5 +1,6 @@
 import com.jfinal.json.FastJson;
 import com.jfinal.json.JFinalJson;
+import io.jboot.core.serializer.FastjsonSerializer;
 import org.junit.Test;
 import service.MyUser;
 
@@ -26,6 +27,14 @@ public class JsonTest {
 
         String json1 = JFinalJson.getJson().toJson(user1);
         System.out.println(json1);
+
+
+        FastjsonSerializer fs = new FastjsonSerializer();
+        byte[] datas = fs.serialize(user);
+
+        MyUser obj = (MyUser) fs.deserialize(datas);
+        System.out.println("obj:" + obj);
+
 
     }
 
