@@ -97,6 +97,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
         return DAO.deleteById(id);
     }
 
+
     /**
      * 删除
      *
@@ -117,6 +118,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     public boolean save(M model) {
         return model.save();
     }
+
 
     /**
      * 保存或更新
@@ -139,9 +141,38 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     }
 
 
+    /**
+     * 分页
+     *
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public Page<M> paginate(int page, int pageSize) {
+        return DAO.paginate(page, pageSize);
+    }
+
+
+    /**
+     * 分页
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param orderBy
+     * @return
+     */
+    public Page<M> paginate(int pageNumber, int pageSize, String orderBy) {
+        return DAO.paginate(pageNumber, pageSize, orderBy);
+    }
+
+
+
+
+
     public void join(Page<? extends Model> page, String joinOnField) {
         join(page.getList(), joinOnField);
     }
+
 
     public void join(Page<? extends Model> page, String joinOnField, String[] attrs) {
         join(page.getList(), joinOnField, attrs);
