@@ -2,13 +2,12 @@ package rabbitmq;
 
 import io.jboot.Jboot;
 import io.jboot.core.mq.JbootmqMessageListener;
-import org.junit.Test;
 
 public class RabbitmqTest {
 
 
 
-    @Test
+//    @Test
     public void testRabbitmqSend() {
 
         Jboot.setBootArg("jboot.mq.type", "rabbitmq");
