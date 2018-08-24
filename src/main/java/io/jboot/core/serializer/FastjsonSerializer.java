@@ -44,7 +44,6 @@ public class FastjsonSerializer implements ISerializer {
             LOG.error(e.toString(), e);
             return null;
         }
-
         return jsonObject.getObject("object", clazz);
     }
 

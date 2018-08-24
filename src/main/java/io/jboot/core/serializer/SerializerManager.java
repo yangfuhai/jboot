@@ -29,7 +29,7 @@ public class SerializerManager {
 
     private static SerializerManager me;
 
-    private static Map<String, ISerializer> serializerMap = new ConcurrentHashMap<>();
+    private static Map<String, ISerializer> serializerCaches = new ConcurrentHashMap<>();
 
     public static SerializerManager me() {
         if (me == null) {
@@ -46,12 +46,12 @@ public class SerializerManager {
 
     public ISerializer getSerializer(String serializerString) {
 
-        ISerializer serializer = serializerMap.get(serializerString);
+        ISerializer serializer = serializerCaches.get(serializerString);
 
         if (serializer == null) {
 
             serializer = buildSerializer(serializerString);
-            serializerMap.put(serializerString, serializer);
+            serializerCaches.put(serializerString, serializer);
         }
 
         return serializer;

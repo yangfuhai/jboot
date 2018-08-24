@@ -62,7 +62,8 @@ public class KryoSerializer implements ISerializer {
 
     @Override
     public Object deserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
+        if (bytes == null || bytes.length == 0)
+            return null;
         ByteBufferInput input = null;
         Kryo kryo = kryoPool.borrow();
         try {
