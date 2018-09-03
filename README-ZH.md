@@ -92,7 +92,7 @@ Jboot Demos ： https://gitee.com/fuhai/jboot/tree/master/src/test/java
 - [Swagger api](./DOC.md#swagger-api自动生成)
 - 其他
 	- [SPI扩展](./DOC.md#spi扩展)
-	- [JbootEvnet事件机制](./DOC.md#jbootEvnet事件机制)
+	- [JbootEvent事件机制](./DOC.md#jbootEvent事件机制)
 	- [配置文件](./DOC.md#配置文件)
 	- [代码生成器](./DOC.md#代码生成器)
 - [项目构建](./DOC.md#项目构建)

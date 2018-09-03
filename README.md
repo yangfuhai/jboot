@@ -91,7 +91,7 @@ document url ： [click here](./DOC.md)
 - [Swagger api](./DOC.md#swagger-api自动生成)
 - Other
 	- [SPI](./DOC.md#spi扩展)
-	- [JbootEvnet](./DOC.md#jbootEvnet事件机制)
+	- [JbootEvent](./DOC.md#jbootEvent事件机制)
 	- [properties reader](./DOC.md#配置文件)
 	- [code generator](./DOC.md#代码生成器)
 - [project build](./DOC.md#项目构建)

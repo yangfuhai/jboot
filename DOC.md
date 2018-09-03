@@ -90,7 +90,7 @@
 	
 - 其他
 	- [SPI扩展](#spi扩展)
-	- [JbootEvnet事件机制](#jbootEvnet事件机制)
+	- [JbootEvent事件机制](#jbootEvent事件机制)
 	- 自定义序列化
 	- 配置文件
 	- 代码生成器
@@ -2688,7 +2688,7 @@ jboot.cache.type = mycache
 
 通过以上三步，我们就可以完成了对JbootCache模块的扩展，其他模块类似。
 
-## JbootEvnet事件机制
+## JbootEvent事件机制
 为了解耦，Jboot内置了一个简单易用的事件系统，使用事件系统非常简单。
 
 #### 第一步，注册事件的监听器。
