@@ -153,22 +153,6 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     }
 
 
-    /**
-     * 分页
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param orderBy
-     * @return
-     */
-    public Page<M> paginate(int pageNumber, int pageSize, String orderBy) {
-        return DAO.paginate(pageNumber, pageSize, orderBy);
-    }
-
-
-
-
-
     public void join(Page<? extends Model> page, String joinOnField) {
         join(page.getList(), joinOnField);
     }

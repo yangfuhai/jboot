@@ -80,18 +80,6 @@ public interface #(tableMeta.modelName)Service  {
     public Page<? extends Model> paginate(int page, int pageSize);
 
 
-    /**
-     * 分页
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param orderBy
-     * @return
-     */
-    public Page<? extends Model> paginate(int pageNumber, int pageSize, String orderBy);
-
-
-
     public void join(Page<? extends Model> page, String joinOnField);
 
     public void join(Page<? extends Model> page, String joinOnField, String[] attrs);
@@ -119,4 +107,5 @@ public interface #(tableMeta.modelName)Service  {
     public void keep(Model model, String... attrs);
 
     public void keep(List<? extends Model> models, String... attrs);
+
 }
