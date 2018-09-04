@@ -19,14 +19,11 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.ext.interceptor.NotAction;
 import com.jfinal.kit.HttpKit;
-import com.jfinal.upload.UploadFile;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.RequestUtils;
 import io.jboot.component.jwt.JwtManager;
+import io.jboot.utils.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -173,7 +170,7 @@ public class JbootController extends Controller {
     @Before(NotAction.class)
     public Controller setJwtMap(Map map) {
         if (map == null) {
-            throw new NullPointerException("map is null");
+            throw new NullPointerException("map is null, u show invoke setJwtAttr() before. ");
         }
         if (jwtMap == null) {
             jwtMap = new HashMap<>();
@@ -250,27 +247,5 @@ public class JbootController extends Controller {
         return (String) object;
     }
 
-
-    /**
-     * 获取所有上传的文件
-     *
-     * @return
-     */
-    @Before(NotAction.class)
-    public HashMap<String, UploadFile> getUploadFilesMap() {
-        if (!isMultipartRequest()) {
-            return null;
-        }
-
-        List<UploadFile> fileList = getFiles();
-        HashMap<String, UploadFile> filesMap = null;
-        if (ArrayUtils.isNotEmpty(fileList)) {
-            filesMap = new HashMap<String, UploadFile>();
-            for (UploadFile ufile : fileList) {
-                filesMap.put(ufile.getParameterName(), ufile);
-            }
-        }
-        return filesMap;
-    }
 
 }
