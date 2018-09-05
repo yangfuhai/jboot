@@ -31,9 +31,9 @@ public class SessionDemo extends JbootController {
 
     public static void main(String[] args) {
         Jboot.setBootArg("jboot.server.type", "jetty");
-        Jboot.setBootArg("jboot.cache.type", "ehcache");
-        Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
-        Jboot.setBootArg("jboot.limitation.enable", true);
+//        Jboot.setBootArg("jboot.cache.type", "ehcache");
+//        Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
+//        Jboot.setBootArg("jboot.limitation.enable", true);
         Jboot.run(args);
     }
 
@@ -51,6 +51,8 @@ public class SessionDemo extends JbootController {
 
     @Before(SessionInViewInterceptor.class)
     public void show() {
+        User user = getSessionAttr("user");
+        System.out.println(user);
         render("/htmls/session/session.html");
     }
 
