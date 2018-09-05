@@ -31,9 +31,9 @@ public class SessionDemo extends JbootController {
 
     public static void main(String[] args) {
         Jboot.setBootArg("jboot.server.type", "jetty");
-//        Jboot.setBootArg("jboot.cache.type", "ehcache");
-//        Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
-//        Jboot.setBootArg("jboot.limitation.enable", true);
+        Jboot.setBootArg("jboot.cache.type", "redis");
+        Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
+        Jboot.setBootArg("jboot.limitation.enable", true);
         Jboot.run(args);
     }
 
@@ -46,13 +46,15 @@ public class SessionDemo extends JbootController {
         user.setName("Micahel Yang" + StringUtils.uuid());
 
         setSessionAttr("user", user);
+        User user1 = getSessionAttr("user");
+        System.out.println("-----user-----"+user1);
         renderHtml("session已经成功设置数据，请访问<a href=\"/session/show\">这里</a>查看session数据");
     }
 
     @Before(SessionInViewInterceptor.class)
     public void show() {
         User user = getSessionAttr("user");
-        System.out.println(user);
+        System.out.println("-----user-----"+user);
         render("/htmls/session/session.html");
     }
 
