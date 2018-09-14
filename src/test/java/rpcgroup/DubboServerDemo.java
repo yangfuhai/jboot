@@ -32,7 +32,7 @@ public class DubboServerDemo {
 
         Jboot.setBootArg("jboot.rpc.type", "dubbo");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8000");//直连模式的url地址
+        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:9999");//直连模式的url地址
 
 
         Jboot.run(args);
@@ -42,8 +42,10 @@ public class DubboServerDemo {
         JbootrpcServiceConfig config1 = new JbootrpcServiceConfig();
         config1.setGroup("mygroup");
 
+
         JbootrpcServiceConfig config2 = new JbootrpcServiceConfig();
-        config2.setGroup("jbobbot");
+        config2.setGroup("jboot");
+
 
         factory.serviceExport(UserService.class, new UserServiceImpl(), config1);
         factory.serviceExport(CategoryService.class, new CategoryServiceImpl(), config2);

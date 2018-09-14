@@ -41,7 +41,7 @@ public class DubboClientDemo extends JbootController {
         //RPC配置
         Jboot.setBootArg("jboot.rpc.type", "dubbo");
         Jboot.setBootArg("jboot.rpc.callMode", "redirect");//直连模式，默认为注册中心
-        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:8000");//直连模式的url地址
+        Jboot.setBootArg("jboot.rpc.directUrl", "localhost:9999");//直连模式的url地址
 
         Jboot.run(args);
     }
@@ -51,20 +51,12 @@ public class DubboClientDemo extends JbootController {
         Jbootrpc jbootrpc = Jboot.me().getRpc();
 
         JbootrpcServiceConfig config1 = new JbootrpcServiceConfig();
-        config1.setGroup("mygroup");
+        config1.setGroup("mygroup"); //必须设置group为 mygroup，否则无法获取
 
-        JbootrpcServiceConfig config2 = new JbootrpcServiceConfig();
-        config2.setGroup("jbobbot");
 
         UserService service1 = jbootrpc.serviceObtain(UserService.class, config1);
-        UserService service2 = jbootrpc.serviceObtain(UserService.class, config2);
 
-        // 使用服务
-        System.out.println(service1.hello("service1"));
-
-        //这个会抛异常，因为没有叫jbobbot的组
-        System.out.println(service2.hello("service2"));
-
+        System.out.println(service1.hello("service1aabb"));
 
         renderText("ok");
     }
