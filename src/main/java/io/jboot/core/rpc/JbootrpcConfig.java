@@ -17,6 +17,8 @@ package io.jboot.core.rpc;
 
 import io.jboot.config.annotation.PropertyConfig;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -73,7 +75,7 @@ public class JbootrpcConfig {
      * 对外暴露服务的相关配置
      */
     private String host; //当有多个IP的时候可以指定某个IP
-    private Integer defaultPort = 8000;
+    private Integer defaultPort = 0; //0 为随机可用端口
     private String defaultGroup = "jboot";
     private String defaultVersion = "1.0";
 
@@ -145,6 +147,23 @@ public class JbootrpcConfig {
     }
 
     public Integer getDefaultPort() {
+        if (defaultPort == 0) {
+            ServerSocket serverSocket = null;
+            try {
+                serverSocket = new ServerSocket(0); //.getLocalPort();
+                return serverSocket.getLocalPort();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (serverSocket != null) {
+                    try {
+                        serverSocket.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        }
+
         return defaultPort;
     }
 
@@ -205,6 +224,9 @@ public class JbootrpcConfig {
     }
 
     public void setDirectUrl(String directUrl) {
+        if (directUrl != null && directUrl.contains(":")) {
+            this.defaultPort = Integer.valueOf(directUrl.split(":")[1]);
+        }
         this.directUrl = directUrl;
     }
 

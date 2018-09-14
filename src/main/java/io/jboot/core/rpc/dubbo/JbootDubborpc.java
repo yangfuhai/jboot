@@ -145,11 +145,6 @@ public class JbootDubborpc extends JbootrpcBase {
             protocolConfig.setSerialization(getRpcConfig().getSerialization());
         }
 
-        if (protocolConfig.getPort() == null && getRpcConfig().getDefaultPort() != null) {
-            protocolConfig.setPort(getRpcConfig().getDefaultPort());
-        }
-
-
         protocolConfig.setPort(serviceConfig.getPort());
 
         //此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏
@@ -161,7 +156,6 @@ public class JbootDubborpc extends JbootrpcBase {
         service.setRef((T) object);
 
         initService(service, serviceConfig);
-
 
 
         // 暴露及注册服务
