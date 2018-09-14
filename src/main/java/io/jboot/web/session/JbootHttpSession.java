@@ -127,14 +127,16 @@ public class JbootHttpSession implements HttpSession {
     @Override
     public void setAttribute(String name, Object value) {
         checkValid();
-        if (value != null) {
-            newAttributes.put(name, value);
-            deleteAttribute.remove(name);
-            empty = false;
-            dataChanged = true;
-        } else {
+        if (value == null) {
             removeAttribute(name);
+            return;
         }
+
+        newAttributes.put(name, value);
+        deleteAttribute.remove(name);
+        empty = false;
+        dataChanged = true;
+
     }
 
     @Override
@@ -149,7 +151,7 @@ public class JbootHttpSession implements HttpSession {
             return;
         }
 
-        if (!newAttributes.containsKey(name) && !sessionStore.containsKey(name)){
+        if (!newAttributes.containsKey(name) && !sessionStore.containsKey(name)) {
             return;
         }
 

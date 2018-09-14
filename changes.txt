@@ -1,3 +1,6 @@
+jboot-1.6.5:
+
+
 jboot-1.6.4:
 修复：FastjsonSerializer序列化错误的问题
 修复：StringUtils正则无法匹配19开头的手机号问题
