@@ -1,4 +1,9 @@
 jboot-1.6.5:
+修复：PaginateDirectiveBase 当不设置page的时候回抛出空指针异常的问题
+修复：文档笔误 JbootEvnet 修改为 JbootEvent
+优化：当RPC不指定默认端口时，默认为随机可用端口号
+优化：异常信息的错误提示
+优化：升级 dubbo 到最新版本 2.6.3
 
 
 jboot-1.6.4:
