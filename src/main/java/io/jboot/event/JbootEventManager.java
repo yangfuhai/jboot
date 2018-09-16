@@ -95,13 +95,13 @@ public class JbootEventManager {
 
         EventConfig listenerAnnotation = listenerClass.getAnnotation(EventConfig.class);
         if (listenerAnnotation == null) {
-            log.warn("listenerClass[" + listenerAnnotation + "] resigter fail,because not use EventConfig annotation.");
+            //当未配置 EventConfig 的时候，可以手动注册
             return;
         }
 
         String[] actions = listenerAnnotation.action();
         if (actions == null || actions.length == 0) {
-            log.warn("listenerClass[" + listenerAnnotation + "] resigter fail, because action is null or blank.");
+            log.warn("listenerClass[" + listenerAnnotation + "] register fail, because action is null or blank.");
             return;
         }
 
@@ -114,31 +114,44 @@ public class JbootEventManager {
             return;
         }
 
+        registerListener(listener, listenerAnnotation.async(), actions);
+
+    }
+
+
+    public void unRegisterListener(JbootEventListener eventListener) {
+        unRegisterListener(eventListener.getClass());
+    }
+
+    /**
+     * 手从初始化 EventListener ，手动注册
+     *
+     * @param eventListener
+     * @param async
+     * @param actions
+     */
+    public void registerListener(JbootEventListener eventListener, boolean async, String... actions) {
+
         for (String action : actions) {
-            List<JbootEventListener> list = null;
-            if (listenerAnnotation.async()) {
-                list = asyncListenerMap.get(action);
-            } else {
-                list = listenerMap.get(action);
-            }
+            List<JbootEventListener> list = async ? asyncListenerMap.get(action) : listenerMap.get(action);
+
             if (null == list) {
                 list = new ArrayList<>();
             }
-            if (list.isEmpty() || !list.contains(listener)) {
-                list.add(listener);
+
+            if (list.contains(eventListener)) {
+                continue;
             }
 
-            Collections.sort(list, new Comparator<JbootEventListener>() {
-                @Override
-                public int compare(JbootEventListener o1, JbootEventListener o2) {
-                    EventConfig c1 = ClassKits.getUsefulClass(o1.getClass()).getAnnotation(EventConfig.class);
-                    EventConfig c2 = ClassKits.getUsefulClass(o2.getClass()).getAnnotation(EventConfig.class);
-                    return c1.weight() - c2.weight();
-                }
+            list.add(eventListener);
+
+            Collections.sort(list, (o1, o2) -> {
+                EventConfig c1 = ClassKits.getUsefulClass(o1.getClass()).getAnnotation(EventConfig.class);
+                EventConfig c2 = ClassKits.getUsefulClass(o2.getClass()).getAnnotation(EventConfig.class);
+                return c1.weight() - c2.weight();
             });
 
-
-            if (listenerAnnotation.async()) {
+            if (async) {
                 asyncListenerMap.put(action, list);
             } else {
                 listenerMap.put(action, list);
@@ -146,10 +159,10 @@ public class JbootEventManager {
         }
 
         if (Jboot.me().isDevMode()) {
-            System.out.println(String.format("listener[%s]-->>registered.", listener));
+            System.out.println(String.format("listener[%s]-->>registered.", eventListener));
         }
-
     }
+
 
     private boolean listenerHasRegisterBefore(Class<? extends JbootEventListener> listenerClass) {
         return findFromMap(listenerClass, listenerMap)
