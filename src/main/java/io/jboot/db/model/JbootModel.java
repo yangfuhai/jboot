@@ -269,7 +269,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    private IJbootModelDialect getDialect() {
+    protected IJbootModelDialect _getDialect() {
         return (IJbootModelDialect) _getConfig().getDialect();
     }
 
@@ -279,18 +279,32 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    public M findFirstByColumn(String column, Object value, String orderBy) {
+        return findFirstByColumn(Column.create(column, value), orderBy);
+    }
+
     public M findFirstByColumn(Column column) {
         return findFirstByColumns(Columns.create(column));
     }
 
+
+    public M findFirstByColumn(Column column, String orderBy) {
+        return findFirstByColumns(Columns.create(column), orderBy);
+    }
+
+
     public M findFirstByColumns(Columns columns) {
-        String sql = getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), null, 1);
+        return findFirstByColumns(columns, null);
+    }
+
+    public M findFirstByColumns(Columns columns, String orderby) {
+        String sql = _getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), orderby, 1);
         return columns.isEmpty() ? findFirst(sql) : findFirst(sql, columns.getValueArray());
     }
 
 
     public List<M> findAll() {
-        String sql = getDialect().forFindByColumns(_getTableName(), "*", null, null, null);
+        String sql = _getDialect().forFindByColumns(_getTableName(), "*", null, null, null);
         return find(sql);
     }
 
@@ -340,7 +354,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
-        String sql = getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), orderBy, count);
+        String sql = _getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 
@@ -380,8 +394,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy) {
-        String selectPartSql = getDialect().forPaginateSelect("*");
-        String fromPartSql = getDialect().forPaginateFrom(_getTableName(), columns.getList(), orderBy);
+        String selectPartSql = _getDialect().forPaginateSelect("*");
+        String fromPartSql = _getDialect().forPaginateFrom(_getTableName(), columns.getList(), orderBy);
 
         return columns.isEmpty()
                 ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)
