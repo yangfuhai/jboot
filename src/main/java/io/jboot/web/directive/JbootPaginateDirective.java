@@ -21,12 +21,10 @@ import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.JbootRequestContext;
-import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.base.PaginateDirectiveBase;
 
 import javax.servlet.http.HttpServletRequest;
 
-@JFinalDirective("JbootPaginateDirective")
 public abstract class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
