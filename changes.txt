@@ -1,9 +1,13 @@
 jboot-1.6.7:
+优化：JbootModel支持FindFirstOrderBy功能
+优化：JbootPaginateDirective支持扩展getPage功能
+优化：升级 druid 依赖版本号
 
 
 jboot-1.6.6:
 新增：JbootEvent 可以进行手动注册的相关接口
 优化：升级 J2Cache 和 Skywalking 的相关依赖
+
 
 jboot-1.6.5:
 修复：PaginateDirectiveBase 当不设置page的时候回抛出空指针异常的问题
