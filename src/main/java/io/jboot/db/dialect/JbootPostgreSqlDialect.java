@@ -87,7 +87,11 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
             int index = 0;
             for (Column column : columns) {
-                sqlBuilder.append(String.format(" \"%s\" %s ? ", column.getName(), column.getLogic()));
+                if (column.isMustNeedValue()) {
+                    sqlBuilder.append(String.format(" \"%s\" %s ? ", column.getName(), column.getLogic()));
+                } else {
+                    sqlBuilder.append(String.format(" \"%s\" %s ", column.getName(), column.getLogic()));
+                }
                 if (index != columns.size() - 1) {
                     sqlBuilder.append(" AND ");
                 }

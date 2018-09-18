@@ -16,7 +16,7 @@
 package io.jboot.db.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -49,6 +49,7 @@ public class Columns implements Serializable {
         return create().eq(name, value);
     }
 
+
     /**
      * add new column in Columns
      *
@@ -56,16 +57,22 @@ public class Columns implements Serializable {
      */
     public void add(Column column) {
         if (this.cols == null) {
-            this.cols = new ArrayList<>();
+            this.cols = new LinkedList<>();
         }
 
         //do not add null value column
-        if (column.getValue() == null) {
+        if (column.isMustNeedValue() && column.getValue() == null) {
             return;
         }
 
         this.cols.add(column);
     }
+
+
+    public Columns add(String name, Object value) {
+        return eq(name, value);
+    }
+
 
     /**
      * equals
@@ -154,9 +161,24 @@ public class Columns implements Serializable {
     }
 
 
+    public Columns is_null(String name) {
+        this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
+        return this;
+    }
+
+
+    public Columns is_not_null(String name) {
+        this.add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
+        return this;
+    }
+
+
     public boolean isEmpty() {
         return cols == null || cols.isEmpty();
     }
+
+
+    static final Object[] NULL_PARA_ARRAY = new Object[0];
 
     public Object[] getValueArray() {
 
@@ -164,11 +186,12 @@ public class Columns implements Serializable {
             return null;
         }
 
-        Object[] values = new Object[cols.size()];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = cols.get(i).getValue();
+        List<Object> values = new LinkedList<>();
+        for (Column column : cols) {
+            if (column.getValue() != null) values.add(column.getValue());
         }
-        return values;
+
+        return values.isEmpty() ? NULL_PARA_ARRAY : values.toArray();
     }
 
 

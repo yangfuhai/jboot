@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.Sqlite3Dialect;
 import io.jboot.db.model.Column;
-import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.StringUtils;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
                 .append(" FROM ")
                 .append(table).append(" ");
 
-        appIfNotEmpty(columns, sqlBuilder);
+        SqlAppendKit.appIfNotEmpty(columns, sqlBuilder);
 
 
         if (StringUtils.isNotBlank(orderBy)) {
@@ -58,7 +57,7 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
     public String forPaginateFrom(String table, List<Column> columns, String orderBy) {
         StringBuilder sqlBuilder = new StringBuilder(" FROM ").append(table);
 
-        appIfNotEmpty(columns, sqlBuilder);
+        SqlAppendKit.appIfNotEmpty(columns, sqlBuilder);
 
         if (StringUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
@@ -67,20 +66,5 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
         return sqlBuilder.toString();
     }
 
-
-    private void appIfNotEmpty(List<Column> columns, StringBuilder sqlBuilder) {
-        if (ArrayUtils.isNotEmpty(columns)) {
-            sqlBuilder.append(" WHERE ");
-
-            int index = 0;
-            for (Column column : columns) {
-                sqlBuilder.append(String.format(" %s %s ? ", column.getName(), column.getLogic()));
-                if (index != columns.size() - 1) {
-                    sqlBuilder.append(" AND ");
-                }
-                index++;
-            }
-        }
-    }
 
 }

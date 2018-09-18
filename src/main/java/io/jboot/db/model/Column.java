@@ -27,6 +27,9 @@ public class Column implements Serializable {
     public static final String LOGIC_EQUALS = " = ";
     public static final String LOGIC_NOT_EQUALS = " != ";
 
+    public static final String LOGIC_IS_NULL = " IS NULL ";
+    public static final String LOGIC_IS_NOT_NULL = " IS NOT NULL ";
+
 
     private String name;
     private Object value;
@@ -83,7 +86,9 @@ public class Column implements Serializable {
         this.logic = logic;
     }
 
-    public String toSql() {
-        return String.format(" `%s` %s ? ", name, logic);
+    public boolean isMustNeedValue() {
+        return !LOGIC_IS_NULL.equals(getLogic())
+                && !LOGIC_IS_NOT_NULL.equals(getLogic());
     }
+
 }
