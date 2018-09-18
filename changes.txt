@@ -1,6 +1,6 @@
 jboot-1.6.8:
 新增：Columns 查询支持 is null 和 is not null 的支持
-
+优化：对 Jboot 自定义方言的相关代码进行优化
 
 jboot-1.6.7:
 优化：JbootModel支持FindFirstOrderBy功能
