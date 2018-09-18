@@ -15,6 +15,10 @@
  */
 package io.jboot.web.directive;
 
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.template.Env;
+import com.jfinal.template.io.Writer;
+import com.jfinal.template.stat.Scope;
 import io.jboot.utils.StringUtils;
 import io.jboot.web.JbootRequestContext;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -58,4 +62,15 @@ public abstract class JbootPaginateDirective extends PaginateDirectiveBase {
         return url;
     }
 
+    @Override
+    protected Page<?> getPage(Env env, Scope scope, Writer writer) {
+        return JbootRequestContext.getRequestAttr(getPageAttrName());
+    }
+
+    /**
+     * 获取 page 设置到 requestAttr 里的名字
+     *
+     * @return
+     */
+    protected abstract String getPageAttrName();
 }

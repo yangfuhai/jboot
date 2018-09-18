@@ -19,7 +19,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.template.Env;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
-import io.jboot.web.JbootRequestContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         String previousText = getParam("previousText", "上一页", scope);
         String nextText = getParam("nextText", "下一页", scope);
 
-        Page<?> page = JbootRequestContext.getRequestAttr(getPageAttrName());
+        Page<?> page = getPage(env, scope, writer);
 
         int currentPage = page == null ? 1 : page.getPageNumber();
         int totalPage = page == null ? 1 : page.getTotalPage();
@@ -131,14 +130,11 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         return anchor;
     }
 
+
     protected abstract String getUrl(int pageNumber);
 
-    /**
-     * 获取 page 设置到 requestAttr 里的名字
-     *
-     * @return
-     */
-    protected abstract String getPageAttrName();
+    protected abstract Page<?> getPage(Env env, Scope scope, Writer writer);
+
 
     protected String getPageItemsName() {
         return "pages";
