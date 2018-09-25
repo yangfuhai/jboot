@@ -65,6 +65,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
 
     public <T> T getParam(int index, T defaultValue, Scope scope) {
+        if (index < 0 || index >= exprList.length()) {
+            return defaultValue;
+        }
         Object data = exprList.getExpr(index).eval(scope);
         return (T) (data == null ? defaultValue : data);
     }
