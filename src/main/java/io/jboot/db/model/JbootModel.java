@@ -309,23 +309,41 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    public List<M> findListByColumn(String column, Object value, Integer count) {
-        return findListByColumns(Columns.create(column, value), count);
-    }
-
-
-    public List<M> findListByColumn(Column column, Integer count) {
-        return findListByColumns(Columns.create(column), count);
-    }
-
-
     public List<M> findListByColumn(String column, Object value) {
-        return findListByColumn(column, value, null);
+        return findListByColumn(Column.create(column, value), null, null);
     }
 
     public List<M> findListByColumn(Column column) {
-        return findListByColumn(column, null);
+        return findListByColumn(column, null, null);
     }
+
+
+    public List<M> findListByColumn(String column, Object value, Integer count) {
+        return findListByColumn(Column.create(column, value), null, count);
+    }
+
+    public List<M> findListByColumn(Column column, Integer count) {
+        return findListByColumn(column, null, count);
+    }
+
+
+    public List<M> findListByColumn(String column, Object value, String orderBy) {
+        return findListByColumn(Column.create(column, value), orderBy, null);
+    }
+
+
+    public List<M> findListByColumn(Column column, String orderby) {
+        return findListByColumn(column, orderby, null);
+    }
+
+    public List<M> findListByColumn(String column, Object value, String orderBy, Integer count) {
+        return findListByColumn(Column.create(column, value), orderBy, count);
+    }
+
+    public List<M> findListByColumn(Column column, String orderBy, Integer count) {
+        return findListByColumns(Columns.create(column), orderBy, count);
+    }
+
 
     public List<M> findListByColumns(List<Column> columns) {
         return findListByColumns(columns, null, null);
@@ -339,6 +357,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return findListByColumns(columns, null, count);
     }
 
+    public List<M> findListByColumns(List<Column> columns, String orderBy, Integer count) {
+        return findListByColumns(Columns.create(columns), orderBy, count);
+    }
 
     public List<M> findListByColumns(Columns columns) {
         return findListByColumns(columns, null, null);
@@ -356,11 +377,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
         String sql = _getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
-    }
-
-
-    public List<M> findListByColumns(List<Column> columns, String orderBy, Integer count) {
-        return findListByColumns(Columns.create(columns), orderBy, count);
     }
 
 
@@ -393,6 +409,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return paginateByColumns(pageNumber, pageSize, columns, null);
     }
 
+
+    public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns, String orderBy) {
+        return paginateByColumns(pageNumber, pageSize, Columns.create(columns), orderBy);
+    }
+
+
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy) {
         String selectPartSql = _getDialect().forPaginateSelect("*");
         String fromPartSql = _getDialect().forPaginateFrom(_getTableName(), columns.getList(), orderBy);
@@ -402,15 +424,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                 : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
     }
 
-    public Page<M> paginateByColumns(int pageNumber, int pageSize, List<Column> columns, String orderBy) {
-        return paginateByColumns(pageNumber, pageSize, Columns.create(columns), orderBy);
-    }
-
 
     protected String _getTableName() {
         return _getTable(true).getName();
     }
-
 
     protected Table _getTable() {
         return _getTable(false);
