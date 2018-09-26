@@ -15,6 +15,8 @@
  */
 package io.jboot.db.model;
 
+import io.jboot.utils.StrUtils;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,13 +58,14 @@ public class Columns implements Serializable {
      * @param column
      */
     public void add(Column column) {
-        if (this.cols == null) {
-            this.cols = new LinkedList<>();
-        }
 
         //do not add null value column
         if (column.isMustNeedValue() && column.getValue() == null) {
             return;
+        }
+
+        if (this.cols == null) {
+            this.cols = new LinkedList<>();
         }
 
         this.cols.add(column);
@@ -106,9 +109,24 @@ public class Columns implements Serializable {
      * @param value
      * @return
      */
-
     public Columns like(String name, Object value) {
         this.add(Column.create(name, value, Column.LOGIC_LIKE));
+        return this;
+    }
+
+    /**
+     * 自动添加两边 % 的like
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    public Columns likeAppendPercent(String name, Object value) {
+        if (value == null || StrUtils.isBlank(value.toString())) {
+            //do nothing
+            return this;
+        }
+        this.add(Column.create(name, "%" + value + "%", Column.LOGIC_LIKE));
         return this;
     }
 
