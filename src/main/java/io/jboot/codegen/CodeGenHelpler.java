@@ -23,7 +23,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.Jboot;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -91,9 +91,9 @@ public class CodeGenHelpler {
      * @param excludeTables
      */
     public static void excludeTables(List<TableMeta> list, String excludeTables) {
-        if (StringUtils.isNotBlank(excludeTables)) {
+        if (StrUtils.isNotBlank(excludeTables)) {
             List<TableMeta> newTableMetaList = new ArrayList<>();
-            Set<String> excludeTableSet = StringUtils.splitToSet(excludeTables.toLowerCase(), ",");
+            Set<String> excludeTableSet = StrUtils.splitToSet(excludeTables.toLowerCase(), ",");
             for (TableMeta tableMeta : list) {
                 if (excludeTableSet.contains(tableMeta.name.toLowerCase())) {
                     System.out.println("exclude table : " + tableMeta.name);

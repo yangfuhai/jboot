@@ -21,7 +21,7 @@ import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.model.JbootModelConfig;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.*;
 
@@ -46,8 +46,8 @@ public class TableInfoManager {
         List<TableInfo> tableInfos = new ArrayList<>();
 
         Set<String> configTables = null;
-        if (StringUtils.isNotBlank(dataSourceConfig.getTable())) {
-            configTables = StringUtils.splitToSet(dataSourceConfig.getTable(), ",");
+        if (StrUtils.isNotBlank(dataSourceConfig.getTable())) {
+            configTables = StrUtils.splitToSet(dataSourceConfig.getTable(), ",");
         }
 
         for (TableInfo tableInfo : getAllTableInfos()) {
@@ -62,8 +62,8 @@ public class TableInfoManager {
             }
         }
 
-        if (StringUtils.isNotBlank(dataSourceConfig.getExTable())) {
-            Set<String> configExTables = StringUtils.splitToSet(dataSourceConfig.getExTable(), ",");
+        if (StrUtils.isNotBlank(dataSourceConfig.getExTable())) {
+            Set<String> configExTables = StrUtils.splitToSet(dataSourceConfig.getExTable(), ",");
             for (Iterator<TableInfo> iterator = tableInfos.iterator(); iterator.hasNext(); ) {
                 TableInfo tableInfo = iterator.next();
 
@@ -104,8 +104,8 @@ public class TableInfoManager {
             }
 
             Set<String> datasources = new HashSet<>();
-            if (StringUtils.isNotBlank(tb.datasource())) {
-                datasources.addAll(StringUtils.splitToSet(tb.datasource(), ","));
+            if (StrUtils.isNotBlank(tb.datasource())) {
+                datasources.addAll(StrUtils.splitToSet(tb.datasource(), ","));
             } else {
                 datasources.add(DataSourceConfig.NAME_DEFAULT);
             }

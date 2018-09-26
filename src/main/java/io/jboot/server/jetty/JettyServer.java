@@ -33,7 +33,7 @@ import io.jboot.server.JbootServerClassloader;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.JbootWebConfig;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.eclipse.jetty.server.Server;
@@ -97,7 +97,7 @@ public class JettyServer implements JbootServer {
         jfinalFilter.setInitParameter("configClass", Jboot.me().getJbootConfig().getJfinalConfig());
 
         JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
-        if (StringUtils.isNotBlank(hystrixConfig.getUrl())) {
+        if (StrUtils.isNotBlank(hystrixConfig.getUrl())) {
             handler.addServlet(HystrixMetricsStreamServlet.class, hystrixConfig.getUrl());
         }
 

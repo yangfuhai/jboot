@@ -21,7 +21,7 @@ import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.core.rpc.JbootrpcBase;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,14 +62,14 @@ public class JbootMotanrpc extends JbootrpcBase {
         protocolConfig.setId("motan");
         protocolConfig.setName("motan");
 
-        if (StringUtils.isNotBlank(getRpcConfig().getProxy())) {
+        if (StrUtils.isNotBlank(getRpcConfig().getProxy())) {
             protocolConfig.setFilter(getRpcConfig().getProxy());
         } else {
             protocolConfig.setFilter("jbootHystrix,jbootOpentracing");
         }
 
 
-        if (StringUtils.isNotBlank(getRpcConfig().getSerialization())) {
+        if (StrUtils.isNotBlank(getRpcConfig().getSerialization())) {
             protocolConfig.setSerialization(getRpcConfig().getSerialization());
         }
 
@@ -107,7 +107,7 @@ public class JbootMotanrpc extends JbootrpcBase {
          * 直连模式
          */
         else if (getRpcConfig().isRedirectCallMode()) {
-            if (StringUtils.isBlank(getRpcConfig().getDirectUrl())) {
+            if (StrUtils.isBlank(getRpcConfig().getDirectUrl())) {
                 throw new JbootIllegalConfigException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
             }
             refererConfig.setDirectUrl(getRpcConfig().getDirectUrl());
@@ -140,7 +140,7 @@ public class JbootMotanrpc extends JbootrpcBase {
             motanServiceConfig.setInterface(interfaceClass);
             motanServiceConfig.setRef((T) object);
 
-            if (StringUtils.isNotBlank(getRpcConfig().getHost())) {
+            if (StrUtils.isNotBlank(getRpcConfig().getHost())) {
                 motanServiceConfig.setHost(getRpcConfig().getHost());
             }
 
@@ -186,7 +186,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         }
 
 
-        if (StringUtils.isNotBlank(config.getProxy())) {
+        if (StrUtils.isNotBlank(config.getProxy())) {
             interfaceConfig.setProxy(config.getProxy());
         } else {
             //默认情况下用于 hystrix 代理
@@ -194,7 +194,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         }
 
 
-        if (StringUtils.isNotBlank(config.getFilter())) {
+        if (StrUtils.isNotBlank(config.getFilter())) {
             interfaceConfig.setFilter(config.getFilter());
         }
     }

@@ -30,7 +30,7 @@ import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.hystrix.annotation.EnableHystrixCommand;
 import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.utils.ClassKits;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -62,7 +62,7 @@ public class AopInterceptor implements MethodInterceptor {
 
 
         String commandKey = enableHystrixCommand.key();
-        if (StringUtils.isBlank(commandKey)) {
+        if (StrUtils.isBlank(commandKey)) {
             commandKey = methodInvocation.getMethod().getName();
         }
 
@@ -81,7 +81,7 @@ public class AopInterceptor implements MethodInterceptor {
 
                 String faillMethod = enableHystrixCommand.failMethod();
 
-                if (StringUtils.isBlank(faillMethod)) {
+                if (StrUtils.isBlank(faillMethod)) {
                     LOG.error(getExecutionException().toString(), getExecutionException());
                     return null;
                 }

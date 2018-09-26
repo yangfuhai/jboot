@@ -18,7 +18,7 @@ package io.jboot.core.rpc.zbus;
 import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 
 public class JbootZbusrpc extends JbootrpcBase {
@@ -29,7 +29,7 @@ public class JbootZbusrpc extends JbootrpcBase {
     JbootZbusRpcConfig zbusConfig = Jboot.config(JbootZbusRpcConfig.class);
 
     public JbootZbusrpc() {
-        if (StringUtils.isBlank(zbusConfig.getServiceName())) {
+        if (StrUtils.isBlank(zbusConfig.getServiceName())) {
             throw new NullPointerException("please config jboot.rpc.zbus.serviceName in your properties.");
         }
 
@@ -37,7 +37,7 @@ public class JbootZbusrpc extends JbootrpcBase {
         clientBootstrap = new JbootClientBootstrap();
         clientBootstrap.serviceAddress(getRpcConfig().getRegistryAddress());
         clientBootstrap.serviceName(zbusConfig.getServiceName());
-        if (StringUtils.isNotBlank(zbusConfig.getServiceToken())) {
+        if (StrUtils.isNotBlank(zbusConfig.getServiceToken())) {
             clientBootstrap.serviceToken(zbusConfig.getServiceToken());
         }
 
@@ -45,7 +45,7 @@ public class JbootZbusrpc extends JbootrpcBase {
 
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
-        String group = StringUtils.isBlank(serviceConfig.getGroup()) ? getRpcConfig().getDefaultGroup() : serviceConfig.getGroup();
+        String group = StrUtils.isBlank(serviceConfig.getGroup()) ? getRpcConfig().getDefaultGroup() : serviceConfig.getGroup();
         return clientBootstrap.serviceObtain(serviceClass, group, serviceConfig.getVersion());
     }
 
@@ -60,7 +60,7 @@ public class JbootZbusrpc extends JbootrpcBase {
         try {
             serviceBootstrap.serviceAddress(getRpcConfig().getRegistryAddress());
             serviceBootstrap.serviceName(zbusConfig.getServiceName());
-            if (StringUtils.isNotBlank(zbusConfig.getServiceToken())) {
+            if (StrUtils.isNotBlank(zbusConfig.getServiceToken())) {
                 serviceBootstrap.serviceToken(zbusConfig.getServiceToken());
             }
             serviceBootstrap.start();

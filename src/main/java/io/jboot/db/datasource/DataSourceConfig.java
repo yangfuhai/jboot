@@ -15,7 +15,7 @@
  */
 package io.jboot.db.datasource;
 
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,7 +165,7 @@ public class DataSourceConfig {
     }
 
     public boolean isConfigOk() {
-        return (StringUtils.isNotBlank(url))
+        return (StrUtils.isNotBlank(url))
                 || shardingEnable == true;
     }
 

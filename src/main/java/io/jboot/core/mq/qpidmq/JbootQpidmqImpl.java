@@ -21,7 +21,7 @@ import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import org.apache.qpid.client.AMQAnyDestination;
 import org.apache.qpid.client.AMQConnection;
 import org.apache.qpid.jms.Connection;
@@ -111,7 +111,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         String host = qpidConfig.getHost();
         String[] hosts = host.split(",");
         for (String h : hosts) {
-            if (StringUtils.isBlank(h)) {
+            if (StrUtils.isBlank(h)) {
                 continue;
             }
             url.append("tcp://" + h + ";");

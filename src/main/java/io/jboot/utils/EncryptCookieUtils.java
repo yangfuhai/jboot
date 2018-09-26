@@ -122,28 +122,41 @@ public class EncryptCookieUtils {
 
 
     public static String getFromCookieInfo(String encrypt_key, String cookieValue) {
-        if (StringUtils.isNotBlank(cookieValue)) {
-            String cookieStrings[] = cookieValue.split(COOKIE_SEPARATOR);
-            if (null != cookieStrings && 4 == cookieStrings.length) {
-                String encrypt_value = cookieStrings[0];
-                String saveTime = cookieStrings[1];
-                String maxAgeInSeconds = cookieStrings[2];
-                String value = Base64Kit.decodeToStr(cookieStrings[3]);
-
-                String encrypt = encrypt(encrypt_key, Long.valueOf(saveTime), maxAgeInSeconds, value);
-
-                // 保证 cookie 不被人为修改
-                if (encrypt_value != null && encrypt_value.equals(encrypt)) {
-                    long stime = Long.parseLong(saveTime);
-                    long maxtime = Long.parseLong(maxAgeInSeconds) * 1000;
-                    // 查看是否过时
-                    if ((stime + maxtime) - System.currentTimeMillis() > 0) {
-                        return value;
-                    }
-                }
-            }
+        if (StrUtils.isBlank(cookieValue)) {
+            return null;
         }
-        return null;
+
+        String cookieStrings[] = cookieValue.split(COOKIE_SEPARATOR);
+        if (cookieStrings == null || cookieStrings.length != 4) {
+            return null;
+        }
+
+        String encrypt_value = cookieStrings[0];
+        String saveTime = cookieStrings[1];
+        String maxAgeInSeconds = cookieStrings[2];
+        String value = Base64Kit.decodeToStr(cookieStrings[3]);
+
+        String encrypt = encrypt(encrypt_key, Long.valueOf(saveTime), maxAgeInSeconds, value);
+
+        // 非常重要，确保 cookie 不被人为修改
+        if (!encrypt.equals(encrypt_value)) {
+            return null;
+        }
+
+        long stime = Long.parseLong(saveTime);
+        long maxtime = Long.parseLong(maxAgeInSeconds) * 1000;
+
+        // 查看是否过时
+        if ((stime + maxtime) - System.currentTimeMillis() > 0) {
+            return value;
+        }
+        /**
+         * 已经超时了
+         */
+        else {
+            return null;
+        }
+
     }
 
     public static Long getLong(Controller ctr, String key) {

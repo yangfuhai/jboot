@@ -19,7 +19,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.RequestUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
@@ -74,7 +74,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
      */
     private boolean validateCaptache(FixedInvocation inv, CaptchaValidate captchaValidate) {
         String formName = captchaValidate.form();
-        if (StringUtils.isBlank(formName)) {
+        if (StrUtils.isBlank(formName)) {
             throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
         }
 
@@ -133,7 +133,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
         for (Form form : forms) {
             String formName = form.name();
-            if (StringUtils.isBlank(formName)) {
+            if (StrUtils.isBlank(formName)) {
                 throw new IllegalArgumentException("@Form.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
             }
             String value = inv.getController().getPara(formName);

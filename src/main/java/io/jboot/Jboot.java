@@ -45,7 +45,7 @@ import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerFactory;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.FileUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.JbootWebConfig;
 
 import java.io.File;
@@ -190,7 +190,7 @@ public class Jboot {
         File bannerFile = new File(getRootClassPath(), config.getBannerFile());
         if (bannerFile.exists() && bannerFile.canRead()) {
             String bannerFileText = FileUtils.readString(bannerFile);
-            if (StringUtils.isNotBlank(bannerFileText)) {
+            if (StrUtils.isNotBlank(bannerFileText)) {
                 return bannerFileText;
             }
         }

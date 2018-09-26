@@ -16,7 +16,7 @@
 package mutildatasource;
 
 import io.jboot.Jboot;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import sharding.UserModel;
@@ -42,7 +42,7 @@ public class MutilDatasourceDemo extends JbootController {
 
 
     public void index() {
-        String id = StringUtils.uuid();
+        String id = StrUtils.uuid();
 
         UserModel user = new UserModel();
         user.setName("Michael yang");

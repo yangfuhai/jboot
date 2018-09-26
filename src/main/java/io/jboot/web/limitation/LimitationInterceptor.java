@@ -19,7 +19,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.utils.RequestUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
@@ -165,8 +165,8 @@ public class LimitationInterceptor implements FixedInterceptor {
 
     private String getUserId(FixedInvocation inv) {
         String userId = inv.getController().getCookie("_jboot_luser_id");
-        if (StringUtils.isBlank(userId)) {
-            userId = StringUtils.uuid();
+        if (StrUtils.isBlank(userId)) {
+            userId = StrUtils.uuid();
             inv.getController().setCookie("_jboot_luser_id", userId, Integer.MAX_VALUE);
         }
         return userId;
@@ -180,7 +180,7 @@ public class LimitationInterceptor implements FixedInterceptor {
         /**
          * 注解上没有设置 Action , 使用jboot.properties配置文件的
          */
-        if (StringUtils.isBlank(limitationInfo.getRenderType())) {
+        if (StrUtils.isBlank(limitationInfo.getRenderType())) {
             //ajax 请求
             if (RequestUtils.isAjaxRequest(controller.getRequest())) {
                 controller.renderJson(manager.getAjaxJsonMap());

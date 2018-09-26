@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,19 +16,18 @@
 package io.jboot.utils;
 
 import com.jfinal.core.JFinal;
+import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringUtils {
-    private static final Log log = Log.getLog(StringUtils.class);
+public class StrUtils extends StrKit {
+    private static final Log log = Log.getLog(StrUtils.class);
 
     public static String urlDecode(String string) {
         try {
@@ -69,79 +68,47 @@ public class StringUtils {
         return true;
     }
 
+    /**
+     * 不是空数据，注意：空格不是空数据
+     *
+     * @param string
+     * @return
+     */
     public static boolean isNotEmpty(String string) {
         return string != null && !string.equals("");
     }
 
-    public static boolean areNotBlank(String... strings) {
-        if (strings == null || strings.length == 0)
-            return false;
 
-        for (String string : strings) {
-            if (string == null || "".equals(string.trim())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
+    /**
+     * 确保不是空白字符串
+     *
+     * @param o
+     * @return
+     */
     public static boolean isNotBlank(Object o) {
-        return o == null ? false : isNotBlank(o.toString());
+        return o == null ? false : notBlank(o.toString());
     }
 
-    public static boolean isNotBlank(String string) {
-        return string != null && !string.trim().equals("");
-    }
 
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().equals("");
-    }
-
-    public static long toLong(String value, Long defaultValue) {
-        try {
-            if (value == null || "".equals(value.trim()))
-                return defaultValue;
-            value = value.trim();
-            if (value.startsWith("N") || value.startsWith("n"))
-                return -Long.parseLong(value.substring(1));
-            return Long.parseLong(value);
-        } catch (Exception e) {
-        }
-        return defaultValue;
-    }
-
-    public static int toInt(String value, int defaultValue) {
-        try {
-            if (value == null || "".equals(value.trim()))
-                return defaultValue;
-            value = value.trim();
-            if (value.startsWith("N") || value.startsWith("n"))
-                return -Integer.parseInt(value.substring(1));
-            return Integer.parseInt(value);
-        } catch (Exception e) {
-        }
-        return defaultValue;
-    }
-
-    public static BigInteger toBigInteger(String value, BigInteger defaultValue) {
-        try {
-            if (value == null || "".equals(value.trim()))
-                return defaultValue;
-            value = value.trim();
-            if (value.startsWith("N") || value.startsWith("n"))
-                return new BigInteger(value).negate();
-            return new BigInteger(value);
-        } catch (Exception e) {
-        }
-        return defaultValue;
-    }
-
+    /**
+     * 字符串是否匹配某个正则
+     *
+     * @param string
+     * @param regex
+     * @return
+     */
     public static boolean match(String string, String regex) {
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(string);
         return matcher.matches();
     }
 
+    /**
+     * 这个字符串是否是全是数字
+     *
+     * @param str
+     * @return
+     */
     public static boolean isNumeric(String str) {
         if (str == null)
             return false;
@@ -153,35 +120,44 @@ public class StringUtils {
         return true;
     }
 
+    /**
+     * 是否是邮件的字符串
+     *
+     * @param email
+     * @return
+     */
     public static boolean isEmail(String email) {
         return Pattern.matches("\\w+@(\\w+.)+[a-z]{2,3}", email);
     }
 
+
+    /**
+     * 是否是中国地区手机号码
+     *
+     * @param phoneNumber
+     * @return
+     */
     public static boolean isMobileNumber(String phoneNumber) {
         return Pattern.matches("^(1[3,4,5,7,8,9])\\d{9}$", phoneNumber);
     }
 
-    public static String escapeHtml(String text) {
-        if (isBlank(text))
-            return text;
 
-        return text.replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#x27;").replace("/", "&#x2F;");
-    }
-
+    /**
+     * 生成一个新的UUID
+     *
+     * @return
+     */
     public static String uuid() {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
+
     /**
-     * 生成流水号
+     * 去除特殊字符
      *
-     * @param uuid 谋订单的主键ID
+     * @param string
      * @return
      */
-    public static String generateSerialNumber(String uuid) {
-        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + Math.abs(uuid.hashCode());
-    }
-
     public static String clearSpecialCharacter(String string) {
         if (isBlank(string)) {
             return string;
@@ -202,15 +178,12 @@ public class StringUtils {
 
 
     /**
-     * 生成验证码
+     * 把字符串拆分成一个set
+     *
+     * @param src
+     * @param regex
+     * @return
      */
-    public static String getValidateCode() {
-
-        Random random = new Random();
-        return String.valueOf(random.nextInt(9999 - 1000 + 1) + 1000);//为变量赋随机值1000-9999
-    }
-
-
     public static Set<String> splitToSet(String src, String regex) {
         if (src == null) {
             return null;
@@ -219,7 +192,7 @@ public class StringUtils {
         String[] strings = src.split(regex);
         Set<String> set = new HashSet<>();
         for (String table : strings) {
-            if (StringUtils.isBlank(table)) {
+            if (StrUtils.isBlank(table)) {
                 continue;
             }
             set.add(table.trim());
@@ -230,7 +203,6 @@ public class StringUtils {
 
     public static void main(String[] args) {
         String url = "http://www.baidu.com?username=aaa";
-
-        System.out.println(StringUtils.urlEncode(url));
+        System.out.println(StrUtils.urlEncode(url));
     }
 }

@@ -1,6 +1,6 @@
 package sharding;
 
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -17,7 +17,7 @@ public class ShardingController extends JbootController {
 
     public void index() {
 
-        String id = StringUtils.uuid();
+        String id = StrUtils.uuid();
 
         UserModel user = new UserModel();
         user.setId(id);

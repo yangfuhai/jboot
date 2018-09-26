@@ -18,7 +18,7 @@ package io.jboot.component.shiro;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.component.shiro.processer.AuthorizeResult;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 /**
@@ -77,7 +77,7 @@ public interface JbootShiroInvokeListener {
 
 
         public void doProcessUnauthenticated(Controller controller) {
-            if (StringUtils.isBlank(config.getLoginUrl())) {
+            if (StrUtils.isBlank(config.getLoginUrl())) {
                 controller.renderError(401);
                 return;
             }
@@ -85,7 +85,7 @@ public interface JbootShiroInvokeListener {
         }
 
         public void doProcessuUnauthorization(Controller controller) {
-            if (StringUtils.isBlank(config.getUnauthorizedUrl())) {
+            if (StrUtils.isBlank(config.getUnauthorizedUrl())) {
                 controller.renderError(403);
                 return;
             }

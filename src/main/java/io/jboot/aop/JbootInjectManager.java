@@ -37,7 +37,7 @@ import io.jboot.event.JbootEventListener;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -143,7 +143,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
                     continue;
                 }
                 try {
-                    if (StringUtils.isBlank(name)) {
+                    if (StrUtils.isBlank(name)) {
                         binder.bind(interfaceClass).to(implClass);
                     } else {
                         binder.bind(interfaceClass).annotatedWith(Names.named(name)).to(implClass);

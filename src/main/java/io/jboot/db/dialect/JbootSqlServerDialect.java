@@ -18,7 +18,7 @@ package io.jboot.db.dialect;
 import com.jfinal.plugin.activerecord.dialect.SqlServerDialect;
 import io.jboot.db.model.Column;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class JbootSqlServerDialect extends SqlServerDialect implements IJbootMod
         SqlAppendKit.appIfNotEmpty(columns, sqlBuilder);
 
 
-        if (StringUtils.isNotBlank(orderBy)) {
+        if (StrUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
@@ -83,7 +83,7 @@ public class JbootSqlServerDialect extends SqlServerDialect implements IJbootMod
 
         SqlAppendKit.appIfNotEmpty(columns, sqlBuilder);
 
-        if (StringUtils.isNotBlank(orderBy)) {
+        if (StrUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 

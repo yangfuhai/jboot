@@ -31,7 +31,7 @@ import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerClassloader;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.listener.JbootAppListenerManager;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.JbootWebConfig;
 import io.jboot.web.websocket.JbootWebsocketManager;
 import io.undertow.Handlers;
@@ -124,7 +124,7 @@ public class UnderTowServer implements JbootServer {
                 .setClassLoader(classloader)
                 .setResourceManager(new ClassPathResourceManager(classloader))
                 .setContextPath(config.getContextPath())
-                .setDeploymentName("jboot" + StringUtils.uuid())
+                .setDeploymentName("jboot" + StrUtils.uuid())
                 .setEagerFilterInit(true); //设置启动的时候，初始化servlet或filter
 
 

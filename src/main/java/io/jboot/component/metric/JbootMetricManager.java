@@ -29,7 +29,7 @@ import io.jboot.component.metric.reporter.jmx.JMXReporter;
 import io.jboot.component.metric.reporter.slf4j.JbootSlf4jReporter;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +83,7 @@ public class JbootMetricManager {
 
     private List<JbootMetricReporter> getReporters() {
         String repoterString = metricsConfig.getReporter();
-        if (StringUtils.isBlank(repoterString)) {
+        if (StrUtils.isBlank(repoterString)) {
             return null;
         }
         List<JbootMetricReporter> reporters = new ArrayList<>();

@@ -26,7 +26,7 @@ import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.opentracing.Span;
 
 import java.lang.reflect.Method;
@@ -92,13 +92,13 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
             }
 
             String key = rpcConfig.getHystrixKeyByMethod(method.getName());
-            if (StringUtils.isBlank(key) && rpcConfig.isHystrixAutoConfig()) {
+            if (StrUtils.isBlank(key) && rpcConfig.isHystrixAutoConfig()) {
                 key = method.getDeclaringClass().getName() + "." + method.getName();
             }
 
             final Span span = JbootDubboTracingFilterKits.getActiveSpan();
 
-            return StringUtils.isBlank(key)
+            return StrUtils.isBlank(key)
                     ? super.invoke(proxy, method, args)
                     : Jboot.hystrix(new JbootHystrixCommand(key, rpcConfig.getHystrixTimeout()) {
                 @Override

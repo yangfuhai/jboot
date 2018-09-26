@@ -28,7 +28,7 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -123,7 +123,7 @@ public class JbootrpcManager {
             return fallbackListener;
         }
 
-        if (!StringUtils.isBlank(config.getHystrixFallbackListener())) {
+        if (!StrUtils.isBlank(config.getHystrixFallbackListener())) {
             fallbackListener = ClassKits.newInstance(config.getHystrixFallbackListener());
 
         }

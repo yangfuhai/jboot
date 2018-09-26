@@ -18,7 +18,7 @@ package session;
 import com.jfinal.aop.Before;
 import com.jfinal.ext.interceptor.SessionInViewInterceptor;
 import io.jboot.Jboot;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.limitation.annotation.EnablePerUserLimit;
@@ -43,7 +43,7 @@ public class SessionDemo extends JbootController {
 
         User user = new User();
         user.setId(100);
-        user.setName("Micahel Yang" + StringUtils.uuid());
+        user.setName("Micahel Yang" + StrUtils.uuid());
 
         setSessionAttr("user", user);
         User user1 = getSessionAttr("user");

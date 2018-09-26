@@ -30,7 +30,7 @@ import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -66,10 +66,10 @@ public class JbootDbManager {
 
                 //子数据源的配置
                 String shardingDatabase = entry.getValue().getShardingDatabase();
-                if (StringUtils.isBlank(shardingDatabase)) {
+                if (StrUtils.isBlank(shardingDatabase)) {
                     continue;
                 }
-                Set<String> databases = StringUtils.splitToSet(shardingDatabase, ",");
+                Set<String> databases = StrUtils.splitToSet(shardingDatabase, ",");
                 for (String database : databases) {
                     DataSourceConfig datasourceConfig = allDatasourceConfigs.remove(database);
                     if (datasourceConfig == null) {
@@ -123,7 +123,7 @@ public class JbootDbManager {
      */
     private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
         String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
-        if (StringUtils.isNotBlank(sqlTemplatePath)) {
+        if (StrUtils.isNotBlank(sqlTemplatePath)) {
             if (sqlTemplatePath.startsWith("/")) {
                 activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
             } else {
@@ -165,7 +165,7 @@ public class JbootDbManager {
                 activeRecordPlugin.setDialect(new JbootMysqlDialect());
                 break;
             case DataSourceConfig.TYPE_ORACLE:
-                if (StringUtils.isBlank(datasourceConfig.getContainerFactory())) {
+                if (StrUtils.isBlank(datasourceConfig.getContainerFactory())) {
                     activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory());
                 }
                 activeRecordPlugin.setDialect(new JbootOracleDialect());
@@ -199,16 +199,16 @@ public class JbootDbManager {
         String configName = config.getName();
         DataSource dataSource = new DataSourceBuilder(config).build();
 
-        ActiveRecordPlugin activeRecordPlugin = StringUtils.isNotBlank(configName)
+        ActiveRecordPlugin activeRecordPlugin = StrUtils.isNotBlank(configName)
                 ? new ActiveRecordPlugin(configName, dataSource)
                 : new ActiveRecordPlugin(dataSource);
 
 
-        if (StringUtils.isNotBlank(config.getDbProFactory())) {
+        if (StrUtils.isNotBlank(config.getDbProFactory())) {
             activeRecordPlugin.setDbProFactory(ClassKits.newInstance(config.getDbProFactory()));
         }
 
-        if (StringUtils.isNotBlank(config.getContainerFactory())) {
+        if (StrUtils.isNotBlank(config.getContainerFactory())) {
             activeRecordPlugin.setContainerFactory(ClassKits.newInstance(config.getContainerFactory()));
         }
 
@@ -229,7 +229,7 @@ public class JbootDbManager {
         }
 
         for (TableInfo ti : tableInfos) {
-            if (StringUtils.isNotBlank(ti.getPrimaryKey())) {
+            if (StrUtils.isNotBlank(ti.getPrimaryKey())) {
                 activeRecordPlugin.addMapping(ti.getTableName(), ti.getPrimaryKey(), (Class<? extends Model<?>>) ti.getModelClass());
             } else {
                 activeRecordPlugin.addMapping(ti.getTableName(), (Class<? extends Model<?>>) ti.getModelClass());

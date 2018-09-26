@@ -20,7 +20,7 @@ import io.jboot.db.TableInfo;
 import io.jboot.db.TableInfoManager;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassKits;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.shardingjdbc.core.api.ShardingDataSourceFactory;
 import io.shardingjdbc.core.api.config.ShardingRuleConfiguration;
 import io.shardingjdbc.core.api.config.TableRuleConfiguration;
@@ -116,15 +116,15 @@ public class DataSourceBuilder {
         tableRuleConfig.setLogicTable(tableInfo.getTableName());
 
         //真实表
-        if (StringUtils.isNotBlank(tableInfo.getActualDataNodes())) {
+        if (StrUtils.isNotBlank(tableInfo.getActualDataNodes())) {
             tableRuleConfig.setActualDataNodes(tableInfo.getActualDataNodes());
         }
 
-        if (StringUtils.isNotBlank(tableInfo.getKeyGeneratorClass())) {
+        if (StrUtils.isNotBlank(tableInfo.getKeyGeneratorClass())) {
             tableRuleConfig.setKeyGeneratorClass(tableInfo.getKeyGeneratorClass());
         }
 
-        if (StringUtils.isNotBlank(tableInfo.getKeyGeneratorColumnName())) {
+        if (StrUtils.isNotBlank(tableInfo.getKeyGeneratorColumnName())) {
             tableRuleConfig.setKeyGeneratorColumnName(tableInfo.getKeyGeneratorColumnName());
         }
 
@@ -145,7 +145,7 @@ public class DataSourceBuilder {
     private DataSource createDataSource(DataSourceConfig dsc) {
 
         String factory = dsc.getFactory();
-        if (StringUtils.isBlank(factory)) {
+        if (StrUtils.isBlank(factory)) {
             return new HikariDataSourceFactory().createDataSource(dsc);
         }
 

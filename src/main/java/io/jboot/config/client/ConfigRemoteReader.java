@@ -23,7 +23,7 @@ import io.jboot.config.PropInfoMap;
 import io.jboot.core.http.JbootHttpRequest;
 import io.jboot.core.http.JbootHttpResponse;
 import io.jboot.core.http.jboot.JbootHttpImpl;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.*;
 
@@ -73,7 +73,7 @@ public abstract class ConfigRemoteReader {
     private void initRemoteProps() {
         String jsonString = httpGet(url+"/"+name);
 
-        if (StringUtils.isBlank(jsonString)) {
+        if (StrUtils.isBlank(jsonString)) {
             LogKit.error("can not get remote config info,plase check url : " + url);
             return;
         }
@@ -146,7 +146,7 @@ public abstract class ConfigRemoteReader {
         String listUrl = url + "/list";
         String jsonString = httpGet(listUrl);
 
-        if (StringUtils.isBlank(jsonString)) {
+        if (StrUtils.isBlank(jsonString)) {
             LogKit.error("can not get remote config info,plase check url : " + listUrl);
             return false;
         }
@@ -197,7 +197,7 @@ public abstract class ConfigRemoteReader {
             String url = this.url + "/" + changeId;
             String jsonString = httpGet(url);
 
-            if (StringUtils.isBlank(jsonString)) {
+            if (StrUtils.isBlank(jsonString)) {
                 LogKit.error("can not get remote config info,plase check url : " + url);
                 continue;
             }
@@ -231,7 +231,7 @@ public abstract class ConfigRemoteReader {
                     String localValue = localPropInfo.getString(newKey);
                     String remoteValue = newPropInfo.getString(newKey);
                     remoteProperties.put(newKey.toString(), remoteValue);
-                    if (localValue == null && StringUtils.isNotBlank(remoteValue)) {
+                    if (localValue == null && StrUtils.isNotBlank(remoteValue)) {
                         onChange(key, newKey.toString(), null, remoteValue);
                     } else if (!localValue.equals(remoteValue)) {
                         onChange(key, newKey.toString(), localValue, remoteValue);

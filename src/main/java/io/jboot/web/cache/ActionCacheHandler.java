@@ -22,7 +22,7 @@ import com.jfinal.log.Log;
 import com.jfinal.render.RenderManager;
 import io.jboot.Jboot;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.JbootWebConfig;
 import io.jboot.web.cache.keygen.ActionKeyGeneratorManager;
 
@@ -87,7 +87,7 @@ public class ActionCacheHandler extends Handler {
         }
 
         for (String cacheName : cacheNames) {
-            if (StringUtils.isNotBlank(cacheName)) {
+            if (StrUtils.isNotBlank(cacheName)) {
                 Jboot.me().getCache().removeAll(cacheName);
             }
         }
@@ -103,7 +103,7 @@ public class ActionCacheHandler extends Handler {
 
         //缓存名称
         String cacheName = actionCacheEnable.group();
-        if (StringUtils.isBlank(cacheName)) {
+        if (StrUtils.isBlank(cacheName)) {
             throw new IllegalArgumentException("EnableActionCache group must not be empty " +
                     "in " + action.getControllerClass().getName() + "." + action.getMethodName());
         }
@@ -114,7 +114,7 @@ public class ActionCacheHandler extends Handler {
 
         //缓存的key
         String cacheKey = ActionKeyGeneratorManager.me().getGenerator().generate(target, request);
-        if (StringUtils.isBlank(cacheKey)) {
+        if (StrUtils.isBlank(cacheKey)) {
             next.handle(target, request, response, isHandled);
             return;
         }
@@ -166,7 +166,7 @@ public class ActionCacheHandler extends Handler {
             String find = m.group(0);
             String parameterName = find.substring(2, find.length() - 1);
             String value = request.getParameter(parameterName);
-            if (StringUtils.isBlank(value)) value = "";
+            if (StrUtils.isBlank(value)) value = "";
             cacheName = cacheName.replace(find, value);
         }
 

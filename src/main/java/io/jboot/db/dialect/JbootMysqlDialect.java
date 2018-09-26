@@ -18,7 +18,7 @@ package io.jboot.db.dialect;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import io.jboot.db.model.Column;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
         appIfNotEmpty(columns, sqlBuilder);
 
 
-        if (StringUtils.isNotBlank(orderBy)) {
+        if (StrUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
@@ -59,7 +59,7 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
 
         appIfNotEmpty(columns, sqlBuilder);
 
-        if (StringUtils.isNotBlank(orderBy)) {
+        if (StrUtils.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 

@@ -22,7 +22,7 @@ import com.jfinal.plugin.activerecord.Table;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -150,7 +150,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     protected String generatePrimaryValue() {
-        return StringUtils.uuid();
+        return StrUtils.uuid();
     }
 
     @Override

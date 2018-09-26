@@ -26,7 +26,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
 import io.jboot.Jboot;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.limitation.annotation.EnableConcurrencyLimit;
 import io.jboot.web.limitation.annotation.EnablePerIpLimit;
 import io.jboot.web.limitation.annotation.EnablePerUserLimit;
@@ -215,11 +215,11 @@ public class JbootLimitationManager {
 
     public Ret doProcessEnable(String path, String type, boolean enable) {
 
-        if (StringUtils.isBlank(type)) {
+        if (StrUtils.isBlank(type)) {
             return Ret.fail().set("message", "type is empty");
         }
 
-        if (StringUtils.isBlank(path)) {
+        if (StrUtils.isBlank(path)) {
             return Ret.fail().set("message", "path is empty");
         }
 

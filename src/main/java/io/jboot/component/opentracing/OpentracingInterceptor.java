@@ -16,7 +16,7 @@
 package io.jboot.component.opentracing;
 
 import io.jboot.Jboot;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 import io.opentracing.Span;
@@ -47,7 +47,7 @@ public class OpentracingInterceptor implements FixedInterceptor {
             return;
         }
 
-        String spanName = StringUtils.isBlank(enableOpentracing.value())
+        String spanName = StrUtils.isBlank(enableOpentracing.value())
                 ? inv.getController().getClass().getName() + "." + inv.getMethodName()
                 : enableOpentracing.value();
 
@@ -55,7 +55,7 @@ public class OpentracingInterceptor implements FixedInterceptor {
 
         Span span = spanBuilder.startManual();
 
-        span.setTag("requestId", StringUtils.uuid());
+        span.setTag("requestId", StrUtils.uuid());
         JbootSpanContext.add(span);
 
 

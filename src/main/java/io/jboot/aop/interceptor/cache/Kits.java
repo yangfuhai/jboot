@@ -21,7 +21,7 @@ import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import javax.inject.Named;
 import java.lang.annotation.Annotation;
@@ -90,7 +90,7 @@ class Kits {
 
         clazz = ClassKits.getUsefulClass(clazz);
 
-        if (StringUtils.isNotBlank(key)) {
+        if (StrUtils.isNotBlank(key)) {
             return renderKey(key, method, arguments);
         }
 
@@ -184,7 +184,7 @@ class Kits {
 
     static boolean isUnless(String unlessString, Method method, Object[] arguments) {
 
-        if (StringUtils.isBlank(unlessString)) {
+        if (StrUtils.isBlank(unlessString)) {
             return false;
         }
 
@@ -201,7 +201,7 @@ class Kits {
         }
 
         String cacheName = evict.name();
-        if (StringUtils.isBlank(cacheName)) {
+        if (StrUtils.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
                     ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }

@@ -15,7 +15,7 @@
  */
 package io.jboot.web.cors;
 
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
@@ -59,35 +59,35 @@ public class CORSInterceptor implements FixedInterceptor {
         String origin = enableCORS.origin();
         int maxAge = enableCORS.maxAge();
 
-        allowOrigin = StringUtils.isNotBlank(allowOrigin) ? allowOrigin : ALLOW_ORIGIN;
-        allowMethods = StringUtils.isNotBlank(allowMethods) ? allowMethods : ALLOW_METHODS;
+        allowOrigin = StrUtils.isNotBlank(allowOrigin) ? allowOrigin : ALLOW_ORIGIN;
+        allowMethods = StrUtils.isNotBlank(allowMethods) ? allowMethods : ALLOW_METHODS;
         maxAge = maxAge > 0 ? maxAge : MAX_AGE;
 
         response.setHeader("Access-Control-Allow-Origin", allowOrigin);
         response.setHeader("Access-Control-Allow-Methods", allowMethods);
         response.setHeader("Access-Control-Max-Age", String.valueOf(maxAge));
 
-        if (StringUtils.isNotBlank(allowHeaders)) {
+        if (StrUtils.isNotBlank(allowHeaders)) {
             response.setHeader("Access-Control-Allow-Headers", allowHeaders);
         }
 
-        if (StringUtils.isNotBlank(allowCredentials)) {
+        if (StrUtils.isNotBlank(allowCredentials)) {
             response.setHeader("Access-Control-Allow-Credentials", allowCredentials);
         }
 
-        if (StringUtils.isNotBlank(exposeHeaders)) {
+        if (StrUtils.isNotBlank(exposeHeaders)) {
             response.setHeader("Access-Control-Expose-Headers", exposeHeaders);
         }
 
-        if (StringUtils.isNotBlank(requestHeaders)) {
+        if (StrUtils.isNotBlank(requestHeaders)) {
             response.setHeader("Access-Control-Request-Headers", requestHeaders);
         }
 
-        if (StringUtils.isNotBlank(requestMethod)) {
+        if (StrUtils.isNotBlank(requestMethod)) {
             response.setHeader("Access-Control-Request-Method", requestMethod);
         }
 
-        if (StringUtils.isNotBlank(origin)) {
+        if (StrUtils.isNotBlank(origin)) {
             response.setHeader("Origin", origin);
         }
 

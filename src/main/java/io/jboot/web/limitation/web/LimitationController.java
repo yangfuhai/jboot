@@ -18,7 +18,7 @@ package io.jboot.web.limitation.web;
 import com.google.common.collect.Multimap;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.Ret;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.limitation.JbootLimitationManager;
 import io.jboot.web.limitation.LimitationInfo;
@@ -63,14 +63,14 @@ public class LimitationController extends JbootController {
         String rateString = getPara("rate");
         String type = getPara("type");
 
-        double rate = StringUtils.isBlank(rateString) ? 0 : Double.valueOf(rateString.trim());
+        double rate = StrUtils.isBlank(rateString) ? 0 : Double.valueOf(rateString.trim());
 
-        if (StringUtils.isBlank(type)) {
+        if (StrUtils.isBlank(type)) {
             renderJson(Ret.fail().set("message", "type is empty"));
             return;
         }
 
-        if (StringUtils.isBlank(path)) {
+        if (StrUtils.isBlank(path)) {
             renderJson(Ret.fail().set("message", "path is empty"));
             return;
         }

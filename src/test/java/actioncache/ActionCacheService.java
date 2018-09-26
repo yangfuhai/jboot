@@ -1,7 +1,7 @@
 package actioncache;
 
 import io.jboot.core.cache.annotation.Cacheable;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -12,6 +12,6 @@ public class ActionCacheService {
 
     @Cacheable(name = "test1",key = "#(phone)")
     public String getByPhone(String phone){
-        return StringUtils.uuid()+ phone;
+        return StrUtils.uuid()+ phone;
     }
 }

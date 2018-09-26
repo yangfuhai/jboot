@@ -42,7 +42,7 @@ import io.jboot.schedule.JbootScheduleManager;
 import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -128,7 +128,7 @@ public class JbootAppConfig extends JFinalConfig {
         }
 
         LimitationConfig limitationConfig = Jboot.config(LimitationConfig.class);
-        if (StringUtils.isNotBlank(limitationConfig.getWebPath())) {
+        if (StrUtils.isNotBlank(limitationConfig.getWebPath())) {
             routes.add(limitationConfig.getWebPath(), LimitationController.class);
         }
 

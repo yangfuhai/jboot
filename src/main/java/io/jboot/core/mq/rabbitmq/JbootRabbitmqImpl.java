@@ -22,7 +22,7 @@ import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -45,14 +45,14 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
         factory.setHost(rabbitmqConfig.getHost());
         factory.setPort(rabbitmqConfig.getPort());
 
-        if (StringUtils.isNotBlank(rabbitmqConfig.getVirtualHost())) {
+        if (StrUtils.isNotBlank(rabbitmqConfig.getVirtualHost())) {
             factory.setVirtualHost(rabbitmqConfig.getVirtualHost());
         }
-        if (StringUtils.isNotBlank(rabbitmqConfig.getUsername())) {
+        if (StrUtils.isNotBlank(rabbitmqConfig.getUsername())) {
             factory.setUsername(rabbitmqConfig.getUsername());
         }
 
-        if (StringUtils.isNotBlank(rabbitmqConfig.getPassword())) {
+        if (StrUtils.isNotBlank(rabbitmqConfig.getPassword())) {
             factory.setPassword(rabbitmqConfig.getPassword());
         }
 

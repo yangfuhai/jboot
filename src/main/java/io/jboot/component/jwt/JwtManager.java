@@ -17,7 +17,7 @@ package io.jboot.component.jwt;
 
 import com.jfinal.json.FastJson;
 import io.jboot.Jboot;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
@@ -73,7 +73,7 @@ public class JwtManager {
 
             String subject = claims.getSubject();
 
-            if (StringUtils.isBlank(subject)) {
+            if (StrUtils.isBlank(subject)) {
                 return null;
             }
 

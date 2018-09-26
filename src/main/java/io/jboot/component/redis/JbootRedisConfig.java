@@ -16,7 +16,7 @@
 package io.jboot.component.redis;
 
 import io.jboot.config.annotation.PropertyConfig;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import redis.clients.jedis.HostAndPort;
 
 import java.util.HashSet;
@@ -167,7 +167,7 @@ public class JbootRedisConfig {
     }
 
     public boolean isConfigOk() {
-        return StringUtils.isNotBlank(host);
+        return StrUtils.isNotBlank(host);
     }
 
     public boolean isClusterConfig() {

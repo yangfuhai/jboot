@@ -21,7 +21,7 @@ import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.cache.j2cache.J2cacheImpl;
 import io.jboot.core.cache.redis.JbootRedisCacheImpl;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +46,7 @@ public class JbootCacheManager {
     }
 
     public JbootCache getCache(String type) {
-        if (StringUtils.isBlank(type)) {
+        if (StrUtils.isBlank(type)) {
             throw new IllegalArgumentException("type must not be null or blank.");
         }
 

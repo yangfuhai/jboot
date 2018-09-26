@@ -22,7 +22,7 @@ import io.jboot.component.shiro.processer.*;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.utils.ControllerUtils;
 import org.apache.shiro.authz.annotation.*;
 
@@ -138,7 +138,7 @@ public class JbootShiroManager {
 
         invokeListener = JbootShiroInvokeListener.DEFAULT;
 
-        if (StringUtils.isNotBlank(jbootShiroConfig.getInvokeListener())) {
+        if (StrUtils.isNotBlank(jbootShiroConfig.getInvokeListener())) {
             invokeListener = ClassKits.newInstance(jbootShiroConfig.getInvokeListener());
             if (invokeListener == null) {
                 throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getInvokeListener() +

@@ -17,7 +17,7 @@ package io.jboot.web.websocket;
 
 import io.jboot.Jboot;
 import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StringUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.JbootWebConfig;
 
 import javax.websocket.server.ServerEndpoint;
@@ -39,7 +39,7 @@ public class JbootWebsocketManager {
             for (Class entry : endPointClasses) {
                 ServerEndpoint serverEndpoint = (ServerEndpoint) entry.getAnnotation(ServerEndpoint.class);
                 String value = serverEndpoint.value();
-                if (!StringUtils.isBlank(value)) {
+                if (!StrUtils.isBlank(value)) {
                     websocketEndPoints.add(entry);
                     websocketEndPointValues.add(value);
                 }
