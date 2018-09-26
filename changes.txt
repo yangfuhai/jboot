@@ -1,3 +1,10 @@
+jboot-1.6.9:
+优化：修改 StringUtils 为 StrUtils。 原因是 Jboot 的 StringUtils 和 commons 的 StringUtils 名字一样，
+导致用户不确定当前代码使用哪一个，导致开发体验不好。
+新增：findListByColumn 相关方法，使之更加简洁
+修复：自定义指令在 getParam 时，可能出现 TemplateException : Index out of bounds 异常的问题
+
+
 jboot-1.6.8:
 新增：Columns 查询支持 is null 和 is not null 的支持
 优化：对 Jboot 自定义方言的相关代码进行优化
