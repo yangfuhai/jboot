@@ -16,6 +16,7 @@
 package io.jboot.db.model;
 
 import com.jfinal.core.JFinal;
+import com.jfinal.plugin.activerecord.Config;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Table;
@@ -268,9 +269,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return key.toString();
     }
 
-
     protected IJbootModelDialect _getDialect() {
-        return (IJbootModelDialect) _getConfig().getDialect();
+        Config config = _getConfig();
+        if (config == null) {
+            throw new JbootException(
+                    String.format("class %s can not mapping to database table, " +
+                                    "maybe application cannot connect to database , " +
+                                    "please check jboot.properties " +
+                                    "or config @Table(datasource=xxx) correct if you use multi datasource."
+                            , _getUsefulClass().getName()));
+
+        }
+        return (IJbootModelDialect) config.getDialect();
     }
 
 
@@ -439,8 +449,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (table == null) {
             table = super._getTable();
             if (table == null && validateNull) {
-                throw new JbootException(String.format("class %s can not mapping to database table, maybe application cannot connect to database , " +
-                        "please check jboot.properties or config @Table(datasource=xxx) correct if you use multi datasource.", _getUsefulClass().getName()));
+                throw new JbootException(
+                        String.format("class %s can not mapping to database table, " +
+                                        "maybe application cannot connect to database , " +
+                                        "please check jboot.properties " +
+                                        "or config @Table(datasource=xxx) correct if you use multi datasource."
+                                , _getUsefulClass().getName()));
             }
         }
         return table;
