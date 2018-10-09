@@ -17,7 +17,7 @@ Jboot Demos ： https://gitee.com/fuhai/jboot/tree/master/src/test/java
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>1.6.9</version>
+    <version>1.7.0</version>
 </dependency>
 
 ```

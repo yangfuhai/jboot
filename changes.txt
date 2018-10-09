@@ -1,3 +1,8 @@
+jboot-1.7.0:
+优化：升级JFinal到3.5，升级dubbo到2.6.4
+
+
+
 jboot-1.6.9:
 优化：修改 StringUtils 为 StrUtils。 原因是 Jboot 的 StringUtils 和 commons 的 StringUtils 名字一样，
 导致用户不确定当前代码使用哪一个，导致开发体验不好。
