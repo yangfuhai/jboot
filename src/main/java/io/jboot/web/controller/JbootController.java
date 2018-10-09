@@ -27,9 +27,6 @@ import java.util.Map;
 
 public class JbootController extends Controller {
 
-    private static final Object NULL_OBJ = new Object();
-    private static final String BODY_STRING_ATTR = "__body_str";
-
     /**
      * 是否是手机浏览器
      *
