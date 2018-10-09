@@ -1,6 +1,8 @@
 jboot-1.7.0:
 优化：升级JFinal到3.5，升级dubbo到2.6.4
-
+优化：Columns 在空数据的时候没必要创建新的list
+优化：_getDialect 当获取为空的时候优化错误提示
+优化：JbootController 全是使用 @NotAction 对方法排除action扫描
 
 
 jboot-1.6.9:
