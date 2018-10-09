@@ -107,7 +107,7 @@ public class JbootJsonRender extends JsonRender {
 
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void buildJsonText() {
+    protected void buildJsonText() {
         Map map = new HashMap();
         if (attrs != null) {
             for (String key : attrs) {

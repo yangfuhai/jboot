@@ -15,10 +15,8 @@
  */
 package io.jboot.web.controller;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
-import com.jfinal.ext.interceptor.NotAction;
-import com.jfinal.kit.HttpKit;
+import com.jfinal.core.NotAction;
 import io.jboot.component.jwt.JwtManager;
 import io.jboot.utils.RequestUtils;
 
@@ -37,7 +35,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public boolean isMoblieBrowser() {
         return RequestUtils.isMoblieBrowser(getRequest());
     }
@@ -47,7 +45,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public boolean isWechatBrowser() {
         return RequestUtils.isWechatBrowser(getRequest());
     }
@@ -57,7 +55,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public boolean isIEBrowser() {
         return RequestUtils.isIEBrowser(getRequest());
     }
@@ -67,7 +65,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public boolean isAjaxRequest() {
         return RequestUtils.isAjaxRequest(getRequest());
     }
@@ -77,7 +75,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public boolean isMultipartRequest() {
         return RequestUtils.isMultipartRequest(getRequest());
     }
@@ -88,7 +86,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public String getIPAddress() {
         return RequestUtils.getIpAddress(getRequest());
     }
@@ -98,7 +96,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public String getReferer() {
         return RequestUtils.getReferer(getRequest());
     }
@@ -109,7 +107,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public String getUserAgent() {
         return RequestUtils.getUserAgent(getRequest());
     }
@@ -117,7 +115,7 @@ public class JbootController extends Controller {
 
     protected HashMap<String, Object> flash;
 
-    @Before(NotAction.class)
+    @NotAction
     public Controller setFlashAttr(String name, Object value) {
         if (flash == null) {
             flash = new HashMap<>();
@@ -128,7 +126,7 @@ public class JbootController extends Controller {
     }
 
 
-    @Before(NotAction.class)
+    @NotAction
     public Controller setFlashMap(Map map) {
         if (map == null) {
             throw new NullPointerException("map is null");
@@ -142,13 +140,13 @@ public class JbootController extends Controller {
     }
 
 
-    @Before(NotAction.class)
+    @NotAction
     public <T> T getFlashAttr(String name) {
         return flash == null ? null : (T) flash.get(name);
     }
 
 
-    @Before(NotAction.class)
+    @NotAction
     public HashMap<String, Object> getFlashAttrs() {
         return flash;
     }
@@ -156,7 +154,7 @@ public class JbootController extends Controller {
 
     private HashMap<String, Object> jwtMap;
 
-    @Before(NotAction.class)
+    @NotAction
     public Controller setJwtAttr(String name, Object value) {
         if (jwtMap == null) {
             jwtMap = new HashMap<>();
@@ -167,7 +165,7 @@ public class JbootController extends Controller {
     }
 
 
-    @Before(NotAction.class)
+    @NotAction
     public Controller setJwtMap(Map map) {
         if (map == null) {
             throw new NullPointerException("map is null, u show invoke setJwtAttr() before. ");
@@ -181,28 +179,28 @@ public class JbootController extends Controller {
     }
 
 
-    @Before(NotAction.class)
+    @NotAction
     public <T> T getJwtAttr(String name) {
         return jwtMap == null ? null : (T) jwtMap.get(name);
     }
 
 
-    @Before(NotAction.class)
+    @NotAction
     public HashMap<String, Object> getJwtAttrs() {
         return jwtMap;
     }
 
-    @Before(NotAction.class)
+    @NotAction
     public <T> T getJwtPara(String name) {
         return JwtManager.me().getPara(name);
     }
 
-    @Before(NotAction.class)
+    @NotAction
     public Map getJwtParas() {
         return JwtManager.me().getParas();
     }
 
-    @Before(NotAction.class)
+    @NotAction
     public String createJwtToken() {
         if (jwtMap == null) {
             throw new NullPointerException("jwt attrs is null");
@@ -215,7 +213,7 @@ public class JbootController extends Controller {
      *
      * @return
      */
-    @Before(NotAction.class)
+    @NotAction
     public String getBaseUrl() {
         HttpServletRequest req = getRequest();
         int port = req.getServerPort();
@@ -224,27 +222,6 @@ public class JbootController extends Controller {
                 ? String.format("%s://%s%s", req.getScheme(), req.getServerName(), req.getContextPath())
                 : String.format("%s://%s%s%s", req.getScheme(), req.getServerName(), ":" + port, req.getContextPath());
 
-    }
-
-    @Before(NotAction.class)
-    public String getBodyString() {
-        Object object = getAttr(BODY_STRING_ATTR);
-        if (object == NULL_OBJ) {
-            return null;
-        }
-
-        if (object != null) {
-            return (String) object;
-        }
-
-        object = HttpKit.readData(getRequest());
-        if (object == null) {
-            setAttr(BODY_STRING_ATTR, NULL_OBJ);
-        } else {
-            setAttr(BODY_STRING_ATTR, object);
-        }
-
-        return (String) object;
     }
 
 

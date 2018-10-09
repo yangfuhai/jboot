@@ -76,7 +76,7 @@ public class JbootActionHandler extends ActionHandler {
             controller = controllerFactory.getController(action.getControllerClass());
             JbootControllerContext.hold(controller);
 //            controller.init(request, response, urlPara[0]);
-            CPI.init(controller, action, request, response, urlPara[0]);
+            CPI._init_(controller, action, request, response, urlPara[0]);
 
             Invocation invocation = new Invocation(action, controller);
             if (devMode) {
@@ -108,8 +108,6 @@ public class JbootActionHandler extends ActionHandler {
 
 
             boolean isRedirect = render instanceof RedirectRender;
-
-
 
 
             /**
@@ -177,7 +175,7 @@ public class JbootActionHandler extends ActionHandler {
                 JbootControllerContext.release();
 
 //              controller.clear();
-                CPI.clear(controller);
+                CPI._clear_(controller);
             }
         }
     }

@@ -48,8 +48,8 @@
 
         <dependency>
             <groupId>com.jfinal</groupId>
-            <artifactId>jfinal-java8</artifactId>
-            <version>3.4</version>
+            <artifactId>jfinal</artifactId>
+            <version>3.5</version>
         </dependency>
 
         <dependency>
