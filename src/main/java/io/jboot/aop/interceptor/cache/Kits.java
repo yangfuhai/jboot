@@ -15,6 +15,7 @@
  */
 package io.jboot.aop.interceptor.cache;
 
+import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CacheEvict;
@@ -23,8 +24,6 @@ import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StrUtils;
 
-import javax.inject.Named;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
@@ -34,6 +33,8 @@ import java.util.Map;
 
 class Kits {
 
+
+    static final Log LOG = Log.getLog(Kits.class);
     static final Engine ENGINE = new Engine("JbootCacheRender");
 
     /**
@@ -54,6 +55,7 @@ class Kits {
          */
         for (Parameter p : method.getParameters()) {
             if (!p.isNamePresent()) {
+                LOG.warn(" Maven or IDE config is error. see http://www.jfinal.com/doc/3-3 ");
                 break;
             }
             datas.put(p.getName(), arguments[x++]);
@@ -64,19 +66,19 @@ class Kits {
          * 保证在java8没有添加 -parameters 的时候，可以通过注解的方式获取参数，保证兼容。
          * 同时，可以通过注解的方式覆盖 默认名称。
          */
-        Annotation[][] annotationss = method.getParameterAnnotations();
-        for (int i = 0; i < annotationss.length; i++) {
-            for (int j = 0; j < annotationss[i].length; j++) {
-                Annotation annotation = annotationss[i][j];
-                if (annotation.annotationType() == Named.class) {
-                    Named named = (Named) annotation;
-                    datas.put(named.value(), arguments[i]);
-                } else if (annotation.annotationType() == com.google.inject.name.Named.class) {
-                    com.google.inject.name.Named named = (com.google.inject.name.Named) annotation;
-                    datas.put(named.value(), arguments[i]);
-                }
-            }
-        }
+//        Annotation[][] annotationss = method.getParameterAnnotations();
+//        for (int i = 0; i < annotationss.length; i++) {
+//            for (int j = 0; j < annotationss[i].length; j++) {
+//                Annotation annotation = annotationss[i][j];
+//                if (annotation.annotationType() == Named.class) {
+//                    Named named = (Named) annotation;
+//                    datas.put(named.value(), arguments[i]);
+//                } else if (annotation.annotationType() == com.google.inject.name.Named.class) {
+//                    com.google.inject.name.Named named = (com.google.inject.name.Named) annotation;
+//                    datas.put(named.value(), arguments[i]);
+//                }
+//            }
+//        }
 
         try {
             return ENGINE.getTemplateByString(template).renderToString(datas);

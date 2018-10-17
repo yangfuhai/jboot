@@ -11,9 +11,13 @@ public class RedisTest {
 //        user.setName("张三历史");
 //
 //        Jboot.setBootArg("jboot.redis.host", "127.0.0.1");
-////        Jboot.setBootArg("jboot.redis.password", "123456");
-//
 //        JbootRedis redis = Jboot.me().getRedis();
+//
+//        redis.incr("incr_key");
+//
+//        Object o = redis.get("incr_key");
+//
+//        System.out.println(o);
 ////        redis.set("mykey", "");
 //
 //        redis.set("user",user);
