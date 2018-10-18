@@ -412,7 +412,19 @@ public class Jboot {
      * @return
      */
     public static <T> T service(Class<T> clazz) {
-        return jboot.getRpc().serviceObtain(clazz, new JbootrpcServiceConfig());
+        return service(clazz, new JbootrpcServiceConfig());
+    }
+
+    /**
+     * 获取 RPC 服务
+     *
+     * @param clazz
+     * @param config rpc 配置
+     * @param <T>
+     * @return
+     */
+    public static <T> T service(Class<T> clazz, JbootrpcServiceConfig config) {
+        return jboot.getRpc().serviceObtain(clazz, config);
     }
 
     /**
