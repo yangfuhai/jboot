@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.hystrix;
+package io.jboot.core.rpc;
 
-import io.jboot.utils.ClassKits;
+import com.netflix.hystrix.HystrixCommand;
 
+import java.lang.reflect.Method;
 
-public class JbootHystrix {
+/**
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.component.hystrix
+ */
+public interface JbootrpcHystrixSetterFactory {
 
-    private static JbootHystrix me;
-
-    public static JbootHystrix me() {
-        if (me == null) {
-            me = ClassKits.singleton(JbootHystrix.class);
-        }
-        return me;
-    }
-
+    public HystrixCommand.Setter createSetter(Object proxy, Method method, Object[] args);
 
 }

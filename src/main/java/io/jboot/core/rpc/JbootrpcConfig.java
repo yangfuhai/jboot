@@ -19,8 +19,6 @@ import io.jboot.config.annotation.PropertyConfig;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 @PropertyConfig(prefix = "jboot.rpc")
@@ -94,9 +92,10 @@ public class JbootrpcConfig {
      */
     private boolean hystrixEnable = true;
     private int hystrixTimeout = 5000; //单位：毫秒
-    private String hystrixKeys;
-    private boolean hystrixAutoConfig = true;
+    private int hystrixThreadPoolSize = 10;
+
     private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();
+    private String hystrixSetterFactory = JbootrpcHystrixSetterFactory.class.getName();
 
     public String getHost() {
         return host;
@@ -254,14 +253,6 @@ public class JbootrpcConfig {
         this.filter = filter;
     }
 
-    public String getHystrixKeys() {
-        return hystrixKeys;
-    }
-
-    public void setHystrixKeys(String hystrixKeys) {
-        this.hystrixKeys = hystrixKeys;
-    }
-
     public boolean isHystrixEnable() {
         return hystrixEnable;
     }
@@ -278,20 +269,28 @@ public class JbootrpcConfig {
         this.hystrixTimeout = hystrixTimeout;
     }
 
-    public boolean isHystrixAutoConfig() {
-        return hystrixAutoConfig;
-    }
-
-    public void setHystrixAutoConfig(boolean hystrixAutoConfig) {
-        this.hystrixAutoConfig = hystrixAutoConfig;
-    }
-
     public String getHystrixFallbackListener() {
         return hystrixFallbackListener;
     }
 
     public void setHystrixFallbackListener(String hystrixFallbackListener) {
         this.hystrixFallbackListener = hystrixFallbackListener;
+    }
+
+    public int getHystrixThreadPoolSize() {
+        return hystrixThreadPoolSize;
+    }
+
+    public void setHystrixThreadPoolSize(int hystrixThreadPoolSize) {
+        this.hystrixThreadPoolSize = hystrixThreadPoolSize;
+    }
+
+    public String getHystrixSetterFactory() {
+        return hystrixSetterFactory;
+    }
+
+    public void setHystrixSetterFactory(String hystrixSetterFactory) {
+        this.hystrixSetterFactory = hystrixSetterFactory;
     }
 
     public boolean isRegistryCheck() {
@@ -334,27 +333,27 @@ public class JbootrpcConfig {
         this.retries = retries;
     }
 
-    private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();
-
-    public String getHystrixKeyByMethod(String method) {
-        if (hystrixKeys != null && methodKeyMapping.isEmpty()) {
-            initMapping();
-        }
-
-        return methodKeyMapping.get(method);
-    }
-
-    private void initMapping() {
-        String keyMethodStrings[] = hystrixKeys.split(";");
-        for (String keyMethodString : keyMethodStrings) {
-            String[] keyMethod = keyMethodString.split(":");
-            if (keyMethod.length != 2) continue;
-
-            String key = keyMethod[0];
-            String[] methods = keyMethod[1].split(",");
-            for (String method : methods) {
-                methodKeyMapping.put(method, key);
-            }
-        }
-    }
+//    private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();
+//
+//    public String getHystrixKeyByMethod(String method) {
+//        if (hystrixKeys != null && methodKeyMapping.isEmpty()) {
+//            initMapping();
+//        }
+//
+//        return methodKeyMapping.get(method);
+//    }
+//
+//    private void initMapping() {
+//        String keyMethodStrings[] = hystrixKeys.split(";");
+//        for (String keyMethodString : keyMethodStrings) {
+//            String[] keyMethod = keyMethodString.split(":");
+//            if (keyMethod.length != 2) continue;
+//
+//            String key = keyMethod[0];
+//            String[] methods = keyMethod[1].split(",");
+//            for (String method : methods) {
+//                methodKeyMapping.put(method, key);
+//            }
+//        }
+//    }
 }

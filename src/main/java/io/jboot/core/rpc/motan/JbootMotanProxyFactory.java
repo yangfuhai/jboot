@@ -15,6 +15,7 @@
  */
 package io.jboot.core.rpc.motan;
 
+import com.netflix.hystrix.HystrixCommand;
 import com.weibo.api.motan.cluster.Cluster;
 import com.weibo.api.motan.core.extension.SpiMeta;
 import com.weibo.api.motan.proxy.ProxyFactory;
@@ -24,7 +25,6 @@ import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
-import io.jboot.utils.StrUtils;
 import io.opentracing.Span;
 
 import java.lang.reflect.Method;
@@ -76,39 +76,40 @@ public class JbootMotanProxyFactory implements ProxyFactory {
                 return super.invoke(proxy, method, args);
             }
 
-            final Span span = JbootMotanTracingFilter.getActiveSpan();
+            HystrixCommand.Setter setter = JbootrpcManager
+                    .me()
+                    .getHystrixSetterFactoryy()
+                    .createSetter(proxy, method, args);
 
-
-            String key = rpcConfig.getHystrixKeyByMethod(method.getName());
-            if (StrUtils.isBlank(key) && rpcConfig.isHystrixAutoConfig()) {
-                key = method.getDeclaringClass().getName() + "." + method.getName();
+            if (setter == null) {
+                return super.invoke(proxy, method, args);
             }
 
+            final Span span = JbootMotanTracingFilter.getActiveSpan();
 
-            return StrUtils.isBlank(key)
-                    ? super.invoke(proxy, method, args)
-                    : Jboot.hystrix(new JbootHystrixCommand(key, rpcConfig.getHystrixTimeout()) {
-
+            JbootHystrixCommand command = new JbootHystrixCommand(setter) {
                 @Override
-                public Object run() throws Exception {
+                protected Object run() throws Exception {
                     try {
                         JbootSpanContext.add(span);
-
-                        return JbootInvocationHandler.super.invoke(proxy, method, args);
+                        return JbootMotanProxyFactory.JbootInvocationHandler.super.invoke(proxy, method, args);
                     } catch (Throwable throwable) {
                         throw (Exception) throwable;
                     } finally {
                         JbootSpanContext.release();
                     }
-
                 }
 
                 @Override
-                public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackListener().onFallback(proxy, method, args, this, this.getExecutionException());
+                protected Object getFallback() {
+                    return JbootrpcManager
+                            .me()
+                            .getHystrixFallbackListener()
+                            .onFallback(proxy, method, args, this, this.getExecutionException());
                 }
-            });
+            };
 
+            return Jboot.hystrix(command);
 
         }
     }

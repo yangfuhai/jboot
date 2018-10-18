@@ -21,12 +21,12 @@ import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.proxy.AbstractProxyFactory;
 import com.alibaba.dubbo.rpc.proxy.AbstractProxyInvoker;
 import com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler;
+import com.netflix.hystrix.HystrixCommand;
 import io.jboot.Jboot;
 import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.opentracing.JbootSpanContext;
 import io.jboot.core.rpc.JbootrpcConfig;
 import io.jboot.core.rpc.JbootrpcManager;
-import io.jboot.utils.StrUtils;
 import io.opentracing.Span;
 
 import java.lang.reflect.Method;
@@ -91,18 +91,20 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
 
             }
 
-            String key = rpcConfig.getHystrixKeyByMethod(method.getName());
-            if (StrUtils.isBlank(key) && rpcConfig.isHystrixAutoConfig()) {
-                key = method.getDeclaringClass().getName() + "." + method.getName();
+            HystrixCommand.Setter setter = JbootrpcManager
+                    .me()
+                    .getHystrixSetterFactoryy()
+                    .createSetter(proxy, method, args);
+
+            if (setter == null) {
+                return super.invoke(proxy, method, args);
             }
 
             final Span span = JbootDubboTracingFilterKits.getActiveSpan();
 
-            return StrUtils.isBlank(key)
-                    ? super.invoke(proxy, method, args)
-                    : Jboot.hystrix(new JbootHystrixCommand(key, rpcConfig.getHystrixTimeout()) {
+            JbootHystrixCommand command = new JbootHystrixCommand(setter) {
                 @Override
-                public Object run() throws Exception {
+                protected Object run() throws Exception {
                     try {
                         JbootSpanContext.add(span);
                         return JbootInvocationHandler.super.invoke(proxy, method, args);
@@ -114,10 +116,15 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
                 }
 
                 @Override
-                public Object getFallback() {
-                    return JbootrpcManager.me().getHystrixFallbackListener().onFallback(proxy, method, args, this, this.getExecutionException());
+                protected Object getFallback() {
+                    return JbootrpcManager
+                            .me()
+                            .getHystrixFallbackListener()
+                            .onFallback(proxy, method, args, this, this.getExecutionException());
                 }
-            });
+            };
+
+            return Jboot.hystrix(command);
         }
     }
 }
