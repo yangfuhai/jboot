@@ -1,3 +1,17 @@
+jboot-1.7.1:
+新增：redis添加自定义序列化配置的功能
+新增：Jboot.java 添加方法 service(Class<T> clazz, JbootrpcServiceConfig config) 方便获取rpc service
+新增：JbootController 添加 getRawObject() 方便获取 api 传过来的json数据
+
+优化：当maven或者ide配置不正确的时候，给出解决方案
+优化：hystrix 对 rpc 的支持，支持hystrix的所有配置
+优化：重构 JbootDirectiveBase ，修改 getParam 为 getPara 保持和 Controller 一致。
+优化：移除 redis 的 getCounter方法， 使用 getWithoutSerialize 代替
+
+修复：blpop 返回数据不正确的问题
+
+
+
 jboot-1.7.0:
 优化：升级JFinal到3.5，升级dubbo到2.6.4
 优化：Columns 在空数据的时候没必要创建新的list
