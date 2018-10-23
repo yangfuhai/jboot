@@ -37,6 +37,7 @@ public class JbootJedisImpl extends JbootRedisBase {
     private static final Log LOG = Log.getLog(JbootJedisImpl.class);
 
     public JbootJedisImpl(JbootRedisConfig config) {
+        super(config);
 
         this.config = config;
 
@@ -122,6 +123,7 @@ public class JbootJedisImpl extends JbootRedisBase {
     }
 
     public JbootJedisImpl(JedisPool jedisPool) {
+        super(null);
         this.jedisPool = jedisPool;
     }
 
@@ -778,18 +780,6 @@ public class JbootJedisImpl extends JbootRedisBase {
         }
     }
 
-    /**
-     * 获取记数器的值
-     */
-    public Long getCounter(Object key) {
-        Jedis jedis = getJedis();
-        try {
-            String value = jedis.get(key.toString());
-            return StrUtils.isNotBlank(value) ? Long.parseLong(value) : null;
-        } finally {
-            returnResource(jedis);
-        }
-    }
 
     /**
      * 返回列表 key 的长度。
@@ -976,8 +966,19 @@ public class JbootJedisImpl extends JbootRedisBase {
     public List blpop(Integer timeout, Object... keys) {
         Jedis jedis = getJedis();
         try {
+
+            //这里注意：第一个为key，第二个为value
             List<byte[]> data = jedis.blpop(timeout, keysToBytesArray(keys));
-            return valueListFromBytesList(data);
+
+            if (data != null && data.size() == 2) {
+                List<Object> objects = new ArrayList<>();
+                objects.add(new String(data.get(0)));
+                objects.add(valueFromBytes(data.get(1)));
+                return objects;
+            }
+
+            //其他情况
+            return null;
         } finally {
             returnResource(jedis);
         }

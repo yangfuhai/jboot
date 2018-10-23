@@ -41,6 +41,8 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 
     public JbootJedisClusterImpl(JbootRedisConfig config) {
 
+        super(config);
+
         Integer timeout = config.getTimeout();
         String password = config.getPassword();
         Integer maxAttempts = config.getMaxAttempts();
@@ -120,6 +122,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
     }
 
     public JbootJedisClusterImpl(JedisCluster jedisCluster) {
+        super(null);
         this.jedisCluster = jedisCluster;
     }
 
@@ -642,15 +645,6 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 
     }
 
-    /**
-     * 获取记数器的值
-     */
-    public Long getCounter(Object key) {
-
-        String value = jedisCluster.get(key.toString());
-        return StrUtils.isNotBlank(value) ? Long.parseLong(value) : null;
-
-    }
 
     /**
      * 返回列表 key 的长度。
@@ -793,7 +787,16 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 //        for (int i = 0; i < keys.length; i++) {
 //            keysStrings[i] = keys[i].toString();
 //        }
+        
         List<byte[]> data = jedisCluster.blpop(timeout, keysToBytesArray(keys));
+
+        if (data != null && data.size() == 2) {
+            List<Object> objects = new ArrayList<>();
+            objects.add(new String(data.get(0)));
+            objects.add(valueFromBytes(data.get(1)));
+            return objects;
+        }
+
         return valueListFromBytesList(data);
 
     }
