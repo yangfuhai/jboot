@@ -22,6 +22,8 @@ import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.Jboot;
 
+import java.io.IOException;
+
 /**
  * Jfinal 指令的基类
  */
@@ -44,42 +46,44 @@ public abstract class JbootDirectiveBase extends Directive {
         scope = new Scope(scope);
         scope.getCtrl().setLocalAssignment();
         exprList.eval(scope);
-
         onRender(env, scope, writer);
-
     }
 
 
     public abstract void onRender(Env env, Scope scope, Writer writer);
 
 
-    public <T> T getParam(String key, T defaultValue, Scope scope) {
+    public void renderBody(Env env, Scope scope, Writer writer) {
+        stat.exec(env, scope, writer);
+    }
+
+    public void renderText(Writer writer, String text) {
+        try {
+            writer.write(text);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public <T> T getPara(String key, Scope scope) {
+        return getPara(key, scope, null);
+    }
+
+    public <T> T getPara(String key, Scope scope, T defaultValue) {
         Object data = scope.getLocal(key);
         return (T) (data == null ? defaultValue : data);
     }
 
-
-    public <T> T getParam(String key, Scope scope) {
-        return getParam(key, null, scope);
+    public <T> T getPara(int index, Scope scope) {
+        return getPara(index, scope, null);
     }
 
-
-    public <T> T getParam(int index, T defaultValue, Scope scope) {
+    public <T> T getPara(int index, Scope scope, T defaultValue) {
         if (index < 0 || index >= exprList.length()) {
             return defaultValue;
         }
         Object data = exprList.getExpr(index).eval(scope);
         return (T) (data == null ? defaultValue : data);
-    }
-
-
-    public <T> T getParam(int index, Scope scope) {
-        return getParam(index, null, scope);
-    }
-
-
-    public void renderBody(Env env, Scope scope, Writer writer) {
-        stat.exec(env, scope, writer);
     }
 
 

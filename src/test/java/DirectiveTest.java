@@ -17,7 +17,7 @@ public class DirectiveTest extends JbootDirectiveBase {
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
 
-        String name = getParam("name", scope);
+        String name = getPara("name", scope);
 
         String helloName = service.hello(name);
 

@@ -37,15 +37,15 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
 
-        previousClass = getParam("previousClass", "previous", scope);
-        nextClass = getParam("nextClass", "next", scope);
-        activeClass = getParam("activeClass", "active", scope);
-        disabledClass = getParam("disabledClass", "disabled", scope);
-        anchor = getParam("anchor", null, scope);
-        onlyShowPreviousAndNext = getParam("onlyShowPreviousAndNext", false, scope);
+        previousClass = getPara("previousClass", scope, "previous");
+        nextClass = getPara("nextClass", scope, "next");
+        activeClass = getPara("activeClass", scope, "active");
+        disabledClass = getPara("disabledClass", scope, "disabled");
+        anchor = getPara("anchor", scope, null);
+        onlyShowPreviousAndNext = getPara("onlyShowPreviousAndNext", scope, false);
 
-        String previousText = getParam("previousText", "上一页", scope);
-        String nextText = getParam("nextText", "下一页", scope);
+        String previousText = getPara("previousText", scope, "上一页");
+        String nextText = getPara("nextText", scope, "下一页");
 
         Page<?> page = getPage(env, scope, writer);
 
@@ -141,6 +141,12 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     }
 
 
+    @Override
+    public boolean hasEnd() {
+        return true;
+    }
+
+
     public static class PaginateItem {
         private String style;
         private String url;
@@ -181,10 +187,5 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         public void setText(String text) {
             this.text = text;
         }
-    }
-
-    @Override
-    public boolean hasEnd() {
-        return true;
     }
 }
