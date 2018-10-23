@@ -49,6 +49,8 @@ public class JbootRedisConfig {
     private Integer minIdle;
     private Integer maxWaitMillis;
 
+    private String serializer;
+
 
     public String getHost() {
         return host;
@@ -223,7 +225,14 @@ public class JbootRedisConfig {
             HostAndPort hap = new HostAndPort(hostAndPorts[0], Integer.valueOf(hostAndPorts[1]));
             haps.add(hap);
         }
-
         return haps;
+    }
+
+    public String getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(String serializer) {
+        this.serializer = serializer;
     }
 }

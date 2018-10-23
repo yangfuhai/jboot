@@ -17,8 +17,14 @@ package io.jboot.component.redis;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.core.serializer.ISerializer;
+import io.jboot.core.serializer.SerializerManager;
+import io.jboot.utils.StrUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 参考： com.jfinal.plugin.redis
@@ -27,6 +33,16 @@ import java.util.*;
 public abstract class JbootRedisBase implements JbootRedis {
 
     private static final Log LOG = Log.getLog(JbootRedisBase.class);
+
+    private final ISerializer serializer;
+
+    public JbootRedisBase(JbootRedisConfig config) {
+        if (config == null || StrUtils.isBlank(config.getSerializer())) {
+            serializer = Jboot.me().getSerializer();
+        } else {
+            serializer = SerializerManager.me().getSerializer(config.getSerializer());
+        }
+    }
 
 
     public byte[] keyToBytes(Object key) {
@@ -52,14 +68,14 @@ public abstract class JbootRedisBase implements JbootRedis {
     }
 
     public byte[] valueToBytes(Object value) {
-        return Jboot.me().getSerializer().serialize(value);
+        return serializer.serialize(value);
     }
 
     public Object valueFromBytes(byte[] bytes) {
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-        return Jboot.me().getSerializer().deserialize(bytes);
+        return serializer.deserialize(bytes);
     }
 
     public byte[][] valuesToBytesArray(Object... valuesArray) {
@@ -93,6 +109,7 @@ public abstract class JbootRedisBase implements JbootRedis {
         }
         return result;
     }
+
 
 }
 
