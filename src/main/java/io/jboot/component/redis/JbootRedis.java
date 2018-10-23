@@ -338,10 +338,6 @@ public interface JbootRedis {
      */
     public <T> T lindex(Object key, long index);
 
-    /**
-     * 获取记数器的值
-     */
-    public Long getCounter(Object key);
 
     /**
      * 返回列表 key 的长度。

@@ -284,11 +284,6 @@ public class JbootLettuceImpl implements JbootRedis {
     }
 
     @Override
-    public Long getCounter(Object key) {
-        return null;
-    }
-
-    @Override
     public Long llen(Object key) {
         return null;
     }
