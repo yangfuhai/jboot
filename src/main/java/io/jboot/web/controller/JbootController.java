@@ -15,10 +15,12 @@
  */
 package io.jboot.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import io.jboot.component.jwt.JwtManager;
 import io.jboot.utils.RequestUtils;
+import io.jboot.utils.StrUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -219,6 +221,11 @@ public class JbootController extends Controller {
                 ? String.format("%s://%s%s", req.getScheme(), req.getServerName(), req.getContextPath())
                 : String.format("%s://%s%s%s", req.getScheme(), req.getServerName(), ":" + port, req.getContextPath());
 
+    }
+
+    @NotAction
+    public <T> T getRawObject(Class<T> tClass) {
+        return StrUtils.isBlank(getRawData()) ? null : JSON.parseObject(getRawData(), tClass);
     }
 
 
