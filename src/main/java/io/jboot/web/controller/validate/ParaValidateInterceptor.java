@@ -147,7 +147,10 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             } else if (FormType.RAW_DATA.equalsIgnoreCase(formType)) {
                 try {
                     JSONObject json = JSON.parseObject(inv.getController().getRawData());
-                    value = JSONPath.eval(json, "$." + formName).toString();
+
+                    if (json != null) {
+                        value = JSONPath.eval(json, "$." + formName).toString();
+                    }
                 } catch (JSONException jsonException) {
                     value = null;
                 }
