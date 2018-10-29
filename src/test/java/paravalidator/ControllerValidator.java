@@ -38,7 +38,7 @@ public class ControllerValidator extends Controller {
     }
 
     @EmptyValidate(value = {
-            @Form(name = "name", message = "name不能为空", type = FormType.RAW_DATA),
+            @Form(name = "name.abc", message = "name不能为空", type = FormType.RAW_DATA),
     }, renderType = ValidateRenderType.JSON)
     public void raw() {
         renderJson(Ret.create("name", getRawData()));
