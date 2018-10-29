@@ -15,20 +15,14 @@
  */
 package io.jboot.web.controller.validate;
 
-import java.lang.annotation.*;
-
 /**
- * 非空验证注解
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.web.controller.validate
  */
-@Documented
-@Target(ElementType.METHOD)
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Form {
+public class FormType {
 
-    String name();
+    public static final String FORM_DATA = "form";
+    public static final String RAW_DATA = "raw";
 
-    String message() default "";
-
-    String type() default FormType.FORM_DATA;
 }
