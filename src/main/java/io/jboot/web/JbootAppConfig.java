@@ -17,7 +17,6 @@ package io.jboot.web;
 
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
-import com.jfinal.json.FastJsonFactory;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
@@ -50,8 +49,8 @@ import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
-import io.jboot.web.handler.JbootFilterHandler;
 import io.jboot.web.handler.JbootActionHandler;
+import io.jboot.web.handler.JbootFilterHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.limitation.JbootLimitationManager;
 import io.jboot.web.limitation.LimitationConfig;
@@ -95,7 +94,7 @@ public class JbootAppConfig extends JFinalConfig {
         constants.setReportAfterInvocation(false);
 
         constants.setControllerFactory(JbootControllerManager.me());
-        constants.setJsonFactory(new FastJsonFactory());
+        constants.setJsonFactory(() -> new JbootJson());
 
         JbootAppListenerManager.me().onJfinalConstantConfig(constants);
     }
