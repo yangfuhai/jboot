@@ -15,6 +15,10 @@
  */
 package io.jboot.web.controller.validate;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
 import io.jboot.utils.ArrayUtils;
@@ -133,10 +137,29 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
         for (Form form : forms) {
             String formName = form.name();
+            String formType = form.type();
             if (StrUtils.isBlank(formName)) {
                 throw new IllegalArgumentException("@Form.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
             }
-            String value = inv.getController().getPara(formName);
+            String value = null;
+            if (FormType.FORM_DATA.equalsIgnoreCase(formType)) {
+                value = inv.getController().getPara(formName);
+            } else if (FormType.RAW_DATA.equalsIgnoreCase(formType)) {
+                try {
+                    JSONObject json = JSON.parseObject(inv.getController().getRawData());
+                    if (json != null) {
+                        Object tmp = JSONPath.eval(json, "$." + formName);
+                        if (tmp != null) {
+                            value = tmp.toString();
+                        }
+                    }
+                } catch (Exception e) {
+                    value = null;
+                }
+            } else {
+                throw new IllegalArgumentException("para validate not support form type : " + formType + ", you can find support types was defined in class : io.jboot.web.controller.validate.FormType");
+            }
+
             if (value == null || value.trim().length() == 0) {
                 renderError(inv.getController(), formName, form.message(), emptyParaValidate);
                 return false;
@@ -175,6 +198,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                 throw new IllegalArgumentException("can not process render : " + emptyParaValidate.renderType());
         }
     }
+
 
 
 }

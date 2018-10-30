@@ -16,12 +16,17 @@
 package aop;
 
 import com.google.inject.Inject;
+import com.jfinal.kit.Ret;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
+import io.jboot.web.fixedinterceptor.FixedInterceptorWapper;
+import io.jboot.web.fixedinterceptor.FixedInterceptors;
 import service.CategoryService;
 
 import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RequestMapping("/aop")
@@ -48,5 +53,11 @@ public class AopDemo extends JbootController {
         renderHtml("service:" + service.hello("") + "<br /> nameservice:" + nameservice.hello(""));
     }
 
-
+    public void inters() {
+        List list = new ArrayList<>();
+        for (FixedInterceptorWapper fixedInterceptorWapper : FixedInterceptors.me().list()) {
+            list.add(Ret.by("name", fixedInterceptorWapper.getFixedInterceptor().getClass()).set("orderNo", fixedInterceptorWapper.getOrderNo()));
+        }
+        renderJson(list);
+    }
 }

@@ -24,8 +24,7 @@ import io.jboot.web.controller.validate.ParaValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
 import io.jboot.web.limitation.LimitationInterceptor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -44,19 +43,20 @@ public class FixedInterceptors {
     /**
      * 默认的 Jboot 系统拦截器
      */
-    private FixedInterceptor[] defaultInters = new FixedInterceptor[]{
-            new CORSInterceptor(),
-            new LimitationInterceptor(),
-            new ParaValidateInterceptor(),
-            new JwtInterceptor(),
-            new JbootShiroInterceptor(),
-            new OpentracingInterceptor(),
-            new JbootMetricInterceptor()};
+    private FixedInterceptorWapper[] defaultInters = new FixedInterceptorWapper[]{
+            new FixedInterceptorWapper(new CORSInterceptor(), 10) ,
+            new FixedInterceptorWapper(new LimitationInterceptor(), 20),
+            new FixedInterceptorWapper(new ParaValidateInterceptor(), 30),
+            new FixedInterceptorWapper(new JwtInterceptor(), 40),
+            new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
+            new FixedInterceptorWapper(new OpentracingInterceptor(), 60),
+            new FixedInterceptorWapper(new JbootMetricInterceptor(), 70)};
 
-    private List<FixedInterceptor> userInters = new ArrayList<>();
-
+    private List<FixedInterceptorWapper> userInters = new ArrayList<>();
 
     private FixedInterceptor[] allInters = null;
+
+    private List<FixedInterceptorWapper> inters;
 
     FixedInterceptor[] all() {
         if (allInters == null) {
@@ -73,16 +73,20 @@ public class FixedInterceptors {
     private void initInters() {
 
         FixedInterceptor[] interceptors = new FixedInterceptor[defaultInters.length + userInters.size()];
+        inters = new ArrayList<>();
+        inters.addAll(Arrays.asList(defaultInters));
+        inters.addAll(userInters);
+        inters.sort(new Comparator<FixedInterceptorWapper>() {
+            @Override
+            public int compare(FixedInterceptorWapper f1, FixedInterceptorWapper f2) {
+                return Integer.compare(f1.getOrderNo(), f2.getOrderNo());
+            }
+        });
 
         int i = 0;
-        for (FixedInterceptor interceptor : defaultInters) {
+        for (FixedInterceptorWapper interceptor : inters) {
             Jboot.injectMembers(interceptor);
-            interceptors[i++] = interceptor;
-        }
-
-        for (FixedInterceptor interceptor : userInters) {
-            Jboot.injectMembers(interceptor);
-            interceptors[i++] = interceptor;
+            interceptors[i++] = interceptor.getFixedInterceptor();
         }
 
         allInters = interceptors;
@@ -90,10 +94,18 @@ public class FixedInterceptors {
 
 
     public void add(FixedInterceptor interceptor) {
-        userInters.add(interceptor);
+        userInters.add(new FixedInterceptorWapper(interceptor));
     }
 
-    public List<FixedInterceptor> list() {
-        return userInters;
+    public void add(FixedInterceptor interceptor, int orderNo) {
+        if (orderNo < 0) {
+            orderNo = 0;
+        }
+
+        userInters.add(new FixedInterceptorWapper(interceptor, orderNo));
+    }
+
+    public List<FixedInterceptorWapper> list() {
+        return inters;
     }
 }

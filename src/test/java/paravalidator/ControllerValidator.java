@@ -1,16 +1,20 @@
 package paravalidator;
 
 import com.jfinal.core.Controller;
+import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.Ret;
 import io.jboot.Jboot;
 import io.jboot.web.controller.annotation.RequestMapping;
-import io.jboot.web.controller.validate.CaptchaValidate;
-import io.jboot.web.controller.validate.EmptyValidate;
-import io.jboot.web.controller.validate.Form;
-import io.jboot.web.controller.validate.ValidateRenderType;
+import io.jboot.web.controller.validate.*;
+import io.jboot.web.cors.EnableCORS;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RequestMapping("/validator")
+@EnableCORS
 public class ControllerValidator extends Controller {
 
 
@@ -33,6 +37,20 @@ public class ControllerValidator extends Controller {
         renderJson(Ret.create("name", getPara("name")));
     }
 
+    @EmptyValidate(value = {
+            @Form(name = "name.abc", message = "name不能为空", type = FormType.RAW_DATA),
+    }, renderType = ValidateRenderType.JSON)
+    public void raw() {
+        renderJson(Ret.create("name", getRawData()));
+    }
+
+    @EmptyValidate(value = {
+            @Form(name = "name", message = "name不能为空", type = "abc"),
+    }, renderType = ValidateRenderType.JSON)
+    public void rawErrorType() {
+        renderJson(Ret.create("name", getRawData()));
+    }
+
     @CaptchaValidate(form = "captcha", renderType = ValidateRenderType.TEXT, message = "/validator/error")
     public void captcha() {
 
@@ -46,4 +64,5 @@ public class ControllerValidator extends Controller {
     public void error() {
         renderText("出错了");
     }
+
 }

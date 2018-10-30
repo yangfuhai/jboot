@@ -21,6 +21,6 @@ public class AopConfig extends JbootAppListenerBase {
 
     @Override
     public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors) {
-        fixedInterceptors.add(new FixedTestInterceptor());
+        fixedInterceptors.add(new FixedTestInterceptor(), 55);
     }
 }
