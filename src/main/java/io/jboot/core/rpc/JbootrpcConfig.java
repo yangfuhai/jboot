@@ -95,7 +95,7 @@ public class JbootrpcConfig {
     private int hystrixThreadPoolSize = 10;
 
     private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();
-    private String hystrixSetterFactory = JbootrpcHystrixSetterFactory.class.getName();
+    private String hystrixSetterFactory = JbootrpcHystrixSetterFactoryDefault.class.getName();
 
     public String getHost() {
         return host;
