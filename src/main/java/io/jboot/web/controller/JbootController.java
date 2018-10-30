@@ -16,6 +16,7 @@
 package io.jboot.web.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import io.jboot.component.jwt.JwtManager;
@@ -223,9 +224,27 @@ public class JbootController extends Controller {
 
     }
 
+    /**
+     * 接收 json 转化为 object
+     *
+     * @param tClass
+     * @param <T>
+     * @return
+     */
     @NotAction
     public <T> T getRawObject(Class<T> tClass) {
         return StrUtils.isBlank(getRawData()) ? null : JSON.parseObject(getRawData(), tClass);
+    }
+
+
+    /**
+     * 接收 Json 转化为 JSONObject
+     *
+     * @return
+     */
+    @NotAction
+    public JSONObject getRawObject() {
+        return StrUtils.isBlank(getRawData()) ? null : JSON.parseObject(getRawData());
     }
 
 
