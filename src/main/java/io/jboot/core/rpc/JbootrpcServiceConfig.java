@@ -58,6 +58,8 @@ public class JbootrpcServiceConfig implements Serializable {
         this.version = defaultConfig.getDefaultVersion();
         this.timeout = defaultConfig.getRequestTimeOut();
         this.retries = defaultConfig.getRetries();
+        this.proxy = defaultConfig.getProxy();
+        this.filter = defaultConfig.getFilter();
     }
 
     public JbootrpcServiceConfig(JbootrpcService annotation) {
