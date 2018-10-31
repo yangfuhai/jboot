@@ -71,8 +71,19 @@ public class JbootHttpKit {
      * @return
      */
     public static String httpPost(String url) {
-        return httpPost(url, null);
+        return httpPost(url, null, null, null);
     }
+
+    /**
+     * http post 操作
+     *
+     * @param url
+     * @return
+     */
+    public static String httpPost(String url, String postData) {
+        return httpPost(url, null, null, postData);
+    }
+
 
     /**
      * Http post 操作
