@@ -1,3 +1,13 @@
+jboot-1.7.2:
+新增：全局拦截器 FixedInterceptor 添加自定义排序的支持（感谢：@pkanyue ）
+新增：空数据验证 ParaValidater 添加验证 API Json 数据的功能 （感谢：@pkanyue ）
+新增：JbootHttpKit 代替 Jboot.http 方法，支持文件上传、下载、自定义https证书等功能
+新增：JbootController 新增 getRawObject() 用于读取一个 JsonObject
+优化：修改Json渲染为 JbootJson。一个类似 JfinalJson 但是不会输出 null 值的 key。
+修复：RPC 下 hystrixSetterFactory 出错的问题
+
+
+
 jboot-1.7.1:
 新增：redis添加自定义序列化配置的功能
 新增：Jboot.java 添加方法 service(Class<T> clazz, JbootrpcServiceConfig config) 方便获取rpc service
