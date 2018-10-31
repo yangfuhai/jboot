@@ -5,7 +5,7 @@ jboot-1.7.2:
 新增：JbootController 新增 getRawObject() 用于读取一个 JsonObject
 优化：修改Json渲染为 JbootJson。一个类似 JfinalJson 但是不会输出 null 值的 key。
 修复：RPC 下 hystrixSetterFactory 出错的问题
-
+其他：升级 maven 相关依赖
 
 
 jboot-1.7.1:
