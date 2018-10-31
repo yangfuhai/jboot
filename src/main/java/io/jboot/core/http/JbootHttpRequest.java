@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,11 @@
  */
 package io.jboot.core.http;
 
+import io.jboot.utils.StrUtils;
+
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +53,7 @@ public class JbootHttpRequest {
 
     private File downloadFile;
     private String contentType = CONTENT_TYPE_URL_ENCODED;
+    private String postContent;
 
 
     public static JbootHttpRequest create(String url) {
@@ -172,6 +177,17 @@ public class JbootHttpRequest {
         headers.put(key, value);
     }
 
+    public void addHeaders(Map<String, String> headers) {
+        if (headers == null || headers.isEmpty()) {
+            return;
+        }
+
+        if (this.headers == null) {
+            this.headers = new HashMap<>();
+        }
+        this.headers.putAll(headers);
+    }
+
     public Map<String, Object> getParams() {
         return params;
     }
@@ -191,11 +207,7 @@ public class JbootHttpRequest {
         this.params = params;
     }
 
-    public boolean isGetRquest() {
-        return METHOD_GET.equalsIgnoreCase(method);
-    }
-
-    public boolean isPostRquest() {
+    public boolean isPostRequest() {
         return METHOD_POST.equalsIgnoreCase(method);
     }
 
@@ -229,5 +241,62 @@ public class JbootHttpRequest {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public String getPostContent() {
+        if (postContent != null) {
+            initGetUrl();
+            return postContent;
+        } else {
+            return buildParams();
+        }
+    }
+
+    public void setPostContent(String postContent) {
+        this.postContent = postContent;
+    }
+
+
+    private String buildParams() {
+        Map<String, Object> params = getParams();
+        if (params == null || params.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            if (entry.getKey() != null && StrUtils.isNotBlank(entry.getValue()))
+                try {
+                    builder.append(entry.getKey().trim()).append("=")
+                            .append(URLEncoder.encode(entry.getValue().toString(), getCharset())).append("&");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+        }
+
+        if (builder.charAt(builder.length() - 1) == '&') {
+            builder.deleteCharAt(builder.length() - 1);
+        }
+
+        return builder.toString();
+    }
+
+
+    public void initGetUrl() {
+
+        String params = buildParams();
+
+        if (StrUtils.isBlank(params)) {
+            return;
+        }
+
+        String originUrl = getRequestUrl();
+        if (originUrl.contains("?")) {
+            originUrl = originUrl + "&" + params;
+        } else {
+            originUrl = originUrl + "?" + params;
+        }
+
+        setRequestUrl(originUrl);
     }
 }

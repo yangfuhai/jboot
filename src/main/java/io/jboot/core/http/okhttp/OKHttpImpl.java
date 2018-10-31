@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
 package io.jboot.core.http.okhttp;
 
 import com.jfinal.log.Log;
-import io.jboot.core.http.JbootHttpBase;
+import io.jboot.core.http.JbootHttp;
 import io.jboot.core.http.JbootHttpRequest;
 import io.jboot.core.http.JbootHttpResponse;
 import okhttp3.*;
@@ -34,7 +34,7 @@ import java.util.Map;
  * @version V1.0
  * @Package io.jboot.core.http.okhttp
  */
-public class OKHttpImpl extends JbootHttpBase {
+public class OKHttpImpl implements JbootHttp {
     private static final Log LOG = Log.getLog(OKHttpImpl.class);
 
     public OKHttpImpl() {
@@ -55,15 +55,15 @@ public class OKHttpImpl extends JbootHttpBase {
 
     private void doProcess(JbootHttpRequest request, JbootHttpResponse response) {
         try {
-            if (request.isPostRquest()) {
+            if (request.isPostRequest()) {
                 doProcessPostRequest(request, response);
             }
 
             /**
-             * get 请求
+             * get 获取 其他 请求
              */
-            else if (request.isGetRquest()) {
-                buildGetUrlWithParams(request);
+            else {
+                request.initGetUrl();
                 doProcessGetRequest(request, response);
             }
 
@@ -96,11 +96,14 @@ public class OKHttpImpl extends JbootHttpBase {
             }
             requestBody = builder.build();
         } else {
-            FormBody.Builder builder = new FormBody.Builder();
-            for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
-                builder.add(entry.getKey(), entry.getValue() == null ? "" : entry.getValue().toString());
-            }
-            requestBody = builder.build();
+//            FormBody.Builder builder = new FormBody.Builder();
+//            for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
+//                builder.add(entry.getKey(), entry.getValue() == null ? "" : entry.getValue().toString());
+//            }
+//            requestBody = builder.build();
+
+            MediaType mediaType = MediaType.parse(request.getContentType());
+            requestBody = RequestBody.create(mediaType, request.getPostContent());
         }
 
 

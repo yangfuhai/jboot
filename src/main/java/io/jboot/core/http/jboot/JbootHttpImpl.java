@@ -16,7 +16,7 @@
 package io.jboot.core.http.jboot;
 
 import com.jfinal.log.Log;
-import io.jboot.core.http.JbootHttpBase;
+import io.jboot.core.http.JbootHttp;
 import io.jboot.core.http.JbootHttpRequest;
 import io.jboot.core.http.JbootHttpResponse;
 import io.jboot.exception.JbootException;
@@ -34,7 +34,7 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 
 
-public class JbootHttpImpl extends JbootHttpBase {
+public class JbootHttpImpl implements JbootHttp {
 
     private static final Log LOG = Log.getLog(JbootHttpImpl.class);
 
@@ -59,7 +59,7 @@ public class JbootHttpImpl extends JbootHttpBase {
             configConnection(connection, request);
 
 
-            if (request.isGetRquest()) {
+            if (request.isPostRequest() == false) {
 
                 connection.setInstanceFollowRedirects(true);
                 connection.connect();
@@ -67,7 +67,7 @@ public class JbootHttpImpl extends JbootHttpBase {
             /**
              * 处理 post请求
              */
-            else if (request.isPostRquest()) {
+            else if (request.isPostRequest()) {
 
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
@@ -77,7 +77,7 @@ public class JbootHttpImpl extends JbootHttpBase {
                  */
                 if (!request.isMultipartFormData()) {
 
-                    String postContent = buildParams(request);
+                    String postContent = request.getPostContent();
                     if (StrUtils.isNotEmpty(postContent)) {
                         DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
                         dos.write(postContent.getBytes(request.getCharset()));
@@ -192,8 +192,8 @@ public class JbootHttpImpl extends JbootHttpBase {
 
     private static HttpURLConnection getConnection(JbootHttpRequest request) {
         try {
-            if (request.isGetRquest()) {
-                buildGetUrlWithParams(request);
+            if (request.isPostRequest() == false) {
+                request.initGetUrl();
             }
             if (request.getRequestUrl().toLowerCase().startsWith("https")) {
                 return getHttpsConnection(request);

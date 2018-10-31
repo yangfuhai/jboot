@@ -21,7 +21,7 @@ import com.jfinal.weixin.sdk.api.*;
 import com.jfinal.weixin.sdk.kit.ParaMap;
 import com.jfinal.weixin.sdk.utils.HttpUtils;
 import com.jfinal.weixin.sdk.utils.RetryUtils;
-import io.jboot.Jboot;
+import io.jboot.core.http.JbootHttpKit;
 
 import java.util.concurrent.Callable;
 
@@ -42,7 +42,7 @@ public class WechatApis {
      */
     public static ApiResult getUserInfo(String token, String openId) {
         Kv pm = Kv.by("access_token", token).set("openid", openId).set("lang", "zh_CN");
-        String jsonResult = Jboot.httpGet("https://api.weixin.qq.com/sns/userinfo", pm);
+        String jsonResult = JbootHttpKit.httpGet("https://api.weixin.qq.com/sns/userinfo", pm);
 
         if (jsonResult == null)
             return null;
@@ -68,7 +68,7 @@ public class WechatApis {
                 .replace("{secret}", ApiConfigKit.getApiConfig().getAppSecret())
                 .replace("{code}", code);
 
-        String jsonResult = Jboot.httpGet(getOpenIdUrl);
+        String jsonResult = JbootHttpKit.httpGet(getOpenIdUrl);
 
         if (jsonResult == null)
             return null;

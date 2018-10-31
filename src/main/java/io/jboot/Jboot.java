@@ -27,8 +27,6 @@ import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
 import io.jboot.core.http.JbootHttp;
 import io.jboot.core.http.JbootHttpManager;
-import io.jboot.core.http.JbootHttpRequest;
-import io.jboot.core.http.JbootHttpResponse;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqManager;
 import io.jboot.core.rpc.Jbootrpc;
@@ -39,11 +37,11 @@ import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
-import io.jboot.server.warmboot.AutoDeployManager;
 import io.jboot.server.JbootServer;
 import io.jboot.server.JbootServerConfig;
 import io.jboot.server.JbootServerFactory;
 import io.jboot.server.listener.JbootAppListenerManager;
+import io.jboot.server.warmboot.AutoDeployManager;
 import io.jboot.utils.FileUtils;
 import io.jboot.utils.StrUtils;
 import io.jboot.web.JbootWebConfig;
@@ -446,52 +444,6 @@ public class Jboot {
         sendEvent(new JbootEvent(action, data));
     }
 
-
-    /**
-     * http get操作
-     *
-     * @param url
-     * @return
-     */
-    public static String httpGet(String url) {
-        return httpGet(url, null);
-    }
-
-    /**
-     * http get操作
-     *
-     * @param url
-     * @param params
-     * @return
-     */
-    public static String httpGet(String url, Map<String, Object> params) {
-        JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_GET);
-        JbootHttpResponse response = jboot.getHttp().handle(request);
-        return response.isError() ? null : response.getContent();
-    }
-
-    /**
-     * http post 操作
-     *
-     * @param url
-     * @return
-     */
-    public static String httpPost(String url) {
-        return httpPost(url, null);
-    }
-
-    /**
-     * Http post 操作
-     *
-     * @param url
-     * @param params post的参数，可以是文件
-     * @return
-     */
-    public static String httpPost(String url, Map<String, Object> params) {
-        JbootHttpRequest request = JbootHttpRequest.create(url, params, JbootHttpRequest.METHOD_POST);
-        JbootHttpResponse response = jboot.getHttp().handle(request);
-        return response.isError() ? null : response.getContent();
-    }
 
 
     /**
