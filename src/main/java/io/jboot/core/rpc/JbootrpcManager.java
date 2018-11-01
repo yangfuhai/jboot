@@ -137,15 +137,14 @@ public class JbootrpcManager {
 
     private JbootrpcHystrixSetterFactory setterFactory = null;
 
-    public JbootrpcHystrixSetterFactory getHystrixSetterFactoryy() {
+    public JbootrpcHystrixSetterFactory getHystrixSetterFactory() {
 
         if (setterFactory != null) {
             return setterFactory;
         }
 
         if (StrUtils.isNotBlank(config.getHystrixSetterFactory())) {
-            fallbackListener = ClassKits.newInstance(config.getHystrixSetterFactory());
-
+            setterFactory = ClassKits.newInstance(config.getHystrixSetterFactory());
         }
 
         if (setterFactory == null) {

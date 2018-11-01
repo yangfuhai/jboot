@@ -78,7 +78,7 @@ public class JbootMotanProxyFactory implements ProxyFactory {
 
             HystrixCommand.Setter setter = JbootrpcManager
                     .me()
-                    .getHystrixSetterFactoryy()
+                    .getHystrixSetterFactory()
                     .createSetter(proxy, method, args);
 
             if (setter == null) {

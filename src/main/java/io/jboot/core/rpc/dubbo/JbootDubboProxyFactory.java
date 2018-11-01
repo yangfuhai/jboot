@@ -93,7 +93,7 @@ public class JbootDubboProxyFactory extends AbstractProxyFactory {
 
             HystrixCommand.Setter setter = JbootrpcManager
                     .me()
-                    .getHystrixSetterFactoryy()
+                    .getHystrixSetterFactory()
                     .createSetter(proxy, method, args);
 
             if (setter == null) {
