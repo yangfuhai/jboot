@@ -1,4 +1,7 @@
 jboot-1.7.3:
+新增：JbootHttpKit 添加 httpPost(url,data) 方法
+修复：hystrixSetterFactory 转化出错的问题
+修复：RPC 默认的 proxy 和 filter 设置无效的问题（感谢：retireworker）
 
 
 jboot-1.7.2:
