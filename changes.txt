@@ -1,3 +1,6 @@
+jboot-1.7.3:
+
+
 jboot-1.7.2:
 新增：全局拦截器 FixedInterceptor 添加自定义排序的支持（感谢：@pkanyue ）
 新增：空数据验证 ParaValidater 添加验证 API Json 数据的功能 （感谢：@pkanyue ）
