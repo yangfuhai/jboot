@@ -16,7 +16,6 @@
 package mutildatasource;
 
 import io.jboot.Jboot;
-import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import sharding.UserModel;
@@ -42,11 +41,11 @@ public class MutilDatasourceDemo extends JbootController {
 
 
     public void index() {
-        String id = StrUtils.uuid();
+//        String id = StrUtils.uuid();
 
         UserModel user = new UserModel();
         user.setName("Michael yang");
-        user.setId(id);
+//        user.setId(id);
 
         //增加
         user.save();
@@ -59,7 +58,7 @@ public class MutilDatasourceDemo extends JbootController {
         user.update();
 
         //试用其他数据源查询
-        UserModel findModel = new UserModel().use("a1").findById(id);
+        UserModel findModel = new UserModel().use("a1").findById(user.getId());
         renderJson(findModel);
     }
 

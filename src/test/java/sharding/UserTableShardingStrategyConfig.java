@@ -1,10 +1,10 @@
 package sharding;
 
 import com.google.common.collect.Sets;
-import io.shardingjdbc.core.api.algorithm.sharding.ListShardingValue;
-import io.shardingjdbc.core.api.algorithm.sharding.ShardingValue;
-import io.shardingjdbc.core.api.config.strategy.ShardingStrategyConfiguration;
-import io.shardingjdbc.core.routing.strategy.ShardingStrategy;
+import io.shardingsphere.api.algorithm.sharding.ListShardingValue;
+import io.shardingsphere.api.algorithm.sharding.ShardingValue;
+import io.shardingsphere.api.config.strategy.ShardingStrategyConfiguration;
+import io.shardingsphere.core.routing.strategy.ShardingStrategy;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
  * @Package sharding
  */
 public class UserTableShardingStrategyConfig implements ShardingStrategyConfiguration {
-
-    @Override
-    public ShardingStrategy build() {
-        return shardingStrategy;
-    }
+//
+//    @Override
+//    public ShardingStrategy build() {
+//        return shardingStrategy;
+//    }
 
 
     private ShardingStrategy shardingStrategy = new ShardingStrategy() {

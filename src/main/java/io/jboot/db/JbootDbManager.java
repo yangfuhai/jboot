@@ -22,9 +22,9 @@ import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.Jboot;
 import io.jboot.core.cache.JbootCache;
-import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.datasource.DataSourceConfigManager;
+import io.jboot.db.datasource.DataSourceFactoryBuilder;
 import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootIllegalConfigException;
@@ -58,61 +58,46 @@ public class JbootDbManager {
         // 所有的数据源，包含了分库数据源的子数据源
         Map<String, DataSourceConfig> allDatasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
 
-        // 分库的数据源，一个数据源包含了多个数据源。
-        Map<String, DataSourceConfig> shardingDatasourceConfigs = DataSourceConfigManager.me().getShardingDatasourceConfigs();
+        // 包含了指定表配置的数据源
+        Map<String, DataSourceConfig> hasTableDatasourceConfigs = new HashMap<>();
 
-        if (shardingDatasourceConfigs != null && shardingDatasourceConfigs.size() > 0) {
-            for (Map.Entry<String, DataSourceConfig> entry : shardingDatasourceConfigs.entrySet()) {
 
-                //子数据源的配置
-                String shardingDatabase = entry.getValue().getShardingDatabase();
-                if (StrUtils.isBlank(shardingDatabase)) {
-                    continue;
-                }
-                Set<String> databases = StrUtils.splitToSet(shardingDatabase, ",");
-                for (String database : databases) {
-                    DataSourceConfig datasourceConfig = allDatasourceConfigs.remove(database);
-                    if (datasourceConfig == null) {
-                        throw new NullPointerException("has no datasource config named " + database + ",plase check your sharding database config");
-                    }
-                    entry.getValue().addChildDatasourceConfig(datasourceConfig);
-                }
+        Iterator<Map.Entry<String, DataSourceConfig>> it = allDatasourceConfigs.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, DataSourceConfig> entry = it.next();
+            if (StrUtils.isNotBlank(entry.getValue().getTable())) {
+                hasTableDatasourceConfigs.put(entry.getKey(), entry.getValue());
+                it.remove();
             }
         }
 
-        //合并后的数据源，包含了分库分表的数据源和正常数据源
-        Map<String, DataSourceConfig> mergeDatasourceConfigs = new HashMap<>();
-        if (allDatasourceConfigs != null) {
-            mergeDatasourceConfigs.putAll(allDatasourceConfigs);
-        }
+        // 优先创建有指定表的数据源的 activeRecordPlugin
+        // 表一旦附着到 activeRecordPlugin， 就不会被其他 activeRecordPlugin 包含了
+        createPlugins(hasTableDatasourceConfigs);
+        createPlugins(allDatasourceConfigs);
 
-        if (shardingDatasourceConfigs != null) {
-            mergeDatasourceConfigs.putAll(shardingDatasourceConfigs);
-        }
+    }
 
-
-        for (Map.Entry<String, DataSourceConfig> entry : mergeDatasourceConfigs.entrySet()) {
+    private void createPlugins(Map<String, DataSourceConfig> allDatasourceConfigs) {
+        for (Map.Entry<String, DataSourceConfig> entry : allDatasourceConfigs.entrySet()) {
 
             DataSourceConfig datasourceConfig = entry.getValue();
 
-            if (datasourceConfig.isConfigOk()) {
 
-                ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
-                activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
-                activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
+            ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
+            activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
+            activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
 
-                JbootCache jbootCache = Jboot.me().getCache();
-                if (jbootCache != null) {
-                    activeRecordPlugin.setCache(jbootCache);
-                }
-
-                configSqlTemplate(datasourceConfig, activeRecordPlugin);
-                configDialect(activeRecordPlugin, datasourceConfig);
-
-                activeRecordPlugins.add(activeRecordPlugin);
+            JbootCache jbootCache = Jboot.me().getCache();
+            if (jbootCache != null) {
+                activeRecordPlugin.setCache(jbootCache);
             }
-        }
 
+            configSqlTemplate(datasourceConfig, activeRecordPlugin);
+            configDialect(activeRecordPlugin, datasourceConfig);
+
+            activeRecordPlugins.add(activeRecordPlugin);
+        }
     }
 
     /**
@@ -197,7 +182,7 @@ public class JbootDbManager {
     private ActiveRecordPlugin createRecordPlugin(DataSourceConfig config) {
 
         String configName = config.getName();
-        DataSource dataSource = new DataSourceBuilder(config).build();
+        DataSource dataSource = DataSourceFactoryBuilder.me().build(config);
 
         ActiveRecordPlugin activeRecordPlugin = StrUtils.isNotBlank(configName)
                 ? new ActiveRecordPlugin(configName, dataSource)
@@ -218,17 +203,22 @@ public class JbootDbManager {
 
         /**
          * 不需要添加映射的直接返回
+         *
+         * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了，
+         * 添加映射：默认为该model的数据源，
+         * 不添加映射：通过 model.use("xxx").save()这种方式去调用该数据源
          */
         if (!config.isNeedAddMapping()) {
             return activeRecordPlugin;
         }
 
-        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(config);
-        if (ArrayUtils.isNullOrEmpty(tableInfos)) {
+        //默认情况下，如果该 DataSource 没做任何配置，讲获得所有的表
+        List<TableInfo> configTables = TableInfoManager.me().getConfigTables(config);
+        if (ArrayUtils.isNullOrEmpty(configTables)) {
             return activeRecordPlugin;
         }
 
-        for (TableInfo ti : tableInfos) {
+        for (TableInfo ti : configTables) {
             if (StrUtils.isNotBlank(ti.getPrimaryKey())) {
                 activeRecordPlugin.addMapping(ti.getTableName(), ti.getPrimaryKey(), (Class<? extends Model<?>>) ti.getModelClass());
             } else {

@@ -16,9 +16,6 @@
 package io.jboot.db;
 
 import com.jfinal.plugin.activerecord.Model;
-import io.shardingjdbc.core.api.config.strategy.ShardingStrategyConfiguration;
-
-import java.util.Set;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -30,12 +27,7 @@ public class TableInfo {
     private String tableName;
     private String primaryKey;
     private Class<? extends Model> modelClass;
-    private Class<? extends ShardingStrategyConfiguration> databaseShardingStrategyConfig;
-    private Class<? extends ShardingStrategyConfiguration> tableShardingStrategyConfig;
-    private String actualDataNodes;
-    private String keyGeneratorColumnName;
-    private String keyGeneratorClass;
-    private Set<String> datasources;
+    private String datasrouces;
 
 
     public String getTableName() {
@@ -62,52 +54,11 @@ public class TableInfo {
         this.modelClass = modelClass;
     }
 
-    public Class<? extends ShardingStrategyConfiguration> getDatabaseShardingStrategyConfig() {
-        return databaseShardingStrategyConfig;
+    public String getDatasrouces() {
+        return datasrouces;
     }
 
-    public void setDatabaseShardingStrategyConfig(Class<? extends ShardingStrategyConfiguration> databaseShardingStrategyConfig) {
-        this.databaseShardingStrategyConfig = databaseShardingStrategyConfig;
+    public void setDatasrouces(String datasrouces) {
+        this.datasrouces = datasrouces;
     }
-
-    public Class<? extends ShardingStrategyConfiguration> getTableShardingStrategyConfig() {
-        return tableShardingStrategyConfig;
-    }
-
-    public void setTableShardingStrategyConfig(Class<? extends ShardingStrategyConfiguration> tableShardingStrategyConfig) {
-        this.tableShardingStrategyConfig = tableShardingStrategyConfig;
-    }
-
-    public String getActualDataNodes() {
-        return actualDataNodes;
-    }
-
-    public void setActualDataNodes(String actualDataNodes) {
-        this.actualDataNodes = actualDataNodes;
-    }
-
-    public String getKeyGeneratorColumnName() {
-        return keyGeneratorColumnName;
-    }
-
-    public void setKeyGeneratorColumnName(String keyGeneratorColumnName) {
-        this.keyGeneratorColumnName = keyGeneratorColumnName;
-    }
-
-    public String getKeyGeneratorClass() {
-        return keyGeneratorClass;
-    }
-
-    public void setKeyGeneratorClass(String keyGeneratorClass) {
-        this.keyGeneratorClass = keyGeneratorClass;
-    }
-
-    public Set<String> getDatasources() {
-        return datasources;
-    }
-
-    public void setDatasources(Set<String> datasources) {
-        this.datasources = datasources;
-    }
-
 }

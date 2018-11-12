@@ -25,26 +25,10 @@ public class Stater {
         Jboot.setBootArg("jboot.model.idCacheEnable", true);
 
 
-        /**
-         * 数据源1
-         */
-        Jboot.setBootArg("jboot.datasource.db0.type", "mysql");
-        Jboot.setBootArg("jboot.datasource.db0.url", "jdbc:mysql://127.0.0.1:3306/jbootsharding0");
-        Jboot.setBootArg("jboot.datasource.db0.user", "root");
+        Jboot.setBootArg("jboot.datasource.sharding.shardingConfigYaml", "sharding.yaml");
+        Jboot.setBootArg("jboot.datasource.sharding.table", "tb_user");
+//        Jboot.setBootArg("jboot.model.scan", "sharding");
 
-        /**
-         * 数据源2
-         */
-        Jboot.setBootArg("jboot.datasource.db1.type", "mysql");
-        Jboot.setBootArg("jboot.datasource.db1.url", "jdbc:mysql://127.0.0.1:3306/jbootsharding1");
-        Jboot.setBootArg("jboot.datasource.db1.user", "root");
-
-
-        /**
-         * 主数据源：包含了 两个子数据源 db0和db1
-         */
-        Jboot.setBootArg("jboot.datasource.shardingEnable", "true");
-        Jboot.setBootArg("jboot.datasource.shardingDatabase", "db0,db1");
 
         //hystrix配置
         Jboot.setBootArg("jboot.hystrix.url", "/hystrix.html");//配置 Hystrix Dashboard 的监控路径,方便查看hystrix对sql的监控

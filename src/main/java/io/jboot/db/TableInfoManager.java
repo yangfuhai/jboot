@@ -42,36 +42,46 @@ public class TableInfoManager {
     }
 
 
-    public List<TableInfo> getTablesInfos(DataSourceConfig dataSourceConfig) {
+    /**
+     * 获取某个datasrource 配置下对于有哪些表，一个DataSource 可能有多个表，一个表也可能对于对个 DataSource
+     *
+     * @param dataSourceConfig
+     * @return
+     */
+    public List<TableInfo> getConfigTables(DataSourceConfig dataSourceConfig) {
+
         List<TableInfo> tableInfos = new ArrayList<>();
 
-        Set<String> configTables = null;
-        if (StrUtils.isNotBlank(dataSourceConfig.getTable())) {
-            configTables = StrUtils.splitToSet(dataSourceConfig.getTable(), ",");
-        }
+        // 数据源指定包含的表
+        Set<String> configTables = StrUtils.isNotBlank(dataSourceConfig.getTable())
+                ? StrUtils.splitToSet(dataSourceConfig.getTable(), ",")
+                : null;
 
+        // 数据源指定排除的表
+        Set<String> configExTables = StrUtils.splitToSet(dataSourceConfig.getExTable(), ",");
+
+
+        // model 通过 @Table 配置指定的表
         for (TableInfo tableInfo : getAllTableInfos()) {
-            if (tableInfo.getDatasources().contains(dataSourceConfig.getName())) {
 
-                //如果 datasource.table 已经配置了，就只用这个配置的，不是这个配置的都排除
-                if (configTables != null && !configTables.contains(tableInfo.getTableName())) {
-                    continue;
-                }
-
-                tableInfos.add(tableInfo);
+            //说明该表已经被指定到datasource了
+            if (tableInfo.getDatasrouces() != null) {
+                continue;
             }
-        }
 
-        if (StrUtils.isNotBlank(dataSourceConfig.getExTable())) {
-            Set<String> configExTables = StrUtils.splitToSet(dataSourceConfig.getExTable(), ",");
-            for (Iterator<TableInfo> iterator = tableInfos.iterator(); iterator.hasNext(); ) {
-                TableInfo tableInfo = iterator.next();
-
-                //如果配置当前数据源的排除表，则需要排除当前数据源的表信息
-                if (configExTables.contains(tableInfo.getTableName())) {
-                    iterator.remove();
-                }
+            // 如果 datasource.table 已经配置了，
+            // 就只用这个配置的，不是这个配置的都排除
+            if (configTables != null && !configTables.contains(tableInfo.getTableName())) {
+                continue;
             }
+
+            //被指定排除的表进行排除了
+            if (configExTables != null && configExTables.contains(tableInfo.getTableName())) {
+                continue;
+            }
+
+            tableInfo.setDatasrouces(dataSourceConfig.getName());
+            tableInfos.add(tableInfo);
         }
 
         return tableInfos;
@@ -103,29 +113,13 @@ public class TableInfoManager {
                 continue;
             }
 
-            Set<String> datasources = new HashSet<>();
-            if (StrUtils.isNotBlank(tb.datasource())) {
-                datasources.addAll(StrUtils.splitToSet(tb.datasource(), ","));
-            } else {
-                datasources.add(DataSourceConfig.NAME_DEFAULT);
-            }
-
 
             TableInfo tableInfo = new TableInfo();
             tableInfo.setModelClass(clazz);
             tableInfo.setPrimaryKey(tb.primaryKey());
             tableInfo.setTableName(tb.tableName());
-            tableInfo.setDatasources(datasources);
 
-            tableInfo.setActualDataNodes(tb.actualDataNodes());
-            tableInfo.setDatabaseShardingStrategyConfig(tb.databaseShardingStrategyConfig());
-            tableInfo.setTableShardingStrategyConfig(tb.tableShardingStrategyConfig());
-
-            if (tb.keyGeneratorClass() != null && Void.class != tb.keyGeneratorClass()) {
-                tableInfo.setKeyGeneratorClass(tb.keyGeneratorClass().getName());
-            }
-            tableInfo.setKeyGeneratorColumnName(tb.keyGeneratorColumnName());
-
+            
             tableInfos.add(tableInfo);
         }
 

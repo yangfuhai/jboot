@@ -34,7 +34,6 @@ public class DataSourceConfigManager {
     }
 
     private Map<String, DataSourceConfig> datasourceConfigs = Maps.newHashMap();
-    private Map<String, DataSourceConfig> shardingDatasourceConfigs = Maps.newHashMap();
 
     private DataSourceConfigManager() {
 
@@ -45,14 +44,7 @@ public class DataSourceConfigManager {
             datasourceConfig.setName(DataSourceConfig.NAME_DEFAULT);
         }
 
-        if (datasourceConfig.isConfigOk()) {
-            datasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
-        }
-        
-        if (datasourceConfig.isShardingEnable()) {
-            shardingDatasourceConfigs.put(datasourceConfig.getName(), datasourceConfig);
-        }
-
+        addConfig(datasourceConfig);
 
         Properties prop = JbootConfigManager.me().getProperties();
         Set<String> datasourceNames = new HashSet<>();
@@ -72,22 +64,21 @@ public class DataSourceConfigManager {
             if (StrUtils.isBlank(dsc.getName())) {
                 dsc.setName(name);
             }
-            if (dsc.isConfigOk()) {
-                datasourceConfigs.put(name, dsc);
-            }
-            if (dsc.isShardingEnable()) {
-                shardingDatasourceConfigs.put(name, dsc);
-            }
+            addConfig(dsc);
         }
+    }
+
+    public void addConfig(DataSourceConfig config) {
+        if (config == null || !config.isOk()) {
+            return;
+        }
+
+        datasourceConfigs.put(config.getName(), config);
     }
 
 
     public Map<String, DataSourceConfig> getDatasourceConfigs() {
         return datasourceConfigs;
-    }
-
-    public Map<String, DataSourceConfig> getShardingDatasourceConfigs() {
-        return shardingDatasourceConfigs;
     }
 
 }

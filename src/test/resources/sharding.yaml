@@ -1,0 +1,36 @@
+dataSources:
+  jbootsharding0: !!com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/jbootsharding0
+    username: root
+    password:
+  jbootsharding1: !!com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/jbootsharding1
+    username: root
+    password:
+
+shardingRule:
+  tables:
+    tb_user:
+      actualDataNodes: jbootsharding${0..1}.tb_user${0..2}
+      tableStrategy:
+        inline:
+          shardingColumn: id
+          algorithmExpression: tb_user${id % 2}
+      keyGeneratorColumnName: id
+
+  bindingTables:
+    - tb_user
+
+  defaultDatabaseStrategy:
+    inline:
+      shardingColumn: id
+      algorithmExpression: jbootsharding${id % 2}
+
+  defaultTableStrategy:
+    none:
+  defaultKeyGeneratorClassName: io.shardingsphere.core.keygen.DefaultKeyGenerator
+
+  props:
+    sql.show: true

@@ -15,12 +15,6 @@
  */
 package io.jboot.server.warmboot;
 
-import com.jfinal.kit.LogKit;
-import com.jfinal.kit.PathKit;
-
-import java.io.File;
-
-
 public class AutoDeployManager {
 
     private static AutoDeployManager manager = new AutoDeployManager();
@@ -35,23 +29,23 @@ public class AutoDeployManager {
 
     public void run() {
 
-        File file = new File(PathKit.getRootClassPath());
-        JbootFileScanner scanner = new JbootFileScanner(file.getAbsolutePath(), 3) {
-            @Override
-            public void onChange(String action, String file) {
-                try {
-//                    System.err.println("file changes : " + file);
-//                    Jboot.me().getServer().restart();
-//                    JbootServerFactory.me().buildServer().start();
-//                    System.err.println("Loading complete.");
-                } catch (Exception e) {
-                    System.err.println("Error reconfiguring/restarting webapp after change in watched files");
-                    LogKit.error(e.getMessage(), e);
-                }
-            }
-        };
+//        File file = new File(PathKit.getRootClassPath());
+//        JbootFileScanner scanner = new JbootFileScanner(file.getAbsolutePath(), 3) {
+//            @Override
+//            public void onChange(String action, String file) {
+//                try {
+////                    System.err.println("file changes : " + file);
+////                    Jboot.me().getServer().restart();
+////                    JbootServerFactory.me().buildServer().start();
+////                    System.err.println("Loading complete.");
+//                } catch (Exception e) {
+//                    System.err.println("Error reconfiguring/restarting webapp after change in watched files");
+//                    LogKit.error(e.getMessage(), e);
+//                }
+//            }
+//        };
 
-        scanner.start();
+//        scanner.start();
     }
 
 }

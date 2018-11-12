@@ -17,10 +17,6 @@ package io.jboot.db.datasource;
 
 import io.jboot.utils.StrUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 public class DataSourceConfig {
     public static final String NAME_DEFAULT = "main";
 
@@ -52,11 +48,7 @@ public class DataSourceConfig {
     private String sqlTemplate;
     private String factory; //HikariDataSourceFactory.class.getName();
 
-    private boolean shardingEnable = false;
-    private String shardingDatabase;
-
-
-    private List<DataSourceConfig> childDatasourceConfigs;
+    private String shardingConfigYaml;
 
 
     private String dbProFactory;
@@ -164,12 +156,6 @@ public class DataSourceConfig {
         this.maximumPoolSize = maximumPoolSize;
     }
 
-    public boolean isConfigOk() {
-        return (StrUtils.isNotBlank(url))
-                || shardingEnable == true;
-    }
-
-
     public boolean isMysqlType() {
         return TYPE_MYSQL.equals(getType());
     }
@@ -230,36 +216,13 @@ public class DataSourceConfig {
         this.needAddMapping = needAddMapping;
     }
 
-    public boolean isShardingEnable() {
-        return shardingEnable;
+
+    public String getShardingConfigYaml() {
+        return shardingConfigYaml;
     }
 
-    public void setShardingEnable(boolean shardingEnable) {
-        this.shardingEnable = shardingEnable;
-    }
-
-    public String getShardingDatabase() {
-        return shardingDatabase;
-    }
-
-    public void setShardingDatabase(String shardingDatabase) {
-        this.shardingDatabase = shardingDatabase;
-    }
-
-    public List<DataSourceConfig> getChildDatasourceConfigs() {
-        return childDatasourceConfigs;
-    }
-
-    public void setChildDatasourceConfigs(List<DataSourceConfig> childDatasourceConfigs) {
-        this.childDatasourceConfigs = childDatasourceConfigs;
-    }
-
-    public void addChildDatasourceConfig(DataSourceConfig config) {
-        if (this.childDatasourceConfigs == null) {
-            this.childDatasourceConfigs = new ArrayList<>();
-        }
-
-        this.childDatasourceConfigs.add(config);
+    public void setShardingConfigYaml(String shardingConfigYaml) {
+        this.shardingConfigYaml = shardingConfigYaml;
     }
 
     public String getDbProFactory() {
@@ -332,5 +295,9 @@ public class DataSourceConfig {
 
     public void setDialectClass(String dialectClass) {
         this.dialectClass = dialectClass;
+    }
+
+    public boolean isOk() {
+        return StrUtils.isNotBlank(getUrl()) || StrUtils.isNotBlank(getShardingConfigYaml());
     }
 }

@@ -1,6 +1,5 @@
 package sharding;
 
-import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -17,10 +16,9 @@ public class ShardingController extends JbootController {
 
     public void index() {
 
-        String id = StrUtils.uuid();
 
         UserModel user = new UserModel();
-        user.setId(id);
+//        user.setId(id);
         user.setName("Michael yang");
 
         //增加
@@ -36,7 +34,7 @@ public class ShardingController extends JbootController {
         user.update();
 
         //查询
-        UserModel findModel = DAO.findById(id);
+        UserModel findModel = DAO.findById(user.getId());
         renderJson(findModel);
 
     }

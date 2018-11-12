@@ -300,11 +300,13 @@
             <version>1.5.12</version>
         </dependency>
 
+
         <dependency>
-            <groupId>io.shardingjdbc</groupId>
+            <groupId>io.shardingsphere</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
-            <version>2.0.3</version>
+            <version>3.0.0</version>
         </dependency>
+
 
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -511,6 +513,7 @@
                 <includes>
                     <!-- **/* 写法，可以将各级子目录下的资源文件被打包 -->
                     <include>**/*.jf</include>
+                    <include>**/*.yaml</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

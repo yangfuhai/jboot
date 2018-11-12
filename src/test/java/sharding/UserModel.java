@@ -10,19 +10,20 @@ import io.jboot.db.model.JbootModel;
  */
 
 @Table(tableName = "tb_user",
-        primaryKey = "id",
-        actualDataNodes = "db${0..1}.tb_user${0..2}",//db${0..1} 表示有数据库db0，db1，tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2 ，如果只分表，不分库，配置为：main.tb_user${0..2}
-        tableShardingStrategyConfig = UserTableShardingStrategyConfig.class,//分表策略
-        databaseShardingStrategyConfig = UseDatabaseShardingStrategyConfig.class //分库策略
+        primaryKey = "id"
+//        ,
+//        actualDataNodes = "db${0..1}.tb_user${0..2}",//db${0..1} 表示有数据库db0，db1，tb_user${0..2} 表示有三张表 tb_user0,tb_user1,tb_user2 ，如果只分表，不分库，配置为：main.tb_user${0..2}
+//        tableShardingStrategyConfig = UserTableShardingStrategyConfig.class,//分表策略
+//        databaseShardingStrategyConfig = UseDatabaseShardingStrategyConfig.class //分库策略
 )
 public class UserModel extends JbootModel<UserModel> {
 
 
-    public String getId() {
+    public long getId() {
         return get("id");
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         set("id", id);
     }
 
