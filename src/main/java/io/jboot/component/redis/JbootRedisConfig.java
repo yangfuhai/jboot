@@ -217,15 +217,18 @@ public class JbootRedisConfig {
     }
 
     public Set<HostAndPort> getHostAndPorts() {
-        Set<HostAndPort> haps = new HashSet<>();
+        Set<HostAndPort> hostAndPortSet = new HashSet<>();
         String[] hostAndPortStrings = host.split(",");
         for (String hostAndPortString : hostAndPortStrings) {
+            if (StrUtils.isBlank(hostAndPortString)) continue;
             String[] hostAndPorts = hostAndPortString.split(":");
 
-            HostAndPort hap = new HostAndPort(hostAndPorts[0], Integer.valueOf(hostAndPorts[1]));
-            haps.add(hap);
+            String host = hostAndPorts[0];
+            int port = hostAndPorts.length > 1 ? Integer.parseInt(hostAndPorts[1]) : getPort();
+
+            hostAndPortSet.add(new HostAndPort(host, port));
         }
-        return haps;
+        return hostAndPortSet;
     }
 
     public String getSerializer() {
