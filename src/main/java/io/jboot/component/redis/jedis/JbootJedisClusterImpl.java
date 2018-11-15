@@ -98,7 +98,6 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
             poolConfig.setMaxWaitMillis(config.getMaxWaitMillis());
         }
         this.jedisCluster = newJedisCluster(config.getHostAndPorts(), timeout, maxAttempts, password, poolConfig);
-
     }
 
     public static JedisCluster newJedisCluster(Set<HostAndPort> haps, Integer timeout,

@@ -44,12 +44,13 @@ public class HttpTest {
         System.out.println(html);
     }
 
-    @Test
-    public void testHttpDownload() {
-
-//        String url = "http://www.xxx.com/abc.zip";
+//    @Test
+//    public void testHttpDownload() {
 //
-//        File downloadToFile = new File("/xxx/abc.zip");
+//
+//        String url = "https://www.baidu.com/img/bd_logo1.png?where=super";
+//
+//        File downloadToFile = new File("/Users/michael/Desktop/xxx/aa/bb/cc/abc.png");
 //
 //
 //        JbootHttpRequest request = JbootHttpRequest.create(url, null, JbootHttpRequest.METHOD_GET);
@@ -63,7 +64,7 @@ public class HttpTest {
 //        }
 //
 //        System.out.println(downloadToFile.length());
-    }
+//    }
 
 
 }
