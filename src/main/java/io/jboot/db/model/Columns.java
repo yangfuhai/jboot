@@ -18,6 +18,8 @@ package io.jboot.db.model;
 import io.jboot.utils.StrUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -215,6 +217,72 @@ public class Columns implements Serializable {
 
     public List<Column> getList() {
         return cols;
+    }
+
+
+    public String toCacheKey() {
+        if (isEmpty()) return null;
+
+        List<Column> columns = new ArrayList<>(cols);
+        columns.sort(Comparator.comparing(Column::getName));
+
+        StringBuilder s = new StringBuilder();
+        for (Column column : columns) {
+            s.append(column.getName()).append("-")
+                    .append(getLogicStr(column.getLogic())).append("-");
+            Object value = column.getValue();
+            if (value != null) s.append(column.getValue()).append("-");
+        }
+
+        return s.deleteCharAt(s.length() - 1).toString();
+    }
+    
+
+    /**
+     * @param logic
+     * @return
+     */
+    private String getLogicStr(String logic) {
+        switch (logic) {
+            case Column.LOGIC_LIKE:
+                return "lk";
+            case Column.LOGIC_GT:
+                return "gt";
+            case Column.LOGIC_GE:
+                return "ge";
+            case Column.LOGIC_LT:
+                return "lt";
+            case Column.LOGIC_LE:
+                return "le";
+            case Column.LOGIC_EQUALS:
+                return "eq";
+            case Column.LOGIC_NOT_EQUALS:
+                return "neq";
+            case Column.LOGIC_IS_NULL:
+                return "isn";
+            case Column.LOGIC_IS_NOT_NULL:
+                return "nn";
+            default:
+                return "";
+        }
+    }
+
+
+    public static void main(String[] args) {
+        Columns columns = Columns.create();
+        System.out.println(columns.toCacheKey());
+
+        columns.add("name", "zhangsan");
+        System.out.println(columns.toCacheKey());
+
+        columns.ge("age", 10);
+        System.out.println(columns.toCacheKey());
+
+        columns.is_not_null("price");
+        System.out.println(columns.toCacheKey());
+
+        columns.is_null("nickname");
+        System.out.println(columns.toCacheKey());
     }
 
 }
