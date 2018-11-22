@@ -17,6 +17,8 @@ package io.jboot.core.http;
 
 import io.jboot.Jboot;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -124,5 +126,94 @@ public class JbootHttpKit {
         JbootHttpResponse response = Jboot.me().getHttp().handle(request);
         return response.isError() ? null : response.getContent();
     }
+
+
+    /**
+     * 下载文件
+     *
+     * @param url
+     * @param toFile
+     * @return
+     */
+    public static boolean download(String url, File toFile) {
+        return download(url, null, null, toFile);
+    }
+
+
+    /**
+     * 下载文件
+     *
+     * @param url
+     * @param paras
+     * @param toFile
+     * @return
+     */
+    public static boolean download(String url, Map<String, Object> paras, File toFile) {
+        return download(url, paras, null, toFile);
+    }
+
+
+    /**
+     * 下载文件
+     *
+     * @param url
+     * @param paras
+     * @param headers
+     * @param toFile
+     * @return
+     */
+    public static boolean download(String url, Map<String, Object> paras, Map<String, String> headers, File toFile) {
+        JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_GET);
+        request.setDownloadFile(toFile);
+        request.addHeaders(headers);
+        return Jboot.me().getHttp().handle(request).isError();
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param url
+     * @return
+     */
+    public static String upload(String url, File file) {
+        return upload(url, null, null, file);
+    }
+
+
+    /**
+     * 上传文件
+     *
+     * @param url
+     * @param paras
+     * @param file
+     * @return
+     */
+    public static String upload(String url, Map<String, Object> paras, File file) {
+        return upload(url, paras, null, file);
+    }
+
+
+    /**
+     * 上传文件
+     *
+     * @param url
+     * @param paras
+     * @param headers
+     * @param file
+     * @return
+     */
+    public static String upload(String url, Map<String, Object> paras, Map<String, String> headers, File file) {
+
+        Map<String, Object> newParas = new HashMap();
+        if (paras != null) newParas.putAll(paras);
+
+        newParas.put("uploadFile", file);
+
+        JbootHttpRequest request = JbootHttpRequest.create(url, newParas, JbootHttpRequest.METHOD_POST);
+        request.addHeaders(headers);
+        JbootHttpResponse response = Jboot.me().getHttp().handle(request);
+        return response.isError() ? null : response.getContent();
+    }
+
 
 }
