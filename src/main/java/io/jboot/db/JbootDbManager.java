@@ -100,17 +100,6 @@ public class JbootDbManager {
             if (datasourceConfig.isConfigOk()) {
 
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
-                activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
-                activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
-
-                JbootCache jbootCache = Jboot.me().getCache();
-                if (jbootCache != null) {
-                    activeRecordPlugin.setCache(jbootCache);
-                }
-
-                configSqlTemplate(datasourceConfig, activeRecordPlugin);
-                configDialect(activeRecordPlugin, datasourceConfig);
-
                 activeRecordPlugins.add(activeRecordPlugin);
             }
         }
@@ -196,7 +185,7 @@ public class JbootDbManager {
      * @param config
      * @return
      */
-    private ActiveRecordPlugin createRecordPlugin(DataSourceConfig config) {
+    public ActiveRecordPlugin createRecordPlugin(DataSourceConfig config) {
 
 
         ActiveRecordPlugin activeRecordPlugin = newRecordPlugin(config);
@@ -213,6 +202,17 @@ public class JbootDbManager {
         if (config.getTransactionLevel() != null) {
             activeRecordPlugin.setTransactionLevel(config.getTransactionLevel());
         }
+
+        activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
+        activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
+
+        JbootCache jbootCache = Jboot.me().getCache();
+        if (jbootCache != null) {
+            activeRecordPlugin.setCache(jbootCache);
+        }
+
+        configSqlTemplate(config, activeRecordPlugin);
+        configDialect(activeRecordPlugin, config);
 
         /**
          * 不需要添加映射的直接返回
