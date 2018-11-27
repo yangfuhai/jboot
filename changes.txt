@@ -1,5 +1,5 @@
 jboot-1.7.4:
-新增：Columns.toCacheKey 方法，方便通过Columns查询的时候使用缓存的功能
+新增：Columns.getCacheKey 方法，方便通过Columns查询的时候使用缓存的功能
 新增：数据源配置添加 activeRecordPluginClass 配置的功能
 修复：GetHostAndPorts 可能出错的问题
 修复：JbootHttpKit下载文件在一个不存在的目录出错的问题
