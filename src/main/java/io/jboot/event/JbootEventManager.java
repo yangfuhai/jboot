@@ -145,12 +145,6 @@ public class JbootEventManager {
 
             list.add(eventListener);
 
-            Collections.sort(list, (o1, o2) -> {
-                EventConfig c1 = ClassKits.getUsefulClass(o1.getClass()).getAnnotation(EventConfig.class);
-                EventConfig c2 = ClassKits.getUsefulClass(o2.getClass()).getAnnotation(EventConfig.class);
-                return c1.weight() - c2.weight();
-            });
-
             if (async) {
                 asyncListenerMap.put(action, list);
             } else {
