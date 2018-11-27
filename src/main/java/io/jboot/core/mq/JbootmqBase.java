@@ -52,7 +52,7 @@ public abstract class JbootmqBase implements Jbootmq {
 
         this.channels.addAll(StrUtils.splitToSet(channelString, ","));
 
-        if (StrUtils.isNotBlank(config.getSyncRecevieMessageChannel())){
+        if (StrUtils.isNotBlank(config.getSyncRecevieMessageChannel())) {
             this.syncRecevieMessageChannels.addAll(StrUtils.splitToSet(config.getSyncRecevieMessageChannel(), ","));
         }
     }
@@ -111,7 +111,7 @@ public abstract class JbootmqBase implements Jbootmq {
     }
 
 
-    private boolean notifyAll(String channel, Object message, Collection<JbootmqMessageListener> listeners) {
+    protected boolean notifyAll(String channel, Object message, Collection<JbootmqMessageListener> listeners) {
         if (listeners == null || listeners.size() == 0) {
             return false;
         }
@@ -135,4 +135,5 @@ public abstract class JbootmqBase implements Jbootmq {
 
         return true;
     }
+
 }

@@ -67,6 +67,7 @@ public class DataSourceConfig {
     private String exTable; //该数据源排除哪些表，这个配置会修改掉@Table上的配置
 
     private String dialectClass;
+    private String activeRecordPluginClass;
 
     /**
      * 是否需要添加到映射
@@ -332,5 +333,13 @@ public class DataSourceConfig {
 
     public void setDialectClass(String dialectClass) {
         this.dialectClass = dialectClass;
+    }
+
+    public String getActiveRecordPluginClass() {
+        return activeRecordPluginClass;
+    }
+
+    public void setActiveRecordPluginClass(String activeRecordPluginClass) {
+        this.activeRecordPluginClass = activeRecordPluginClass;
     }
 }

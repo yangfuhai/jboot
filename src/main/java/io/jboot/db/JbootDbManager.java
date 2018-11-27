@@ -27,12 +27,14 @@ import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.datasource.DataSourceConfigManager;
 import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
+import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.StrUtils;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 
@@ -196,12 +198,8 @@ public class JbootDbManager {
      */
     private ActiveRecordPlugin createRecordPlugin(DataSourceConfig config) {
 
-        String configName = config.getName();
-        DataSource dataSource = new DataSourceBuilder(config).build();
 
-        ActiveRecordPlugin activeRecordPlugin = StrUtils.isNotBlank(configName)
-                ? new ActiveRecordPlugin(configName, dataSource)
-                : new ActiveRecordPlugin(dataSource);
+        ActiveRecordPlugin activeRecordPlugin = newRecordPlugin(config);
 
 
         if (StrUtils.isNotBlank(config.getDbProFactory())) {
@@ -237,6 +235,32 @@ public class JbootDbManager {
         }
 
         return activeRecordPlugin;
+    }
+
+    private ActiveRecordPlugin newRecordPlugin(DataSourceConfig config) {
+
+        String configName = config.getName();
+        DataSource dataSource = new DataSourceBuilder(config).build();
+
+        String clazzName = config.getActiveRecordPluginClass();
+        if (StrUtils.isBlank(clazzName)) {
+            return StrUtils.isNotBlank(configName)
+                    ? new ActiveRecordPlugin(configName, dataSource)
+                    : new ActiveRecordPlugin(dataSource);
+        }
+
+        try {
+            Class<ActiveRecordPlugin> arpc = (Class<ActiveRecordPlugin>) Class.forName(clazzName, false, Thread.currentThread().getContextClassLoader());
+            if (StrUtils.isNotBlank(configName)) {
+                Constructor constructor = arpc.getConstructor(String.class, DataSource.class);
+                return (ActiveRecordPlugin) constructor.newInstance(configName, dataSource);
+            } else {
+                Constructor constructor = arpc.getConstructor(DataSource.class);
+                return (ActiveRecordPlugin) constructor.newInstance(dataSource);
+            }
+        } catch (Exception e) {
+            throw new JbootException(e.toString(), e);
+        }
     }
 
 
