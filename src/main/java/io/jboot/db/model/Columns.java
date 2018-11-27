@@ -220,7 +220,7 @@ public class Columns implements Serializable {
     }
 
 
-    public String toCacheKey() {
+    public String getCacheKey() {
         if (isEmpty()) return null;
 
         List<Column> columns = new ArrayList<>(cols);
@@ -270,19 +270,19 @@ public class Columns implements Serializable {
 
     public static void main(String[] args) {
         Columns columns = Columns.create();
-        System.out.println(columns.toCacheKey());
+        System.out.println(columns.getCacheKey());
 
         columns.add("name", "zhangsan");
-        System.out.println(columns.toCacheKey());
+        System.out.println(columns.getCacheKey());
 
         columns.ge("age", 10);
-        System.out.println(columns.toCacheKey());
+        System.out.println(columns.getCacheKey());
 
         columns.is_not_null("price");
-        System.out.println(columns.toCacheKey());
+        System.out.println(columns.getCacheKey());
 
         columns.is_null("nickname");
-        System.out.println(columns.toCacheKey());
+        System.out.println(columns.getCacheKey());
     }
 
 }
