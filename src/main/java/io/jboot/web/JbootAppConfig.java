@@ -200,14 +200,16 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configHandler(Handlers handlers) {
 
-        handlers.add(new JbootFilterHandler());
-        handlers.add(new ActionCacheHandler());
-        handlers.add(new JbootHandler());
-
         //用于对jfinal的拦截器进行注入
         handlers.setActionHandler(new JbootActionHandler());
 
+        //先添加用户的handler，再添加jboot自己的handler
+        //用户的handler优先于jboot的handler执行
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
+
+        handlers.add(new JbootFilterHandler());
+        handlers.add(new ActionCacheHandler());
+        handlers.add(new JbootHandler());
     }
 
     @Override
