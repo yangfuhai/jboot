@@ -1,4 +1,6 @@
 jboot-1.7.5:
+优化：添加JFinal Handler时，默认优先添加用户自己的Handler
+优化：多数据源时，只需要配置Table即可，不再需要在其他数据源配置 extable
 
 
 jboot-1.7.4:
