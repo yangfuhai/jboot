@@ -15,6 +15,7 @@
  */
 package io.jboot.db.datasource;
 
+import com.jfinal.plugin.activerecord.DbKit;
 import io.jboot.utils.StrUtils;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.List;
 
 
 public class DataSourceConfig {
-    public static final String NAME_DEFAULT = "main";
+    public static final String NAME_DEFAULT = DbKit.MAIN_CONFIG_NAME;
 
     public static final String TYPE_MYSQL = "mysql";
     public static final String TYPE_ORACLE = "oracle";
