@@ -93,6 +93,26 @@ public class JbootDbManager {
         }
 
 
+        // 包含了指定表配置的数据源
+        Map<String, DataSourceConfig> hasTableDatasourceConfigs = new HashMap<>();
+
+        Iterator<Map.Entry<String, DataSourceConfig>> it = mergeDatasourceConfigs.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, DataSourceConfig> entry = it.next();
+            if (StrUtils.isNotBlank(entry.getValue().getTable())) {
+                hasTableDatasourceConfigs.put(entry.getKey(), entry.getValue());
+                it.remove();
+            }
+        }
+
+        // 优先创建有指定表的数据源的 activeRecordPlugin
+        // 表一旦附着到 activeRecordPlugin， 就不会被其他 activeRecordPlugin 包含了
+        createRecordPlugin(hasTableDatasourceConfigs);
+        createRecordPlugin(mergeDatasourceConfigs);
+
+    }
+
+    private void createRecordPlugin(Map<String, DataSourceConfig> mergeDatasourceConfigs) {
         for (Map.Entry<String, DataSourceConfig> entry : mergeDatasourceConfigs.entrySet()) {
 
             DataSourceConfig datasourceConfig = entry.getValue();
@@ -102,79 +122,6 @@ public class JbootDbManager {
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
                 activeRecordPlugins.add(activeRecordPlugin);
             }
-        }
-
-    }
-
-    /**
-     * 配置 本地 sql
-     *
-     * @param datasourceConfig
-     * @param activeRecordPlugin
-     */
-    private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
-        String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
-        if (StrUtils.isNotBlank(sqlTemplatePath)) {
-            if (sqlTemplatePath.startsWith("/")) {
-                activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
-            } else {
-                activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
-            }
-        } else {
-            activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath());
-        }
-
-
-        String sqlTemplateString = datasourceConfig.getSqlTemplate();
-        if (sqlTemplateString != null) {
-            String[] sqlTemplateFiles = sqlTemplateString.split(",");
-            for (String sql : sqlTemplateFiles) {
-                activeRecordPlugin.addSqlTemplate(sql);
-            }
-        }
-    }
-
-    /**
-     * 配置 数据源的 方言
-     *
-     * @param activeRecordPlugin
-     * @param datasourceConfig
-     */
-    private void configDialect(ActiveRecordPlugin activeRecordPlugin, DataSourceConfig datasourceConfig) {
-
-        if (datasourceConfig.getDialectClass() != null) {
-            Dialect dialect = ClassKits.newInstance(datasourceConfig.getDialectClass(), false);
-            if (dialect == null) {
-                throw new NullPointerException("can not new instance by class:" + datasourceConfig.getDialectClass());
-            }
-            activeRecordPlugin.setDialect(dialect);
-            return;
-        }
-
-        switch (datasourceConfig.getType()) {
-            case DataSourceConfig.TYPE_MYSQL:
-                activeRecordPlugin.setDialect(new JbootMysqlDialect());
-                break;
-            case DataSourceConfig.TYPE_ORACLE:
-                if (StrUtils.isBlank(datasourceConfig.getContainerFactory())) {
-                    activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory());
-                }
-                activeRecordPlugin.setDialect(new JbootOracleDialect());
-                break;
-            case DataSourceConfig.TYPE_SQLSERVER:
-                activeRecordPlugin.setDialect(new JbootSqlServerDialect());
-                break;
-            case DataSourceConfig.TYPE_SQLITE:
-                activeRecordPlugin.setDialect(new JbootSqlite3Dialect());
-                break;
-            case DataSourceConfig.TYPE_ANSISQL:
-                activeRecordPlugin.setDialect(new JbootAnsiSqlDialect());
-                break;
-            case DataSourceConfig.TYPE_POSTGRESQL:
-                activeRecordPlugin.setDialect(new JbootPostgreSqlDialect());
-                break;
-            default:
-                throw new JbootIllegalConfigException("only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql and postgresql, please check your jboot.properties. ");
         }
     }
 
@@ -260,6 +207,79 @@ public class JbootDbManager {
             }
         } catch (Exception e) {
             throw new JbootException(e.toString(), e);
+        }
+    }
+
+
+    /**
+     * 配置 本地 sql
+     *
+     * @param datasourceConfig
+     * @param activeRecordPlugin
+     */
+    private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
+        String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
+        if (StrUtils.isNotBlank(sqlTemplatePath)) {
+            if (sqlTemplatePath.startsWith("/")) {
+                activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
+            } else {
+                activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
+            }
+        } else {
+            activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath());
+        }
+
+
+        String sqlTemplateString = datasourceConfig.getSqlTemplate();
+        if (sqlTemplateString != null) {
+            String[] sqlTemplateFiles = sqlTemplateString.split(",");
+            for (String sql : sqlTemplateFiles) {
+                activeRecordPlugin.addSqlTemplate(sql);
+            }
+        }
+    }
+
+    /**
+     * 配置 数据源的 方言
+     *
+     * @param activeRecordPlugin
+     * @param datasourceConfig
+     */
+    private void configDialect(ActiveRecordPlugin activeRecordPlugin, DataSourceConfig datasourceConfig) {
+
+        if (datasourceConfig.getDialectClass() != null) {
+            Dialect dialect = ClassKits.newInstance(datasourceConfig.getDialectClass(), false);
+            if (dialect == null) {
+                throw new NullPointerException("can not new instance by class:" + datasourceConfig.getDialectClass());
+            }
+            activeRecordPlugin.setDialect(dialect);
+            return;
+        }
+
+        switch (datasourceConfig.getType()) {
+            case DataSourceConfig.TYPE_MYSQL:
+                activeRecordPlugin.setDialect(new JbootMysqlDialect());
+                break;
+            case DataSourceConfig.TYPE_ORACLE:
+                if (StrUtils.isBlank(datasourceConfig.getContainerFactory())) {
+                    activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory());
+                }
+                activeRecordPlugin.setDialect(new JbootOracleDialect());
+                break;
+            case DataSourceConfig.TYPE_SQLSERVER:
+                activeRecordPlugin.setDialect(new JbootSqlServerDialect());
+                break;
+            case DataSourceConfig.TYPE_SQLITE:
+                activeRecordPlugin.setDialect(new JbootSqlite3Dialect());
+                break;
+            case DataSourceConfig.TYPE_ANSISQL:
+                activeRecordPlugin.setDialect(new JbootAnsiSqlDialect());
+                break;
+            case DataSourceConfig.TYPE_POSTGRESQL:
+                activeRecordPlugin.setDialect(new JbootPostgreSqlDialect());
+                break;
+            default:
+                throw new JbootIllegalConfigException("only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql and postgresql, please check your jboot.properties. ");
         }
     }
 

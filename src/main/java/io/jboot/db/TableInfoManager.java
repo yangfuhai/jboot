@@ -15,6 +15,7 @@
  */
 package io.jboot.db;
 
+import com.google.common.collect.Sets;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceConfig;
@@ -50,28 +51,25 @@ public class TableInfoManager {
             configTables = StrUtils.splitToSet(dataSourceConfig.getTable(), ",");
         }
 
+        Set<String> configExTables = StrUtils.splitToSet(dataSourceConfig.getExTable(), ",");
+
         for (TableInfo tableInfo : getAllTableInfos()) {
-            if (tableInfo.getDatasources().contains(dataSourceConfig.getName())) {
 
-                //如果 datasource.table 已经配置了，就只用这个配置的，不是这个配置的都排除
-                if (configTables != null && !configTables.contains(tableInfo.getTableName())) {
-                    continue;
-                }
-
-                tableInfos.add(tableInfo);
+            //该表已经被其他数据源优先使用了
+            if (ArrayUtils.isNotEmpty(tableInfo.getDatasources())) {
+                continue;
             }
-        }
 
-        if (StrUtils.isNotBlank(dataSourceConfig.getExTable())) {
-            Set<String> configExTables = StrUtils.splitToSet(dataSourceConfig.getExTable(), ",");
-            for (Iterator<TableInfo> iterator = tableInfos.iterator(); iterator.hasNext(); ) {
-                TableInfo tableInfo = iterator.next();
-
-                //如果配置当前数据源的排除表，则需要排除当前数据源的表信息
-                if (configExTables.contains(tableInfo.getTableName())) {
-                    iterator.remove();
-                }
+            if (configTables != null && configTables.contains(tableInfo.getTableName()) == false) {
+                continue;
             }
+
+            if (configExTables != null && configExTables.contains(tableInfo.getTableName())) {
+                continue;
+            }
+
+            tableInfo.setDatasources(Sets.newHashSet(dataSourceConfig.getName()));
+            tableInfos.add(tableInfo);
         }
 
         return tableInfos;
@@ -103,12 +101,9 @@ public class TableInfoManager {
                 continue;
             }
 
-            Set<String> datasources = new HashSet<>();
-            if (StrUtils.isNotBlank(tb.datasource())) {
-                datasources.addAll(StrUtils.splitToSet(tb.datasource(), ","));
-            } else {
-                datasources.add(DataSourceConfig.NAME_DEFAULT);
-            }
+            Set<String> datasources = StrUtils.isNotBlank(tb.datasource())
+                    ? StrUtils.splitToSet(tb.datasource(), ",")
+                    : null;
 
 
             TableInfo tableInfo = new TableInfo();
