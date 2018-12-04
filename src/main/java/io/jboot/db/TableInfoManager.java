@@ -43,15 +43,23 @@ public class TableInfoManager {
     }
 
 
-    public List<TableInfo> getTablesInfos(DataSourceConfig dataSourceConfig) {
-        List<TableInfo> tableInfos = new ArrayList<>();
+    /**
+     * 获取 某数据源 下匹配的表
+     *
+     * @param dataSourceConfig
+     * @return 该数据源下所有的表
+     */
+    public List<TableInfo> getMatchTablesInfos(DataSourceConfig dataSourceConfig) {
 
-        Set<String> configTables = null;
-        if (StrUtils.isNotBlank(dataSourceConfig.getTable())) {
-            configTables = StrUtils.splitToSet(dataSourceConfig.getTable(), ",");
-        }
+        Set<String> configTables = StrUtils.isNotBlank(dataSourceConfig.getTable())
+                ? StrUtils.splitToSet(dataSourceConfig.getTable(), ",")
+                : null;
 
-        Set<String> configExTables = StrUtils.splitToSet(dataSourceConfig.getExTable(), ",");
+        Set<String> configExTables = StrUtils.isNotBlank(dataSourceConfig.getExTable())
+                ? StrUtils.splitToSet(dataSourceConfig.getExTable(), ",")
+                : null;
+
+        List<TableInfo> matchList = new ArrayList<>();
 
         for (TableInfo tableInfo : getAllTableInfos()) {
 
@@ -69,10 +77,10 @@ public class TableInfoManager {
             }
 
             tableInfo.setDatasources(Sets.newHashSet(dataSourceConfig.getName()));
-            tableInfos.add(tableInfo);
+            matchList.add(tableInfo);
         }
 
-        return tableInfos;
+        return matchList;
     }
 
     private List<TableInfo> getAllTableInfos() {

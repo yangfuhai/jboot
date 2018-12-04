@@ -60,7 +60,7 @@ public class JbootDbManager {
         // 所有的数据源，包含了分库数据源的子数据源
         Map<String, DataSourceConfig> allDatasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
 
-        // 分库的数据源，一个数据源包含了多个数据源。
+        // 分库的数据源，一个数据源包含了多个子数据源。
         Map<String, DataSourceConfig> shardingDatasourceConfigs = DataSourceConfigManager.me().getShardingDatasourceConfigs();
 
         if (shardingDatasourceConfigs != null && shardingDatasourceConfigs.size() > 0) {
@@ -114,11 +114,8 @@ public class JbootDbManager {
 
     private void createRecordPlugin(Map<String, DataSourceConfig> mergeDatasourceConfigs) {
         for (Map.Entry<String, DataSourceConfig> entry : mergeDatasourceConfigs.entrySet()) {
-
             DataSourceConfig datasourceConfig = entry.getValue();
-
             if (datasourceConfig.isConfigOk()) {
-
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
                 activeRecordPlugins.add(activeRecordPlugin);
             }
@@ -134,9 +131,7 @@ public class JbootDbManager {
      */
     public ActiveRecordPlugin createRecordPlugin(DataSourceConfig config) {
 
-
         ActiveRecordPlugin activeRecordPlugin = newRecordPlugin(config);
-
 
         if (StrUtils.isNotBlank(config.getDbProFactory())) {
             activeRecordPlugin.setDbProFactory(ClassKits.newInstance(config.getDbProFactory()));
@@ -163,12 +158,18 @@ public class JbootDbManager {
 
         /**
          * 不需要添加映射的直接返回
+         *
+         * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了，
+         * 添加映射：默认为该model的数据源，
+         * 不添加映射：通过 model.use("xxx").save() 这种方式去调用该数据源
+         * 不添加映射使用从场景一般是：读写分离时，用于读取只读数据库的数据
          */
         if (!config.isNeedAddMapping()) {
             return activeRecordPlugin;
         }
 
-        List<TableInfo> tableInfos = TableInfoManager.me().getTablesInfos(config);
+        //获得该数据源匹配的表
+        List<TableInfo> tableInfos = TableInfoManager.me().getMatchTablesInfos(config);
         if (ArrayUtils.isNullOrEmpty(tableInfos)) {
             return activeRecordPlugin;
         }
