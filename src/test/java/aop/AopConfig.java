@@ -1,7 +1,7 @@
 package aop;
 
 import com.jfinal.config.Interceptors;
-import io.jboot.server.listener.JbootAppListenerBase;
+import io.jboot.app.listener.JbootAppListenerBase;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 /**

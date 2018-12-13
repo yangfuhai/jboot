@@ -38,7 +38,7 @@ import io.jboot.config.JbootConfigManager;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootScheduleManager;
-import io.jboot.server.listener.JbootAppListenerManager;
+import io.jboot.app.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtils;

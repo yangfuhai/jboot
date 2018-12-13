@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.server.listener;
+package io.jboot.app.listener;
 
-import com.google.inject.Binder;
-import com.jfinal.config.*;
+import com.jfinal.config.Constants;
+import com.jfinal.config.Interceptors;
+import com.jfinal.config.Routes;
 import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.server.ContextListeners;
-import io.jboot.server.JbootServer;
-import io.jboot.server.Servlets;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
@@ -63,16 +61,16 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
 
-    @Override
-    public void onJbootDeploy(Servlets servlets, ContextListeners listeners) {
-        for (JbootAppListener listener : this.listeners) {
-            try {
-                listener.onJbootDeploy(servlets, listeners);
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
-        }
-    }
+//    @Override
+//    public void onJbootDeploy(Servlets servlets, ContextListeners listeners) {
+//        for (JbootAppListener listener : this.listeners) {
+//            try {
+//                listener.onJbootDeploy(servlets, listeners);
+//            } catch (Throwable ex) {
+//                log.error(ex.toString(), ex);
+//            }
+//        }
+//    }
 
     @Override
     public void onJfinalConstantConfig(Constants constants) {
@@ -184,25 +182,25 @@ public class JbootAppListenerManager implements JbootAppListener {
         }
     }
 
-    @Override
-    public void onAppStartBefore(JbootServer jbootServer) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onAppStartBefore(jbootServer);
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
-        }
-    }
-
-    @Override
-    public void onGuiceConfigure(Binder binder) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onGuiceConfigure(binder);
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
-        }
-    }
+//    @Override
+//    public void onAppStartBefore(JbootServer jbootServer) {
+//        for (JbootAppListener listener : listeners) {
+//            try {
+//                listener.onAppStartBefore(jbootServer);
+//            } catch (Throwable ex) {
+//                log.error(ex.toString(), ex);
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void onGuiceConfigure(Binder binder) {
+//        for (JbootAppListener listener : listeners) {
+//            try {
+//                listener.onGuiceConfigure(binder);
+//            } catch (Throwable ex) {
+//                log.error(ex.toString(), ex);
+//            }
+//        }
+//    }
 }

@@ -34,7 +34,6 @@ import io.jboot.aop.interceptor.AopInterceptor;
 import io.jboot.core.mq.JbootmqMessageListener;
 import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.event.JbootEventListener;
-import io.jboot.server.listener.JbootAppListenerManager;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtils;
@@ -103,8 +102,6 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
          */
         beanBind(binder);
 
-        //自定义aop configure
-        JbootAppListenerManager.me().onGuiceConfigure(binder);
     }
 
 

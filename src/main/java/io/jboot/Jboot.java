@@ -18,6 +18,7 @@ package io.jboot;
 import com.codahale.metrics.MetricRegistry;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
+import io.jboot.app.listener.JbootAppListenerManager;
 import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.component.redis.JbootRedis;
@@ -37,11 +38,6 @@ import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
-import io.jboot.server.JbootServer;
-import io.jboot.server.JbootServerConfig;
-import io.jboot.server.JbootServerFactory;
-import io.jboot.server.listener.JbootAppListenerManager;
-import io.jboot.server.warmboot.AutoDeployManager;
 import io.jboot.utils.FileUtils;
 import io.jboot.utils.StrUtils;
 import io.jboot.web.JbootWebConfig;
@@ -66,7 +62,6 @@ public class Jboot {
     private JbootCache jbootCache;
     private JbootHttp jbootHttp;
     private JbootRedis jbootRedis;
-    private JbootServer jbootServer;
 
 
     private static Jboot jboot = new Jboot();
@@ -142,37 +137,21 @@ public class Jboot {
         printBannerInfo();
         printConfigInfo();
 
-        ensureServerCreated();
-
-        if (!startServer()) {
-            System.err.println("jboot start fail!!!");
-            return;
-        }
+//        ensureServerCreated();
+//
+//        if (!startServer()) {
+//            System.err.println("jboot start fail!!!");
+//            return;
+//        }
 
         printServerPath();
         printServerUrl();
-
-        if (isDevMode()) {
-            AutoDeployManager.me().run();
-        }
-
 
         JbootAppListenerManager.me().onJbootStarted();
 
     }
 
 
-    private boolean startServer() {
-        return jbootServer.start();
-    }
-
-
-    private void ensureServerCreated() {
-        if (jbootServer == null) {
-            JbootServerFactory factory = JbootServerFactory.me();
-            jbootServer = factory.buildServer();
-        }
-    }
 
     private void printBannerInfo() {
         System.out.println(getBannerText());
@@ -206,7 +185,6 @@ public class Jboot {
 
     private void printConfigInfo() {
         System.out.println(getJbootConfig());
-        System.out.println(config(JbootServerConfig.class));
         System.out.println(config(JbootWebConfig.class));
     }
 
@@ -218,15 +196,15 @@ public class Jboot {
 
 
     private void printServerUrl() {
-        JbootServerConfig serverConfig = config(JbootServerConfig.class);
-
-        String host = "0.0.0.0".equals(serverConfig.getHost()) ? "127.0.0.1" : serverConfig.getHost();
-        String port = "80".equals(serverConfig.getPort()) ? "" : ":" + serverConfig.getPort();
-        String path = serverConfig.getContextPath();
-
-        String url = String.format("http://%s%s%s", host, port, path);
-
-        System.out.println("server started success , url : " + url);
+//        JbootServerConfig serverConfig = config(JbootServerConfig.class);
+//
+//        String host = "0.0.0.0".equals(serverConfig.getHost()) ? "127.0.0.1" : serverConfig.getHost();
+//        String port = "80".equals(serverConfig.getPort()) ? "" : ":" + serverConfig.getPort();
+//        String path = serverConfig.getContextPath();
+//
+//        String url = String.format("http://%s%s%s", host, port, path);
+//
+//        System.out.println("server started success , url : " + url);
     }
 
     private static String getRootClassPath() {
@@ -327,16 +305,6 @@ public class Jboot {
             jbootRedis = JbootRedisManager.me().getRedis();
         }
         return jbootRedis;
-    }
-
-
-    /**
-     * 获取本地server 例如，undertow
-     *
-     * @return
-     */
-    public JbootServer getServer() {
-        return jbootServer;
     }
 
 

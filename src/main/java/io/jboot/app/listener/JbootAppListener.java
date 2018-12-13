@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.server.listener;
+package io.jboot.app.listener;
 
-import com.google.inject.Binder;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Interceptors;
 import com.jfinal.config.Routes;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.server.ContextListeners;
-import io.jboot.server.JbootServer;
-import io.jboot.server.Servlets;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 
 public interface JbootAppListener {
 
-    public void onJbootDeploy(Servlets servlets, ContextListeners listeners);
+//    public void onJbootDeploy(Servlets servlets, ContextListeners listeners);
 
     public void onJfinalConstantConfig(Constants constants);
 
@@ -52,7 +48,7 @@ public interface JbootAppListener {
 
     public void onJbootStarted();
 
-    public void onAppStartBefore(JbootServer jbootServer);
+//    public void onAppStartBefore(JbootServer jbootServer);
 
-    public void onGuiceConfigure(Binder binder);
+//    public void onGuiceConfigure(Binder binder);
 }

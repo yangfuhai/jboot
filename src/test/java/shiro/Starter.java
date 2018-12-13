@@ -1,7 +1,7 @@
 package shiro;
 
 import io.jboot.Jboot;
-import io.jboot.server.listener.JbootAppListenerBase;
+import io.jboot.app.listener.JbootAppListenerBase;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
