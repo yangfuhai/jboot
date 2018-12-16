@@ -1,7 +1,6 @@
 target
 logs
 .idea
-rebel.xml
 *.iml
 *.log
 *.iws
