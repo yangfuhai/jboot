@@ -41,6 +41,7 @@ import io.jboot.config.JbootConfigManager;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootScheduleManager;
+import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtils;
@@ -108,23 +109,19 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configRoute(Routes routes) {
 
-        System.out.println("configRoute classloader:" + this.getClass().getClassLoader());
-
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
-        if (controllerClassList == null) {
-            return;
-        }
+        if (ArrayUtils.isNotEmpty(controllerClassList)) {
+            for (Class<Controller> clazz : controllerClassList) {
+                RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
+                if (mapping == null || mapping.value() == null) {
+                    continue;
+                }
 
-        for (Class<Controller> clazz : controllerClassList) {
-            RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
-            if (mapping == null || mapping.value() == null) {
-                continue;
-            }
-
-            if (StrKit.notBlank(mapping.viewPath())) {
-                routes.add(mapping.value(), clazz, mapping.viewPath());
-            } else {
-                routes.add(mapping.value(), clazz);
+                if (StrKit.notBlank(mapping.viewPath())) {
+                    routes.add(mapping.value(), clazz, mapping.viewPath());
+                } else {
+                    routes.add(mapping.value(), clazz);
+                }
             }
         }
 

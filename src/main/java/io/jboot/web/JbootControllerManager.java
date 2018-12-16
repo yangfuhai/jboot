@@ -37,22 +37,6 @@ public class JbootControllerManager extends ControllerFactory {
     private JbootControllerManager() {
     }
 
-//    private ThreadLocal<Map<Class<? extends Controller>, Controller>> buffers = new ThreadLocal<Map<Class<? extends Controller>, Controller>>() {
-//        protected Map<Class<? extends Controller>, Controller> initialValue() {
-//            return new HashMap<Class<? extends Controller>, Controller>();
-//        }
-//    };
-//
-//    public Controller getController(Class<? extends Controller> controllerClass) throws InstantiationException, IllegalAccessException {
-//        Controller ret = buffers.get().get(controllerClass);
-//        if (ret == null) {
-//            ret = controllerClass.newInstance();
-//            Jboot.injectMembers(ret);
-//            buffers.get().put(controllerClass, ret);
-//        }
-//        return ret;
-//    }
-
     public Controller getController(Class<? extends Controller> controllerClass) throws InstantiationException, IllegalAccessException {
         return Jboot.bean(controllerClass);
     }
