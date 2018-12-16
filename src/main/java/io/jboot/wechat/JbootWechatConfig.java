@@ -18,7 +18,7 @@ package io.jboot.wechat;
 
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import io.jboot.core.config.annotation.PropertyConfig;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 @PropertyConfig(prefix = "jboot.wechat")
 public class JbootWechatConfig {
@@ -93,9 +93,9 @@ public class JbootWechatConfig {
     }
 
     public boolean isConfigOk() {
-        return StrUtils.isNotBlank(appId)
-                && StrUtils.isNotBlank(appSecret)
-                && StrUtils.isNotBlank(token);
+        return StringKits.isNotBlank(appId)
+                && StringKits.isNotBlank(appSecret)
+                && StringKits.isNotBlank(token);
     }
 
     public ApiConfig getApiConfig() {

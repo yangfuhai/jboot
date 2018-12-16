@@ -33,12 +33,12 @@ import java.math.BigInteger;
  * <p>
  * 加密的cookie工具类
  */
-public class EncryptCookieUtils {
+public class CookieKits {
 
     private final static String COOKIE_SEPARATOR = "#";
 
     private static String COOKIE_ENCRYPT_KEY = Jboot.config(JbootWebConfig.class).getCookieEncryptKey();
-    private static Log log = Log.getLog(EncryptCookieUtils.class);
+    private static Log log = Log.getLog(CookieKits.class);
 
     /**
      * 在使用之前，小调用此方法进行加密key的设置
@@ -122,7 +122,7 @@ public class EncryptCookieUtils {
 
 
     public static String getFromCookieInfo(String encrypt_key, String cookieValue) {
-        if (StrUtils.isBlank(cookieValue)) {
+        if (StringKits.isBlank(cookieValue)) {
             return null;
         }
 

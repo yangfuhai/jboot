@@ -15,7 +15,7 @@
  */
 package io.jboot.core.http;
 
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -265,7 +265,7 @@ public class JbootHttpRequest {
 
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            if (entry.getKey() != null && StrUtils.isNotBlank(entry.getValue()))
+            if (entry.getKey() != null && StringKits.isNotBlank(entry.getValue()))
                 try {
                     builder.append(entry.getKey().trim()).append("=")
                             .append(URLEncoder.encode(entry.getValue().toString(), getCharset())).append("&");
@@ -286,7 +286,7 @@ public class JbootHttpRequest {
 
         String params = buildParams();
 
-        if (StrUtils.isBlank(params)) {
+        if (StringKits.isBlank(params)) {
             return;
         }
 

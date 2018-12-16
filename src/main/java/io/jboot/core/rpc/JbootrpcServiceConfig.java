@@ -17,7 +17,7 @@ package io.jboot.core.rpc;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.annotation.JbootrpcService;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -69,11 +69,11 @@ public class JbootrpcServiceConfig implements Serializable {
             this.port = annotation.port();
         }
 
-        if (StrUtils.isNotBlank(annotation.group())) {
+        if (StringKits.isNotBlank(annotation.group())) {
             this.group = annotation.group();
         }
 
-        if (StrUtils.isNotBlank(annotation.version())) {
+        if (StringKits.isNotBlank(annotation.version())) {
             this.version = annotation.version();
         }
 
@@ -85,15 +85,15 @@ public class JbootrpcServiceConfig implements Serializable {
             this.actives = annotation.actives();
         }
 
-        if (StrUtils.isNotBlank(annotation.loadbalance())) {
+        if (StringKits.isNotBlank(annotation.loadbalance())) {
             this.loadbalance = annotation.loadbalance();
         }
 
-        if (StrUtils.isNotBlank(annotation.async())) {
+        if (StringKits.isNotBlank(annotation.async())) {
             this.async = Boolean.getBoolean(annotation.async());
         }
 
-        if (StrUtils.isNotBlank(annotation.check())) {
+        if (StringKits.isNotBlank(annotation.check())) {
             this.check = Boolean.getBoolean(annotation.check());
         }
 

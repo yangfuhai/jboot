@@ -24,7 +24,7 @@ import io.jboot.core.cache.JbootCacheBase;
 import io.jboot.core.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.core.cache.redis.JbootRedisCacheImpl;
 import io.jboot.core.serializer.ISerializer;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -62,7 +62,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
         this.ehcacheImpl.setCacheEventListener(this);
 
         this.redisCacheImpl = new JbootRedisCacheImpl();
-        this.clientId = StrUtils.uuid();
+        this.clientId = StringKits.uuid();
         this.serializer = Jboot.me().getSerializer();
 
         this.redis = redisCacheImpl.getRedis();

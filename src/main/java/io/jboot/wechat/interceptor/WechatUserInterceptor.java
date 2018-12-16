@@ -20,7 +20,7 @@ import com.jfinal.aop.Invocation;
 import com.jfinal.core.JFinal;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.ApiResult;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 import io.jboot.wechat.controller.JbootWechatController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -115,7 +115,7 @@ public class WechatUserInterceptor implements Interceptor {
 
         // 被拦截前的请求URL
         String toUrl = request.getRequestURI();
-        if (StrUtils.isNotBlank(queryString)) {
+        if (StringKits.isNotBlank(queryString)) {
             toUrl = toUrl.concat("?").concat(queryString);
         }
 
@@ -127,9 +127,9 @@ public class WechatUserInterceptor implements Interceptor {
             callbackControllerKey = controllerKey.substring(0, controllerKey.lastIndexOf("/")) + "/wechatCallback";
         }
 
-        String redirectUrl = controller.getBaseUrl() + callbackControllerKey + "?goto=" + StrUtils.urlEncode(toUrl);
+        String redirectUrl = controller.getBaseUrl() + callbackControllerKey + "?goto=" + StringKits.urlEncode(toUrl);
 
-        redirectUrl = StrUtils.urlEncode(redirectUrl);
+        redirectUrl = StringKits.urlEncode(redirectUrl);
         String authUrl = isFromBaseScope ? AUTHORIZE_URL : BASE_AUTHORIZE_URL;
         String url = authUrl.replace("{redirecturi}", redirectUrl).replace("{appid}", appid.trim());
         controller.redirect(url);
@@ -142,7 +142,7 @@ public class WechatUserInterceptor implements Interceptor {
      * @return
      */
     protected boolean validateUserJson(String wechatUserJson) {
-        return StrUtils.isNotBlank(wechatUserJson)
+        return StringKits.isNotBlank(wechatUserJson)
                 && wechatUserJson.contains("openid")
                 && wechatUserJson.contains("nickname") //包含昵称
                 && wechatUserJson.contains("headimgurl"); //包含头像

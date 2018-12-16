@@ -20,7 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -113,7 +113,7 @@ public class JbootDubborpc extends JbootrpcBase {
          * 直连调用模式
          */
         else if (getRpcConfig().isRedirectCallMode()) {
-            if (StrUtils.isBlank(getRpcConfig().getDirectUrl())) {
+            if (StringKits.isBlank(getRpcConfig().getDirectUrl())) {
                 throw new JbootIllegalConfigException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
             }
             reference.setUrl(getRpcConfig().getDirectUrl());
@@ -191,7 +191,7 @@ public class JbootDubborpc extends JbootrpcBase {
         }
 
 
-        if (StrUtils.isNotBlank(config.getProxy())) {
+        if (StringKits.isNotBlank(config.getProxy())) {
             reference.setProxy(config.getProxy());
         } else {
             //默认情况下用于 hystrix 代理
@@ -199,7 +199,7 @@ public class JbootDubborpc extends JbootrpcBase {
         }
 
 
-        if (StrUtils.isNotBlank(config.getFilter())) {
+        if (StringKits.isNotBlank(config.getFilter())) {
             reference.setFilter(config.getFilter());
         } else {
             //默认情况下用于 OpenTracing 的追踪
@@ -231,7 +231,7 @@ public class JbootDubborpc extends JbootrpcBase {
         }
 
 
-        if (StrUtils.isNotBlank(config.getProxy())) {
+        if (StringKits.isNotBlank(config.getProxy())) {
             service.setProxy(config.getProxy());
         } else {
             //默认情况下用于 hystrix 代理
@@ -239,7 +239,7 @@ public class JbootDubborpc extends JbootrpcBase {
         }
 
 
-        if (StrUtils.isNotBlank(config.getFilter())) {
+        if (StringKits.isNotBlank(config.getFilter())) {
             service.setFilter(config.getFilter());
         } else {
             //默认情况下用于 OpenTracing 的追踪

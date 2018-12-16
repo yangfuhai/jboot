@@ -6,7 +6,7 @@ import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.interceptor.JFinalBeforeInvocation;
 import io.jboot.core.mq.JbootmqMessageListener;
 import io.jboot.core.event.JbootEventListener;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassScanner;
 
 import java.io.Serializable;
@@ -90,7 +90,7 @@ public class JbootAopFactory extends AopFactory implements Interceptor {
             //对某些系统的类 进行排除，例如：Serializable 等
             Class[] excludes = beanExclude == null
                     ? default_excludes
-                    : ArrayUtils.concat(default_excludes, beanExclude.value());
+                    : ArrayKits.concat(default_excludes, beanExclude.value());
 
             for (Class interfaceClass : interfaceClasses) {
                 if (inExcludes(interfaceClass,excludes) == false){

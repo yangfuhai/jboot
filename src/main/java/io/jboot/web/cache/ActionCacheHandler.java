@@ -21,8 +21,8 @@ import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
 import com.jfinal.render.RenderManager;
 import io.jboot.Jboot;
-import io.jboot.kits.ArrayUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.ArrayKits;
+import io.jboot.kits.StringKits;
 import io.jboot.web.JbootWebConfig;
 import io.jboot.web.cache.keygen.ActionKeyGeneratorManager;
 
@@ -81,13 +81,13 @@ public class ActionCacheHandler extends Handler {
      */
     private void clearActionCache(Action action, ActionCacheClear actionClear) {
         String[] cacheNames = actionClear.value();
-        if (ArrayUtils.isNullOrEmpty(cacheNames)) {
+        if (ArrayKits.isNullOrEmpty(cacheNames)) {
             throw new IllegalArgumentException("ActionCacheClear annotation argument must not be empty " +
                     "in " + action.getControllerClass().getName() + "." + action.getMethodName());
         }
 
         for (String cacheName : cacheNames) {
-            if (StrUtils.isNotBlank(cacheName)) {
+            if (StringKits.isNotBlank(cacheName)) {
                 Jboot.me().getCache().removeAll(cacheName);
             }
         }
@@ -103,7 +103,7 @@ public class ActionCacheHandler extends Handler {
 
         //缓存名称
         String cacheName = actionCacheEnable.group();
-        if (StrUtils.isBlank(cacheName)) {
+        if (StringKits.isBlank(cacheName)) {
             throw new IllegalArgumentException("EnableActionCache group must not be empty " +
                     "in " + action.getControllerClass().getName() + "." + action.getMethodName());
         }
@@ -114,7 +114,7 @@ public class ActionCacheHandler extends Handler {
 
         //缓存的key
         String cacheKey = ActionKeyGeneratorManager.me().getGenerator().generate(target, request);
-        if (StrUtils.isBlank(cacheKey)) {
+        if (StringKits.isBlank(cacheKey)) {
             next.handle(target, request, response, isHandled);
             return;
         }
@@ -166,7 +166,7 @@ public class ActionCacheHandler extends Handler {
             String find = m.group(0);
             String parameterName = find.substring(2, find.length() - 1);
             String value = request.getParameter(parameterName);
-            if (StrUtils.isBlank(value)) value = "";
+            if (StringKits.isBlank(value)) value = "";
             cacheName = cacheName.replace(find, value);
         }
 

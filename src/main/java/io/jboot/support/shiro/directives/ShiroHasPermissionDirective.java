@@ -19,7 +19,7 @@ import com.jfinal.template.Env;
 import com.jfinal.template.expr.ast.ExprList;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.web.directive.annotation.JFinalDirective;
 
 
@@ -42,7 +42,7 @@ public class ShiroHasPermissionDirective extends JbootShiroDirectiveBase {
 
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
-        if (getSubject() != null && ArrayUtils.isNotEmpty(exprList.getExprArray()))
+        if (getSubject() != null && ArrayKits.isNotEmpty(exprList.getExprArray()))
             if (getSubject().isPermitted(getPara(0, scope).toString())) {
                 renderBody(env, scope, writer);
             }

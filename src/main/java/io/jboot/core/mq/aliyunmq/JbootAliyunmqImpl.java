@@ -19,7 +19,7 @@ import com.aliyun.openservices.ons.api.*;
 import io.jboot.Jboot;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 
 import java.util.Properties;
 
@@ -44,7 +44,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
         producer = ONSFactory.createProducer(properties);
         producer.start();
 
-        if (ArrayUtils.isNotEmpty(this.channels)) {
+        if (ArrayKits.isNotEmpty(this.channels)) {
             initChannelSubscribe(properties);
         }
 

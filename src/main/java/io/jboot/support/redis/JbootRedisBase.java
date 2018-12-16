@@ -19,7 +19,7 @@ import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,7 +37,7 @@ public abstract class JbootRedisBase implements JbootRedis {
     private final ISerializer serializer;
 
     public JbootRedisBase(JbootRedisConfig config) {
-        if (config == null || StrUtils.isBlank(config.getSerializer())) {
+        if (config == null || StringKits.isBlank(config.getSerializer())) {
             serializer = Jboot.me().getSerializer();
         } else {
             serializer = SerializerManager.me().getSerializer(config.getSerializer());

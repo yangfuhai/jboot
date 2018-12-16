@@ -21,7 +21,7 @@ import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
 import io.jboot.Jboot;
 import io.jboot.support.metric.JbootMetricReporter;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +37,7 @@ public class JbootGraphiteReporter implements JbootMetricReporter {
 
         JbootMetricGraphiteReporterConfig config = Jboot.config(JbootMetricGraphiteReporterConfig.class);
 
-        if (StrUtils.isBlank(config.getHost())) {
+        if (StringKits.isBlank(config.getHost())) {
             throw new NullPointerException("graphite reporter host must not be null, please config jboot.metrics.reporter.graphite.host in you properties.");
         }
         if (config.getPort() == null) {

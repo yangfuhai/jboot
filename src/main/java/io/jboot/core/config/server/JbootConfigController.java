@@ -21,7 +21,7 @@ import io.jboot.Jboot;
 import io.jboot.core.config.JbootConfigConfig;
 import io.jboot.core.config.JbootConfigManager;
 import io.jboot.core.config.PropInfoMap;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -43,7 +43,7 @@ public class JbootConfigController extends JbootController {
 
     public void index() {
         String id = getPara();
-        if (StrUtils.isBlank(id)) {
+        if (StringKits.isBlank(id)) {
             renderJson(JbootConfigManager.me().getPropInfoMap());
             return;
         } else {

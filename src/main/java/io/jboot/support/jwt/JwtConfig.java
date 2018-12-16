@@ -16,7 +16,7 @@
 package io.jboot.support.jwt;
 
 import io.jboot.core.config.annotation.PropertyConfig;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -55,7 +55,7 @@ public class JwtConfig {
     }
 
     public boolean isEnable() {
-        return StrUtils.isNotBlank(secret);
+        return StringKits.isNotBlank(secret);
     }
 
 

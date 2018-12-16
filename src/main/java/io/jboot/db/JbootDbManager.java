@@ -29,9 +29,9 @@ import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassKits;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
@@ -68,10 +68,10 @@ public class JbootDbManager {
 
                 //子数据源的配置
                 String shardingDatabase = entry.getValue().getShardingDatabase();
-                if (StrUtils.isBlank(shardingDatabase)) {
+                if (StringKits.isBlank(shardingDatabase)) {
                     continue;
                 }
-                Set<String> databases = StrUtils.splitToSet(shardingDatabase, ",");
+                Set<String> databases = StringKits.splitToSet(shardingDatabase, ",");
                 for (String database : databases) {
                     DataSourceConfig datasourceConfig = allDatasourceConfigs.remove(database);
                     if (datasourceConfig == null) {
@@ -99,7 +99,7 @@ public class JbootDbManager {
         Iterator<Map.Entry<String, DataSourceConfig>> it = mergeDatasourceConfigs.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, DataSourceConfig> entry = it.next();
-            if (StrUtils.isNotBlank(entry.getValue().getTable())) {
+            if (StringKits.isNotBlank(entry.getValue().getTable())) {
                 hasTableDatasourceConfigs.put(entry.getKey(), entry.getValue());
                 it.remove();
             }
@@ -133,11 +133,11 @@ public class JbootDbManager {
 
         ActiveRecordPlugin activeRecordPlugin = newRecordPlugin(config);
 
-        if (StrUtils.isNotBlank(config.getDbProFactory())) {
+        if (StringKits.isNotBlank(config.getDbProFactory())) {
             activeRecordPlugin.setDbProFactory(ClassKits.newInstance(config.getDbProFactory()));
         }
 
-        if (StrUtils.isNotBlank(config.getContainerFactory())) {
+        if (StringKits.isNotBlank(config.getContainerFactory())) {
             activeRecordPlugin.setContainerFactory(ClassKits.newInstance(config.getContainerFactory()));
         }
 
@@ -170,12 +170,12 @@ public class JbootDbManager {
 
         //获得该数据源匹配的表
         List<TableInfo> tableInfos = TableInfoManager.me().getMatchTablesInfos(config);
-        if (ArrayUtils.isNullOrEmpty(tableInfos)) {
+        if (ArrayKits.isNullOrEmpty(tableInfos)) {
             return activeRecordPlugin;
         }
 
         for (TableInfo ti : tableInfos) {
-            if (StrUtils.isNotBlank(ti.getPrimaryKey())) {
+            if (StringKits.isNotBlank(ti.getPrimaryKey())) {
                 activeRecordPlugin.addMapping(ti.getTableName(), ti.getPrimaryKey(), (Class<? extends Model<?>>) ti.getModelClass());
             } else {
                 activeRecordPlugin.addMapping(ti.getTableName(), (Class<? extends Model<?>>) ti.getModelClass());
@@ -191,15 +191,15 @@ public class JbootDbManager {
         DataSource dataSource = new DataSourceBuilder(config).build();
 
         String clazzName = config.getActiveRecordPluginClass();
-        if (StrUtils.isBlank(clazzName)) {
-            return StrUtils.isNotBlank(configName)
+        if (StringKits.isBlank(clazzName)) {
+            return StringKits.isNotBlank(configName)
                     ? new ActiveRecordPlugin(configName, dataSource)
                     : new ActiveRecordPlugin(dataSource);
         }
 
         try {
             Class<ActiveRecordPlugin> arpc = (Class<ActiveRecordPlugin>) Class.forName(clazzName, false, Thread.currentThread().getContextClassLoader());
-            if (StrUtils.isNotBlank(configName)) {
+            if (StringKits.isNotBlank(configName)) {
                 Constructor constructor = arpc.getConstructor(String.class, DataSource.class);
                 return (ActiveRecordPlugin) constructor.newInstance(configName, dataSource);
             } else {
@@ -220,7 +220,7 @@ public class JbootDbManager {
      */
     private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
         String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
-        if (StrUtils.isNotBlank(sqlTemplatePath)) {
+        if (StringKits.isNotBlank(sqlTemplatePath)) {
             if (sqlTemplatePath.startsWith("/")) {
                 activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
             } else {
@@ -262,7 +262,7 @@ public class JbootDbManager {
                 activeRecordPlugin.setDialect(new JbootMysqlDialect());
                 break;
             case DataSourceConfig.TYPE_ORACLE:
-                if (StrUtils.isBlank(datasourceConfig.getContainerFactory())) {
+                if (StringKits.isBlank(datasourceConfig.getContainerFactory())) {
                     activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory());
                 }
                 activeRecordPlugin.setDialect(new JbootOracleDialect());

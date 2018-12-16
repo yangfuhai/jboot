@@ -20,7 +20,7 @@ import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassKits;
 
 import java.lang.reflect.ParameterizedType;
@@ -164,7 +164,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
 
     public void join(List<? extends Model> models, String joinOnField) {
-        if (ArrayUtils.isNotEmpty(models)) {
+        if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField);
             }
@@ -173,7 +173,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
 
     public void join(List<? extends Model> models, String joinOnField, String[] attrs) {
-        if (ArrayUtils.isNotEmpty(models)) {
+        if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, attrs);
             }
@@ -187,7 +187,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
 
     public void join(List<? extends Model> models, String joinOnField, String joinName) {
-        if (ArrayUtils.isNotEmpty(models)) {
+        if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, joinName);
             }
@@ -200,7 +200,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
 
 
     public void join(List<? extends Model> models, String joinOnField, String joinName, String[] attrs) {
-        if (ArrayUtils.isNotEmpty(models)) {
+        if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, joinName, attrs);
             }
@@ -304,7 +304,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     }
 
     public void keep(List<? extends Model> models, String... attrs) {
-        if (ArrayUtils.isNotEmpty(models)) {
+        if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 keep(m, attrs);
             }

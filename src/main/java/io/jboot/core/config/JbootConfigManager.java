@@ -27,9 +27,9 @@ import io.jboot.core.config.annotation.PropertyConfig;
 import io.jboot.core.config.client.ConfigRemoteReader;
 import io.jboot.core.config.server.ConfigFileScanner;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassKits;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -166,7 +166,7 @@ public class JbootConfigManager {
         T obj = ClassKits.newInstance(clazz, false);
         Collection<Method> setMethods = ClassKits.getClassSetMethods(clazz);
 
-        if (ArrayUtils.isNullOrEmpty(setMethods)) {
+        if (ArrayKits.isNullOrEmpty(setMethods)) {
             configs.put(clazz.getName() + prefix, obj);
             return obj;
         }
@@ -176,11 +176,11 @@ public class JbootConfigManager {
             String key = getKeyByMethod(prefix, method);
             String value = getValueByKey(key);
 
-            if (StrUtils.isNotBlank(file)) {
+            if (StringKits.isNotBlank(file)) {
                 try {
                     Prop prop = PropKit.use(file);
                     String filePropValue = prop.get(key);
-                    if (StrUtils.isNotBlank(filePropValue)) {
+                    if (StringKits.isNotBlank(filePropValue)) {
                         value = filePropValue;
                     }
                 } catch (Throwable ex) {
@@ -200,7 +200,7 @@ public class JbootConfigManager {
             keyInstanceMapping.put(key, obj);
 
             try {
-                if (StrUtils.isNotBlank(value)) {
+                if (StringKits.isNotBlank(value)) {
                     Object val = convert(method.getParameterTypes()[0], value);
                     method.invoke(obj, val);
                 }
@@ -216,7 +216,7 @@ public class JbootConfigManager {
 
         String key = StrKit.firstCharToLowerCase(method.getName().substring(3));
 
-        if (StrUtils.isNotBlank(prefix)) {
+        if (StringKits.isNotBlank(prefix)) {
             key = prefix.trim() + "." + key;
         }
 
@@ -237,11 +237,11 @@ public class JbootConfigManager {
 
         String value = Jboot.getBootArg(key);
 
-        if (StrUtils.isBlank(value) && configRemoteReader != null) {
+        if (StringKits.isBlank(value) && configRemoteReader != null) {
             value = (String) configRemoteReader.getRemoteProperties().get(key);
         }
 
-        if (StrUtils.isBlank(value)) {
+        if (StringKits.isBlank(value)) {
             value = (String) mainProperties.get(key);
         }
         return value;
@@ -277,7 +277,7 @@ public class JbootConfigManager {
      */
     private void initModeProp() {
         String mode = (String) mainProperties.get("jboot.mode");
-        if (StrUtils.isBlank(mode)) {
+        if (StringKits.isBlank(mode)) {
             return;
         }
 
@@ -361,7 +361,7 @@ public class JbootConfigManager {
                 Collection<Object> objects = keyInstanceMapping.get(key);
                 for (Object obj : objects) {
                     try {
-                        if (StrUtils.isBlank(value)) {
+                        if (StringKits.isBlank(value)) {
                             method.invoke(obj, new Object[]{null});
                         } else {
                             Object val = convert(method.getParameterTypes()[0], value);

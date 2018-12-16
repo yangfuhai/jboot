@@ -22,7 +22,7 @@ import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.support.metric.annotation.EnableMetricCounter;
 import io.jboot.kits.ClassKits;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 /**
  * 用于在AOP拦截，并通过Metrics的Conter进行统计
@@ -42,7 +42,7 @@ public class JbootMetricCounterAopInterceptor implements Interceptor {
         }
 
         Class targetClass = ClassKits.getUsefulClass(inv.getTarget().getClass());
-        String name = StrUtils.isBlank(annotation.value())
+        String name = StringKits.isBlank(annotation.value())
                 ? targetClass.getName() + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 

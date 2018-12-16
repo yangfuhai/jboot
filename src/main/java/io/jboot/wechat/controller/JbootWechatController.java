@@ -21,8 +21,8 @@ import com.jfinal.ext.interceptor.NotAction;
 import com.jfinal.kit.HashKit;
 import com.jfinal.weixin.sdk.api.*;
 import io.jboot.Jboot;
-import io.jboot.kits.RequestUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.RequestKits;
+import io.jboot.kits.StringKits;
 import io.jboot.web.controller.JbootController;
 import io.jboot.wechat.JbootWechatConfig;
 import io.jboot.wechat.WechatApis;
@@ -55,7 +55,7 @@ public abstract class JbootWechatController extends JbootController {
         String code = getPara("code");
 
         //获得不到code？
-        if (StrUtils.isBlank(code)) {
+        if (StringKits.isBlank(code)) {
             renderText("获取不到正确的code信息");
             return;
         }
@@ -67,8 +67,8 @@ public abstract class JbootWechatController extends JbootController {
         String wechatOpenId = getSessionAttr(SESSION_WECHAT_OPEN_ID);
         String accessToken = getSessionAttr(SESSION_WECHAT_ACCESS_TOKEN);
 
-        if (StrUtils.isNotBlank(wechatOpenId)
-                && StrUtils.isNotBlank(accessToken)) {
+        if (StringKits.isNotBlank(wechatOpenId)
+                && StringKits.isNotBlank(accessToken)) {
             doRedirect(gotoUrl, wechatOpenId, accessToken);
             return;
         }
@@ -93,7 +93,7 @@ public abstract class JbootWechatController extends JbootController {
             wechatOpenId = getSessionAttr(SESSION_WECHAT_OPEN_ID);
             accessToken = getSessionAttr(SESSION_WECHAT_ACCESS_TOKEN);
 
-            if (StrUtils.isBlank(wechatOpenId) || StrUtils.isBlank(accessToken)) {
+            if (StringKits.isBlank(wechatOpenId) || StringKits.isBlank(accessToken)) {
                 renderText("错误：" + result.getErrorMsg());
                 return;
             }
@@ -142,7 +142,7 @@ public abstract class JbootWechatController extends JbootController {
         // 1.拼接url（当前网页的URL，不包含#及其后面部分）
         String url = getRequest().getRequestURL().toString().split("#")[0];
         String query = getRequest().getQueryString();
-        if (StrUtils.isNotBlank(query)) {
+        if (StringKits.isNotBlank(query)) {
             url = url.concat("?").concat(query);
         }
 
@@ -152,7 +152,7 @@ public abstract class JbootWechatController extends JbootController {
 
         String _wxJsApiTicket = jsTicket.getTicket();
 
-        String noncestr = StrUtils.uuid();
+        String noncestr = StringKits.uuid();
         String timestamp = (System.currentTimeMillis() / 1000) + "";
 
         Map<String, String> _wxMap = new TreeMap<String, String>();
@@ -181,11 +181,11 @@ public abstract class JbootWechatController extends JbootController {
 
     public boolean isAllowVisit() {
         HttpServletRequest req = getRequest();
-        if (RequestUtils.isWechatPcBrowser(req)) {
+        if (RequestKits.isWechatPcBrowser(req)) {
             return false;
         }
 
-        return RequestUtils.isWechatBrowser(req);
+        return RequestKits.isWechatBrowser(req);
     }
 
     @Before(NotAction.class)

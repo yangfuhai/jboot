@@ -22,7 +22,7 @@ import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import redis.clients.jedis.BinaryJedisPubSub;
 
 
@@ -49,7 +49,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
                     "or use other mq component. ");
         }
 
-        if (ArrayUtils.isNotEmpty(this.channels)) {
+        if (ArrayKits.isNotEmpty(this.channels)) {
             initChannelSubscribe();
         }
     }

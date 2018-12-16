@@ -20,9 +20,9 @@ import com.jfinal.plugin.activerecord.Model;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.model.JbootModelConfig;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassScanner;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.util.*;
 
@@ -51,12 +51,12 @@ public class TableInfoManager {
      */
     public List<TableInfo> getMatchTablesInfos(DataSourceConfig dataSourceConfig) {
 
-        Set<String> configTables = StrUtils.isNotBlank(dataSourceConfig.getTable())
-                ? StrUtils.splitToSet(dataSourceConfig.getTable(), ",")
+        Set<String> configTables = StringKits.isNotBlank(dataSourceConfig.getTable())
+                ? StringKits.splitToSet(dataSourceConfig.getTable(), ",")
                 : null;
 
-        Set<String> configExTables = StrUtils.isNotBlank(dataSourceConfig.getExTable())
-                ? StrUtils.splitToSet(dataSourceConfig.getExTable(), ",")
+        Set<String> configExTables = StringKits.isNotBlank(dataSourceConfig.getExTable())
+                ? StringKits.splitToSet(dataSourceConfig.getExTable(), ",")
                 : null;
 
         List<TableInfo> matchList = new ArrayList<>();
@@ -64,7 +64,7 @@ public class TableInfoManager {
         for (TableInfo tableInfo : getAllTableInfos()) {
 
             //该表已经被其他数据源优先使用了
-            if (ArrayUtils.isNotEmpty(tableInfo.getDatasources())) {
+            if (ArrayKits.isNotEmpty(tableInfo.getDatasources())) {
                 continue;
             }
 
@@ -94,7 +94,7 @@ public class TableInfoManager {
 
     private void initTableInfos(List<TableInfo> tableInfos) {
         List<Class<Model>> modelClassList = ClassScanner.scanSubClass(Model.class);
-        if (ArrayUtils.isNullOrEmpty(modelClassList)) {
+        if (ArrayKits.isNullOrEmpty(modelClassList)) {
             return;
         }
 
@@ -109,8 +109,8 @@ public class TableInfoManager {
                 continue;
             }
 
-            Set<String> datasources = StrUtils.isNotBlank(tb.datasource())
-                    ? StrUtils.splitToSet(tb.datasource(), ",")
+            Set<String> datasources = StringKits.isNotBlank(tb.datasource())
+                    ? StringKits.splitToSet(tb.datasource(), ",")
                     : null;
 
 

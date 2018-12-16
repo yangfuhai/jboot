@@ -26,8 +26,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StrUtils extends StrKit {
-    private static final Log log = Log.getLog(StrUtils.class);
+public class StringKits extends StrKit {
+
+    private static final Log log = Log.getLog(StringKits.class);
 
     public static String urlDecode(String string) {
         try {
@@ -192,7 +193,7 @@ public class StrUtils extends StrKit {
         String[] strings = src.split(regex);
         Set<String> set = new HashSet<>();
         for (String table : strings) {
-            if (StrUtils.isBlank(table)) {
+            if (StringKits.isBlank(table)) {
                 continue;
             }
             set.add(table.trim());
@@ -203,6 +204,6 @@ public class StrUtils extends StrKit {
 
     public static void main(String[] args) {
         String url = "http://www.baidu.com?username=aaa";
-        System.out.println(StrUtils.urlEncode(url));
+        System.out.println(StringKits.urlEncode(url));
     }
 }

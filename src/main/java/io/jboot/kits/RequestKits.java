@@ -17,7 +17,7 @@ package io.jboot.kits;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class RequestUtils {
+public class RequestKits {
 
     static String[] mobileAgents = {"iphone", "android", "phone", "mobile", "wap", "netfront", "java", "opera mobi",
             "opera mini", "ucweb", "windows ce", "symbian", "series", "webos", "sony", "blackberry", "dopod", "nokia",
@@ -124,22 +124,22 @@ public class RequestUtils {
     public static String getIpAddress(HttpServletRequest request) {
 
         String ip = request.getHeader("X-requested-For");
-        if (StrUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringKits.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Forwarded-For");
         }
-        if (StrUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringKits.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (StrUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringKits.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (StrUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringKits.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_CLIENT_IP");
         }
-        if (StrUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringKits.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
-        if (StrUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringKits.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
 

@@ -18,8 +18,8 @@ package io.jboot.web.limitation;
 import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
-import io.jboot.kits.RequestUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.RequestKits;
+import io.jboot.kits.StringKits;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
@@ -113,7 +113,7 @@ public class LimitationInterceptor implements FixedInterceptor {
 
     private boolean ipIntercept(FixedInvocation inv, LimitationInfo info) {
         JbootLimitationManager manager = JbootLimitationManager.me();
-        String ipaddress = RequestUtils.getIpAddress(inv.getController().getRequest());
+        String ipaddress = RequestKits.getIpAddress(inv.getController().getRequest());
         long currentTime = System.currentTimeMillis();
         long userFlagTime = manager.getIpflag(ipaddress);
         manager.flagIpRequest(ipaddress);
@@ -165,8 +165,8 @@ public class LimitationInterceptor implements FixedInterceptor {
 
     private String getUserId(FixedInvocation inv) {
         String userId = inv.getController().getCookie("_jboot_luser_id");
-        if (StrUtils.isBlank(userId)) {
-            userId = StrUtils.uuid();
+        if (StringKits.isBlank(userId)) {
+            userId = StringKits.uuid();
             inv.getController().setCookie("_jboot_luser_id", userId, Integer.MAX_VALUE);
         }
         return userId;
@@ -180,9 +180,9 @@ public class LimitationInterceptor implements FixedInterceptor {
         /**
          * 注解上没有设置 Action , 使用jboot.properties配置文件的
          */
-        if (StrUtils.isBlank(limitationInfo.getRenderType())) {
+        if (StringKits.isBlank(limitationInfo.getRenderType())) {
             //ajax 请求
-            if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+            if (RequestKits.isAjaxRequest(controller.getRequest())) {
                 controller.renderJson(manager.getAjaxJsonMap());
             }
             //非ajax的正常请求

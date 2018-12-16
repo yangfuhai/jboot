@@ -20,7 +20,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,14 +46,14 @@ public abstract class JbootmqBase implements Jbootmq {
 
     public JbootmqBase() {
         String channelString = config.getChannel();
-        if (StrUtils.isBlank(channelString)) {
+        if (StringKits.isBlank(channelString)) {
             return;
         }
 
-        this.channels.addAll(StrUtils.splitToSet(channelString, ","));
+        this.channels.addAll(StringKits.splitToSet(channelString, ","));
 
-        if (StrUtils.isNotBlank(config.getSyncRecevieMessageChannel())) {
-            this.syncRecevieMessageChannels.addAll(StrUtils.splitToSet(config.getSyncRecevieMessageChannel(), ","));
+        if (StringKits.isNotBlank(config.getSyncRecevieMessageChannel())) {
+            this.syncRecevieMessageChannels.addAll(StringKits.splitToSet(config.getSyncRecevieMessageChannel(), ","));
         }
     }
 
@@ -67,7 +67,7 @@ public abstract class JbootmqBase implements Jbootmq {
     public void addMessageListener(JbootmqMessageListener listener, String forChannel) {
         String[] forChannels = forChannel.split(",");
         for (String channel : forChannels) {
-            if (StrUtils.isBlank(channel)) {
+            if (StringKits.isBlank(channel)) {
                 continue;
             }
             listenersMap.put(channel.trim(), listener);

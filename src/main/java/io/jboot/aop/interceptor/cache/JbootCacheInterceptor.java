@@ -22,7 +22,7 @@ import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.Cacheable;
 import io.jboot.exception.JbootException;
 import io.jboot.kits.ClassKits;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.lang.reflect.Method;
 
@@ -53,7 +53,7 @@ public class JbootCacheInterceptor implements Interceptor {
         Class targetClass = inv.getTarget().getClass();
         String cacheName = cacheable.name();
 
-        if (StrUtils.isBlank(cacheName)) {
+        if (StringKits.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
                     ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }

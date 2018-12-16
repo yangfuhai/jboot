@@ -16,7 +16,7 @@
 package io.jboot.db.datasource;
 
 import com.jfinal.plugin.activerecord.DbKit;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,7 +167,7 @@ public class DataSourceConfig {
     }
 
     public boolean isConfigOk() {
-        return (StrUtils.isNotBlank(url))
+        return (StringKits.isNotBlank(url))
                 || shardingEnable == true;
     }
 

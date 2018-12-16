@@ -20,7 +20,7 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.core.cache.JbootCacheBase;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -40,7 +40,7 @@ public class JbootEhcacheImpl extends JbootCacheBase {
 
     public JbootEhcacheImpl() {
         JbootEhCacheConfig config = Jboot.config(JbootEhCacheConfig.class);
-        if (StrUtils.isBlank(config.getConfigFileName())) {
+        if (StringKits.isBlank(config.getConfigFileName())) {
             cacheManager = CacheManager.create();
         } else {
             String configPath = config.getConfigFileName();

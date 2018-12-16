@@ -20,9 +20,9 @@ import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.support.shiro.processer.*;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassKits;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 import io.jboot.web.utils.ControllerUtils;
 import org.apache.shiro.authz.annotation.*;
 
@@ -87,7 +87,7 @@ public class JbootShiroManager {
 
 
                 Annotation[] methodAnnotations = method.getAnnotations();
-                Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
+                Annotation[] allAnnotations = ArrayKits.concat(controllerAnnotations, methodAnnotations);
 
 
                 String actionKey = ControllerUtils.createActionKey(controllerClass, method, controllerKey);
@@ -138,7 +138,7 @@ public class JbootShiroManager {
 
         invokeListener = JbootShiroInvokeListener.DEFAULT;
 
-        if (StrUtils.isNotBlank(jbootShiroConfig.getInvokeListener())) {
+        if (StringKits.isNotBlank(jbootShiroConfig.getInvokeListener())) {
             invokeListener = ClassKits.newInstance(jbootShiroConfig.getInvokeListener());
             if (invokeListener == null) {
                 throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getInvokeListener() +

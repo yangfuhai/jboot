@@ -20,7 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.kits.ClassKits;
 import io.jboot.kits.ClassScanner;
 import io.jboot.core.event.annotation.EventConfig;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -54,7 +54,7 @@ public class JbootEventManager {
 
     private void initListeners() {
         List<Class<JbootEventListener>> classes = ClassScanner.scanSubClass(JbootEventListener.class, true);
-        if (ArrayUtils.isNullOrEmpty(classes)) {
+        if (ArrayKits.isNullOrEmpty(classes)) {
             return;
         }
         for (Class<JbootEventListener> clazz : classes) {

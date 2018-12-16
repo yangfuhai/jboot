@@ -20,9 +20,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
-import io.jboot.kits.ArrayUtils;
-import io.jboot.kits.RequestUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.ArrayKits;
+import io.jboot.kits.RequestKits;
+import io.jboot.kits.StringKits;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
@@ -62,7 +62,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
      */
     private void parseMultpartRequestIfNecessary(FixedInvocation inv) {
         Controller controller = inv.getController();
-        if (RequestUtils.isMultipartRequest(controller.getRequest())) {
+        if (RequestKits.isMultipartRequest(controller.getRequest())) {
             controller.getFiles();
         }
     }
@@ -77,7 +77,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
      */
     private boolean validateCaptache(FixedInvocation inv, CaptchaValidate captchaValidate) {
         String formName = captchaValidate.form();
-        if (StrUtils.isBlank(formName)) {
+        if (StringKits.isBlank(formName)) {
             throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
         }
 
@@ -90,7 +90,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
         switch (captchaValidate.renderType()) {
             case ValidateRenderType.DEFAULT:
-                if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+                if (RequestKits.isAjaxRequest(controller.getRequest())) {
                     controller.renderJson(Ret.fail("message", captchaValidate.flashMessage()).set("code", DEFAULT_ERROR_CODE).set("form", formName));
                 } else {
                     controller.renderError(404);
@@ -128,7 +128,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
      */
     private boolean validateEmpty(FixedInvocation inv, EmptyValidate emptyParaValidate) {
         Form[] forms = emptyParaValidate.value();
-        if (ArrayUtils.isNullOrEmpty(forms)) {
+        if (ArrayKits.isNullOrEmpty(forms)) {
             return true;
         }
 
@@ -137,7 +137,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         for (Form form : forms) {
             String formName = form.name();
             String formType = form.type();
-            if (StrUtils.isBlank(formName)) {
+            if (StringKits.isBlank(formName)) {
                 throw new IllegalArgumentException("@Form.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
             }
             String value = null;
@@ -172,7 +172,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     private void renderError(Controller controller, String formName, String message, EmptyValidate emptyParaValidate) {
         switch (emptyParaValidate.renderType()) {
             case ValidateRenderType.DEFAULT:
-                if (RequestUtils.isAjaxRequest(controller.getRequest())) {
+                if (RequestKits.isAjaxRequest(controller.getRequest())) {
                     controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
                 } else {
                     controller.renderError(404);

@@ -19,6 +19,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.kits.StringKits;
 import io.jboot.support.metric.reporter.console.JbootConsoleReporter;
 import io.jboot.support.metric.reporter.csv.CSVReporter;
 import io.jboot.support.metric.reporter.elasticsearch.ElasticsearchReporter;
@@ -28,8 +29,7 @@ import io.jboot.support.metric.reporter.influxdb.InfluxdbReporter;
 import io.jboot.support.metric.reporter.jmx.JMXReporter;
 import io.jboot.support.metric.reporter.slf4j.JbootSlf4jReporter;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.kits.ArrayUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.ArrayKits;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class JbootMetricManager {
         healthCheckRegistry = new HealthCheckRegistry();
 
         List<JbootMetricReporter> reporters = getReporters();
-        if (ArrayUtils.isNullOrEmpty(reporters)) {
+        if (ArrayKits.isNullOrEmpty(reporters)) {
             return;
         }
 
@@ -83,7 +83,7 @@ public class JbootMetricManager {
 
     private List<JbootMetricReporter> getReporters() {
         String repoterString = metricsConfig.getReporter();
-        if (StrUtils.isBlank(repoterString)) {
+        if (StringKits.isBlank(repoterString)) {
             return null;
         }
         List<JbootMetricReporter> reporters = new ArrayList<>();

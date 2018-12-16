@@ -19,9 +19,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
+import io.jboot.kits.StringKits;
 import io.jboot.support.jwt.JwtManager;
-import io.jboot.kits.RequestUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.RequestKits;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public boolean isMoblieBrowser() {
-        return RequestUtils.isMoblieBrowser(getRequest());
+        return RequestKits.isMoblieBrowser(getRequest());
     }
 
     /**
@@ -47,7 +47,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public boolean isWechatBrowser() {
-        return RequestUtils.isWechatBrowser(getRequest());
+        return RequestKits.isWechatBrowser(getRequest());
     }
 
     /**
@@ -57,7 +57,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public boolean isIEBrowser() {
-        return RequestUtils.isIEBrowser(getRequest());
+        return RequestKits.isIEBrowser(getRequest());
     }
 
     /**
@@ -67,7 +67,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public boolean isAjaxRequest() {
-        return RequestUtils.isAjaxRequest(getRequest());
+        return RequestKits.isAjaxRequest(getRequest());
     }
 
     /**
@@ -77,7 +77,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public boolean isMultipartRequest() {
-        return RequestUtils.isMultipartRequest(getRequest());
+        return RequestKits.isMultipartRequest(getRequest());
     }
 
 
@@ -88,7 +88,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public String getIPAddress() {
-        return RequestUtils.getIpAddress(getRequest());
+        return RequestKits.getIpAddress(getRequest());
     }
 
     /**
@@ -98,7 +98,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public String getReferer() {
-        return RequestUtils.getReferer(getRequest());
+        return RequestKits.getReferer(getRequest());
     }
 
 
@@ -109,7 +109,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public String getUserAgent() {
-        return RequestUtils.getUserAgent(getRequest());
+        return RequestKits.getUserAgent(getRequest());
     }
 
 
@@ -233,7 +233,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public <T> T getRawObject(Class<T> tClass) {
-        return StrUtils.isBlank(getRawData()) ? null : JSON.parseObject(getRawData(), tClass);
+        return StringKits.isBlank(getRawData()) ? null : JSON.parseObject(getRawData(), tClass);
     }
 
 
@@ -244,7 +244,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public JSONObject getRawObject() {
-        return StrUtils.isBlank(getRawData()) ? null : JSON.parseObject(getRawData());
+        return StringKits.isBlank(getRawData()) ? null : JSON.parseObject(getRawData());
     }
 
 

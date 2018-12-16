@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 
 
-public class ArrayUtils {
+public class ArrayKits {
 
     public static boolean isNotEmpty(Collection list) {
         return list != null && list.size() > 0;

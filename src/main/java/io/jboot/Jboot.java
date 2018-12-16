@@ -158,8 +158,8 @@ public class Jboot {
 //
 //        File bannerFile = new File(getRootClassPath(), config.getBannerFile());
 //        if (bannerFile.exists() && bannerFile.canRead()) {
-//            String bannerFileText = FileUtils.readString(bannerFile);
-//            if (StrUtils.isNotBlank(bannerFileText)) {
+//            String bannerFileText = FileKits.readString(bannerFile);
+//            if (StringKits.isNotBlank(bannerFileText)) {
 //                return bannerFileText;
 //            }
 //        }

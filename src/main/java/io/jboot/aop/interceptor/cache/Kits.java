@@ -20,9 +20,9 @@ import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassKits;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -92,12 +92,12 @@ class Kits {
 
         clazz = ClassKits.getUsefulClass(clazz);
 
-        if (StrUtils.isNotBlank(key)) {
+        if (StringKits.isNotBlank(key)) {
             return renderKey(key, method, arguments);
         }
 
 
-        if (ArrayUtils.isNullOrEmpty(arguments)) {
+        if (ArrayKits.isNullOrEmpty(arguments)) {
             return String.format("%s#%s", clazz.getName(), method.getName());
         }
 
@@ -186,7 +186,7 @@ class Kits {
 
     static boolean isUnless(String unlessString, Method method, Object[] arguments) {
 
-        if (StrUtils.isBlank(unlessString)) {
+        if (StringKits.isBlank(unlessString)) {
             return false;
         }
 
@@ -203,7 +203,7 @@ class Kits {
         }
 
         String cacheName = evict.name();
-        if (StrUtils.isBlank(cacheName)) {
+        if (StringKits.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
                     ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }

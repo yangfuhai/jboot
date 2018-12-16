@@ -25,8 +25,8 @@ import com.jfinal.config.Routes;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
 import io.jboot.Jboot;
-import io.jboot.kits.ArrayUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.ArrayKits;
+import io.jboot.kits.StringKits;
 import io.jboot.web.limitation.annotation.EnableConcurrencyLimit;
 import io.jboot.web.limitation.annotation.EnablePerIpLimit;
 import io.jboot.web.limitation.annotation.EnablePerUserLimit;
@@ -106,7 +106,7 @@ public class JbootLimitationManager {
 
 
                 Annotation[] methodAnnotations = method.getAnnotations();
-                Annotation[] allAnnotations = ArrayUtils.concat(controllerAnnotations, methodAnnotations);
+                Annotation[] allAnnotations = ArrayKits.concat(controllerAnnotations, methodAnnotations);
 
                 String actionKey = ControllerUtils.createActionKey(controllerClass, method, controllerKey);
 
@@ -215,11 +215,11 @@ public class JbootLimitationManager {
 
     public Ret doProcessEnable(String path, String type, boolean enable) {
 
-        if (StrUtils.isBlank(type)) {
+        if (StringKits.isBlank(type)) {
             return Ret.fail().set("message", "type is empty");
         }
 
-        if (StrUtils.isBlank(path)) {
+        if (StringKits.isBlank(path)) {
             return Ret.fail().set("message", "path is empty");
         }
 

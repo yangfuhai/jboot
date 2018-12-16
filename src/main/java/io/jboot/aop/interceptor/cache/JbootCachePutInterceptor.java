@@ -22,7 +22,7 @@ import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CachePut;
 import io.jboot.exception.JbootException;
 import io.jboot.kits.ClassKits;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.lang.reflect.Method;
 
@@ -47,7 +47,7 @@ public class JbootCachePutInterceptor implements Interceptor {
         Object result = inv.getReturnValue();
 
         String unlessString = cachePut.unless();
-        if (StrUtils.isNotBlank(unlessString)) {
+        if (StringKits.isNotBlank(unlessString)) {
             unlessString = String.format("#(%s)", unlessString);
             String unlessBoolString = Kits.engineRender(unlessString, method, inv.getArgs());
             if ("true".equals(unlessBoolString)) {
@@ -59,7 +59,7 @@ public class JbootCachePutInterceptor implements Interceptor {
         Class targetClass = inv.getTarget().getClass();
         String cacheName = cachePut.name();
 
-        if (StrUtils.isBlank(cacheName)) {
+        if (StringKits.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
                     ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }

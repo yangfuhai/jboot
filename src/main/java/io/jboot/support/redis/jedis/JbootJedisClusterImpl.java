@@ -16,10 +16,10 @@
 package io.jboot.support.redis.jedis;
 
 import com.jfinal.log.Log;
+import io.jboot.kits.StringKits;
 import io.jboot.support.redis.JbootRedisBase;
 import io.jboot.support.redis.JbootRedisConfig;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.StrUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
@@ -54,47 +54,47 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
 
-        if (StrUtils.isNotBlank(config.getTestWhileIdle())) {
+        if (StringKits.isNotBlank(config.getTestWhileIdle())) {
             poolConfig.setTestWhileIdle(config.getTestWhileIdle());
         }
 
-        if (StrUtils.isNotBlank(config.getTestOnBorrow())) {
+        if (StringKits.isNotBlank(config.getTestOnBorrow())) {
             poolConfig.setTestOnBorrow(config.getTestOnBorrow());
         }
 
-        if (StrUtils.isNotBlank(config.getTestOnCreate())) {
+        if (StringKits.isNotBlank(config.getTestOnCreate())) {
             poolConfig.setTestOnCreate(config.getTestOnCreate());
         }
 
-        if (StrUtils.isNotBlank(config.getTestOnReturn())) {
+        if (StringKits.isNotBlank(config.getTestOnReturn())) {
             poolConfig.setTestOnReturn(config.getTestOnReturn());
         }
 
-        if (StrUtils.isNotBlank(config.getMinEvictableIdleTimeMillis())) {
+        if (StringKits.isNotBlank(config.getMinEvictableIdleTimeMillis())) {
             poolConfig.setMinEvictableIdleTimeMillis(config.getMinEvictableIdleTimeMillis());
         }
 
-        if (StrUtils.isNotBlank(config.getTimeBetweenEvictionRunsMillis())) {
+        if (StringKits.isNotBlank(config.getTimeBetweenEvictionRunsMillis())) {
             poolConfig.setTimeBetweenEvictionRunsMillis(config.getTimeBetweenEvictionRunsMillis());
         }
 
-        if (StrUtils.isNotBlank(config.getNumTestsPerEvictionRun())) {
+        if (StringKits.isNotBlank(config.getNumTestsPerEvictionRun())) {
             poolConfig.setNumTestsPerEvictionRun(config.getNumTestsPerEvictionRun());
         }
 
-        if (StrUtils.isNotBlank(config.getMaxTotal())) {
+        if (StringKits.isNotBlank(config.getMaxTotal())) {
             poolConfig.setMaxTotal(config.getMaxTotal());
         }
 
-        if (StrUtils.isNotBlank(config.getMaxIdle())) {
+        if (StringKits.isNotBlank(config.getMaxIdle())) {
             poolConfig.setMaxIdle(config.getMaxIdle());
         }
 
-        if (StrUtils.isNotBlank(config.getMinIdle())) {
+        if (StringKits.isNotBlank(config.getMinIdle())) {
             poolConfig.setMinIdle(config.getMinIdle());
         }
 
-        if (StrUtils.isNotBlank(config.getMaxWaitMillis())) {
+        if (StringKits.isNotBlank(config.getMaxWaitMillis())) {
             poolConfig.setMaxWaitMillis(config.getMaxWaitMillis());
         }
         this.jedisCluster = newJedisCluster(config.getHostAndPorts(), timeout, maxAttempts, password, poolConfig);

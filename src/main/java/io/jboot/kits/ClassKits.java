@@ -144,7 +144,7 @@ public class ClassKits {
     public static Collection<Method> getClassSetMethods(Class clazz) {
 
         Collection<Method> setMethods = classMethodsCache.get(clazz);
-        if (ArrayUtils.isNullOrEmpty(setMethods)) {
+        if (ArrayKits.isNullOrEmpty(setMethods)) {
             initSetMethodsCache(clazz);
             setMethods = classMethodsCache.get(clazz);
         }

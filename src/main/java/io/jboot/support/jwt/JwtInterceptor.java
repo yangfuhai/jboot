@@ -16,7 +16,7 @@
 package io.jboot.support.jwt;
 
 import io.jboot.Jboot;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
@@ -45,7 +45,7 @@ public class JwtInterceptor implements FixedInterceptor {
         HttpServletRequest request = inv.getController().getRequest();
         String token = request.getHeader(JwtManager.me().getHttpHeaderName());
 
-        if (StrUtils.isBlank(token)) {
+        if (StringKits.isBlank(token)) {
             inv.invoke();
             processInvokeAfter(inv, null);
             return;

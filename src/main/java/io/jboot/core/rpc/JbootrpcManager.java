@@ -25,7 +25,7 @@ import io.jboot.core.rpc.zbus.JbootZbusrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.core.event.JbootEventListener;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassScanner;
 
 import java.io.Serializable;
@@ -61,7 +61,7 @@ public class JbootrpcManager {
         getJbootrpc().onInitBefore();
 
         List<Class> classes = ClassScanner.scanClass(true);
-        if (ArrayUtils.isNullOrEmpty(classes)) {
+        if (ArrayKits.isNullOrEmpty(classes)) {
             return;
         }
 
@@ -77,7 +77,7 @@ public class JbootrpcManager {
             }
 
             //对某些系统的类 进行排除，例如：Serializable 等
-            Class[] excludes = ArrayUtils.concat(default_excludes, rpcService.exclude());
+            Class[] excludes = ArrayKits.concat(default_excludes, rpcService.exclude());
             for (Class inter : inters) {
                 boolean isContinue = false;
                 for (Class ex : excludes) {
@@ -121,7 +121,7 @@ public class JbootrpcManager {
 //            return fallbackListener;
 //        }
 //
-//        if (StrUtils.isNotBlank(config.getHystrixFallbackListener())) {
+//        if (StringKits.isNotBlank(config.getHystrixFallbackListener())) {
 //            fallbackListener = ClassKits.newInstance(config.getHystrixFallbackListener());
 //
 //        }
@@ -141,7 +141,7 @@ public class JbootrpcManager {
 //            return setterFactory;
 //        }
 //
-//        if (StrUtils.isNotBlank(config.getHystrixSetterFactory())) {
+//        if (StringKits.isNotBlank(config.getHystrixSetterFactory())) {
 //            setterFactory = ClassKits.newInstance(config.getHystrixSetterFactory());
 //        }
 //

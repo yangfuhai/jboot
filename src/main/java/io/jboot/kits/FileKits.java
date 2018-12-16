@@ -24,7 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 
-public class FileUtils {
+public class FileKits {
 
 	public static String getSuffix(String fileName) {
 		if (fileName != null && fileName.contains(".")) {

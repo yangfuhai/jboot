@@ -17,7 +17,7 @@ package io.jboot.web.render;
 
 import com.jfinal.render.RenderException;
 import io.jboot.Jboot;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 import io.jboot.web.cache.ActionCacheContent;
 import io.jboot.web.cache.ActionCacheContext;
 import io.jboot.web.cache.ActionCacheInfo;
@@ -58,7 +58,7 @@ public class RenderHelpler {
 
 
     public static String processCDN(String content) {
-        if (StrUtils.isBlank(content)) {
+        if (StringKits.isBlank(content)) {
             return content;
         }
 
@@ -93,7 +93,7 @@ public class RenderHelpler {
             }
 
             String url = element.attr(attrName);
-            if (StrUtils.isBlank(url) || !url.startsWith("/") || url.startsWith("//")) {
+            if (StringKits.isBlank(url) || !url.startsWith("/") || url.startsWith("//")) {
                 continue;
             }
 

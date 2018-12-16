@@ -19,7 +19,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.template.Env;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 import io.jboot.web.JbootRequestContext;
 import io.jboot.web.directive.base.PaginateDirectiveBase;
 
@@ -34,7 +34,7 @@ public abstract class JbootPaginateDirective extends PaginateDirectiveBase {
 
         String url = request.getRequestURI();
 
-        if (StrUtils.isNotBlank(queryString)) {
+        if (StringKits.isNotBlank(queryString)) {
             url = url.concat("?").concat(queryString);
         }
 

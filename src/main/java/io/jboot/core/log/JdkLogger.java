@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.support.log;
+package io.jboot.core.log;
 
 import com.jfinal.log.Log;
 import io.jboot.exception.JbootExceptionHolder;

@@ -21,8 +21,8 @@ import io.jboot.Jboot;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.ArrayKits;
+import io.jboot.kits.StringKits;
 
 import java.io.IOException;
 import java.util.Map;
@@ -45,14 +45,14 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
         factory.setHost(rabbitmqConfig.getHost());
         factory.setPort(rabbitmqConfig.getPort());
 
-        if (StrUtils.isNotBlank(rabbitmqConfig.getVirtualHost())) {
+        if (StringKits.isNotBlank(rabbitmqConfig.getVirtualHost())) {
             factory.setVirtualHost(rabbitmqConfig.getVirtualHost());
         }
-        if (StrUtils.isNotBlank(rabbitmqConfig.getUsername())) {
+        if (StringKits.isNotBlank(rabbitmqConfig.getUsername())) {
             factory.setUsername(rabbitmqConfig.getUsername());
         }
 
-        if (StrUtils.isNotBlank(rabbitmqConfig.getPassword())) {
+        if (StringKits.isNotBlank(rabbitmqConfig.getPassword())) {
             factory.setPassword(rabbitmqConfig.getPassword());
         }
 
@@ -62,7 +62,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             throw new JbootException("can not connection rabbitmq server", e);
         }
 
-        if (ArrayUtils.isNotEmpty(this.channels)) {
+        if (ArrayKits.isNotEmpty(this.channels)) {
             initChannelSubscribe();
         }
 

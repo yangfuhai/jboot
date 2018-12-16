@@ -32,7 +32,8 @@ import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.app.listener.JbootAppListenerManager;
-import io.jboot.support.log.Slf4jLogFactory;
+import io.jboot.kits.StringKits;
+import io.jboot.core.log.Slf4jLogFactory;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
@@ -41,10 +42,9 @@ import io.jboot.core.config.JbootConfigManager;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.core.schedule.JbootScheduleManager;
-import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassKits;
 import io.jboot.kits.ClassScanner;
-import io.jboot.kits.StrUtils;
 import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -110,7 +110,7 @@ public class JbootAppConfig extends JFinalConfig {
     public void configRoute(Routes routes) {
 
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
-        if (ArrayUtils.isNotEmpty(controllerClassList)) {
+        if (ArrayKits.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
                 RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
                 if (mapping == null || mapping.value() == null) {
@@ -131,7 +131,7 @@ public class JbootAppConfig extends JFinalConfig {
         }
 
         LimitationConfig limitationConfig = Jboot.config(LimitationConfig.class);
-        if (StrUtils.isNotBlank(limitationConfig.getWebPath())) {
+        if (StringKits.isNotBlank(limitationConfig.getWebPath())) {
             routes.add(limitationConfig.getWebPath(), LimitationController.class);
         }
 

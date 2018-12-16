@@ -15,7 +15,7 @@
  */
 package io.jboot.db.model;
 
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns likeAppendPercent(String name, Object value) {
-        if (value == null || StrUtils.isBlank(value.toString())) {
+        if (value == null || StringKits.isBlank(value.toString())) {
             //do nothing
             return this;
         }

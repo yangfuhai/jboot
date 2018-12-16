@@ -17,8 +17,8 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import io.jboot.db.model.Column;
-import io.jboot.kits.ArrayUtils;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.ArrayKits;
+import io.jboot.kits.StringKits;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
         appIfNotEmpty(columns, sqlBuilder);
 
 
-        if (StrUtils.isNotBlank(orderBy)) {
+        if (StringKits.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
@@ -59,7 +59,7 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
 
         appIfNotEmpty(columns, sqlBuilder);
 
-        if (StrUtils.isNotBlank(orderBy)) {
+        if (StringKits.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
@@ -68,7 +68,7 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
 
 
     private void appIfNotEmpty(List<Column> columns, StringBuilder sqlBuilder) {
-        if (ArrayUtils.isNotEmpty(columns)) {
+        if (ArrayKits.isNotEmpty(columns)) {
             sqlBuilder.append(" WHERE ");
 
             int index = 0;

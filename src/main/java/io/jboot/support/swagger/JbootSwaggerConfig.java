@@ -16,7 +16,7 @@
 package io.jboot.support.swagger;
 
 import io.jboot.core.config.annotation.PropertyConfig;
-import io.jboot.kits.StrUtils;
+import io.jboot.kits.StringKits;
 
 @PropertyConfig(prefix = "jboot.swagger")
 public class JbootSwaggerConfig {
@@ -45,7 +45,7 @@ public class JbootSwaggerConfig {
     }
 
     public boolean isConfigOk() {
-        return StrUtils.isNotBlank(path);
+        return StringKits.isNotBlank(path);
     }
 
     public String getTitle() {
