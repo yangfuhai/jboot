@@ -30,6 +30,5 @@ public class JbootConstants {
     public static final String EVENT_STARTED = "jboot:started";
 
     public static final String ATTR_REQUEST = "REQUEST";
-    public static final String ATTR_SESSION = "SESSION";
     public static final String ATTR_CONTEXT_PATH = "CPATH";
 }

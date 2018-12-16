@@ -21,8 +21,7 @@ import io.jboot.web.JbootAppConfig;
 @PropertyConfig(prefix = "jboot")
 public class JbootConfig {
 
-
-    private String version = "1.7.5";
+    private String version = "2.0-alpha.1";
     private String mode = Jboot.MODE.DEV.getValue();
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
