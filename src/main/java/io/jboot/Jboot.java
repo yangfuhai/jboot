@@ -16,9 +16,7 @@
 package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
-import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
-import io.jboot.app.listener.JbootAppListenerManager;
 import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.component.redis.JbootRedis;
 import io.jboot.component.redis.JbootRedisManager;
@@ -37,12 +35,7 @@ import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
 import io.jboot.event.JbootEvent;
 import io.jboot.event.JbootEventManager;
-import io.jboot.utils.FileUtils;
-import io.jboot.utils.StrUtils;
-import io.jboot.web.JbootWebConfig;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,7 +74,7 @@ public class Jboot {
 
     public static void run(String[] args) {
         parseArgs(args);
-        jboot.start();
+//        jboot.start();
     }
 
 
@@ -131,91 +124,91 @@ public class Jboot {
     /**
      * 开始启动
      */
-    public void start() {
-
-        printBannerInfo();
-        printConfigInfo();
-
-//        ensureServerCreated();
+//    public void start() {
 //
-//        if (!startServer()) {
-//            System.err.println("jboot start fail!!!");
-//            return;
+//        printBannerInfo();
+//        printConfigInfo();
+//
+////        ensureServerCreated();
+////
+////        if (!startServer()) {
+////            System.err.println("jboot start fail!!!");
+////            return;
+////        }
+//
+//        printServerPath();
+//        printServerUrl();
+//
+//        JbootAppListenerManager.me().onJbootStarted();
+//
+//    }
+
+
+
+//    private void printBannerInfo() {
+//        System.out.println(getBannerText());
+//    }
+
+//    private String getBannerText() {
+//        JbootConfig config = getJbootConfig();
+//
+//        if (!config.isBannerEnable()) {
+//            return "";
 //        }
-
-        printServerPath();
-        printServerUrl();
-
-        JbootAppListenerManager.me().onJbootStarted();
-
-    }
-
-
-
-    private void printBannerInfo() {
-        System.out.println(getBannerText());
-    }
-
-    private String getBannerText() {
-        JbootConfig config = getJbootConfig();
-
-        if (!config.isBannerEnable()) {
-            return "";
-        }
-
-        File bannerFile = new File(getRootClassPath(), config.getBannerFile());
-        if (bannerFile.exists() && bannerFile.canRead()) {
-            String bannerFileText = FileUtils.readString(bannerFile);
-            if (StrUtils.isNotBlank(bannerFileText)) {
-                return bannerFileText;
-            }
-        }
-
-        return "  ____  ____    ___    ___   ______ \n" +
-                " |    ||    \\  /   \\  /   \\ |      |\n" +
-                " |__  ||  o  )|     ||     ||      |\n" +
-                " __|  ||     ||  O  ||  O  ||_|  |_|\n" +
-                "/  |  ||  O  ||     ||     |  |  |  \n" +
-                "\\  `  ||     ||     ||     |  |  |  \n" +
-                " \\____||_____| \\___/  \\___/   |__|  \n" +
-                "                                    ";
-
-    }
-
-    private void printConfigInfo() {
-        System.out.println(getJbootConfig());
-        System.out.println(config(JbootWebConfig.class));
-    }
-
-
-    private void printServerPath() {
-        System.out.println("server classPath : " + getRootClassPath());
-        System.out.println("server webRoot : " + PathKit.getWebRootPath());
-    }
-
-
-    private void printServerUrl() {
-//        JbootServerConfig serverConfig = config(JbootServerConfig.class);
 //
-//        String host = "0.0.0.0".equals(serverConfig.getHost()) ? "127.0.0.1" : serverConfig.getHost();
-//        String port = "80".equals(serverConfig.getPort()) ? "" : ":" + serverConfig.getPort();
-//        String path = serverConfig.getContextPath();
+//        File bannerFile = new File(getRootClassPath(), config.getBannerFile());
+//        if (bannerFile.exists() && bannerFile.canRead()) {
+//            String bannerFileText = FileUtils.readString(bannerFile);
+//            if (StrUtils.isNotBlank(bannerFileText)) {
+//                return bannerFileText;
+//            }
+//        }
 //
-//        String url = String.format("http://%s%s%s", host, port, path);
+//        return "  ____  ____    ___    ___   ______ \n" +
+//                " |    ||    \\  /   \\  /   \\ |      |\n" +
+//                " |__  ||  o  )|     ||     ||      |\n" +
+//                " __|  ||     ||  O  ||  O  ||_|  |_|\n" +
+//                "/  |  ||  O  ||     ||     |  |  |  \n" +
+//                "\\  `  ||     ||     ||     |  |  |  \n" +
+//                " \\____||_____| \\___/  \\___/   |__|  \n" +
+//                "                                    ";
 //
-//        System.out.println("server started success , url : " + url);
-    }
+//    }
+//
+//    private void printConfigInfo() {
+//        System.out.println(getJbootConfig());
+//        System.out.println(config(JbootWebConfig.class));
+//    }
 
-    private static String getRootClassPath() {
-        String path = null;
-        try {
-            path = Jboot.class.getClassLoader().getResource("").toURI().getPath();
-            return new File(path).getAbsolutePath();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return path;
-    }
+
+//    private void printServerPath() {
+//        System.out.println("server classPath : " + getRootClassPath());
+//        System.out.println("server webRoot : " + PathKit.getWebRootPath());
+//    }
+
+
+//    private void printServerUrl() {
+////        JbootServerConfig serverConfig = config(JbootServerConfig.class);
+////
+////        String host = "0.0.0.0".equals(serverConfig.getHost()) ? "127.0.0.1" : serverConfig.getHost();
+////        String port = "80".equals(serverConfig.getPort()) ? "" : ":" + serverConfig.getPort();
+////        String path = serverConfig.getContextPath();
+////
+////        String url = String.format("http://%s%s%s", host, port, path);
+////
+////        System.out.println("server started success , url : " + url);
+//    }
+
+//    private static String getRootClassPath() {
+//        String path = null;
+//        try {
+//            path = Jboot.class.getClassLoader().getResource("").toURI().getPath();
+//            return new File(path).getAbsolutePath();
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//        return path;
+//    }
 
 
     ///////////get component methods///////////

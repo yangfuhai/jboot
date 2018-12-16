@@ -17,7 +17,6 @@ package io.jboot.aop;
 
 
 import com.jfinal.aop.Aop;
-import com.jfinal.aop.AopFactory;
 
 /**
  * Inject管理器
@@ -39,7 +38,6 @@ public class JbootInjectManager {
 //    private Injector injector;
 
     private JbootInjectManager() {
-        AopFactory aopFactory = Aop.getAopFactory();
     }
 
 //    public Injector getInjector() {

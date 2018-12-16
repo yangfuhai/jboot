@@ -61,17 +61,6 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
 
-//    @Override
-//    public void onJbootDeploy(Servlets servlets, ContextListeners listeners) {
-//        for (JbootAppListener listener : this.listeners) {
-//            try {
-//                listener.onJbootDeploy(servlets, listeners);
-//            } catch (Throwable ex) {
-//                log.error(ex.toString(), ex);
-//            }
-//        }
-//    }
-
     @Override
     public void onJfinalConstantConfig(Constants constants) {
         for (JbootAppListener listener : listeners) {
@@ -171,36 +160,4 @@ public class JbootAppListenerManager implements JbootAppListener {
         }
     }
 
-    @Override
-    public void onJbootStarted() {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onJbootStarted();
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
-        }
-    }
-
-//    @Override
-//    public void onAppStartBefore(JbootServer jbootServer) {
-//        for (JbootAppListener listener : listeners) {
-//            try {
-//                listener.onAppStartBefore(jbootServer);
-//            } catch (Throwable ex) {
-//                log.error(ex.toString(), ex);
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void onGuiceConfigure(Binder binder) {
-//        for (JbootAppListener listener : listeners) {
-//            try {
-//                listener.onGuiceConfigure(binder);
-//            } catch (Throwable ex) {
-//                log.error(ex.toString(), ex);
-//            }
-//        }
-//    }
 }

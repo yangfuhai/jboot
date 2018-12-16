@@ -77,10 +77,10 @@ public class JbootAppListenerBase implements JbootAppListener {
 
     }
 
-    @Override
-    public void onJbootStarted() {
-
-    }
+//    @Override
+//    public void onJbootStarted() {
+//
+//    }
 
 //    @Override
 //    public void onAppStartBefore(JbootServer underTowServer) {

@@ -46,7 +46,7 @@ public interface JbootAppListener {
 
     public void onJFinalStop();
 
-    public void onJbootStarted();
+//    public void onJbootStarted();
 
 //    public void onAppStartBefore(JbootServer jbootServer);
 
