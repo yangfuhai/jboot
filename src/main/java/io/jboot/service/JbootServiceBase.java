@@ -20,8 +20,8 @@ import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassKits;
+import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ClassKits;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

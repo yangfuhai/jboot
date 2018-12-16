@@ -21,8 +21,8 @@ import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CachePut;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ClassKits;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.ClassKits;
+import io.jboot.kits.StrUtils;
 
 import java.lang.reflect.Method;
 

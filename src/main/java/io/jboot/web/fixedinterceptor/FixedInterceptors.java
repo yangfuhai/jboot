@@ -16,9 +16,9 @@
 package io.jboot.web.fixedinterceptor;
 
 import io.jboot.Jboot;
-import io.jboot.component.jwt.JwtInterceptor;
-import io.jboot.component.metric.JbootMetricInterceptor;
-import io.jboot.component.shiro.JbootShiroInterceptor;
+import io.jboot.support.jwt.JwtInterceptor;
+import io.jboot.support.metric.JbootMetricInterceptor;
+import io.jboot.support.shiro.JbootShiroInterceptor;
 import io.jboot.web.controller.validate.ParaValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
 import io.jboot.web.limitation.LimitationInterceptor;

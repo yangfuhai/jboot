@@ -15,7 +15,7 @@
  */
 package io.jboot.web;
 
-import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyConfig;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）

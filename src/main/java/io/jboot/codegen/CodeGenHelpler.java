@@ -23,7 +23,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.jboot.Jboot;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;

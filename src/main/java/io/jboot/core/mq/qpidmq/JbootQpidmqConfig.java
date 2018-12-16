@@ -15,7 +15,7 @@
  */
 package io.jboot.core.mq.qpidmq;
 
-import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyConfig;
 
 @PropertyConfig(prefix = "jboot.mq.qpid")
 public class JbootQpidmqConfig {

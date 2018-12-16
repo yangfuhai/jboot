@@ -17,7 +17,7 @@ package io.jboot.core.rpc;
 
 import io.jboot.Jboot;
 import io.jboot.core.rpc.annotation.JbootrpcService;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;

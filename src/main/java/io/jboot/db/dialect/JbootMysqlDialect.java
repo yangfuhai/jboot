@@ -17,8 +17,8 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import io.jboot.db.model.Column;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.StrUtils;
 
 import java.util.List;
 

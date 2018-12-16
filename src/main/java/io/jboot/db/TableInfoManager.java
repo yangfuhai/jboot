@@ -20,9 +20,9 @@ import com.jfinal.plugin.activerecord.Model;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.model.JbootModelConfig;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ClassScanner;
+import io.jboot.kits.StrUtils;
 
 import java.util.*;
 

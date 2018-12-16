@@ -17,8 +17,8 @@ package io.jboot.db.datasource;
 
 import com.google.common.collect.Maps;
 import io.jboot.Jboot;
-import io.jboot.config.JbootConfigManager;
-import io.jboot.utils.StrUtils;
+import io.jboot.core.config.JbootConfigManager;
+import io.jboot.kits.StrUtils;
 
 import java.util.*;
 

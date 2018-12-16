@@ -16,8 +16,8 @@
 package io.jboot.core.cache.redis;
 
 
-import io.jboot.config.annotation.PropertyConfig;
-import io.jboot.component.redis.JbootRedisConfig;
+import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.support.redis.JbootRedisConfig;
 
 /**
  * JbootRedis 缓存的配置文件

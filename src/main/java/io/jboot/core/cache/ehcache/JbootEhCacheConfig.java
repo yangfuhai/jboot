@@ -16,7 +16,7 @@
 package io.jboot.core.cache.ehcache;
 
 
-import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyConfig;
 
 
 @PropertyConfig(prefix = "jboot.cache.ehcache")

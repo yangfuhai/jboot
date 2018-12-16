@@ -18,7 +18,7 @@ package io.jboot.core.serializer;
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootAssert;
-import io.jboot.utils.ClassKits;
+import io.jboot.kits.ClassKits;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

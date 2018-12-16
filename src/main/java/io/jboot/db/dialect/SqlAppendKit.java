@@ -16,7 +16,7 @@
 package io.jboot.db.dialect;
 
 import io.jboot.db.model.Column;
-import io.jboot.utils.ArrayUtils;
+import io.jboot.kits.ArrayUtils;
 
 import java.util.List;
 

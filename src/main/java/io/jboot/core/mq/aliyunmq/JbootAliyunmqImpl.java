@@ -19,7 +19,7 @@ import com.aliyun.openservices.ons.api.*;
 import io.jboot.Jboot;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.utils.ArrayUtils;
+import io.jboot.kits.ArrayUtils;
 
 import java.util.Properties;
 

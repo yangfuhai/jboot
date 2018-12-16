@@ -19,7 +19,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.template.Env;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 import io.jboot.web.JbootRequestContext;
 import io.jboot.web.directive.base.PaginateDirectiveBase;
 

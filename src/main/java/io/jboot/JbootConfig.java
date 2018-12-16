@@ -15,7 +15,7 @@
  */
 package io.jboot;
 
-import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyConfig;
 import io.jboot.web.JbootAppConfig;
 
 @PropertyConfig(prefix = "jboot")

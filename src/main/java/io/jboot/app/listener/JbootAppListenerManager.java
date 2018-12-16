@@ -22,8 +22,8 @@ import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.utils.ClassKits;
-import io.jboot.utils.ClassScanner;
+import io.jboot.kits.ClassKits;
+import io.jboot.kits.ClassScanner;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 import java.util.ArrayList;

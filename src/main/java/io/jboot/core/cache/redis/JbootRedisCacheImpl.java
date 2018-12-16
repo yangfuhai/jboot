@@ -17,8 +17,8 @@ package io.jboot.core.cache.redis;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
-import io.jboot.component.redis.JbootRedis;
-import io.jboot.component.redis.JbootRedisManager;
+import io.jboot.support.redis.JbootRedis;
+import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.core.cache.JbootCacheBase;
 import io.jboot.exception.JbootIllegalConfigException;
 

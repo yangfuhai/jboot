@@ -21,7 +21,7 @@ import io.jboot.core.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.core.cache.j2cache.J2cacheImpl;
 import io.jboot.core.cache.redis.JbootRedisCacheImpl;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

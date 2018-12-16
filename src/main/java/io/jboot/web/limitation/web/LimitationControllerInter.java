@@ -19,7 +19,7 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ClassKits;
+import io.jboot.kits.ClassKits;
 import io.jboot.web.limitation.LimitationConfig;
 
 /**

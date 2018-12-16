@@ -20,7 +20,7 @@ import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 import io.zbus.mq.*;
 
 import java.io.IOException;

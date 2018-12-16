@@ -21,8 +21,8 @@ import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
 import com.jfinal.render.RenderManager;
 import io.jboot.Jboot;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.StrUtils;
 import io.jboot.web.JbootWebConfig;
 import io.jboot.web.cache.keygen.ActionKeyGeneratorManager;
 

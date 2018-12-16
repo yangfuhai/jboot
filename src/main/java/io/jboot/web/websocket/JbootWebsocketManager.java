@@ -16,8 +16,8 @@
 package io.jboot.web.websocket;
 
 import io.jboot.Jboot;
-import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.ClassScanner;
+import io.jboot.kits.StrUtils;
 import io.jboot.web.JbootWebConfig;
 
 import javax.websocket.server.ServerEndpoint;

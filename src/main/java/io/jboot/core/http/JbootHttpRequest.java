@@ -15,7 +15,7 @@
  */
 package io.jboot.core.http;
 
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;

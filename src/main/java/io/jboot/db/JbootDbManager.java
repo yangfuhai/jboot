@@ -29,9 +29,9 @@ import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassKits;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ClassKits;
+import io.jboot.kits.StrUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;

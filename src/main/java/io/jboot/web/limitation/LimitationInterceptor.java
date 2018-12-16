@@ -18,8 +18,8 @@ package io.jboot.web.limitation;
 import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
-import io.jboot.utils.RequestUtils;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.RequestUtils;
+import io.jboot.kits.StrUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 

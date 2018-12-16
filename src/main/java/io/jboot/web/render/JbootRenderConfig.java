@@ -15,8 +15,8 @@
  */
 package io.jboot.web.render;
 
-import io.jboot.config.annotation.PropertyConfig;
-import io.jboot.utils.StrUtils;
+import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.kits.StrUtils;
 
 @PropertyConfig(prefix = "jboot.render")
 public class JbootRenderConfig {

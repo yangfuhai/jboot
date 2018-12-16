@@ -17,12 +17,12 @@ package io.jboot.core.mq.redismq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.component.redis.JbootRedis;
-import io.jboot.component.redis.JbootRedisManager;
+import io.jboot.support.redis.JbootRedis;
+import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.core.mq.Jbootmq;
 import io.jboot.core.mq.JbootmqBase;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.ArrayUtils;
+import io.jboot.kits.ArrayUtils;
 import redis.clients.jedis.BinaryJedisPubSub;
 
 

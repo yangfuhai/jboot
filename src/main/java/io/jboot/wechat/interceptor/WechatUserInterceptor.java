@@ -20,7 +20,7 @@ import com.jfinal.aop.Invocation;
 import com.jfinal.core.JFinal;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.ApiResult;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 import io.jboot.wechat.controller.JbootWechatController;
 
 import javax.servlet.http.HttpServletRequest;

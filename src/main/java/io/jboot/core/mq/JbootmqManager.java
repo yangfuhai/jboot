@@ -22,7 +22,7 @@ import io.jboot.core.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.core.mq.redismq.JbootRedismqImpl;
 import io.jboot.core.mq.zbus.JbootZbusmqImpl;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.utils.ClassKits;
+import io.jboot.kits.ClassKits;
 
 
 public class JbootmqManager {

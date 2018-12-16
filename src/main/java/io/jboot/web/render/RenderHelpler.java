@@ -17,7 +17,7 @@ package io.jboot.web.render;
 
 import com.jfinal.render.RenderException;
 import io.jboot.Jboot;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 import io.jboot.web.cache.ActionCacheContent;
 import io.jboot.web.cache.ActionCacheContext;
 import io.jboot.web.cache.ActionCacheInfo;

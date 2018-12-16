@@ -16,7 +16,7 @@
 package io.jboot.db.model;
 
 import io.jboot.Jboot;
-import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyConfig;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.core.cache.JbootCacheManager;

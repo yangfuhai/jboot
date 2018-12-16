@@ -20,8 +20,8 @@ import io.jboot.core.http.JbootHttp;
 import io.jboot.core.http.JbootHttpRequest;
 import io.jboot.core.http.JbootHttpResponse;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.StrUtils;
 
 import javax.net.ssl.*;
 import java.io.*;

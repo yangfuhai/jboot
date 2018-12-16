@@ -16,7 +16,7 @@
 package io.jboot.db.datasource;
 
 import com.jfinal.plugin.activerecord.DbKit;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -19,9 +19,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
-import io.jboot.component.jwt.JwtManager;
-import io.jboot.utils.RequestUtils;
-import io.jboot.utils.StrUtils;
+import io.jboot.support.jwt.JwtManager;
+import io.jboot.kits.RequestUtils;
+import io.jboot.kits.StrUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;

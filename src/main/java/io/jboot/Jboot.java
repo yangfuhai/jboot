@@ -17,10 +17,10 @@ package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
 import io.jboot.aop.JbootInjectManager;
-import io.jboot.component.metric.JbootMetricManager;
-import io.jboot.component.redis.JbootRedis;
-import io.jboot.component.redis.JbootRedisManager;
-import io.jboot.config.JbootConfigManager;
+import io.jboot.support.metric.JbootMetricManager;
+import io.jboot.support.redis.JbootRedis;
+import io.jboot.support.redis.JbootRedisManager;
+import io.jboot.core.config.JbootConfigManager;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
 import io.jboot.core.http.JbootHttp;
@@ -33,8 +33,8 @@ import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.core.serializer.ISerializer;
 import io.jboot.core.serializer.SerializerManager;
-import io.jboot.event.JbootEvent;
-import io.jboot.event.JbootEventManager;
+import io.jboot.core.event.JbootEvent;
+import io.jboot.core.event.JbootEventManager;
 
 import java.util.HashMap;
 import java.util.Map;

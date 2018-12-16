@@ -20,9 +20,9 @@ import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.core.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassKits;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.ArrayUtils;
+import io.jboot.kits.ClassKits;
+import io.jboot.kits.StrUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

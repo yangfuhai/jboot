@@ -18,7 +18,7 @@ package io.jboot.web.cache.keygen;
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 import io.jboot.web.JbootWebConfig;
 
 /**

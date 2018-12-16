@@ -18,7 +18,7 @@ package io.jboot.db.dialect;
 import com.jfinal.plugin.activerecord.dialect.SqlServerDialect;
 import io.jboot.db.model.Column;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.util.List;
 

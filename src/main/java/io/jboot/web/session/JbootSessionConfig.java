@@ -16,7 +16,7 @@
 package io.jboot.web.session;
 
 import io.jboot.Jboot;
-import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyConfig;
 import io.jboot.core.cache.JbootCacheConfig;
 
 @PropertyConfig(prefix = "jboot.web.session")

@@ -20,7 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

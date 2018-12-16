@@ -15,7 +15,7 @@
  */
 package io.jboot.web.cors;
 
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 

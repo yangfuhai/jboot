@@ -15,7 +15,7 @@
  */
 package io.jboot.core.http;
 
-import io.jboot.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyConfig;
 
 
 @PropertyConfig(prefix = "jboot.http")

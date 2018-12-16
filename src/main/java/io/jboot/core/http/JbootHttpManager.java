@@ -19,7 +19,7 @@ import io.jboot.Jboot;
 import io.jboot.core.http.jboot.JbootHttpImpl;
 import io.jboot.core.http.okhttp.OKHttpImpl;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.utils.ClassKits;
+import io.jboot.kits.ClassKits;
 
 public class JbootHttpManager {
 

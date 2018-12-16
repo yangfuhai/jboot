@@ -20,9 +20,9 @@ import com.codahale.metrics.Timer;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
-import io.jboot.component.metric.annotation.EnableMetricTimer;
-import io.jboot.utils.ClassKits;
-import io.jboot.utils.StrUtils;
+import io.jboot.support.metric.annotation.EnableMetricTimer;
+import io.jboot.kits.ClassKits;
+import io.jboot.kits.StrUtils;
 
 /**
  * 用于在AOP拦截，并通过Metrics的Timer进行统计

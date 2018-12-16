@@ -23,7 +23,7 @@ import com.jfinal.plugin.activerecord.Table;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.util.Arrays;
 import java.util.Date;

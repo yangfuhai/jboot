@@ -20,7 +20,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.util.Collection;
 import java.util.List;

@@ -18,7 +18,7 @@ package io.jboot.web.limitation.web;
 import com.google.common.collect.Multimap;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.Ret;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.limitation.JbootLimitationManager;
 import io.jboot.web.limitation.LimitationInfo;

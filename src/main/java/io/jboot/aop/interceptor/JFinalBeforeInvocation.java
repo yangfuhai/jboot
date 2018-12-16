@@ -23,9 +23,9 @@ import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
 import io.jboot.aop.interceptor.metric.*;
-import io.jboot.component.metric.JbootMetricManager;
+import io.jboot.support.metric.JbootMetricManager;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ClassKits;
+import io.jboot.kits.ClassKits;
 
 import java.lang.reflect.Method;
 

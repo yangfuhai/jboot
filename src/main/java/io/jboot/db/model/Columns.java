@@ -15,7 +15,7 @@
  */
 package io.jboot.db.model;
 
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;

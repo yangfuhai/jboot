@@ -18,7 +18,7 @@ package io.jboot.core.rpc.zbus;
 import io.jboot.Jboot;
 import io.jboot.core.rpc.JbootrpcBase;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
-import io.jboot.utils.StrUtils;
+import io.jboot.kits.StrUtils;
 
 
 public class JbootZbusrpc extends JbootrpcBase {
