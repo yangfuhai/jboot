@@ -1,2 +1,0 @@
-jbootConsumerOpentracing=io.jboot.core.rpc.dubbo.JbootDubboConsumerTracingFilter
-jbootProviderOpentracing=io.jboot.core.rpc.dubbo.JbootDubboProviderTracingFilter
