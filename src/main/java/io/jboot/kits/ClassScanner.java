@@ -42,7 +42,7 @@ public class ClassScanner {
         return scanSubClass(pclazz, false);
     }
 
-    private static final Set<String> excludeJars = new HashSet<>();
+    public static final Set<String> excludeJars = new HashSet<>();
 
     static {
         excludeJars.add("animal-sniffer-annotations-");
@@ -162,7 +162,7 @@ public class ClassScanner {
         excludeJars.add("checker-qual-");
     }
 
-    private static final Set<String> excludeJarPackages = new HashSet<>();
+    public static final Set<String> excludeJarPackages = new HashSet<>();
 
     static {
         excludeJarPackages.add("com.google");
@@ -173,14 +173,7 @@ public class ClassScanner {
     }
 
     public static <T> List<Class<T>> scanSubClass(Class<T> pclazz, boolean mustCanNewInstance) {
-        if (pclazz == null) {
-            throw new RuntimeException("pclazz cannot be null");
-        }
-
-        if (appClasses.isEmpty()) {
-            initAppClasses();
-        }
-
+        initIfNecessary();
         List<Class<T>> classes = new ArrayList<>();
         findClassesByParent(classes, pclazz, mustCanNewInstance);
         return classes;
@@ -191,13 +184,9 @@ public class ClassScanner {
     }
 
     public static List<Class> scanClass(boolean mustCanNewInstance) {
-
-        if (appClasses.isEmpty()) {
-            initAppClasses();
-        }
+        initIfNecessary();
 
         List<Class> list = new ArrayList<>();
-
         if (mustCanNewInstance) {
             for (Class clazz : appClasses) {
                 if (clazz.isInterface()
@@ -214,13 +203,9 @@ public class ClassScanner {
     }
 
     public static List<Class> scanClassByAnnotation(Class annotationClass, boolean mustCanNewInstance) {
-
-        if (appClasses.isEmpty()) {
-            initAppClasses();
-        }
+        initIfNecessary();
 
         List<Class> list = new ArrayList<>();
-
         for (Class clazz : appClasses) {
             Annotation annotation = clazz.getAnnotation(annotationClass);
             if (annotation == null) {
@@ -233,19 +218,19 @@ public class ClassScanner {
                     continue;
                 }
             }
-
             list.add(clazz);
         }
+
         return list;
     }
 
-
-    /**
-     * 开发环境下，用于热加载后重新清空所有的类
-     */
-    static void clearAppClasses() {
-        appClasses.clear();
+    private static void initIfNecessary(){
+        if (appClasses.isEmpty()) {
+            addClassesFromFilePath(PathKit.getRootClassPath());
+            addClassesFromJars();
+        }
     }
+
 
     private static <T> void findClassesByParent(List<Class<T>> classes, Class<T> pclazz, boolean mustCanNewInstance) {
         for (Class clazz : appClasses) {
@@ -253,10 +238,8 @@ public class ClassScanner {
         }
     }
 
-    private static void initAppClasses() {
 
-        initByFilePath(PathKit.getRootClassPath());
-
+    private static void addClassesFromJars() {
         Set<String> jars = new HashSet<>();
         findJars(jars, ClassScanner.class.getClassLoader());
 
@@ -274,7 +257,7 @@ public class ClassScanner {
                     String entryName = jarEntry.getName();
                     if (!jarEntry.isDirectory() && entryName.endsWith(".class")) {
                         String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                        initAppClasses(classForName(className));
+                        addClass(classForName(className));
                     }
                 }
             } catch (IOException e1) {
@@ -350,11 +333,10 @@ public class ClassScanner {
         return false;
     }
 
-    private static void initByFilePath(String filePath) {
-
-
+    private static void addClassesFromFilePath(String filePath) {
         List<File> classFileList = new ArrayList<>();
         scanClassFile(classFileList, filePath);
+
         for (File file : classFileList) {
 
             int start = filePath.length();
@@ -363,13 +345,12 @@ public class ClassScanner {
             String classFile = file.toString().substring(start + 1, end);
             String className = classFile.replace(File.separator, ".");
 
-            initAppClasses(classForName(className));
+            addClass(classForName(className));
         }
     }
 
-    private static void initAppClasses(Class clazz) {
-        if (clazz != null)
-            appClasses.add(clazz);
+    private static void addClass(Class clazz) {
+        if (clazz != null) appClasses.add(clazz);
     }
 
 
@@ -389,7 +370,7 @@ public class ClassScanner {
                     }
 
                     if (!path.toLowerCase().endsWith(".jar")) {
-                        initByFilePath(new File(path).getCanonicalPath());
+                        addClassesFromFilePath(new File(path).getCanonicalPath());
                     }
 
                     if (!path.startsWith(JAVA_HOME) && !isExcludeJar(path)) {
