@@ -18,23 +18,12 @@ package io.jboot.aop;
 
 import com.jfinal.aop.Aop;
 import com.jfinal.aop.AopFactory;
-import io.jboot.aop.annotation.Bean;
-import io.jboot.aop.annotation.BeanExclude;
-import io.jboot.core.mq.JbootmqMessageListener;
-import io.jboot.event.JbootEventListener;
-import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StrUtils;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * Inject管理器
  */
 public class JbootInjectManager {
 
-    private static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
 
     /**
      * 这个manager的创建不能来之ClassNewer
@@ -103,45 +92,7 @@ public class JbootInjectManager {
     /**
      * auto bind interface impl
      */
-    private void beanBind() {
 
-        List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
-        for (Class implClass : classes) {
-            Class<?>[] interfaceClasses = implClass.getInterfaces();
-
-            if (interfaceClasses == null || interfaceClasses.length == 0) {
-                continue;
-            }
-
-            Bean bean = (Bean) implClass.getAnnotation(Bean.class);
-            String name = bean.name();
-
-            BeanExclude beanExclude = (BeanExclude) implClass.getAnnotation(BeanExclude.class);
-
-            //对某些系统的类 进行排除，例如：Serializable 等
-            Class[] excludes = beanExclude == null ? default_excludes : ArrayUtils.concat(default_excludes, beanExclude.value());
-
-            for (Class interfaceClass : interfaceClasses) {
-                boolean isContinue = false;
-                for (Class ex : excludes) {
-                    if (ex.isAssignableFrom(interfaceClass)) {
-                        isContinue = true;
-                        break;
-                    }
-                }
-                if (isContinue) {
-                    continue;
-                }
-                try {
-                    if (StrUtils.isBlank(name)) {
-                        Aop.addMapping(interfaceClass, implClass);
-                    }
-                } catch (Throwable ex) {
-                    System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, implClass));
-                }
-            }
-        }
-    }
 
     /**
      * TypeListener  implements

@@ -24,7 +24,12 @@ public class JbootApplication {
     }
 
     public static void run(String[] args) {
-        UndertowServer.create("io.jboot.web.JbootAppConfig");
+        UndertowServer.create("io.jboot.web.JbootAppConfig")
+                .config(config->{
+                    config.addHotSwapClassPrefix("io.jboot");
+                    config.setHost("0.0.0.0");
+                    config.setPort(8080);
+                }).start();
     }
 
 }

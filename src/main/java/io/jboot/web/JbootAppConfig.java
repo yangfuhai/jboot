@@ -15,6 +15,7 @@
  */
 package io.jboot.web;
 
+import com.jfinal.aop.Aop;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
@@ -27,8 +28,10 @@ import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.JbootConstants;
+import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.app.listener.JbootAppListenerManager;
 import io.jboot.component.log.Slf4jLogFactory;
 import io.jboot.component.shiro.JbootShiroManager;
 import io.jboot.component.swagger.JbootSwaggerConfig;
@@ -38,7 +41,6 @@ import io.jboot.config.JbootConfigManager;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.db.JbootDbManager;
 import io.jboot.schedule.JbootScheduleManager;
-import io.jboot.app.listener.JbootAppListenerManager;
 import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtils;
@@ -79,6 +81,8 @@ public class JbootAppConfig extends JFinalConfig {
     @Override
     public void configConstant(Constants constants) {
 
+        Aop.setAopFactory(new JbootAopFactory());
+
         constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.me().isDevMode());
         ApiConfigKit.setDevMode(Jboot.me().isDevMode());
@@ -95,6 +99,7 @@ public class JbootAppConfig extends JFinalConfig {
 
         constants.setControllerFactory(JbootControllerManager.me());
         constants.setJsonFactory(() -> new JbootJson());
+        constants.setInjectDependency(true);
 
         JbootAppListenerManager.me().onJfinalConstantConfig(constants);
     }
@@ -102,6 +107,8 @@ public class JbootAppConfig extends JFinalConfig {
 
     @Override
     public void configRoute(Routes routes) {
+
+        System.out.println("configRoute classloader:" + this.getClass().getClassLoader());
 
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (controllerClassList == null) {
