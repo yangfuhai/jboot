@@ -16,7 +16,6 @@
 package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import io.jboot.JbootConstants;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.web.JbootRequestContext;
@@ -43,7 +42,7 @@ public class JbootHandler extends Handler {
         /**
          * 初始化 当前线程的 Hystrix
          */
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+//        HystrixRequestContext context = HystrixRequestContext.initializeContext();
 
         /**
          * 初始化 异常记录器，用于记录异常信息，然后在页面输出
@@ -59,7 +58,7 @@ public class JbootHandler extends Handler {
 
         } finally {
             JbootExceptionHolder.release();
-            context.shutdown();
+//            context.shutdown();
             JbootRequestContext.release();
 
             jbootServletRequest.refreshSession();

@@ -16,9 +16,16 @@
 package io.jboot.aop.interceptor;
 
 import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.InterceptorManager;
 import com.jfinal.aop.Invocation;
+import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
+import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
+import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
+import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
+import io.jboot.aop.interceptor.metric.*;
+import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.exception.JbootException;
-import org.aopalliance.intercept.MethodInvocation;
+import io.jboot.utils.ClassKits;
 
 import java.lang.reflect.Method;
 
@@ -27,16 +34,44 @@ public class JFinalBeforeInvocation extends Invocation {
 
 
     private Interceptor[] inters;
-    private MethodInvocation methodInvocation;
-    private Object[] args;
+    private Invocation originInvocation;
 
     private int index = 0;
 
 
-    public JFinalBeforeInvocation(MethodInvocation methodInvocation, Interceptor[] inters, Object[] args) {
-        this.methodInvocation = methodInvocation;
-        this.inters = inters;
-        this.args = args;
+    private static final Interceptor[] ALL_INTERS = {
+            new JbootMetricCounterAopInterceptor(),
+            new JbootMetricConcurrencyAopInterceptor(),
+            new JbootMetricMeterAopInterceptor(),
+            new JbootMetricTimerAopInterceptor(),
+            new JbootMetricHistogramAopInterceptor(),
+            new JbootCacheEvictInterceptor(),
+            new JbootCachesEvictInterceptor(),
+            new JbootCachePutInterceptor(),
+            new JbootCacheInterceptor()
+    };
+
+    private static final Interceptor[] NO_METRIC_INTERS = {
+            new JbootCacheEvictInterceptor(),
+            new JbootCachesEvictInterceptor(),
+            new JbootCachePutInterceptor(),
+            new JbootCacheInterceptor()
+    };
+
+
+    private static boolean metricConfigOk = JbootMetricManager.me().isConfigOk();
+
+
+    public JFinalBeforeInvocation(Invocation originInvocation) {
+        this.originInvocation = originInvocation;
+
+        Class targetClass = ClassKits.getUsefulClass(originInvocation.getTarget().getClass());
+        Method method = originInvocation.getMethod();
+
+        this.inters = metricConfigOk
+                ? InterceptorManager.me().buildServiceMethodInterceptor(ALL_INTERS, targetClass, method)
+                : InterceptorManager.me().buildServiceMethodInterceptor(NO_METRIC_INTERS, targetClass, method);
+
     }
 
 
@@ -46,7 +81,8 @@ public class JFinalBeforeInvocation extends Invocation {
             inters[index++].intercept(this);
         } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
             try {
-                setReturnValue(methodInvocation.proceed());
+                originInvocation.invoke();
+                setReturnValue(originInvocation.getReturnValue());
             } catch (Throwable throwable) {
                 if (throwable instanceof RuntimeException) {
                     throw (RuntimeException) throwable;
@@ -60,7 +96,7 @@ public class JFinalBeforeInvocation extends Invocation {
 
     @Override
     public Method getMethod() {
-        return methodInvocation.getMethod();
+        return originInvocation.getMethod();
     }
 
     @Override
@@ -70,25 +106,21 @@ public class JFinalBeforeInvocation extends Invocation {
 
     @Override
     public <T> T getTarget() {
-        return (T) methodInvocation.getThis();
+        return (T) originInvocation.getTarget();
     }
 
     @Override
     public Object getArg(int index) {
-        if (index >= args.length)
-            throw new ArrayIndexOutOfBoundsException();
-        return args[index];
+        return originInvocation.getArg(index);
     }
 
     @Override
     public void setArg(int index, Object value) {
-        if (index >= args.length)
-            throw new ArrayIndexOutOfBoundsException();
-        args[index] = value;
+        originInvocation.setArg(index, value);
     }
 
     @Override
     public Object[] getArgs() {
-        return args;
+        return originInvocation.getArgs();
     }
 }

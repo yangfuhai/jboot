@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.component.opentracing;
+package io.jboot.app;
 
-import io.opentracing.Span;
+import com.jfinal.server.undertow.UndertowServer;
 
-/**
- * openTracing span 的上下文
- */
-public class JbootSpanContext {
-    private static ThreadLocal<Span> spans = new ThreadLocal<>();
+public class JbootApplication {
 
-
-    public static void add(Span span) {
-        spans.set(span);
+    public static void main(String[] args) {
+        run(args);
     }
 
-    public static Span get() {
-        return spans.get();
+    public static void run(String[] args) {
+        UndertowServer.create("io.jboot.web.JbootAppConfig");
     }
 
-    public static void release() {
-        spans.remove();
-    }
 }

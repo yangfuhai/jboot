@@ -17,7 +17,6 @@ package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
 import io.jboot.Jboot;
-import io.jboot.component.hystrix.JbootHystrixConfig;
 import io.jboot.component.metric.JbootMetricConfig;
 import io.jboot.web.websocket.JbootWebsocketManager;
 
@@ -29,15 +28,15 @@ public class JbootFilterHandler extends Handler {
 
 
     private static JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
-    private static JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
+//    private static JbootHystrixConfig hystrixConfig = Jboot.config(JbootHystrixConfig.class);
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
 
         if (target.indexOf('.') != -1 //static files
                 || JbootWebsocketManager.me().isWebsokcetEndPoint(target) //websocket
-                || (metricsConfig.isConfigOk() && target.startsWith(metricsConfig.getUrl())) // metrics
-                || (hystrixConfig.isConfigOk() && target.startsWith(hystrixConfig.getUrl()))) // hystrix
+                || (metricsConfig.isConfigOk() && target.startsWith(metricsConfig.getUrl()))) // metrics
+//                || (hystrixConfig.isConfigOk() && target.startsWith(hystrixConfig.getUrl()))) // hystrix
         {
             return;
         }

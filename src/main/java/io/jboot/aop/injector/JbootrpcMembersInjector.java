@@ -15,7 +15,6 @@
  */
 package io.jboot.aop.injector;
 
-import com.google.inject.MembersInjector;
 import com.jfinal.log.Log;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
@@ -26,7 +25,7 @@ import java.lang.reflect.Field;
 /**
  * RPC 的注入器，用来初始化RPC对象
  */
-public class JbootrpcMembersInjector implements MembersInjector {
+public class JbootrpcMembersInjector  {
 
     private static Log log = Log.getLog(JbootrpcMembersInjector.class);
     private Field field;
@@ -35,7 +34,6 @@ public class JbootrpcMembersInjector implements MembersInjector {
         this.field = field;
     }
 
-    @Override
     public void injectMembers(Object instance) {
 
         JbootrpcService annotation = field.getAnnotation(JbootrpcService.class);

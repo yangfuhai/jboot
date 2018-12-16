@@ -94,8 +94,8 @@ public class JbootrpcConfig {
     private int hystrixTimeout = 5000; //单位：毫秒
     private int hystrixThreadPoolSize = 10;
 
-    private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();
-    private String hystrixSetterFactory = JbootrpcHystrixSetterFactoryDefault.class.getName();
+//    private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();
+//    private String hystrixSetterFactory = JbootrpcHystrixSetterFactoryDefault.class.getName();
 
     public String getHost() {
         return host;
@@ -269,29 +269,29 @@ public class JbootrpcConfig {
         this.hystrixTimeout = hystrixTimeout;
     }
 
-    public String getHystrixFallbackListener() {
-        return hystrixFallbackListener;
-    }
-
-    public void setHystrixFallbackListener(String hystrixFallbackListener) {
-        this.hystrixFallbackListener = hystrixFallbackListener;
-    }
-
-    public int getHystrixThreadPoolSize() {
-        return hystrixThreadPoolSize;
-    }
-
-    public void setHystrixThreadPoolSize(int hystrixThreadPoolSize) {
-        this.hystrixThreadPoolSize = hystrixThreadPoolSize;
-    }
-
-    public String getHystrixSetterFactory() {
-        return hystrixSetterFactory;
-    }
-
-    public void setHystrixSetterFactory(String hystrixSetterFactory) {
-        this.hystrixSetterFactory = hystrixSetterFactory;
-    }
+//    public String getHystrixFallbackListener() {
+//        return hystrixFallbackListener;
+//    }
+//
+//    public void setHystrixFallbackListener(String hystrixFallbackListener) {
+//        this.hystrixFallbackListener = hystrixFallbackListener;
+//    }
+//
+//    public int getHystrixThreadPoolSize() {
+//        return hystrixThreadPoolSize;
+//    }
+//
+//    public void setHystrixThreadPoolSize(int hystrixThreadPoolSize) {
+//        this.hystrixThreadPoolSize = hystrixThreadPoolSize;
+//    }
+//
+//    public String getHystrixSetterFactory() {
+//        return hystrixSetterFactory;
+//    }
+//
+//    public void setHystrixSetterFactory(String hystrixSetterFactory) {
+//        this.hystrixSetterFactory = hystrixSetterFactory;
+//    }
 
     public boolean isRegistryCheck() {
         return registryCheck;

@@ -15,12 +15,9 @@
  */
 package io.jboot.core.rpc.annotation;
 
-import com.google.inject.BindingAnnotation;
-
 import java.lang.annotation.*;
 
 @Inherited
-@BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD})
 public @interface JbootrpcService {

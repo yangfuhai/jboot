@@ -18,13 +18,15 @@ package io.jboot.web.fixedinterceptor;
 import io.jboot.Jboot;
 import io.jboot.component.jwt.JwtInterceptor;
 import io.jboot.component.metric.JbootMetricInterceptor;
-import io.jboot.component.opentracing.OpentracingInterceptor;
 import io.jboot.component.shiro.JbootShiroInterceptor;
 import io.jboot.web.controller.validate.ParaValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
 import io.jboot.web.limitation.LimitationInterceptor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -49,7 +51,6 @@ public class FixedInterceptors {
             new FixedInterceptorWapper(new ParaValidateInterceptor(), 30),
             new FixedInterceptorWapper(new JwtInterceptor(), 40),
             new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
-            new FixedInterceptorWapper(new OpentracingInterceptor(), 60),
             new FixedInterceptorWapper(new JbootMetricInterceptor(), 70)};
 
     private List<FixedInterceptorWapper> userInters = new ArrayList<>();
@@ -76,12 +77,7 @@ public class FixedInterceptors {
         inters = new ArrayList<>();
         inters.addAll(Arrays.asList(defaultInters));
         inters.addAll(userInters);
-        inters.sort(new Comparator<FixedInterceptorWapper>() {
-            @Override
-            public int compare(FixedInterceptorWapper f1, FixedInterceptorWapper f2) {
-                return Integer.compare(f1.getOrderNo(), f2.getOrderNo());
-            }
-        });
+        inters.sort(Comparator.comparingInt(FixedInterceptorWapper::getOrderNo));
 
         int i = 0;
         for (FixedInterceptorWapper interceptor : inters) {

@@ -16,37 +16,23 @@
 package io.jboot.aop;
 
 
-import com.google.inject.Binder;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
-import com.google.inject.matcher.AbstractMatcher;
-import com.google.inject.matcher.Matcher;
-import com.google.inject.matcher.Matchers;
-import com.google.inject.name.Names;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
-import com.jfinal.aop.Before;
+import com.jfinal.aop.Aop;
+import com.jfinal.aop.AopFactory;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
-import io.jboot.aop.injector.JbootrpcMembersInjector;
-import io.jboot.aop.interceptor.AopInterceptor;
 import io.jboot.core.mq.JbootmqMessageListener;
-import io.jboot.core.rpc.annotation.JbootrpcService;
 import io.jboot.event.JbootEventListener;
 import io.jboot.utils.ArrayUtils;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
  * Inject管理器
  */
-public class JbootInjectManager implements com.google.inject.Module, TypeListener {
+public class JbootInjectManager {
 
     private static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
 
@@ -61,14 +47,23 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
     }
 
 
-    private Injector injector;
+//    private Injector injector;
 
     private JbootInjectManager() {
-        injector = Guice.createInjector(this);
+        AopFactory aopFactory = Aop.getAopFactory();
     }
 
-    public Injector getInjector() {
-        return injector;
+//    public Injector getInjector() {
+////        return injector;
+//    }
+
+
+    public <T> T getInstance(Class<T> clazz) {
+        return Aop.get(clazz);
+    }
+
+    public void injectMembers(Object o) {
+        Aop.inject(o);
     }
 
 
@@ -77,40 +72,38 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
      *
      * @param binder
      */
-    @Override
-    public void configure(Binder binder) {
-
-        // 设置 TypeListener
-        binder.bindListener(Matchers.any(), this);
-
-        Matcher matcher = Matchers.annotatedWith(Bean.class)
-                .or(Matchers.annotatedWith(JbootrpcService.class))
-                .or(Matchers.annotatedWith(Before.class));
-
-
-        Matcher notSynthetic = new AbstractMatcher<Method>() {
-            @Override
-            public boolean matches(Method method) {
-                return !method.isSynthetic();
-            }
-        };
-
-        binder.bindInterceptor(matcher, notSynthetic, new AopInterceptor());
-
-        /**
-         * Bean 注解
-         */
-        beanBind(binder);
-
-    }
+//    @Override
+//    public void configure(Binder binder) {
+//
+//        // 设置 TypeListener
+//        binder.bindListener(Matchers.any(), this);
+//
+//        Matcher matcher = Matchers.annotatedWith(Bean.class)
+//                .or(Matchers.annotatedWith(JbootrpcService.class))
+//                .or(Matchers.annotatedWith(Before.class));
+//
+//
+//        Matcher notSynthetic = new AbstractMatcher<Method>() {
+//            @Override
+//            public boolean matches(Method method) {
+//                return !method.isSynthetic();
+//            }
+//        };
+//
+//        binder.bindInterceptor(matcher, notSynthetic, new AopInterceptor());
+//
+//        /**
+//         * Bean 注解
+//         */
+//        beanBind(binder);
+//
+//    }
 
 
     /**
      * auto bind interface impl
-     *
-     * @param binder
      */
-    private void beanBind(Binder binder) {
+    private void beanBind() {
 
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class implClass : classes) {
@@ -141,9 +134,7 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
                 }
                 try {
                     if (StrUtils.isBlank(name)) {
-                        binder.bind(interfaceClass).to(implClass);
-                    } else {
-                        binder.bind(interfaceClass).annotatedWith(Names.named(name)).to(implClass);
+                        Aop.addMapping(interfaceClass, implClass);
                     }
                 } catch (Throwable ex) {
                     System.err.println(String.format("can not bind [%s] to [%s]", interfaceClass, implClass));
@@ -159,15 +150,15 @@ public class JbootInjectManager implements com.google.inject.Module, TypeListene
      * @param encounter
      * @param <I>
      */
-    @Override
-    public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
-        Class clazz = type.getRawType();
-        if (clazz == null) return;
-
-        for (Field field : clazz.getDeclaredFields()) {
-            if (field.isAnnotationPresent(JbootrpcService.class)) {
-                encounter.register(new JbootrpcMembersInjector(field));
-            }
-        }
-    }
+//    @Override
+//    public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
+//        Class clazz = type.getRawType();
+//        if (clazz == null) return;
+//
+//        for (Field field : clazz.getDeclaredFields()) {
+//            if (field.isAnnotationPresent(JbootrpcService.class)) {
+//                encounter.register(new JbootrpcMembersInjector(field));
+//            }
+//        }
+//    }
 }

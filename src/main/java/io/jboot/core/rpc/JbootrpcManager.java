@@ -26,9 +26,7 @@ import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.event.JbootEventListener;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtils;
-import io.jboot.utils.ClassKits;
 import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StrUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -115,43 +113,43 @@ public class JbootrpcManager {
         }
     }
 
-    private JbootrpcHystrixFallbackListener fallbackListener = null;
+//    private JbootrpcHystrixFallbackListener fallbackListener = null;
+//
+//    public JbootrpcHystrixFallbackListener getHystrixFallbackListener() {
+//
+//        if (fallbackListener != null) {
+//            return fallbackListener;
+//        }
+//
+//        if (StrUtils.isNotBlank(config.getHystrixFallbackListener())) {
+//            fallbackListener = ClassKits.newInstance(config.getHystrixFallbackListener());
+//
+//        }
+//
+//        if (fallbackListener == null) {
+//            fallbackListener = new JbootrpcHystrixFallbackListenerDefault();
+//        }
+//
+//        return fallbackListener;
+//    }
 
-    public JbootrpcHystrixFallbackListener getHystrixFallbackListener() {
-
-        if (fallbackListener != null) {
-            return fallbackListener;
-        }
-
-        if (StrUtils.isNotBlank(config.getHystrixFallbackListener())) {
-            fallbackListener = ClassKits.newInstance(config.getHystrixFallbackListener());
-
-        }
-
-        if (fallbackListener == null) {
-            fallbackListener = new JbootrpcHystrixFallbackListenerDefault();
-        }
-
-        return fallbackListener;
-    }
-
-    private JbootrpcHystrixSetterFactory setterFactory = null;
-
-    public JbootrpcHystrixSetterFactory getHystrixSetterFactory() {
-
-        if (setterFactory != null) {
-            return setterFactory;
-        }
-
-        if (StrUtils.isNotBlank(config.getHystrixSetterFactory())) {
-            setterFactory = ClassKits.newInstance(config.getHystrixSetterFactory());
-        }
-
-        if (setterFactory == null) {
-            setterFactory = new JbootrpcHystrixSetterFactoryDefault();
-        }
-
-        return setterFactory;
-    }
+//    private JbootrpcHystrixSetterFactory setterFactory = null;
+//
+//    public JbootrpcHystrixSetterFactory getHystrixSetterFactory() {
+//
+//        if (setterFactory != null) {
+//            return setterFactory;
+//        }
+//
+//        if (StrUtils.isNotBlank(config.getHystrixSetterFactory())) {
+//            setterFactory = ClassKits.newInstance(config.getHystrixSetterFactory());
+//        }
+//
+//        if (setterFactory == null) {
+//            setterFactory = new JbootrpcHystrixSetterFactoryDefault();
+//        }
+//
+//        return setterFactory;
+//    }
 
 }

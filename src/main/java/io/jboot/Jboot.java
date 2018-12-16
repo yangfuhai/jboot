@@ -19,7 +19,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootInjectManager;
 import io.jboot.app.listener.JbootAppListenerManager;
-import io.jboot.component.hystrix.JbootHystrixCommand;
 import io.jboot.component.metric.JbootMetricManager;
 import io.jboot.component.redis.JbootRedis;
 import io.jboot.component.redis.JbootRedisManager;
@@ -422,7 +421,8 @@ public class Jboot {
      * @return
      */
     public static <T> T bean(Class<T> clazz) {
-        return JbootInjectManager.me().getInjector().getInstance(clazz);
+//        return JbootInjectManager.me().getInjector().getInstance(clazz);
+        return JbootInjectManager.me().getInstance(clazz);
     }
 
 
@@ -432,34 +432,9 @@ public class Jboot {
      * @param object
      */
     public static void injectMembers(Object object) {
-        JbootInjectManager.me().getInjector().injectMembers(object);
+        JbootInjectManager.me().injectMembers(object);
     }
 
-    /**
-     * 通过  hystrix 进行调用
-     *
-     * @param hystrixRunnable
-     * @param <T>
-     * @return
-     */
-    public static <T> T hystrix(JbootHystrixCommand hystrixRunnable) {
-        return (T) hystrixRunnable.execute();
-    }
-
-
-    private static Boolean isRunInjar = null;
-
-    /**
-     * 是否在jar包里运行
-     *
-     * @return
-     */
-    public static boolean isRunInJar() {
-        if (isRunInjar == null) {
-            isRunInjar = Thread.currentThread().getContextClassLoader().getResource("") == null;
-        }
-        return isRunInjar;
-    }
 
 
     /**
