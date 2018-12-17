@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot;
+package io.jboot.app;
 
-import io.jboot.core.config.annotation.PropertyModel;
-import io.jboot.web.JbootAppConfig;
+import io.jboot.app.config.annotation.PropertyModel;
 
-@PropertyModel(prefix = "jboot")
-public class JbootConfig {
+@PropertyModel(prefix = "jboot.app")
+public class JbootApplicationConfig {
 
-    private String version = "2.0-alpha.1";
-    private String mode = Jboot.MODE.DEV.getValue();
+    private String mode = "dev";
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
-    private String jfinalConfig = JbootAppConfig.class.getName();
+    private String jfinalConfig = "io.jboot.web.JbootAppConfig";
 
-    public String getVersion() {
-        return version;
-    }
 
     public String getMode() {
         return mode;
@@ -67,8 +62,7 @@ public class JbootConfig {
 
     @Override
     public String toString() {
-        return "JbootConfig {" +
-                "version='" + version + '\'' +
+        return "JbootApplication {" +
                 ", mode='" + mode + '\'' +
                 ", bannerEnable=" + bannerEnable +
                 ", bannerFile='" + bannerFile + '\'' +

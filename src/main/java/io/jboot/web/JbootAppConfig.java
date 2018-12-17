@@ -27,7 +27,6 @@ import com.jfinal.template.ext.directive.NowDirective;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
-import io.jboot.JbootConstants;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
@@ -229,11 +228,6 @@ public class JbootAppConfig extends JFinalConfig {
         JbootLimitationManager.me().init(routeList);
         JbootScheduleManager.me().init();
         JbootSwaggerManager.me().init();
-
-        /**
-         * 发送启动完成通知
-         */
-        Jboot.sendEvent(JbootConstants.EVENT_STARTED, null);
 
         JbootAppListenerManager.me().onJFinalStarted();
     }

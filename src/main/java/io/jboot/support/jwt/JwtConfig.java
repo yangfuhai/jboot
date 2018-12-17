@@ -15,7 +15,7 @@
  */
 package io.jboot.support.jwt;
 
-import io.jboot.core.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.PropertyModel;
 import io.jboot.kits.StringKits;
 
 /**

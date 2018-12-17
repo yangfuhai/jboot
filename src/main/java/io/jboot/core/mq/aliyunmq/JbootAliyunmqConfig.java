@@ -15,7 +15,7 @@
  */
 package io.jboot.core.mq.aliyunmq;
 
-import io.jboot.core.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.PropertyModel;
 
 
 @PropertyModel(prefix = "jboot.mq.aliyun")

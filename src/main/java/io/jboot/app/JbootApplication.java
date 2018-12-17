@@ -16,13 +16,9 @@
 package io.jboot.app;
 
 import com.jfinal.server.undertow.UndertowServer;
-
-import java.util.HashMap;
-import java.util.Map;
+import io.jboot.app.config.JbootConfigManager;
 
 public class JbootApplication {
-
-    private static Map<String, String> argMap;
 
     public static void main(String[] args) {
         run(args);
@@ -30,7 +26,7 @@ public class JbootApplication {
 
     public static void run(String[] args) {
 
-        parseArgs(args);
+        JbootConfigManager.parseArgs(args);
 
         UndertowServer.create("io.jboot.web.JbootAppConfig")
                 .config(config->{
@@ -41,47 +37,16 @@ public class JbootApplication {
     }
 
 
-    /**
-     * 解析启动参数
-     *
-     * @param args
-     */
-    private static void parseArgs(String[] args) {
-        if (args == null || args.length == 0) {
-            return;
-        }
-
-        for (String arg : args) {
-            int indexOf = arg.indexOf("=");
-            if (arg.startsWith("--") && indexOf > 0) {
-                String key = arg.substring(2, indexOf);
-                String value = arg.substring(indexOf + 1);
-                setBootArg(key, value);
-            }
-        }
-    }
 
     public static void setBootArg(String key, Object value) {
-        if (argMap == null) {
-            argMap = new HashMap<>();
-        }
-        argMap.put(key, value.toString());
+        JbootConfigManager.setBootArg(key, value.toString());
     }
 
-    /**
-     * 获取启动参数
-     *
-     * @param key
-     * @return
-     */
+
     public static String getBootArg(String key) {
-        if (argMap == null) return null;
-        return argMap.get(key);
+        return JbootConfigManager.getBootArg(key);
     }
 
-    public static Map<String, String> getBootArgs() {
-        return argMap;
-    }
 
 
 }

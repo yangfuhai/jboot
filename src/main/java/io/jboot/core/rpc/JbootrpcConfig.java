@@ -15,7 +15,7 @@
  */
 package io.jboot.core.rpc;
 
-import io.jboot.core.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.PropertyModel;
 
 import java.io.IOException;
 import java.net.ServerSocket;

@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.config;
+package io.jboot.app.config;
 
 import com.jfinal.core.converter.TypeConverter;
-import com.jfinal.kit.LogKit;
-import com.jfinal.kit.Prop;
-import com.jfinal.kit.PropKit;
-import com.jfinal.kit.StrKit;
-import com.jfinal.log.Log;
-import io.jboot.app.JbootApplication;
-import io.jboot.core.config.annotation.PropertyModel;
-import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.StringKits;
+import io.jboot.app.config.annotation.PropertyModel;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,12 +34,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JbootConfigManager {
 
-    private static final Log LOG = Log.getLog(JbootConfigManager.class);
-
+    private static Map<String, String> argMap;
 
     private Properties mainProperties;
 
-    private PropInfoMap propInfoMap = new PropInfoMap();
     private ConcurrentHashMap<String, Object> configs = new ConcurrentHashMap<>();
 
 
@@ -65,20 +55,27 @@ public class JbootConfigManager {
     }
 
 
-
     /**
      * 读取本地配置文件
      */
     public void init() {
-        try {
-            Prop prop = PropKit.use("jboot.properties");
-            mainProperties = prop.getProperties();
-        } catch (Throwable ex) {
-            LOG.warn("Could not find jboot.properties in your class path.");
+
+        File jbootPropertiesFile = new File(Kits.getRootClassPath(), "jboot.properties");
+        if (!jbootPropertiesFile.exists()) {
             mainProperties = new Properties();
+        } else {
+            mainProperties = new Prop("jboot.properties").getProperties();
         }
 
-        initModeProp();
+        String mode = getValueByKey("jboot.mode");
+
+        if (Kits.isNotBlank(mode)) {
+
+            String p = String.format("jboot-%s.properties", mode);
+            if (new File(Kits.getRootClassPath(), p).exists()) {
+                mainProperties.putAll(new Prop(p).getProperties());
+            }
+        }
 
     }
 
@@ -116,13 +113,11 @@ public class JbootConfigManager {
     }
 
     public <T> T newConfigObject(Class<T> clazz, String prefix, String file) {
-        // 不能通过RPC创建
-        // 原因：很多场景下回使用到配置，包括Guice，如果此时又通过Guice来创建Config，会出现循环调用的问题
 
-        T obj = ClassKits.newInstance(clazz, false);
-        Collection<Method> setMethods = ClassKits.getClassSetMethods(clazz);
+        T obj = Kits.newInstance(clazz);
+        Collection<Method> setMethods = Kits.getClassSetMethods(clazz);
 
-        if (ArrayKits.isNullOrEmpty(setMethods)) {
+        if (setMethods == null || setMethods.isEmpty()) {
             configs.put(clazz.getName() + prefix, obj);
             return obj;
         }
@@ -132,25 +127,25 @@ public class JbootConfigManager {
             String key = getKeyByMethod(prefix, method);
             String value = getValueByKey(key);
 
-            if (StringKits.isNotBlank(file)) {
+            if (Kits.isNotBlank(file)) {
                 try {
-                    Prop prop = PropKit.use(file);
-                    String filePropValue = prop.get(key);
-                    if (StringKits.isNotBlank(filePropValue)) {
+                    Prop prop = new Prop(file);
+                    String filePropValue = getValueByKey(prop.getProperties(), key);
+                    if (Kits.isNotBlank(filePropValue)) {
                         value = filePropValue;
                     }
                 } catch (Throwable ex) {
-                    LOG.warn("Could not find " + file + " in your class path, use jboot.properties to replace. ");
+                    Kits.doNothing(ex);
                 }
             }
 
             try {
-                if (StringKits.isNotBlank(value)) {
+                if (Kits.isNotBlank(value)) {
                     Object val = convert(method.getParameterTypes()[0], value);
                     method.invoke(obj, val);
                 }
             } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
+                ex.printStackTrace();
             }
         }
 
@@ -159,81 +154,72 @@ public class JbootConfigManager {
 
     private String getKeyByMethod(String prefix, Method method) {
 
-        String key = StrKit.firstCharToLowerCase(method.getName().substring(3));
+        String key = Kits.firstCharToLowerCase(method.getName().substring(3));
 
-        if (StringKits.isNotBlank(prefix)) {
+        if (Kits.isNotBlank(prefix)) {
             key = prefix.trim() + "." + key;
         }
 
         return key;
     }
 
+
+    public String getValueByKey(String key) {
+        return getValueByKey(mainProperties, key);
+    }
+
     /**
-     * 根据 key 获取value的值
-     * <p>
-     * 优先获取系统启动设置参数
-     * 第二 从系统的环境变量中获取
-     * 第三 获取本地配置
+     * 获取值的优先顺序：1、启动配置  2、环境变量   3、properties配置文件
      *
      * @param key
      * @return
      */
-    public String getValueByKey(String key) {
+    public String getValueByKey(Properties properties, String key) {
 
-        String value = JbootApplication.getBootArg(key);
+        String value = getBootArg(key);
 
-        if (StringKits.isBlank(value)) {
+        if (Kits.isBlank(value)) {
             value = System.getenv(key);
         }
 
-        if (StringKits.isBlank(value)) {
-            value = (String) mainProperties.get(key);
+        if (Kits.isBlank(value)) {
+            value = System.getProperty(key);
         }
-        return value;
+
+        if (Kits.isBlank(value)) {
+            value = (String) properties.get(key);
+        }
+        return value == null ? null : value.trim();
     }
 
 
     /**
-     * 或者Jboot默认的配置信息
+     * 获取Jboot默认的配置信息
      *
      * @return
      */
     public Properties getProperties() {
-        Properties properties = new Properties();
 
+        Properties properties = new Properties();
         properties.putAll(mainProperties);
 
-        if (JbootApplication.getBootArgs() != null) {
-            for (Map.Entry<String, String> entry : JbootApplication.getBootArgs().entrySet()) {
+        if (System.getenv() != null) {
+            for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+                properties.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (System.getProperties() != null) {
+            properties.putAll(System.getProperties());
+        }
+
+        if (getBootArgs() != null) {
+            for (Map.Entry<String, String> entry : getBootArgs().entrySet()) {
                 properties.put(entry.getKey(), entry.getValue());
             }
         }
 
         return properties;
-    }
-
-
-    /**
-     * 初始化不同model下的properties文件
-     */
-    private void initModeProp() {
-        String mode = (String) mainProperties.get("jboot.mode");
-        if (StringKits.isBlank(mode)) {
-            return;
-        }
-
-        Prop modeProp = null;
-        try {
-            String p = String.format("jboot-%s.properties", mode);
-            modeProp = PropKit.use(p);
-        } catch (Throwable ex) {
-        }
-
-        if (modeProp == null) {
-            return;
-        }
-
-        mainProperties.putAll(modeProp.getProperties());
     }
 
 
@@ -247,17 +233,53 @@ public class JbootConfigManager {
     private static final Object convert(Class<?> type, String s) {
 
         try {
-            return TypeConverter.me().convert(type,s.trim());
+            return TypeConverter.me().convert(type, s);
         } catch (ParseException e) {
-            throw new JbootIllegalConfigException(type.getName() + " can not be converted, please use other type in your config class!");
+            throw new RuntimeException(type.getName() + " can not be converted, please use other type in your config class!");
         }
     }
 
 
+    /**
+     * 解析启动参数
+     *
+     * @param args
+     */
+    public static void parseArgs(String[] args) {
+        if (args == null || args.length == 0) {
+            return;
+        }
 
+        for (String arg : args) {
+            int indexOf = arg.indexOf("=");
+            if (arg.startsWith("--") && indexOf > 0) {
+                String key = arg.substring(2, indexOf);
+                String value = arg.substring(indexOf + 1);
+                setBootArg(key, value);
+            }
+        }
+    }
 
-    public PropInfoMap getPropInfoMap() {
-        return propInfoMap;
+    public static void setBootArg(String key, Object value) {
+        if (argMap == null) {
+            argMap = new HashMap<>();
+        }
+        argMap.put(key, value.toString());
+    }
+
+    /**
+     * 获取启动参数
+     *
+     * @param key
+     * @return
+     */
+    public static String getBootArg(String key) {
+        if (argMap == null) return null;
+        return argMap.get(key);
+    }
+
+    public static Map<String, String> getBootArgs() {
+        return argMap;
     }
 
 

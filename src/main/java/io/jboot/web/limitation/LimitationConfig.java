@@ -15,7 +15,7 @@
  */
 package io.jboot.web.limitation;
 
-import io.jboot.core.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.PropertyModel;
 import io.jboot.web.limitation.web.NoneAuthorizer;
 
 /**

@@ -19,7 +19,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.jfinal.aop.Aop;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
-import io.jboot.core.config.JbootConfigManager;
+import io.jboot.app.config.JbootConfigManager;
 import io.jboot.core.event.JbootEvent;
 import io.jboot.core.event.JbootEventManager;
 import io.jboot.core.rpc.JbootrpcManager;
@@ -35,8 +35,7 @@ import io.jboot.support.redis.JbootRedisManager;
  */
 public class Jboot {
 
-
-
+    private static Boolean devMode = null;
 
     /**
      * 是否是开发模式
@@ -44,11 +43,10 @@ public class Jboot {
      * @return
      */
     public static boolean isDevMode() {
-//        if (devMode == null) {
-//            JbootConfig config = getJbootConfig();
-//            devMode = MODE.DEV.getValue().equals(config.getMode());
-//        }
-        return true;
+        if (devMode == null) {
+            devMode = MODE.DEV.getValue().equals(JbootConfigManager.me().getValueByKey("jboot.devMode"));
+        }
+        return devMode;
     }
 
 
@@ -60,7 +58,6 @@ public class Jboot {
     public static JbootCache getCache() {
         return JbootCacheManager.me().getCache();
     }
-
 
 
     /**
@@ -76,8 +73,8 @@ public class Jboot {
     /**
      * 获取 MetricRegistry
      *
-     * @return
-//     */
+     * @return //
+     */
     public static MetricRegistry getMetric() {
         return JbootMetricManager.me().metric();
     }

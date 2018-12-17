@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.config.annotation;
+package io.jboot;
 
-import java.lang.annotation.*;
+/**
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Title: Jboot 常量定义
+ * @Description: Jboot APP 内置的所有常量信息
+ * @Package io.jboot
+ */
+public class JbootConsts {
+
+    public static String VERSION = "2.0-alpha.1";
 
 
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-public @interface PropertyValue {
-    String value();
-
-    String file() default "";
+    public static final String ATTR_REQUEST = "REQUEST";
+    public static final String ATTR_CONTEXT_PATH = "CPATH";
 }

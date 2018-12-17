@@ -16,7 +16,7 @@
 package io.jboot.support.shiro;
 
 import com.jfinal.kit.PathKit;
-import io.jboot.core.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.PropertyModel;
 
 import java.io.File;
 

@@ -15,7 +15,7 @@
  */
 package io.jboot.core.mq.redismq;
 
-import io.jboot.core.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.PropertyModel;
 import io.jboot.support.redis.JbootRedisConfig;
 
 

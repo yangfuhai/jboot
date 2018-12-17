@@ -15,7 +15,7 @@
  */
 package io.jboot.core.mq;
 
-import io.jboot.core.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.PropertyModel;
 
 
 @PropertyModel(prefix = "jboot.mq")

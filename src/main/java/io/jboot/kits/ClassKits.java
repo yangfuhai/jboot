@@ -18,8 +18,8 @@ package io.jboot.kits;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.jfinal.aop.Aop;
 import com.jfinal.log.Log;
-import io.jboot.Jboot;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -79,7 +79,7 @@ public class ClassKits {
 
     public static <T> T newInstance(Class<T> clazz, boolean createByAop) {
         if (createByAop) {
-            return Jboot.bean(clazz);
+            return Aop.get(clazz);
         } else {
             try {
                 Constructor constructor = clazz.getDeclaredConstructor();

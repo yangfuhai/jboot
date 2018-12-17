@@ -18,7 +18,7 @@ package io.jboot.web.render;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.render.JsonRender;
 import com.jfinal.render.RenderException;
-import io.jboot.JbootConstants;
+import io.jboot.JbootConsts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,8 +44,8 @@ public class JbootJsonRender extends JsonRender {
             add("javax.servlet.request.key_size");
             add("javax.servlet.request.cipher_suite");
             add("_res");    // I18nInterceptor 中使用的 _res
-            add(JbootConstants.ATTR_REQUEST);
-            add(JbootConstants.ATTR_CONTEXT_PATH);
+            add(JbootConsts.ATTR_REQUEST);
+            add(JbootConsts.ATTR_CONTEXT_PATH);
         }
     };
 
