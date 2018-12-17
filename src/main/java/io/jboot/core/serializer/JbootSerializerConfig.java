@@ -15,10 +15,10 @@
  */
 package io.jboot.core.serializer;
 
-import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyModel;
 
 
-@PropertyConfig(prefix = "jboot.serializer")
+@PropertyModel(prefix = "jboot.serializer")
 public class JbootSerializerConfig {
     public static final String FST = "fst";
     public static final String FASTJSON = "fastjson";

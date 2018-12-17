@@ -13,25 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.render;
+package io.jboot.core.config.annotation;
 
-import io.jboot.core.config.annotation.PropertyModel;
-import io.jboot.kits.StringKits;
+import java.lang.annotation.*;
 
-@PropertyModel(prefix = "jboot.render")
-public class JbootRenderConfig {
 
-    private String cdn;
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+public @interface PropertyValue {
+    String value();
 
-    public String getCdn() {
-        return cdn;
-    }
-
-    public void setCdn(String cdn) {
-        this.cdn = cdn;
-    }
-
-    public boolean isEnableCdn() {
-        return StringKits.isNotBlank(cdn);
-    }
+    String file() default "";
 }

@@ -30,75 +30,12 @@ import io.jboot.support.metric.JbootMetricManager;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * JBOOT 启动类，项目入口
  */
 public class Jboot {
 
 
-    private static Map<String, String> argMap;
-
-
-    /**
-     * main 入口方法
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        run(args);
-    }
-
-
-    public static void run(String[] args) {
-        parseArgs(args);
-//        jboot.start();
-    }
-
-
-    /**
-     * 解析启动参数
-     *
-     * @param args
-     */
-    private static void parseArgs(String[] args) {
-        if (args == null || args.length == 0) {
-            return;
-        }
-
-        for (String arg : args) {
-            int indexOf = arg.indexOf("=");
-            if (arg.startsWith("--") && indexOf > 0) {
-                String key = arg.substring(2, indexOf);
-                String value = arg.substring(indexOf + 1);
-                setBootArg(key, value);
-            }
-        }
-    }
-
-    public static void setBootArg(String key, Object value) {
-        if (argMap == null) {
-            argMap = new HashMap<>();
-        }
-        argMap.put(key, value.toString());
-    }
-
-    /**
-     * 获取启动参数
-     *
-     * @param key
-     * @return
-     */
-    public static String getBootArg(String key) {
-        if (argMap == null) return null;
-        return argMap.get(key);
-    }
-
-    public static Map<String, String> getBootArgs() {
-        return argMap;
-    }
 
 
     /**

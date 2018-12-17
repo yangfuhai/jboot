@@ -15,10 +15,10 @@
  */
 package io.jboot.core.sso;
 
-import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyModel;
 
 
-@PropertyConfig(prefix = "jboot.sso")
+@PropertyModel(prefix = "jboot.sso")
 public class JbootssoConfig {
 
 }

@@ -15,11 +15,11 @@
  */
 package io.jboot.core.mq.redismq;
 
-import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyModel;
 import io.jboot.support.redis.JbootRedisConfig;
 
 
-@PropertyConfig(prefix = "jboot.mq.redis")
+@PropertyModel(prefix = "jboot.mq.redis")
 public class JbootmqRedisConfig extends JbootRedisConfig {
 
 

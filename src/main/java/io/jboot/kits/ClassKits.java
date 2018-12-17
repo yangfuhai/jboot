@@ -77,8 +77,8 @@ public class ClassKits {
     }
 
 
-    public static <T> T newInstance(Class<T> clazz, boolean createByGuice) {
-        if (createByGuice) {
+    public static <T> T newInstance(Class<T> clazz, boolean createByAop) {
+        if (createByAop) {
             return Jboot.bean(clazz);
         } else {
             try {

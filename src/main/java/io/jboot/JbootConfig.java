@@ -15,10 +15,10 @@
  */
 package io.jboot;
 
-import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyModel;
 import io.jboot.web.JbootAppConfig;
 
-@PropertyConfig(prefix = "jboot")
+@PropertyModel(prefix = "jboot")
 public class JbootConfig {
 
     private String version = "2.0-alpha.1";

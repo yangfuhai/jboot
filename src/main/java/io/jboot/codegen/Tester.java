@@ -17,7 +17,7 @@ package io.jboot.codegen;
 
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
-import io.jboot.Jboot;
+import io.jboot.app.JbootApplication;
 import io.jboot.codegen.model.JbootBaseModelGenerator;
 import io.jboot.codegen.model.JbootModelGenerator;
 import io.jboot.codegen.service.JbootServiceImplGenerator;
@@ -34,8 +34,8 @@ public class Tester {
 
     public static void main(String[] args) {
 
-        Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
-        Jboot.setBootArg("jboot.datasource.user", "root");
+        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
+        JbootApplication.setBootArg("jboot.datasource.user", "root");
 
         String modelPackage = "io.jboot.codegen.test.model";
 

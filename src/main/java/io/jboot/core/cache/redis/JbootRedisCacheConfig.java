@@ -16,13 +16,13 @@
 package io.jboot.core.cache.redis;
 
 
-import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyModel;
 import io.jboot.support.redis.JbootRedisConfig;
 
 /**
  * JbootRedis 缓存的配置文件
  */
-@PropertyConfig(prefix = "jboot.cache.redis")
+@PropertyModel(prefix = "jboot.cache.redis")
 public class JbootRedisCacheConfig extends JbootRedisConfig {
 
 

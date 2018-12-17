@@ -16,7 +16,7 @@
 package io.jboot.codegen.service;
 
 import com.jfinal.plugin.activerecord.generator.TableMeta;
-import io.jboot.Jboot;
+import io.jboot.app.JbootApplication;
 import io.jboot.codegen.CodeGenHelpler;
 
 import java.util.List;
@@ -26,8 +26,8 @@ public class JbootServiceGenerator {
 
     public static void main(String[] args) {
 
-        Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
-        Jboot.setBootArg("jboot.datasource.user", "root");
+        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
+        JbootApplication.setBootArg("jboot.datasource.user", "root");
 
         String basePackage = "io.jboot.codegen.service.test";
         String modelPackage = "io.jboot.codegen.model.test";

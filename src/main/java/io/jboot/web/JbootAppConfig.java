@@ -32,19 +32,18 @@ import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.app.listener.JbootAppListenerManager;
-import io.jboot.kits.StringKits;
 import io.jboot.core.log.Slf4jLogFactory;
+import io.jboot.core.rpc.JbootrpcManager;
+import io.jboot.core.schedule.JbootScheduleManager;
+import io.jboot.db.JbootDbManager;
+import io.jboot.kits.ArrayKits;
+import io.jboot.kits.ClassKits;
+import io.jboot.kits.ClassScanner;
+import io.jboot.kits.StringKits;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
 import io.jboot.support.swagger.JbootSwaggerManager;
-import io.jboot.core.config.JbootConfigManager;
-import io.jboot.core.rpc.JbootrpcManager;
-import io.jboot.db.JbootDbManager;
-import io.jboot.core.schedule.JbootScheduleManager;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.ClassScanner;
 import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -252,7 +251,6 @@ public class JbootAppConfig extends JFinalConfig {
                 }
             }
         }
-        JbootConfigManager.me().destroy();
         JbootAppListenerManager.me().onJFinalStop();
     }
 

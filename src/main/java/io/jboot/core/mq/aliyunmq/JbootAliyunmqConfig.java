@@ -15,10 +15,10 @@
  */
 package io.jboot.core.mq.aliyunmq;
 
-import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyModel;
 
 
-@PropertyConfig(prefix = "jboot.mq.aliyun")
+@PropertyModel(prefix = "jboot.mq.aliyun")
 public class JbootAliyunmqConfig {
 
     private String accessKey;

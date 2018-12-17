@@ -15,7 +15,7 @@
  */
 package io.jboot.web.limitation;
 
-import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyModel;
 import io.jboot.web.limitation.web.NoneAuthorizer;
 
 /**
@@ -23,7 +23,7 @@ import io.jboot.web.limitation.web.NoneAuthorizer;
  * @version V1.0
  * @Package io.jboot.web.limitation
  */
-@PropertyConfig(prefix = "jboot.limitation")
+@PropertyModel(prefix = "jboot.limitation")
 public class LimitationConfig {
 
     private int limitAjaxCode = 886;

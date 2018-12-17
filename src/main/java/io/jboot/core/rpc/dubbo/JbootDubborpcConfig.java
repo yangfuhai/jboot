@@ -16,10 +16,10 @@
 package io.jboot.core.rpc.dubbo;
 
 import com.alibaba.dubbo.config.ProtocolConfig;
-import io.jboot.core.config.annotation.PropertyConfig;
+import io.jboot.core.config.annotation.PropertyModel;
 
 
-@PropertyConfig(prefix = "jboot.rpc.dubbo")
+@PropertyModel(prefix = "jboot.rpc.dubbo")
 public class JbootDubborpcConfig {
 
 
