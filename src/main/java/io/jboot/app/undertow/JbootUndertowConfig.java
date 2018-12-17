@@ -11,6 +11,7 @@ public class JbootUndertowConfig extends UndertowConfig {
     public JbootUndertowConfig(String jfinalConfigClass) {
         super(jfinalConfigClass);
         p.append(new JbootPropExt());
+        init();
     }
 
     public JbootUndertowConfig(Class<?> jfinalConfigClass, String undertowConfig) {
@@ -20,5 +21,7 @@ public class JbootUndertowConfig extends UndertowConfig {
     public JbootUndertowConfig(String jfinalConfigClass, String undertowConfig) {
         super(jfinalConfigClass, undertowConfig);
         p.append(new JbootPropExt());
+        init();
     }
 }
+
