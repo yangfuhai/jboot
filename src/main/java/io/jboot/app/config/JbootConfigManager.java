@@ -15,12 +15,10 @@
  */
 package io.jboot.app.config;
 
-import com.jfinal.core.converter.TypeConverter;
 import io.jboot.app.config.annotation.PropertyModel;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -141,7 +139,7 @@ public class JbootConfigManager {
 
             try {
                 if (Kits.isNotBlank(value)) {
-                    Object val = convert(method.getParameterTypes()[0], value);
+                    Object val = Kits.convert(method.getParameterTypes()[0], value);
                     method.invoke(obj, val);
                 }
             } catch (Throwable ex) {
@@ -223,29 +221,13 @@ public class JbootConfigManager {
     }
 
 
-    /**
-     * 数据转化
-     *
-     * @param type
-     * @param s
-     * @return
-     */
-    private static final Object convert(Class<?> type, String s) {
-
-        try {
-            return TypeConverter.me().convert(type, s);
-        } catch (ParseException e) {
-            throw new RuntimeException(type.getName() + " can not be converted, please use other type in your config class!");
-        }
-    }
-
 
     /**
      * 解析启动参数
      *
      * @param args
      */
-    public static void parseArgs(String[] args) {
+    public void parseArgs(String[] args) {
         if (args == null || args.length == 0) {
             return;
         }
@@ -260,7 +242,7 @@ public class JbootConfigManager {
         }
     }
 
-    public static void setBootArg(String key, Object value) {
+    public void setBootArg(String key, Object value) {
         if (argMap == null) {
             argMap = new HashMap<>();
         }
@@ -273,12 +255,12 @@ public class JbootConfigManager {
      * @param key
      * @return
      */
-    public static String getBootArg(String key) {
+    public String getBootArg(String key) {
         if (argMap == null) return null;
         return argMap.get(key);
     }
 
-    public static Map<String, String> getBootArgs() {
+    public Map<String, String> getBootArgs() {
         return argMap;
     }
 

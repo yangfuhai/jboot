@@ -89,4 +89,40 @@ class Kits {
 
     public static void doNothing(Throwable ex) {
     }
+
+    public static final Object convert(Class<?> type, String s) {
+
+        if (type == String.class) {
+            return s;
+        }
+
+        if (type == Integer.class || type == int.class) {
+            return Integer.parseInt(s);
+        } else if (type == Long.class || type == long.class) {
+            return Long.parseLong(s);
+        } else if (type == Double.class || type == double.class) {
+            return Double.parseDouble(s);
+        } else if (type == Float.class || type == float.class) {
+            return Float.parseFloat(s);
+        } else if (type == Boolean.class || type == boolean.class) {
+            String value = s.toLowerCase();
+            if ("1".equals(value) || "true".equals(value)) {
+                return Boolean.TRUE;
+            } else if ("0".equals(value) || "false".equals(value)) {
+                return Boolean.FALSE;
+            } else {
+                throw new RuntimeException("Can not parse to boolean type of value: " + s);
+            }
+        } else if (type == java.math.BigDecimal.class) {
+            return new java.math.BigDecimal(s);
+        } else if (type == java.math.BigInteger.class) {
+            return new java.math.BigInteger(s);
+        } else if (type == byte[].class) {
+            return s.getBytes();
+        }
+
+        throw new RuntimeException(type.getName() + " can not be converted, please use other type in your config class!");
+
+    }
+
 }

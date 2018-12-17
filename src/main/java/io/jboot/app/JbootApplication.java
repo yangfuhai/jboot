@@ -26,27 +26,20 @@ public class JbootApplication {
 
     public static void run(String[] args) {
 
-        JbootConfigManager.parseArgs(args);
+        JbootConfigManager.me().parseArgs(args);
 
         UndertowServer.create("io.jboot.web.JbootAppConfig")
-                .config(config->{
-                    config.addHotSwapClassPrefix("io.jboot");
-                    config.setHost("0.0.0.0");
-                    config.setPort(8080);
+                .config(undertowConfig -> {
+                    undertowConfig.addHotSwapClassPrefix("io.jboot");
+                    undertowConfig.setHost("0.0.0.0");
+                    undertowConfig.setPort(8080);
                 }).start();
     }
 
 
-
     public static void setBootArg(String key, Object value) {
-        JbootConfigManager.setBootArg(key, value.toString());
+        JbootConfigManager.me().setBootArg(key, value.toString());
     }
-
-
-    public static String getBootArg(String key) {
-        return JbootConfigManager.getBootArg(key);
-    }
-
 
 
 }
