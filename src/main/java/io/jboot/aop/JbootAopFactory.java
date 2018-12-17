@@ -3,7 +3,6 @@ package io.jboot.aop;
 import com.jfinal.aop.*;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
-import io.jboot.aop.interceptor.JFinalBeforeInvocation;
 import io.jboot.core.mq.JbootmqMessageListener;
 import io.jboot.core.event.JbootEventListener;
 import io.jboot.kits.ArrayKits;
@@ -66,8 +65,7 @@ public class JbootAopFactory extends AopFactory implements Interceptor {
     @Override
     public void intercept(Invocation inv) {
 
-
-        JFinalBeforeInvocation invocation = new JFinalBeforeInvocation(inv);
+        JbootAopInvocation invocation = new JbootAopInvocation(inv);
         invocation.invoke();
 
     }
@@ -94,7 +92,7 @@ public class JbootAopFactory extends AopFactory implements Interceptor {
 
             for (Class interfaceClass : interfaceClasses) {
                 if (inExcludes(interfaceClass,excludes) == false){
-                    Aop.addMapping(interfaceClass, implClass);
+                    this.addMapping(interfaceClass, implClass);
                 }
             }
         }

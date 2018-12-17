@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop.interceptor;
+package io.jboot.aop;
 
 import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.InterceptorManager;
 import com.jfinal.aop.Invocation;
 import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
 import io.jboot.aop.interceptor.metric.*;
-import io.jboot.support.metric.JbootMetricManager;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ClassKits;
+import io.jboot.support.metric.JbootMetricManager;
 
 import java.lang.reflect.Method;
 
 
-public class JFinalBeforeInvocation extends Invocation {
+public class JbootAopInvocation extends Invocation {
 
 
     private Interceptor[] inters;
@@ -62,15 +60,15 @@ public class JFinalBeforeInvocation extends Invocation {
     private static boolean metricConfigOk = JbootMetricManager.me().isConfigOk();
 
 
-    public JFinalBeforeInvocation(Invocation originInvocation) {
+    public JbootAopInvocation(Invocation originInvocation) {
         this.originInvocation = originInvocation;
 
-        Class targetClass = ClassKits.getUsefulClass(originInvocation.getTarget().getClass());
-        Method method = originInvocation.getMethod();
+//        Class targetClass = ClassKits.getUsefulClass(originInvocation.getTarget().getClass());
+//        Method method = originInvocation.getMethod();
 
-        this.inters = metricConfigOk
-                ? InterceptorManager.me().buildServiceMethodInterceptor(ALL_INTERS, targetClass, method)
-                : InterceptorManager.me().buildServiceMethodInterceptor(NO_METRIC_INTERS, targetClass, method);
+        this.inters = metricConfigOk ? ALL_INTERS : NO_METRIC_INTERS;
+//                ? InterceptorManager.me().buildServiceMethodInterceptor(ALL_INTERS, targetClass, method)
+//                : InterceptorManager.me().buildServiceMethodInterceptor(NO_METRIC_INTERS, targetClass, method);
 
     }
 
@@ -82,7 +80,6 @@ public class JFinalBeforeInvocation extends Invocation {
         } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
             try {
                 originInvocation.invoke();
-                setReturnValue(originInvocation.getReturnValue());
             } catch (Throwable throwable) {
                 if (throwable instanceof RuntimeException) {
                     throw (RuntimeException) throwable;
@@ -122,5 +119,10 @@ public class JFinalBeforeInvocation extends Invocation {
     @Override
     public Object[] getArgs() {
         return originInvocation.getArgs();
+    }
+
+    @Override
+    public <T> T getReturnValue() {
+        return originInvocation.getReturnValue();
     }
 }

@@ -16,5 +16,6 @@ public class IndexController extends JbootController {
     public void index(){
 
         renderText("index ..." + userService.getName());
+//        renderText("index ...");
     }
 }

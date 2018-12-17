@@ -42,6 +42,7 @@ import java.util.*;
  * 数据库 管理
  */
 public class JbootDbManager {
+
     private static JbootDbManager manager;
 
 
@@ -50,7 +51,7 @@ public class JbootDbManager {
 
     public static JbootDbManager me() {
         if (manager == null) {
-            manager = ClassKits.singleton(JbootDbManager.class);
+            manager =new JbootDbManager();
         }
         return manager;
     }
