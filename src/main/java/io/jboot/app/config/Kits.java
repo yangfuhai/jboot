@@ -1,8 +1,6 @@
 package io.jboot.app.config;
 
 
-import com.jfinal.kit.PathKit;
-
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
@@ -67,7 +65,7 @@ class Kits {
                 rootClassPath = new File(path).getAbsolutePath();
             } catch (Exception e) {
                 try {
-                    String path = PathKit.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                    String path = Kits.class.getProtectionDomain().getCodeSource().getLocation().getPath();
                     path = java.net.URLDecoder.decode(path, "UTF-8");
                     if (path.endsWith(File.separator)) {
                         path = path.substring(0, path.length() - 1);
@@ -84,7 +82,7 @@ class Kits {
 
     public static ClassLoader getClassLoader() {
         ClassLoader ret = Thread.currentThread().getContextClassLoader();
-        return ret != null ? ret : PathKit.class.getClassLoader();
+        return ret != null ? ret : Kits.class.getClassLoader();
     }
 
     public static void doNothing(Throwable ex) {
