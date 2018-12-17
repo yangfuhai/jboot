@@ -30,9 +30,7 @@ import io.jboot.support.metric.JbootMetricManager;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
 
-/**
- * JBOOT 启动类，项目入口
- */
+
 public class Jboot {
 
     private static Boolean devMode = null;
@@ -44,7 +42,7 @@ public class Jboot {
      */
     public static boolean isDevMode() {
         if (devMode == null) {
-            devMode = MODE.DEV.getValue().equals(JbootConfigManager.me().getValueByKey("jboot.devMode"));
+            devMode = MODE.DEV.getValue().equals(JbootConfigManager.me().getValueByKey("jboot.app.mode"));
         }
         return devMode;
     }

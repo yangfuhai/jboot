@@ -17,6 +17,7 @@ package io.jboot.app;
 
 import com.jfinal.server.undertow.UndertowServer;
 import io.jboot.app.config.JbootConfigManager;
+import io.jboot.app.undertow.JbootUndertowConfig;
 
 public class JbootApplication {
 
@@ -28,13 +29,24 @@ public class JbootApplication {
 
         JbootConfigManager.me().parseArgs(args);
 
-        UndertowServer.create("io.jboot.web.JbootAppConfig")
-                .config(undertowConfig -> {
-                    undertowConfig.addHotSwapClassPrefix("io.jboot");
-                    undertowConfig.setHost("0.0.0.0");
-                    undertowConfig.setPort(8080);
-                }).start();
+        JbootApplicationConfig applicationConfig = JbootConfigManager.me().get(JbootApplicationConfig.class);
+        JbootUndertowConfig undertowConfig = new JbootUndertowConfig(applicationConfig.getJfinalConfig());
+
+        printBannerInfo(applicationConfig);
+
+        UndertowServer.create(undertowConfig).start();
     }
+
+
+    private static void printBannerInfo(JbootApplicationConfig applicationConfig) {
+        if (!applicationConfig.isBannerEnable()) {
+            return ;
+        }
+
+        System.out.println(JbootApplicationKits.getBannerText(applicationConfig.getBannerFile()));
+    }
+
+
 
 
     public static void setBootArg(String key, Object value) {
