@@ -3,9 +3,9 @@ package io.jboot.app;
 
 import java.io.*;
 
-class JbootApplicationKits {
+class Banner {
 
-    public static String getBannerText(String file) {
+    public static String getText(String file) {
         File bannerFile = new File(getRootClassPath(), file);
         if (bannerFile.exists() && bannerFile.canRead()) {
             String bannerFileText = readString(bannerFile);
@@ -32,7 +32,7 @@ class JbootApplicationKits {
             return new File(path).getAbsolutePath();
         } catch (Exception e) {
             try {
-                String path = JbootApplicationKits.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                String path = Banner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
                 path = java.net.URLDecoder.decode(path, "UTF-8");
                 if (path.endsWith(File.separator)) {
                     path = path.substring(0, path.length() - 1);
@@ -47,7 +47,7 @@ class JbootApplicationKits {
 
     private static ClassLoader getClassLoader() {
         ClassLoader ret = Thread.currentThread().getContextClassLoader();
-        return ret != null ? ret : JbootApplicationKits.class.getClassLoader();
+        return ret != null ? ret : Banner.class.getClassLoader();
     }
 
 

@@ -15,6 +15,7 @@
  */
 package io.jboot.app;
 
+import com.jfinal.server.undertow.UndertowConfig;
 import com.jfinal.server.undertow.UndertowServer;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.undertow.JbootUndertowConfig;
@@ -26,27 +27,29 @@ public class JbootApplication {
     }
 
     public static void run(String[] args) {
+        run(args, null);
+    }
+
+    public static void run(String[] args, UndertowConfig undertowConfig) {
 
         JbootConfigManager.me().parseArgs(args);
 
-        JbootApplicationConfig applicationConfig = JbootConfigManager.me().get(JbootApplicationConfig.class);
-        JbootUndertowConfig undertowConfig = new JbootUndertowConfig(applicationConfig.getJfinalConfig());
+        JbootApplicationConfig appConfig = JbootConfigManager.me().get(JbootApplicationConfig.class);
+        printBannerInfo(appConfig);
 
-        printBannerInfo(applicationConfig);
+        if (undertowConfig == null) {
+            undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
+        }
 
         UndertowServer.create(undertowConfig).start();
     }
 
 
-    private static void printBannerInfo(JbootApplicationConfig applicationConfig) {
-        if (!applicationConfig.isBannerEnable()) {
-            return ;
+    private static void printBannerInfo(JbootApplicationConfig appConfig) {
+        if (appConfig.isBannerEnable()) {
+            System.out.println(Banner.getText(appConfig.getBannerFile()));
         }
-
-        System.out.println(JbootApplicationKits.getBannerText(applicationConfig.getBannerFile()));
     }
-
-
 
 
     public static void setBootArg(String key, Object value) {

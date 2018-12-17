@@ -24,6 +24,7 @@ public class JbootApplicationConfig {
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
     private String jfinalConfig = "io.jboot.web.JbootAppConfig";
+    private String hotSwapClassPrefix = "io.jboot";
 
 
     public String getMode() {
