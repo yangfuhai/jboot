@@ -51,10 +51,7 @@ public class JbootConfigManager {
     }
 
 
-    /**
-     * 读取本地配置文件
-     */
-    public void init() {
+    private void init() {
 
         File jbootPropertiesFile = new File(Kits.getRootClassPath(), "jboot.properties");
         if (!jbootPropertiesFile.exists()) {
@@ -96,19 +93,22 @@ public class JbootConfigManager {
     public <T> T get(Class<T> clazz, String prefix, String file) {
 
         T obj = (T) configs.get(clazz.getName() + prefix);
-        if (obj == null) {
-            synchronized (clazz) {
-                if (obj == null) {
-                    obj = newConfigObject(clazz, prefix, file);
-                    configs.put(clazz.getName() + prefix, obj);
-                }
+
+        if (obj != null) {
+           return obj;
+        }
+
+        synchronized (clazz) {
+            if (obj == null) {
+                obj = createConfigObject(clazz, prefix, file);
+                configs.put(clazz.getName() + prefix, obj);
             }
         }
 
         return obj;
     }
 
-    public <T> T newConfigObject(Class<T> clazz, String prefix, String file) {
+    public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
 
         T obj = Kits.newInstance(clazz);
         Collection<Method> setMethods = Kits.getClassSetMethods(clazz);

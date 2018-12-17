@@ -55,6 +55,7 @@ public class DataSourceConfigManager {
 
 
         Properties prop = JbootConfigManager.me().getProperties();
+
         Set<String> datasourceNames = new HashSet<>();
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
             String key = entry.getKey().toString();
