@@ -42,7 +42,7 @@ public class JbootDistributedRunnable implements Runnable {
 
     public JbootDistributedRunnable() {
 
-        this.redis = Jboot.me().getRedis();
+        this.redis = Jboot.getRedis();
         this.key = "jbootRunnable:" + this.getClass().getName();
 
         if (redis == null) {
@@ -56,7 +56,7 @@ public class JbootDistributedRunnable implements Runnable {
     public JbootDistributedRunnable(Runnable runnable) {
         this.runnable = runnable;
         this.key = "jbootRunnable:" + runnable.getClass().getName();
-        this.redis = Jboot.me().getRedis();
+        this.redis = Jboot.getRedis();
         if (redis == null) {
             LOG.warn("redis is null, " +
                     "can not use @EnableDistributedRunnable in your Class[" + runnable.getClass().getName() + "], " +
@@ -68,7 +68,7 @@ public class JbootDistributedRunnable implements Runnable {
         this.expire = (expire - 1) * 1000;
         this.runnable = runnable;
         this.key = "jbootRunnable:" + runnable.getClass().getName();
-        this.redis = Jboot.me().getRedis();
+        this.redis = Jboot.getRedis();
         if (redis == null) {
             LOG.warn("redis is null, " +
                     "can not use @EnableDistributedRunnable in your Class[" + runnable.getClass().getName() + "], " +

@@ -209,12 +209,12 @@ class Kits {
         }
 
         if ("*".equals(evict.key().trim())) {
-            Jboot.me().getCache().removeAll(cacheName);
+            Jboot.getCache().removeAll(cacheName);
             return;
         }
 
         String cacheKey = Kits.buildCacheKey(evict.key(), targetClass, method, arguments);
-        Jboot.me().getCache().remove(cacheName, cacheKey);
+        Jboot.getCache().remove(cacheName, cacheKey);
     }
 
 }

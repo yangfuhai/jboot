@@ -46,7 +46,7 @@ public class JbootMetricTimerAopInterceptor implements Interceptor {
                 ? targetClass + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 
-        Timer meter = Jboot.me().getMetric().timer(name);
+        Timer meter = Jboot.getMetric().timer(name);
         Timer.Context timerContext = meter.time();
         try {
             inv.invoke();

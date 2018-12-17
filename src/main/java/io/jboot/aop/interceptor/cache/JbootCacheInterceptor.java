@@ -61,7 +61,7 @@ public class JbootCacheInterceptor implements Interceptor {
         String cacheKey = Kits.buildCacheKey(cacheable.key(), targetClass, method, inv.getArgs());
 
 
-        Object data = Jboot.me().getCache().get(cacheName, cacheKey);
+        Object data = Jboot.getCache().get(cacheName, cacheKey);
         if (data != null) {
             if (NULL_VALUE.equals(data)) {
                 inv.setReturnValue(null);
@@ -84,9 +84,9 @@ public class JbootCacheInterceptor implements Interceptor {
 
     private void cacheData(Cacheable cacheable, String cacheName, String cacheKey, Object data) {
         if (cacheable.liveSeconds() > 0) {
-            Jboot.me().getCache().put(cacheName, cacheKey, data, cacheable.liveSeconds());
+            Jboot.getCache().put(cacheName, cacheKey, data, cacheable.liveSeconds());
         } else {
-            Jboot.me().getCache().put(cacheName, cacheKey, data);
+            Jboot.getCache().put(cacheName, cacheKey, data);
         }
     }
 

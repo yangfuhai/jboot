@@ -60,8 +60,8 @@ public class HikariDataSourceFactory implements DataSourceFactory {
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
-        if (Jboot.me().getMetric() != null) {
-            dataSource.setMetricRegistry(Jboot.me().getMetric());
+        if (Jboot.getMetric() != null) {
+            dataSource.setMetricRegistry(Jboot.getMetric());
         }
 
         return dataSource;

@@ -88,7 +88,7 @@ public class ActionCacheHandler extends Handler {
 
         for (String cacheName : cacheNames) {
             if (StringKits.isNotBlank(cacheName)) {
-                Jboot.me().getCache().removeAll(cacheName);
+                Jboot.getCache().removeAll(cacheName);
             }
         }
     }
@@ -119,7 +119,7 @@ public class ActionCacheHandler extends Handler {
             return;
         }
 
-        ActionCacheContent actionCache = Jboot.me().getCache().get(cacheName, cacheKey);
+        ActionCacheContent actionCache = Jboot.getCache().get(cacheName, cacheKey);
         if (actionCache != null) {
             renderCache(request, response, actionCache, action);
             isHandled[0] = true;

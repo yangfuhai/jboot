@@ -16,17 +16,12 @@
 package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
-import io.jboot.aop.JbootInjectManager;
+import com.jfinal.aop.Aop;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
 import io.jboot.core.config.JbootConfigManager;
 import io.jboot.core.event.JbootEvent;
 import io.jboot.core.event.JbootEventManager;
-import io.jboot.core.http.JbootHttp;
-import io.jboot.core.http.JbootHttpManager;
-import io.jboot.core.mq.Jbootmq;
-import io.jboot.core.mq.JbootmqManager;
-import io.jboot.core.rpc.Jbootrpc;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
 import io.jboot.core.serializer.ISerializer;
@@ -46,20 +41,6 @@ public class Jboot {
 
     private static Map<String, String> argMap;
 
-
-    private JbootConfig jbootConfig;
-    private Boolean devMode;
-    private Jbootrpc jbootrpc;
-    private JbootCache jbootCache;
-    private JbootHttp jbootHttp;
-    private JbootRedis jbootRedis;
-
-
-    private static Jboot jboot = new Jboot();
-
-    public static Jboot me() {
-        return jboot;
-    }
 
     /**
      * main 入口方法
@@ -120,78 +101,29 @@ public class Jboot {
     }
 
 
-
     /**
      * 是否是开发模式
      *
      * @return
      */
-    public boolean isDevMode() {
-        if (devMode == null) {
-            JbootConfig config = getJbootConfig();
-            devMode = MODE.DEV.getValue().equals(config.getMode());
-        }
-        return devMode;
+    public static boolean isDevMode() {
+//        if (devMode == null) {
+//            JbootConfig config = getJbootConfig();
+//            devMode = MODE.DEV.getValue().equals(config.getMode());
+//        }
+        return true;
     }
 
-    /**
-     * 获取JbootConfig 配置文件
-     *
-     * @return
-     */
-    public JbootConfig getJbootConfig() {
-        if (jbootConfig == null) {
-            jbootConfig = config(JbootConfig.class);
-        }
-        return jbootConfig;
-    }
-
-
-    /**
-     * 获取 Jbootrpc，进行服务获取和发布
-     *
-     * @return
-     */
-    public Jbootrpc getRpc() {
-        if (jbootrpc == null) {
-            jbootrpc = JbootrpcManager.me().getJbootrpc();
-        }
-        return jbootrpc;
-    }
-
-
-    /**
-     * 获取 MQ，进行消息发送
-     *
-     * @return
-     */
-    public Jbootmq getMq() {
-        return JbootmqManager.me().getJbootmq();
-    }
 
     /**
      * 获取 缓存
      *
      * @return
      */
-    public JbootCache getCache() {
-        if (jbootCache == null) {
-            jbootCache = JbootCacheManager.me().getCache();
-        }
-        return jbootCache;
+    public static JbootCache getCache() {
+        return JbootCacheManager.me().getCache();
     }
 
-    /**
-     * 获取 jbootHttp 工具类，方便操作http请求
-     *
-     * @return
-     */
-    public JbootHttp getHttp() {
-        if (jbootHttp == null) {
-            jbootHttp = JbootHttpManager.me().getJbootHttp();
-        }
-        return jbootHttp;
-    }
 
 
     /**
@@ -199,11 +131,8 @@ public class Jboot {
      *
      * @return
      */
-    public JbootRedis getRedis() {
-        if (jbootRedis == null) {
-            jbootRedis = JbootRedisManager.me().getRedis();
-        }
-        return jbootRedis;
+    public static JbootRedis getRedis() {
+        return JbootRedisManager.me().getRedis();
     }
 
 
@@ -211,8 +140,8 @@ public class Jboot {
      * 获取 MetricRegistry
      *
      * @return
-     */
-    public MetricRegistry getMetric() {
+//     */
+    public static MetricRegistry getMetric() {
         return JbootMetricManager.me().metric();
     }
 
@@ -222,12 +151,10 @@ public class Jboot {
      *
      * @return
      */
-    public ISerializer getSerializer() {
+    public static ISerializer getSerializer() {
         return SerializerManager.me().getSerializer();
     }
 
-
-    ////////// static tool methods///////////
 
     /**
      * 获取配置信息
@@ -267,7 +194,6 @@ public class Jboot {
     }
 
 
-
     /**
      * 获取 RPC 服务
      *
@@ -288,7 +214,7 @@ public class Jboot {
      * @return
      */
     public static <T> T service(Class<T> clazz, JbootrpcServiceConfig config) {
-        return jboot.getRpc().serviceObtain(clazz, config);
+        return JbootrpcManager.me().getJbootrpc().serviceObtain(clazz, config);
     }
 
     /**
@@ -311,7 +237,6 @@ public class Jboot {
     }
 
 
-
     /**
      * 获取被增强的，可以使用AOP注入的实体类
      *
@@ -320,7 +245,7 @@ public class Jboot {
      * @return
      */
     public static <T> T bean(Class<T> clazz) {
-        return JbootInjectManager.me().getInstance(clazz);
+        return Aop.get(clazz);
     }
 
 
@@ -330,9 +255,8 @@ public class Jboot {
      * @param object
      */
     public static void injectMembers(Object object) {
-        JbootInjectManager.me().injectMembers(object);
+        Aop.inject(object);
     }
-
 
 
     /**

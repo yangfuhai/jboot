@@ -66,7 +66,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
 
     @Override
     public void publish(Object message, String toChannel) {
-        byte[] bytes = Jboot.me().getSerializer().serialize(message);
+        byte[] bytes = Jboot.getSerializer().serialize(message);
         Message onsMessage = new Message(toChannel, "*", bytes);
         producer.send(onsMessage);
     }
@@ -74,7 +74,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
     @Override
     public Action consume(Message message, ConsumeContext context) {
         byte[] bytes = message.getBody();
-        Object object = Jboot.me().getSerializer().deserialize(bytes);
+        Object object = Jboot.getSerializer().deserialize(bytes);
         notifyListeners(message.getTopic(), object);
         return Action.CommitMessage;
     }

@@ -84,7 +84,7 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
         Producer producer = getProducer(toChannel);
         Message msg = new Message();
         msg.setTopic(toChannel);
-        msg.setBody(Jboot.me().getSerializer().serialize(message));
+        msg.setBody(Jboot.getSerializer().serialize(message));
 
         try {
             producer.publish(msg);
@@ -112,6 +112,6 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
 
     @Override
     public void handle(Message message, MqClient mqClient) throws IOException {
-        notifyListeners(message.getTopic(), Jboot.me().getSerializer().deserialize(message.getBody()));
+        notifyListeners(message.getTopic(), Jboot.getSerializer().deserialize(message.getBody()));
     }
 }

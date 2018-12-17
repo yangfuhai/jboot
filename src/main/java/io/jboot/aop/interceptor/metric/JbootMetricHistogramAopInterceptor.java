@@ -47,7 +47,7 @@ public class JbootMetricHistogramAopInterceptor implements Interceptor {
                 : annotation.value();
 
 
-        Histogram histogram = Jboot.me().getMetric().histogram(name);
+        Histogram histogram = Jboot.getMetric().histogram(name);
         histogram.update(annotation.update());
         inv.invoke();
     }

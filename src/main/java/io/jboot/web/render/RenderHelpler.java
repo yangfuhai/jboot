@@ -41,7 +41,7 @@ public class RenderHelpler {
         ActionCacheInfo info = ActionCacheContext.get();
         if (info != null) {
             ActionCacheContent actionCache = new ActionCacheContent(contentType, html);
-            Jboot.me().getCache().put(info.getGroup(), info.getKey(), actionCache, info.getLiveSeconds());
+            Jboot.getCache().put(info.getGroup(), info.getKey(), actionCache, info.getLiveSeconds());
         }
     }
 

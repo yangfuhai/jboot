@@ -46,7 +46,7 @@ public class JbootMetricCounterAopInterceptor implements Interceptor {
                 ? targetClass.getName() + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 
-        Counter counter = Jboot.me().getMetric().counter(name);
+        Counter counter = Jboot.getMetric().counter(name);
         counter.inc();
         inv.invoke();
     }

@@ -62,7 +62,7 @@ public class JbootRedisLock {
             throw new RuntimeException("lockName must not null !");
         }
         this.lockName = lockName;
-        this.redis = Jboot.me().getRedis();
+        this.redis = Jboot.getRedis();
     }
 
     /**
@@ -77,7 +77,7 @@ public class JbootRedisLock {
         }
         this.lockName = lockName;
         this.timeoutMsecs = timeoutMsecs;
-        this.redis = Jboot.me().getRedis();
+        this.redis = Jboot.getRedis();
     }
 
 
@@ -161,7 +161,7 @@ public class JbootRedisLock {
         if (!isLocked()) {
             return;
         }
-        if (Jboot.me().getRedis().del(lockName) > 0) {
+        if (Jboot.getRedis().del(lockName) > 0) {
             locked = false;
         }
     }

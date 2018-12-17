@@ -46,7 +46,7 @@ public class JbootMetricConcurrencyAopInterceptor implements Interceptor {
                 ? targetClass + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 
-        Counter counter = Jboot.me().getMetric().counter(name);
+        Counter counter = Jboot.getMetric().counter(name);
         try {
             counter.inc();
             inv.invoke();

@@ -25,16 +25,16 @@ public class JbootAccessTokenCache implements IAccessTokenCache {
 
     @Override
     public String get(String key) {
-        return Jboot.me().getCache().get(cache_name, key);
+        return Jboot.getCache().get(cache_name, key);
     }
 
     @Override
     public void set(String key, String value) {
-        Jboot.me().getCache().put(cache_name, key, value);
+        Jboot.getCache().put(cache_name, key, value);
     }
 
     @Override
     public void remove(String key) {
-        Jboot.me().getCache().remove(cache_name, key);
+        Jboot.getCache().remove(cache_name, key);
     }
 }

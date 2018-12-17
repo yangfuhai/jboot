@@ -85,8 +85,8 @@ public class JbootAppConfig extends JFinalConfig {
         Aop.setAopFactory(new JbootAopFactory());
 
         constants.setRenderFactory(JbootRenderFactory.me());
-        constants.setDevMode(Jboot.me().isDevMode());
-        ApiConfigKit.setDevMode(Jboot.me().isDevMode());
+        constants.setDevMode(Jboot.isDevMode());
+        ApiConfigKit.setDevMode(Jboot.isDevMode());
 
         JbootWechatConfig config = Jboot.config(JbootWechatConfig.class);
         ApiConfig apiConfig = config.getApiConfig();

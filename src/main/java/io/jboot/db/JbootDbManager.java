@@ -146,10 +146,10 @@ public class JbootDbManager {
             activeRecordPlugin.setTransactionLevel(config.getTransactionLevel());
         }
 
-        activeRecordPlugin.setShowSql(Jboot.me().isDevMode());
+        activeRecordPlugin.setShowSql(Jboot.isDevMode());
         activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
 
-        JbootCache jbootCache = Jboot.me().getCache();
+        JbootCache jbootCache = Jboot.getCache();
         if (jbootCache != null) {
             activeRecordPlugin.setCache(jbootCache);
         }

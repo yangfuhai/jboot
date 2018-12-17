@@ -46,7 +46,7 @@ public class JbootMetricMeterAopInterceptor implements Interceptor {
                 ? targetClass + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 
-        Meter meter = Jboot.me().getMetric().meter(name);
+        Meter meter = Jboot.getMetric().meter(name);
         meter.mark();
         inv.invoke();
     }

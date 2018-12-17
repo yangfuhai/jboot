@@ -15,8 +15,6 @@
  */
 package io.jboot.core.http;
 
-import io.jboot.Jboot;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +60,7 @@ public class JbootHttpKit {
     public static String httpGet(String url, Map<String, Object> paras, Map<String, String> headers) {
         JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_GET);
         request.addHeaders(headers);
-        JbootHttpResponse response = Jboot.me().getHttp().handle(request);
+        JbootHttpResponse response = JbootHttpManager.me().getJbootHttp().handle(request);
         return response.isError() ? null : response.getContent();
     }
 
@@ -123,7 +121,7 @@ public class JbootHttpKit {
         JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_POST);
         request.setPostContent(postData);
         request.addHeaders(headers);
-        JbootHttpResponse response = Jboot.me().getHttp().handle(request);
+        JbootHttpResponse response = JbootHttpManager.me().getJbootHttp().handle(request);
         return response.isError() ? null : response.getContent();
     }
 
@@ -166,7 +164,7 @@ public class JbootHttpKit {
         JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_GET);
         request.setDownloadFile(toFile);
         request.addHeaders(headers);
-        return Jboot.me().getHttp().handle(request).isError();
+        return JbootHttpManager.me().getJbootHttp().handle(request).isError();
     }
 
     /**
@@ -211,7 +209,7 @@ public class JbootHttpKit {
 
         JbootHttpRequest request = JbootHttpRequest.create(url, newParas, JbootHttpRequest.METHOD_POST);
         request.addHeaders(headers);
-        JbootHttpResponse response = Jboot.me().getHttp().handle(request);
+        JbootHttpResponse response = JbootHttpManager.me().getJbootHttp().handle(request);
         return response.isError() ? null : response.getContent();
     }
 

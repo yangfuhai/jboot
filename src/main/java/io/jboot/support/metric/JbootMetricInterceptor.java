@@ -50,7 +50,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
                     : counterAnnotation.value();
 
 
-            Counter counter = Jboot.me().getMetric().counter(name);
+            Counter counter = Jboot.getMetric().counter(name);
             counter.inc();
         }
 
@@ -63,7 +63,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
                     : concurrencyAnnotation.value();
 
 
-            concurrencyRecord = Jboot.me().getMetric().counter(name);
+            concurrencyRecord = Jboot.getMetric().counter(name);
             concurrencyRecord.inc();
         }
 
@@ -75,7 +75,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
                     : meterAnnotation.value();
 
 
-            Meter meter = Jboot.me().getMetric().meter(name);
+            Meter meter = Jboot.getMetric().meter(name);
             meter.mark();
         }
 
@@ -87,7 +87,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
                     : histogramAnnotation.value();
 
 
-            Histogram histogram = Jboot.me().getMetric().histogram(name);
+            Histogram histogram = Jboot.getMetric().histogram(name);
             histogram.update(histogramAnnotation.update());
         }
 
@@ -99,7 +99,7 @@ public class JbootMetricInterceptor implements FixedInterceptor {
                     : timerAnnotation.value();
 
 
-            Timer timer = Jboot.me().getMetric().timer(name);
+            Timer timer = Jboot.getMetric().timer(name);
             timerContext = timer.time();
         }
 

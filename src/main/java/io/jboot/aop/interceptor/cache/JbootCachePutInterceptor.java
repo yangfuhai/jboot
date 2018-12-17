@@ -67,9 +67,9 @@ public class JbootCachePutInterceptor implements Interceptor {
         String cacheKey = Kits.buildCacheKey(cachePut.key(), targetClass, method, inv.getArgs());
 
         if (cachePut.liveSeconds() > 0) {
-            Jboot.me().getCache().put(cacheName, cacheKey, result, cachePut.liveSeconds());
+            Jboot.getCache().put(cacheName, cacheKey, result, cachePut.liveSeconds());
         } else {
-            Jboot.me().getCache().put(cacheName, cacheKey, result);
+            Jboot.getCache().put(cacheName, cacheKey, result);
         }
     }
 }

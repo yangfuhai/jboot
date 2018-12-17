@@ -38,7 +38,7 @@ public abstract class JbootRedisBase implements JbootRedis {
 
     public JbootRedisBase(JbootRedisConfig config) {
         if (config == null || StringKits.isBlank(config.getSerializer())) {
-            serializer = Jboot.me().getSerializer();
+            serializer = Jboot.getSerializer();
         } else {
             serializer = SerializerManager.me().getSerializer(config.getSerializer());
         }
