@@ -15,7 +15,6 @@
  */
 package io.jboot.db;
 
-import com.google.common.collect.Sets;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceConfig;
@@ -24,7 +23,9 @@ import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassScanner;
 import io.jboot.kits.StringKits;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -63,20 +64,23 @@ public class TableInfoManager {
 
         for (TableInfo tableInfo : getAllTableInfos()) {
 
-            //该表已经被其他数据源优先使用了
-            if (ArrayKits.isNotEmpty(tableInfo.getDatasources())) {
+            //说明该表已经被指定到datasource了
+            if (tableInfo.getDatasources() != null) {
                 continue;
             }
 
-            if (configTables != null && configTables.contains(tableInfo.getTableName()) == false) {
+            // 如果 datasource.table 已经配置了，
+            // 就只用这个配置的，不是这个配置的都排除
+            if (configTables != null && !configTables.contains(tableInfo.getTableName())) {
                 continue;
             }
 
+            //被指定排除的表进行排除了
             if (configExTables != null && configExTables.contains(tableInfo.getTableName())) {
                 continue;
             }
 
-            tableInfo.setDatasources(Sets.newHashSet(dataSourceConfig.getName()));
+            tableInfo.setDatasources(dataSourceConfig.getName());
             matchList.add(tableInfo);
         }
 
@@ -109,25 +113,12 @@ public class TableInfoManager {
                 continue;
             }
 
-            Set<String> datasources = StringKits.isNotBlank(tb.datasource())
-                    ? StringKits.splitToSet(tb.datasource(), ",")
-                    : null;
-
 
             TableInfo tableInfo = new TableInfo();
             tableInfo.setModelClass(clazz);
             tableInfo.setPrimaryKey(tb.primaryKey());
             tableInfo.setTableName(tb.tableName());
-            tableInfo.setDatasources(datasources);
 
-            tableInfo.setActualDataNodes(tb.actualDataNodes());
-            tableInfo.setDatabaseShardingStrategyConfig(tb.databaseShardingStrategyConfig());
-            tableInfo.setTableShardingStrategyConfig(tb.tableShardingStrategyConfig());
-
-            if (tb.keyGeneratorClass() != null && Void.class != tb.keyGeneratorClass()) {
-                tableInfo.setKeyGeneratorClass(tb.keyGeneratorClass().getName());
-            }
-            tableInfo.setKeyGeneratorColumnName(tb.keyGeneratorColumnName());
 
             tableInfos.add(tableInfo);
         }

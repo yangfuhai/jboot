@@ -15,8 +15,6 @@
  */
 package io.jboot.db.annotation;
 
-import io.shardingjdbc.core.api.config.strategy.ShardingStrategyConfiguration;
-
 import java.lang.annotation.*;
 
 @Inherited
@@ -28,16 +26,4 @@ public @interface Table {
 
     String primaryKey() default "";
 
-    Class<? extends ShardingStrategyConfiguration> databaseShardingStrategyConfig() default ShardingStrategyConfiguration.class;
-
-    Class<? extends ShardingStrategyConfiguration> tableShardingStrategyConfig() default ShardingStrategyConfiguration.class;
-
-    String actualDataNodes() default "";
-
-    String keyGeneratorColumnName() default "";
-
-    Class keyGeneratorClass() default Void.class;
-
-    String datasource() default "";
-    
 }

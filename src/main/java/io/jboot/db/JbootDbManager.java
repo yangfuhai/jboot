@@ -58,46 +58,14 @@ public class JbootDbManager {
 
     public JbootDbManager() {
 
-        // 所有的数据源，包含了分库数据源的子数据源
+
         Map<String, DataSourceConfig> allDatasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
-
-        // 分库的数据源，一个数据源包含了多个子数据源。
-        Map<String, DataSourceConfig> shardingDatasourceConfigs = DataSourceConfigManager.me().getShardingDatasourceConfigs();
-
-        if (shardingDatasourceConfigs != null && shardingDatasourceConfigs.size() > 0) {
-            for (Map.Entry<String, DataSourceConfig> entry : shardingDatasourceConfigs.entrySet()) {
-
-                //子数据源的配置
-                String shardingDatabase = entry.getValue().getShardingDatabase();
-                if (StringKits.isBlank(shardingDatabase)) {
-                    continue;
-                }
-                Set<String> databases = StringKits.splitToSet(shardingDatabase, ",");
-                for (String database : databases) {
-                    DataSourceConfig datasourceConfig = allDatasourceConfigs.remove(database);
-                    if (datasourceConfig == null) {
-                        throw new NullPointerException("has no datasource config named " + database + ",plase check your sharding database config");
-                    }
-                    entry.getValue().addChildDatasourceConfig(datasourceConfig);
-                }
-            }
-        }
-
-        //合并后的数据源，包含了分库分表的数据源和正常数据源
-        Map<String, DataSourceConfig> mergeDatasourceConfigs = new HashMap<>();
-        if (allDatasourceConfigs != null) {
-            mergeDatasourceConfigs.putAll(allDatasourceConfigs);
-        }
-
-        if (shardingDatasourceConfigs != null) {
-            mergeDatasourceConfigs.putAll(shardingDatasourceConfigs);
-        }
-
 
         // 包含了指定表配置的数据源
         Map<String, DataSourceConfig> hasTableDatasourceConfigs = new HashMap<>();
 
-        Iterator<Map.Entry<String, DataSourceConfig>> it = mergeDatasourceConfigs.entrySet().iterator();
+
+        Iterator<Map.Entry<String, DataSourceConfig>> it = allDatasourceConfigs.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, DataSourceConfig> entry = it.next();
             if (StringKits.isNotBlank(entry.getValue().getTable())) {
@@ -109,7 +77,7 @@ public class JbootDbManager {
         // 优先创建有指定表的数据源的 activeRecordPlugin
         // 表一旦附着到 activeRecordPlugin， 就不会被其他 activeRecordPlugin 包含了
         createRecordPlugin(hasTableDatasourceConfigs);
-        createRecordPlugin(mergeDatasourceConfigs);
+        createRecordPlugin(allDatasourceConfigs);
 
     }
 

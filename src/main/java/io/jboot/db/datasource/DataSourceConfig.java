@@ -18,9 +18,6 @@ package io.jboot.db.datasource;
 import com.jfinal.plugin.activerecord.DbKit;
 import io.jboot.kits.StringKits;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class DataSourceConfig {
     public static final String NAME_DEFAULT = DbKit.MAIN_CONFIG_NAME;
@@ -53,12 +50,7 @@ public class DataSourceConfig {
     private String sqlTemplate;
     private String factory; //HikariDataSourceFactory.class.getName();
 
-    private boolean shardingEnable = false;
-    private String shardingDatabase;
-
-
-    private List<DataSourceConfig> childDatasourceConfigs;
-
+    private String shardingConfigYaml;
 
     private String dbProFactory;
     private String containerFactory;
@@ -167,8 +159,7 @@ public class DataSourceConfig {
     }
 
     public boolean isConfigOk() {
-        return (StringKits.isNotBlank(url))
-                || shardingEnable == true;
+        return StringKits.isNotBlank(getUrl()) || StringKits.isNotBlank(getShardingConfigYaml());
     }
 
 
@@ -232,36 +223,12 @@ public class DataSourceConfig {
         this.needAddMapping = needAddMapping;
     }
 
-    public boolean isShardingEnable() {
-        return shardingEnable;
+    public String getShardingConfigYaml() {
+        return shardingConfigYaml;
     }
 
-    public void setShardingEnable(boolean shardingEnable) {
-        this.shardingEnable = shardingEnable;
-    }
-
-    public String getShardingDatabase() {
-        return shardingDatabase;
-    }
-
-    public void setShardingDatabase(String shardingDatabase) {
-        this.shardingDatabase = shardingDatabase;
-    }
-
-    public List<DataSourceConfig> getChildDatasourceConfigs() {
-        return childDatasourceConfigs;
-    }
-
-    public void setChildDatasourceConfigs(List<DataSourceConfig> childDatasourceConfigs) {
-        this.childDatasourceConfigs = childDatasourceConfigs;
-    }
-
-    public void addChildDatasourceConfig(DataSourceConfig config) {
-        if (this.childDatasourceConfigs == null) {
-            this.childDatasourceConfigs = new ArrayList<>();
-        }
-
-        this.childDatasourceConfigs.add(config);
+    public void setShardingConfigYaml(String shardingConfigYaml) {
+        this.shardingConfigYaml = shardingConfigYaml;
     }
 
     public String getDbProFactory() {
