@@ -47,18 +47,18 @@ public interface #(tableMeta.modelName)Service  {
      * save model to database
      *
      * @param model
-     * @return
+     * @return primary value if save success
      */
-    public boolean save(#(tableMeta.modelName) model);
+    public <T> T save(#(tableMeta.modelName) model);
 
 
     /**
      * save or update model
      *
      * @param model
-     * @return if save or update success
+     * @return primary value if save or update success
      */
-    public boolean saveOrUpdate(#(tableMeta.modelName) model);
+    public <T> T saveOrUpdate(#(tableMeta.modelName) model);
 
 
     /**
