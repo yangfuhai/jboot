@@ -74,6 +74,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
     public JbootCoreConfig() {
         Jboot.injectMembers(this);
+        JbootAppListenerManager.me().onInit();
     }
 
 

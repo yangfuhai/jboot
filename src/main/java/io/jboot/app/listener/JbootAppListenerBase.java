@@ -27,10 +27,10 @@ import io.jboot.web.fixedinterceptor.FixedInterceptors;
 public class JbootAppListenerBase implements JbootAppListener {
 
 
-//    @Override
-//    public void onJbootDeploy(Servlets servlets, ContextListeners listeners) {
-//
-//    }
+    @Override
+    public void onInit() {
+
+    }
 
     @Override
     public void onJfinalConstantConfig(Constants constants) {
@@ -77,18 +77,4 @@ public class JbootAppListenerBase implements JbootAppListener {
 
     }
 
-//    @Override
-//    public void onJbootStarted() {
-//
-//    }
-
-//    @Override
-//    public void onAppStartBefore(JbootServer underTowServer) {
-//
-//    }
-//
-//    @Override
-//    public void onGuiceConfigure(Binder binder) {
-//
-//    }
 }

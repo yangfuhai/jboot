@@ -26,7 +26,8 @@ import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 public interface JbootAppListener {
 
-//    public void onJbootDeploy(Servlets servlets, ContextListeners listeners);
+
+    public void onInit();
 
     public void onJfinalConstantConfig(Constants constants);
 
@@ -46,9 +47,4 @@ public interface JbootAppListener {
 
     public void onJFinalStop();
 
-//    public void onJbootStarted();
-
-//    public void onAppStartBefore(JbootServer jbootServer);
-
-//    public void onGuiceConfigure(Binder binder);
 }

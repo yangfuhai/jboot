@@ -62,6 +62,17 @@ public class JbootAppListenerManager implements JbootAppListener {
 
 
     @Override
+    public void onInit() {
+        for (JbootAppListener listener : listeners) {
+            try {
+                listener.onInit();
+            } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
+            }
+        }
+    }
+
+    @Override
     public void onJfinalConstantConfig(Constants constants) {
         for (JbootAppListener listener : listeners) {
             try {
