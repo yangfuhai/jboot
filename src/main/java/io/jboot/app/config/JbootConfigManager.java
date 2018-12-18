@@ -15,7 +15,7 @@
  */
 package io.jboot.app.config;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -74,7 +74,7 @@ public class JbootConfigManager {
 
 
     public <T> T get(Class<T> clazz) {
-        PropertyModel propertyConfig = clazz.getAnnotation(PropertyModel.class);
+        ConfigModel propertyConfig = clazz.getAnnotation(ConfigModel.class);
         if (propertyConfig == null) {
             return get(clazz, null, null);
         }

@@ -15,9 +15,9 @@
  */
 package io.jboot.app;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
-@PropertyModel(prefix = "jboot.app")
+@ConfigModel(prefix = "jboot.app")
 public class JbootApplicationConfig {
 
     private String mode = "dev";

@@ -20,9 +20,11 @@ import java.lang.annotation.*;
 
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface PropertyModel {
-    String prefix();
+@Target({ElementType.FIELD})
+public @interface ConfigInject {
+
+    String value();
 
     String file() default "";
+
 }
