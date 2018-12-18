@@ -27,21 +27,19 @@ public class JbootApplication {
     }
 
     public static void run(String[] args) {
-        run(args, null);
+        createServer(args).start();
     }
 
-    public static void run(String[] args, UndertowConfig undertowConfig) {
+    public static UndertowServer createServer(String[] args) {
 
         JbootConfigManager.me().parseArgs(args);
 
         JbootApplicationConfig appConfig = JbootConfigManager.me().get(JbootApplicationConfig.class);
         printBannerInfo(appConfig);
 
-        if (undertowConfig == null) {
-            undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
-        }
+        UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
 
-        UndertowServer.create(undertowConfig).start();
+        return UndertowServer.create(undertowConfig);
     }
 
 
