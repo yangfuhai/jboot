@@ -30,7 +30,7 @@ import java.util.List;
  * @version V1.0
  * @Package io.jboot.codegen
  */
-public class Tester {
+public class CodeGenTester {
 
     public static void main(String[] args) {
 

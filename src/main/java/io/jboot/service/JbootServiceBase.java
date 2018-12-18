@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * JbootServiceBase 类
  */
-public class JbootServiceBase<M extends JbootModel<M>> {
+public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJoiner {
 
 
     protected M DAO = null;
@@ -153,58 +153,69 @@ public class JbootServiceBase<M extends JbootModel<M>> {
     }
 
 
-    public void join(Page<? extends Model> page, String joinOnField) {
+    @Override
+    public <M extends Model> Page<M> join(Page<M> page, String joinOnField) {
         join(page.getList(), joinOnField);
+        return page;
     }
 
-
-    public void join(Page<? extends Model> page, String joinOnField, String[] attrs) {
+    @Override
+    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String[] attrs) {
         join(page.getList(), joinOnField, attrs);
+        return page;
     }
 
-
-    public void join(List<? extends Model> models, String joinOnField) {
+    @Override
+    public <M extends Model> List<M> join(List<M> models, String joinOnField) {
         if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField);
             }
         }
+        return models;
     }
 
-
-    public void join(List<? extends Model> models, String joinOnField, String[] attrs) {
+    @Override
+    public <M extends Model> List<M> join(List<M> models, String joinOnField, String[] attrs) {
         if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, attrs);
             }
         }
+        return models;
     }
 
-
-    public void join(Page<? extends Model> page, String joinOnField, String joinName) {
+    @Override
+    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String joinName) {
         join(page.getList(), joinOnField, joinName);
+        return page;
     }
 
-
-    public void join(List<? extends Model> models, String joinOnField, String joinName) {
+    @Override
+    public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName) {
         if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, joinName);
             }
         }
+        return models;
     }
 
-    public void join(Page<? extends Model> page, String joinOnField, String joinName, String[] attrs) {
+    @Override
+    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String joinName, String[] attrs) {
         join(page.getList(), joinOnField, joinName, attrs);
+        return page;
     }
 
 
-    public void join(List<? extends Model> models, String joinOnField, String joinName, String[] attrs) {
+    @Override
+    public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName, String[] attrs) {
         if (ArrayKits.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, joinName, attrs);
             }
         }
+        return models;
     }
 
     /**
@@ -213,17 +224,19 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param model       要添加到的model
      * @param joinOnField model对于的关联字段
      */
-    public void join(Model model, String joinOnField) {
+    @Override
+    public <M extends Model> M join(M model, String joinOnField) {
         if (model == null)
-            return;
+            return model;
         Object id = model.get(joinOnField);
         if (id == null) {
-            return;
+            return model;
         }
         Model m = findById(id);
         if (m != null) {
             model.put(StrKit.firstCharToLowerCase(m.getClass().getSimpleName()), m);
         }
+        return model;
     }
 
     /**
@@ -233,12 +246,13 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param joinOnField
      * @param attrs
      */
-    public void join(Model model, String joinOnField, String[] attrs) {
+    @Override
+    public <M extends Model> M join(M model, String joinOnField, String[] attrs) {
         if (model == null)
-            return;
+            return model;
         Object id = model.get(joinOnField);
         if (id == null) {
-            return;
+            return model;
         }
         JbootModel m = findById(id);
         if (m != null) {
@@ -246,6 +260,7 @@ public class JbootServiceBase<M extends JbootModel<M>> {
             m.keep(attrs);
             model.put(StrKit.firstCharToLowerCase(m.getClass().getSimpleName()), m);
         }
+        return model;
     }
 
 
@@ -256,17 +271,19 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param joinOnField
      * @param joinName
      */
-    public void join(Model model, String joinOnField, String joinName) {
+    @Override
+    public <M extends Model> M join(M model, String joinOnField, String joinName) {
         if (model == null)
-            return;
+            return model;
         Object id = model.get(joinOnField);
         if (id == null) {
-            return;
+            return model;
         }
         Model m = findById(id);
         if (m != null) {
             model.put(joinName, m);
         }
+        return model;
     }
 
 
@@ -278,12 +295,13 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param joinName
      * @param attrs
      */
-    public void join(Model model, String joinOnField, String joinName, String[] attrs) {
+    @Override
+    public <M extends Model> M join(M model, String joinOnField, String joinName, String[] attrs) {
         if (model == null)
-            return;
+            return model;
         Object id = model.get(joinOnField);
         if (id == null) {
-            return;
+            return model;
         }
         JbootModel m = findById(id);
         if (m != null) {
@@ -291,23 +309,8 @@ public class JbootServiceBase<M extends JbootModel<M>> {
             m.keep(attrs);
             model.put(joinName, m);
         }
-
+        return model;
     }
 
 
-    public void keep(Model model, String... attrs) {
-        if (model == null) {
-            return;
-        }
-
-        model.keep(attrs);
-    }
-
-    public void keep(List<? extends Model> models, String... attrs) {
-        if (ArrayKits.isNotEmpty(models)) {
-            for (Model m : models) {
-                keep(m, attrs);
-            }
-        }
-    }
 }
