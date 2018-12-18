@@ -15,21 +15,17 @@
  */
 package io.jboot.kits;
 
-import com.jfinal.core.Const;
-import com.jfinal.kit.PathKit;
-
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.*;
-import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 /**
  * 类扫描器
@@ -38,25 +34,29 @@ public class ClassScanner {
 
     private static final Set<Class> appClasses = new HashSet<>();
 
-    public static <T> List<Class<T>> scanSubClass(Class<T> pclazz) {
-        return scanSubClass(pclazz, false);
+
+    public static final Set<String> includeJars = new HashSet<>();
+    static {
+        includeJars.add("jboot-");
     }
 
     public static final Set<String> excludeJars = new HashSet<>();
 
     static {
-        excludeJars.add("animal-sniffer-annotations-");
-        excludeJars.add("aopalliance-");
-        excludeJars.add("archaius-core-");
-        excludeJars.add("assertj-core-");
-        excludeJars.add("brave-");
-        excludeJars.add("cglib-nodep-");
-        excludeJars.add("consul-api-");
+        excludeJars.add("jfinal-");
         excludeJars.add("cos-2017.5.jar");
+        excludeJars.add("cglib-");
+        excludeJars.add("undertow-");
+        excludeJars.add("xnio-");
+        excludeJars.add("javax.");
+        excludeJars.add("HikariCP-");
         excludeJars.add("druid-");
-        excludeJars.add("ehcache-");
-        excludeJars.add("error_prone_annotations-");
-        excludeJars.add("fastjson-");
+        excludeJars.add("mysql-");
+        excludeJars.add("junit-");
+        excludeJars.add("hamcrest-");
+        excludeJars.add("jboss-");
+        excludeJars.add("motan-");
+        excludeJars.add("commons-pool");
         excludeJars.add("commons-beanutils");
         excludeJars.add("commons-codec");
         excludeJars.add("commons-collections");
@@ -70,107 +70,76 @@ public class ClassScanner {
         excludeJars.add("commons-configuration");
         excludeJars.add("commons-validator");
         excludeJars.add("commons-email");
-        excludeJars.add("fst-");
-        excludeJars.add("gson-");
-        excludeJars.add("guava-");
-        excludeJars.add("guice-");
-        excludeJars.add("HdrHistogram-");
-        excludeJars.add("HikariCP-");
-        excludeJars.add("httpclient-");
-        excludeJars.add("httpcore-");
-        excludeJars.add("hystrix-");
-        excludeJars.add("j2objc-annotations-");
-        excludeJars.add("jackson-module-afterburner-");
-        excludeJars.add("javapoet-");
-        excludeJars.add("javassist-");
-        excludeJars.add("javax.");
-        excludeJars.add("org.apache.");
-        excludeJars.add("com.sun.");
-        excludeJars.add("jboss-");
-        excludeJars.add("jedis-");
-        excludeJars.add("jfinal-");
-        excludeJars.add("joda-time-");
-        excludeJars.add("jsoup-");
-        excludeJars.add("jsr305-");
-        excludeJars.add("metrics-");
-        excludeJars.add("motan-");
-        excludeJars.add("mysql-connector-java-");
-        excludeJars.add("netty-");
-        excludeJars.add("objenesis-");
-        excludeJars.add("opentracing-");
-        excludeJars.add("profiler-");
-        excludeJars.add("rxjava-");
-        excludeJars.add("sharding-jdbc-core-");
-        excludeJars.add("servlet-");
-        excludeJars.add("shiro-");
-        excludeJars.add("slf4j-");
-        excludeJars.add("spring-");
-        excludeJars.add("zipkin-");
-        excludeJars.add("jcommander-");
-        excludeJars.add("jackson-");
-        excludeJars.add("org.eclipse.");
-        excludeJars.add("jetty-");
-        excludeJars.add("freemarker-");
-        excludeJars.add("dom4j-");
-        excludeJars.add("amqp-client-");
-        excludeJars.add("ons-client-");
-        excludeJars.add("hamcrest-core-");
-        excludeJars.add("mchange-commons-java-");
-        excludeJars.add("idea_rt.jar");
-        excludeJars.add("MRJToolkit.jar");
-        excludeJars.add("struts-");
-        excludeJars.add("c3p0-");
-        excludeJars.add("junit-");
-        excludeJars.add("javase-");
-        excludeJars.add("antlr-");
-        excludeJars.add("velocity-");
-        excludeJars.add("log4j-");
-        excludeJars.add("dubbo-");
-        excludeJars.add("cron4j-");
-        excludeJars.add("sslext-");
-        excludeJars.add("logback-");
-        excludeJars.add("metrics-");
-        excludeJars.add("jline-");
-        excludeJars.add("zkclient-");
-        excludeJars.add("okhttp-");
-        excludeJars.add("okio-");
-        excludeJars.add("zbus-");
         excludeJars.add("hessian-");
-        excludeJars.add("groovy-");
-        excludeJars.add("snakeyaml-");
+        excludeJars.add("metrics-");
+        excludeJars.add("javapoet-");
+        excludeJars.add("netty-");
+        excludeJars.add("consul-");
+        excludeJars.add("gson-");
+        excludeJars.add("httpcore-");
+        excludeJars.add("zookeeper-");
+        excludeJars.add("slf4j-");
+        excludeJars.add("fastjson-");
+        excludeJars.add("guava-");
+        excludeJars.add("failureaccess-");
+        excludeJars.add("listenablefuture-");
+        excludeJars.add("jsr305-");
+        excludeJars.add("checker-qual-");
+        excludeJars.add("error_prone_annotations-");
+        excludeJars.add("j2objc-");
+        excludeJars.add("animal-sniffer-");
+        excludeJars.add("cron4j-");
+        excludeJars.add("jedis-");
+        excludeJars.add("lettuce-");
+        excludeJars.add("reactor-");
+        excludeJars.add("fst-");
         excludeJars.add("kryo-");
+        excludeJars.add("jackson-");
+        excludeJars.add("javassist-");
+        excludeJars.add("objenesis-");
         excludeJars.add("reflectasm-");
         excludeJars.add("asm-");
         excludeJars.add("minlog-");
-        excludeJars.add("swagger-");
-        excludeJars.add("validation-api-");
-        excludeJars.add("checker-compat-qual-");
-        excludeJars.add("caffeine-");
-        excludeJars.add("j2cache-core-");
-        excludeJars.add("jgroups-");
-        excludeJars.add("snappy-java-");
+        excludeJars.add("jsoup-");
+        excludeJars.add("ons-client-");
+        excludeJars.add("amqp-client-");
+        excludeJars.add("ehcache-");
+        excludeJars.add("sharding-");
+        excludeJars.add("snakeyaml-");
+        excludeJars.add("groovy-");
+        excludeJars.add("profiler-");
+        excludeJars.add("joda-time-");
+        excludeJars.add("shiro-");
+        excludeJars.add("dubbo-");
+        excludeJars.add("curator-");
         excludeJars.add("resteasy-");
-        excludeJars.add("activation-");
-        excludeJars.add("jcip-annotations-");
+        excludeJars.add("reactive-");
+        excludeJars.add("validation-");
+        excludeJars.add("httpclient-");
+        excludeJars.add("jcip-");
+        excludeJars.add("jcl-");
+        excludeJars.add("microprofile-");
+        excludeJars.add("org.osgi");
+        excludeJars.add("zkclient-");
         excludeJars.add("jjwt-");
-        excludeJars.add("undertow-");
-        excludeJars.add("reactor-core-");
-        excludeJars.add("reactive-streams-");
-        excludeJars.add("lettuce-core-");
-        excludeJars.add("xnio-");
-        excludeJars.add("wrapper.jar");
-        excludeJars.add("checker-qual-");
+        excludeJars.add("okhttp-");
+        excludeJars.add("okio-");
+        excludeJars.add("zbus-");
+        excludeJars.add("swagger-");
+        excludeJars.add("j2cache-");
+        excludeJars.add("caffeine-");
+        excludeJars.add("jline-");
+        excludeJars.add("qpid-");
+        excludeJars.add("geronimo-");
+        excludeJars.add("activation-");
+        excludeJars.add("idea_rt");
+        excludeJars.add("MRJToolkit");
     }
 
-    public static final Set<String> excludeJarPackages = new HashSet<>();
-
-    static {
-        excludeJarPackages.add("com.google");
-        excludeJarPackages.add("oro.oro");
-        excludeJarPackages.add("org.eclipse");
-        excludeJarPackages.add("org.apache");
-        excludeJarPackages.add("org.osgi");
+    public static <T> List<Class<T>> scanSubClass(Class<T> pclazz) {
+        return scanSubClass(pclazz, false);
     }
+
 
     public static <T> List<Class<T>> scanSubClass(Class<T> pclazz, boolean mustCanNewInstance) {
         initIfNecessary();
@@ -184,23 +153,28 @@ public class ClassScanner {
     }
 
     public static List<Class> scanClass(boolean mustCanNewInstance) {
+
         initIfNecessary();
 
+        if (!mustCanNewInstance) {
+            return new ArrayList<>(appClasses);
+        }
+
         List<Class> list = new ArrayList<>();
-        if (mustCanNewInstance) {
-            for (Class clazz : appClasses) {
-                if (clazz.isInterface()
-                        || Modifier.isAbstract(clazz.getModifiers())) {
-                    continue;
-                }
+        for (Class clazz : appClasses) {
+            if (canNewInstance(clazz)) {
                 list.add(clazz);
             }
-        } else {
-            list.addAll(appClasses);
         }
 
         return list;
     }
+
+
+    private static boolean canNewInstance(Class clazz) {
+        return !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers());
+    }
+
 
     public static List<Class> scanClassByAnnotation(Class annotationClass, boolean mustCanNewInstance) {
         initIfNecessary();
@@ -212,21 +186,19 @@ public class ClassScanner {
                 continue;
             }
 
-            if (mustCanNewInstance) {
-                if (clazz.isInterface()
-                        || Modifier.isAbstract(clazz.getModifiers())) {
-                    continue;
-                }
+            if (mustCanNewInstance && !canNewInstance(clazz)) {
+                continue;
             }
+
             list.add(clazz);
         }
 
         return list;
     }
 
-    private static void initIfNecessary(){
+    private static void initIfNecessary() {
         if (appClasses.isEmpty()) {
-            addClassesFromFilePath(PathKit.getRootClassPath());
+            addClassesFromFilePath(getRootClassPath());
             addClassesFromJars();
         }
     }
@@ -234,13 +206,24 @@ public class ClassScanner {
 
     private static <T> void findClassesByParent(List<Class<T>> classes, Class<T> pclazz, boolean mustCanNewInstance) {
         for (Class clazz : appClasses) {
-            tryToaddClass(classes, pclazz, mustCanNewInstance, clazz);
+
+            if (!pclazz.isAssignableFrom(clazz)) {
+                continue;
+            }
+
+            if (mustCanNewInstance && !canNewInstance(clazz)) {
+                continue;
+            }
+
+            classes.add(clazz);
         }
     }
 
 
     private static void addClassesFromJars() {
+
         Set<String> jars = new HashSet<>();
+
         findJars(jars, ClassScanner.class.getClassLoader());
 
         for (String path : jars) {
@@ -248,9 +231,6 @@ public class ClassScanner {
             JarFile jarFile = null;
             try {
                 jarFile = new JarFile(path);
-                if (isExcluedeJar(jarFile.getManifest())) {
-                    continue;
-                }
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     JarEntry jarEntry = entries.nextElement();
@@ -272,66 +252,6 @@ public class ClassScanner {
         }
     }
 
-    private static boolean isExcluedeJar(Manifest manifest) {
-        if (manifest == null) {
-            return false;
-        }
-        Attributes mainAttributes = manifest.getMainAttributes();
-        if (mainAttributes == null) {
-            return false;
-        }
-
-        String exportPackage = mainAttributes.getValue("Export-Package");
-        if (exportPackage != null) {
-            if (exportPackage.startsWith("com.google.")
-                    || exportPackage.startsWith("org.apache.")
-                    || exportPackage.startsWith("org.jboss.")
-                    || exportPackage.startsWith("com.netflix.")
-                    || exportPackage.startsWith("com.github.")
-                    || exportPackage.startsWith("org.eclipse.")
-                    || exportPackage.startsWith("com.fasterxml.")
-                    || exportPackage.startsWith("org.slf4j")
-                    || exportPackage.startsWith("net.sf")
-                    ) {
-                return true;
-            }
-        }
-
-        String vendor = mainAttributes.getValue("Implementation-Vendor");
-        if (vendor != null) {
-            vendor = vendor.toLowerCase();
-            if (vendor.indexOf("jboss") > -1
-                    || vendor.indexOf("apache") > -1
-                    || vendor.indexOf("oracle") > -1
-                    || vendor.indexOf("netty") > -1
-                    || vendor.indexOf("dubbo") > -1
-                    ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean isExcludeJar(String path) {
-
-        if (!path.toLowerCase().endsWith(".jar")) {
-            return true;
-        }
-
-        for (String exclude : excludeJarPackages) {
-            if (path.contains(exclude.replace(".", File.separator))) {
-                return true;
-            }
-        }
-        for (String exclude : excludeJars) {
-            if (new File(path).getName().startsWith(exclude)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     private static void addClassesFromFilePath(String filePath) {
         List<File> classFileList = new ArrayList<>();
@@ -354,15 +274,14 @@ public class ClassScanner {
     }
 
 
-    private static void findJars(Set<String> set, ClassLoader classLoader) {
+    private static void findJars(Set<String> jarPaths, ClassLoader classLoader) {
         try {
             if (classLoader instanceof URLClassLoader) {
                 URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
                 URL[] urLs = urlClassLoader.getURLs();
-                String JAVA_HOME = new File(System.getProperty("java.home"), "..").getCanonicalPath();
                 for (URL url : urLs) {
                     String path = url.getPath();
-                    path = URLDecoder.decode(path, Const.DEFAULT_ENCODING);
+                    path = URLDecoder.decode(path, "UTF-8");
 
                     // path : /d:/xxx
                     if (path.startsWith("/") && path.indexOf(":") == 2) {
@@ -373,40 +292,42 @@ public class ClassScanner {
                         addClassesFromFilePath(new File(path).getCanonicalPath());
                     }
 
-                    if (!path.startsWith(JAVA_HOME) && !isExcludeJar(path)) {
-                        set.add(path);
+                    if (isIncludeJar(path)) {
+                        System.out.println(path);
+                        jarPaths.add(path);
                     }
                 }
             }
             ClassLoader parent = classLoader.getParent();
             if (parent != null) {
-                findJars(set, parent);
+                findJars(jarPaths, parent);
             }
         } catch (Throwable ex) {
             ex.printStackTrace();
         }
     }
 
-    private static <T> void tryToaddClass(List<Class<T>> classes, Class<T> pclazz, boolean mustCanNewInstance, Class<T> clazz) {
-        if (classes == null
-                || pclazz == null
-                || clazz == null
-                || !pclazz.isAssignableFrom(clazz)) {
+    private static boolean isIncludeJar(String path) {
 
-            return;
+        String jarName = new File(path).getName();
+
+        for (String exclude : includeJars) {
+            if (jarName.startsWith(exclude)) {
+                return true;
+            }
         }
 
-        if (!mustCanNewInstance) {
-            classes.add(clazz);
-            return;
+        for (String exclude : excludeJars) {
+            if (jarName.startsWith(exclude)) {
+                return false;
+            }
         }
 
-        if (clazz.isInterface()
-                || Modifier.isAbstract(clazz.getModifiers())) {
-            return;
+        if (path.startsWith(getJavaHome())) {
+            return false;
         }
 
-        classes.add(clazz);
+        return true;
     }
 
 
@@ -421,6 +342,7 @@ public class ClassScanner {
         return null;
     }
 
+
     private static void scanClassFile(List<File> fileList, String path) {
         File files[] = new File(path).listFiles();
         if (null == files || files.length == 0)
@@ -432,6 +354,48 @@ public class ClassScanner {
                 fileList.add(file);
             }
         }
+    }
+
+
+    private static String javaHome;
+
+    private static String getJavaHome() {
+        if (javaHome == null) {
+            try {
+                javaHome = new File(System.getProperty("java.home"), "..").getCanonicalPath();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return javaHome;
+    }
+
+    private static String rootClassPath;
+
+    private static String getRootClassPath() {
+        if (rootClassPath == null) {
+            try {
+                String path = getClassLoader().getResource("").toURI().getPath();
+                rootClassPath = new File(path).getAbsolutePath();
+            } catch (Exception e) {
+                try {
+                    String path = ClassScanner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                    path = java.net.URLDecoder.decode(path, "UTF-8");
+                    if (path.endsWith(File.separator)) {
+                        path = path.substring(0, path.length() - 1);
+                    }
+                    rootClassPath = path;
+                } catch (UnsupportedEncodingException e1) {
+                    throw new RuntimeException(e1);
+                }
+            }
+        }
+        return rootClassPath;
+    }
+
+    private static ClassLoader getClassLoader() {
+        ClassLoader ret = Thread.currentThread().getContextClassLoader();
+        return ret != null ? ret : ClassScanner.class.getClassLoader();
     }
 
 
