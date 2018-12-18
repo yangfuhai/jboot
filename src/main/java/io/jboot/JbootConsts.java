@@ -15,6 +15,8 @@
  */
 package io.jboot;
 
+import io.jboot.app.config.JbootConfigManager;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
@@ -29,4 +31,27 @@ public class JbootConsts {
 
     public static final String ATTR_REQUEST = "REQUEST";
     public static final String ATTR_CONTEXT_PATH = "CPATH";
+
+
+    /**
+     * 产品模式：开发、测试、产品
+     */
+    public static enum MODE {
+
+        DEV("dev"), TEST("test"), PRODUCT("product");
+
+        private final String value;
+
+        MODE(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static boolean isDevMode(){
+            return DEV.getValue().equals(JbootConfigManager.me().getValueByKey("jboot.app.mode"));
+        }
+    }
 }

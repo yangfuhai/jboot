@@ -42,7 +42,7 @@ public class Jboot {
      */
     public static boolean isDevMode() {
         if (devMode == null) {
-            devMode = MODE.DEV.getValue().equals(JbootConfigManager.me().getValueByKey("jboot.app.mode"));
+            devMode = JbootConsts.MODE.isDevMode();
         }
         return devMode;
     }
@@ -191,21 +191,5 @@ public class Jboot {
     }
 
 
-    /**
-     * 产品模式：开发、测试、产品
-     */
-    public static enum MODE {
 
-        DEV("dev"), TEST("test"), PRODUCT("product");
-
-        private final String value;
-
-        MODE(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
 }

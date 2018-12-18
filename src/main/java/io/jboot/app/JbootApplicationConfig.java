@@ -23,7 +23,7 @@ public class JbootApplicationConfig {
     private String mode = "dev";
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
-    private String jfinalConfig = "io.jboot.web.JbootAppConfig";
+    private String jfinalConfig = "io.jboot.web.JbootCoreConfig";
     private String hotSwapClassPrefix = "io.jboot";
 
 
@@ -64,10 +64,10 @@ public class JbootApplicationConfig {
     @Override
     public String toString() {
         return "JbootApplication {" +
-                ", mode='" + mode + '\'' +
+                " mode='" + mode + '\'' +
+                ", jfinalConfig='" + jfinalConfig + '\'' +
                 ", bannerEnable=" + bannerEnable +
                 ", bannerFile='" + bannerFile + '\'' +
-                ", jfinalConfig='" + jfinalConfig + '\'' +
-                '}';
+                " }";
     }
 }

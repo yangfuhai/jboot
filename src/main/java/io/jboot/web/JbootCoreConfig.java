@@ -67,12 +67,12 @@ import java.util.Enumeration;
 import java.util.List;
 
 
-public class JbootAppConfig extends JFinalConfig {
+public class JbootCoreConfig extends JFinalConfig {
 
-    static final Log log = Log.getLog(JbootAppConfig.class);
+    static final Log log = Log.getLog(JbootCoreConfig.class);
     private List<Routes.Route> routeList = new ArrayList<>();
 
-    public JbootAppConfig() {
+    public JbootCoreConfig() {
         Jboot.injectMembers(this);
     }
 

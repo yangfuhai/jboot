@@ -35,7 +35,9 @@ public class JbootApplication {
         JbootConfigManager.me().parseArgs(args);
 
         JbootApplicationConfig appConfig = JbootConfigManager.me().get(JbootApplicationConfig.class);
+
         printBannerInfo(appConfig);
+        printApplicationInfo(appConfig);
 
         UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
 
@@ -43,10 +45,16 @@ public class JbootApplication {
     }
 
 
+
+
     private static void printBannerInfo(JbootApplicationConfig appConfig) {
         if (appConfig.isBannerEnable()) {
             System.out.println(Banner.getText(appConfig.getBannerFile()));
         }
+    }
+
+    private static void printApplicationInfo(JbootApplicationConfig appConfig) {
+        System.out.println(appConfig.toString());
     }
 
 

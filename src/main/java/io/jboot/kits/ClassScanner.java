@@ -15,6 +15,8 @@
  */
 package io.jboot.kits;
 
+import io.jboot.JbootConsts;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -293,7 +295,9 @@ public class ClassScanner {
                     }
 
                     if (isIncludeJar(path)) {
-                        System.out.println(path);
+                        if (JbootConsts.MODE.isDevMode()){
+                            System.out.println("jboot scan jar : " + path);
+                        }
                         jarPaths.add(path);
                     }
                 }
