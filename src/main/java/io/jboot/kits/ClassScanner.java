@@ -38,12 +38,19 @@ public class ClassScanner {
 
 
     public static final Set<String> includeJars = new HashSet<>();
+    public static void addScanJarPrefix(String prefix){
+        includeJars.add(prefix);
+    }
     static {
         includeJars.add("jboot-");
     }
 
-    public static final Set<String> excludeJars = new HashSet<>();
 
+
+    public static final Set<String> excludeJars = new HashSet<>();
+    public static void addUnscanJarPrefix(String prefix){
+        excludeJars.add(prefix);
+    }
     static {
         excludeJars.add("jfinal-");
         excludeJars.add("cos-2017.5.jar");
