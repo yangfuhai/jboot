@@ -15,9 +15,9 @@
  */
 package io.jboot.core.mq.qpidmq;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
-@PropertyModel(prefix = "jboot.mq.qpid")
+@ConfigModel(prefix = "jboot.mq.qpid")
 public class JbootQpidmqConfig {
     private String username = "admin";
     private String password = "admin";

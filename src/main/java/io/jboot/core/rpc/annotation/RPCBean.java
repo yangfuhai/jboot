@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.core.mq.redismq;
+package io.jboot.core.rpc.annotation;
 
-import io.jboot.app.config.annotation.ConfigModel;
-import io.jboot.support.redis.JbootRedisConfig;
+import java.lang.annotation.*;
 
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface RPCBean {
 
-@ConfigModel(prefix = "jboot.mq.redis")
-public class JbootmqRedisConfig extends JbootRedisConfig {
+    int port() default 0;
 
+    int timeout() default -1;
 
+    int actives() default -1;
+
+    String group() default "";
+
+    String version() default "";
+
+    //当一个Service类实现对个接口的时候，可以通过这个排除不暴露某个实现接口
+    Class[] exclude() default Void.class;
 }

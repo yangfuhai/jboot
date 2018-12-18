@@ -16,10 +16,10 @@
 package io.jboot.web.session;
 
 import io.jboot.Jboot;
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.core.cache.JbootCacheConfig;
 
-@PropertyModel(prefix = "jboot.web.session")
+@ConfigModel(prefix = "jboot.web.session")
 public class JbootSessionConfig {
 
     public final static int DEFAULT_MAX_INACTIVE_INTERVAL = 60 * 60;

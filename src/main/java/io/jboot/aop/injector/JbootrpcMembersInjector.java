@@ -18,7 +18,7 @@ package io.jboot.aop.injector;
 import com.jfinal.log.Log;
 import io.jboot.core.rpc.JbootrpcManager;
 import io.jboot.core.rpc.JbootrpcServiceConfig;
-import io.jboot.core.rpc.annotation.JbootrpcService;
+import io.jboot.core.rpc.annotation.RPCInject;
 
 import java.lang.reflect.Field;
 
@@ -36,7 +36,7 @@ public class JbootrpcMembersInjector  {
 
     public void injectMembers(Object instance) {
 
-        JbootrpcService annotation = field.getAnnotation(JbootrpcService.class);
+        RPCInject annotation = field.getAnnotation(RPCInject.class);
 
         Object implObject = null;
         try {

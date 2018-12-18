@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD})
-public @interface JbootrpcService {
+public @interface RPCInject {
 
     int port() default 0;
 
@@ -40,6 +40,4 @@ public @interface JbootrpcService {
 
     String check() default "";
 
-    //当一个Service类实现对个接口的时候，可以通过这个排除不暴露某个实现接口
-    Class[] exclude() default Void.class;
 }

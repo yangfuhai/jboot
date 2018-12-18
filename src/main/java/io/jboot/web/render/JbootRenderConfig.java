@@ -15,10 +15,10 @@
  */
 package io.jboot.web.render;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.kits.StringKits;
 
-@PropertyModel(prefix = "jboot.render")
+@ConfigModel(prefix = "jboot.render")
 public class JbootRenderConfig {
 
     private String cdn;

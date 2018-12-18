@@ -16,10 +16,10 @@
 package io.jboot.core.cache.ehcache;
 
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 
-@PropertyModel(prefix = "jboot.cache.ehcache")
+@ConfigModel(prefix = "jboot.cache.ehcache")
 public class JbootEhCacheConfig {
 
    private String configFileName;

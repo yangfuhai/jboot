@@ -15,10 +15,10 @@
  */
 package io.jboot.core.rpc.zbus;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 
-@PropertyModel(prefix = "jboot.rpc.zbus")
+@ConfigModel(prefix = "jboot.rpc.zbus")
 public class JbootZbusRpcConfig {
 
     private String serviceName;

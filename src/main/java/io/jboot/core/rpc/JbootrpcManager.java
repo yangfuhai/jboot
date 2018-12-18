@@ -16,14 +16,14 @@
 package io.jboot.core.rpc;
 
 import io.jboot.Jboot;
+import io.jboot.core.event.JbootEventListener;
 import io.jboot.core.mq.JbootmqMessageListener;
-import io.jboot.core.rpc.annotation.JbootrpcService;
+import io.jboot.core.rpc.annotation.RPCBean;
 import io.jboot.core.rpc.dubbo.JbootDubborpc;
 import io.jboot.core.rpc.local.JbootLocalrpc;
 import io.jboot.core.rpc.motan.JbootMotanrpc;
 import io.jboot.core.rpc.zbus.JbootZbusrpc;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.core.event.JbootEventListener;
 import io.jboot.exception.JbootException;
 import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassScanner;
@@ -66,14 +66,14 @@ public class JbootrpcManager {
         }
 
         for (Class clazz : classes) {
-            JbootrpcService rpcService = (JbootrpcService) clazz.getAnnotation(JbootrpcService.class);
+            RPCBean rpcService = (RPCBean) clazz.getAnnotation(RPCBean.class);
             if (rpcService == null) {
                 continue;
             }
 
             Class[] inters = clazz.getInterfaces();
             if (inters == null || inters.length == 0) {
-                throw new JbootException(String.format("class[%s] has no interface, can not use @JbootrpcService", clazz));
+                throw new JbootException(String.format("class[%s] has no interface, can not use @RPCInject", clazz));
             }
 
             //对某些系统的类 进行排除，例如：Serializable 等
@@ -112,44 +112,5 @@ public class JbootrpcManager {
                 return JbootSpiLoader.load(Jbootrpc.class, config.getType());
         }
     }
-
-//    private JbootrpcHystrixFallbackListener fallbackListener = null;
-//
-//    public JbootrpcHystrixFallbackListener getHystrixFallbackListener() {
-//
-//        if (fallbackListener != null) {
-//            return fallbackListener;
-//        }
-//
-//        if (StringKits.isNotBlank(config.getHystrixFallbackListener())) {
-//            fallbackListener = ClassKits.newInstance(config.getHystrixFallbackListener());
-//
-//        }
-//
-//        if (fallbackListener == null) {
-//            fallbackListener = new JbootrpcHystrixFallbackListenerDefault();
-//        }
-//
-//        return fallbackListener;
-//    }
-
-//    private JbootrpcHystrixSetterFactory setterFactory = null;
-//
-//    public JbootrpcHystrixSetterFactory getHystrixSetterFactory() {
-//
-//        if (setterFactory != null) {
-//            return setterFactory;
-//        }
-//
-//        if (StringKits.isNotBlank(config.getHystrixSetterFactory())) {
-//            setterFactory = ClassKits.newInstance(config.getHystrixSetterFactory());
-//        }
-//
-//        if (setterFactory == null) {
-//            setterFactory = new JbootrpcHystrixSetterFactoryDefault();
-//        }
-//
-//        return setterFactory;
-//    }
 
 }

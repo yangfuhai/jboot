@@ -15,10 +15,10 @@
  */
 package io.jboot.core.mq.rabbitmq;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 
-@PropertyModel(prefix = "jboot.mq.rabbitmq")
+@ConfigModel(prefix = "jboot.mq.rabbitmq")
 public class JbootmqRabbitmqConfig {
 
 

@@ -15,14 +15,14 @@
  */
 package io.jboot.web;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package io.jboot.web
  */
-@PropertyModel(prefix = "jboot.web")
+@ConfigModel(prefix = "jboot.web")
 public class JbootWebConfig {
 
     public static final String ACTION_CACHE_KEYGENERATOR_TYPE_DEFAULT = "default";

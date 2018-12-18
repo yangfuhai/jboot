@@ -15,10 +15,10 @@
  */
 package io.jboot.core.schedule;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 
-@PropertyModel(prefix = "jboot.schedule")
+@ConfigModel(prefix = "jboot.schedule")
 public class JbooScheduleConfig {
     private String cron4jFile = "cron4j.properties";
     private int poolSize = Runtime.getRuntime().availableProcessors() * 8;

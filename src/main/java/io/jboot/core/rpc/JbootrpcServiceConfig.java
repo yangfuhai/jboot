@@ -16,7 +16,8 @@
 package io.jboot.core.rpc;
 
 import io.jboot.Jboot;
-import io.jboot.core.rpc.annotation.JbootrpcService;
+import io.jboot.core.rpc.annotation.RPCBean;
+import io.jboot.core.rpc.annotation.RPCInject;
 import io.jboot.kits.StringKits;
 
 import java.io.Serializable;
@@ -62,7 +63,44 @@ public class JbootrpcServiceConfig implements Serializable {
         this.filter = defaultConfig.getFilter();
     }
 
-    public JbootrpcServiceConfig(JbootrpcService annotation) {
+    public JbootrpcServiceConfig(RPCInject rpcInject) {
+        this();
+
+        if (rpcInject.port() > 0) {
+            this.port = rpcInject.port();
+        }
+
+        if (StringKits.isNotBlank(rpcInject.group())) {
+            this.group = rpcInject.group();
+        }
+
+        if (StringKits.isNotBlank(rpcInject.version())) {
+            this.version = rpcInject.version();
+        }
+
+        if (rpcInject.retries() >= 0) {
+            this.retries = rpcInject.retries();
+        }
+
+        if (rpcInject.actives() >= 0) {
+            this.actives = rpcInject.actives();
+        }
+
+        if (StringKits.isNotBlank(rpcInject.loadbalance())) {
+            this.loadbalance = rpcInject.loadbalance();
+        }
+
+        if (StringKits.isNotBlank(rpcInject.async())) {
+            this.async = Boolean.getBoolean(rpcInject.async());
+        }
+
+        if (StringKits.isNotBlank(rpcInject.check())) {
+            this.check = Boolean.getBoolean(rpcInject.check());
+        }
+
+    }
+
+    public JbootrpcServiceConfig(RPCBean annotation) {
         this();
 
         if (annotation.port() > 0) {
@@ -77,24 +115,9 @@ public class JbootrpcServiceConfig implements Serializable {
             this.version = annotation.version();
         }
 
-        if (annotation.retries() >= 0) {
-            this.retries = annotation.retries();
-        }
 
         if (annotation.actives() >= 0) {
             this.actives = annotation.actives();
-        }
-
-        if (StringKits.isNotBlank(annotation.loadbalance())) {
-            this.loadbalance = annotation.loadbalance();
-        }
-
-        if (StringKits.isNotBlank(annotation.async())) {
-            this.async = Boolean.getBoolean(annotation.async());
-        }
-
-        if (StringKits.isNotBlank(annotation.check())) {
-            this.check = Boolean.getBoolean(annotation.check());
         }
 
     }

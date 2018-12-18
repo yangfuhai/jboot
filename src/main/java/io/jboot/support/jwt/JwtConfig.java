@@ -15,7 +15,7 @@
  */
 package io.jboot.support.jwt;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.kits.StringKits;
 
 /**
@@ -23,7 +23,7 @@ import io.jboot.kits.StringKits;
  * @version V1.0
  * @Package io.jboot.web.jwt
  */
-@PropertyModel(prefix = "jboot.web.jwt")
+@ConfigModel(prefix = "jboot.web.jwt")
 public class JwtConfig {
 
     private String httpHeaderName = "Jwt";

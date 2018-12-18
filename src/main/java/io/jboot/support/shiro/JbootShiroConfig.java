@@ -16,11 +16,11 @@
 package io.jboot.support.shiro;
 
 import com.jfinal.kit.PathKit;
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 import java.io.File;
 
-@PropertyModel(prefix = "jboot.shiro")
+@ConfigModel(prefix = "jboot.shiro")
 public class JbootShiroConfig {
 
     private String loginUrl;

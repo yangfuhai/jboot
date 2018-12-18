@@ -15,10 +15,10 @@
  */
 package io.jboot.core.mq;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 
-@PropertyModel(prefix = "jboot.mq")
+@ConfigModel(prefix = "jboot.mq")
 public class JbootmqConfig {
     public static final String TYPE_REDIS = "redis";
     public static final String TYPE_ACTIVEMQ = "activemq";

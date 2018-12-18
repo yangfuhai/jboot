@@ -15,13 +15,13 @@
  */
 package io.jboot.core.rpc;
 
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
 
-@PropertyModel(prefix = "jboot.rpc")
+@ConfigModel(prefix = "jboot.rpc")
 public class JbootrpcConfig {
 
     public static final String TYPE_DUBBO = "dubbo";

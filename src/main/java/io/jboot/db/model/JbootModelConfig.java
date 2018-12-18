@@ -16,7 +16,7 @@
 package io.jboot.db.model;
 
 import io.jboot.Jboot;
-import io.jboot.app.config.annotation.PropertyModel;
+import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheConfig;
 import io.jboot.core.cache.JbootCacheManager;
@@ -26,7 +26,7 @@ import io.jboot.core.cache.JbootCacheManager;
  * @version V1.0
  * @Package io.jboot.db.model
  */
-@PropertyModel(prefix = "jboot.model")
+@ConfigModel(prefix = "jboot.model")
 public class JbootModelConfig {
 
     private String scan;
