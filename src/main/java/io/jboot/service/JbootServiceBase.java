@@ -232,7 +232,7 @@ public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJo
         if (id == null) {
             return model;
         }
-        Model m = findById(id);
+        Model m = joinById(id);
         if (m != null) {
             model.put(StrKit.firstCharToLowerCase(m.getClass().getSimpleName()), m);
         }
@@ -254,7 +254,7 @@ public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJo
         if (id == null) {
             return model;
         }
-        JbootModel m = findById(id);
+        JbootModel m = joinById(id);
         if (m != null) {
             m = m.copy();
             m.keep(attrs);
@@ -279,7 +279,7 @@ public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJo
         if (id == null) {
             return model;
         }
-        Model m = findById(id);
+        Model m = joinById(id);
         if (m != null) {
             model.put(joinName, m);
         }
@@ -303,13 +303,24 @@ public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJo
         if (id == null) {
             return model;
         }
-        JbootModel m = findById(id);
+        JbootModel m = joinById(id);
         if (m != null) {
             m = m.copy();
             m.keep(attrs);
             model.put(joinName, m);
         }
         return model;
+    }
+
+
+    /**
+     * 可以让子类去复写joinById ，比如默认只 join 部分字段等
+     *
+     * @param id
+     * @return
+     */
+    protected M joinById(Object id) {
+        return findById(id);
     }
 
 
