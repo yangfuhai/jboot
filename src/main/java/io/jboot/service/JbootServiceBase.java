@@ -115,8 +115,8 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param model
      * @return
      */
-    public boolean save(M model) {
-        return model.save();
+    public <T> T save(M model) {
+        return model.save() ? model.getIdValue() : null;
     }
 
 
@@ -126,8 +126,8 @@ public class JbootServiceBase<M extends JbootModel<M>> {
      * @param model
      * @return
      */
-    public boolean saveOrUpdate(M model) {
-        return model.saveOrUpdate();
+    public <T> T saveOrUpdate(M model) {
+        return model.saveOrUpdate() ? model.getIdValue() : null;
     }
 
     /**

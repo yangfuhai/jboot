@@ -307,6 +307,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return findFirstByColumns(columns, null);
     }
 
+
     public M findFirstByColumns(Columns columns, String orderby) {
         String sql = _getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), orderby, 1);
         return columns.isEmpty() ? findFirst(sql) : findFirst(sql, columns.getValueArray());
@@ -432,6 +433,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return columns.isEmpty()
                 ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)
                 : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
+    }
+
+    public  <T> T getIdValue(){
+        return get(_getPrimaryKey());
     }
 
 
