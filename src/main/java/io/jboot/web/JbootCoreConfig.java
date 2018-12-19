@@ -73,6 +73,7 @@ public class JbootCoreConfig extends JFinalConfig {
     private List<Routes.Route> routeList = new ArrayList<>();
 
     public JbootCoreConfig() {
+        Aop.setAopFactory(new JbootAopFactory());
         Aop.inject(this);
         JbootAppListenerManager.me().onInit();
     }
@@ -80,8 +81,6 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void configConstant(Constants constants) {
-
-        Aop.setAopFactory(new JbootAopFactory());
 
         constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.isDevMode());
