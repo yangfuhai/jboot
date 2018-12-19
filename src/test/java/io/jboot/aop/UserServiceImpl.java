@@ -1,4 +1,4 @@
-package io.jboot.test;
+package io.jboot.aop;
 
 import io.jboot.aop.annotation.Bean;
 
@@ -6,6 +6,6 @@ import io.jboot.aop.annotation.Bean;
 public class UserServiceImpl implements UserService {
     @Override
     public String getName(){
-        return "name from service";
+        return "UserServiceImpl";
     }
 }

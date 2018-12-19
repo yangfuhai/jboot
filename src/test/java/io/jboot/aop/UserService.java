@@ -1,4 +1,4 @@
-package io.jboot.test;
+package io.jboot.aop;
 
 
 public interface UserService {
