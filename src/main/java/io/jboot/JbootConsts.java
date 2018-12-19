@@ -50,8 +50,15 @@ public class JbootConsts {
             return value;
         }
 
+        private static Boolean isDevMode = null;
         public static boolean isDevMode(){
-            return DEV.getValue().equals(JbootConfigManager.me().getValueByKey("jboot.app.mode"));
+            if (isDevMode == null){
+                String appMode = JbootConfigManager.me().getValueByKey("jboot.app.mode");
+                isDevMode =  appMode == null
+                        || appMode.trim().length() == 0
+                        || DEV.getValue().equals(appMode);
+            }
+            return isDevMode;
         }
     }
 }

@@ -60,24 +60,22 @@ public class JbootrpcManager {
 
         getJbootrpc().onInitBefore();
 
-        List<Class> classes = ClassScanner.scanClass(true);
+        List<Class> classes = ClassScanner.scanClassByAnnotation(RPCBean.class,true);
         if (ArrayKits.isNullOrEmpty(classes)) {
             return;
         }
 
         for (Class clazz : classes) {
-            RPCBean rpcService = (RPCBean) clazz.getAnnotation(RPCBean.class);
-            if (rpcService == null) {
-                continue;
-            }
+
+            RPCBean rpcBean = (RPCBean) clazz.getAnnotation(RPCBean.class);
 
             Class[] inters = clazz.getInterfaces();
             if (inters == null || inters.length == 0) {
-                throw new JbootException(String.format("class[%s] has no interface, can not use @RPCInject", clazz));
+                throw new JbootException(String.format("class[%s] has no interface, can not use @RPCBean", clazz));
             }
 
             //对某些系统的类 进行排除，例如：Serializable 等
-            Class[] excludes = ArrayKits.concat(default_excludes, rpcService.exclude());
+            Class[] excludes = ArrayKits.concat(default_excludes, rpcBean.exclude());
             for (Class inter : inters) {
                 boolean isContinue = false;
                 for (Class ex : excludes) {
@@ -89,7 +87,7 @@ public class JbootrpcManager {
                 if (isContinue) {
                     continue;
                 }
-                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), new JbootrpcServiceConfig(rpcService));
+                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), new JbootrpcServiceConfig(rpcBean));
             }
         }
 

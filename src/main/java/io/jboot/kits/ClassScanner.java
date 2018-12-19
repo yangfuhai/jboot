@@ -19,7 +19,6 @@ import io.jboot.JbootConsts;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -38,19 +37,22 @@ public class ClassScanner {
 
 
     public static final Set<String> includeJars = new HashSet<>();
-    public static void addScanJarPrefix(String prefix){
+
+    public static void addScanJarPrefix(String prefix) {
         includeJars.add(prefix);
     }
+
     static {
         includeJars.add("jboot-");
     }
 
 
-
     public static final Set<String> excludeJars = new HashSet<>();
-    public static void addUnscanJarPrefix(String prefix){
+
+    public static void addUnscanJarPrefix(String prefix) {
         excludeJars.add(prefix);
     }
+
     static {
         excludeJars.add("jfinal-");
         excludeJars.add("cos-2017.5.jar");
@@ -207,8 +209,7 @@ public class ClassScanner {
 
     private static void initIfNecessary() {
         if (appClasses.isEmpty()) {
-            addClassesFromFilePath(getRootClassPath());
-            addClassesFromJars();
+            initAppClasses();
         }
     }
 
@@ -229,46 +230,60 @@ public class ClassScanner {
     }
 
 
-    private static void addClassesFromJars() {
+    private static void initAppClasses() {
 
-        Set<String> jars = new HashSet<>();
+        Set<String> jarPaths = new HashSet<>();
+        Set<String> classPaths = new HashSet<>();
 
-        findJars(jars, ClassScanner.class.getClassLoader());
+        findClassPathsAndJars(jarPaths, classPaths, ClassScanner.class.getClassLoader());
 
-        for (String path : jars) {
-
-            JarFile jarFile = null;
-            try {
-                jarFile = new JarFile(path);
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry jarEntry = entries.nextElement();
-                    String entryName = jarEntry.getName();
-                    if (!jarEntry.isDirectory() && entryName.endsWith(".class")) {
-                        String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                        addClass(classForName(className));
-                    }
-                }
-            } catch (IOException e1) {
-            } finally {
-                if (jarFile != null)
-                    try {
-                        jarFile.close();
-                    } catch (IOException e) {
-                    }
+        for (String jarPath : jarPaths) {
+            if (JbootConsts.MODE.isDevMode()) {
+                System.out.println("ClassScanner scan jar : " + jarPath);
             }
+            addClassesFromJar(jarPath);
+        }
 
+        for (String classPath : classPaths) {
+            if (JbootConsts.MODE.isDevMode()) {
+                System.out.println("ClassScanner scan classPath : " + classPath);
+            }
+            addClassesFromClassPath(classPath);
+        }
+    }
+
+    private static void addClassesFromJar(String jarPath) {
+        JarFile jarFile = null;
+        try {
+            jarFile = new JarFile(jarPath);
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry jarEntry = entries.nextElement();
+                String entryName = jarEntry.getName();
+                if (!jarEntry.isDirectory() && entryName.endsWith(".class")) {
+                    String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+                    addClass(classForName(className));
+                }
+            }
+        } catch (IOException e1) {
+        } finally {
+            if (jarFile != null)
+                try {
+                    jarFile.close();
+                } catch (IOException e) {
+                }
         }
     }
 
 
-    private static void addClassesFromFilePath(String filePath) {
+    private static void addClassesFromClassPath(String classPath) {
+
         List<File> classFileList = new ArrayList<>();
-        scanClassFile(classFileList, filePath);
+        scanClassFile(classFileList, classPath);
 
         for (File file : classFileList) {
 
-            int start = filePath.length();
+            int start = classPath.length();
             int end = file.toString().length() - ".class".length();
 
             String classFile = file.toString().substring(start + 1, end);
@@ -283,12 +298,12 @@ public class ClassScanner {
     }
 
 
-    private static void findJars(Set<String> jarPaths, ClassLoader classLoader) {
+    private static void findClassPathsAndJars(Set<String> jarPaths, Set<String> classPaths, ClassLoader classLoader) {
         try {
             if (classLoader instanceof URLClassLoader) {
                 URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
                 URL[] urLs = urlClassLoader.getURLs();
-                for (URL url : urLs) {
+                for (URL url  : urLs) {
                     String path = url.getPath();
                     path = URLDecoder.decode(path, "UTF-8");
 
@@ -298,22 +313,20 @@ public class ClassScanner {
                     }
 
                     if (!path.toLowerCase().endsWith(".jar")) {
-                        addClassesFromFilePath(new File(path).getCanonicalPath());
+                        classPaths.add(new File(path).getCanonicalPath());
+                        continue;
                     }
 
                     if (isIncludeJar(path)) {
-                        if (JbootConsts.MODE.isDevMode()){
-                            System.out.println("jboot scan jar : " + path);
-                        }
                         jarPaths.add(path);
                     }
                 }
             }
             ClassLoader parent = classLoader.getParent();
             if (parent != null) {
-                findJars(jarPaths, parent);
+                findClassPathsAndJars(jarPaths, classPaths, parent);
             }
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -379,34 +392,6 @@ public class ClassScanner {
             }
         }
         return javaHome;
-    }
-
-    private static String rootClassPath;
-
-    private static String getRootClassPath() {
-        if (rootClassPath == null) {
-            try {
-                String path = getClassLoader().getResource("").toURI().getPath();
-                rootClassPath = new File(path).getAbsolutePath();
-            } catch (Exception e) {
-                try {
-                    String path = ClassScanner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-                    path = java.net.URLDecoder.decode(path, "UTF-8");
-                    if (path.endsWith(File.separator)) {
-                        path = path.substring(0, path.length() - 1);
-                    }
-                    rootClassPath = path;
-                } catch (UnsupportedEncodingException e1) {
-                    throw new RuntimeException(e1);
-                }
-            }
-        }
-        return rootClassPath;
-    }
-
-    private static ClassLoader getClassLoader() {
-        ClassLoader ret = Thread.currentThread().getContextClassLoader();
-        return ret != null ? ret : ClassScanner.class.getClassLoader();
     }
 
 
