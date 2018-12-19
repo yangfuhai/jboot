@@ -17,9 +17,9 @@ package io.jboot.web;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.jfinal.aop.Aop;
 import com.jfinal.core.Controller;
 import com.jfinal.core.ControllerFactory;
-import io.jboot.Jboot;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -38,7 +38,8 @@ public class JbootControllerManager extends ControllerFactory {
     }
 
     public Controller getController(Class<? extends Controller> controllerClass) throws InstantiationException, IllegalAccessException {
-        return Jboot.bean(controllerClass);
+        Controller controller = controllerClass.newInstance();
+        return Aop.inject(controller);
     }
 
 

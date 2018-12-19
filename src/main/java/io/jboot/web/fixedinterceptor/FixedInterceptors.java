@@ -15,7 +15,7 @@
  */
 package io.jboot.web.fixedinterceptor;
 
-import io.jboot.Jboot;
+import com.jfinal.aop.Aop;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
@@ -81,7 +81,7 @@ public class FixedInterceptors {
 
         int i = 0;
         for (FixedInterceptorWapper interceptor : inters) {
-            Jboot.injectMembers(interceptor);
+            Aop.inject(interceptor);
             interceptors[i++] = interceptor.getFixedInterceptor();
         }
 

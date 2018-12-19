@@ -15,12 +15,12 @@
  */
 package io.jboot.web.directive.base;
 
+import com.jfinal.aop.Aop;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Env;
 import com.jfinal.template.expr.ast.ExprList;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
-import io.jboot.Jboot;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ public abstract class JbootDirectiveBase extends Directive {
 
 
     public JbootDirectiveBase() {
-        Jboot.injectMembers(this);
+        Aop.inject(this);
     }
 
 

@@ -73,7 +73,7 @@ public class JbootCoreConfig extends JFinalConfig {
     private List<Routes.Route> routeList = new ArrayList<>();
 
     public JbootCoreConfig() {
-        Jboot.injectMembers(this);
+        Aop.inject(this);
         JbootAppListenerManager.me().onInit();
     }
 

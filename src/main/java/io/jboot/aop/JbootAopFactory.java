@@ -28,7 +28,8 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     protected Object createObject(Class<?> targetClass) throws ReflectiveOperationException {
-        return com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
+        Object ret =  com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
+        return inject(ret);
     }
 
 
@@ -52,6 +53,12 @@ public class JbootAopFactory extends AopFactory {
                 return;
             }
 
+            javax.inject.Inject javaxInject = field.getAnnotation(javax.inject.Inject.class);
+            if (javaxInject != null) {
+                injectByJavaxInject(targetObject, field, javaxInject);
+                return;
+            }
+
             ConfigInject configInject = field.getAnnotation(ConfigInject.class);
             if (configInject != null) {
                 injectByConfig(targetObject, field, configInject);
@@ -63,8 +70,57 @@ public class JbootAopFactory extends AopFactory {
                 injectByRPC(targetObject, field, rpcInject);
                 return;
             }
-
         }
+    }
+
+
+    /**
+     * 本地 service 注入
+     * @param targetObject
+     * @param field
+     * @param inject
+     * @throws ReflectiveOperationException
+     */
+    private void injectByJFinalInject(Object targetObject, Field field, Inject inject) throws ReflectiveOperationException {
+
+        Class<?> fieldInjectedClass = inject.value();
+        if (fieldInjectedClass == Void.class) {
+            fieldInjectedClass = field.getType();
+            fieldInjectedClass = getMappingClass(fieldInjectedClass);
+        }
+
+        Singleton si = fieldInjectedClass.getAnnotation(Singleton.class);
+        boolean singleton = (si != null ? si.value() : this.singleton);
+
+        Object fieldInjectedObject = getOrCreateObject(fieldInjectedClass, singleton);
+        field.setAccessible(true);
+        field.set(targetObject, fieldInjectedObject);
+
+//        // 递归调用，为当前被注入的对象进行注入
+//        this.inject(fieldInjectedObject.getClass(), fieldInjectedObject, injectDepth);
+    }
+
+
+    /**
+     * 本地注入，兼容 javax 的注解
+     * @param targetObject
+     * @param field
+     * @param inject
+     * @throws ReflectiveOperationException
+     */
+    private void injectByJavaxInject(Object targetObject, Field field, javax.inject.Inject inject) throws ReflectiveOperationException {
+
+        Class<?> fieldInjectedClass = field.getType();
+
+        Singleton si = fieldInjectedClass.getAnnotation(Singleton.class);
+        boolean singleton = (si != null ? si.value() : this.singleton);
+
+        Object fieldInjectedObject = getOrCreateObject(fieldInjectedClass, singleton);
+        field.setAccessible(true);
+        field.set(targetObject, fieldInjectedObject);
+
+//        // 递归调用，为当前被注入的对象进行注入
+//        this.inject(fieldInjectedObject.getClass(), fieldInjectedObject, injectDepth);
     }
 
     /**
@@ -106,31 +162,10 @@ public class JbootAopFactory extends AopFactory {
         field.set(targetObject, fieldInjectedObject);
     }
 
-    /**
-     * 本地 service 注入
-     * @param targetObject
-     * @param field
-     * @param inject
-     * @throws ReflectiveOperationException
-     */
-    private void injectByJFinalInject(Object targetObject, Field field, Inject inject) throws ReflectiveOperationException {
 
-        Class<?> fieldInjectedClass = inject.value();
-        if (fieldInjectedClass == Void.class) {
-            fieldInjectedClass = field.getType();
-            fieldInjectedClass = getMappingClass(fieldInjectedClass);
-        }
 
-        Singleton si = fieldInjectedClass.getAnnotation(Singleton.class);
-        boolean singleton = (si != null ? si.value() : this.singleton);
 
-        Object fieldInjectedObject = getOrCreateObject(fieldInjectedClass, singleton);
-        field.setAccessible(true);
-        field.set(targetObject, fieldInjectedObject);
 
-        // 递归调用，为当前被注入的对象进行注入
-        this.inject(fieldInjectedObject.getClass(), fieldInjectedObject, injectDepth);
-    }
 
 
 

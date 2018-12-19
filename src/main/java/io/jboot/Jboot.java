@@ -17,9 +17,9 @@ package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
 import com.jfinal.aop.Aop;
+import io.jboot.app.config.JbootConfigManager;
 import io.jboot.core.cache.JbootCache;
 import io.jboot.core.cache.JbootCacheManager;
-import io.jboot.app.config.JbootConfigManager;
 import io.jboot.core.event.JbootEvent;
 import io.jboot.core.event.JbootEventManager;
 import io.jboot.core.rpc.JbootrpcManager;

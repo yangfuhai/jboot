@@ -15,9 +15,9 @@
  */
 package io.jboot.aop.jfinal;
 
+import com.jfinal.aop.Aop;
 import com.jfinal.config.Handlers;
 import com.jfinal.handler.Handler;
-import io.jboot.Jboot;
 
 /**
  * Jfinal Handlers 的代理类，方便为Handler插件的自动注入功能
@@ -31,13 +31,13 @@ public class JfinalHandlers {
     }
 
     public JfinalHandlers add(Handler handler) {
-        Jboot.injectMembers(handler);
+        Aop.inject(handler);
         handlers.add(handler);
         return this;
     }
 
     public JfinalHandlers add(int index, Handler handler) {
-        Jboot.injectMembers(handler);
+        Aop.inject(handler);
         handlers.getHandlerList().add(index, handler);
         return this;
     }

@@ -16,6 +16,7 @@
 package io.jboot.web.handler;
 
 import com.google.common.collect.Sets;
+import com.jfinal.aop.Aop;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.*;
@@ -23,7 +24,6 @@ import com.jfinal.log.Log;
 import com.jfinal.render.RedirectRender;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
-import io.jboot.Jboot;
 import io.jboot.web.JbootControllerContext;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 import io.jboot.web.flashmessage.FlashMessageManager;
@@ -209,7 +209,7 @@ public class JbootActionHandler extends ActionHandler {
 
         //对所有拦截器进行注入
         for (Interceptor interceptor : interceptors) {
-            Jboot.injectMembers(interceptor);
+            Aop.inject(interceptor);
         }
 
         injectedActions.add(action);

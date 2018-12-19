@@ -15,6 +15,7 @@
  */
 package io.jboot.core.rpc;
 
+import com.jfinal.aop.Aop;
 import io.jboot.Jboot;
 import io.jboot.core.event.JbootEventListener;
 import io.jboot.core.mq.JbootmqMessageListener;
@@ -87,7 +88,7 @@ public class JbootrpcManager {
                 if (isContinue) {
                     continue;
                 }
-                getJbootrpc().serviceExport(inter, Jboot.bean(clazz), new JbootrpcServiceConfig(rpcBean));
+                getJbootrpc().serviceExport(inter, Aop.get(clazz), new JbootrpcServiceConfig(rpcBean));
             }
         }
 
