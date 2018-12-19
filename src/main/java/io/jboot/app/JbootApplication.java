@@ -41,10 +41,13 @@ public class JbootApplication {
 
         UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
 
+        String[] hotSwapClassPrefixes = appConfig.getHotSwapClassPrefix().split(",");
+        for (String hotSwapClassPrefix : hotSwapClassPrefixes) {
+            undertowConfig.addHotSwapClassPrefix(hotSwapClassPrefix.trim());
+        }
+
         return UndertowServer.create(undertowConfig);
     }
-
-
 
 
     private static void printBannerInfo(JbootApplicationConfig appConfig) {

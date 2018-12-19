@@ -60,6 +60,13 @@ public class JbootApplicationConfig {
         this.jfinalConfig = jfinalConfig;
     }
 
+    public String getHotSwapClassPrefix() {
+        return hotSwapClassPrefix;
+    }
+
+    public void setHotSwapClassPrefix(String hotSwapClassPrefix) {
+        this.hotSwapClassPrefix = hotSwapClassPrefix;
+    }
 
     @Override
     public String toString() {
@@ -68,6 +75,7 @@ public class JbootApplicationConfig {
                 ", jfinalConfig='" + jfinalConfig + '\'' +
                 ", bannerEnable=" + bannerEnable +
                 ", bannerFile='" + bannerFile + '\'' +
+                ", hotSwapClassPrefix='" + hotSwapClassPrefix + '\'' +
                 " }";
     }
 }

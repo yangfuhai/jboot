@@ -50,25 +50,25 @@ public class JbootAopFactory extends AopFactory {
             Inject inject = field.getAnnotation(Inject.class);
             if (inject != null) {
                 injectByJFinalInject(targetObject, field, inject);
-                return;
+                continue;
             }
 
             javax.inject.Inject javaxInject = field.getAnnotation(javax.inject.Inject.class);
             if (javaxInject != null) {
                 injectByJavaxInject(targetObject, field, javaxInject);
-                return;
+                continue;
             }
 
             ConfigInject configInject = field.getAnnotation(ConfigInject.class);
             if (configInject != null) {
                 injectByConfig(targetObject, field, configInject);
-                return;
+                continue;
             }
 
             RPCInject rpcInject = field.getAnnotation(RPCInject.class);
             if (rpcInject != null) {
                 injectByRPC(targetObject, field, rpcInject);
-                return;
+                continue;
             }
         }
     }
