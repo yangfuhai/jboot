@@ -110,7 +110,7 @@ public class JbootAopFactory extends AopFactory {
      */
     private void injectByJavaxInject(Object targetObject, Field field, javax.inject.Inject inject) throws ReflectiveOperationException {
 
-        Class<?> fieldInjectedClass = field.getType();
+        Class<?> fieldInjectedClass = getMappingClass(field.getType());
 
         Singleton si = fieldInjectedClass.getAnnotation(Singleton.class);
         boolean singleton = (si != null ? si.value() : this.singleton);
