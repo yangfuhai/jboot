@@ -25,6 +25,4 @@ public @interface ConfigInject {
 
     String value();
 
-    String file() default "";
-
 }

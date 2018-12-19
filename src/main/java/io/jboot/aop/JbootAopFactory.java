@@ -3,24 +3,32 @@ package io.jboot.aop;
 import com.jfinal.aop.*;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
-import io.jboot.core.mq.JbootmqMessageListener;
+import io.jboot.app.config.JbootConfigManager;
+import io.jboot.app.config.annotation.ConfigInject;
 import io.jboot.core.event.JbootEventListener;
+import io.jboot.core.mq.JbootmqMessageListener;
+import io.jboot.core.rpc.JbootrpcManager;
+import io.jboot.core.rpc.JbootrpcServiceConfig;
+import io.jboot.core.rpc.annotation.RPCInject;
 import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassScanner;
+import io.jboot.kits.StringKits;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class JbootAopFactory extends AopFactory implements Interceptor {
+public class JbootAopFactory extends AopFactory {
 
-    public JbootAopFactory(){
-        initMapping();
+    private JbootAopInterceptor aopInterceptor = new JbootAopInterceptor();
+
+    public JbootAopFactory() {
+        initBeanMapping();
     }
 
     @Override
     protected Object createObject(Class<?> targetClass) throws ReflectiveOperationException {
-        return com.jfinal.aop.Enhancer.enhance(targetClass, this);
+        return com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
     }
 
 
@@ -37,43 +45,101 @@ public class JbootAopFactory extends AopFactory implements Interceptor {
         }
 
         for (Field field : fields) {
+
             Inject inject = field.getAnnotation(Inject.class);
-            javax.inject.Inject javaxInject = field.getAnnotation(javax.inject.Inject.class);
-            if (inject == null && javaxInject == null) {
-                continue;
+            if (inject != null) {
+                injectByJFinalInject(targetObject, field, inject);
+                return;
             }
 
-            Class<?> fieldInjectedClass = inject == null ? Void.class : inject.value();
-            if (fieldInjectedClass == Void.class) {
-                fieldInjectedClass = field.getType();
-                fieldInjectedClass = getMappingClass(fieldInjectedClass);
+            ConfigInject configInject = field.getAnnotation(ConfigInject.class);
+            if (configInject != null) {
+                injectByConfig(targetObject, field, configInject);
+                return;
             }
 
-            Singleton si = fieldInjectedClass.getAnnotation(Singleton.class);
-            boolean singleton = (si != null ? si.value() : this.singleton);
+            RPCInject rpcInject = field.getAnnotation(RPCInject.class);
+            if (rpcInject != null) {
+                injectByRPC(targetObject, field, rpcInject);
+                return;
+            }
 
-            Object fieldInjectedObject = getOrCreateObject(fieldInjectedClass, singleton);
-            field.setAccessible(true);
-            field.set(targetObject, fieldInjectedObject);
-
-            // 递归调用，为当前被注入的对象进行注入
-            this.inject(fieldInjectedObject.getClass(), fieldInjectedObject, injectDepth);
         }
     }
 
+    /**
+     * 注入 rpc service
+     * @param targetObject
+     * @param field
+     * @param rpcInject
+     * @throws IllegalAccessException
+     */
+    private void injectByRPC(Object targetObject, Field field, RPCInject rpcInject) throws IllegalAccessException {
 
-    @Override
-    public void intercept(Invocation inv) {
+        JbootrpcServiceConfig serviceConfig = new JbootrpcServiceConfig(rpcInject);
+        Class<?> fieldInjectedClass = field.getType();
 
-        JbootAopInvocation invocation = new JbootAopInvocation(inv);
-        invocation.invoke();
+        Object fieldInjectedObject = JbootrpcManager.me().getJbootrpc().serviceObtain(fieldInjectedClass,serviceConfig);
+        field.setAccessible(true);
+        field.set(targetObject, fieldInjectedObject);
 
     }
 
+    /**
+     * 注入配置文件
+     * @param targetObject
+     * @param field
+     * @param configInject
+     * @throws IllegalAccessException
+     */
+    private void injectByConfig(Object targetObject, Field field, ConfigInject configInject) throws IllegalAccessException {
+        String key = configInject.value();
+        Class<?> fieldInjectedClass = field.getType();
+        String value = JbootConfigManager.me().getValueByKey(key);
+
+        if (StringKits.isBlank(value)) {
+            return;
+        }
+
+        Object fieldInjectedObject = JbootConfigManager.me().convert(fieldInjectedClass, value);
+        field.setAccessible(true);
+        field.set(targetObject, fieldInjectedObject);
+    }
+
+    /**
+     * 本地 service 注入
+     * @param targetObject
+     * @param field
+     * @param inject
+     * @throws ReflectiveOperationException
+     */
+    private void injectByJFinalInject(Object targetObject, Field field, Inject inject) throws ReflectiveOperationException {
+
+        Class<?> fieldInjectedClass = inject.value();
+        if (fieldInjectedClass == Void.class) {
+            fieldInjectedClass = field.getType();
+            fieldInjectedClass = getMappingClass(fieldInjectedClass);
+        }
+
+        Singleton si = fieldInjectedClass.getAnnotation(Singleton.class);
+        boolean singleton = (si != null ? si.value() : this.singleton);
+
+        Object fieldInjectedObject = getOrCreateObject(fieldInjectedClass, singleton);
+        field.setAccessible(true);
+        field.set(targetObject, fieldInjectedObject);
+
+        // 递归调用，为当前被注入的对象进行注入
+        this.inject(fieldInjectedObject.getClass(), fieldInjectedObject, injectDepth);
+    }
+
+
+
     private static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
 
-    private void initMapping() {
-
+    /**
+     * 初始化 @Bean 注解的映射关系
+     */
+    private void initBeanMapping() {
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class implClass : classes) {
 
@@ -91,7 +157,7 @@ public class JbootAopFactory extends AopFactory implements Interceptor {
                     : ArrayKits.concat(default_excludes, beanExclude.value());
 
             for (Class interfaceClass : interfaceClasses) {
-                if (inExcludes(interfaceClass,excludes) == false){
+                if (inExcludes(interfaceClass, excludes) == false) {
                     this.addMapping(interfaceClass, implClass);
                 }
             }
@@ -101,7 +167,7 @@ public class JbootAopFactory extends AopFactory implements Interceptor {
     private boolean inExcludes(Class interfaceClass, Class[] excludes) {
         for (Class ex : excludes) {
             if (ex.isAssignableFrom(interfaceClass)) {
-               return true;
+                return true;
             }
         }
         return false;

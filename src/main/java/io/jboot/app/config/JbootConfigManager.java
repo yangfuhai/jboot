@@ -95,7 +95,7 @@ public class JbootConfigManager {
         T obj = (T) configs.get(clazz.getName() + prefix);
 
         if (obj != null) {
-           return obj;
+            return obj;
         }
 
         synchronized (clazz) {
@@ -137,7 +137,7 @@ public class JbootConfigManager {
 
             try {
                 if (Kits.isNotBlank(value)) {
-                    Object val = Kits.convert(method.getParameterTypes()[0], value);
+                    Object val = convert(method.getParameterTypes()[0], value);
                     method.invoke(obj, val);
                 }
             } catch (Throwable ex) {
@@ -146,6 +146,11 @@ public class JbootConfigManager {
         }
 
         return obj;
+    }
+
+
+    public Object convert(Class<?> type, String s) {
+        return Kits.convert(type, s);
     }
 
     private String getKeyByMethod(String prefix, Method method) {
@@ -185,6 +190,7 @@ public class JbootConfigManager {
         if (Kits.isBlank(value)) {
             value = (String) properties.get(key);
         }
+
         return value == null ? null : value.trim();
     }
 
@@ -217,7 +223,6 @@ public class JbootConfigManager {
 
         return properties;
     }
-
 
 
     /**
