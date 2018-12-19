@@ -170,26 +170,27 @@ public class Jboot {
 
 
     /**
-     * 获取被增强的，可以使用AOP注入的实体类
+     * 使用 Aop.get 代替
      *
      * @param clazz
      * @param <T>
      * @return
      */
+    @Deprecated
     public static <T> T bean(Class<T> clazz) {
         return Aop.get(clazz);
     }
 
 
     /**
-     * 对某个对象内部的变量进行注入
+     * 使用  Aop.inject 代替
      *
      * @param object
      */
+    @Deprecated
     public static void injectMembers(Object object) {
         Aop.inject(object);
     }
-
 
 
 }
