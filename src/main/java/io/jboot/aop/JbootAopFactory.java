@@ -189,7 +189,7 @@ public class JbootAopFactory extends AopFactory {
     private void injectByConfig(Object targetObject, Field field, ConfigInject configInject) throws IllegalAccessException {
         String key = configInject.value();
         Class<?> fieldInjectedClass = field.getType();
-        String value = JbootConfigManager.me().getValueByKey(key);
+        String value = JbootConfigManager.me().getConfigValue(key);
 
         if (StringKits.isBlank(value)) {
             return;

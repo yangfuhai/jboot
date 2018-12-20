@@ -105,7 +105,7 @@ public class JbootApplication {
     }
 
     private static String config(String key) {
-        return JbootConfigManager.me().getValueByKey(key);
+        return JbootConfigManager.me().getConfigValue(key);
     }
 
 

@@ -53,7 +53,7 @@ public class JbootConsts {
         private static Boolean isDevMode = null;
         public static boolean isDevMode(){
             if (isDevMode == null){
-                String appMode = JbootConfigManager.me().getValueByKey("jboot.app.mode");
+                String appMode = JbootConfigManager.me().getConfigValue("jboot.app.mode");
                 isDevMode =  appMode == null
                         || appMode.trim().length() == 0
                         || DEV.getValue().equals(appMode);

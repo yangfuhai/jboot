@@ -19,8 +19,8 @@ import io.jboot.app.config.annotation.ConfigModel;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +34,7 @@ public class JbootConfigManager {
 
     private Properties mainProperties;
 
-    private ConcurrentHashMap<String, Object> configs = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Object> configCache = new ConcurrentHashMap<>();
 
 
     private static JbootConfigManager instance;
@@ -60,7 +60,7 @@ public class JbootConfigManager {
             mainProperties = new Prop("jboot.properties").getProperties();
         }
 
-        String mode = getValueByKey("jboot.mode");
+        String mode = getConfigValue("jboot.mode");
 
         if (Kits.isNotBlank(mode)) {
 
@@ -92,60 +92,60 @@ public class JbootConfigManager {
      */
     public <T> T get(Class<T> clazz, String prefix, String file) {
 
-        T obj = (T) configs.get(clazz.getName() + prefix);
-
-        if (obj != null) {
-            return obj;
+        /**
+         * 开发模式下，热加载会导致由于Config是不同的ClassLoader，走缓存会Class转化异常
+         */
+        if (isDevMode()) {
+            return createConfigObject(clazz, prefix, file);
         }
 
-        synchronized (clazz) {
-            if (obj == null) {
-                obj = createConfigObject(clazz, prefix, file);
-                configs.put(clazz.getName() + prefix, obj);
+        Object configObject = configCache.get(clazz.getName() + prefix);
+
+        if (configObject == null) {
+            synchronized (clazz) {
+                if (configObject == null) {
+                    configObject = createConfigObject(clazz, prefix, file);
+                    configCache.put(clazz.getName() + prefix, configObject);
+                }
             }
         }
 
-        return obj;
+        return (T) configObject;
     }
 
     public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
 
-        T obj = Kits.newInstance(clazz);
-        Collection<Method> setMethods = Kits.getClassSetMethods(clazz);
+        Object configObject = Kits.newInstance(clazz);
+        List<Method> setMethods = Kits.getClassSetMethods(clazz);
+        if (setMethods != null) {
+            for (Method method : setMethods) {
 
-        if (setMethods == null || setMethods.isEmpty()) {
-            configs.put(clazz.getName() + prefix, obj);
-            return obj;
-        }
+                String key = buildKey(prefix, method);
+                String value = getConfigValue(key);
 
-        for (Method method : setMethods) {
+                if (Kits.isNotBlank(file)) {
+                    try {
+                        Prop prop = new Prop(file);
+                        String filePropValue = getConfigValue(prop.getProperties(), key);
+                        if (Kits.isNotBlank(filePropValue)) {
+                            value = filePropValue;
+                        }
+                    } catch (Throwable ex) {
+                    }
+                }
 
-            String key = getKeyByMethod(prefix, method);
-            String value = getValueByKey(key);
-
-            if (Kits.isNotBlank(file)) {
                 try {
-                    Prop prop = new Prop(file);
-                    String filePropValue = getValueByKey(prop.getProperties(), key);
-                    if (Kits.isNotBlank(filePropValue)) {
-                        value = filePropValue;
+                    if (Kits.isNotBlank(value)) {
+                        Object val = convert(method.getParameterTypes()[0], value);
+                        method.invoke(configObject, val);
                     }
                 } catch (Throwable ex) {
-                    Kits.doNothing(ex);
+                    ex.printStackTrace();
                 }
-            }
-
-            try {
-                if (Kits.isNotBlank(value)) {
-                    Object val = convert(method.getParameterTypes()[0], value);
-                    method.invoke(obj, val);
-                }
-            } catch (Throwable ex) {
-                ex.printStackTrace();
             }
         }
 
-        return obj;
+        return (T) configObject;
     }
 
 
@@ -153,20 +153,17 @@ public class JbootConfigManager {
         return Kits.convert(type, s);
     }
 
-    private String getKeyByMethod(String prefix, Method method) {
-
+    private String buildKey(String prefix, Method method) {
         String key = Kits.firstCharToLowerCase(method.getName().substring(3));
-
         if (Kits.isNotBlank(prefix)) {
             key = prefix.trim() + "." + key;
         }
-
         return key;
     }
 
 
-    public String getValueByKey(String key) {
-        return getValueByKey(mainProperties, key);
+    public String getConfigValue(String key) {
+        return getConfigValue(mainProperties, key);
     }
 
     /**
@@ -175,7 +172,7 @@ public class JbootConfigManager {
      * @param key
      * @return
      */
-    public String getValueByKey(Properties properties, String key) {
+    public String getConfigValue(Properties properties, String key) {
 
         String value = getBootArg(key);
 
@@ -265,6 +262,19 @@ public class JbootConfigManager {
 
     public Map<String, String> getBootArgs() {
         return argMap;
+    }
+
+
+    private Boolean devMode = null;
+
+    public boolean isDevMode() {
+        if (devMode == null) {
+            String appMode = getConfigValue("jboot.app.mode");
+            devMode = appMode == null
+                    || appMode.trim().length() == 0
+                    || "dev".equals(appMode);
+        }
+        return devMode;
     }
 
 
