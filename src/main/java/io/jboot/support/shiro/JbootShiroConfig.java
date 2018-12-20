@@ -15,10 +15,7 @@
  */
 package io.jboot.support.shiro;
 
-import com.jfinal.kit.PathKit;
 import io.jboot.app.config.annotation.ConfigModel;
-
-import java.io.File;
 
 @ConfigModel(prefix = "jboot.shiro")
 public class JbootShiroConfig {
@@ -26,7 +23,7 @@ public class JbootShiroConfig {
     private String loginUrl;
     private String successUrl;
     private String unauthorizedUrl;
-    private String shiroIniFile = "shiro.ini";
+    private String shiroIniFile;
     private String urlMapping = "/*";
 
     private String invokeListener;
@@ -79,13 +76,8 @@ public class JbootShiroConfig {
         this.invokeListener = invokeListener;
     }
 
-    private Boolean config;
-
     public boolean isConfigOK() {
-        if (config == null) {
-            config = new File(PathKit.getRootClassPath(), shiroIniFile).exists();
-        }
-        return config;
+        return shiroIniFile != null;
     }
 }
 

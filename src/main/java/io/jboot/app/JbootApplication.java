@@ -17,8 +17,15 @@ package io.jboot.app;
 
 import com.jfinal.server.undertow.UndertowConfig;
 import com.jfinal.server.undertow.UndertowServer;
+import com.jfinal.server.undertow.WebBuilder;
+
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.undertow.JbootUndertowConfig;
+
+import io.jboot.support.metric.JbootMetricConfig;
+import io.jboot.support.shiro.JbootShiroConfig;
+
+import javax.servlet.DispatcherType;
 
 public class JbootApplication {
 
@@ -30,11 +37,16 @@ public class JbootApplication {
         createServer(args).start();
     }
 
+    /**
+     * 创建 Undertow 服务器，public 用于可以给第三方创建创建着急的 Server
+     * @param args
+     * @return 返回 UndertowServer
+     */
     public static UndertowServer createServer(String[] args) {
 
         JbootConfigManager.me().parseArgs(args);
 
-        JbootApplicationConfig appConfig = JbootConfigManager.me().get(JbootApplicationConfig.class);
+        JbootApplicationConfig appConfig = config(JbootApplicationConfig.class);
 
         printBannerInfo(appConfig);
         printApplicationInfo(appConfig);
@@ -47,7 +59,33 @@ public class JbootApplication {
             undertowConfig.addHotSwapClassPrefix(hotSwapClassPrefix.trim());
         }
 
-        return UndertowServer.create(undertowConfig);
+
+        return UndertowServer.create(undertowConfig).configWeb(webBuilder -> {
+            tryAddMetricsSupport(webBuilder);
+            tryAddShiroSupport(webBuilder);
+        });
+    }
+
+
+    private static void tryAddMetricsSupport(WebBuilder webBuilder) {
+        JbootMetricConfig metricsConfig = config(JbootMetricConfig.class);
+        if (metricsConfig.isConfigOk()) {
+            webBuilder.addServlet("MetricsAdminServlet", "com.codahale.metrics.servlets.AdminServlet")
+                    .addServletMapping("MetricsAdminServlet", metricsConfig.getMappingUrl());
+            webBuilder.addListener("io.jboot.support.metric.JbootMetricServletContextListener");
+            webBuilder.addListener("io.jboot.support.metric.JbootHealthCheckServletContextListener");
+        }
+    }
+
+
+    private static void tryAddShiroSupport(WebBuilder webBuilder) {
+        JbootShiroConfig shiroConfig = config(JbootShiroConfig.class);
+        if (shiroConfig.isConfigOK()) {
+            webBuilder.addListener("org.apache.shiro.web.env.EnvironmentLoaderListener");
+            webBuilder.addFilter("shiro", "io.jboot.support.shiro.JbootShiroFilter")
+                    .addFilterUrlMapping("shiro", shiroConfig.getUrlMapping(), DispatcherType.REQUEST);
+
+        }
     }
 
 
@@ -59,6 +97,11 @@ public class JbootApplication {
 
     private static void printApplicationInfo(JbootApplicationConfig appConfig) {
         System.out.println(appConfig.toString());
+    }
+
+
+    private static <T> T config(Class<T> clazz) {
+        return JbootConfigManager.me().get(clazz);
     }
 
 
