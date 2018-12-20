@@ -56,8 +56,7 @@ public class JbootApplication {
             undertowConfig.addHotSwapClassPrefix(hotSwapClassPrefix.trim());
         }
 
-
-        return UndertowServer.create(undertowConfig).configWeb(webBuilder -> {
+        return UndertowServer.create(undertowConfig).setDevMode(isDevMode()).configWeb(webBuilder -> {
             tryAddMetricsSupport(webBuilder);
             tryAddShiroSupport(webBuilder);
         });
@@ -111,6 +110,16 @@ public class JbootApplication {
 
     public static void setBootArg(String key, Object value) {
         JbootConfigManager.me().setBootArg(key, value);
+    }
+
+
+    private static Boolean devMode = null;
+    public static boolean isDevMode() {
+        if (devMode == null) {
+            String appMode = JbootConfigManager.me().getConfigValue("jboot.app.mode");
+            devMode = null == appMode || "".equals(appMode.trim()) || "dev".equals(appMode);
+        }
+        return devMode;
     }
 
 

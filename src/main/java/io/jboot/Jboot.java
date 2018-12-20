@@ -17,6 +17,7 @@ package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
 import com.jfinal.aop.Aop;
+import io.jboot.app.JbootApplication;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.components.cache.JbootCache;
 import io.jboot.components.cache.JbootCacheManager;
@@ -33,18 +34,13 @@ import io.jboot.support.redis.JbootRedisManager;
 
 public class Jboot {
 
-    private static Boolean devMode = null;
-
     /**
      * 是否是开发模式
      *
      * @return
      */
     public static boolean isDevMode() {
-        if (devMode == null) {
-            devMode = JbootConsts.MODE.isDevMode();
-        }
-        return devMode;
+        return JbootApplication.isDevMode();
     }
 
 

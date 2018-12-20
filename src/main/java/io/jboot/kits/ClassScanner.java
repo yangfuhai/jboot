@@ -15,7 +15,7 @@
  */
 package io.jboot.kits;
 
-import io.jboot.JbootConsts;
+import io.jboot.app.JbootApplication;
 
 import java.io.File;
 import java.io.IOException;
@@ -238,14 +238,14 @@ public class ClassScanner {
         findClassPathsAndJars(jarPaths, classPaths, ClassScanner.class.getClassLoader());
 
         for (String jarPath : jarPaths) {
-            if (JbootConsts.MODE.isDevMode()) {
+            if (JbootApplication.isDevMode()) {
                 System.out.println("ClassScanner scan jar : " + jarPath);
             }
             addClassesFromJar(jarPath);
         }
 
         for (String classPath : classPaths) {
-            if (JbootConsts.MODE.isDevMode()) {
+            if (JbootApplication.isDevMode()) {
                 System.out.println("ClassScanner scan classPath : " + classPath);
             }
             addClassesFromClassPath(classPath);
@@ -303,7 +303,7 @@ public class ClassScanner {
             if (classLoader instanceof URLClassLoader) {
                 URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
                 URL[] urLs = urlClassLoader.getURLs();
-                for (URL url  : urLs) {
+                for (URL url : urLs) {
                     String path = url.getPath();
                     path = URLDecoder.decode(path, "UTF-8");
 

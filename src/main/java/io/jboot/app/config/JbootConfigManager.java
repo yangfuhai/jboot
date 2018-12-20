@@ -15,6 +15,7 @@
  */
 package io.jboot.app.config;
 
+import io.jboot.app.JbootApplication;
 import io.jboot.app.config.annotation.ConfigModel;
 
 import java.io.File;
@@ -93,9 +94,10 @@ public class JbootConfigManager {
     public <T> T get(Class<T> clazz, String prefix, String file) {
 
         /**
-         * 开发模式下，热加载会导致由于Config是不同的ClassLoader，走缓存会Class转化异常
+         * 开发模式下，热加载会导致由于Config是不同的 ClassLoader，
+         * 如果走缓存会Class转化异常
          */
-        if (isDevMode()) {
+        if (JbootApplication.isDevMode()) {
             return createConfigObject(clazz, prefix, file);
         }
 
@@ -263,19 +265,5 @@ public class JbootConfigManager {
     public Map<String, String> getBootArgs() {
         return argMap;
     }
-
-
-    private Boolean devMode = null;
-
-    public boolean isDevMode() {
-        if (devMode == null) {
-            String appMode = getConfigValue("jboot.app.mode");
-            devMode = appMode == null
-                    || appMode.trim().length() == 0
-                    || "dev".equals(appMode);
-        }
-        return devMode;
-    }
-
 
 }

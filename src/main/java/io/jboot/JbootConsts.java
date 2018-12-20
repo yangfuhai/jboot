@@ -15,8 +15,6 @@
  */
 package io.jboot;
 
-import io.jboot.app.config.JbootConfigManager;
-
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
@@ -50,15 +48,5 @@ public class JbootConsts {
             return value;
         }
 
-        private static Boolean isDevMode = null;
-        public static boolean isDevMode(){
-            if (isDevMode == null){
-                String appMode = JbootConfigManager.me().getConfigValue("jboot.app.mode");
-                isDevMode =  appMode == null
-                        || appMode.trim().length() == 0
-                        || DEV.getValue().equals(appMode);
-            }
-            return isDevMode;
-        }
     }
 }
