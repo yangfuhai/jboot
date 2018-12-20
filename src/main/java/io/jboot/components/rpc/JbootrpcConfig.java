@@ -87,15 +87,9 @@ public class JbootrpcConfig {
     //重试次数，不配置默认使用框架默认配置 motan和dubbo可能不一样
     private Integer retries;
 
-    /**
-     * RPC Hystrix 相关的配置
-     */
-//    private boolean hystrixEnable = true;
-//    private int hystrixTimeout = 5000; //单位：毫秒
-//    private int hystrixThreadPoolSize = 10;
+    //关闭本地自动暴露 @RPCBean 的service
+    private boolean closeAutoExport = false;
 
-//    private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();
-//    private String hystrixSetterFactory = JbootrpcHystrixSetterFactoryDefault.class.getName();
 
     public String getHost() {
         return host;
@@ -253,46 +247,6 @@ public class JbootrpcConfig {
         this.filter = filter;
     }
 
-//    public boolean isHystrixEnable() {
-//        return hystrixEnable;
-//    }
-//
-//    public void setHystrixEnable(boolean hystrixEnable) {
-//        this.hystrixEnable = hystrixEnable;
-//    }
-//
-//    public int getHystrixTimeout() {
-//        return hystrixTimeout;
-//    }
-//
-//    public void setHystrixTimeout(int hystrixTimeout) {
-//        this.hystrixTimeout = hystrixTimeout;
-//    }
-
-//    public String getHystrixFallbackListener() {
-//        return hystrixFallbackListener;
-//    }
-//
-//    public void setHystrixFallbackListener(String hystrixFallbackListener) {
-//        this.hystrixFallbackListener = hystrixFallbackListener;
-//    }
-//
-//    public int getHystrixThreadPoolSize() {
-//        return hystrixThreadPoolSize;
-//    }
-//
-//    public void setHystrixThreadPoolSize(int hystrixThreadPoolSize) {
-//        this.hystrixThreadPoolSize = hystrixThreadPoolSize;
-//    }
-//
-//    public String getHystrixSetterFactory() {
-//        return hystrixSetterFactory;
-//    }
-//
-//    public void setHystrixSetterFactory(String hystrixSetterFactory) {
-//        this.hystrixSetterFactory = hystrixSetterFactory;
-//    }
-
     public boolean isRegistryCheck() {
         return registryCheck;
     }
@@ -333,27 +287,11 @@ public class JbootrpcConfig {
         this.retries = retries;
     }
 
-//    private Map<String, String> methodKeyMapping = new ConcurrentHashMap<>();
-//
-//    public String getHystrixKeyByMethod(String method) {
-//        if (hystrixKeys != null && methodKeyMapping.isEmpty()) {
-//            initMapping();
-//        }
-//
-//        return methodKeyMapping.get(method);
-//    }
-//
-//    private void initMapping() {
-//        String keyMethodStrings[] = hystrixKeys.split(";");
-//        for (String keyMethodString : keyMethodStrings) {
-//            String[] keyMethod = keyMethodString.split(":");
-//            if (keyMethod.length != 2) continue;
-//
-//            String key = keyMethod[0];
-//            String[] methods = keyMethod[1].split(",");
-//            for (String method : methods) {
-//                methodKeyMapping.put(method, key);
-//            }
-//        }
-//    }
+    public boolean isCloseAutoExport() {
+        return closeAutoExport;
+    }
+
+    public void setCloseAutoExport(boolean closeAutoExport) {
+        this.closeAutoExport = closeAutoExport;
+    }
 }

@@ -42,6 +42,7 @@ public class JbootrpcManager {
     }
 
     private Jbootrpc jbootrpc;
+    private JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
 
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {
@@ -57,15 +58,21 @@ public class JbootrpcManager {
 
         getJbootrpc().onInitBefore();
 
-        List<Class> classes = ClassScanner.scanClassByAnnotation(RPCBean.class,true);
+        if (!config.isCloseAutoExport()) {
+            autoExportRPCBean();
+        }
+
+        getJbootrpc().onInited();
+    }
+
+    private void autoExportRPCBean() {
+        List<Class> classes = ClassScanner.scanClassByAnnotation(RPCBean.class, true);
         if (ArrayKits.isNullOrEmpty(classes)) {
             return;
         }
 
         for (Class clazz : classes) {
-
             RPCBean rpcBean = (RPCBean) clazz.getAnnotation(RPCBean.class);
-
             Class[] inters = clazz.getInterfaces();
             if (inters == null || inters.length == 0) {
                 throw new JbootException(String.format("class[%s] has no interface, can not use @RPCBean", clazz));
@@ -87,14 +94,11 @@ public class JbootrpcManager {
                 getJbootrpc().serviceExport(inter, Aop.get(clazz), new JbootrpcServiceConfig(rpcBean));
             }
         }
-
-        getJbootrpc().onInited();
     }
 
 
     private Jbootrpc createJbootrpc() {
 
-        JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
 
         switch (config.getType()) {
             case JbootrpcConfig.TYPE_MOTAN:
