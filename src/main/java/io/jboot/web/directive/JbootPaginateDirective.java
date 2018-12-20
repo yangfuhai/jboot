@@ -20,7 +20,7 @@ import com.jfinal.template.Env;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.kits.StringKits;
-import io.jboot.web.JbootRequestContext;
+import io.jboot.web.JbootControllerContext;
 import io.jboot.web.directive.base.PaginateDirectiveBase;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +29,7 @@ public abstract class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
     protected String getUrl(int pageNumber) {
-        HttpServletRequest request = JbootRequestContext.getRequest();
+        HttpServletRequest request = JbootControllerContext.get().getRequest();
         String queryString = request.getQueryString();
 
         String url = request.getRequestURI();
@@ -62,7 +62,7 @@ public abstract class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
     protected Page<?> getPage(Env env, Scope scope, Writer writer) {
-        return JbootRequestContext.getRequestAttr(getPageAttrName());
+        return JbootControllerContext.get().getAttr(getPageAttrName());
     }
 
     /**

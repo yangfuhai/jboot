@@ -33,13 +33,23 @@ public class CORSInterceptor implements FixedInterceptor {
     private static final String ALLOW_METHODS = "GET, POST, PUT, DELETE, OPTIONS";
     private static final int MAX_AGE = 3600;
 
+    private static final String METHOD_OPTIONS = "OPTIONS";
+
     @Override
     public void intercept(FixedInvocation inv) {
+
         EnableCORS enableCORS = inv.getMethod().getAnnotation(EnableCORS.class);
+
         if (enableCORS == null) {
             enableCORS = inv.getController().getClass().getAnnotation(EnableCORS.class);
         }
+
         if (enableCORS != null) {
+            String method = inv.getController().getRequest().getMethod();
+            if (METHOD_OPTIONS.equals(method)) {
+                inv.getController().renderText("");
+                return;
+            }
             doProcessCORS(inv, enableCORS);
         }
 
@@ -47,6 +57,7 @@ public class CORSInterceptor implements FixedInterceptor {
     }
 
     private void doProcessCORS(FixedInvocation inv, EnableCORS enableCORS) {
+
         HttpServletResponse response = inv.getController().getResponse();
 
         String allowOrigin = enableCORS.allowOrigin();
