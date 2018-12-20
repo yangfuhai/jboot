@@ -36,9 +36,9 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     public void inject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
-//        if ((injectDepth--) <= 0) {
-//            return;
-//        }
+        if ((injectDepth--) <= 0) {
+            return;
+        }
 
         targetClass = getUsefulClass(targetClass);
         Field[] fields = targetClass.getDeclaredFields();
@@ -50,13 +50,13 @@ public class JbootAopFactory extends AopFactory {
 
             Inject inject = field.getAnnotation(Inject.class);
             if (inject != null) {
-                injectByJFinalInject(targetObject, field, inject);
+                injectByJFinalInject(targetObject, field, inject, injectDepth);
                 continue;
             }
 
             javax.inject.Inject javaxInject = field.getAnnotation(javax.inject.Inject.class);
             if (javaxInject != null) {
-                injectByJavaxInject(targetObject, field, javaxInject);
+                injectByJavaxInject(targetObject, field, javaxInject, injectDepth);
                 continue;
             }
 
@@ -78,37 +78,43 @@ public class JbootAopFactory extends AopFactory {
     @Override
     public <T> T get(Class<T> targetClass) {
         try {
-            // Aop.get(obj.getClass()) 可以用 Aop.inject(obj)，所以注掉下一行代码
-            // targetClass = (Class<T>)getUsefulClass(targetClass);
-
-            targetClass = (Class<T>) getMappingClass(targetClass);
-
-            Singleton si = targetClass.getAnnotation(Singleton.class);
-            boolean singleton = (si != null ? si.value() : this.singleton);
-
-            Object ret;
-            if (!singleton) {
-                ret = createObject(targetClass);
-                inject(targetClass, ret, injectDepth);
-                return (T) ret;
-            }
-
-            ret = singletonCache.get(targetClass);
-            if (ret == null) {
-                synchronized (targetClass) {
-                    ret = singletonCache.get(targetClass);
-                    if (ret == null) {
-                        ret = createObject(targetClass);
-                        singletonCache.put(targetClass, ret);
-                        inject(targetClass, ret, injectDepth);
-                    }
-                }
-            }
-
-            return (T) ret;
+            return get(targetClass, injectDepth);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    @SuppressWarnings("unchecked")
+    protected <T> T get(Class<T> targetClass, int injectDepth) throws ReflectiveOperationException {
+        // Aop.get(obj.getClass()) 可以用 Aop.inject(obj)，所以注掉下一行代码
+        // targetClass = (Class<T>)getUsefulClass(targetClass);
+
+        targetClass = (Class<T>) getMappingClass(targetClass);
+
+        Singleton si = targetClass.getAnnotation(Singleton.class);
+        boolean singleton = (si != null ? si.value() : this.singleton);
+
+        Object ret;
+        if (!singleton) {
+            ret = createObject(targetClass);
+            inject(targetClass, ret, injectDepth);
+            return (T) ret;
+        }
+
+        ret = singletonCache.get(targetClass);
+        if (ret == null) {
+            synchronized (targetClass) {
+                ret = singletonCache.get(targetClass);
+                if (ret == null) {
+                    ret = createObject(targetClass);
+                    inject(targetClass, ret, injectDepth);
+                    singletonCache.put(targetClass, ret);
+                }
+            }
+        }
+
+        return (T) ret;
     }
 
 
@@ -120,7 +126,7 @@ public class JbootAopFactory extends AopFactory {
      * @param inject
      * @throws ReflectiveOperationException
      */
-    private void injectByJFinalInject(Object targetObject, Field field, Inject inject) throws ReflectiveOperationException {
+    private void injectByJFinalInject(Object targetObject, Field field, Inject inject, int injectDepth) throws ReflectiveOperationException {
 
         Class<?> fieldInjectedClass = inject.value();
         if (fieldInjectedClass == Void.class) {
@@ -128,7 +134,7 @@ public class JbootAopFactory extends AopFactory {
             fieldInjectedClass = getMappingClass(fieldInjectedClass);
         }
 
-        Object fieldInjectedObject = get(fieldInjectedClass);
+        Object fieldInjectedObject = get(fieldInjectedClass, injectDepth);
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
 
@@ -143,11 +149,11 @@ public class JbootAopFactory extends AopFactory {
      * @param inject
      * @throws ReflectiveOperationException
      */
-    private void injectByJavaxInject(Object targetObject, Field field, javax.inject.Inject inject) throws ReflectiveOperationException {
+    private void injectByJavaxInject(Object targetObject, Field field, javax.inject.Inject inject, int injectDepth) throws ReflectiveOperationException {
 
         Class<?> fieldInjectedClass = getMappingClass(field.getType());
 
-        Object fieldInjectedObject = get(fieldInjectedClass);
+        Object fieldInjectedObject = get(fieldInjectedClass, injectDepth);
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
 
