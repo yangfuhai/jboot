@@ -24,14 +24,14 @@ public class AopController extends JbootController {
 
 
     public void index(){
-        renderText("text from  " + userService.getName());
+        renderText("text from : " + userService.getName());
     }
 
     public void javax(){
-        renderText("text from  " + javaxInjectUserService.getName());
+        renderText("text from : " + javaxInjectUserService.getName());
     }
 
     public void config(){
-        renderText("host : " + host +"  port : " + port);
+        renderText("host:" + host +"   port:" + port);
     }
 }
