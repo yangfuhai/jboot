@@ -17,9 +17,12 @@ package io.jboot.wechat.controller;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
-import com.jfinal.ext.interceptor.NotAction;
+import com.jfinal.core.NotAction;
 import com.jfinal.kit.HashKit;
-import com.jfinal.weixin.sdk.api.*;
+import com.jfinal.weixin.sdk.api.ApiConfig;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
+import com.jfinal.weixin.sdk.api.ApiResult;
+import com.jfinal.weixin.sdk.api.JsTicket;
 import io.jboot.Jboot;
 import io.jboot.kits.RequestKits;
 import io.jboot.kits.StringKits;
@@ -124,7 +127,7 @@ public abstract class JbootWechatController extends JbootController {
         redirect(gotoUrl);
     }
 
-    @Before(NotAction.class)
+    @NotAction
     public void clearWechatSession() {
         //移除脏数据后，再次进入授权页面
         removeSessionAttr(SESSION_WECHAT_OPEN_ID);
@@ -133,7 +136,7 @@ public abstract class JbootWechatController extends JbootController {
     }
 
 
-    @Before(NotAction.class)
+    @NotAction
     public void initJsSdkConfig() {
 
         JbootWechatConfig config = Jboot.config(JbootWechatConfig.class);
@@ -188,7 +191,7 @@ public abstract class JbootWechatController extends JbootController {
         return RequestKits.isWechatBrowser(req);
     }
 
-    @Before(NotAction.class)
+    @NotAction
     public void doNotAlloVisitRedirect() {
         /**
          * 一般情况下，此方法是为了调整到其他页面，比如让用户扫描二维码之类的

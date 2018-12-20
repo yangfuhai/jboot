@@ -23,7 +23,7 @@ public class JbootShiroConfig {
     private String loginUrl;
     private String successUrl;
     private String unauthorizedUrl;
-    private String shiroIniFile;
+    private String ini;                 //Ini文件路径，默认去classPath寻找
     private String urlMapping = "/*";
 
     private String invokeListener;
@@ -52,12 +52,12 @@ public class JbootShiroConfig {
         this.unauthorizedUrl = unauthorizedUrl;
     }
 
-    public String getShiroIniFile() {
-        return shiroIniFile;
+    public String getIni() {
+        return ini;
     }
 
-    public void setShiroIniFile(String shiroIniFile) {
-        this.shiroIniFile = shiroIniFile;
+    public void setIni(String ini) {
+        this.ini = ini;
     }
 
     public String getUrlMapping() {
@@ -77,7 +77,7 @@ public class JbootShiroConfig {
     }
 
     public boolean isConfigOK() {
-        return shiroIniFile != null;
+        return ini != null;
     }
 }
 

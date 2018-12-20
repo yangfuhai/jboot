@@ -18,12 +18,8 @@ package io.jboot.app;
 import com.jfinal.server.undertow.UndertowConfig;
 import com.jfinal.server.undertow.UndertowServer;
 import com.jfinal.server.undertow.WebBuilder;
-
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.undertow.JbootUndertowConfig;
-
-import io.jboot.support.metric.JbootMetricConfig;
-import io.jboot.support.shiro.JbootShiroConfig;
 
 import javax.servlet.DispatcherType;
 
@@ -39,6 +35,7 @@ public class JbootApplication {
 
     /**
      * 创建 Undertow 服务器，public 用于可以给第三方创建创建着急的 Server
+     *
      * @param args
      * @return 返回 UndertowServer
      */
@@ -68,10 +65,11 @@ public class JbootApplication {
 
 
     private static void tryAddMetricsSupport(WebBuilder webBuilder) {
-        JbootMetricConfig metricsConfig = config(JbootMetricConfig.class);
-        if (metricsConfig.isConfigOk()) {
+        String url = config("jboot.metric.url");
+        String reporter = config("jboot.metric.reporter");
+        if (url != null && reporter != null) {
             webBuilder.addServlet("MetricsAdminServlet", "com.codahale.metrics.servlets.AdminServlet")
-                    .addServletMapping("MetricsAdminServlet", metricsConfig.getMappingUrl());
+                    .addServletMapping("MetricsAdminServlet", url.endsWith("/*") ? url : url + "/*");
             webBuilder.addListener("io.jboot.support.metric.JbootMetricServletContextListener");
             webBuilder.addListener("io.jboot.support.metric.JbootHealthCheckServletContextListener");
         }
@@ -79,11 +77,13 @@ public class JbootApplication {
 
 
     private static void tryAddShiroSupport(WebBuilder webBuilder) {
-        JbootShiroConfig shiroConfig = config(JbootShiroConfig.class);
-        if (shiroConfig.isConfigOK()) {
+        String iniConfig = config("jboot.shiro.ini");
+        if (iniConfig != null) {
+            String urlMapping = config("jboot.shiro.urlMapping");
+            if (urlMapping == null) urlMapping = "/*";
             webBuilder.addListener("org.apache.shiro.web.env.EnvironmentLoaderListener");
             webBuilder.addFilter("shiro", "io.jboot.support.shiro.JbootShiroFilter")
-                    .addFilterUrlMapping("shiro", shiroConfig.getUrlMapping(), DispatcherType.REQUEST);
+                    .addFilterUrlMapping("shiro", urlMapping, DispatcherType.REQUEST);
 
         }
     }
@@ -102,6 +102,10 @@ public class JbootApplication {
 
     private static <T> T config(Class<T> clazz) {
         return JbootConfigManager.me().get(clazz);
+    }
+
+    private static String config(String key) {
+        return JbootConfigManager.me().getValueByKey(key);
     }
 
 
