@@ -1,3 +1,2 @@
 undertow.devMode = true
 undertow.port = 8080
-undertow.host = 0.0.0.0
