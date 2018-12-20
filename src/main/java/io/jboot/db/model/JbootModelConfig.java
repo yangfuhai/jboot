@@ -17,9 +17,9 @@ package io.jboot.db.model;
 
 import io.jboot.Jboot;
 import io.jboot.app.config.annotation.ConfigModel;
-import io.jboot.core.cache.JbootCache;
-import io.jboot.core.cache.JbootCacheConfig;
-import io.jboot.core.cache.JbootCacheManager;
+import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.JbootCacheConfig;
+import io.jboot.components.cache.JbootCacheManager;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）

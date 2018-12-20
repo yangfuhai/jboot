@@ -16,9 +16,9 @@
 package io.jboot.aop.injector;
 
 import com.jfinal.log.Log;
-import io.jboot.core.rpc.JbootrpcManager;
-import io.jboot.core.rpc.JbootrpcServiceConfig;
-import io.jboot.core.rpc.annotation.RPCInject;
+import io.jboot.components.rpc.JbootrpcManager;
+import io.jboot.components.rpc.JbootrpcServiceConfig;
+import io.jboot.components.rpc.annotation.RPCInject;
 
 import java.lang.reflect.Field;
 

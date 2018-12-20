@@ -23,7 +23,7 @@ public class JbootApplicationConfig {
     private String mode = "dev";
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
-    private String jfinalConfig = "io.jboot.web.JbootCoreConfig";
+    private String jfinalConfig = "io.jboot.core.JbootCoreConfig";
     private String hotSwapClassPrefix = "io.jboot";
 
 

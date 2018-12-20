@@ -21,7 +21,7 @@ import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.Jboot;
-import io.jboot.core.cache.JbootCache;
+import io.jboot.components.cache.JbootCache;
 import io.jboot.db.datasource.DataSourceBuilder;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.datasource.DataSourceConfigManager;

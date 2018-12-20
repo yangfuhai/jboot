@@ -19,7 +19,7 @@ package io.jboot.aop.interceptor.cache;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
-import io.jboot.core.cache.annotation.CachePut;
+import io.jboot.components.cache.annotation.CachePut;
 import io.jboot.exception.JbootException;
 import io.jboot.kits.ClassKits;
 import io.jboot.kits.StringKits;

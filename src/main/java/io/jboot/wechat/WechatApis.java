@@ -21,7 +21,7 @@ import com.jfinal.weixin.sdk.api.*;
 import com.jfinal.weixin.sdk.kit.ParaMap;
 import com.jfinal.weixin.sdk.utils.HttpUtils;
 import com.jfinal.weixin.sdk.utils.RetryUtils;
-import io.jboot.core.http.JbootHttpKit;
+import io.jboot.components.http.JbootHttpKit;
 
 import java.util.concurrent.Callable;
 

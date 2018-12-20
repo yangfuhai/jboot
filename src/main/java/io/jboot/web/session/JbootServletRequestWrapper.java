@@ -16,8 +16,8 @@
 package io.jboot.web.session;
 
 import io.jboot.Jboot;
-import io.jboot.core.cache.JbootCache;
-import io.jboot.core.cache.JbootCacheManager;
+import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.JbootCacheManager;
 
 import javax.servlet.http.*;
 import java.util.Collections;

@@ -18,7 +18,7 @@ package io.jboot.aop.interceptor.cache;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.core.cache.annotation.CacheEvict;
+import io.jboot.components.cache.annotation.CacheEvict;
 
 import java.lang.reflect.Method;
 

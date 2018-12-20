@@ -18,7 +18,7 @@ package io.jboot.aop.interceptor.cache;
 import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
-import io.jboot.core.cache.annotation.CacheEvict;
+import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
 import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassKits;

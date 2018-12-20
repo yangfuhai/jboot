@@ -40,6 +40,7 @@ public class JbootApplication {
         printApplicationInfo(appConfig);
 
         UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
+        undertowConfig.addSystemClassPrefix("io.jboot.app");
 
         String[] hotSwapClassPrefixes = appConfig.getHotSwapClassPrefix().split(",");
         for (String hotSwapClassPrefix : hotSwapClassPrefixes) {
@@ -62,7 +63,7 @@ public class JbootApplication {
 
 
     public static void setBootArg(String key, Object value) {
-        JbootConfigManager.me().setBootArg(key, value.toString());
+        JbootConfigManager.me().setBootArg(key, value);
     }
 
 

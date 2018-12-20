@@ -17,8 +17,8 @@ package io.jboot.support.redis;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.core.serializer.ISerializer;
-import io.jboot.core.serializer.SerializerManager;
+import io.jboot.components.serializer.ISerializer;
+import io.jboot.components.serializer.SerializerManager;
 import io.jboot.kits.StringKits;
 
 import java.util.ArrayList;

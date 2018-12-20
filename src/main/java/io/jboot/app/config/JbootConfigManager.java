@@ -47,6 +47,7 @@ public class JbootConfigManager {
     }
 
     private JbootConfigManager() {
+        System.out.println("------new JbootConfigManager : " + this.getClass().getClassLoader());
         init();
     }
 

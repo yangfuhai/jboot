@@ -5,11 +5,12 @@ import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigInject;
-import io.jboot.core.event.JbootEventListener;
-import io.jboot.core.mq.JbootmqMessageListener;
-import io.jboot.core.rpc.JbootrpcManager;
-import io.jboot.core.rpc.JbootrpcServiceConfig;
-import io.jboot.core.rpc.annotation.RPCInject;
+import io.jboot.components.event.JbootEventListener;
+import io.jboot.components.mq.JbootmqMessageListener;
+import io.jboot.components.rpc.Jbootrpc;
+import io.jboot.components.rpc.JbootrpcManager;
+import io.jboot.components.rpc.JbootrpcServiceConfig;
+import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassScanner;
 import io.jboot.kits.StringKits;
@@ -172,7 +173,9 @@ public class JbootAopFactory extends AopFactory {
         JbootrpcServiceConfig serviceConfig = new JbootrpcServiceConfig(rpcInject);
         Class<?> fieldInjectedClass = field.getType();
 
-        Object fieldInjectedObject = JbootrpcManager.me().getJbootrpc().serviceObtain(fieldInjectedClass, serviceConfig);
+        Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
+
+        Object fieldInjectedObject = jbootrpc.serviceObtain(fieldInjectedClass, serviceConfig);
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
 
