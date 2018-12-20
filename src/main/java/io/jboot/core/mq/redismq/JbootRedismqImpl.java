@@ -60,7 +60,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         redis.subscribe(new BinaryJedisPubSub() {
             @Override
             public void onMessage(byte[] channel, byte[] message) {
-                notifyListeners(redis.bytesToKey(channel), Jboot.getSerializer().deserialize(message));
+                notifyListeners(redis.bytesToKey(channel), getSerializer().deserialize(message));
             }
         }, redis.keysToBytesArray(channels));
 
@@ -77,7 +77,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     @Override
     public void publish(Object message, String toChannel) {
-        redis.publish(redis.keyToBytes(toChannel), Jboot.getSerializer().serialize(message));
+        redis.publish(redis.keyToBytes(toChannel), getSerializer().serialize(message));
     }
 
 

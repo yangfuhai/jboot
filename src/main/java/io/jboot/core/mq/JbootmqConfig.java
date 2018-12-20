@@ -30,6 +30,7 @@ public class JbootmqConfig {
     private String type = TYPE_REDIS;
     private String channel;
     private String syncRecevieMessageChannel; //可同步接收消息的channel配置
+    private String serializer;
 
     public String getChannel() {
         return channel;
@@ -45,6 +46,15 @@ public class JbootmqConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+
+    public String getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(String serializer) {
+        this.serializer = serializer;
     }
 
     public String getSyncRecevieMessageChannel() {

@@ -57,7 +57,7 @@ public class SerializerManager {
         return serializer;
     }
 
-    private ISerializer buildSerializer(String serializerString) {
+    public ISerializer buildSerializer(String serializerString) {
 
         JbootAssert.assertTrue(serializerString != null, "can not get serializer config, please set jboot.serializer value to jboot.proerties");
 

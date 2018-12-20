@@ -81,7 +81,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
             if (!serializerEnable) {
                 m = session.createTextMessage((String) message);
             } else {
-                byte[] data = Jboot.getSerializer().serialize(message);
+                byte[] data = getSerializer().serialize(message);
                 m = session.createBytesMessage();
                 m.setIntProperty("data-len", data.length);
                 ((BytesMessage) m).writeBytes(data);
@@ -190,7 +190,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
                         if (dataLen != bytesMessage.readBytes(data)) {
                             continue;
                         }
-                        object = Jboot.getSerializer().deserialize(data);
+                        object = getSerializer().deserialize(data);
                     }
 
                     if (object != null) {

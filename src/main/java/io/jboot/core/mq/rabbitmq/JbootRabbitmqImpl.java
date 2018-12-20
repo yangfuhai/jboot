@@ -86,7 +86,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             channel.basicConsume("", true, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    Object o = Jboot.getSerializer().deserialize(body);
+                    Object o = getSerializer().deserialize(body);
                     notifyListeners(envelope.getExchange(), o);
                 }
             });
@@ -98,7 +98,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             channel.basicConsume(toChannel, true, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    Object o = Jboot.getSerializer().deserialize(body);
+                    Object o = getSerializer().deserialize(body);
                     notifyListeners(envelope.getRoutingKey(), o);
                 }
             });
@@ -135,7 +135,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     public void enqueue(Object message, String toChannel) {
         Channel channel = getChannel(toChannel);
         try {
-            byte[] bytes = Jboot.getSerializer().serialize(message);
+            byte[] bytes = getSerializer().serialize(message);
             channel.basicPublish("", toChannel, MessageProperties.BASIC, bytes);
         } catch (IOException e) {
             e.printStackTrace();
@@ -146,7 +146,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     public void publish(Object message, String toChannel) {
         Channel channel = getChannel(toChannel);
         try {
-            byte[] bytes = Jboot.getSerializer().serialize(message);
+            byte[] bytes = getSerializer().serialize(message);
             channel.basicPublish(toChannel, "", MessageProperties.BASIC, bytes);
         } catch (IOException e) {
             e.printStackTrace();
