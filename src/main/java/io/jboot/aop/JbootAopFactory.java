@@ -105,7 +105,7 @@ public class JbootAopFactory extends AopFactory {
 
         ret = singletonCache.get(targetClass);
         if (ret == null) {
-            synchronized (targetClass) {
+            synchronized (this) {
                 ret = singletonCache.get(targetClass);
                 if (ret == null) {
                     ret = createObject(targetClass);
@@ -132,7 +132,6 @@ public class JbootAopFactory extends AopFactory {
         Class<?> fieldInjectedClass = inject.value();
         if (fieldInjectedClass == Void.class) {
             fieldInjectedClass = field.getType();
-            fieldInjectedClass = getMappingClass(fieldInjectedClass);
         }
 
         Object fieldInjectedObject = get(fieldInjectedClass, injectDepth);
@@ -152,9 +151,7 @@ public class JbootAopFactory extends AopFactory {
      */
     private void injectByJavaxInject(Object targetObject, Field field, javax.inject.Inject inject, int injectDepth) throws ReflectiveOperationException {
 
-        Class<?> fieldInjectedClass = getMappingClass(field.getType());
-
-        Object fieldInjectedObject = get(fieldInjectedClass, injectDepth);
+        Object fieldInjectedObject = get(field.getType(), injectDepth);
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
 
