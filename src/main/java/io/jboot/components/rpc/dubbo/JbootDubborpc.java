@@ -59,7 +59,7 @@ public class JbootDubborpc extends JbootrpcBase {
         /**
          * 直连模式
          */
-        else if (getRpcConfig().isRedirectCallMode()) {
+        else if (getRpcConfig().isDirectCallMode()) {
             registryConfig.setAddress(RegistryConfig.NO_AVAILABLE);
         }
     }
@@ -111,7 +111,7 @@ public class JbootDubborpc extends JbootrpcBase {
         /**
          * 直连调用模式
          */
-        else if (getRpcConfig().isRedirectCallMode()) {
+        else if (getRpcConfig().isDirectCallMode()) {
             if (StringKits.isBlank(getRpcConfig().getDirectUrl())) {
                 throw new JbootIllegalConfigException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
             }

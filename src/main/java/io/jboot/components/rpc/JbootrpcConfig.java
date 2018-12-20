@@ -34,15 +34,19 @@ public class JbootrpcConfig {
     public static final String REGISTRY_TYPE_CONSUL = "consul";
     public static final String REGISTRY_TYPE_ZOOKEEPER = "zookeeper";
 
-    private String type = TYPE_LOCAL;
-    private int requestTimeOut = 5000;
+
 
     /**
-     * RPC的调用模式：registry 注册中心，redirect直连模式
+     * RPC的调用模式：registry 注册中心，direct直连模式
      */
     public static final String CALL_MODE_REGISTRY = "registry";
-    public static final String CALL_MODE_REDIRECT = "redirect";
+    public static final String CALL_MODE_DIRECT = "direct";
+
+
+    private String type = TYPE_DUBBO;
     private String callMode = CALL_MODE_REGISTRY;
+
+    private int requestTimeOut = 5000;
 
 
     /**
@@ -223,8 +227,8 @@ public class JbootrpcConfig {
         this.directUrl = directUrl;
     }
 
-    public boolean isRedirectCallMode() {
-        return CALL_MODE_REDIRECT.equals(getCallMode());
+    public boolean isDirectCallMode() {
+        return CALL_MODE_DIRECT.equals(getCallMode());
     }
 
     public boolean isRegistryCallMode() {

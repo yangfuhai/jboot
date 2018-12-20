@@ -53,7 +53,7 @@ public class JbootMotanrpc extends JbootrpcBase {
         /**
          * 直连模式
          */
-        else if (getRpcConfig().isRedirectCallMode()) {
+        else if (getRpcConfig().isDirectCallMode()) {
             registryConfig.setRegProtocol("local");
         }
 
@@ -102,9 +102,9 @@ public class JbootMotanrpc extends JbootrpcBase {
         /**
          * 直连模式
          */
-        else if (getRpcConfig().isRedirectCallMode()) {
+        else if (getRpcConfig().isDirectCallMode()) {
             if (StringKits.isBlank(getRpcConfig().getDirectUrl())) {
-                throw new JbootIllegalConfigException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
+                throw new JbootIllegalConfigException("directUrl must not be null if you use direct call mode，please config jboot.rpc.directUrl value");
             }
             refererConfig.setDirectUrl(getRpcConfig().getDirectUrl());
         }
