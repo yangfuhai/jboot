@@ -15,7 +15,6 @@
  */
 package io.jboot.support.shiro;
 
-import io.jboot.web.websocket.JbootWebsocketManager;
 import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.servlet.ShiroFilter;
@@ -64,7 +63,7 @@ public class JbootShiroFilter extends ShiroFilter {
             target = target.substring(contextPathLength);
         }
 
-        if (target.indexOf('.') != -1 || JbootWebsocketManager.me().isWebsokcetEndPoint(target)) {
+        if (target.indexOf('.') != -1) {
             chain.doFilter(request, response);
             return;
         }

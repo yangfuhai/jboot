@@ -18,7 +18,6 @@ package io.jboot.web.handler;
 import com.jfinal.handler.Handler;
 import io.jboot.Jboot;
 import io.jboot.support.metric.JbootMetricConfig;
-import io.jboot.web.websocket.JbootWebsocketManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,10 +31,13 @@ public class JbootFilterHandler extends Handler {
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
 
-        if (target.indexOf('.') != -1 //static files
-                || JbootWebsocketManager.me().isWebsokcetEndPoint(target) //websocket
-                || (metricsConfig.isConfigOk() && target.startsWith(metricsConfig.getUrl()))) // metrics
-        {
+        //static files
+        if (target.indexOf('.') != -1) {
+            return;
+        }
+
+        // metrics
+        if (metricsConfig.isConfigOk() && target.startsWith(metricsConfig.getUrl())) {
             return;
         }
 
