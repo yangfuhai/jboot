@@ -81,7 +81,6 @@ public class JbootDubborpc extends JbootrpcBase {
 
 
     @Override
-//    public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
     public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
 
         String key = String.format("%s:%s:%s", serviceClass.getName(), serviceConfig.getGroup(), serviceConfig.getVersion());
@@ -132,7 +131,6 @@ public class JbootDubborpc extends JbootrpcBase {
 
 
     @Override
-//    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, String group, String version, int port) {
     public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig) {
 
         ProtocolConfig protocolConfig = dubboConfig.newProtocolConfig();
@@ -190,20 +188,13 @@ public class JbootDubborpc extends JbootrpcBase {
             reference.setCheck(config.getCheck());
         }
 
-
         if (StringKits.isNotBlank(config.getProxy())) {
             reference.setProxy(config.getProxy());
-        } else {
-            //默认情况下用于 hystrix 代理
-            reference.setProxy("jboot");
         }
 
 
         if (StringKits.isNotBlank(config.getFilter())) {
             reference.setFilter(config.getFilter());
-        } else {
-            //默认情况下用于 OpenTracing 的追踪
-            reference.setFilter("jbootConsumerOpentracing");
         }
     }
 
@@ -230,20 +221,12 @@ public class JbootDubborpc extends JbootrpcBase {
             service.setAsync(config.getAsync());
         }
 
-
         if (StringKits.isNotBlank(config.getProxy())) {
             service.setProxy(config.getProxy());
-        } else {
-            //默认情况下用于 hystrix 代理
-            service.setProxy("jboot");
         }
-
 
         if (StringKits.isNotBlank(config.getFilter())) {
             service.setFilter(config.getFilter());
-        } else {
-            //默认情况下用于 OpenTracing 的追踪
-            service.setFilter("jbootProviderOpentracing");
         }
     }
 

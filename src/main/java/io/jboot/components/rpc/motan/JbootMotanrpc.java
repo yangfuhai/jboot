@@ -64,10 +64,7 @@ public class JbootMotanrpc extends JbootrpcBase {
 
         if (StringKits.isNotBlank(getRpcConfig().getProxy())) {
             protocolConfig.setFilter(getRpcConfig().getProxy());
-        } else {
-            protocolConfig.setFilter("jbootHystrix,jbootOpentracing");
         }
-
 
         if (StringKits.isNotBlank(getRpcConfig().getSerialization())) {
             protocolConfig.setSerialization(getRpcConfig().getSerialization());
@@ -77,7 +74,6 @@ public class JbootMotanrpc extends JbootrpcBase {
 
 
     @Override
-//    public <T> T serviceObtain(Class<T> serviceClass, String group, String version) {
     public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
 
         String key = String.format("%s:%s:%s", serviceClass.getName(), serviceConfig.getGroup(), serviceConfig.getVersion());
@@ -124,9 +120,7 @@ public class JbootMotanrpc extends JbootrpcBase {
 
 
     @Override
-//    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, String group, String version, int port) {
     public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig) {
-
 
         synchronized (this) {
 
@@ -176,7 +170,6 @@ public class JbootMotanrpc extends JbootrpcBase {
             interfaceConfig.setAsync(config.getAsync());
         }
 
-
         if (config.getRetries() != null) {
             interfaceConfig.setRetries(config.getRetries());
         }
@@ -185,14 +178,9 @@ public class JbootMotanrpc extends JbootrpcBase {
             interfaceConfig.setCheck(config.getCheck().toString());
         }
 
-
         if (StringKits.isNotBlank(config.getProxy())) {
             interfaceConfig.setProxy(config.getProxy());
-        } else {
-            //默认情况下用于 hystrix 代理
-            interfaceConfig.setProxy("jboot");
         }
-
 
         if (StringKits.isNotBlank(config.getFilter())) {
             interfaceConfig.setFilter(config.getFilter());

@@ -90,9 +90,9 @@ public class JbootrpcConfig {
     /**
      * RPC Hystrix 相关的配置
      */
-    private boolean hystrixEnable = true;
-    private int hystrixTimeout = 5000; //单位：毫秒
-    private int hystrixThreadPoolSize = 10;
+//    private boolean hystrixEnable = true;
+//    private int hystrixTimeout = 5000; //单位：毫秒
+//    private int hystrixThreadPoolSize = 10;
 
 //    private String hystrixFallbackListener = JbootrpcHystrixFallbackListenerDefault.class.getName();
 //    private String hystrixSetterFactory = JbootrpcHystrixSetterFactoryDefault.class.getName();
@@ -253,21 +253,21 @@ public class JbootrpcConfig {
         this.filter = filter;
     }
 
-    public boolean isHystrixEnable() {
-        return hystrixEnable;
-    }
-
-    public void setHystrixEnable(boolean hystrixEnable) {
-        this.hystrixEnable = hystrixEnable;
-    }
-
-    public int getHystrixTimeout() {
-        return hystrixTimeout;
-    }
-
-    public void setHystrixTimeout(int hystrixTimeout) {
-        this.hystrixTimeout = hystrixTimeout;
-    }
+//    public boolean isHystrixEnable() {
+//        return hystrixEnable;
+//    }
+//
+//    public void setHystrixEnable(boolean hystrixEnable) {
+//        this.hystrixEnable = hystrixEnable;
+//    }
+//
+//    public int getHystrixTimeout() {
+//        return hystrixTimeout;
+//    }
+//
+//    public void setHystrixTimeout(int hystrixTimeout) {
+//        this.hystrixTimeout = hystrixTimeout;
+//    }
 
 //    public String getHystrixFallbackListener() {
 //        return hystrixFallbackListener;
