@@ -15,12 +15,9 @@
  */
 package io.jboot.service;
 
-import com.jfinal.kit.StrKit;
-import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayKits;
 import io.jboot.kits.ClassKits;
 
 import java.lang.reflect.ParameterizedType;
@@ -29,8 +26,9 @@ import java.util.List;
 
 /**
  * JbootServiceBase 类
+ * Jboot 1.x 的 Service 需要 Join 功能的话，需要实现 JbootServiceJoiner 接口
  */
-public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJoiner {
+public class JbootServiceBase<M extends JbootModel<M>> extends JbootServiceJoinerImpl implements JbootServiceJoiner {
 
 
     protected M DAO = null;
@@ -113,7 +111,7 @@ public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJo
      * 保存到数据库
      *
      * @param model
-     * @return
+     * @return id if success
      */
     public <T> T save(M model) {
         return model.save() ? model.getIdValue() : null;
@@ -124,7 +122,7 @@ public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJo
      * 保存或更新
      *
      * @param model
-     * @return
+     * @return id if success
      */
     public <T> T saveOrUpdate(M model) {
         return model.saveOrUpdate() ? model.getIdValue() : null;
@@ -153,175 +151,14 @@ public class JbootServiceBase<M extends JbootModel<M>> implements JbootServiceJo
     }
 
 
-    @Override
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField) {
-        join(page.getList(), joinOnField);
-        return page;
-    }
-
-    @Override
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String[] attrs) {
-        join(page.getList(), joinOnField, attrs);
-        return page;
-    }
-
-    @Override
-    public <M extends Model> List<M> join(List<M> models, String joinOnField) {
-        if (ArrayKits.isNotEmpty(models)) {
-            for (Model m : models) {
-                join(m, joinOnField);
-            }
-        }
-        return models;
-    }
-
-    @Override
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String[] attrs) {
-        if (ArrayKits.isNotEmpty(models)) {
-            for (Model m : models) {
-                join(m, joinOnField, attrs);
-            }
-        }
-        return models;
-    }
-
-    @Override
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String joinName) {
-        join(page.getList(), joinOnField, joinName);
-        return page;
-    }
-
-    @Override
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName) {
-        if (ArrayKits.isNotEmpty(models)) {
-            for (Model m : models) {
-                join(m, joinOnField, joinName);
-            }
-        }
-        return models;
-    }
-
-    @Override
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String joinName, String[] attrs) {
-        join(page.getList(), joinOnField, joinName, attrs);
-        return page;
-    }
-
-
-    @Override
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName, String[] attrs) {
-        if (ArrayKits.isNotEmpty(models)) {
-            for (Model m : models) {
-                join(m, joinOnField, joinName, attrs);
-            }
-        }
-        return models;
-    }
-
     /**
-     * 添加关联数据到某个model中去，避免关联查询，提高性能。
-     *
-     * @param model       要添加到的model
-     * @param joinOnField model对于的关联字段
-     */
-    @Override
-    public <M extends Model> M join(M model, String joinOnField) {
-        if (model == null)
-            return model;
-        Object id = model.get(joinOnField);
-        if (id == null) {
-            return model;
-        }
-        Model m = joinById(id);
-        if (m != null) {
-            model.put(StrKit.firstCharToLowerCase(m.getClass().getSimpleName()), m);
-        }
-        return model;
-    }
-
-    /**
-     * 添加关联数据到某个model中去，避免关联查询，提高性能。
-     *
-     * @param model
-     * @param joinOnField
-     * @param attrs
-     */
-    @Override
-    public <M extends Model> M join(M model, String joinOnField, String[] attrs) {
-        if (model == null)
-            return model;
-        Object id = model.get(joinOnField);
-        if (id == null) {
-            return model;
-        }
-        JbootModel m = joinById(id);
-        if (m != null) {
-            m = m.copy();
-            m.keep(attrs);
-            model.put(StrKit.firstCharToLowerCase(m.getClass().getSimpleName()), m);
-        }
-        return model;
-    }
-
-
-    /**
-     * 添加关联数据到某个model中去，避免关联查询，提高性能。
-     *
-     * @param model
-     * @param joinOnField
-     * @param joinName
-     */
-    @Override
-    public <M extends Model> M join(M model, String joinOnField, String joinName) {
-        if (model == null)
-            return model;
-        Object id = model.get(joinOnField);
-        if (id == null) {
-            return model;
-        }
-        Model m = joinById(id);
-        if (m != null) {
-            model.put(joinName, m);
-        }
-        return model;
-    }
-
-
-    /**
-     * 添加关联数据到某个model中去，避免关联查询，提高性能。
-     *
-     * @param model
-     * @param joinOnField
-     * @param joinName
-     * @param attrs
-     */
-    @Override
-    public <M extends Model> M join(M model, String joinOnField, String joinName, String[] attrs) {
-        if (model == null)
-            return model;
-        Object id = model.get(joinOnField);
-        if (id == null) {
-            return model;
-        }
-        JbootModel m = joinById(id);
-        if (m != null) {
-            m = m.copy();
-            m.keep(attrs);
-            model.put(joinName, m);
-        }
-        return model;
-    }
-
-
-    /**
-     * 可以让子类去复写joinById ，比如默认只 join 部分字段等
+     * 复写 JbootServiceJoinerImpl 的方法
      *
      * @param id
      * @return
      */
-    protected M joinById(Object id) {
+    @Override
+    protected JbootModel joinById(Object id) {
         return findById(id);
     }
-
-
 }
