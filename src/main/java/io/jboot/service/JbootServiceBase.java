@@ -16,6 +16,7 @@
 package io.jboot.service;
 
 import com.jfinal.plugin.activerecord.Page;
+import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.kits.ClassKits;
@@ -148,6 +149,32 @@ public class JbootServiceBase<M extends JbootModel<M>> extends JbootServiceJoine
      */
     public Page<M> paginate(int page, int pageSize) {
         return DAO.paginate(page, pageSize);
+    }
+
+
+    /**
+     * 分页
+     *
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public Page<M> paginateByColumns(int page, int pageSize, Columns columns) {
+        return DAO.paginateByColumns(page, pageSize, columns);
+    }
+
+
+    /**
+     * 分页
+     *
+     * @param page
+     * @param pageSize
+     * @param columns
+     * @param orderBy
+     * @return
+     */
+    public Page<M> paginateByColumns(int page, int pageSize, Columns columns, String orderBy) {
+        return DAO.paginateByColumns(page, pageSize, columns, orderBy);
     }
 
 

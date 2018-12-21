@@ -1,8 +1,8 @@
 package #(basePackage);
 
-import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import #(modelPacket).#(tableMeta.modelName);
+import io.jboot.db.model.Columns;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public interface #(tableMeta.modelName)Service  {
      * save model to database
      *
      * @param model
-     * @return primary value if save success
+     * @return id value if save success
      */
     public <T> T save(#(tableMeta.modelName) model);
 
@@ -56,7 +56,7 @@ public interface #(tableMeta.modelName)Service  {
      * save or update model
      *
      * @param model
-     * @return primary value if save or update success
+     * @return id value if save or update success
      */
     public <T> T saveOrUpdate(#(tableMeta.modelName) model);
 
@@ -71,13 +71,36 @@ public interface #(tableMeta.modelName)Service  {
 
 
     /**
-     * 分页
+     * page query
      *
      * @param page
      * @param pageSize
-     * @return
+     * @return page data
      */
-    public Page<? extends Model> paginate(int page, int pageSize);
+    public Page<#(tableMeta.modelName)> paginate(int page, int pageSize);
+
+
+    /**
+     * page query by columns
+     *
+     * @param page
+     * @param pageSize
+     * @param columns
+     * @return page data
+     */
+    public Page<#(tableMeta.modelName)> paginateByColumns(int page, int pageSize, Columns columns);
+
+
+    /**
+     * page query by columns
+     *
+     * @param page
+     * @param pageSize
+     * @param columns
+     * @param orderBy
+     * @return page data
+     */
+    public Page<#(tableMeta.modelName)> paginateByColumns(int page, int pageSize, Columns columns, String orderBy);
 
 
 }
