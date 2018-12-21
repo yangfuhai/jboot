@@ -23,6 +23,8 @@ import io.jboot.components.cache.JbootCache;
 import io.jboot.components.cache.JbootCacheManager;
 import io.jboot.components.event.JbootEvent;
 import io.jboot.components.event.JbootEventManager;
+import io.jboot.components.mq.Jbootmq;
+import io.jboot.components.mq.JbootmqManager;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.serializer.ISerializer;
@@ -71,6 +73,15 @@ public class Jboot {
      */
     public static MetricRegistry getMetric() {
         return JbootMetricManager.me().metric();
+    }
+
+
+    /**
+     * 获取 Mq
+     * @return
+     */
+    public static Jbootmq getMq() {
+        return JbootmqManager.me().getJbootmq();
     }
 
 
