@@ -1,9 +1,9 @@
-package io.jboot.rpc.dubbo;
+package io.jboot.test.rpc.dubbo;
 
 
 import io.jboot.app.JbootApplication;
 import io.jboot.components.rpc.annotation.RPCInject;
-import io.jboot.rpc.commons.BlogService;
+import io.jboot.test.rpc.commons.BlogService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 

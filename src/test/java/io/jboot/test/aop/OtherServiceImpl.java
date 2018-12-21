@@ -1,4 +1,4 @@
-package io.jboot.aop;
+package io.jboot.test.aop;
 
 import com.jfinal.aop.Inject;
 import io.jboot.aop.annotation.Bean;

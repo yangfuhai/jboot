@@ -1,4 +1,4 @@
-package io.jboot.rpc.commons;
+package io.jboot.test.rpc.commons;
 
 
 import java.util.List;

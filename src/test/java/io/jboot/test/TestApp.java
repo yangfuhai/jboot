@@ -1,4 +1,4 @@
-package io.jboot;
+package io.jboot.test;
 
 import io.jboot.app.JbootApplication;
 

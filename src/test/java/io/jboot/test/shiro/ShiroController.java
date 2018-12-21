@@ -1,4 +1,4 @@
-package io.jboot.shiro;
+package io.jboot.test.shiro;
 
 
 import io.jboot.web.controller.JbootController;

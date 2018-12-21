@@ -1,4 +1,4 @@
-package io.jboot.rpc.commons;
+package io.jboot.test.rpc.commons;
 
 import com.google.common.collect.Lists;
 import io.jboot.components.rpc.annotation.RPCBean;

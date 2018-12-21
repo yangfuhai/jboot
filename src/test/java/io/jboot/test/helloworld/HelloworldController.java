@@ -1,4 +1,4 @@
-package io.jboot.helloworld;
+package io.jboot.test.helloworld;
 
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;

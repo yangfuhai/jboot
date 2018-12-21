@@ -1,4 +1,4 @@
-package io.jboot.mq.redis;
+package io.jboot.test.mq.redis;
 
 
 import io.jboot.Jboot;

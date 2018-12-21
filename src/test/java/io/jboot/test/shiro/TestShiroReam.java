@@ -1,4 +1,4 @@
-package io.jboot.shiro;
+package io.jboot.test.shiro;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;

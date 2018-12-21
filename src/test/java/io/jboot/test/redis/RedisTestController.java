@@ -1,4 +1,4 @@
-package io.jboot.redis;
+package io.jboot.test.redis;
 
 import io.jboot.Jboot;
 import io.jboot.kits.StringKits;

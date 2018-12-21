@@ -1,4 +1,4 @@
-package io.jboot.rpc.dubbo;
+package io.jboot.test.rpc.dubbo;
 
 
 import io.jboot.app.JbootApplication;
