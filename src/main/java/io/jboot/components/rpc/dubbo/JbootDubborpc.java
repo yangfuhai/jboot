@@ -113,7 +113,7 @@ public class JbootDubborpc extends JbootrpcBase {
          */
         else if (getRpcConfig().isDirectCallMode()) {
             if (StringKits.isBlank(getRpcConfig().getDirectUrl())) {
-                throw new JbootIllegalConfigException("directUrl must not be null if you use redirect call mode，please config jboot.rpc.directUrl value");
+                throw new JbootIllegalConfigException("directUrl must not be blank if you use direct call mode，please config jboot.rpc.directUrl value");
             }
             reference.setUrl(getRpcConfig().getDirectUrl());
         }

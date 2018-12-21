@@ -104,7 +104,7 @@ public class JbootMotanrpc extends JbootrpcBase {
          */
         else if (getRpcConfig().isDirectCallMode()) {
             if (StringKits.isBlank(getRpcConfig().getDirectUrl())) {
-                throw new JbootIllegalConfigException("directUrl must not be null if you use direct call mode，please config jboot.rpc.directUrl value");
+                throw new JbootIllegalConfigException("directUrl must not be blank if you use direct call mode，please config jboot.rpc.directUrl value");
             }
             refererConfig.setDirectUrl(getRpcConfig().getDirectUrl());
         }
