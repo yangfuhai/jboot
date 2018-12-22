@@ -4,7 +4,7 @@ package io.jboot.test.mq.redis;
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplication;
 
-public class RedisMqReceiver {
+public class RedisMqReceiver1 {
 
     public static void main(String[] args) {
 
@@ -29,6 +29,8 @@ public class RedisMqReceiver {
             System.out.println("listener2 receive msg : " + message + ", from channel : " + channel);
         },"myChannel");
 
-        System.out.println("RedisMqReceiver started.");
+        Jboot.getMq().startListening();
+
+        System.out.println("RedisMqReceiver1 started.");
     }
 }
