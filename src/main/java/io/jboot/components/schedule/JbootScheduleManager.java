@@ -15,8 +15,8 @@
  */
 package io.jboot.components.schedule;
 
+import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Prop;
-import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.components.schedule.annotation.Cron;
@@ -28,6 +28,7 @@ import io.jboot.kits.ClassScanner;
 import it.sauronsoftware.cron4j.ProcessTask;
 import it.sauronsoftware.cron4j.Task;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -46,13 +47,11 @@ public class JbootScheduleManager {
         config = Jboot.config(JbooScheduleConfig.class);
         fixedScheduler = new ScheduledThreadPoolExecutor(config.getPoolSize());
 
-        Prop prop = null;
-        try {
-            prop = PropKit.use(config.getCron4jFile());
-        } catch (Throwable ex) {
-        }
+        File cron4jProperties = new File(PathKit.getRootClassPath(), config.getCron4jFile());
+        cron4jPlugin = cron4jProperties.exists()
+                ? new JbootCron4jPlugin(new Prop(config.getCron4jFile()))
+                : new JbootCron4jPlugin();
 
-        cron4jPlugin = prop == null ? new JbootCron4jPlugin() : new JbootCron4jPlugin(prop);
     }
 
 
