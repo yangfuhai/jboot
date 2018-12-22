@@ -4,6 +4,8 @@ package io.jboot.test.mq.redis;
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplication;
 
+import java.util.UUID;
+
 public class RedisMqSender {
 
     public static void main(String[] args) throws InterruptedException {
@@ -20,9 +22,11 @@ public class RedisMqSender {
 
         while (true) {
 
-            Jboot.getMq().publish("message from RedisMqSender","channel1");
-            Jboot.getMq().publish("message from RedisMqSender","channel2");
-            Jboot.getMq().publish("message from RedisMqSender","myChannel");
+            Jboot.getMq().publish("message from RedisMqSender", "channel1");
+            Jboot.getMq().publish("message from RedisMqSender", "channel2");
+            Jboot.getMq().publish("message from RedisMqSender", "myChannel");
+
+            Jboot.getMq().enqueue("message from RedisMqSender by enqueue : " + UUID.randomUUID(), "channel1");
 
             Thread.sleep(2000);
             System.out.println("jboot mq publish success...");
