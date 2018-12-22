@@ -22,6 +22,7 @@ import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.components.serializer.ISerializer;
 import io.jboot.components.serializer.SerializerManager;
+import io.jboot.exception.JbootException;
 import io.jboot.kits.StringKits;
 
 import java.util.Collection;
@@ -156,7 +157,11 @@ public abstract class JbootmqBase implements Jbootmq {
 
     @Override
     public boolean startListening() {
-        if (isStartListen) throw new RuntimeException("jboot mq is started before");
+        if (isStartListen) throw new JbootException("jboot mq is started before");
+
+        if (channels == null || channels.isEmpty()) {
+            throw new JbootException("mq channels is null or empty, please config channels");
+        }
 
         onStartListening();
         isStartListen = true;

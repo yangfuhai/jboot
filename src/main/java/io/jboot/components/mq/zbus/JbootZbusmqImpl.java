@@ -31,13 +31,16 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
 
     private static final Log LOG = Log.getLog(JbootZbusmqImpl.class);
     private Broker broker;
+    JbootZbusmqConfig zbusmqConfig = Jboot.config(JbootZbusmqConfig.class);
 
     public JbootZbusmqImpl() {
         super();
-
-        JbootZbusmqConfig zbusmqConfig = Jboot.config(JbootZbusmqConfig.class);
         broker = new Broker(zbusmqConfig.getBroker());
+    }
 
+
+    @Override
+    protected void onStartListening() {
         for (String channel : channels) {
             ConsumerConfig config = new ConsumerConfig(broker);
             config.setTopic(channel);
@@ -45,8 +48,6 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
             ConsumeGroup group = ConsumeGroup.createTempBroadcastGroup();
             config.setConsumeGroup(group);
             Consumer consumer = new Consumer(config);
-
-
             try {
                 consumer.start();
             } catch (IOException e) {

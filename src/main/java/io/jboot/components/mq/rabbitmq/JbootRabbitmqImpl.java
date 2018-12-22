@@ -21,7 +21,6 @@ import io.jboot.Jboot;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayKits;
 import io.jboot.kits.StringKits;
 
 import java.io.IOException;
@@ -36,8 +35,8 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     private Connection connection;
     private Map<String, Channel> channelMap = Maps.newConcurrentMap();
 
-    @Override
-    protected void onStartListening() {
+    public JbootRabbitmqImpl() {
+        super();
         JbootmqRabbitmqConfig rabbitmqConfig = Jboot.config(JbootmqRabbitmqConfig.class);
 
         ConnectionFactory factory = new ConnectionFactory();
@@ -60,13 +59,10 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
         } catch (Exception e) {
             throw new JbootException("can not connection rabbitmq server", e);
         }
-
-        if (ArrayKits.isNotEmpty(this.channels)) {
-            initChannelSubscribe();
-        }
     }
 
-    private void initChannelSubscribe() {
+    @Override
+    protected void onStartListening() {
         for (String toChannel : channels) {
             registerListner(getChannel(toChannel), toChannel);
         }

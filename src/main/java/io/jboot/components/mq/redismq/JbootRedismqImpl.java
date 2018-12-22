@@ -20,7 +20,6 @@ import io.jboot.Jboot;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.ArrayKits;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
 import redis.clients.jedis.BinaryJedisPubSub;
@@ -33,8 +32,8 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     private JbootRedis redis;
     private Thread dequeueThread;
 
-    @Override
-    protected void onStartListening() {
+    public JbootRedismqImpl() {
+        super();
         JbootmqRedisConfig redisConfig = Jboot.config(JbootmqRedisConfig.class);
         if (redisConfig.isConfigOk()) {
             redis = JbootRedisManager.me().getRedis(redisConfig);
@@ -46,13 +45,11 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
             throw new JbootIllegalConfigException("can not use redis mq (redis mq is default), " +
                     "please config jboot.redis.host=yourhost or use other mq component. ");
         }
-
-        if (ArrayKits.isNotEmpty(this.channels)) {
-            initChannelSubscribe();
-        }
     }
 
-    private void initChannelSubscribe() {
+    @Override
+    protected void onStartListening() {
+
         String[] channels = this.channels.toArray(new String[]{});
 
         redis.subscribe(new BinaryJedisPubSub() {

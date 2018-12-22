@@ -40,8 +40,8 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
     private Connection connection = null;
     private boolean serializerEnable = true;
 
-    @Override
-    protected void onStartListening() {
+    public JbootQpidmqImpl() {
+        super();
         JbootQpidmqConfig qpidConfig = Jboot.config(JbootQpidmqConfig.class);
         serializerEnable = qpidConfig.isSerializerEnable();
 
@@ -50,13 +50,19 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
             connection = new AMQConnection(url);
             connection.start();
 
-            startReceiveMsgThread();
-
         } catch (Exception e) {
             throw new JbootException("can not connection qpidmq server", e);
         }
     }
 
+    @Override
+    protected void onStartListening() {
+        try {
+            startReceiveMsgThread();
+        } catch (Exception e) {
+            throw new JbootException(e.toString(), e);
+        }
+    }
 
 
     @Override
