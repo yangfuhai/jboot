@@ -44,7 +44,7 @@ public abstract class JbootmqBase implements Jbootmq {
 
     private final ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
             60L, TimeUnit.SECONDS,
-            new SynchronousQueue<Runnable>());
+            new SynchronousQueue<>());
 
 
     public JbootmqBase() {
@@ -139,6 +139,7 @@ public abstract class JbootmqBase implements Jbootmq {
         return true;
     }
 
+
     public ISerializer getSerializer() {
         if (serializer == null) {
             if (StringKits.isBlank(config.getSerializer())) {
@@ -149,5 +150,20 @@ public abstract class JbootmqBase implements Jbootmq {
         }
         return serializer;
     }
+
+
+    protected boolean isStartListen = false;
+
+    @Override
+    public boolean startListening() {
+        if (isStartListen) throw new RuntimeException("jboot mq is started before");
+
+        onStartListening();
+        isStartListen = true;
+        return true;
+    }
+
+
+    protected abstract void onStartListening();
 
 }

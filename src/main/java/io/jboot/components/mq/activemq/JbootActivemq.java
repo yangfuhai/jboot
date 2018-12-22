@@ -30,4 +30,9 @@ public class JbootActivemq extends JbootmqBase implements Jbootmq {
     public void publish(Object message, String toChannel) {
 
     }
+
+    @Override
+    protected void onStartListening() {
+
+    }
 }

@@ -29,9 +29,9 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
     private Producer producer;
     private Consumer consumer;
 
-    public JbootAliyunmqImpl() {
-        super();
 
+    @Override
+    protected void onStartListening() {
         JbootAliyunmqConfig aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
 
         Properties properties = new Properties();
@@ -47,9 +47,8 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageLi
         if (ArrayKits.isNotEmpty(this.channels)) {
             initChannelSubscribe(properties);
         }
-
-
     }
+
 
     private void initChannelSubscribe(Properties properties) {
         consumer = ONSFactory.createConsumer(properties);

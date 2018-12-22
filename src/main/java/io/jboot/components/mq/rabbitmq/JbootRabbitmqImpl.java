@@ -36,9 +36,8 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     private Connection connection;
     private Map<String, Channel> channelMap = Maps.newConcurrentMap();
 
-    public JbootRabbitmqImpl() {
-        super();
-
+    @Override
+    protected void onStartListening() {
         JbootmqRabbitmqConfig rabbitmqConfig = Jboot.config(JbootmqRabbitmqConfig.class);
 
         ConnectionFactory factory = new ConnectionFactory();
@@ -65,7 +64,6 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
         if (ArrayKits.isNotEmpty(this.channels)) {
             initChannelSubscribe();
         }
-
     }
 
     private void initChannelSubscribe() {

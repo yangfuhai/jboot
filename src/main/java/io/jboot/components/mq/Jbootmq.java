@@ -36,4 +36,6 @@ public interface Jbootmq {
 
     public Collection<JbootmqMessageListener> getListenersByChannel(String channel);
 
+    public boolean startListening();
+
 }
