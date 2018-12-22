@@ -1,4 +1,4 @@
-package io.jboot.test.aop;
+package io.jboot.test.aop.inject;
 
 import com.jfinal.aop.Inject;
 import io.jboot.app.config.annotation.ConfigInject;
