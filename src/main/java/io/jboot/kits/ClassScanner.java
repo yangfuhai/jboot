@@ -143,6 +143,11 @@ public class ClassScanner {
         excludeJars.add("qpid-");
         excludeJars.add("geronimo-");
         excludeJars.add("activation-");
+        excludeJars.add("org.abego");
+        excludeJars.add("antlr-");
+        excludeJars.add("antlr4-");
+        excludeJars.add("ST4-");
+        excludeJars.add("icu4j-");
         excludeJars.add("idea_rt");
         excludeJars.add("MRJToolkit");
     }
