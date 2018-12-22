@@ -11,30 +11,29 @@ public class AopCacheController extends JbootController {
     @Inject
     private CommentService commentService;
 
-    private String id = "myId";
 
     public void index() {
-        renderText("text from : " + commentService.getCommentById(id));
+        renderText("text from : " + commentService.getCommentById("index"));
     }
 
 
     public void cache() {
-        renderText("text from : " + commentService.getCommentByIdWithCache(id));
+        renderText("text from : " + commentService.getCommentByIdWithCache("cache"));
     }
 
-    public void cacheTime() {
-        renderText("text from : " + commentService.getCommentByIdWithCache(id));
+    public void cachetime() {
+        renderText("text from : " + commentService.getCommentByIdWithCacheTime("cachetime"));
     }
 
 
     public void updateCache() {
-        renderText("text from : " + commentService.updateCache(id));
+        renderText("text from : " + commentService.updateCache("cache"));
     }
 
 
     public void delCache() {
-        commentService.delCache(id);
-        renderText("text from : " + commentService.getCommentByIdWithCache(id));
+        commentService.delCache("cache");
+        renderText("del ok");
     }
 
 }
