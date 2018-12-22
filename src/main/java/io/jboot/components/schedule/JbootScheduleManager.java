@@ -18,7 +18,6 @@ package io.jboot.components.schedule;
 import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
-import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import io.jboot.Jboot;
 import io.jboot.components.schedule.annotation.Cron;
 import io.jboot.components.schedule.annotation.EnableDistributedRunnable;
@@ -39,7 +38,7 @@ public class JbootScheduleManager {
     private static final Log LOG = Log.getLog(JbootScheduleManager.class);
 
     private static JbootScheduleManager manager;
-    private Cron4jPlugin cron4jPlugin;
+    private JbootCron4jPlugin cron4jPlugin;
     private ScheduledThreadPoolExecutor fixedScheduler;
     private JbooScheduleConfig config;
 
@@ -53,7 +52,7 @@ public class JbootScheduleManager {
         } catch (Throwable ex) {
         }
 
-        cron4jPlugin = prop == null ? new Cron4jPlugin() : new Cron4jPlugin(prop);
+        cron4jPlugin = prop == null ? new JbootCron4jPlugin() : new JbootCron4jPlugin(prop);
     }
 
 
