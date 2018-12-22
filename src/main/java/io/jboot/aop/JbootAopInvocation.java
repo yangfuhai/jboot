@@ -125,4 +125,9 @@ public class JbootAopInvocation extends Invocation {
     public <T> T getReturnValue() {
         return originInvocation.getReturnValue();
     }
+
+    @Override
+    public void setReturnValue(Object returnValue) {
+        originInvocation.setReturnValue(returnValue);
+    }
 }
