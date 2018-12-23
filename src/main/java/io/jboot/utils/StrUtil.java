@@ -22,7 +22,9 @@ import com.jfinal.log.Log;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -153,30 +155,6 @@ public class StrUtil extends StrKit {
     }
 
 
-    /**
-     * 去除特殊字符
-     *
-     * @param string
-     * @return
-     */
-    public static String clearSpecialCharacter(String string) {
-        if (isBlank(string)) {
-            return string;
-        }
-
-        /**
-         P：标点字符；
-         L：字母；
-         M：标记符号（一般不会单独出现）；
-         Z：分隔符（比如空格、换行等）；
-         S：符号（比如数学符号、货币符号等）；
-         N：数字（比如阿拉伯数字、罗马数字等）；
-         C：其他字符
-         */
-//        return string.replaceAll("[\\pP\\pZ\\pM\\pC]", "");
-        return string.replaceAll("[\\\\\'\"\\/\f\n\r\t]", "");
-    }
-
 
     /**
      * 把字符串拆分成一个set
@@ -199,6 +177,43 @@ public class StrUtil extends StrKit {
             set.add(table.trim());
         }
         return set;
+    }
+
+
+    public static String escapeHtml(String content) {
+
+        if (isBlank(content)) {
+            return content;
+        }
+
+        /**
+         "&lt;" represents the < sign.
+         "&gt;" represents the > sign.
+         "&amp;" represents the & sign.
+         "&quot; represents the " mark.
+         */
+
+        return unEscapeHtml(content)
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("'", "&#39;")
+                .replace("\"", "&quot;");
+    }
+
+
+    public static String unEscapeHtml(String content) {
+
+        if (isBlank(content)) {
+            return content;
+        }
+
+        return content
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&#39;", "'")
+                .replace("&quot;", "\"")
+                .replace("&amp;", "&");
     }
 
 

@@ -435,7 +435,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                 : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
     }
 
-    public  <T> T getIdValue(){
+    public <T> T getIdValue() {
         return get(_getPrimaryKey());
     }
 
@@ -580,6 +580,44 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         return id.equals(get(_getPrimaryKey()));
+    }
+
+
+    public M preventXssAttack() {
+        String[] attrNames = _getAttrNames();
+        for (String attrName : attrNames) {
+            Object value = get(attrName);
+            if (value == null || !(value instanceof String)) {
+                continue;
+            }
+
+            set(attrName, StrUtil.escapeHtml((String) value));
+        }
+        return (M) this;
+    }
+
+
+    public M preventXssAttack(String... ignoreAttrs) {
+        String[] attrNames = _getAttrNames();
+        for (String attrName : attrNames) {
+            Object value = get(attrName);
+            if (value == null || !(value instanceof String)) {
+                continue;
+            }
+
+            boolean isContinue = false;
+            for (String ignoreAttr : ignoreAttrs) {
+                if (attrName.equals(ignoreAttr)) {
+                    isContinue = true;
+                    break;
+                }
+            }
+
+            if (isContinue) continue;
+            set(attrName, StrUtil.escapeHtml((String) value));
+        }
+
+        return (M) this;
     }
 
 }
