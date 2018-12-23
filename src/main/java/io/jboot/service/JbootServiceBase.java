@@ -29,7 +29,9 @@ import java.util.List;
  * JbootServiceBase 类
  * Jboot 1.x 的 Service 需要 Join 功能的话，需要实现 JbootServiceJoiner 接口
  */
-public class JbootServiceBase<M extends JbootModel<M>> extends JbootServiceJoinerImpl implements JbootServiceJoiner {
+public class JbootServiceBase<M extends JbootModel<M>>
+        extends JbootServiceJoinerImpl
+        implements JbootServiceJoiner {
 
 
     protected M DAO = null;
