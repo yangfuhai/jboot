@@ -20,8 +20,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.components.serializer.ISerializer;
-import io.jboot.components.serializer.SerializerManager;
+import io.jboot.components.serializer.JbootSerializer;
+import io.jboot.components.serializer.JbootSerializerManager;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 
@@ -41,7 +41,7 @@ public abstract class JbootmqBase implements Jbootmq {
 
     protected Set<String> channels = Sets.newHashSet();
     protected Set<String> syncRecevieMessageChannels = Sets.newHashSet();
-    protected ISerializer serializer;
+    protected JbootSerializer serializer;
 
     private final ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
             60L, TimeUnit.SECONDS,
@@ -141,12 +141,12 @@ public abstract class JbootmqBase implements Jbootmq {
     }
 
 
-    public ISerializer getSerializer() {
+    public JbootSerializer getSerializer() {
         if (serializer == null) {
             if (StrUtil.isBlank(config.getSerializer())) {
                 serializer = Jboot.getSerializer();
             } else {
-                serializer = SerializerManager.me().getSerializer(config.getSerializer());
+                serializer = JbootSerializerManager.me().getSerializer(config.getSerializer());
             }
         }
         return serializer;

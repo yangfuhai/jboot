@@ -19,7 +19,7 @@ import com.jfinal.log.Log;
 import org.nustaq.serialization.FSTConfiguration;
 
 
-public class FstSerializer implements ISerializer {
+public class FstSerializer implements JbootSerializer {
 
 
     private static final Log LOG = Log.getLog(FstSerializer.class);

@@ -17,36 +17,36 @@ package io.jboot.components.serializer;
 
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.exception.JbootAssert;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class SerializerManager {
+public class JbootSerializerManager {
 
 
-    private static SerializerManager me;
+    private static JbootSerializerManager me;
 
-    private static Map<String, ISerializer> serializerCaches = new ConcurrentHashMap<>();
+    private static Map<String, JbootSerializer> serializerCaches = new ConcurrentHashMap<>();
 
-    public static SerializerManager me() {
+    public static JbootSerializerManager me() {
         if (me == null) {
-            me = ClassUtil.singleton(SerializerManager.class);
+            me = ClassUtil.singleton(JbootSerializerManager.class);
         }
         return me;
     }
 
 
-    public ISerializer getSerializer() {
+    public JbootSerializer getSerializer() {
         JbootSerializerConfig config = Jboot.config(JbootSerializerConfig.class);
         return getSerializer(config.getType());
     }
 
-    public ISerializer getSerializer(String serializerString) {
+    public JbootSerializer getSerializer(String serializerString) {
 
-        ISerializer serializer = serializerCaches.get(serializerString);
+        JbootSerializer serializer = serializerCaches.get(serializerString);
 
         if (serializer == null) {
 
@@ -57,16 +57,17 @@ public class SerializerManager {
         return serializer;
     }
 
-    public ISerializer buildSerializer(String serializerString) {
+    public JbootSerializer buildSerializer(String serializerString) {
 
-        JbootAssert.assertTrue(serializerString != null, "can not get serializer config, please set jboot.serializer value to jboot.proerties");
-
+        if (serializerString == null){
+            throw new JbootException("can not get serializer config, please set jboot.serializer value to jboot.proerties");
+        }
         /**
          * 可能是某个类名
          */
         if (serializerString != null && serializerString.contains(".")) {
 
-            ISerializer serializer = ClassUtil.newInstance(serializerString);
+            JbootSerializer serializer = ClassUtil.newInstance(serializerString);
 
             if (serializer != null) {
                 return serializer;
@@ -83,7 +84,7 @@ public class SerializerManager {
                 return new FastjsonSerializer();
 
             default:
-                return JbootSpiLoader.load(ISerializer.class, serializerString);
+                return JbootSpiLoader.load(JbootSerializer.class, serializerString);
         }
     }
 

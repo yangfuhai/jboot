@@ -30,14 +30,10 @@ import java.io.ByteArrayOutputStream;
  * @Description: 性能和 fst一样
  * @Package io.jboot.core.serializer
  */
-public class KryoSerializer implements ISerializer {
+public class KryoSerializer implements JbootSerializer {
 
 
-    private KryoFactory kryoFactory = new KryoFactory() {
-        public Kryo create() {
-            return new Kryo();
-        }
-    };
+    private KryoFactory kryoFactory = () -> new Kryo();
 
     private KryoPool kryoPool = new KryoPool.Builder(kryoFactory).
             softReferences()

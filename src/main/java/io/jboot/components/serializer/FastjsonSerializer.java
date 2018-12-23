@@ -20,7 +20,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.log.Log;
 
 
-public class FastjsonSerializer implements ISerializer {
+public class FastjsonSerializer implements JbootSerializer {
 
     private static final Log LOG = Log.getLog(FastjsonSerializer.class);
 

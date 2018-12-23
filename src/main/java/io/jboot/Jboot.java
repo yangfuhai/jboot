@@ -27,8 +27,8 @@ import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqManager;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
-import io.jboot.components.serializer.ISerializer;
-import io.jboot.components.serializer.SerializerManager;
+import io.jboot.components.serializer.JbootSerializer;
+import io.jboot.components.serializer.JbootSerializerManager;
 import io.jboot.support.metric.JbootMetricManager;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
@@ -90,8 +90,8 @@ public class Jboot {
      *
      * @return
      */
-    public static ISerializer getSerializer() {
-        return SerializerManager.me().getSerializer();
+    public static JbootSerializer getSerializer() {
+        return JbootSerializerManager.me().getSerializer();
     }
 
 

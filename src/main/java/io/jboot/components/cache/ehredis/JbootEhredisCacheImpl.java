@@ -23,7 +23,7 @@ import io.jboot.support.redis.JbootRedis;
 import io.jboot.components.cache.JbootCacheBase;
 import io.jboot.components.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.components.cache.redis.JbootRedisCacheImpl;
-import io.jboot.components.serializer.ISerializer;
+import io.jboot.components.serializer.JbootSerializer;
 import io.jboot.utils.StrUtil;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
@@ -46,7 +46,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     private JbootEhcacheImpl ehcacheImpl;
     private JbootRedisCacheImpl redisCacheImpl;
     private JbootRedis redis;
-    private ISerializer serializer;
+    private JbootSerializer serializer;
 
     private String channel = DEFAULT_NOTIFY_CHANNEL;
     private String clientId;

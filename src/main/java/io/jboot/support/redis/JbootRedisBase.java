@@ -17,8 +17,8 @@ package io.jboot.support.redis;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.components.serializer.ISerializer;
-import io.jboot.components.serializer.SerializerManager;
+import io.jboot.components.serializer.JbootSerializer;
+import io.jboot.components.serializer.JbootSerializerManager;
 import io.jboot.utils.StrUtil;
 
 import java.util.ArrayList;
@@ -34,13 +34,13 @@ public abstract class JbootRedisBase implements JbootRedis {
 
     private static final Log LOG = Log.getLog(JbootRedisBase.class);
 
-    private final ISerializer serializer;
+    private final JbootSerializer serializer;
 
     public JbootRedisBase(JbootRedisConfig config) {
         if (config == null || StrUtil.isBlank(config.getSerializer())) {
             serializer = Jboot.getSerializer();
         } else {
-            serializer = SerializerManager.me().getSerializer(config.getSerializer());
+            serializer = JbootSerializerManager.me().getSerializer(config.getSerializer());
         }
     }
 
