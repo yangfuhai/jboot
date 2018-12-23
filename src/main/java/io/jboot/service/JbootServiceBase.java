@@ -45,17 +45,9 @@ public class JbootServiceBase<M extends JbootModel<M>> extends JbootServiceJoine
      * @return
      */
     protected M initDao() {
-        Class<M> modelClass = null;
-        Type t = ClassUtil.getUsefulClass(getClass()).getGenericSuperclass();
-        if (t instanceof ParameterizedType) {
-            Type[] p = ((ParameterizedType) t).getActualTypeArguments();
-            modelClass = (Class<M>) p[0];
-        }
-
-        if (modelClass == null) {
-            throw new JbootException("can not get parameterizedType in JbootServiceBase");
-        }
-
+        Type type = ClassUtil.getUsefulClass(getClass()).getGenericSuperclass();
+        Class<M> modelClass = (Class<M>) ((ParameterizedType) type).getActualTypeArguments()[0];
+        if (modelClass == null) throw new JbootException("can not get modelClass in JbootServiceBase");
         return ClassUtil.newInstance(modelClass, false);
     }
 
