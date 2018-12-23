@@ -24,7 +24,7 @@ import com.jfinal.log.Log;
 import com.jfinal.render.RedirectRender;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
-import io.jboot.web.JbootControllerContext;
+import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 import io.jboot.web.flashmessage.FlashMessageManager;
 

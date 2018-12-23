@@ -16,7 +16,7 @@
 package io.jboot.support.swagger;
 
 import com.jfinal.core.Controller;
-import io.jboot.web.JbootControllerManager;
+import io.jboot.web.controller.JbootControllerManager;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Response;

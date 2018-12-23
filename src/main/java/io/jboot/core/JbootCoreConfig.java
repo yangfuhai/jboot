@@ -42,7 +42,7 @@ import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
 import io.jboot.support.swagger.JbootSwaggerManager;
-import io.jboot.web.JbootControllerManager;
+import io.jboot.web.controller.JbootControllerManager;
 import io.jboot.web.JbootJson;
 import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.annotation.RequestMapping;

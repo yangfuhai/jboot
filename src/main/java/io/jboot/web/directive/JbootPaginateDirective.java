@@ -20,7 +20,7 @@ import com.jfinal.template.Env;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import io.jboot.kits.StringKits;
-import io.jboot.web.JbootControllerContext;
+import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.directive.base.PaginateDirectiveBase;
 
 import javax.servlet.http.HttpServletRequest;
