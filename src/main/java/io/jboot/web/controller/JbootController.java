@@ -248,4 +248,31 @@ public class JbootController extends Controller {
     }
 
 
+    @Override
+    @NotAction
+    public String getPara(String name) {
+        String value = super.getPara(name);
+        return "".equals(value) ? null : value;
+    }
+
+
+    @NotAction
+    public String getEscapePara(String name) {
+        String value = super.getPara(name);
+        if (value == null || "".equals(value)) {
+            return null;
+        }
+        return StrUtil.escapeHtml(value);
+    }
+
+
+    @NotAction
+    public String getEscapePara(String name, String defaultValue) {
+        String value = super.getPara(name);
+        if (value == null || "".equals(value)) {
+            return defaultValue;
+        }
+        return StrUtil.escapeHtml(value);
+    }
+
 }
