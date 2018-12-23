@@ -54,7 +54,7 @@ public class JbootConfigManager {
 
     private void init() {
 
-        File jbootPropertiesFile = new File(Kits.getRootClassPath(), "jboot.properties");
+        File jbootPropertiesFile = new File(Utils.getRootClassPath(), "jboot.properties");
         if (!jbootPropertiesFile.exists()) {
             mainProperties = new Properties();
         } else {
@@ -63,10 +63,9 @@ public class JbootConfigManager {
 
         String mode = getConfigValue("jboot.mode");
 
-        if (Kits.isNotBlank(mode)) {
-
+        if (Utils.isNotBlank(mode)) {
             String p = String.format("jboot-%s.properties", mode);
-            if (new File(Kits.getRootClassPath(), p).exists()) {
+            if (new File(Utils.getRootClassPath(), p).exists()) {
                 mainProperties.putAll(new Prop(p).getProperties());
             }
         }
@@ -117,19 +116,19 @@ public class JbootConfigManager {
 
     public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
 
-        Object configObject = Kits.newInstance(clazz);
-        List<Method> setMethods = Kits.getClassSetMethods(clazz);
+        Object configObject = Utils.newInstance(clazz);
+        List<Method> setMethods = Utils.getClassSetMethods(clazz);
         if (setMethods != null) {
             for (Method method : setMethods) {
 
                 String key = buildKey(prefix, method);
                 String value = getConfigValue(key);
 
-                if (Kits.isNotBlank(file)) {
+                if (Utils.isNotBlank(file)) {
                     try {
                         Prop prop = new Prop(file);
                         String filePropValue = getConfigValue(prop.getProperties(), key);
-                        if (Kits.isNotBlank(filePropValue)) {
+                        if (Utils.isNotBlank(filePropValue)) {
                             value = filePropValue;
                         }
                     } catch (Throwable ex) {
@@ -137,7 +136,7 @@ public class JbootConfigManager {
                 }
 
                 try {
-                    if (Kits.isNotBlank(value)) {
+                    if (Utils.isNotBlank(value)) {
                         Object val = convert(method.getParameterTypes()[0], value);
                         method.invoke(configObject, val);
                     }
@@ -152,12 +151,12 @@ public class JbootConfigManager {
 
 
     public Object convert(Class<?> type, String s) {
-        return Kits.convert(type, s);
+        return Utils.convert(type, s);
     }
 
     private String buildKey(String prefix, Method method) {
-        String key = Kits.firstCharToLowerCase(method.getName().substring(3));
-        if (Kits.isNotBlank(prefix)) {
+        String key = Utils.firstCharToLowerCase(method.getName().substring(3));
+        if (Utils.isNotBlank(prefix)) {
             key = prefix.trim() + "." + key;
         }
         return key;
@@ -178,15 +177,15 @@ public class JbootConfigManager {
 
         String value = getBootArg(key);
 
-        if (Kits.isBlank(value)) {
+        if (Utils.isBlank(value)) {
             value = System.getenv(key);
         }
 
-        if (Kits.isBlank(value)) {
+        if (Utils.isBlank(value)) {
             value = System.getProperty(key);
         }
 
-        if (Kits.isBlank(value)) {
+        if (Utils.isBlank(value)) {
             value = (String) properties.get(key);
         }
 

@@ -16,7 +16,7 @@ class Prop {
     public Prop(String fileName, String encoding) {
         InputStream inputStream = null;
         try {
-            inputStream = Kits.getClassLoader().getResourceAsStream(fileName);
+            inputStream = Utils.getClassLoader().getResourceAsStream(fileName);
             if (inputStream == null) {
                 throw new IllegalArgumentException("properties file not found in classpath,  fileName : " + fileName);
             }
