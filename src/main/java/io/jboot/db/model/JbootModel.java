@@ -92,11 +92,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public M use(String configName) {
         M m = this.get("__ds__" + configName);
         if (m == null) {
-
-            m = this.copy()
-                    .superUse(configName);
-
-            this.put("__ds__" + configName, m);
+            synchronized (configName) {
+                m = this.get("__ds__" + configName);
+                if (m != null) return m;
+                m = this.copy().superUse(configName);
+                this.put("__ds__" + configName, m);
+            }
         }
         return m;
     }
