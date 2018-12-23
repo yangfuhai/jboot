@@ -21,7 +21,6 @@ import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
 import io.jboot.web.controller.validate.ParaValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
-import io.jboot.web.limitation.LimitationInterceptor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +46,6 @@ public class FixedInterceptors {
      */
     private FixedInterceptorWapper[] defaultInters = new FixedInterceptorWapper[]{
             new FixedInterceptorWapper(new CORSInterceptor(), 10) ,
-            new FixedInterceptorWapper(new LimitationInterceptor(), 20),
             new FixedInterceptorWapper(new ParaValidateInterceptor(), 30),
             new FixedInterceptorWapper(new JwtInterceptor(), 40),
             new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
