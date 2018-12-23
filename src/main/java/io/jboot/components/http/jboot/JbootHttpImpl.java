@@ -20,8 +20,8 @@ import io.jboot.components.http.JbootHttp;
 import io.jboot.components.http.JbootHttpRequest;
 import io.jboot.components.http.JbootHttpResponse;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.StrUtil;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -78,7 +78,7 @@ public class JbootHttpImpl implements JbootHttp {
                 if (!request.isMultipartFormData()) {
 
                     String postContent = request.getPostContent();
-                    if (StringKits.isNotEmpty(postContent)) {
+                    if (StrUtil.isNotEmpty(postContent)) {
                         DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
                         dos.write(postContent.getBytes(request.getCharset()));
                         dos.flush();
@@ -92,7 +92,7 @@ public class JbootHttpImpl implements JbootHttp {
                  */
                 else {
 
-                    if (ArrayKits.isNotEmpty(request.getParams())) {
+                    if (ArrayUtil.isNotEmpty(request.getParams())) {
                         uploadData(request, connection);
                     }
 
@@ -131,7 +131,7 @@ public class JbootHttpImpl implements JbootHttp {
 
     private void uploadData(JbootHttpRequest request, HttpURLConnection connection) throws IOException {
         String endFlag = "\r\n";
-        String boundary = "---------" + StringKits.uuid();
+        String boundary = "---------" + StrUtil.uuid();
         connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
         DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
         for (Map.Entry entry : request.getParams().entrySet()) {

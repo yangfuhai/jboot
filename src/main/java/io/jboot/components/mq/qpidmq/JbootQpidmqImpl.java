@@ -20,8 +20,8 @@ import io.jboot.Jboot;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.StrUtil;
 import org.apache.qpid.client.AMQAnyDestination;
 import org.apache.qpid.client.AMQConnection;
 import org.apache.qpid.jms.Connection;
@@ -118,7 +118,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         String host = qpidConfig.getHost();
         String[] hosts = host.split(",");
         for (String h : hosts) {
-            if (StringKits.isBlank(h)) {
+            if (StrUtil.isBlank(h)) {
                 continue;
             }
             url.append("tcp://" + h + ";");
@@ -147,7 +147,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
     }
 
     private void startReceiveMsgThread() throws Exception {
-        if (ArrayKits.isNullOrEmpty(this.channels)) {
+        if (ArrayUtil.isNullOrEmpty(this.channels)) {
             return;
         }
 

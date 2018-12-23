@@ -35,9 +35,9 @@ import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
 import io.jboot.core.listener.JbootAppListenerManager;
 import io.jboot.db.JbootDbManager;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.ClassScanner;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.ClassScanner;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
@@ -106,7 +106,7 @@ public class JbootCoreConfig extends JFinalConfig {
     public void configRoute(Routes routes) {
 
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
-        if (ArrayKits.isNotEmpty(controllerClassList)) {
+        if (ArrayUtil.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
                 RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
                 if (mapping == null || mapping.value() == null) {
@@ -153,7 +153,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
             JFinalSharedMethod sharedMethod = (JFinalSharedMethod) clazz.getAnnotation(JFinalSharedMethod.class);
             if (sharedMethod != null) {
-                engine.addSharedMethod(ClassKits.newInstance(clazz));
+                engine.addSharedMethod(ClassUtil.newInstance(clazz));
             }
 
             JFinalSharedStaticMethod sharedStaticMethod = (JFinalSharedStaticMethod) clazz.getAnnotation(JFinalSharedStaticMethod.class);
@@ -163,7 +163,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
             JFinalSharedObject sharedObject = (JFinalSharedObject) clazz.getAnnotation(JFinalSharedObject.class);
             if (sharedObject != null) {
-                engine.addSharedObject(sharedObject.value(), ClassKits.newInstance(clazz));
+                engine.addSharedObject(sharedObject.value(), ClassUtil.newInstance(clazz));
             }
         }
 

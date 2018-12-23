@@ -26,8 +26,8 @@ import io.jboot.components.rpc.motan.JbootMotanrpc;
 import io.jboot.components.rpc.zbus.JbootZbusrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassScanner;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.ClassScanner;
 
 import java.io.Serializable;
 import java.util.List;
@@ -67,7 +67,7 @@ public class JbootrpcManager {
 
     private void autoExportRPCBean() {
         List<Class> classes = ClassScanner.scanClassByAnnotation(RPCBean.class, true);
-        if (ArrayKits.isNullOrEmpty(classes)) {
+        if (ArrayUtil.isNullOrEmpty(classes)) {
             return;
         }
 
@@ -79,7 +79,7 @@ public class JbootrpcManager {
             }
 
             //对某些系统的类 进行排除，例如：Serializable 等
-            Class[] excludes = ArrayKits.concat(default_excludes, rpcBean.exclude());
+            Class[] excludes = ArrayUtil.concat(default_excludes, rpcBean.exclude());
             for (Class inter : inters) {
                 boolean isContinue = false;
                 for (Class ex : excludes) {

@@ -21,8 +21,8 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.support.metric.annotation.EnableMetricCounter;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 /**
  * 用于在AOP拦截，并通过Metrics的Conter进行统计
@@ -41,8 +41,8 @@ public class JbootMetricCounterAopInterceptor implements Interceptor {
             return;
         }
 
-        Class targetClass = ClassKits.getUsefulClass(inv.getTarget().getClass());
-        String name = StringKits.isBlank(annotation.value())
+        Class targetClass = ClassUtil.getUsefulClass(inv.getTarget().getClass());
+        String name = StrUtil.isBlank(annotation.value())
                 ? targetClass.getName() + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 

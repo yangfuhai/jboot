@@ -20,9 +20,9 @@ import com.codahale.metrics.Timer;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 import io.jboot.support.metric.annotation.EnableMetricTimer;
-import io.jboot.kits.ClassKits;
 
 /**
  * 用于在AOP拦截，并通过Metrics的Timer进行统计
@@ -41,8 +41,8 @@ public class JbootMetricTimerAopInterceptor implements Interceptor {
             return;
         }
 
-        Class targetClass = ClassKits.getUsefulClass(inv.getTarget().getClass());
-        String name = StringKits.isBlank(annotation.value())
+        Class targetClass = ClassUtil.getUsefulClass(inv.getTarget().getClass());
+        String name = StrUtil.isBlank(annotation.value())
                 ? targetClass + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 

@@ -20,7 +20,7 @@ import com.jfinal.template.expr.ast.Expr;
 import com.jfinal.template.expr.ast.ExprList;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
-import io.jboot.kits.ArrayKits;
+import io.jboot.utils.ArrayUtil;
 import io.jboot.web.directive.annotation.JFinalDirective;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class ShiroHasAllRolesDirective extends JbootShiroDirectiveBase {
 
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
-        if (getSubject() != null && ArrayKits.isNotEmpty(exprList.getExprArray())) {
+        if (getSubject() != null && ArrayUtil.isNotEmpty(exprList.getExprArray())) {
             List<String> roles = new ArrayList<String>();
             for (Expr expr : exprList.getExprArray())
                 roles.add(expr.eval(scope).toString());

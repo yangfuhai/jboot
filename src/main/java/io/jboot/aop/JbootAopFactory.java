@@ -11,9 +11,9 @@ import io.jboot.components.rpc.Jbootrpc;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.rpc.annotation.RPCInject;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassScanner;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.ClassScanner;
+import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -191,7 +191,7 @@ public class JbootAopFactory extends AopFactory {
         Class<?> fieldInjectedClass = field.getType();
         String value = JbootConfigManager.me().getConfigValue(key);
 
-        if (StringKits.isBlank(value)) {
+        if (StrUtil.isBlank(value)) {
             return;
         }
 
@@ -221,7 +221,7 @@ public class JbootAopFactory extends AopFactory {
             //对某些系统的类 进行排除，例如：Serializable 等
             Class[] excludes = beanExclude == null
                     ? default_excludes
-                    : ArrayKits.concat(default_excludes, beanExclude.value());
+                    : ArrayUtil.concat(default_excludes, beanExclude.value());
 
             for (Class interfaceClass : interfaceClasses) {
                 if (inExcludes(interfaceClass, excludes) == false) {

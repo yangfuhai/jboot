@@ -20,7 +20,7 @@ import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 import io.zbus.mq.*;
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class JbootZbusmqImpl extends JbootmqBase implements Jbootmq, MessageHand
         }
 
         String queueString = zbusmqConfig.getQueue();
-        if (StringKits.isBlank(queueString)) {
+        if (StrUtil.isBlank(queueString)) {
             return;
         }
 

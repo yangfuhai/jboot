@@ -19,7 +19,7 @@ import io.jboot.Jboot;
 import io.jboot.components.http.jboot.JbootHttpImpl;
 import io.jboot.components.http.okhttp.OKHttpImpl;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.kits.ClassKits;
+import io.jboot.utils.ClassUtil;
 
 public class JbootHttpManager {
 
@@ -28,7 +28,7 @@ public class JbootHttpManager {
 
     public static JbootHttpManager me() {
         if (manager == null) {
-            manager = ClassKits.singleton(JbootHttpManager.class);
+            manager = ClassUtil.singleton(JbootHttpManager.class);
         }
         return manager;
     }

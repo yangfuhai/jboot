@@ -16,7 +16,7 @@
 package io.jboot.db.dialect;
 
 import io.jboot.db.model.Column;
-import io.jboot.kits.ArrayKits;
+import io.jboot.utils.ArrayUtil;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import java.util.List;
 public class SqlAppendKit {
 
     public static void appIfNotEmpty(List<Column> columns, StringBuilder sqlBuilder) {
-        if (ArrayKits.isNotEmpty(columns)) {
+        if (ArrayUtil.isNotEmpty(columns)) {
             sqlBuilder.append(" WHERE ");
 
             int index = 0;

@@ -15,7 +15,7 @@
  */
 package io.jboot.web.cors;
 
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
@@ -70,35 +70,35 @@ public class CORSInterceptor implements FixedInterceptor {
         String origin = enableCORS.origin();
         int maxAge = enableCORS.maxAge();
 
-        allowOrigin = StringKits.isNotBlank(allowOrigin) ? allowOrigin : ALLOW_ORIGIN;
-        allowMethods = StringKits.isNotBlank(allowMethods) ? allowMethods : ALLOW_METHODS;
+        allowOrigin = StrUtil.isNotBlank(allowOrigin) ? allowOrigin : ALLOW_ORIGIN;
+        allowMethods = StrUtil.isNotBlank(allowMethods) ? allowMethods : ALLOW_METHODS;
         maxAge = maxAge > 0 ? maxAge : MAX_AGE;
 
         response.setHeader("Access-Control-Allow-Origin", allowOrigin);
         response.setHeader("Access-Control-Allow-Methods", allowMethods);
         response.setHeader("Access-Control-Max-Age", String.valueOf(maxAge));
 
-        if (StringKits.isNotBlank(allowHeaders)) {
+        if (StrUtil.isNotBlank(allowHeaders)) {
             response.setHeader("Access-Control-Allow-Headers", allowHeaders);
         }
 
-        if (StringKits.isNotBlank(allowCredentials)) {
+        if (StrUtil.isNotBlank(allowCredentials)) {
             response.setHeader("Access-Control-Allow-Credentials", allowCredentials);
         }
 
-        if (StringKits.isNotBlank(exposeHeaders)) {
+        if (StrUtil.isNotBlank(exposeHeaders)) {
             response.setHeader("Access-Control-Expose-Headers", exposeHeaders);
         }
 
-        if (StringKits.isNotBlank(requestHeaders)) {
+        if (StrUtil.isNotBlank(requestHeaders)) {
             response.setHeader("Access-Control-Request-Headers", requestHeaders);
         }
 
-        if (StringKits.isNotBlank(requestMethod)) {
+        if (StrUtil.isNotBlank(requestMethod)) {
             response.setHeader("Access-Control-Request-Method", requestMethod);
         }
 
-        if (StringKits.isNotBlank(origin)) {
+        if (StrUtil.isNotBlank(origin)) {
             response.setHeader("Origin", origin);
         }
 

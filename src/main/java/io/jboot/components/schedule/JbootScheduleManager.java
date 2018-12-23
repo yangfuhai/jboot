@@ -23,8 +23,8 @@ import io.jboot.components.schedule.annotation.Cron;
 import io.jboot.components.schedule.annotation.EnableDistributedRunnable;
 import io.jboot.components.schedule.annotation.FixedDelay;
 import io.jboot.components.schedule.annotation.FixedRate;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.ClassScanner;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.ClassScanner;
 import it.sauronsoftware.cron4j.ProcessTask;
 import it.sauronsoftware.cron4j.Task;
 
@@ -57,7 +57,7 @@ public class JbootScheduleManager {
 
     public static final JbootScheduleManager me() {
         if (manager == null) {
-            manager = ClassKits.singleton(JbootScheduleManager.class);
+            manager = ClassUtil.singleton(JbootScheduleManager.class);
         }
         return manager;
     }
@@ -76,7 +76,7 @@ public class JbootScheduleManager {
                 throw new RuntimeException(clazz.getName() + " must implements Runnable");
             }
             FixedDelay fixedDelayJob = (FixedDelay) clazz.getAnnotation(FixedDelay.class);
-            Runnable runnable = (Runnable) ClassKits.newInstance(clazz);
+            Runnable runnable = (Runnable) ClassUtil.newInstance(clazz);
             Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable, fixedDelayJob.period());
             try {
                 fixedScheduler.scheduleWithFixedDelay(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
@@ -91,7 +91,7 @@ public class JbootScheduleManager {
                 throw new RuntimeException(clazz.getName() + " must implements Runnable");
             }
             FixedRate fixedDelayJob = (FixedRate) clazz.getAnnotation(FixedRate.class);
-            Runnable runnable = (Runnable) ClassKits.newInstance(clazz);
+            Runnable runnable = (Runnable) ClassUtil.newInstance(clazz);
             Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable, fixedDelayJob.period());
             try {
                 fixedScheduler.scheduleAtFixedRate(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
@@ -107,13 +107,13 @@ public class JbootScheduleManager {
         for (Class clazz : cronClasses) {
             Cron cron = (Cron) clazz.getAnnotation(Cron.class);
             if (Runnable.class.isAssignableFrom(clazz)) {
-                Runnable runnable = (Runnable) ClassKits.newInstance(clazz);
+                Runnable runnable = (Runnable) ClassUtil.newInstance(clazz);
                 Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
                 cron4jPlugin.addTask(cron.value(), executeRunnable, cron.daemon());
             } else if (ProcessTask.class.isAssignableFrom(clazz)) {
-                cron4jPlugin.addTask(cron.value(), (ProcessTask) ClassKits.newInstance(clazz), cron.daemon());
+                cron4jPlugin.addTask(cron.value(), (ProcessTask) ClassUtil.newInstance(clazz), cron.daemon());
             } else if (Task.class.isAssignableFrom(clazz)) {
-                cron4jPlugin.addTask(cron.value(), (Task) ClassKits.newInstance(clazz), cron.daemon());
+                cron4jPlugin.addTask(cron.value(), (Task) ClassUtil.newInstance(clazz), cron.daemon());
             } else {
                 throw new RuntimeException("annotation Cron can not use for class : " + clazz);
             }

@@ -18,7 +18,7 @@ package io.jboot.db.datasource;
 import com.google.common.collect.Maps;
 import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigManager;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 
 import java.util.*;
 
@@ -40,7 +40,7 @@ public class DataSourceConfigManager {
         DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
 
         //若未配置数据源的名称，设置为默认
-        if (StringKits.isBlank(datasourceConfig.getName())) {
+        if (StrUtil.isBlank(datasourceConfig.getName())) {
             datasourceConfig.setName(DataSourceConfig.NAME_DEFAULT);
         }
 
@@ -61,7 +61,7 @@ public class DataSourceConfigManager {
 
         for (String name : datasourceNames) {
             DataSourceConfig dsc = Jboot.config(DataSourceConfig.class, DATASOURCE_PREFIX + name);
-            if (StringKits.isBlank(dsc.getName())) {
+            if (StrUtil.isBlank(dsc.getName())) {
                 dsc.setName(name);
             }
             addConfig(dsc);

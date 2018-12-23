@@ -22,8 +22,8 @@ import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.ClassScanner;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.ClassScanner;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class JbootAppListenerManager implements JbootAppListener {
                 continue;
             }
 
-            JbootAppListener listener = ClassKits.newInstance(clazz, false);
+            JbootAppListener listener = ClassUtil.newInstance(clazz, false);
             if (listener != null) {
                 listeners.add(listener);
             }

@@ -19,7 +19,7 @@ import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.MetricRegistry;
 import io.jboot.Jboot;
 import io.jboot.support.metric.JbootMetricReporter;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 
 import java.io.File;
 import java.util.Locale;
@@ -39,7 +39,7 @@ public class CSVReporter implements JbootMetricReporter {
 
         JbootMetricCVRReporterConfig cvrReporterConfig = Jboot.config(JbootMetricCVRReporterConfig.class);
 
-        if (StringKits.isBlank(cvrReporterConfig.getPath())) {
+        if (StrUtil.isBlank(cvrReporterConfig.getPath())) {
             throw new NullPointerException("csv reporter path must not be null, please config jboot.metrics.reporter.cvr.path in you properties.");
         }
 

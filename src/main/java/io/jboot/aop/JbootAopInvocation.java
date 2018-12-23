@@ -63,7 +63,7 @@ public class JbootAopInvocation extends Invocation {
     public JbootAopInvocation(Invocation originInvocation) {
         this.originInvocation = originInvocation;
 
-//        Class targetClass = ClassKits.getUsefulClass(originInvocation.getTarget().getClass());
+//        Class targetClass = ClassUtil.getUsefulClass(originInvocation.getTarget().getClass());
 //        Method method = originInvocation.getMethod();
 
         this.inters = metricConfigOk ? ALL_INTERS : NO_METRIC_INTERS;

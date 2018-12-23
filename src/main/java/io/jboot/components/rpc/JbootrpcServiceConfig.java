@@ -18,7 +18,7 @@ package io.jboot.components.rpc;
 import io.jboot.Jboot;
 import io.jboot.components.rpc.annotation.RPCBean;
 import io.jboot.components.rpc.annotation.RPCInject;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -70,11 +70,11 @@ public class JbootrpcServiceConfig implements Serializable {
             this.port = rpcInject.port();
         }
 
-        if (StringKits.isNotBlank(rpcInject.group())) {
+        if (StrUtil.isNotBlank(rpcInject.group())) {
             this.group = rpcInject.group();
         }
 
-        if (StringKits.isNotBlank(rpcInject.version())) {
+        if (StrUtil.isNotBlank(rpcInject.version())) {
             this.version = rpcInject.version();
         }
 
@@ -86,15 +86,15 @@ public class JbootrpcServiceConfig implements Serializable {
             this.actives = rpcInject.actives();
         }
 
-        if (StringKits.isNotBlank(rpcInject.loadbalance())) {
+        if (StrUtil.isNotBlank(rpcInject.loadbalance())) {
             this.loadbalance = rpcInject.loadbalance();
         }
 
-        if (StringKits.isNotBlank(rpcInject.async())) {
+        if (StrUtil.isNotBlank(rpcInject.async())) {
             this.async = Boolean.getBoolean(rpcInject.async());
         }
 
-        if (StringKits.isNotBlank(rpcInject.check())) {
+        if (StrUtil.isNotBlank(rpcInject.check())) {
             this.check = Boolean.getBoolean(rpcInject.check());
         }
 
@@ -107,11 +107,11 @@ public class JbootrpcServiceConfig implements Serializable {
             this.port = annotation.port();
         }
 
-        if (StringKits.isNotBlank(annotation.group())) {
+        if (StrUtil.isNotBlank(annotation.group())) {
             this.group = annotation.group();
         }
 
-        if (StringKits.isNotBlank(annotation.version())) {
+        if (StrUtil.isNotBlank(annotation.version())) {
             this.version = annotation.version();
         }
 

@@ -19,9 +19,9 @@ import com.jfinal.plugin.activerecord.Model;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.model.JbootModelConfig;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassScanner;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.ClassScanner;
+import io.jboot.utils.StrUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +52,12 @@ public class TableInfoManager {
      */
     public List<TableInfo> getMatchTablesInfos(DataSourceConfig dataSourceConfig) {
 
-        Set<String> configTables = StringKits.isNotBlank(dataSourceConfig.getTable())
-                ? StringKits.splitToSet(dataSourceConfig.getTable(), ",")
+        Set<String> configTables = StrUtil.isNotBlank(dataSourceConfig.getTable())
+                ? StrUtil.splitToSet(dataSourceConfig.getTable(), ",")
                 : null;
 
-        Set<String> configExTables = StringKits.isNotBlank(dataSourceConfig.getExTable())
-                ? StringKits.splitToSet(dataSourceConfig.getExTable(), ",")
+        Set<String> configExTables = StrUtil.isNotBlank(dataSourceConfig.getExTable())
+                ? StrUtil.splitToSet(dataSourceConfig.getExTable(), ",")
                 : null;
 
         List<TableInfo> matchList = new ArrayList<>();
@@ -98,7 +98,7 @@ public class TableInfoManager {
 
     private void initTableInfos(List<TableInfo> tableInfos) {
         List<Class<Model>> modelClassList = ClassScanner.scanSubClass(Model.class);
-        if (ArrayKits.isNullOrEmpty(modelClassList)) {
+        if (ArrayUtil.isNullOrEmpty(modelClassList)) {
             return;
         }
 

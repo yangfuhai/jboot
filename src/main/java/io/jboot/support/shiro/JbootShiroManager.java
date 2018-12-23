@@ -20,9 +20,9 @@ import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.support.shiro.processer.*;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 import io.jboot.web.utils.ControllerUtils;
 import org.apache.shiro.authz.annotation.*;
 
@@ -87,7 +87,7 @@ public class JbootShiroManager {
 
 
                 Annotation[] methodAnnotations = method.getAnnotations();
-                Annotation[] allAnnotations = ArrayKits.concat(controllerAnnotations, methodAnnotations);
+                Annotation[] allAnnotations = ArrayUtil.concat(controllerAnnotations, methodAnnotations);
 
 
                 String actionKey = ControllerUtils.createActionKey(controllerClass, method, controllerKey);
@@ -138,8 +138,8 @@ public class JbootShiroManager {
 
         invokeListener = JbootShiroInvokeListener.DEFAULT;
 
-        if (StringKits.isNotBlank(jbootShiroConfig.getInvokeListener())) {
-            invokeListener = ClassKits.newInstance(jbootShiroConfig.getInvokeListener());
+        if (StrUtil.isNotBlank(jbootShiroConfig.getInvokeListener())) {
+            invokeListener = ClassUtil.newInstance(jbootShiroConfig.getInvokeListener());
             if (invokeListener == null) {
                 throw new JbootIllegalConfigException("can not find Class : " + jbootShiroConfig.getInvokeListener() +
                         " please config jboot.shiro.invokeListener correct. ");

@@ -19,7 +19,7 @@ import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
-import io.jboot.kits.ArrayKits;
+import io.jboot.utils.ArrayUtil;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
     @Override
     public <M extends Model> List<M> join(List<M> models, String joinOnField) {
-        if (ArrayKits.isNotEmpty(models)) {
+        if (ArrayUtil.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField);
             }
@@ -67,7 +67,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
     @Override
     public <M extends Model> List<M> join(List<M> models, String joinOnField, String[] attrs) {
-        if (ArrayKits.isNotEmpty(models)) {
+        if (ArrayUtil.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, attrs);
             }
@@ -78,7 +78,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
     @Override
     public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName) {
-        if (ArrayKits.isNotEmpty(models)) {
+        if (ArrayUtil.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, joinName);
             }
@@ -89,7 +89,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
     @Override
     public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName, String[] attrs) {
-        if (ArrayKits.isNotEmpty(models)) {
+        if (ArrayUtil.isNotEmpty(models)) {
             for (Model m : models) {
                 join(m, joinOnField, joinName, attrs);
             }

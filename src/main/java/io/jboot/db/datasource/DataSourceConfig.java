@@ -16,7 +16,7 @@
 package io.jboot.db.datasource;
 
 import com.jfinal.plugin.activerecord.DbKit;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 
 
 public class DataSourceConfig {
@@ -159,7 +159,7 @@ public class DataSourceConfig {
     }
 
     public boolean isConfigOk() {
-        return StringKits.isNotBlank(getUrl()) || StringKits.isNotBlank(getShardingConfigYaml());
+        return StrUtil.isNotBlank(getUrl()) || StrUtil.isNotBlank(getShardingConfigYaml());
     }
 
 

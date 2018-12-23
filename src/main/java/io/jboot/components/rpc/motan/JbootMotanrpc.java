@@ -21,7 +21,7 @@ import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,11 +62,11 @@ public class JbootMotanrpc extends JbootrpcBase {
         protocolConfig.setId("motan");
         protocolConfig.setName("motan");
 
-        if (StringKits.isNotBlank(getRpcConfig().getProxy())) {
+        if (StrUtil.isNotBlank(getRpcConfig().getProxy())) {
             protocolConfig.setFilter(getRpcConfig().getProxy());
         }
 
-        if (StringKits.isNotBlank(getRpcConfig().getSerialization())) {
+        if (StrUtil.isNotBlank(getRpcConfig().getSerialization())) {
             protocolConfig.setSerialization(getRpcConfig().getSerialization());
         }
 
@@ -103,7 +103,7 @@ public class JbootMotanrpc extends JbootrpcBase {
          * 直连模式
          */
         else if (getRpcConfig().isDirectCallMode()) {
-            if (StringKits.isBlank(getRpcConfig().getDirectUrl())) {
+            if (StrUtil.isBlank(getRpcConfig().getDirectUrl())) {
                 throw new JbootIllegalConfigException("directUrl must not be blank if you use direct call mode，please config jboot.rpc.directUrl value");
             }
             refererConfig.setDirectUrl(getRpcConfig().getDirectUrl());
@@ -134,7 +134,7 @@ public class JbootMotanrpc extends JbootrpcBase {
             motanServiceConfig.setInterface(interfaceClass);
             motanServiceConfig.setRef((T) object);
 
-            if (StringKits.isNotBlank(getRpcConfig().getHost())) {
+            if (StrUtil.isNotBlank(getRpcConfig().getHost())) {
                 motanServiceConfig.setHost(getRpcConfig().getHost());
             }
 
@@ -178,11 +178,11 @@ public class JbootMotanrpc extends JbootrpcBase {
             interfaceConfig.setCheck(config.getCheck().toString());
         }
 
-        if (StringKits.isNotBlank(config.getProxy())) {
+        if (StrUtil.isNotBlank(config.getProxy())) {
             interfaceConfig.setProxy(config.getProxy());
         }
 
-        if (StringKits.isNotBlank(config.getFilter())) {
+        if (StrUtil.isNotBlank(config.getFilter())) {
             interfaceConfig.setFilter(config.getFilter());
         }
     }

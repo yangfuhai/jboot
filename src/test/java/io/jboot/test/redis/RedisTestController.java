@@ -1,7 +1,7 @@
 package io.jboot.test.redis;
 
 import io.jboot.Jboot;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
@@ -20,7 +20,7 @@ public class RedisTestController extends JbootController {
     public void show() {
 
         String key = getPara("key");
-        if (StringKits.isBlank(key)) {
+        if (StrUtil.isBlank(key)) {
             renderText("key is empty. ");
             return;
         }
@@ -39,13 +39,13 @@ public class RedisTestController extends JbootController {
     public void set() {
 
         String key = getPara("key");
-        if (StringKits.isBlank(key)) {
+        if (StrUtil.isBlank(key)) {
             renderText("key is empty. ");
             return;
         }
 
         String value = getPara("value");
-        if (StringKits.isBlank(value)) {
+        if (StrUtil.isBlank(value)) {
             renderText("value is empty. ");
             return;
         }
@@ -64,7 +64,7 @@ public class RedisTestController extends JbootController {
     public void del() {
 
         String key = getPara("key");
-        if (StringKits.isBlank(key)) {
+        if (StrUtil.isBlank(key)) {
             renderText("key is empty. ");
             return;
         }

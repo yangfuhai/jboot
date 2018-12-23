@@ -16,7 +16,7 @@
 package io.jboot.support.redis;
 
 import io.jboot.app.config.annotation.ConfigModel;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 import redis.clients.jedis.HostAndPort;
 
 import java.util.HashSet;
@@ -169,7 +169,7 @@ public class JbootRedisConfig {
     }
 
     public boolean isConfigOk() {
-        return StringKits.isNotBlank(host);
+        return StrUtil.isNotBlank(host);
     }
 
     public boolean isClusterConfig() {
@@ -220,7 +220,7 @@ public class JbootRedisConfig {
         Set<HostAndPort> hostAndPortSet = new HashSet<>();
         String[] hostAndPortStrings = host.split(",");
         for (String hostAndPortString : hostAndPortStrings) {
-            if (StringKits.isBlank(hostAndPortString)) continue;
+            if (StrUtil.isBlank(hostAndPortString)) continue;
             String[] hostAndPorts = hostAndPortString.split(":");
 
             String host = hostAndPorts[0];

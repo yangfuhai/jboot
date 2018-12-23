@@ -16,7 +16,7 @@
 package io.jboot.web.render;
 
 import io.jboot.app.config.annotation.ConfigModel;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 
 @ConfigModel(prefix = "jboot.render")
 public class JbootRenderConfig {
@@ -32,6 +32,6 @@ public class JbootRenderConfig {
     }
 
     public boolean isEnableCdn() {
-        return StringKits.isNotBlank(cdn);
+        return StrUtil.isNotBlank(cdn);
     }
 }

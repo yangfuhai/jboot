@@ -18,7 +18,7 @@ package io.jboot.db.datasource;
 import com.jfinal.kit.PathKit;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 import io.shardingsphere.shardingjdbc.api.yaml.YamlShardingDataSourceFactory;
 
 import javax.sql.DataSource;
@@ -38,7 +38,7 @@ public class DataSourceBuilder {
         String shardingConfigYaml = config.getShardingConfigYaml();
 
         // 不启用分库分表的配置
-        if (StringKits.isBlank(shardingConfigYaml)) {
+        if (StrUtil.isBlank(shardingConfigYaml)) {
             return createDataSource(config);
         }
 
@@ -59,7 +59,7 @@ public class DataSourceBuilder {
     private DataSource createDataSource(DataSourceConfig dsc) {
 
         String factory = dsc.getFactory();
-        if (StringKits.isBlank(factory)) {
+        if (StrUtil.isBlank(factory)) {
             return new HikariDataSourceFactory().createDataSource(dsc);
         }
 

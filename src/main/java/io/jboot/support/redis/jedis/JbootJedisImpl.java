@@ -16,7 +16,7 @@
 package io.jboot.support.redis.jedis;
 
 import com.jfinal.log.Log;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 import io.jboot.support.redis.JbootRedisBase;
 import io.jboot.support.redis.JbootRedisConfig;
 import io.jboot.exception.JbootIllegalConfigException;
@@ -55,47 +55,47 @@ public class JbootJedisImpl extends JbootRedisBase {
 
         JedisPoolConfig poolConfig = new JedisPoolConfig();
 
-        if (StringKits.isNotBlank(config.getTestWhileIdle())) {
+        if (StrUtil.isNotBlank(config.getTestWhileIdle())) {
             poolConfig.setTestWhileIdle(config.getTestWhileIdle());
         }
 
-        if (StringKits.isNotBlank(config.getTestOnBorrow())) {
+        if (StrUtil.isNotBlank(config.getTestOnBorrow())) {
             poolConfig.setTestOnBorrow(config.getTestOnBorrow());
         }
 
-        if (StringKits.isNotBlank(config.getTestOnCreate())) {
+        if (StrUtil.isNotBlank(config.getTestOnCreate())) {
             poolConfig.setTestOnCreate(config.getTestOnCreate());
         }
 
-        if (StringKits.isNotBlank(config.getTestOnReturn())) {
+        if (StrUtil.isNotBlank(config.getTestOnReturn())) {
             poolConfig.setTestOnReturn(config.getTestOnReturn());
         }
 
-        if (StringKits.isNotBlank(config.getMinEvictableIdleTimeMillis())) {
+        if (StrUtil.isNotBlank(config.getMinEvictableIdleTimeMillis())) {
             poolConfig.setMinEvictableIdleTimeMillis(config.getMinEvictableIdleTimeMillis());
         }
 
-        if (StringKits.isNotBlank(config.getTimeBetweenEvictionRunsMillis())) {
+        if (StrUtil.isNotBlank(config.getTimeBetweenEvictionRunsMillis())) {
             poolConfig.setTimeBetweenEvictionRunsMillis(config.getTimeBetweenEvictionRunsMillis());
         }
 
-        if (StringKits.isNotBlank(config.getNumTestsPerEvictionRun())) {
+        if (StrUtil.isNotBlank(config.getNumTestsPerEvictionRun())) {
             poolConfig.setNumTestsPerEvictionRun(config.getNumTestsPerEvictionRun());
         }
 
-        if (StringKits.isNotBlank(config.getMaxTotal())) {
+        if (StrUtil.isNotBlank(config.getMaxTotal())) {
             poolConfig.setMaxTotal(config.getMaxTotal());
         }
 
-        if (StringKits.isNotBlank(config.getMaxIdle())) {
+        if (StrUtil.isNotBlank(config.getMaxIdle())) {
             poolConfig.setMaxIdle(config.getMaxIdle());
         }
 
-        if (StringKits.isNotBlank(config.getMinIdle())) {
+        if (StrUtil.isNotBlank(config.getMinIdle())) {
             poolConfig.setMinIdle(config.getMinIdle());
         }
 
-        if (StringKits.isNotBlank(config.getMaxWaitMillis())) {
+        if (StrUtil.isNotBlank(config.getMaxWaitMillis())) {
             poolConfig.setMaxWaitMillis(config.getMaxWaitMillis());
         }
 

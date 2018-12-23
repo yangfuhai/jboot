@@ -18,8 +18,8 @@ package io.jboot.db.dialect;
 import com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect;
 import io.jboot.db.model.Column;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.StrUtil;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
         appIfNotEmpty(columns, sqlBuilder);
 
 
-        if (StringKits.isNotBlank(orderBy)) {
+        if (StrUtil.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
@@ -73,7 +73,7 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
         appIfNotEmpty(columns, sqlBuilder);
 
-        if (StringKits.isNotBlank(orderBy)) {
+        if (StrUtil.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
 
@@ -82,7 +82,7 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
 
     private void appIfNotEmpty(List<Column> columns, StringBuilder sqlBuilder) {
-        if (ArrayKits.isNotEmpty(columns)) {
+        if (ArrayUtil.isNotEmpty(columns)) {
             sqlBuilder.append(" WHERE ");
 
             int index = 0;

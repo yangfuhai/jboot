@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.kits;
+package io.jboot.utils;
 
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.PathKit;
@@ -24,7 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 
-public class FileKits {
+public class FileUtil {
 
 	public static String getSuffix(String fileName) {
 		if (fileName != null && fileName.contains(".")) {

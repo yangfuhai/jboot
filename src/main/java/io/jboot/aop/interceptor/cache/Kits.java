@@ -20,9 +20,9 @@ import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -90,14 +90,14 @@ class Kits {
 
     static String buildCacheKey(String key, Class clazz, Method method, Object[] arguments) {
 
-        clazz = ClassKits.getUsefulClass(clazz);
+        clazz = ClassUtil.getUsefulClass(clazz);
 
-        if (StringKits.isNotBlank(key)) {
+        if (StrUtil.isNotBlank(key)) {
             return renderKey(key, method, arguments);
         }
 
 
-        if (ArrayKits.isNullOrEmpty(arguments)) {
+        if (ArrayUtil.isNullOrEmpty(arguments)) {
             return String.format("%s#%s", clazz.getName(), method.getName());
         }
 
@@ -186,7 +186,7 @@ class Kits {
 
     static boolean isUnless(String unlessString, Method method, Object[] arguments) {
 
-        if (StringKits.isBlank(unlessString)) {
+        if (StrUtil.isBlank(unlessString)) {
             return false;
         }
 
@@ -203,9 +203,9 @@ class Kits {
         }
 
         String cacheName = evict.name();
-        if (StringKits.isBlank(cacheName)) {
+        if (StrUtil.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
-                    ClassKits.getUsefulClass(targetClass).getName() + "." + method.getName()));
+                    ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }
 
         if ("*".equals(evict.key().trim())) {

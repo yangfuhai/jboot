@@ -29,9 +29,9 @@ import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.ArrayKits;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
@@ -68,7 +68,7 @@ public class JbootDbManager {
         Iterator<Map.Entry<String, DataSourceConfig>> it = allDatasourceConfigs.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, DataSourceConfig> entry = it.next();
-            if (StringKits.isNotBlank(entry.getValue().getTable())) {
+            if (StrUtil.isNotBlank(entry.getValue().getTable())) {
                 hasTableDatasourceConfigs.put(entry.getKey(), entry.getValue());
                 it.remove();
             }
@@ -102,12 +102,12 @@ public class JbootDbManager {
 
         ActiveRecordPlugin activeRecordPlugin = newRecordPlugin(config);
 
-        if (StringKits.isNotBlank(config.getDbProFactory())) {
-            activeRecordPlugin.setDbProFactory(ClassKits.newInstance(config.getDbProFactory()));
+        if (StrUtil.isNotBlank(config.getDbProFactory())) {
+            activeRecordPlugin.setDbProFactory(ClassUtil.newInstance(config.getDbProFactory()));
         }
 
-        if (StringKits.isNotBlank(config.getContainerFactory())) {
-            activeRecordPlugin.setContainerFactory(ClassKits.newInstance(config.getContainerFactory()));
+        if (StrUtil.isNotBlank(config.getContainerFactory())) {
+            activeRecordPlugin.setContainerFactory(ClassUtil.newInstance(config.getContainerFactory()));
         }
 
         if (config.getTransactionLevel() != null) {
@@ -139,12 +139,12 @@ public class JbootDbManager {
 
         //获得该数据源匹配的表
         List<TableInfo> tableInfos = TableInfoManager.me().getMatchTablesInfos(config);
-        if (ArrayKits.isNullOrEmpty(tableInfos)) {
+        if (ArrayUtil.isNullOrEmpty(tableInfos)) {
             return activeRecordPlugin;
         }
 
         for (TableInfo ti : tableInfos) {
-            if (StringKits.isNotBlank(ti.getPrimaryKey())) {
+            if (StrUtil.isNotBlank(ti.getPrimaryKey())) {
                 activeRecordPlugin.addMapping(ti.getTableName(), ti.getPrimaryKey(), (Class<? extends Model<?>>) ti.getModelClass());
             } else {
                 activeRecordPlugin.addMapping(ti.getTableName(), (Class<? extends Model<?>>) ti.getModelClass());
@@ -160,15 +160,15 @@ public class JbootDbManager {
         DataSource dataSource = new DataSourceBuilder(config).build();
 
         String clazzName = config.getActiveRecordPluginClass();
-        if (StringKits.isBlank(clazzName)) {
-            return StringKits.isNotBlank(configName)
+        if (StrUtil.isBlank(clazzName)) {
+            return StrUtil.isNotBlank(configName)
                     ? new ActiveRecordPlugin(configName, dataSource)
                     : new ActiveRecordPlugin(dataSource);
         }
 
         try {
             Class<ActiveRecordPlugin> arpc = (Class<ActiveRecordPlugin>) Class.forName(clazzName, false, Thread.currentThread().getContextClassLoader());
-            if (StringKits.isNotBlank(configName)) {
+            if (StrUtil.isNotBlank(configName)) {
                 Constructor constructor = arpc.getConstructor(String.class, DataSource.class);
                 return (ActiveRecordPlugin) constructor.newInstance(configName, dataSource);
             } else {
@@ -189,7 +189,7 @@ public class JbootDbManager {
      */
     private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
         String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
-        if (StringKits.isNotBlank(sqlTemplatePath)) {
+        if (StrUtil.isNotBlank(sqlTemplatePath)) {
             if (sqlTemplatePath.startsWith("/")) {
                 activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
             } else {
@@ -218,7 +218,7 @@ public class JbootDbManager {
     private void configDialect(ActiveRecordPlugin activeRecordPlugin, DataSourceConfig datasourceConfig) {
 
         if (datasourceConfig.getDialectClass() != null) {
-            Dialect dialect = ClassKits.newInstance(datasourceConfig.getDialectClass(), false);
+            Dialect dialect = ClassUtil.newInstance(datasourceConfig.getDialectClass(), false);
             if (dialect == null) {
                 throw new NullPointerException("can not new instance by class:" + datasourceConfig.getDialectClass());
             }
@@ -231,7 +231,7 @@ public class JbootDbManager {
                 activeRecordPlugin.setDialect(new JbootMysqlDialect());
                 break;
             case DataSourceConfig.TYPE_ORACLE:
-                if (StringKits.isBlank(datasourceConfig.getContainerFactory())) {
+                if (StrUtil.isBlank(datasourceConfig.getContainerFactory())) {
                     activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory());
                 }
                 activeRecordPlugin.setDialect(new JbootOracleDialect());

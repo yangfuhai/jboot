@@ -23,7 +23,7 @@ import io.jboot.Jboot;
 import io.jboot.components.serializer.ISerializer;
 import io.jboot.components.serializer.SerializerManager;
 import io.jboot.exception.JbootException;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -50,14 +50,14 @@ public abstract class JbootmqBase implements Jbootmq {
 
     public JbootmqBase() {
         String channelString = config.getChannel();
-        if (StringKits.isBlank(channelString)) {
+        if (StrUtil.isBlank(channelString)) {
             return;
         }
 
-        this.channels.addAll(StringKits.splitToSet(channelString, ","));
+        this.channels.addAll(StrUtil.splitToSet(channelString, ","));
 
-        if (StringKits.isNotBlank(config.getSyncRecevieMessageChannel())) {
-            this.syncRecevieMessageChannels.addAll(StringKits.splitToSet(config.getSyncRecevieMessageChannel(), ","));
+        if (StrUtil.isNotBlank(config.getSyncRecevieMessageChannel())) {
+            this.syncRecevieMessageChannels.addAll(StrUtil.splitToSet(config.getSyncRecevieMessageChannel(), ","));
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class JbootmqBase implements Jbootmq {
     public void addMessageListener(JbootmqMessageListener listener, String forChannel) {
         String[] forChannels = forChannel.split(",");
         for (String channel : forChannels) {
-            if (StringKits.isBlank(channel)) {
+            if (StrUtil.isBlank(channel)) {
                 continue;
             }
             listenersMap.put(channel.trim(), listener);
@@ -143,7 +143,7 @@ public abstract class JbootmqBase implements Jbootmq {
 
     public ISerializer getSerializer() {
         if (serializer == null) {
-            if (StringKits.isBlank(config.getSerializer())) {
+            if (StrUtil.isBlank(config.getSerializer())) {
                 serializer = Jboot.getSerializer();
             } else {
                 serializer = SerializerManager.me().getSerializer(config.getSerializer());

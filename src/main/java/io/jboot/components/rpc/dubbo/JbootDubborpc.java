@@ -20,7 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,7 +112,7 @@ public class JbootDubborpc extends JbootrpcBase {
          * 直连调用模式
          */
         else if (getRpcConfig().isDirectCallMode()) {
-            if (StringKits.isBlank(getRpcConfig().getDirectUrl())) {
+            if (StrUtil.isBlank(getRpcConfig().getDirectUrl())) {
                 throw new JbootIllegalConfigException("directUrl must not be blank if you use direct call mode，please config jboot.rpc.directUrl value");
             }
             reference.setUrl(getRpcConfig().getDirectUrl());
@@ -188,12 +188,12 @@ public class JbootDubborpc extends JbootrpcBase {
             reference.setCheck(config.getCheck());
         }
 
-        if (StringKits.isNotBlank(config.getProxy())) {
+        if (StrUtil.isNotBlank(config.getProxy())) {
             reference.setProxy(config.getProxy());
         }
 
 
-        if (StringKits.isNotBlank(config.getFilter())) {
+        if (StrUtil.isNotBlank(config.getFilter())) {
             reference.setFilter(config.getFilter());
         }
     }
@@ -221,11 +221,11 @@ public class JbootDubborpc extends JbootrpcBase {
             service.setAsync(config.getAsync());
         }
 
-        if (StringKits.isNotBlank(config.getProxy())) {
+        if (StrUtil.isNotBlank(config.getProxy())) {
             service.setProxy(config.getProxy());
         }
 
-        if (StringKits.isNotBlank(config.getFilter())) {
+        if (StrUtil.isNotBlank(config.getFilter())) {
             service.setFilter(config.getFilter());
         }
     }

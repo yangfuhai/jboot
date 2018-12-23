@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.kits;
+package io.jboot.utils;
 
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Base64Kit;
@@ -33,12 +33,12 @@ import java.math.BigInteger;
  * <p>
  * 加密的cookie工具类
  */
-public class CookieKits {
+public class CookieUtil {
 
     private final static String COOKIE_SEPARATOR = "#";
 
     private static String COOKIE_ENCRYPT_KEY = Jboot.config(JbootWebConfig.class).getCookieEncryptKey();
-    private static Log log = Log.getLog(CookieKits.class);
+    private static Log log = Log.getLog(CookieUtil.class);
 
     /**
      * 在使用之前，小调用此方法进行加密key的设置
@@ -122,7 +122,7 @@ public class CookieKits {
 
 
     public static String getFromCookieInfo(String encrypt_key, String cookieValue) {
-        if (StringKits.isBlank(cookieValue)) {
+        if (StrUtil.isBlank(cookieValue)) {
             return null;
         }
 

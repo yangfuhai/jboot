@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.kits;
+package io.jboot.utils;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -32,9 +32,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * 类实例创建者创建者
  * Created by michael on 17/3/21.
  */
-public class ClassKits {
+public class ClassUtil {
 
-    public static Log log = Log.getLog(ClassKits.class);
+    public static Log log = Log.getLog(ClassUtil.class);
     private static final Map<Class, Object> singletons = new ConcurrentHashMap<>();
 
 
@@ -144,7 +144,7 @@ public class ClassKits {
     public static Collection<Method> getClassSetMethods(Class clazz) {
 
         Collection<Method> setMethods = classMethodsCache.get(clazz);
-        if (ArrayKits.isNullOrEmpty(setMethods)) {
+        if (ArrayUtil.isNullOrEmpty(setMethods)) {
             initSetMethodsCache(clazz);
             setMethods = classMethodsCache.get(clazz);
         }

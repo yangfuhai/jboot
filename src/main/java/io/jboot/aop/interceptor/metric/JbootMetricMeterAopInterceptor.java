@@ -20,9 +20,9 @@ import com.codahale.metrics.Meter;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 import io.jboot.support.metric.annotation.EnableMetricMeter;
-import io.jboot.kits.ClassKits;
+import io.jboot.utils.ClassUtil;
 
 /**
  * 用于在AOP拦截，并通过Metrics的Meter进行统计
@@ -41,8 +41,8 @@ public class JbootMetricMeterAopInterceptor implements Interceptor {
             return;
         }
 
-        Class targetClass = ClassKits.getUsefulClass(inv.getTarget().getClass());
-        String name = StringKits.isBlank(annotation.value())
+        Class targetClass = ClassUtil.getUsefulClass(inv.getTarget().getClass());
+        String name = StrUtil.isBlank(annotation.value())
                 ? targetClass + "." + inv.getMethod().getName() + suffix
                 : annotation.value();
 

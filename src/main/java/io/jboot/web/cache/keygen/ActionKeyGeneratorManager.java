@@ -18,7 +18,7 @@ package io.jboot.web.cache.keygen;
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.kits.StringKits;
+import io.jboot.utils.StrUtil;
 import io.jboot.web.JbootWebConfig;
 
 /**
@@ -52,7 +52,7 @@ public class ActionKeyGeneratorManager {
 
         String type = webConfig.getActionCacheKeyGeneratorType();
 
-        if (StringKits.isBlank(type)) {
+        if (StrUtil.isBlank(type)) {
             return new DefaultActionKeyGeneratorImpl();
         }
 

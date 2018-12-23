@@ -16,7 +16,7 @@
 package io.jboot.support.swagger;
 
 import io.jboot.Jboot;
-import io.jboot.kits.ClassScanner;
+import io.jboot.utils.ClassScanner;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;

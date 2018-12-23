@@ -17,10 +17,10 @@ package io.jboot.components.event;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.kits.ClassKits;
-import io.jboot.kits.ClassScanner;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.ClassScanner;
 import io.jboot.components.event.annotation.EventConfig;
-import io.jboot.kits.ArrayKits;
+import io.jboot.utils.ArrayUtil;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -47,14 +47,14 @@ public class JbootEventManager {
 
     public static JbootEventManager me() {
         if (manager == null) {
-            manager = ClassKits.singleton(JbootEventManager.class);
+            manager = ClassUtil.singleton(JbootEventManager.class);
         }
         return manager;
     }
 
     private void initListeners() {
         List<Class<JbootEventListener>> classes = ClassScanner.scanSubClass(JbootEventListener.class, true);
-        if (ArrayKits.isNullOrEmpty(classes)) {
+        if (ArrayUtil.isNullOrEmpty(classes)) {
             return;
         }
         for (Class<JbootEventListener> clazz : classes) {
@@ -109,7 +109,7 @@ public class JbootEventManager {
             return;
         }
 
-        JbootEventListener listener = ClassKits.newInstance(listenerClass);
+        JbootEventListener listener = ClassUtil.newInstance(listenerClass);
         if (listener == null) {
             return;
         }

@@ -19,7 +19,7 @@ import com.jfinal.template.Env;
 import com.jfinal.template.expr.ast.ExprList;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
-import io.jboot.kits.ArrayKits;
+import io.jboot.utils.ArrayUtil;
 import io.jboot.web.directive.annotation.JFinalDirective;
 
 /**
@@ -42,7 +42,7 @@ public class ShiroHasRoleDirective extends JbootShiroDirectiveBase {
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
         boolean hasRole = false;
-        if (getSubject() != null && ArrayKits.isNotEmpty(exprList.getExprArray()))
+        if (getSubject() != null && ArrayUtil.isNotEmpty(exprList.getExprArray()))
             if (getSubject().hasRole(getPara(0, scope).toString()))
                 hasRole = true;
 
