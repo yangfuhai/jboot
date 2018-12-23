@@ -28,14 +28,14 @@ public class ShiroController extends JbootController {
 //        subject.isAuthenticated();
 //        subject.isPermitted()
 
-        renderText("logined");
+        renderText("logined success");
 
     }
 
     public void logout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        renderText("logouted");
+        renderText("logouted success");
     }
 
     @RequiresAuthentication
