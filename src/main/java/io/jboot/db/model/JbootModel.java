@@ -21,7 +21,6 @@ import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Table;
 import io.jboot.db.dialect.IJbootModelDialect;
-import io.jboot.exception.JbootAssert;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 
@@ -478,7 +477,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return primaryKeys;
         }
         primaryKeys = _getTable(true).getPrimaryKey();
-        JbootAssert.assertTrue(primaryKeys != null, String.format("get PrimaryKey is error in[%s]", getClass()));
+
+        if (primaryKeys == null) {
+            throw new JbootException(String.format("get PrimaryKey is error in[%s]", getClass()));
+        }
         return primaryKeys;
     }
 
