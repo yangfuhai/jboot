@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.controller.validate;
+package io.jboot.web.validate;
+
+import java.lang.annotation.*;
 
 /**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Package io.jboot.web.controller.validate
+ * 非空验证注解
  */
-public class FormType {
+@Documented
+@Target(ElementType.METHOD)
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CaptchaValidate {
 
-    public static final String FORM_DATA = "form";
-    public static final String RAW_DATA = "raw";
+    String form();
+
+    String message() default "";
+
+    String flashMessage() default "";
+
+    String renderType() default ValidateRenderType.DEFAULT;
 
 }

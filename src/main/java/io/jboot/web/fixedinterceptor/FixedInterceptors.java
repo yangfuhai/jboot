@@ -19,7 +19,7 @@ import com.jfinal.aop.Aop;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
-import io.jboot.web.controller.validate.ParaValidateInterceptor;
+import io.jboot.web.validate.ParaValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
 
 import java.util.ArrayList;

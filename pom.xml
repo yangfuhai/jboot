@@ -97,7 +97,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <dependency>
             <groupId>io.undertow</groupId>
             <artifactId>undertow-websockets-jsr</artifactId>
@@ -231,7 +230,6 @@
             <version>1.11.3</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
@@ -270,7 +268,6 @@
             <version>4.0.3</version>
             <scope>provided</scope>
         </dependency>
-
 
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -373,11 +370,10 @@
             <version>0.9.1</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.11.0</version>
+            <version>3.12.0</version>
             <scope>provided</scope>
         </dependency>
 

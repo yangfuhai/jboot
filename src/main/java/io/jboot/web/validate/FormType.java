@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.controller.validate;
-
-import java.lang.annotation.*;
+package io.jboot.web.validate;
 
 /**
- * 非空验证注解
+ * @author Michael Yang 杨福海 （fuhai999@gmail.com）
+ * @version V1.0
+ * @Package io.jboot.web.controller.validate
  */
-@Documented
-@Target(ElementType.METHOD)
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-public @interface EmptyValidate {
+public class FormType {
 
-    Form[] value();
+    public static final String FORM_DATA = "form";
+    public static final String RAW_DATA = "raw";
 
-    String message() default "";
-
-    String flashMessage() default "";
-
-    String renderType() default ValidateRenderType.DEFAULT;
 }

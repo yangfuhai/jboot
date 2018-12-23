@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.controller.validate;
+package io.jboot.web.validate;
 
 import java.lang.annotation.*;
 
