@@ -4,6 +4,9 @@ import com.jfinal.server.undertow.PropExt;
 import com.jfinal.server.undertow.UndertowConfig;
 import io.jboot.app.config.JbootConfigManager;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 public class JbootUndertowConfig extends UndertowConfig {
 
     public JbootUndertowConfig(Class<?> jfinalConfigClass) {
@@ -24,8 +27,36 @@ public class JbootUndertowConfig extends UndertowConfig {
 
     @Override
     protected PropExt createPropExt(String undertowConfig) {
-        return super.createPropExt(undertowConfig)
+        PropExt propExt = super.createPropExt(undertowConfig)
                 .append(new PropExt(JbootConfigManager.me().getProperties()));
+
+        String port = propExt.get("undertow.port");
+        Integer availablePort = getAvailablePort();
+
+        if (port != null && port.trim().equals("*") && availablePort != null) {
+            propExt.getProperties().put("undertow.port", availablePort.toString());
+        }
+
+        return propExt;
     }
+
+    public static Integer getAvailablePort() {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(0);
+            return serverSocket.getLocalPort();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return null;
+    }
+
 }
 
