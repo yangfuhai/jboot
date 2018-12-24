@@ -75,7 +75,7 @@ public class JbootCachesEvictInterceptor implements Interceptor {
 
         for (CacheEvict evict : cacheEvicts) {
             try {
-                Kits.doCacheEvict(arguments, targetClass, method, evict);
+                Utils.doCacheEvict(arguments, targetClass, method, evict);
             } catch (Exception ex) {
                 LOG.error(ex.toString(), ex);
             }

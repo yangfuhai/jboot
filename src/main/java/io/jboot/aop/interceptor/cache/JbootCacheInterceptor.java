@@ -45,7 +45,7 @@ public class JbootCacheInterceptor implements Interceptor {
         }
 
         String unlessString = cacheable.unless();
-        if (Kits.isUnless(unlessString, method, inv.getArgs())) {
+        if (Utils.isUnless(unlessString, method, inv.getArgs())) {
             inv.invoke();
             return;
         }
@@ -58,7 +58,7 @@ public class JbootCacheInterceptor implements Interceptor {
                     ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }
 
-        String cacheKey = Kits.buildCacheKey(cacheable.key(), targetClass, method, inv.getArgs());
+        String cacheKey = Utils.buildCacheKey(cacheable.key(), targetClass, method, inv.getArgs());
 
 
         Object data = Jboot.getCache().get(cacheName, cacheKey);

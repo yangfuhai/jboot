@@ -31,10 +31,10 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-class Kits {
+class Utils {
 
 
-    static final Log LOG = Log.getLog(Kits.class);
+    static final Log LOG = Log.getLog(Utils.class);
     static final Engine ENGINE = new Engine("JbootCacheRender");
 
     /**
@@ -61,25 +61,6 @@ class Kits {
             datas.put(p.getName(), arguments[x++]);
         }
 
-
-        /**
-         * 保证在java8没有添加 -parameters 的时候，可以通过注解的方式获取参数，保证兼容。
-         * 同时，可以通过注解的方式覆盖 默认名称。
-         */
-//        Annotation[][] annotationss = method.getParameterAnnotations();
-//        for (int i = 0; i < annotationss.length; i++) {
-//            for (int j = 0; j < annotationss[i].length; j++) {
-//                Annotation annotation = annotationss[i][j];
-//                if (annotation.annotationType() == Named.class) {
-//                    Named named = (Named) annotation;
-//                    datas.put(named.value(), arguments[i]);
-//                } else if (annotation.annotationType() == com.google.inject.name.Named.class) {
-//                    com.google.inject.name.Named named = (com.google.inject.name.Named) annotation;
-//                    datas.put(named.value(), arguments[i]);
-//                }
-//            }
-//        }
-
         try {
             return ENGINE.getTemplateByString(template).renderToString(datas);
         } catch (Throwable throwable) {
@@ -96,26 +77,28 @@ class Kits {
             return renderKey(key, method, arguments);
         }
 
+        StringBuilder keyBuilder = new StringBuilder(clazz.getName());
+        keyBuilder.append("#").append(method.getName());
 
         if (ArrayUtil.isNullOrEmpty(arguments)) {
-            return String.format("%s#%s", clazz.getName(), method.getName());
+            return keyBuilder.toString();
         }
 
         Class[] paramTypes = method.getParameterTypes();
-        StringBuilder argumentBuilder = new StringBuilder();
         int index = 0;
         for (Object argument : arguments) {
             String argStr = converteToString(argument);
             ensureArgumentNotNull(argStr, clazz, method);
-            argumentBuilder.append(paramTypes[index++].getClass().getName())
+            keyBuilder
+                    .append(paramTypes[index++].getClass().getName())
                     .append(":")
                     .append(argStr)
                     .append("-");
         }
 
         //remove last chat '-'
-        argumentBuilder.deleteCharAt(argumentBuilder.length() - 1);
-        return String.format("%s#%s#%s", clazz.getName(), method.getName(), argumentBuilder.toString());
+        return keyBuilder.deleteCharAt(keyBuilder.length() - 1).toString();
+
     }
 
     private static String renderKey(String key, Method method, Object[] arguments) {
@@ -123,7 +106,7 @@ class Kits {
             return key;
         }
 
-        return Kits.engineRender(key, method, arguments);
+        return Utils.engineRender(key, method, arguments);
     }
 
     private static void ensureArgumentNotNull(String argument, Class clazz, Method method) {
@@ -190,15 +173,21 @@ class Kits {
             return false;
         }
 
-        unlessString = String.format("#(%s)", unlessString);
-        String unlessBoolString = engineRender(unlessString, method, arguments);
+        String template = new StringBuilder("#(")
+                .append(unlessString)
+                .append(")")
+                .toString();
+
+        String unlessBoolString = engineRender(template,
+                method, arguments);
+
         return "true".equals(unlessBoolString);
     }
 
 
     static void doCacheEvict(Object[] arguments, Class targetClass, Method method, CacheEvict evict) {
         String unlessString = evict.unless();
-        if (Kits.isUnless(unlessString, method, arguments)) {
+        if (Utils.isUnless(unlessString, method, arguments)) {
             return;
         }
 
@@ -213,7 +202,7 @@ class Kits {
             return;
         }
 
-        String cacheKey = Kits.buildCacheKey(evict.key(), targetClass, method, arguments);
+        String cacheKey = Utils.buildCacheKey(evict.key(), targetClass, method, arguments);
         Jboot.getCache().remove(cacheName, cacheKey);
     }
 

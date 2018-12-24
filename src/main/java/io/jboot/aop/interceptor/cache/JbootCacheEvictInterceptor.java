@@ -41,13 +41,13 @@ public class JbootCacheEvictInterceptor implements Interceptor {
         Class targetClass = inv.getTarget().getClass();
 
         if (cacheEvict.beforeInvocation()) {
-            Kits.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
+            Utils.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
         }
 
         inv.invoke();
 
         if (!cacheEvict.beforeInvocation()) {
-            Kits.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
+            Utils.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
         }
     }
 }

@@ -49,7 +49,7 @@ public class JbootCachePutInterceptor implements Interceptor {
         String unlessString = cachePut.unless();
         if (StrUtil.isNotBlank(unlessString)) {
             unlessString = String.format("#(%s)", unlessString);
-            String unlessBoolString = Kits.engineRender(unlessString, method, inv.getArgs());
+            String unlessBoolString = Utils.engineRender(unlessString, method, inv.getArgs());
             if ("true".equals(unlessBoolString)) {
                 return;
             }
@@ -64,7 +64,7 @@ public class JbootCachePutInterceptor implements Interceptor {
                     ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }
 
-        String cacheKey = Kits.buildCacheKey(cachePut.key(), targetClass, method, inv.getArgs());
+        String cacheKey = Utils.buildCacheKey(cachePut.key(), targetClass, method, inv.getArgs());
 
         if (cachePut.liveSeconds() > 0) {
             Jboot.getCache().put(cacheName, cacheKey, result, cachePut.liveSeconds());
