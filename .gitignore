@@ -3,6 +3,7 @@ logs
 .idea
 *.iml
 *.log
+.logs
 *.iws
 *.classpath
 .DS_Store

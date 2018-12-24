@@ -8,14 +8,21 @@
 - Maven 依赖管理的使用
 - Java 开发工具的基本使用
 
+## 目录
+
+- 通过开发工具创建 Maven 项目
+- 在 `pom.xml` 上添加 Jboot 依赖
+- 编写 hello world 代码
+- 运行并查看效果
 
 
-## 通过开发工具创建一个系的 Maven 项目
+
+## 通过开发工具创建 Maven 项目
 
    略
 
 
-## 添加 Maven 的依赖
+## 在 `pom.xml` 上添加 Jboot 依赖
 
 ```xml
 <dependency>
@@ -25,11 +32,11 @@
 </dependency>
 ```
 
-## 编写Hello World工程
+## 编写 hello world 代码
 
 
 ```java
-@RequestMapping("/helloworld")
+@RequestMapping("/")
 public class HelloworldController extends JbootController {
 
     public void index(){
@@ -42,9 +49,9 @@ public class HelloworldController extends JbootController {
 }
 ```
 
-## 启动 main 方法，并在浏览器查看
+## 启动 `main()` 方法，并在浏览器查看
 
-浏览器输入：`http://127.0.0.1:8080/helloworld`，此时，能看到渲染 `hello world` 文字。
+浏览器输入：`http://127.0.0.1:8080`，此时，能看到浏览器显示 `hello world` 的文字内容。
 
 
 
