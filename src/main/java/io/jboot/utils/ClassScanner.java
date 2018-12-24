@@ -68,6 +68,7 @@ public class ClassScanner {
         excludeJars.add("jboss-");
         excludeJars.add("motan-");
         excludeJars.add("commons-pool");
+        excludeJars.add("commons-pool2");
         excludeJars.add("commons-beanutils");
         excludeJars.add("commons-codec");
         excludeJars.add("commons-collections");
@@ -127,6 +128,7 @@ public class ClassScanner {
         excludeJars.add("reactive-");
         excludeJars.add("validation-");
         excludeJars.add("httpclient-");
+        excludeJars.add("httpcore-");
         excludeJars.add("jcip-");
         excludeJars.add("jcl-");
         excludeJars.add("microprofile-");
@@ -153,6 +155,15 @@ public class ClassScanner {
         excludeJars.add("logback-");
         excludeJars.add("log4j-");
         excludeJars.add("log4j2-");
+        excludeJars.add("aliyun-java-sdk-");
+        excludeJars.add("aliyun-sdk-");
+        excludeJars.add("archaius-");
+        excludeJars.add("aopalliance-");
+        excludeJars.add("caffeine-");
+        excludeJars.add("caffeine-");
+        excludeJars.add("HdrHistogram-");
+        excludeJars.add("jdom-");
+        excludeJars.add("rxjava-");
     }
 
     public static <T> List<Class<T>> scanSubClass(Class<T> pclazz) {
