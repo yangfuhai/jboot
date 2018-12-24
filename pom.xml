@@ -67,7 +67,7 @@
         <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal-undertow</artifactId>
-            <version>1.4-SNAPSHOT</version>
+            <version>1.4</version>
         </dependency>
 
         <dependency>
