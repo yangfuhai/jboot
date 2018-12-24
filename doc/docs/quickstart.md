@@ -1,0 +1,49 @@
+本文档的目的是让您学习完成之后，能对 Jboot 有一个整体的了解，开始基于 Jboot 开发自己的应用程序。
+
+本文档假设您已经具备了如下基本技能：
+
+- Java 编程语言的基本使用
+- Maven 依赖管理的使用
+- Java 开发工具的基本使用
+
+
+
+## 通过开发工具创建一个系的 Maven 项目
+
+   略
+
+
+## 添加 Maven 的依赖
+
+```xml
+<dependency>
+    <groupId>io.jboot</groupId>
+    <artifactId>jboot</artifactId>
+    <version>2.0-rc.1</version>
+</dependency>
+```
+
+## 编写Hello World工程
+
+
+```java
+@RequestMapping("/helloworld")
+public class HelloworldController extends JbootController {
+
+    public void index(){
+        renderText("hello world");
+    }
+
+    public static void main(String[] args){
+        JbootApplication.run(args);
+    }
+}
+```
+
+## 启动 main 方法，并在浏览器查看
+
+浏览器输入：`http://127.0.0.1:8080/helloworld`，此时，能看到渲染 `hello world` 文字。
+
+
+
+

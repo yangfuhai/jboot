@@ -44,9 +44,9 @@ public class HelloWorldApp {
 
 ## 帮助文档
 
-- [安装](./)
-- [2分钟快速开始](./)
-- [配置文件](./)
+- [安装](./doc/docs/install.md)
+- [2分钟快速开始](./doc/docs/quickstart.md)
+- [配置文件](./doc/docs/config.md)
 - [Controller和数据请求](./)
 - [数据库](./)
 - [缓存](./)
