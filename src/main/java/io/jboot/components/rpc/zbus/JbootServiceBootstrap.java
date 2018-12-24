@@ -26,7 +26,7 @@ import io.zbus.rpc.bootstrap.mq.ServiceBootstrap;
 public class JbootServiceBootstrap extends ServiceBootstrap {
 
     public ServiceBootstrap addModule(Class clazz, Object impl, String group, String version) {
-        String module = ZbusKits.buildModule(clazz, group, version);
+        String module = ZbusUtil.buildModule(clazz, group, version);
         this.processor.addModule(module, impl);
         return this;
     }

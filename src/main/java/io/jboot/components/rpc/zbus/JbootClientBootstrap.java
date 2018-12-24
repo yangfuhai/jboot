@@ -46,7 +46,7 @@ public class JbootClientBootstrap extends ClientBootstrap {
         RpcMessageInvoker messageInvoker = new RpcMessageInvoker(producerConfig, this.topic);
 
         RpcConfig rpcConfig = new RpcConfig();
-        rpcConfig.setModule(ZbusKits.buildModule(serviceClass, group, version));
+        rpcConfig.setModule(ZbusUtil.buildModule(serviceClass, group, version));
         rpcConfig.setMessageInvoker(messageInvoker);
 
         RpcInvoker rpcInvoker = new RpcInvoker(rpcConfig);
@@ -72,7 +72,7 @@ public class JbootClientBootstrap extends ClientBootstrap {
 //        RpcMessageInvoker messageInvoker = new RpcMessageInvoker(producerConfig, this.topic);
 //
 //        RpcConfig rpcConfig = new RpcConfig();
-//        rpcConfig.setModule(ZbusKits.buildModule(serviceClass, group, version));
+//        rpcConfig.setModule(ZbusUtil.buildModule(serviceClass, group, version));
 //        rpcConfig.setMessageInvoker(messageInvoker);
 //
 //        RpcInvoker rpcInvoker = new RpcInvoker(rpcConfig);

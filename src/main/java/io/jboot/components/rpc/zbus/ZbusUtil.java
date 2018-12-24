@@ -20,7 +20,7 @@ package io.jboot.components.rpc.zbus;
  * @version V1.0
  * @Package io.jboot.core.rpc.zbus
  */
-public class ZbusKits {
+class ZbusUtil {
 
     public static String buildModule(Class clazz, String group, String version) {
         StringBuilder builder = new StringBuilder(clazz.getName());
