@@ -112,5 +112,6 @@ Component1Config config = Jboot.config(Component1Config.class);
 
 
 2、如何设置系统环境变量 ？
-> 答：在 Docker 下，启动 Docker 容器的时候，只需要添加 -e 参数即可，Linux、Window、Mac 搜索引擎自行搜索关键字： `环境变量配置`
+> 答：在 Docker 下，启动 Docker 容器的时候，只需要添加 -e 参数即可，例如： `docker run -e undertow.port=8080 xxxx`
+> Linux、Window、Mac 搜索引擎自行搜索关键字： `环境变量配置`
 
