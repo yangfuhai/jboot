@@ -4,7 +4,7 @@ jboot 2.0 is developing
 ## 开始
 
 注意：
-> 由于Jboot2.0 还处于 alpha 阶段，请不要使用在正式环境里。 
+> 由于Jboot2.0 还处于 rc 阶段，请不要使用在正式环境里。 
 
 **maven 依赖**
 
@@ -12,7 +12,7 @@ jboot 2.0 is developing
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>2.0-alpha.1</version>
+    <version>2.0-rc.1</version>
 </dependency>
 ```
 
