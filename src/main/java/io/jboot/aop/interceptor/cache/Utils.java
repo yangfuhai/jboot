@@ -61,11 +61,7 @@ class Utils {
             datas.put(p.getName(), arguments[x++]);
         }
 
-        try {
-            return ENGINE.getTemplateByString(template).renderToString(datas);
-        } catch (Throwable throwable) {
-            throw new JbootException("render template is error! template is " + template, throwable);
-        }
+        return ENGINE.getTemplateByString(template).renderToString(datas);
 
     }
 
@@ -106,7 +102,7 @@ class Utils {
             return key;
         }
 
-        return Utils.engineRender(key, method, arguments);
+        return engineRender(key, method, arguments);
     }
 
     private static void ensureArgumentNotNull(String argument, Class clazz, Method method) {
@@ -204,6 +200,22 @@ class Utils {
 
         String cacheKey = Utils.buildCacheKey(evict.key(), targetClass, method, arguments);
         Jboot.getCache().remove(cacheName, cacheKey);
+    }
+
+
+    public static void main(String[] args) {
+
+        Map<String, Object> datas = new HashMap();
+        datas.put("key", "value");
+
+        String template = "#(key)";
+
+        long time = System.currentTimeMillis();
+        for (int i = 0; i < 1000000; i++) {
+            ENGINE.getTemplateByString(template).renderToString(datas);
+        }
+
+        System.out.println("time : " + (System.currentTimeMillis() - time));
     }
 
 }
