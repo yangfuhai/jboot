@@ -21,7 +21,7 @@ jboot 2.0 is developing
 Controller：
 
 ```java
-@RequestMapping("/helloworld")
+@RequestMapping("/")
 public class HelloworldController extends JbootController {
 
     public void index(){
