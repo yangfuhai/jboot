@@ -150,6 +150,9 @@ public class ClassScanner {
         excludeJars.add("icu4j-");
         excludeJars.add("idea_rt");
         excludeJars.add("MRJToolkit");
+        excludeJars.add("logback-");
+        excludeJars.add("log4j-");
+        excludeJars.add("log4j2-");
     }
 
     public static <T> List<Class<T>> scanSubClass(Class<T> pclazz) {

@@ -73,8 +73,6 @@ public class JbootApplicationConfig {
         return "JbootApplication {" +
                 " mode='" + mode + '\'' +
                 ", jfinalConfig='" + jfinalConfig + '\'' +
-                ", bannerEnable=" + bannerEnable +
-                ", bannerFile='" + bannerFile + '\'' +
                 ", hotSwapClassPrefix='" + hotSwapClassPrefix + '\'' +
                 " }";
     }
