@@ -33,7 +33,6 @@ public class JbootCacheInterceptor implements Interceptor {
 
     private static final String NULL_VALUE = "NULL_VALUE";
 
-
     @Override
     public void intercept(Invocation inv) {
 
@@ -59,7 +58,6 @@ public class JbootCacheInterceptor implements Interceptor {
         }
 
         String cacheKey = Utils.buildCacheKey(cacheable.key(), targetClass, method, inv.getArgs());
-
 
         Object data = Jboot.getCache().get(cacheName, cacheKey);
         if (data != null) {
