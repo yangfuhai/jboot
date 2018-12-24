@@ -35,7 +35,7 @@ public class JbootCachePutInterceptor implements Interceptor {
     @Override
     public void intercept(Invocation inv) {
 
-        //先执行，之后再保持数据
+        //先执行，之后再保存数据
         inv.invoke();
 
         Method method = inv.getMethod();
@@ -47,14 +47,9 @@ public class JbootCachePutInterceptor implements Interceptor {
         Object result = inv.getReturnValue();
 
         String unlessString = cachePut.unless();
-        if (StrUtil.isNotBlank(unlessString)) {
-            unlessString = String.format("#(%s)", unlessString);
-            String unlessBoolString = Utils.engineRender(unlessString, method, inv.getArgs());
-            if ("true".equals(unlessBoolString)) {
-                return;
-            }
+        if (Utils.isUnless(unlessString, method, inv.getArgs())) {
+            return;
         }
-
 
         Class targetClass = inv.getTarget().getClass();
         String cacheName = cachePut.name();
