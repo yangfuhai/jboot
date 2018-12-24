@@ -78,6 +78,7 @@ public class Jboot {
 
     /**
      * 获取 Mq
+     *
      * @return
      */
     public static Jbootmq getMq() {
@@ -106,6 +107,7 @@ public class Jboot {
         return JbootConfigManager.me().get(clazz);
     }
 
+
     /**
      * 读取配置文件信息
      *
@@ -131,6 +133,17 @@ public class Jboot {
     public static <T> T config(Class<T> clazz, String prefix, String file) {
         return JbootConfigManager.me().get(clazz, prefix, file);
     }
+
+    /**
+     * 读取某个配置信息
+     * @param key
+     * @return
+     */
+    public static String configValue(String key) {
+        return JbootConfigManager.me().getConfigValue(key);
+    }
+
+
 
 
     /**
