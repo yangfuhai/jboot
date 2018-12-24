@@ -115,9 +115,12 @@ public class JbootrpcServiceConfig implements Serializable {
             this.version = annotation.version();
         }
 
-
         if (annotation.actives() >= 0) {
             this.actives = annotation.actives();
+        }
+
+        if (annotation.timeout() >= 0) {
+            this.timeout = annotation.timeout();
         }
 
     }
