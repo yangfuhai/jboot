@@ -18,4 +18,4 @@
 - [项目部署](./docs/deploy.md)
 - [Jboot与Docker](./docs/docker.md)
 - [Jboot与Devops](./docs/devops.md)
-- [交流社区、QQ群和微信群](./)
+- [交流社区、QQ群和微信群](./docs/communication.md)
