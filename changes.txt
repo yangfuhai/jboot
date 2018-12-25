@@ -1,1 +1,16 @@
-jboot-v2.0
+jboot v2.0-rc.1:
+- 移除Server模块，引入JFinal-Undertow，完美支持各种热加载。
+- 移除Hystrix，Dubbo内置降级功能、同时 DockerStack 可以很好完成。
+- 移除Google Guice，使用 JFinal AOP 功能代替。
+- 移除统一配置中心，Jboot 的配置来源可以是配置文件、环境变量、启动参数、Jvm等多个地方，因此通过 DockerStack 可以完成统一配置
+- 移除opentracing，链路追踪由 DockerStack 来完成
+- 移除网络限流模块，由 DockerStack 来完成
+- Jboot.me().getXXX 直接修改为：Jboot.getXxx()
+- 升级Sharding-jdbc到3.x ，通过 Sharding-shpere 加 JFinal ActiveRecordPlugin 完美实现数据库读写分离、分库分表和分布式事务。
+- RPC注入和暴露修改为 RPCInject 和 RPCBean，删除RPCService
+- Model 进行 save() 的时候返回 Id，而不是 bool 类型，方便微服务调用的时候，直接返回ID，而不需要再次查询。
+- 所有配置优先读取启动参数和环境变量，方便在docker、k8s 环境下做自动化部署
+- 添加 @ConfigInject 用于对Controller、Service等属性的配置数据注入
+- 完善 ClassScanner 机制，支持外部自定义扫描和排除
+- 优化 Join 机制，支持 RPC 调用 Join、支持 Join 返回数据、支持 Join 自定 Model 属性，生成代码默认不再带有 Join 的代码生成 ，使 Service 更加轻便。
+- MQ 新增 startListener() 方法，而非是项目启动后自动监听。方便 MQ 的 Listener 做其他初始化工作。同时 MQ 支持自定义序列化等功能。
