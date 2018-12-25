@@ -50,11 +50,7 @@ public class JbootApplication {
 
         UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
         undertowConfig.addSystemClassPrefix("io.jboot.app");
-
-        String[] hotSwapClassPrefixes = appConfig.getHotSwapClassPrefix().split(",");
-        for (String hotSwapClassPrefix : hotSwapClassPrefixes) {
-            undertowConfig.addHotSwapClassPrefix(hotSwapClassPrefix.trim());
-        }
+        undertowConfig.addHotSwapClassPrefix("io.jboot");
 
         return UndertowServer.create(undertowConfig).setDevMode(isDevMode()).configWeb(webBuilder -> {
             tryAddMetricsSupport(webBuilder);
@@ -114,6 +110,7 @@ public class JbootApplication {
 
 
     private static Boolean devMode = null;
+
     public static boolean isDevMode() {
         if (devMode == null) {
             String appMode = JbootConfigManager.me().getConfigValue("jboot.app.mode");

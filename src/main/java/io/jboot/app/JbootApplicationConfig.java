@@ -24,7 +24,6 @@ public class JbootApplicationConfig {
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
     private String jfinalConfig = "io.jboot.core.JbootCoreConfig";
-    private String hotSwapClassPrefix = "io.jboot";
 
 
     public String getMode() {
@@ -60,20 +59,12 @@ public class JbootApplicationConfig {
         this.jfinalConfig = jfinalConfig;
     }
 
-    public String getHotSwapClassPrefix() {
-        return hotSwapClassPrefix;
-    }
-
-    public void setHotSwapClassPrefix(String hotSwapClassPrefix) {
-        this.hotSwapClassPrefix = hotSwapClassPrefix;
-    }
 
     @Override
     public String toString() {
         return "JbootApplication {" +
                 " mode='" + mode + '\'' +
                 ", jfinalConfig='" + jfinalConfig + '\'' +
-                ", hotSwapClassPrefix='" + hotSwapClassPrefix + '\'' +
                 " }";
     }
 }
