@@ -63,6 +63,9 @@ public class ClassScanner {
         excludeJars.add("HikariCP-");
         excludeJars.add("druid-");
         excludeJars.add("mysql-");
+        excludeJars.add("db2jcc-");
+        excludeJars.add("db2jcc4-");
+        excludeJars.add("ojdbc");
         excludeJars.add("junit-");
         excludeJars.add("hamcrest-");
         excludeJars.add("jboss-");
@@ -354,8 +357,8 @@ public class ClassScanner {
 
         String jarName = new File(path).getName();
 
-        for (String exclude : includeJars) {
-            if (jarName.startsWith(exclude)) {
+        for (String include : includeJars) {
+            if (jarName.startsWith(include)) {
                 return true;
             }
         }
@@ -367,6 +370,10 @@ public class ClassScanner {
         }
 
         if (path.startsWith(getJavaHome())) {
+            return false;
+        }
+
+        if (path.toLowerCase().indexOf(getJreLib()) > 0) {
             return false;
         }
 
@@ -411,6 +418,16 @@ public class ClassScanner {
             }
         }
         return javaHome;
+    }
+
+
+    private static String jreLib;
+
+    private static String getJreLib() {
+        if (jreLib == null) {
+            jreLib = File.separator + "jre" + File.separator + "lib" + File.separator;
+        }
+        return jreLib;
     }
 
 
