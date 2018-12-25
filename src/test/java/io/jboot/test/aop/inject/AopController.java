@@ -13,9 +13,6 @@ public class AopController extends JbootController {
     @Inject
     private UserService userService;
 
-    @javax.inject.Inject
-    private UserService javaxInjectUserService;
-
     @ConfigInject("undertow.host")
     private String host;
 
@@ -27,9 +24,6 @@ public class AopController extends JbootController {
         renderText("text from : " + userService.getName());
     }
 
-    public void javax(){
-        renderText("text from : " + javaxInjectUserService.getName());
-    }
 
     public void config(){
         renderText("host:" + host +"   port:" + port);

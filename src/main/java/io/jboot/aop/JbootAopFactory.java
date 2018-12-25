@@ -55,12 +55,6 @@ public class JbootAopFactory extends AopFactory {
                 continue;
             }
 
-            javax.inject.Inject javaxInject = field.getAnnotation(javax.inject.Inject.class);
-            if (javaxInject != null) {
-                injectByJavaxInject(targetObject, field, javaxInject, injectDepth);
-                continue;
-            }
-
             ConfigInject configInject = field.getAnnotation(ConfigInject.class);
             if (configInject != null) {
                 injectByConfig(targetObject, field, configInject);
@@ -140,22 +134,6 @@ public class JbootAopFactory extends AopFactory {
 
     }
 
-
-    /**
-     * 本地注入，兼容 javax 的注解
-     *
-     * @param targetObject
-     * @param field
-     * @param inject
-     * @throws ReflectiveOperationException
-     */
-    private void injectByJavaxInject(Object targetObject, Field field, javax.inject.Inject inject, int injectDepth) throws ReflectiveOperationException {
-
-        Object fieldInjectedObject = get(field.getType(), injectDepth);
-        field.setAccessible(true);
-        field.set(targetObject, fieldInjectedObject);
-
-    }
 
     /**
      * 注入 rpc service
