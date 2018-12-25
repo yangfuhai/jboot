@@ -1,3 +1,10 @@
+jboot v2.0-rc.2:
+- 移除 javax 的 @Inject 功能
+- 移除 jboot.app.hotSwapClassPrefix 的配置，直接使用 undertow.hotSwapClassPrefix 配置即可
+- 修复 代码生成器生成的代码带有 @Singleton 注解的问题
+
+
+
 jboot v2.0-rc.1:
 - 移除Server模块，引入JFinal-Undertow，完美支持各种热加载。
 - 移除Hystrix，Dubbo内置降级功能、同时 DockerStack 可以很好完成。
