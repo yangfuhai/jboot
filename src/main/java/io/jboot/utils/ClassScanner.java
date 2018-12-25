@@ -373,11 +373,17 @@ public class ClassScanner {
             return false;
         }
 
-        if (path.toLowerCase().indexOf(getJreLib()) > 0) {
+        if (isJrelibPath(path)) {
             return false;
         }
 
         return true;
+    }
+
+
+    private static boolean isJrelibPath(String path) {
+        path = path.toLowerCase();
+        return path.indexOf("/jre/lib/") > 0 || path.indexOf("\\jre\\lib\\") > 0;
     }
 
 
@@ -418,16 +424,6 @@ public class ClassScanner {
             }
         }
         return javaHome;
-    }
-
-
-    private static String jreLib;
-
-    private static String getJreLib() {
-        if (jreLib == null) {
-            jreLib = File.separator + "jre" + File.separator + "lib" + File.separator;
-        }
-        return jreLib;
     }
 
 
