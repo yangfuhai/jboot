@@ -63,3 +63,8 @@ public class HelloWorldApp {
 - [Jboot与Docker](./doc/docs/docker.md)
 - [Jboot与Devops](./doc/docs/devops.md)
 - [交流社区、QQ群和微信群](./doc/docs/communication.md)
+
+## 微信交流群
+
+![](./doc/docs/imgs/jboot-wechat-group.png)
+
