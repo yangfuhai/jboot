@@ -3,6 +3,7 @@ jboot v2.0-rc.2:
 移除 jboot.app.hotSwapClassPrefix 的配置，直接使用 undertow.hotSwapClassPrefix 配置即可
 修复 代码生成器生成的代码带有 @Singleton 注解的问题
 优化 @RPCInject 中的 async 和 check 的类型
+优化 ClassScanner 会扫描到 JRE 的 Class 导致加载速度慢的问题
 
 
 

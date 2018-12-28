@@ -15,12 +15,14 @@
  */
 package io.jboot.app;
 
+import io.jboot.JbootConsts;
 import io.jboot.app.config.annotation.ConfigModel;
 
 @ConfigModel(prefix = "jboot.app")
 public class JbootApplicationConfig {
 
     private String mode = "dev";
+    private String version = JbootConsts.VERSION;
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
     private String jfinalConfig = "io.jboot.core.JbootCoreConfig";
@@ -32,6 +34,10 @@ public class JbootApplicationConfig {
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public boolean isBannerEnable() {
@@ -64,6 +70,7 @@ public class JbootApplicationConfig {
     public String toString() {
         return "JbootApplication {" +
                 " mode='" + mode + '\'' +
+                ", version='" + version + '\'' +
                 ", jfinalConfig='" + jfinalConfig + '\'' +
                 " }";
     }
