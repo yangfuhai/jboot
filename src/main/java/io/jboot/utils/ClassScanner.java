@@ -383,7 +383,7 @@ public class ClassScanner {
 
     private static boolean isJrelibPath(String path) {
         path = path.toLowerCase();
-        return path.indexOf("/jre/lib/") > 0 || path.indexOf("\\jre\\lib\\") > 0;
+        return path.indexOf("/jre/lib/") > -1 || path.indexOf("\\jre\\lib\\") > -1;
     }
 
 
