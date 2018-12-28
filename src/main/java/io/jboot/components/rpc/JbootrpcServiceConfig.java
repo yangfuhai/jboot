@@ -91,11 +91,11 @@ public class JbootrpcServiceConfig implements Serializable {
         }
 
         if (StrUtil.isNotBlank(rpcInject.async())) {
-            this.async = Boolean.getBoolean(rpcInject.async());
+            this.async = rpcInject.async(); //Boolean.getBoolean(rpcInject.async());
         }
 
         if (StrUtil.isNotBlank(rpcInject.check())) {
-            this.check = Boolean.getBoolean(rpcInject.check());
+            this.check = rpcInject.check(); //Boolean.getBoolean(rpcInject.check());
         }
 
     }

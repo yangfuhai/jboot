@@ -36,8 +36,8 @@ public @interface RPCInject {
 
     String loadbalance() default "";
 
-    String async() default "";
+    boolean async() default false;
 
-    String check() default "";
+    boolean check() default false;
 
 }
