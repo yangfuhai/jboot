@@ -4,9 +4,9 @@
 
 本文档假设您已经具备了如下基本技能：
 
-- Java 编程语言的基本使用
+- Java 编程语言的使用
 - Maven 依赖管理的使用
-- Java 开发工具的基本使用
+- Java 开发工具的使用
 
 ## 目录
 
@@ -28,7 +28,7 @@
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>2.0-rc.1</version>
+    <version>2.0-rc.2</version>
 </dependency>
 ```
 
@@ -48,6 +48,7 @@ public class HelloworldController extends JbootController {
     }
 }
 ```
+> 备注：真正项目开发中，建议不要把 `main` 方法写在 `Controller` 里。
 
 ## 启动 `main()` 方法，并在浏览器查看
 

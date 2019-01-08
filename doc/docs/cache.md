@@ -4,7 +4,8 @@ Jboot 定位为高性能的微服务框架，然而高性能离不开合理的�
 
 - ehcache
 - redis
-- j2cache
 - ehredis
+- j2cache
+
 
 
