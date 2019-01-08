@@ -19,6 +19,7 @@ import io.jboot.Jboot;
 import io.jboot.components.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.components.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.components.cache.j2cache.J2cacheImpl;
+import io.jboot.components.cache.none.NoneCacheImpl;
 import io.jboot.components.cache.redis.JbootRedisCacheImpl;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.StrUtil;
@@ -79,6 +80,8 @@ public class JbootCacheManager {
                 return new JbootEhredisCacheImpl();
             case JbootCacheConfig.TYPE_J2CACHE:
                 return new J2cacheImpl();
+            case JbootCacheConfig.TYPE_NONE:
+                return new NoneCacheImpl();
             default:
                 return JbootSpiLoader.load(JbootCache.class, config.getType());
         }

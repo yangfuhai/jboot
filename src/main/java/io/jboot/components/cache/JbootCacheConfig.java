@@ -26,6 +26,7 @@ public class JbootCacheConfig {
     public static final String TYPE_REDIS = "redis";
     public static final String TYPE_EHREDIS = "ehredis";
     public static final String TYPE_J2CACHE = "j2cache";
+    public static final String TYPE_NONE = "none";
 
 
     private String type = TYPE_EHCACHE;
