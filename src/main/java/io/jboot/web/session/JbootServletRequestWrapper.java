@@ -17,7 +17,9 @@ package io.jboot.web.session;
 
 import io.jboot.Jboot;
 import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.JbootCacheManager;
+import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.*;
 import java.util.Collections;
@@ -28,7 +30,7 @@ import java.util.UUID;
 public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     private static JbootSessionConfig config = Jboot.config(JbootSessionConfig.class);
-    
+
     private static int maxInactiveInterval = config.getMaxInactiveInterval();
     private static String cookieName = config.getCookieName();
     private static String cookiePath = config.getCookieContextPath();
@@ -37,7 +39,10 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
     private static String cacheName = config.getCacheName();
     private static String cacheType = config.getCacheType();
 
-    private static JbootCache jbootCache = JbootCacheManager.me().getCache(cacheType);
+    private static JbootCache jbootCache = JbootCacheManager.me()
+            .getCache(StrUtil.isBlank(cacheType) || JbootCacheConfig.TYPE_NONE.equals(cacheType)
+                    ? JbootCacheConfig.TYPE_EHCACHE
+                    : cacheType);
 
 
     private HttpServletResponse response;
