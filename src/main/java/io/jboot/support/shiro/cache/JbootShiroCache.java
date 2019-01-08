@@ -68,7 +68,7 @@ public class JbootShiroCache<K, V> implements Cache<K, V> {
     @Override
     public Set<K> keys() {
         List list = Jboot.getCache().getKeys(cacheName);
-        return list == null ? null : new HashSet<K>(list);
+        return list == null ? null : new HashSet<>(list);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class JbootShiroCache<K, V> implements Cache<K, V> {
         List keys = Jboot.getCache().getKeys(cacheName);
 
         if (!CollectionUtils.isEmpty(keys)) {
-            values = new ArrayList<V>(keys.size());
+            values = new ArrayList<>(keys.size());
             for (Object key : keys) {
                 V value = Jboot.getCache().get(cacheName, key);
                 if (value != null) {
