@@ -8,6 +8,7 @@
 
 **方案1：**
 通过 @Cron 注解，这个需要依赖 cron4j 框架：
+
 ```java
 //1分钟执行一次
 @Cron("*/1 * * * *")
@@ -50,6 +51,7 @@ Cron 表达式最多只允许五部分，每部分用空格分隔开来，这五
 
 **方案2：**
 Jboot 通过 `ScheduledThreadPoolExecutor` 封装一个轻量的任务调度框架，使用方法如下：
+
 ```java
 @FixedDelay(period = 5)
 public class MyTask implements Runnable {
@@ -69,6 +71,7 @@ public class MyTask implements Runnable {
 分布式任务在以上的 **基本任务调度** 的基础上，只需要添加 `@EnableDistributedRunnable` 注解即可，例如：
 
 示例1：
+
 ```java
 @Cron("*/1 * * * *")
 @EnableDistributedRunnable
@@ -82,6 +85,7 @@ public class MyTask implements Runnable {
 ```
 
 示例2：
+
 ```java
 @FixedDelay(period = 5)
 @EnableDistributedRunnable
