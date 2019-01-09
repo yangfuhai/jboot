@@ -31,8 +31,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JbootConfigManager {
 
+    //启动参数
     private static Map<String, String> argMap;
 
+    //jboot.properties 和 jboot-dev.properties 等内容
     private Properties mainProperties;
 
     private ConcurrentHashMap<String, Object> configCache = new ConcurrentHashMap<>();

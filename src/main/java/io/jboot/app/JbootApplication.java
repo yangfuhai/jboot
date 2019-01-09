@@ -114,7 +114,7 @@ public class JbootApplication {
     public static boolean isDevMode() {
         if (devMode == null) {
             String appMode = JbootConfigManager.me().getConfigValue("jboot.app.mode");
-            devMode = null == appMode || "".equals(appMode.trim()) || "dev".equals(appMode);
+            devMode = (null == appMode || "".equals(appMode.trim()) || "dev".equals(appMode));
         }
         return devMode;
     }
