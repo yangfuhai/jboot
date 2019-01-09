@@ -43,19 +43,24 @@ public class JbootSpiLoader {
     public static <T> T load(Class<T> clazz, String spiName) {
         ServiceLoader<T> serviceLoader = ServiceLoader.load(clazz);
         Iterator<T> iterator = serviceLoader.iterator();
+
         while (iterator.hasNext()) {
-            T t = iterator.next();
+            T returnObject = iterator.next();
+
             if (spiName == null) {
-                return t;
+                return returnObject;
             }
-            JbootSpi spi = t.getClass().getAnnotation(JbootSpi.class);
-            if (spi == null) {
+
+            JbootSpi spiConfig = returnObject.getClass().getAnnotation(JbootSpi.class);
+            if (spiConfig == null) {
                 continue;
             }
-            if (spiName.equals(spi.value())) {
-                return t;
+
+            if (spiName.equals(spiConfig.value())) {
+                return returnObject;
             }
         }
+        
         return null;
     }
 }
