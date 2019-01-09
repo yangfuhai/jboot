@@ -418,7 +418,7 @@ public class JbootJedisImpl extends JbootRedisBase {
     public String migrate(String host, int port, Object key, int destinationDb, int timeout) {
         Jedis jedis = getJedis();
         try {
-            return jedis.migrate(valueToBytes(host), port, keyToBytes(key), destinationDb, timeout);
+            return jedis.migrate(host, port, keyToBytes(key), destinationDb, timeout);
         } finally {
             returnResource(jedis);
         }
