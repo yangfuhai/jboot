@@ -1,3 +1,8 @@
+jboot v2.0-rc.3:
+新增：JbootCache模块的空实现 NoneCacheImpl，方便通过配置关闭缓存功能
+优化：更新相关依赖
+
+
 jboot v2.0-rc.2:
 移除 javax 的 @Inject 功能
 移除 jboot.app.hotSwapClassPrefix 的配置，直接使用 undertow.hotSwapClassPrefix 配置即可
