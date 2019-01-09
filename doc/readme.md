@@ -19,8 +19,8 @@
 - [Jboot与Docker](./docs/docker.md)
 - [Jboot与Devops](./docs/devops.md)
 - [交流社区、QQ群和微信群](./docs/communication.md)
-- 第三方功能的支持
-  - [redis]()
+- 第三方组件的支持
+  - [redis](./docs/shiro.md)
   - [shiro]()
   - [jwt]()
   - [metrics]()
