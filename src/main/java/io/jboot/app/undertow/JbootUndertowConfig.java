@@ -41,13 +41,17 @@ public class JbootUndertowConfig extends UndertowConfig {
         return propExt;
     }
 
+    /**
+     * 获取随机可用的端口号
+     *
+     * @return
+     */
     public static Integer getAvailablePort() {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(0);
             return serverSocket.getLocalPort();
         } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             if (serverSocket != null) {
                 try {
