@@ -26,6 +26,7 @@ import io.jboot.components.rpc.motan.JbootMotanrpc;
 import io.jboot.components.rpc.zbus.JbootZbusrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootRpcException;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 
@@ -42,16 +43,19 @@ public class JbootrpcManager {
     }
 
     private Jbootrpc jbootrpc;
-    private JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
-    private boolean inited = false;
+    private JbootrpcConfig defaultConfig = Jboot.config(JbootrpcConfig.class);
 
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {
-            jbootrpc = createJbootrpc();
+            if (!defaultConfig.isConfigOk()) {
+                throw new JbootRpcException("jboot rpc config is error, please config jboot.rpc.type = xxx in jboot.properties");
+            }
+            jbootrpc = createJbootrpc(defaultConfig);
         }
         return jbootrpc;
     }
 
+    
     private static Class[] default_excludes = new Class[]{
             JbootEventListener.class,
             JbootmqMessageListener.class,
@@ -61,16 +65,22 @@ public class JbootrpcManager {
 
     public void init() {
 
-        getJbootrpc().onInitBefore();
-
-        if (config.isAutoExportEnable()) {
-            autoExportRPCBean();
+        if (!defaultConfig.isConfigOk()) {
+            return;
         }
 
-        getJbootrpc().onInited();
+        Jbootrpc jbootrpc = getJbootrpc();
+        jbootrpc.onInitBefore();
+
+        if (defaultConfig.isAutoExportEnable()) {
+            exportRPCBean(jbootrpc);
+        }
+
+        jbootrpc.onInited();
     }
 
-    private void autoExportRPCBean() {
+
+    public void exportRPCBean(Jbootrpc jbootrpc) {
         List<Class> classes = ClassScanner.scanClassByAnnotation(RPCBean.class, true);
         if (ArrayUtil.isNullOrEmpty(classes)) {
             return;
@@ -93,17 +103,18 @@ public class JbootrpcManager {
                         break;
                     }
                 }
+
                 if (isContinue) {
                     continue;
                 }
-                getJbootrpc().serviceExport(inter, Aop.get(clazz), new JbootrpcServiceConfig(rpcBean));
+
+                jbootrpc.serviceExport(inter, Aop.get(clazz), new JbootrpcServiceConfig(rpcBean));
             }
         }
     }
 
 
-    private Jbootrpc createJbootrpc() {
-
+    public Jbootrpc createJbootrpc(JbootrpcConfig config) {
 
         switch (config.getType()) {
             case JbootrpcConfig.TYPE_MOTAN:

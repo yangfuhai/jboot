@@ -16,6 +16,7 @@
 package io.jboot.components.rpc;
 
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.utils.StrUtil;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -42,7 +43,7 @@ public class JbootrpcConfig {
     public static final String CALL_MODE_DIRECT = "direct";
 
 
-    private String type = TYPE_DUBBO;
+    private String type;
     private String callMode = CALL_MODE_REGISTRY;
 
     private int requestTimeOut = 5000;
@@ -296,5 +297,9 @@ public class JbootrpcConfig {
 
     public void setAutoExportEnable(boolean autoExportEnable) {
         this.autoExportEnable = autoExportEnable;
+    }
+
+    public boolean isConfigOk() {
+        return StrUtil.isNotBlank(getType());
     }
 }
