@@ -21,15 +21,6 @@ public class MyTask implements Runnable {
 }
 ```
 
-同时注意添加如下依赖：
-
-```java
-<dependency>
-    <groupId>it.sauronsoftware.cron4j</groupId>
-    <artifactId>cron4j</artifactId>
-    <version>2.2.5</version>
-</dependency>
-```
 
 Cron表达式详解：
 
