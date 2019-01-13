@@ -1,5 +1,7 @@
 jboot v2.0-rc.3:
 新增：JbootCache模块的空实现 NoneCacheImpl，方便通过配置关闭缓存功能
+新增：Jboot 代码生成器添加排除表和移除前缀的支持
+优化：当未对 RPC 模块进行配置的情况下，该功能默认关闭，不会启用dubbo等 RPC 组件
 优化：更新相关依赖
 
 
