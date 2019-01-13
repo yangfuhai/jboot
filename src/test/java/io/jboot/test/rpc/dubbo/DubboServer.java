@@ -11,7 +11,7 @@ public class DubboServer {
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
 
         //开启 @RPCBean 自动暴露功能，默认情况下是自动暴露的，但是 jboot.properties 文件关闭了，这里需要开启下
-        JbootApplication.setBootArg("jboot.rpc.closeAutoExport", false);
+        JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
 
         //设置直连模式，方便调试，默认为注册中心
         JbootApplication.setBootArg("jboot.rpc.callMode", "direct");

@@ -52,14 +52,18 @@ public class JbootrpcManager {
         return jbootrpc;
     }
 
-    static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
+    private static Class[] default_excludes = new Class[]{
+            JbootEventListener.class,
+            JbootmqMessageListener.class,
+            Serializable.class
+    };
 
 
-    private void init() {
+    public void init() {
 
         getJbootrpc().onInitBefore();
 
-        if (!config.isCloseAutoExport()) {
+        if (config.isAutoExportEnable()) {
             autoExportRPCBean();
         }
 
@@ -100,7 +104,6 @@ public class JbootrpcManager {
 
     private Jbootrpc createJbootrpc() {
 
-        tryInit();
 
         switch (config.getType()) {
             case JbootrpcConfig.TYPE_MOTAN:
@@ -116,11 +119,5 @@ public class JbootrpcManager {
         }
     }
 
-    private synchronized void tryInit() {
-        if (!inited) {
-            init();
-            inited = true;
-        }
-    }
 
 }
