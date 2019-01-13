@@ -15,56 +15,38 @@
  */
 package io.jboot.codegen.model;
 
-import com.jfinal.kit.PathKit;
+import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.ModelGenerator;
-import com.jfinal.plugin.activerecord.generator.TableMeta;
-import io.jboot.app.JbootApplication;
 import io.jboot.codegen.CodeGenHelpler;
-
-import java.util.List;
 
 public class JbootModelGenerator extends ModelGenerator {
 
-    public static void main(String[] args) {
 
-        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
-        JbootApplication.setBootArg("jboot.datasource.user", "root");
-
-        String basePackage = "io.jboot.codegen.test";
-        run(basePackage);
-    }
-
-
-    public static void run(String modelPackage) {
-        run(modelPackage, null);
-    }
-
-
-    public static void run(String modelPackage, String excludeTables) {
-        String baseModelPackage = modelPackage + ".base";
-
-        String modelDir = PathKit.getWebRootPath() + "/src/main/java/" + modelPackage.replace(".", "/");
-        String baseModelDir = PathKit.getWebRootPath() + "/src/main/java/" + baseModelPackage.replace(".", "/");
-
-        System.out.println("start generate...");
-        System.out.println("generate dir:" + modelDir);
-
-        List<TableMeta> tableMetaList = CodeGenHelpler.createMetaBuilder().build();
-        CodeGenHelpler.excludeTables(tableMetaList, excludeTables);
-
-
-        new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
-        new JbootModelGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
-
-    }
-
+    private MetaBuilder metaBuilder;
 
     public JbootModelGenerator(String modelPackageName,
                                String baseModelPackageName, String modelOutputDir) {
         super(modelPackageName, baseModelPackageName, modelOutputDir);
 
         this.template = "/io/jboot/codegen/model/model_template.jf";
+        this.metaBuilder = CodeGenHelpler.createMetaBuilder();
 
+    }
+
+    public void generate() {
+        super.generate(metaBuilder.build());
+    }
+
+    /**
+     * 设置需要被移除的表名前缀
+     * 例如表名  "tb_account"，移除前缀 "tb_" 后变为 "account"
+     */
+    public void setRemovedTableNamePrefixes(String... prefixes) {
+        metaBuilder.setRemovedTableNamePrefixes(prefixes);
+    }
+
+    public void addExcludedTable(String... excludedTables) {
+        metaBuilder.addExcludedTable(excludedTables);
     }
 
 
