@@ -43,6 +43,7 @@ public class JbootrpcManager {
 
     private Jbootrpc jbootrpc;
     private JbootrpcConfig config = Jboot.config(JbootrpcConfig.class);
+    private boolean inited = false;
 
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {
@@ -54,7 +55,7 @@ public class JbootrpcManager {
     static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
 
 
-    public void init() {
+    private void init() {
 
         getJbootrpc().onInitBefore();
 
@@ -99,6 +100,7 @@ public class JbootrpcManager {
 
     private Jbootrpc createJbootrpc() {
 
+        tryInit();
 
         switch (config.getType()) {
             case JbootrpcConfig.TYPE_MOTAN:
@@ -111,6 +113,13 @@ public class JbootrpcManager {
                 return new JbootZbusrpc();
             default:
                 return JbootSpiLoader.load(Jbootrpc.class, config.getType());
+        }
+    }
+
+    private synchronized void tryInit() {
+        if (!inited) {
+            init();
+            inited = true;
         }
     }
 

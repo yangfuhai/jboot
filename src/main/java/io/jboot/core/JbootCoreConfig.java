@@ -30,21 +30,20 @@ import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.core.log.Slf4jLogFactory;
-import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
 import io.jboot.core.listener.JbootAppListenerManager;
+import io.jboot.core.log.Slf4jLogFactory;
 import io.jboot.db.JbootDbManager;
-import io.jboot.utils.ArrayUtil;
-import io.jboot.utils.ClassUtil;
-import io.jboot.utils.ClassScanner;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
 import io.jboot.support.swagger.JbootSwaggerManager;
-import io.jboot.web.controller.JbootControllerManager;
+import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.ClassScanner;
+import io.jboot.utils.ClassUtil;
 import io.jboot.web.JbootJson;
 import io.jboot.web.cache.ActionCacheHandler;
+import io.jboot.web.controller.JbootControllerManager;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
@@ -99,6 +98,7 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setInjectDependency(true);
 
         JbootAppListenerManager.me().onJfinalConstantConfig(constants);
+
     }
 
 
@@ -210,14 +210,16 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void afterJFinalStart() {
-        super.afterJFinalStart();
+
+        /**
+         * 配置微信accessToken的缓存
+         */
         ApiConfigKit.setAccessTokenCache(new JbootAccessTokenCache());
         JsonManager.me().setDefaultDatePattern("yyyy-MM-dd HH:mm:ss");
 
         /**
          * 初始化
          */
-        JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
         JbootScheduleManager.me().init();
         JbootSwaggerManager.me().init();
