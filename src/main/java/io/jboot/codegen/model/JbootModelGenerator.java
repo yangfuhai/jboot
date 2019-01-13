@@ -41,12 +41,14 @@ public class JbootModelGenerator extends ModelGenerator {
      * 设置需要被移除的表名前缀
      * 例如表名  "tb_account"，移除前缀 "tb_" 后变为 "account"
      */
-    public void setRemovedTableNamePrefixes(String... prefixes) {
+    public JbootModelGenerator setRemovedTableNamePrefixes(String... prefixes) {
         metaBuilder.setRemovedTableNamePrefixes(prefixes);
+        return this;
     }
 
-    public void addExcludedTable(String... excludedTables) {
+    public JbootModelGenerator addExcludedTable(String... excludedTables) {
         metaBuilder.addExcludedTable(excludedTables);
+        return this;
     }
 
 
