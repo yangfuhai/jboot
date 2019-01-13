@@ -15,7 +15,26 @@
 Apache Shiro是一个强大且易用的Java安全框架，执行身份验证、授权、密码学和会话管理。使用 Shiro 的易于理解的 API，您可以快速、轻松地获得任何应用程序，从最小的移动应用程序到最大的网络和企业应用程序。
 
 ## Shiro的配置
-在使用 Jboot 的 Shiro 模块之前，我假定您已经学习并了解 Shiro 的基础知识。在 Jboot 中使用 Shiro 非常简单，只需要在 resources 目录下配置上您的 `shiro.ini` 配置文件并添加上 `jboot.shiro.ini = shiro.ini`即可。在 `shiro.ini` 文件里，需要在自行扩展 `realm` 等信息。
+
+Jboot 默认情况下并没有依赖 shiro，因此，在在使用 Jboot 的 Shiro 模块之前，需要你添加下 Shiro 的 Maven 依赖。
+
+```xml
+<dependency>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-core</artifactId>
+    <version>1.3.2</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-web</artifactId>
+    <version>1.3.2</version>
+</dependency>
+```
+注意：目前暂时不支持 Shiro 1.4.x 版本，晚点会添加支持。
+
+
+同时，需要在 resources 目录下配置上您的 `shiro.ini` 配置文件，并在 `jboot.porperties` 添加上 `jboot.shiro.ini = shiro.ini` 配置。在 `shiro.ini` 文件里，需要在自行扩展 `realm` 等信息。
 
 ## Shiro的使用
 Jboot 的 Shiro 模块为您提供了以下12个模板指令，同时支持 Shiro 的5个 Requires 注解功能。方便您使用 Shiro。
