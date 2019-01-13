@@ -7,6 +7,6 @@ import io.jboot.service.JbootServiceBase;
 
 
 @Bean
-public class #(tableMeta.modelName)ServiceImpl extends JbootServiceBase<#(tableMeta.modelName)> implements #(tableMeta.modelName)Service {
+public class #(tableMeta.modelName)Service#(firstCharToUpperCase(implName)) extends JbootServiceBase<#(tableMeta.modelName)> implements #(tableMeta.modelName)Service {
 
 }

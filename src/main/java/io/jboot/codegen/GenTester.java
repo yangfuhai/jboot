@@ -16,21 +16,18 @@
 package io.jboot.codegen;
 
 import com.jfinal.kit.PathKit;
-import com.jfinal.plugin.activerecord.generator.TableMeta;
 import io.jboot.app.JbootApplication;
 import io.jboot.codegen.model.JbootBaseModelGenerator;
 import io.jboot.codegen.model.JbootModelGenerator;
 import io.jboot.codegen.service.JbootServiceImplGenerator;
 import io.jboot.codegen.service.JbootServiceInterfaceGenerator;
 
-import java.util.List;
-
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package io.jboot.codegen
  */
-public class CodeGenTester {
+public class GenTester {
 
     public static void main(String[] args) {
 
@@ -38,7 +35,6 @@ public class CodeGenTester {
         JbootApplication.setBootArg("jboot.datasource.user", "root");
 
         String modelPackage = "io.jboot.codegen.test.model";
-
         String baseModelPackage = modelPackage + ".base";
 
         String modelDir = PathKit.getWebRootPath() + "/src/main/java/" + modelPackage.replace(".", "/");
@@ -47,17 +43,14 @@ public class CodeGenTester {
         System.out.println("start generate...");
         System.out.println("generate dir:" + modelDir);
 
-        List<TableMeta> tableMetaList = CodeGenHelpler.createMetaBuilder().build();
-        CodeGenHelpler.excludeTables(tableMetaList, null);
+
+        new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate();
+        new JbootModelGenerator(modelPackage, baseModelPackage, modelDir).generate();
 
 
-        new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate(tableMetaList);
-        new JbootModelGenerator(modelPackage, baseModelPackage, modelDir).generate(tableMetaList);
-
-
-        String baseServicePackage = "io.jboot.codegen.test.service";
-        new JbootServiceInterfaceGenerator(baseServicePackage, modelPackage).generate(tableMetaList);
-        new JbootServiceImplGenerator(baseServicePackage , modelPackage).generate(tableMetaList);
+        String servicePackage = "io.jboot.codegen.test.service";
+        new JbootServiceInterfaceGenerator(servicePackage, modelPackage).generate();
+        new JbootServiceImplGenerator(servicePackage , modelPackage).setImplName("provider").generate();
 
     }
 }

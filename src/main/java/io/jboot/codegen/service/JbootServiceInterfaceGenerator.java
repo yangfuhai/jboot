@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,9 +19,11 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.generator.BaseModelGenerator;
+import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
+import io.jboot.codegen.CodeGenHelpler;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -33,6 +35,9 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
     private String modelPacket;
     private String basePackage;
 
+    private MetaBuilder metaBuilder;
+
+
     public JbootServiceInterfaceGenerator(String basePackage, String modelPacket) {
         super(basePackage, PathKit.getWebRootPath() + "/src/main/java/" + basePackage.replace(".", "/"));
 
@@ -40,7 +45,24 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
         this.modelPacket = modelPacket;
         this.basePackage = basePackage;
         this.template = "io/jboot/codegen/service/service_template.jf";
+        this.metaBuilder = CodeGenHelpler.createMetaBuilder();
 
+    }
+
+    public void generate() {
+        generate(metaBuilder.build());
+    }
+
+    /**
+     * 设置需要被移除的表名前缀
+     * 例如表名  "tb_account"，移除前缀 "tb_" 后变为 "account"
+     */
+    public void setRemovedTableNamePrefixes(String... prefixes) {
+        metaBuilder.setRemovedTableNamePrefixes(prefixes);
+    }
+
+    public void addExcludedTable(String... excludedTables) {
+        metaBuilder.addExcludedTable(excludedTables);
     }
 
     @Override
