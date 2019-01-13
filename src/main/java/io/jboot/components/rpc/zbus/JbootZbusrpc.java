@@ -35,7 +35,7 @@ public class JbootZbusrpc extends JbootrpcBase {
 
         serviceBootstrap = new JbootServiceBootstrap();
         clientBootstrap = new JbootClientBootstrap();
-        clientBootstrap.serviceAddress(getRpcConfig().getRegistryAddress());
+        clientBootstrap.serviceAddress(getConfig().getRegistryAddress());
         clientBootstrap.serviceName(zbusConfig.getServiceName());
         if (StrUtil.isNotBlank(zbusConfig.getServiceToken())) {
             clientBootstrap.serviceToken(zbusConfig.getServiceToken());
@@ -45,7 +45,7 @@ public class JbootZbusrpc extends JbootrpcBase {
 
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
-        String group = StrUtil.isBlank(serviceConfig.getGroup()) ? getRpcConfig().getDefaultGroup() : serviceConfig.getGroup();
+        String group = StrUtil.isBlank(serviceConfig.getGroup()) ? getConfig().getDefaultGroup() : serviceConfig.getGroup();
         return clientBootstrap.serviceObtain(serviceClass, group, serviceConfig.getVersion());
     }
 
@@ -58,7 +58,7 @@ public class JbootZbusrpc extends JbootrpcBase {
     @Override
     public void onInited() {
         try {
-            serviceBootstrap.serviceAddress(getRpcConfig().getRegistryAddress());
+            serviceBootstrap.serviceAddress(getConfig().getRegistryAddress());
             serviceBootstrap.serviceName(zbusConfig.getServiceName());
             if (StrUtil.isNotBlank(zbusConfig.getServiceToken())) {
                 serviceBootstrap.serviceToken(zbusConfig.getServiceToken());

@@ -36,24 +36,23 @@ public class JbootMotanrpc extends JbootrpcBase {
     private static final Map<String, Object> singletons = new ConcurrentHashMap<>();
 
     public JbootMotanrpc() {
-
         registryConfig = new RegistryConfig();
-        registryConfig.setCheck(String.valueOf(getRpcConfig().isRegistryCheck()));
+        registryConfig.setCheck(String.valueOf(getConfig().isRegistryCheck()));
 
         /**
          * 注册中心的调用模式
          */
-        if (getRpcConfig().isRegistryCallMode()) {
+        if (getConfig().isRegistryCallMode()) {
 
-            registryConfig.setRegProtocol(getRpcConfig().getRegistryType());
-            registryConfig.setAddress(getRpcConfig().getRegistryAddress());
-            registryConfig.setName(getRpcConfig().getRegistryName());
+            registryConfig.setRegProtocol(getConfig().getRegistryType());
+            registryConfig.setAddress(getConfig().getRegistryAddress());
+            registryConfig.setName(getConfig().getRegistryName());
         }
 
         /**
          * 直连模式
          */
-        else if (getRpcConfig().isDirectCallMode()) {
+        else if (getConfig().isDirectCallMode()) {
             registryConfig.setRegProtocol("local");
         }
 
@@ -62,12 +61,12 @@ public class JbootMotanrpc extends JbootrpcBase {
         protocolConfig.setId("motan");
         protocolConfig.setName("motan");
 
-        if (StrUtil.isNotBlank(getRpcConfig().getProxy())) {
-            protocolConfig.setFilter(getRpcConfig().getProxy());
+        if (StrUtil.isNotBlank(getConfig().getProxy())) {
+            protocolConfig.setFilter(getConfig().getProxy());
         }
 
-        if (StrUtil.isNotBlank(getRpcConfig().getSerialization())) {
-            protocolConfig.setSerialization(getRpcConfig().getSerialization());
+        if (StrUtil.isNotBlank(getConfig().getSerialization())) {
+            protocolConfig.setSerialization(getConfig().getSerialization());
         }
 
     }
@@ -88,25 +87,25 @@ public class JbootMotanrpc extends JbootrpcBase {
         // 设置接口及实现类
         refererConfig.setProtocol(protocolConfig);
         refererConfig.setInterface(serviceClass);
-        refererConfig.setCheck(String.valueOf(getRpcConfig().isConsumerCheck()));
+        refererConfig.setCheck(String.valueOf(getConfig().isConsumerCheck()));
 
         initInterface(refererConfig, serviceConfig);
 
         /**
          * 注册中心模式
          */
-        if (getRpcConfig().isRegistryCallMode()) {
+        if (getConfig().isRegistryCallMode()) {
             refererConfig.setRegistry(registryConfig);
         }
 
         /**
          * 直连模式
          */
-        else if (getRpcConfig().isDirectCallMode()) {
-            if (StrUtil.isBlank(getRpcConfig().getDirectUrl())) {
+        else if (getConfig().isDirectCallMode()) {
+            if (StrUtil.isBlank(getConfig().getDirectUrl())) {
                 throw new JbootIllegalConfigException("directUrl must not be blank if you use direct call mode，please config jboot.rpc.directUrl value");
             }
-            refererConfig.setDirectUrl(getRpcConfig().getDirectUrl());
+            refererConfig.setDirectUrl(getConfig().getDirectUrl());
         }
 
 
@@ -134,14 +133,14 @@ public class JbootMotanrpc extends JbootrpcBase {
             motanServiceConfig.setInterface(interfaceClass);
             motanServiceConfig.setRef((T) object);
 
-            if (StrUtil.isNotBlank(getRpcConfig().getHost())) {
-                motanServiceConfig.setHost(getRpcConfig().getHost());
+            if (StrUtil.isNotBlank(getConfig().getHost())) {
+                motanServiceConfig.setHost(getConfig().getHost());
             }
 
 
             motanServiceConfig.setShareChannel(true);
             motanServiceConfig.setExport(String.format("motan:%s", serviceConfig.getPort()));
-            motanServiceConfig.setCheck(String.valueOf(getRpcConfig().isProviderCheck()));
+            motanServiceConfig.setCheck(String.valueOf(getConfig().isProviderCheck()));
 
             initInterface(motanServiceConfig, serviceConfig);
 

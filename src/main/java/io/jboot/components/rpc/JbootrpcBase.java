@@ -16,14 +16,14 @@
 package io.jboot.components.rpc;
 
 
-import io.jboot.Jboot;
+import io.jboot.app.config.JbootConfigManager;
 
 public abstract class JbootrpcBase implements Jbootrpc {
 
-    private JbootrpcConfig rpcConfig = Jboot.config(JbootrpcConfig.class);
+    private final JbootrpcConfig config = JbootConfigManager.me().get(JbootrpcConfig.class);
 
-    public JbootrpcConfig getRpcConfig() {
-        return rpcConfig;
+    public JbootrpcConfig getConfig() {
+        return config;
     }
 
     @Override

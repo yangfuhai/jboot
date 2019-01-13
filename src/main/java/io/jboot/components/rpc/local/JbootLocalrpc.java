@@ -26,6 +26,10 @@ public class JbootLocalrpc extends JbootrpcBase {
 
     Map<Class, Object> objectMap = new ConcurrentHashMap<>();
 
+    public JbootLocalrpc() {
+        
+    }
+
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
         return (T) objectMap.get(serviceClass);

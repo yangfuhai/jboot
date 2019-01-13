@@ -50,12 +50,12 @@ public class JbootrpcManager {
             if (!defaultConfig.isConfigOk()) {
                 throw new JbootRpcException("jboot rpc config is error, please config jboot.rpc.type = xxx in jboot.properties");
             }
-            jbootrpc = createJbootrpc(defaultConfig);
+            jbootrpc = createJbootrpc(defaultConfig.getType());
         }
         return jbootrpc;
     }
 
-    
+
     private static Class[] default_excludes = new Class[]{
             JbootEventListener.class,
             JbootmqMessageListener.class,
@@ -114,9 +114,9 @@ public class JbootrpcManager {
     }
 
 
-    public Jbootrpc createJbootrpc(JbootrpcConfig config) {
+    public Jbootrpc createJbootrpc(String type) {
 
-        switch (config.getType()) {
+        switch (type) {
             case JbootrpcConfig.TYPE_MOTAN:
                 return new JbootMotanrpc();
             case JbootrpcConfig.TYPE_LOCAL:
@@ -126,7 +126,7 @@ public class JbootrpcManager {
             case JbootrpcConfig.TYPE_ZBUS:
                 return new JbootZbusrpc();
             default:
-                return JbootSpiLoader.load(Jbootrpc.class, config.getType());
+                return JbootSpiLoader.load(Jbootrpc.class, type);
         }
     }
 

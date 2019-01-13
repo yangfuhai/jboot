@@ -40,26 +40,26 @@ public class JbootDubborpc extends JbootrpcBase {
         dubboConfig = Jboot.config(JbootDubborpcConfig.class);
 
         registryConfig = new RegistryConfig();
-        registryConfig.setCheck(getRpcConfig().isRegistryCheck());
+        registryConfig.setCheck(getConfig().isRegistryCheck());
 
-        if (getRpcConfig().getRegistryFile() != null) {
-            registryConfig.setFile(getRpcConfig().getRegistryFile());
+        if (getConfig().getRegistryFile() != null) {
+            registryConfig.setFile(getConfig().getRegistryFile());
         }
 
         /**
          * 注册中心的调用模式
          */
-        if (getRpcConfig().isRegistryCallMode()) {
+        if (getConfig().isRegistryCallMode()) {
 
-            registryConfig.setProtocol(getRpcConfig().getRegistryType());
-            registryConfig.setAddress(getRpcConfig().getRegistryAddress());
-            registryConfig.setUsername(getRpcConfig().getRegistryUserName());
-            registryConfig.setPassword(getRpcConfig().getRegistryPassword());
+            registryConfig.setProtocol(getConfig().getRegistryType());
+            registryConfig.setAddress(getConfig().getRegistryAddress());
+            registryConfig.setUsername(getConfig().getRegistryUserName());
+            registryConfig.setPassword(getConfig().getRegistryPassword());
         }
         /**
          * 直连模式
          */
-        else if (getRpcConfig().isDirectCallMode()) {
+        else if (getConfig().isDirectCallMode()) {
             registryConfig.setAddress(RegistryConfig.NO_AVAILABLE);
         }
     }
@@ -97,25 +97,25 @@ public class JbootDubborpc extends JbootrpcBase {
         ReferenceConfig<T> reference = new ReferenceConfig<T>();
         reference.setApplication(createApplicationConfig(serviceConfig.getGroup()));
         reference.setInterface(serviceClass);
-        reference.setCheck(getRpcConfig().isConsumerCheck());
+        reference.setCheck(getConfig().isConsumerCheck());
 
         initReference(reference, serviceConfig);
 
         /**
          * 注册中心的调用模式
          */
-        if (getRpcConfig().isRegistryCallMode()) {
+        if (getConfig().isRegistryCallMode()) {
             reference.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
         }
 
         /**
          * 直连调用模式
          */
-        else if (getRpcConfig().isDirectCallMode()) {
-            if (StrUtil.isBlank(getRpcConfig().getDirectUrl())) {
+        else if (getConfig().isDirectCallMode()) {
+            if (StrUtil.isBlank(getConfig().getDirectUrl())) {
                 throw new JbootIllegalConfigException("directUrl must not be blank if you use direct call mode，please config jboot.rpc.directUrl value");
             }
-            reference.setUrl(getRpcConfig().getDirectUrl());
+            reference.setUrl(getConfig().getDirectUrl());
         }
 
 
@@ -135,12 +135,12 @@ public class JbootDubborpc extends JbootrpcBase {
 
         ProtocolConfig protocolConfig = dubboConfig.newProtocolConfig();
 
-        if (protocolConfig.getHost() == null && getRpcConfig().getHost() != null) {
-            protocolConfig.setHost(getRpcConfig().getHost());
+        if (protocolConfig.getHost() == null && getConfig().getHost() != null) {
+            protocolConfig.setHost(getConfig().getHost());
         }
 
-        if (protocolConfig.getSerialization() == null && getRpcConfig().getSerialization() != null) {
-            protocolConfig.setSerialization(getRpcConfig().getSerialization());
+        if (protocolConfig.getSerialization() == null && getConfig().getSerialization() != null) {
+            protocolConfig.setSerialization(getConfig().getSerialization());
         }
 
         protocolConfig.setPort(serviceConfig.getPort());
