@@ -57,7 +57,7 @@ public class RenderHelpler {
     }
 
 
-    public static String processCDN(String content) {
+    public static String processCDN(String content, String domain) {
         if (StrUtil.isBlank(content)) {
             return content;
         }
@@ -66,23 +66,20 @@ public class RenderHelpler {
         Document doc = Jsoup.parse(content);
 
         Elements jsElements = doc.select("script[src]");
-        replace(jsElements, "src");
+        replace(jsElements, "src", domain);
 
         Elements imgElements = doc.select("img[src]");
-        replace(imgElements, "src");
+        replace(imgElements, "src", domain);
 
-        Elements lazyElements = doc.select("img[data-original]");
-        replace(lazyElements, "data-original");
 
         Elements linkElements = doc.select("link[href]");
-        replace(linkElements, "href");
+        replace(linkElements, "href", domain);
 
         return doc.toString();
 
     }
 
-    private static void replace(Elements elements, String attrName) {
-        String cdnDomain = Jboot.config(JbootRenderConfig.class).getCdn();
+    private static void replace(Elements elements, String attrName, String domain) {
         Iterator<Element> iterator = elements.iterator();
         while (iterator.hasNext()) {
 
@@ -97,7 +94,7 @@ public class RenderHelpler {
                 continue;
             }
 
-            url = cdnDomain + url;
+            url = domain + url;
 
             element.attr(attrName, url);
         }

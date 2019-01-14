@@ -18,20 +18,25 @@ package io.jboot.web.render;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.utils.StrUtil;
 
-@ConfigModel(prefix = "jboot.render")
-public class JbootRenderConfig {
+@ConfigModel(prefix = "jboot.web.cdn")
+public class JbootWebCdnConfig {
 
-    private String cdn;
+    private boolean enable = false;
+    private String domain;
 
-    public String getCdn() {
-        return cdn;
+    public boolean isEnable() {
+        return enable && StrUtil.isNotBlank(domain);
     }
 
-    public void setCdn(String cdn) {
-        this.cdn = cdn;
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
-    public boolean isEnableCdn() {
-        return StrUtil.isNotBlank(cdn);
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 }

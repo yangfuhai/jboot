@@ -38,11 +38,11 @@ public class JbootRender extends Render {
         return engine;
     }
 
-    private JbootRenderConfig config;
+    private JbootWebCdnConfig config;
 
     public JbootRender(String view) {
         this.view = view;
-        this.config = Jboot.config(JbootRenderConfig.class);
+        this.config = Jboot.config(JbootWebCdnConfig.class);
     }
 
     public String getContentType() {
@@ -60,7 +60,7 @@ public class JbootRender extends Render {
         }
 
         String html = getEngine().getTemplate(view).renderToString(data);
-        html = config.isEnableCdn() ? RenderHelpler.processCDN(html) : html;
+        html = config.isEnable() ? RenderHelpler.processCDN(html, config.getDomain()) : html;
 
         RenderHelpler.actionCacheExec(html, contentType);
 
