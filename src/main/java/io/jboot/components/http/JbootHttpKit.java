@@ -164,7 +164,7 @@ public class JbootHttpKit {
         JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_GET);
         request.setDownloadFile(toFile);
         request.addHeaders(headers);
-        return JbootHttpManager.me().getJbootHttp().handle(request).isError();
+        return JbootHttpManager.me().getJbootHttp().handle(request).getError() == null;
     }
 
     /**
