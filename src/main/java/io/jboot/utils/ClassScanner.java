@@ -35,7 +35,6 @@ public class ClassScanner {
 
     private static final Set<Class> appClasses = new HashSet<>();
 
-
     public static final Set<String> includeJars = new HashSet<>();
 
     public static void addScanJarPrefix(String prefix) {
@@ -85,6 +84,7 @@ public class ClassScanner {
         excludeJars.add("commons-configuration");
         excludeJars.add("commons-validator");
         excludeJars.add("commons-email");
+        excludeJars.add("commons-text");
         excludeJars.add("hessian-");
         excludeJars.add("metrics-");
         excludeJars.add("javapoet-");
@@ -167,6 +167,13 @@ public class ClassScanner {
         excludeJars.add("HdrHistogram-");
         excludeJars.add("jdom-");
         excludeJars.add("rxjava-");
+        excludeJars.add("jersey-");
+        excludeJars.add("stax-");
+        excludeJars.add("stax2-");
+        excludeJars.add("jettison-");
+        excludeJars.add("commonmark-");
+        excludeJars.add("jaxb-");
+        excludeJars.add("json-20");
     }
 
     public static <T> List<Class<T>> scanSubClass(Class<T> pclazz) {
