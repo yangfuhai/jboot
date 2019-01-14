@@ -41,11 +41,6 @@ public class ClassScanner {
         includeJars.add(prefix);
     }
 
-    static {
-        includeJars.add("jboot-");
-    }
-
-
     public static final Set<String> excludeJars = new HashSet<>();
 
     public static void addUnscanJarPrefix(String prefix) {
