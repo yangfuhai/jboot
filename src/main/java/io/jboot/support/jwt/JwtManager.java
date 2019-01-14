@@ -17,6 +17,7 @@ package io.jboot.support.jwt;
 
 import com.jfinal.json.FastJson;
 import io.jboot.Jboot;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 import io.jsonwebtoken.*;
 
@@ -93,6 +94,9 @@ public class JwtManager {
 
     public String createJwtToken(Map map) {
 
+        if (!jwtConfig.isEnable()) {
+            throw new JbootException("can not create jwt,please config jboot.web.jwt.secret in jboot.properties.");
+        }
 
         SecretKey secretKey = generalKey();
 
