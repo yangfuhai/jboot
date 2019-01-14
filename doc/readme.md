@@ -19,6 +19,7 @@
 - [项目部署](./docs/deploy.md)
 - [Jboot与Docker](./docs/docker.md)
 - [Jboot与Devops](./docs/devops.md)
+- [1.x 升级到 2.x 教程](./docs/upgrade.md)
 - [交流社区、QQ群和微信群](./docs/communication.md)
 - 第三方组件的支持
   - [redis](./docs/shiro.md)

@@ -63,6 +63,7 @@ public class HelloWorldApp {
 - [项目部署](./doc/docs/deploy.md)
 - [Jboot与Docker](./doc/docs/docker.md)
 - [Jboot与Devops](./doc/docs/devops.md)
+- [1.x 升级到 2.x 教程](./doc/docs/upgrade.md)
 - [交流社区、QQ群和微信群](./doc/docs/communication.md)
 - 第三方组件的支持
   - [redis](./doc/docs/shiro.md)
@@ -70,6 +71,7 @@ public class HelloWorldApp {
   - [jwt](./doc/docs/jwt.md)
   - [metrics]()
   - [swagger]()
+
 
 ## 微信交流群
 
