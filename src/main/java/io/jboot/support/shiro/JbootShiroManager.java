@@ -23,7 +23,7 @@ import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.utils.ControllerUtils;
+import io.jboot.web.utils.ControllerUtil;
 import org.apache.shiro.authz.annotation.*;
 
 import java.lang.annotation.Annotation;
@@ -66,7 +66,7 @@ public class JbootShiroManager {
      * 初始化 invokers 变量
      */
     private void initInvokers(List<Routes.Route> routes) {
-        Set<String> excludedMethodName = ControllerUtils.buildExcludedMethodName();
+        Set<String> excludedMethodName = ControllerUtil.buildExcludedMethodName();
 
         for (Routes.Route route : routes) {
             Class<? extends Controller> controllerClass = route.getControllerClass();
@@ -90,7 +90,7 @@ public class JbootShiroManager {
                 Annotation[] allAnnotations = ArrayUtil.concat(controllerAnnotations, methodAnnotations);
 
 
-                String actionKey = ControllerUtils.createActionKey(controllerClass, method, controllerKey);
+                String actionKey = ControllerUtil.createActionKey(controllerClass, method, controllerKey);
                 ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
 
 
