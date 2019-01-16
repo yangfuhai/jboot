@@ -12,7 +12,7 @@ import java.util.Set;
  * @version V1.0
  * @Package io.jboot.web.utils
  */
-public class ControllerUtils {
+public class ControllerUtil {
 
     private static final String SLASH = "/";
 
