@@ -19,6 +19,7 @@ import com.jfinal.plugin.activerecord.Model;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.model.JbootModelConfig;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtil;
@@ -116,8 +117,8 @@ public class TableInfoManager {
 
             TableInfo tableInfo = new TableInfo();
             tableInfo.setModelClass(clazz);
-            tableInfo.setPrimaryKey(tb.primaryKey());
-            tableInfo.setTableName(tb.tableName());
+            tableInfo.setPrimaryKey(AnnotationUtil.get(tb.primaryKey()));
+            tableInfo.setTableName(AnnotationUtil.get(tb.tableName()));
 
 
             tableInfos.add(tableInfo);
