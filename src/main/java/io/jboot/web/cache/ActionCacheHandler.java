@@ -21,6 +21,7 @@ import com.jfinal.handler.Handler;
 import com.jfinal.log.Log;
 import com.jfinal.render.RenderManager;
 import io.jboot.Jboot;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.JbootWebConfig;
@@ -80,7 +81,7 @@ public class ActionCacheHandler extends Handler {
      * @param actionClear
      */
     private void clearActionCache(Action action, ActionCacheClear actionClear) {
-        String[] cacheNames = actionClear.value();
+        String[] cacheNames = AnnotationUtil.get(actionClear.value());
         if (ArrayUtil.isNullOrEmpty(cacheNames)) {
             throw new IllegalArgumentException("ActionCacheClear annotation argument must not be empty " +
                     "in " + action.getControllerClass().getName() + "." + action.getMethodName());
@@ -102,7 +103,7 @@ public class ActionCacheHandler extends Handler {
     private void exec(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, EnableActionCache actionCacheEnable) {
 
         //缓存名称
-        String cacheName = actionCacheEnable.group();
+        String cacheName = AnnotationUtil.get(actionCacheEnable.group());
         if (StrUtil.isBlank(cacheName)) {
             throw new IllegalArgumentException("EnableActionCache group must not be empty " +
                     "in " + action.getControllerClass().getName() + "." + action.getMethodName());
