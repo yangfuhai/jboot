@@ -20,6 +20,7 @@ import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
@@ -182,23 +183,25 @@ class Utils {
 
 
     static void doCacheEvict(Object[] arguments, Class targetClass, Method method, CacheEvict evict) {
-        String unlessString = evict.unless();
-        if (Utils.isUnless(unlessString, method, arguments)) {
+        String unless = AnnotationUtil.get(evict.unless());
+        if (Utils.isUnless(unless, method, arguments)) {
             return;
         }
 
-        String cacheName = evict.name();
+        String cacheName = AnnotationUtil.get(evict.name());
         if (StrUtil.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
                     ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }
 
-        if ("*".equals(evict.key().trim())) {
+        String cacheKey = AnnotationUtil.get(evict.key());
+
+        if ("*".equals(cacheKey)) {
             Jboot.getCache().removeAll(cacheName);
             return;
         }
 
-        String cacheKey = Utils.buildCacheKey(evict.key(), targetClass, method, arguments);
+        cacheKey = Utils.buildCacheKey(cacheKey, targetClass, method, arguments);
         Jboot.getCache().remove(cacheName, cacheKey);
     }
 

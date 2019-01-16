@@ -21,6 +21,7 @@ import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.components.cache.annotation.CachePut;
 import io.jboot.exception.JbootException;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -46,20 +47,20 @@ public class JbootCachePutInterceptor implements Interceptor {
 
         Object result = inv.getReturnValue();
 
-        String unlessString = cachePut.unless();
-        if (Utils.isUnless(unlessString, method, inv.getArgs())) {
+        String unless = AnnotationUtil.get(cachePut.unless());
+        if (Utils.isUnless(unless, method, inv.getArgs())) {
             return;
         }
 
         Class targetClass = inv.getTarget().getClass();
-        String cacheName = cachePut.name();
+        String cacheName = AnnotationUtil.get(cachePut.name());
 
         if (StrUtil.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
                     ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }
 
-        String cacheKey = Utils.buildCacheKey(cachePut.key(), targetClass, method, inv.getArgs());
+        String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cachePut.key()), targetClass, method, inv.getArgs());
 
         if (cachePut.liveSeconds() > 0) {
             Jboot.getCache().put(cacheName, cacheKey, result, cachePut.liveSeconds());
