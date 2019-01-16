@@ -23,6 +23,7 @@ import io.jboot.components.schedule.annotation.Cron;
 import io.jboot.components.schedule.annotation.EnableDistributedRunnable;
 import io.jboot.components.schedule.annotation.FixedDelay;
 import io.jboot.components.schedule.annotation.FixedRate;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ClassScanner;
 import it.sauronsoftware.cron4j.ProcessTask;
@@ -106,14 +107,15 @@ public class JbootScheduleManager {
         List<Class> cronClasses = ClassScanner.scanClassByAnnotation(Cron.class, true);
         for (Class clazz : cronClasses) {
             Cron cron = (Cron) clazz.getAnnotation(Cron.class);
+            String value = AnnotationUtil.get(cron.value());
             if (Runnable.class.isAssignableFrom(clazz)) {
                 Runnable runnable = (Runnable) ClassUtil.newInstance(clazz);
                 Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
-                cron4jPlugin.addTask(cron.value(), executeRunnable, cron.daemon());
+                cron4jPlugin.addTask(value, executeRunnable, cron.daemon());
             } else if (ProcessTask.class.isAssignableFrom(clazz)) {
-                cron4jPlugin.addTask(cron.value(), (ProcessTask) ClassUtil.newInstance(clazz), cron.daemon());
+                cron4jPlugin.addTask(value, (ProcessTask) ClassUtil.newInstance(clazz), cron.daemon());
             } else if (Task.class.isAssignableFrom(clazz)) {
-                cron4jPlugin.addTask(cron.value(), (Task) ClassUtil.newInstance(clazz), cron.daemon());
+                cron4jPlugin.addTask(value, (Task) ClassUtil.newInstance(clazz), cron.daemon());
             } else {
                 throw new RuntimeException("annotation Cron can not use for class : " + clazz);
             }
