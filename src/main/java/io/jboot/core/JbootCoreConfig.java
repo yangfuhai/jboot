@@ -111,11 +111,11 @@ public class JbootCoreConfig extends JFinalConfig {
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
                 RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
-                if (mapping == null || mapping.value() == null) {
-                    continue;
-                }
+                if (mapping == null) continue;
 
                 String value = AnnotationUtil.get(mapping.value());
+                if (value == null) continue;
+
                 String viewPath = AnnotationUtil.get(mapping.viewPath());
 
                 if (StrKit.notBlank(viewPath)) {
