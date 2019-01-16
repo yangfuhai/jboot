@@ -17,6 +17,7 @@ package io.jboot.components.event;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.components.event.annotation.EventConfig;
@@ -99,8 +100,8 @@ public class JbootEventManager {
             return;
         }
 
-        String[] actions = listenerAnnotation.action();
-        if (actions == null || actions.length == 0) {
+        String[] actions = AnnotationUtil.get(listenerAnnotation.action());
+        if (actions == null) {
             log.warn("listenerClass[" + listenerAnnotation + "] register fail, because action is null or blank.");
             return;
         }

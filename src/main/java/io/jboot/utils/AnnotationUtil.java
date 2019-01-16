@@ -21,5 +21,17 @@ public class AnnotationUtil {
         return value;
     }
 
+    public static String[] get(String[] value) {
+        if (ArrayUtil.isNullOrEmpty(value)) {
+            return null;
+        }
+
+        String[] rets = new String[value.length];
+        for (int i = 0; i < rets.length; i++) {
+            rets[i] = get(value[i]);
+        }
+        return rets;
+    }
+
 
 }
