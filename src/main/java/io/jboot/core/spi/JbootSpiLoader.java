@@ -15,6 +15,8 @@
  */
 package io.jboot.core.spi;
 
+import io.jboot.utils.AnnotationUtil;
+
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
@@ -56,11 +58,11 @@ public class JbootSpiLoader {
                 continue;
             }
 
-            if (spiName.equals(spiConfig.value())) {
+            if (spiName.equals(AnnotationUtil.get(spiConfig.value()))) {
                 return returnObject;
             }
         }
-        
+
         return null;
     }
 }
