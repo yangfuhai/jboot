@@ -22,13 +22,13 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.FIELD})
 public @interface RPCInject {
 
-    int port() default 0;
+    String port() default "";
 
-    int timeout() default -1;
+    String timeout() default "";
 
-    int retries() default -1;
+    String retries() default "";
 
-    int actives() default -1;
+    String actives() default "";
 
     String group() default "";
 
@@ -36,8 +36,8 @@ public @interface RPCInject {
 
     String loadbalance() default "";
 
-    boolean async() default false;
+    String async() default "false";
 
-    boolean check() default false;
+    String check() default "false";
 
 }

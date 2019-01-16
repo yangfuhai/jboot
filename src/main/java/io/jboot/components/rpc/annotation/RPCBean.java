@@ -22,11 +22,11 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface RPCBean {
 
-    int port() default 0;
+    String port() default "";
 
-    int timeout() default -1;
+    String timeout() default "";
 
-    int actives() default -1;
+    String actives() default "";
 
     String group() default "";
 

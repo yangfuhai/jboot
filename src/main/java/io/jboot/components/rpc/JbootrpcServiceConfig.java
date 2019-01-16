@@ -18,7 +18,7 @@ package io.jboot.components.rpc;
 import io.jboot.Jboot;
 import io.jboot.components.rpc.annotation.RPCBean;
 import io.jboot.components.rpc.annotation.RPCInject;
-import io.jboot.utils.StrUtil;
+import io.jboot.utils.AnnotationUtil;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -63,64 +63,89 @@ public class JbootrpcServiceConfig implements Serializable {
         this.filter = defaultConfig.getFilter();
     }
 
-    public JbootrpcServiceConfig(RPCInject rpcInject) {
+    public JbootrpcServiceConfig(RPCInject inject) {
         this();
 
-        if (rpcInject.port() > 0) {
-            this.port = rpcInject.port();
+        int port = AnnotationUtil.getInt(inject.port(), -1);
+        int timeout = AnnotationUtil.getInt(inject.timeout(), -1);
+        int retries = AnnotationUtil.getInt(inject.retries(), -1);
+        int actives = AnnotationUtil.getInt(inject.actives(), -1);
+
+        String group = AnnotationUtil.get(inject.group());
+        String version = AnnotationUtil.get(inject.version());
+        String loadbalance = AnnotationUtil.get(inject.loadbalance());
+
+        Boolean async = AnnotationUtil.getBool(inject.async());
+        Boolean check = AnnotationUtil.getBool(inject.check());
+
+
+        if (port >= 0) {
+            this.port = port;
         }
 
-        if (StrUtil.isNotBlank(rpcInject.group())) {
-            this.group = rpcInject.group();
+        if (retries >= 0) {
+            this.retries = retries;
         }
 
-        if (StrUtil.isNotBlank(rpcInject.version())) {
-            this.version = rpcInject.version();
+        if (actives >= 0) {
+            this.actives = actives;
         }
 
-        if (rpcInject.retries() >= 0) {
-            this.retries = rpcInject.retries();
+        if (timeout >= 0) {
+            this.timeout = timeout;
         }
 
-        if (rpcInject.actives() >= 0) {
-            this.actives = rpcInject.actives();
+
+        if (group != null) {
+            this.group = group;
         }
 
-        if (StrUtil.isNotBlank(rpcInject.loadbalance())) {
-            this.loadbalance = rpcInject.loadbalance();
+        if (version != null) {
+            this.version = version;
         }
 
-        if (StrUtil.isNotBlank(rpcInject.async())) {
-            this.async = rpcInject.async(); //Boolean.getBoolean(rpcInject.async());
+        if (loadbalance != null) {
+            this.loadbalance = loadbalance;
         }
 
-        if (StrUtil.isNotBlank(rpcInject.check())) {
-            this.check = rpcInject.check(); //Boolean.getBoolean(rpcInject.check());
+        if (async != null) {
+            this.async = async;
+        }
+
+        if (check != null) {
+            this.check = check;
         }
 
     }
 
-    public JbootrpcServiceConfig(RPCBean annotation) {
+    public JbootrpcServiceConfig(RPCBean bean) {
         this();
 
-        if (annotation.port() > 0) {
-            this.port = annotation.port();
+        int port = AnnotationUtil.getInt(bean.port(), -1);
+        int timeout = AnnotationUtil.getInt(bean.timeout(), -1);
+        int actives = AnnotationUtil.getInt(bean.actives(), -1);
+
+        String group = AnnotationUtil.get(bean.group());
+        String version = AnnotationUtil.get(bean.version());
+
+        if (port >= 0) {
+            this.port = port;
         }
 
-        if (StrUtil.isNotBlank(annotation.group())) {
-            this.group = annotation.group();
+        if (actives >= 0) {
+            this.actives = actives;
         }
 
-        if (StrUtil.isNotBlank(annotation.version())) {
-            this.version = annotation.version();
+        if (timeout >= 0) {
+            this.timeout = timeout;
         }
 
-        if (annotation.actives() >= 0) {
-            this.actives = annotation.actives();
+        if (group != null) {
+            this.group = group;
         }
 
-        if (annotation.timeout() >= 0) {
-            this.timeout = annotation.timeout();
+        if (version != null) {
+            this.version = version;
         }
 
     }
