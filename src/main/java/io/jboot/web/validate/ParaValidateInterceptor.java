@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
@@ -40,7 +41,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     public void intercept(FixedInvocation inv) {
 
         Method method = inv.getMethod();
-        
+
         EmptyValidate emptyParaValidate = method.getAnnotation(EmptyValidate.class);
         if (emptyParaValidate != null && !validateEmpty(inv, emptyParaValidate)) {
             return;
@@ -76,7 +77,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
      * @return
      */
     private boolean validateCaptache(FixedInvocation inv, CaptchaValidate captchaValidate) {
-        String formName = captchaValidate.form();
+        String formName = AnnotationUtil.get(captchaValidate.form());
         if (StrUtil.isBlank(formName)) {
             throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
         }
@@ -88,31 +89,35 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             return true;
         }
 
-        switch (captchaValidate.renderType()) {
+        String message = AnnotationUtil.get(captchaValidate.message());
+        String flasMessage = AnnotationUtil.get(captchaValidate.flashMessage());
+        String renderType = AnnotationUtil.get(captchaValidate.renderType());
+
+        switch (renderType) {
             case ValidateRenderType.DEFAULT:
                 if (RequestUtil.isAjaxRequest(controller.getRequest())) {
-                    controller.renderJson(Ret.fail("message", captchaValidate.flashMessage()).set("code", DEFAULT_ERROR_CODE).set("form", formName));
+                    controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
                 } else {
                     controller.renderError(404);
                 }
                 break;
             case ValidateRenderType.JSON:
-                controller.renderJson(Ret.fail("message", captchaValidate.message()).set("code", DEFAULT_ERROR_CODE).set("form", formName));
+                controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
                 break;
             case ValidateRenderType.REDIRECT:
                 if (controller instanceof JbootController) {
-                    ((JbootController) controller).setFlashAttr("message", captchaValidate.flashMessage());
+                    ((JbootController) controller).setFlashAttr("message", flasMessage);
                 }
-                controller.redirect(captchaValidate.message());
+                controller.redirect(message);
                 break;
             case ValidateRenderType.RENDER:
-                controller.render(captchaValidate.message());
+                controller.render(message);
                 break;
             case ValidateRenderType.TEXT:
-                controller.renderText(captchaValidate.message());
+                controller.renderText(message);
                 break;
             default:
-                throw new IllegalArgumentException("can not process render  : " + captchaValidate.renderType());
+                throw new IllegalArgumentException("can not process render  : " + renderType);
         }
 
         return false;
@@ -135,8 +140,8 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         parseMultpartRequestIfNecessary(inv);
 
         for (Form form : forms) {
-            String formName = form.name();
-            String formType = form.type();
+            String formName = AnnotationUtil.get(form.name());
+            String formType = AnnotationUtil.get(form.type());
             if (StrUtil.isBlank(formName)) {
                 throw new IllegalArgumentException("@Form.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
             }
@@ -160,7 +165,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             }
 
             if (value == null || value.trim().length() == 0) {
-                renderError(inv.getController(), formName, form.message(), emptyParaValidate);
+                renderError(inv.getController(), formName, AnnotationUtil.get(form.message()), emptyParaValidate);
                 return false;
             }
         }
@@ -170,7 +175,10 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
 
     private void renderError(Controller controller, String formName, String message, EmptyValidate emptyParaValidate) {
-        switch (emptyParaValidate.renderType()) {
+        String validateMessage = AnnotationUtil.get(emptyParaValidate.message());
+        String renderType = AnnotationUtil.get(emptyParaValidate.renderType());
+
+        switch (renderType) {
             case ValidateRenderType.DEFAULT:
                 if (RequestUtil.isAjaxRequest(controller.getRequest())) {
                     controller.renderJson(Ret.fail("message", message).set("code", DEFAULT_ERROR_CODE).set("form", formName));
@@ -185,19 +193,18 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                 if (controller instanceof JbootController) {
                     ((JbootController) controller).setFlashAttr("message", message);
                 }
-                controller.redirect(emptyParaValidate.message());
+                controller.redirect(validateMessage);
                 break;
             case ValidateRenderType.RENDER:
-                controller.render(emptyParaValidate.message());
+                controller.render(validateMessage);
                 break;
             case ValidateRenderType.TEXT:
-                controller.renderText(emptyParaValidate.message());
+                controller.renderText(validateMessage);
                 break;
             default:
-                throw new IllegalArgumentException("can not process render : " + emptyParaValidate.renderType());
+                throw new IllegalArgumentException("can not process render : " + renderType);
         }
     }
-
 
 
 }

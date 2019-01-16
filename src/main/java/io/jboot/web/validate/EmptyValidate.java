@@ -30,7 +30,5 @@ public @interface EmptyValidate {
 
     String message() default "";
 
-    String flashMessage() default "";
-
     String renderType() default ValidateRenderType.DEFAULT;
 }
