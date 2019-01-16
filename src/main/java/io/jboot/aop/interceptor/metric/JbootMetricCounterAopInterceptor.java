@@ -21,6 +21,7 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.support.metric.annotation.EnableMetricCounter;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -36,15 +37,18 @@ public class JbootMetricCounterAopInterceptor implements Interceptor {
 
         EnableMetricCounter annotation = inv.getMethod().getAnnotation(EnableMetricCounter.class);
 
-        if (annotation == null){
+        if (annotation == null) {
             inv.invoke();
             return;
         }
 
         Class targetClass = ClassUtil.getUsefulClass(inv.getTarget().getClass());
-        String name = StrUtil.isBlank(annotation.value())
+
+        String value = AnnotationUtil.get(annotation.value());
+
+        String name = StrUtil.isBlank(value)
                 ? targetClass.getName() + "." + inv.getMethod().getName() + suffix
-                : annotation.value();
+                : value;
 
         Counter counter = Jboot.getMetric().counter(name);
         counter.inc();

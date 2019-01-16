@@ -20,6 +20,7 @@ import com.codahale.metrics.Meter;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.support.metric.annotation.EnableMetricMeter;
 import io.jboot.utils.ClassUtil;
@@ -42,9 +43,11 @@ public class JbootMetricMeterAopInterceptor implements Interceptor {
         }
 
         Class targetClass = ClassUtil.getUsefulClass(inv.getTarget().getClass());
-        String name = StrUtil.isBlank(annotation.value())
+
+        String value = AnnotationUtil.get(annotation.value());
+        String name = StrUtil.isBlank(value)
                 ? targetClass + "." + inv.getMethod().getName() + suffix
-                : annotation.value();
+                : value;
 
         Meter meter = Jboot.getMetric().meter(name);
         meter.mark();

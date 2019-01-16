@@ -21,6 +21,7 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.support.metric.annotation.EnableMetricHistogram;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -42,9 +43,12 @@ public class JbootMetricHistogramAopInterceptor implements Interceptor {
         }
 
         Class targetClass = ClassUtil.getUsefulClass(inv.getTarget().getClass());
-        String name = StrUtil.isBlank(annotation.value())
+
+        String value = AnnotationUtil.get(annotation.value());
+
+        String name = StrUtil.isBlank(value)
                 ? targetClass + "." + inv.getMethod().getName() + suffix
-                : annotation.value();
+                : value;
 
 
         Histogram histogram = Jboot.getMetric().histogram(name);
