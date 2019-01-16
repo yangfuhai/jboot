@@ -39,6 +39,7 @@ import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
 import io.jboot.support.swagger.JbootSwaggerManager;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.ClassUtil;
@@ -114,10 +115,13 @@ public class JbootCoreConfig extends JFinalConfig {
                     continue;
                 }
 
-                if (StrKit.notBlank(mapping.viewPath())) {
-                    routes.add(mapping.value(), clazz, mapping.viewPath());
+                String value = AnnotationUtil.get(mapping.value());
+                String viewPath = AnnotationUtil.get(mapping.viewPath());
+
+                if (StrKit.notBlank(viewPath)) {
+                    routes.add(value, clazz, viewPath);
                 } else {
-                    routes.add(mapping.value(), clazz);
+                    routes.add(value, clazz);
                 }
             }
         }
