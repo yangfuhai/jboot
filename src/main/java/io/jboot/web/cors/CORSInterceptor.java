@@ -15,6 +15,7 @@
  */
 package io.jboot.web.cors;
 
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
@@ -60,14 +61,15 @@ public class CORSInterceptor implements FixedInterceptor {
 
         HttpServletResponse response = inv.getController().getResponse();
 
-        String allowOrigin = enableCORS.allowOrigin();
-        String allowCredentials = enableCORS.allowCredentials();
-        String allowHeaders = enableCORS.allowHeaders();
-        String allowMethods = enableCORS.allowMethods();
-        String exposeHeaders = enableCORS.exposeHeaders();
-        String requestHeaders = enableCORS.requestHeaders();
-        String requestMethod = enableCORS.requestMethod();
-        String origin = enableCORS.origin();
+        String allowOrigin = AnnotationUtil.get(enableCORS.allowOrigin());
+        String allowCredentials = AnnotationUtil.get(enableCORS.allowCredentials());
+        String allowHeaders = AnnotationUtil.get(enableCORS.allowHeaders());
+        String allowMethods = AnnotationUtil.get(enableCORS.allowMethods());
+        String exposeHeaders = AnnotationUtil.get(enableCORS.exposeHeaders());
+        String requestHeaders = AnnotationUtil.get(enableCORS.requestHeaders());
+        String requestMethod = AnnotationUtil.get(enableCORS.requestMethod());
+        String origin = AnnotationUtil.get(enableCORS.origin());
+
         int maxAge = enableCORS.maxAge();
 
         allowOrigin = StrUtil.isNotBlank(allowOrigin) ? allowOrigin : ALLOW_ORIGIN;
