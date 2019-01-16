@@ -20,6 +20,7 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Timer;
 import io.jboot.Jboot;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.support.metric.annotation.*;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
@@ -45,9 +46,10 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         Timer.Context timerContext = null;
         EnableMetricCounter counterAnnotation = inv.getMethod().getAnnotation(EnableMetricCounter.class);
         if (counterAnnotation != null) {
-            String name = StrUtil.isBlank(counterAnnotation.value())
+            String value = AnnotationUtil.get(counterAnnotation.value());
+            String name = StrUtil.isBlank(value)
                     ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".counter"
-                    : counterAnnotation.value();
+                    : value;
 
 
             Counter counter = Jboot.getMetric().counter(name);
@@ -58,9 +60,10 @@ public class JbootMetricInterceptor implements FixedInterceptor {
         Counter concurrencyRecord = null;
         EnableMetricConcurrency concurrencyAnnotation = inv.getMethod().getAnnotation(EnableMetricConcurrency.class);
         if (concurrencyAnnotation != null) {
-            String name = StrUtil.isBlank(concurrencyAnnotation.value())
+            String value = AnnotationUtil.get(concurrencyAnnotation.value());
+            String name = StrUtil.isBlank(value)
                     ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".concurrency"
-                    : concurrencyAnnotation.value();
+                    : value;
 
 
             concurrencyRecord = Jboot.getMetric().counter(name);
@@ -70,9 +73,10 @@ public class JbootMetricInterceptor implements FixedInterceptor {
 
         EnableMetricMeter meterAnnotation = inv.getMethod().getAnnotation(EnableMetricMeter.class);
         if (meterAnnotation != null) {
-            String name = StrUtil.isBlank(meterAnnotation.value())
+            String value = AnnotationUtil.get(meterAnnotation.value());
+            String name = StrUtil.isBlank(value)
                     ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".meter"
-                    : meterAnnotation.value();
+                    : value;
 
 
             Meter meter = Jboot.getMetric().meter(name);
@@ -82,9 +86,10 @@ public class JbootMetricInterceptor implements FixedInterceptor {
 
         EnableMetricHistogram histogramAnnotation = inv.getMethod().getAnnotation(EnableMetricHistogram.class);
         if (histogramAnnotation != null) {
-            String name = StrUtil.isBlank(histogramAnnotation.value())
+            String value = AnnotationUtil.get(histogramAnnotation.value());
+            String name = StrUtil.isBlank(value)
                     ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".histogram"
-                    : histogramAnnotation.value();
+                    : value;
 
 
             Histogram histogram = Jboot.getMetric().histogram(name);
@@ -94,9 +99,10 @@ public class JbootMetricInterceptor implements FixedInterceptor {
 
         EnableMetricTimer timerAnnotation = inv.getMethod().getAnnotation(EnableMetricTimer.class);
         if (timerAnnotation != null) {
-            String name = StrUtil.isBlank(timerAnnotation.value())
+            String value = AnnotationUtil.get(timerAnnotation.value());
+            String name = StrUtil.isBlank(value)
                     ? inv.getController().getClass().getName() + "." + inv.getMethodName() + ".timer"
-                    : timerAnnotation.value();
+                    : value;
 
 
             Timer timer = Jboot.getMetric().timer(name);
