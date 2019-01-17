@@ -68,6 +68,11 @@ public class JbootAppListenerBase implements JbootAppListener {
     }
 
     @Override
+    public void onJFinalStartedBefore() {
+
+    }
+
+    @Override
     public void onJFinalStarted() {
 
     }

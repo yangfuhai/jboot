@@ -151,9 +151,9 @@ public class JbootCoreConfig extends JFinalConfig {
 
         List<Class> directiveClasses = ClassScanner.scanClass();
         for (Class clazz : directiveClasses) {
-            JFinalDirective jFinalDirective = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
-            if (jFinalDirective != null) {
-                engine.addDirective(jFinalDirective.value(), clazz);
+            JFinalDirective directive = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
+            if (directive != null) {
+                engine.addDirective(AnnotationUtil.get(directive.value()), clazz);
             }
 
             JFinalSharedMethod sharedMethod = (JFinalSharedMethod) clazz.getAnnotation(JFinalSharedMethod.class);
@@ -168,7 +168,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
             JFinalSharedObject sharedObject = (JFinalSharedObject) clazz.getAnnotation(JFinalSharedObject.class);
             if (sharedObject != null) {
-                engine.addSharedObject(sharedObject.value(), ClassUtil.newInstance(clazz));
+                engine.addSharedObject(AnnotationUtil.get(sharedObject.value()), ClassUtil.newInstance(clazz));
             }
         }
 
@@ -193,7 +193,6 @@ public class JbootCoreConfig extends JFinalConfig {
     public void configInterceptor(Interceptors interceptors) {
 
         JbootAppListenerManager.me().onInterceptorConfig(interceptors);
-
         JbootAppListenerManager.me().onFixedInterceptorConfig(FixedInterceptors.me());
     }
 
@@ -215,6 +214,8 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void afterJFinalStart() {
+
+        JbootAppListenerManager.me().onJFinalStartedBefore();
 
         /**
          * 配置微信accessToken的缓存

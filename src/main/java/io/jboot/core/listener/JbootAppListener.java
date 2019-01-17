@@ -26,7 +26,6 @@ import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 public interface JbootAppListener {
 
-
     public void onInit();
 
     public void onJfinalConstantConfig(Constants constants);
@@ -42,6 +41,8 @@ public interface JbootAppListener {
     public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors);
 
     public void onHandlerConfig(JfinalHandlers handlers);
+
+    public void onJFinalStartedBefore();
 
     public void onJFinalStarted();
 
