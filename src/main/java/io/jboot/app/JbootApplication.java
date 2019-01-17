@@ -89,7 +89,9 @@ public class JbootApplication {
 
     private static void printBannerInfo(JbootApplicationConfig appConfig) {
         if (appConfig.isBannerEnable()) {
+            System.out.println();
             System.out.println(Banner.getText(appConfig.getBannerFile()));
+            System.out.println();
         }
     }
 
