@@ -1,3 +1,8 @@
+jboot v2.0-rc.4:
+修复：JbootHttpKit.download() 返回内容错误的问题
+新增：注解可以通过${key}来指定读取配置的功能
+
+
 jboot v2.0-rc.3:
 新增：JbootCache模块的空实现 NoneCacheImpl，方便通过配置关闭缓存功能
 新增：Jboot 代码生成器添加排除表和移除前缀的支持
