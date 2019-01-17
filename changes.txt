@@ -1,6 +1,7 @@
 jboot v2.0-rc.4:
 修复：JbootHttpKit.download() 返回内容错误的问题
 新增：注解可以通过${key}来指定读取配置的功能
+新增：onJFinalStartedBefore() 监听，可以在项目启动的时候做一些必须的初始化
 
 
 jboot v2.0-rc.3:
