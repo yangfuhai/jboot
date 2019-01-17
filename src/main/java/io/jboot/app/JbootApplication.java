@@ -22,6 +22,8 @@ import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.undertow.JbootUndertowConfig;
 
 import javax.servlet.DispatcherType;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class JbootApplication {
 
@@ -47,6 +49,7 @@ public class JbootApplication {
 
         printBannerInfo(appConfig);
         printApplicationInfo(appConfig);
+        printClassPath();
 
         UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
         undertowConfig.addSystemClassPrefix("io.jboot.app");
@@ -92,6 +95,19 @@ public class JbootApplication {
 
     private static void printApplicationInfo(JbootApplicationConfig appConfig) {
         System.out.println(appConfig.toString());
+    }
+
+    private static void printClassPath() {
+        try {
+            URL resourceURL = JbootApplication.class.getResource("/");
+            if (resourceURL != null) {
+                System.out.println("classpath : " + resourceURL.toURI().getPath());
+            } else {
+                System.out.println("classpath : application in one jar.");
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
 
