@@ -7,6 +7,7 @@
 - 描述
 - 读取配置
 - 注入配置
+- 注解配置
 - 配置实体类
 - 设计原因
 - 常见问题
@@ -55,6 +56,63 @@ public class AopController extends JbootController {
     }
 }
 ```
+
+## 注解配置
+
+在应用开发中，我们通常会使用注解，Jboot 内置了多个注解。
+
+例如：
+- @RequestMapping
+- @EnableCORS
+- @RPCInject
+- @RPCBean
+- ...等等
+
+在使用注解的时候，我们通常会这样来使用，例如：
+
+```java
+@RequestMapping("/user")
+public class UserController extends Controller{
+    //....
+}
+```
+或者
+
+```java
+@RPCBean(group="myGroup",version="myVersion",port=...)
+public class UserServiceProvider extends UserService{
+    //....
+}
+```
+
+但是，无论是 `@RequestMapping("/user")` 或者是 `@RPCBean(group="myGroup",version="myVersion",port=...)` , 其参数配置都是固定的，因此，Jboot 提供了一种动态的配置方法，可以用于读取配置文件的内容。
+
+例如：
+
+```java
+@RequestMapping("${user.mapping}")
+public class UserController extends Controller{
+    //....
+}
+```
+
+然后在配置文件 `jboot.properties` （也可以是启动参数、环境变量等）添加上：
+
+```
+user.mapping = /user
+```
+
+其作用是等效于：
+
+```java
+@RequestMapping("/user")
+public class UserController extends Controller{
+    //....
+}
+```
+
+因此，在 Jboot 应用中，注解的值可以通过 `${key}` 的方式，读取到配置内容的 key 对于的 value 值。
+
 
 
 ## 配置实体类
