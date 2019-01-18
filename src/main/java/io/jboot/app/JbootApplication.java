@@ -45,7 +45,7 @@ public class JbootApplication {
 
         JbootConfigManager.me().parseArgs(args);
 
-        JbootApplicationConfig appConfig = config(JbootApplicationConfig.class);
+        JbootApplicationConfig appConfig = getConfig(JbootApplicationConfig.class);
 
         printBannerInfo(appConfig);
         printApplicationInfo(appConfig);
@@ -55,16 +55,18 @@ public class JbootApplication {
         undertowConfig.addSystemClassPrefix("io.jboot.app");
         undertowConfig.addHotSwapClassPrefix("io.jboot");
 
-        return UndertowServer.create(undertowConfig).setDevMode(isDevMode()).configWeb(webBuilder -> {
-            tryAddMetricsSupport(webBuilder);
-            tryAddShiroSupport(webBuilder);
-        });
+        return UndertowServer.create(undertowConfig)
+                .setDevMode(isDevMode())
+                .configWeb(webBuilder -> {
+                    tryAddMetricsSupport(webBuilder);
+                    tryAddShiroSupport(webBuilder);
+                });
     }
 
 
     private static void tryAddMetricsSupport(WebBuilder webBuilder) {
-        String url = config("jboot.metric.url");
-        String reporter = config("jboot.metric.reporter");
+        String url = getConfigValue("jboot.metric.url");
+        String reporter = getConfigValue("jboot.metric.reporter");
         if (url != null && reporter != null) {
             webBuilder.addServlet("MetricsAdminServlet", "com.codahale.metrics.servlets.AdminServlet")
                     .addServletMapping("MetricsAdminServlet", url.endsWith("/*") ? url : url + "/*");
@@ -75,9 +77,9 @@ public class JbootApplication {
 
 
     private static void tryAddShiroSupport(WebBuilder webBuilder) {
-        String iniConfig = config("jboot.shiro.ini");
+        String iniConfig = getConfigValue("jboot.shiro.ini");
         if (iniConfig != null) {
-            String urlMapping = config("jboot.shiro.urlMapping");
+            String urlMapping = getConfigValue("jboot.shiro.urlMapping");
             if (urlMapping == null) urlMapping = "/*";
             webBuilder.addListener("org.apache.shiro.web.env.EnvironmentLoaderListener");
             webBuilder.addFilter("shiro", "io.jboot.support.shiro.JbootShiroFilter")
@@ -113,11 +115,11 @@ public class JbootApplication {
     }
 
 
-    private static <T> T config(Class<T> clazz) {
+    private static <T> T getConfig(Class<T> clazz) {
         return JbootConfigManager.me().get(clazz);
     }
 
-    private static String config(String key) {
+    private static String getConfigValue(String key) {
         return JbootConfigManager.me().getConfigValue(key);
     }
 
