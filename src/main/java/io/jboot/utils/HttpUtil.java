@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.components.http;
+package io.jboot.utils;
+
+import io.jboot.components.http.JbootHttpManager;
+import io.jboot.components.http.JbootHttpRequest;
+import io.jboot.components.http.JbootHttpResponse;
 
 import java.io.File;
 import java.util.HashMap;
@@ -25,7 +29,7 @@ import java.util.Map;
  * 2、支持文件下载 和 文件上传
  * 3、支持自定义https文件证书（可以用在类似调用支付相关接口等）
  */
-public class JbootHttpKit {
+public class HttpUtil {
 
     /**
      * http get操作
@@ -60,7 +64,7 @@ public class JbootHttpKit {
     public static String httpGet(String url, Map<String, Object> paras, Map<String, String> headers) {
         JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_GET);
         request.addHeaders(headers);
-        JbootHttpResponse response = JbootHttpManager.me().getJbootHttp().handle(request);
+        JbootHttpResponse response = handle(request);
         return response.isError() ? null : response.getContent();
     }
 
@@ -121,7 +125,7 @@ public class JbootHttpKit {
         JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_POST);
         request.setPostContent(postData);
         request.addHeaders(headers);
-        JbootHttpResponse response = JbootHttpManager.me().getJbootHttp().handle(request);
+        JbootHttpResponse response = handle(request);
         return response.isError() ? null : response.getContent();
     }
 
@@ -164,7 +168,7 @@ public class JbootHttpKit {
         JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_GET);
         request.setDownloadFile(toFile);
         request.addHeaders(headers);
-        return JbootHttpManager.me().getJbootHttp().handle(request).getError() == null;
+        return handle(request).getError() == null;
     }
 
     /**
@@ -209,8 +213,13 @@ public class JbootHttpKit {
 
         JbootHttpRequest request = JbootHttpRequest.create(url, newParas, JbootHttpRequest.METHOD_POST);
         request.addHeaders(headers);
-        JbootHttpResponse response = JbootHttpManager.me().getJbootHttp().handle(request);
+        JbootHttpResponse response = handle(request);
         return response.isError() ? null : response.getContent();
+    }
+
+
+    public static JbootHttpResponse handle(JbootHttpRequest request) {
+        return JbootHttpManager.me().getJbootHttp().handle(request);
     }
 
 

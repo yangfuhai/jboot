@@ -28,8 +28,16 @@ import java.util.Map;
  */
 public class JbootHttpRequest {
 
-    public static final String METHOD_POST = "POST";
     public static final String METHOD_GET = "GET";
+    public static final String METHOD_POST = "POST";
+
+    public static final String METHOD_HEAD = "HEAD";
+    public static final String METHOD_OPTIONS = "OPTIONS";
+    public static final String METHOD_PUT = "PUT";
+    public static final String METHOD_PATCH = "PATCH";
+    public static final String METHOD_DELETE = "DELETE";
+    public static final String METHOD_TRACE = "TRACE";
+
     public static final int READ_TIME_OUT = 1000 * 10; // 10秒
     public static final int CONNECT_TIME_OUT = 1000 * 5; // 5秒
     public static final String CHAR_SET = "UTF-8";

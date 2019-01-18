@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import com.jfinal.weixin.sdk.api.*;
 import com.jfinal.weixin.sdk.kit.ParaMap;
 import com.jfinal.weixin.sdk.utils.HttpUtils;
 import com.jfinal.weixin.sdk.utils.RetryUtils;
-import io.jboot.components.http.JbootHttpKit;
+import io.jboot.utils.HttpUtil;
 
 import java.util.concurrent.Callable;
 
@@ -42,7 +42,7 @@ public class WechatApis {
      */
     public static ApiResult getUserInfo(String token, String openId) {
         Kv pm = Kv.by("access_token", token).set("openid", openId).set("lang", "zh_CN");
-        String jsonResult = JbootHttpKit.httpGet("https://api.weixin.qq.com/sns/userinfo", pm);
+        String jsonResult = HttpUtil.httpGet("https://api.weixin.qq.com/sns/userinfo", pm);
 
         if (jsonResult == null)
             return null;
@@ -68,7 +68,7 @@ public class WechatApis {
                 .replace("{secret}", ApiConfigKit.getApiConfig().getAppSecret())
                 .replace("{code}", code);
 
-        String jsonResult = JbootHttpKit.httpGet(getOpenIdUrl);
+        String jsonResult = HttpUtil.httpGet(getOpenIdUrl);
 
         if (jsonResult == null)
             return null;
