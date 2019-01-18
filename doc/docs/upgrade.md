@@ -8,6 +8,7 @@
 - EncryptCookieUtils -> CookieUtil
 - RequestUtils -> RequestUtil
 - ArrayUtils -> ArrayUtil
+- JbootHttpKit -> HttpUtil
 - @JBootRPCService -> 修改为 @RPCInject 和 @RPCBean
 
 ## 方法修改
