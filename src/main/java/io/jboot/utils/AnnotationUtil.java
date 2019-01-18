@@ -15,8 +15,19 @@ public class AnnotationUtil {
 
         if (value.startsWith("${") && value.endsWith("}")) {
             String key = value.substring(2, value.length() - 1);
+            int indexOf = key.indexOf(":");
+
+            String defaultValue = null;
+            if (indexOf != -1) {
+                defaultValue = key.substring(indexOf + 1, key.length());
+                key = key.substring(0, indexOf);
+            }
+
             if (StrUtil.isBlank(key)) throw new RuntimeException("can not config empty propertie key");
-            return JbootConfigManager.me().getConfigValue(key.trim());
+            String configValue = JbootConfigManager.me().getConfigValue(key.trim());
+
+            String returnValue = StrUtil.isBlank(configValue) ? defaultValue.trim() : configValue;
+            return StrUtil.isBlank(returnValue) ? null : returnValue;
         }
 
         return value;
@@ -70,5 +81,17 @@ public class AnnotationUtil {
         return rets;
     }
 
+
+    public static void main(String[] args) {
+        String key = "aa:bb";
+
+        int indexOf = key.indexOf(":");
+        String defaultValue = key.substring(indexOf + 1, key.length());
+        key = key.substring(0, indexOf);
+
+        System.out.println(key);
+        System.out.println(defaultValue);
+
+    }
 
 }

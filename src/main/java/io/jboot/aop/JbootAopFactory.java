@@ -11,6 +11,7 @@ import io.jboot.components.rpc.Jbootrpc;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.rpc.annotation.RPCInject;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtil;
@@ -165,9 +166,9 @@ public class JbootAopFactory extends AopFactory {
      * @throws IllegalAccessException
      */
     private void injectByConfig(Object targetObject, Field field, ConfigInject configInject) throws IllegalAccessException {
-        String key = configInject.value();
+        String key = AnnotationUtil.get(configInject.value());
         Class<?> fieldInjectedClass = field.getType();
-        String value = JbootConfigManager.me().getConfigValue(key);
+        String value = getConfigValue(key, targetObject, field);
 
         if (StrUtil.isBlank(value)) {
             return;
@@ -176,6 +177,23 @@ public class JbootAopFactory extends AopFactory {
         Object fieldInjectedObject = JbootConfigManager.me().convert(fieldInjectedClass, value);
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
+    }
+
+    private String getConfigValue(String key, Object targetObject, Field field) {
+        int indexOf = key.indexOf(":");
+
+        String defaultValue = null;
+        if (indexOf != -1) {
+            defaultValue = key.substring(indexOf + 1, key.length());
+            key = key.substring(0, indexOf);
+        }
+
+        if (StrUtil.isBlank(key)) {
+            throw new RuntimeException("can not inject config by empty key in " + targetObject.getClass() + ":" + field.getName());
+        }
+
+        String configValue = JbootConfigManager.me().getConfigValue(key.trim());
+        return StrUtil.isBlank(configValue) ? defaultValue : configValue;
     }
 
 
