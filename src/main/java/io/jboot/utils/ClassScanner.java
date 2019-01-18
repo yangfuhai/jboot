@@ -270,7 +270,7 @@ public class ClassScanner {
 
         for (String classPath : classPaths) {
             if (JbootApplication.isDevMode()) {
-                System.out.println("ClassScanner scan classPath : " + classPath);
+                System.out.println("ClassScanner scan classpath : " + classPath);
             }
             addClassesFromClassPath(classPath);
         }
