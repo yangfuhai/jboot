@@ -49,7 +49,7 @@ public interface #(tableMeta.modelName)Service  {
      * @param model
      * @return id value if save success
      */
-    public <T> T save(#(tableMeta.modelName) model);
+    public Object save(#(tableMeta.modelName) model);
 
 
     /**
@@ -58,7 +58,7 @@ public interface #(tableMeta.modelName)Service  {
      * @param model
      * @return id value if save or update success
      */
-    public <T> T saveOrUpdate(#(tableMeta.modelName) model);
+    public Object saveOrUpdate(#(tableMeta.modelName) model);
 
 
     /**
