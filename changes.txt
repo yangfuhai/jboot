@@ -1,7 +1,9 @@
 jboot v2.0-rc.4:
-修复：JbootHttpKit.download() 返回内容错误的问题
 新增：注解可以通过${key}来指定读取配置的功能
 新增：onJFinalStartedBefore() 监听，可以在项目启动的时候做一些必须的初始化
+优化：save() 和 saveOrUpdate() 方法返回 Object，而不是 `<T> T`
+优化：增强 SPI 功能，当未在 META-INF 定义 Service 接口的时候，可以进行SPI发现
+修复：JbootHttpKit.download() 返回内容错误的问题
 
 
 jboot v2.0-rc.3:
@@ -11,14 +13,12 @@ jboot v2.0-rc.3:
 优化：更新相关依赖
 
 
-
 jboot v2.0-rc.2:
 移除 javax 的 @Inject 功能
 移除 jboot.app.hotSwapClassPrefix 的配置，直接使用 undertow.hotSwapClassPrefix 配置即可
 修复 代码生成器生成的代码带有 @Singleton 注解的问题
 优化 @RPCInject 中的 async 和 check 的类型
 优化 ClassScanner 会扫描到 JRE 的 Class 导致加载速度慢的问题
-
 
 
 jboot v2.0-rc.1:

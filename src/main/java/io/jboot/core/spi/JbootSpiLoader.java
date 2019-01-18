@@ -17,6 +17,7 @@ package io.jboot.core.spi;
 
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassScanner;
+import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.Iterator;
@@ -49,19 +50,19 @@ public class JbootSpiLoader {
         T returnObject = loadByServiceLoader(clazz, spiName);
         if (returnObject != null) return returnObject;
 
-        if (StrUtil.isBlank(spiName)) return null;
+        if (StrUtil.isBlank(spiName)) {
+            return null;
+        }
 
         List<Class<T>> classes = ClassScanner.scanSubClass(clazz);
-        if (classes == null || classes.isEmpty()) return null;
+        if (classes == null || classes.isEmpty()) {
+            return null;
+        }
 
         for (Class<T> c : classes) {
             JbootSpi spiConfig = c.getAnnotation(JbootSpi.class);
-            if (spiConfig == null) {
-                continue;
-            }
-
-            if (spiName.equals(AnnotationUtil.get(spiConfig.value()))) {
-                return returnObject;
+            if (spiConfig != null && spiName.equals(AnnotationUtil.get(spiConfig.value()))) {
+                return ClassUtil.newInstance(c);
             }
         }
         return null;
