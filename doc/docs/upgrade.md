@@ -8,6 +8,7 @@
 - EncryptCookieUtils -> CookieUtil
 - RequestUtils -> RequestUtil
 - ArrayUtils -> ArrayUtil
+- @JBootRPCService -> 修改为 @RPCInject 和 @RPCBean
 
 ## 方法修改
 
@@ -17,7 +18,7 @@ Jboot.me().getXXX -> Jboot.getXXX
 
 - 删除代码生成器生成的 Service类的 join 系列方法和 keep 方法
 - 删除代码生成器生成的ServiceImpl的@Singleton注解
-- 修改代码生成器生成的 Service类的 Save和SaveOrUpdate方法，修改其返回内容为 ： `<T> T`
+- 修改代码生成器生成的 Service类的 Save和SaveOrUpdate方法，修改其返回内容为 ： `Object`
 
 ```
 public boolean save()
@@ -25,7 +26,7 @@ public boolean save()
 修改为
 
 ```java
-public <T> T save()
+public Object save()
 ```
 
 同时：
@@ -35,8 +36,10 @@ public boolean saveOrUpdate()
 修改为
 
 ```java
-public <T> T saveOrUpdate()
+public Object saveOrUpdate()
 ```
+
+备注：返回的 `Object` 是 Model 的主键值（id）。
 
 ## 其他
 
