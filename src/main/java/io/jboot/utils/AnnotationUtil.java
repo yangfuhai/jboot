@@ -82,16 +82,4 @@ public class AnnotationUtil {
     }
 
 
-    public static void main(String[] args) {
-        String key = "aa:bb";
-
-        int indexOf = key.indexOf(":");
-        String defaultValue = key.substring(indexOf + 1, key.length());
-        key = key.substring(0, indexOf);
-
-        System.out.println(key);
-        System.out.println(defaultValue);
-
-    }
-
 }

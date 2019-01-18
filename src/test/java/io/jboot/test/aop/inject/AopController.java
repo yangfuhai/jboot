@@ -6,7 +6,6 @@ import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
 
-
 @RequestMapping("/aop")
 public class AopController extends JbootController {
 
@@ -19,13 +18,16 @@ public class AopController extends JbootController {
     @ConfigInject("undertow.port")
     private int port;
 
+    @ConfigInject("undertow.xxx:123")
+    private int xxx;
 
-    public void index(){
+
+    public void index() {
         renderText("text from : " + userService.getName());
     }
 
 
-    public void config(){
-        renderText("host:" + host +"   port:" + port);
+    public void config() {
+        renderText("host:" + host + "   port:" + port + "  xxx:" + xxx);
     }
 }
