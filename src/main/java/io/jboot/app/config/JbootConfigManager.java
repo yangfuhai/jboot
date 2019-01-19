@@ -187,7 +187,7 @@ public class JbootConfigManager {
             value = System.getProperty(key);
         }
 
-        if (Utils.isBlank(value)) {
+        if (Utils.isBlank(value) && properties != null) {
             value = (String) properties.get(key);
         }
 
