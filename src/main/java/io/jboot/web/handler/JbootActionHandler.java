@@ -42,6 +42,17 @@ public class JbootActionHandler extends ActionHandler {
 
     private static final Log log = Log.getLog(JbootActionHandler.class);
 
+    /**
+     * 方便子类复写、从而可以实现 自定义Action的功能
+     *
+     * @param target
+     * @param urlPara
+     * @return
+     */
+    public Action getAction(String target, String[] urlPara) {
+        return actionMapping.getAction(target, urlPara);
+    }
+
 
     /**
      * handle
@@ -56,7 +67,7 @@ public class JbootActionHandler extends ActionHandler {
 
         isHandled[0] = true;
         String[] urlPara = {null};
-        Action action = actionMapping.getAction(target, urlPara);
+        Action action = getAction(target, urlPara);
 
         if (action == null) {
             if (log.isWarnEnabled()) {
