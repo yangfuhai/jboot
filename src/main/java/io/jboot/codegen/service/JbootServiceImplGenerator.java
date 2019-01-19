@@ -47,7 +47,7 @@ public class JbootServiceImplGenerator {
 
         this.basePackage = basePackage;
         this.modelPackage = modelPackage;
-        this.template = "io/jboot/codegen/service/service_impl_template.jf";
+        this.template = "io/jboot/codegen/service/service_impl_template.tp";
         this.metaBuilder = CodeGenHelpler.createMetaBuilder();
 
     }

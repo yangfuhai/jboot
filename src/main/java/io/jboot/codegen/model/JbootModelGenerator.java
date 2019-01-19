@@ -28,7 +28,7 @@ public class JbootModelGenerator extends ModelGenerator {
                                String baseModelPackageName, String modelOutputDir) {
         super(modelPackageName, baseModelPackageName, modelOutputDir);
 
-        this.template = "/io/jboot/codegen/model/model_template.jf";
+        this.template = "/io/jboot/codegen/model/model_template.tp";
         this.metaBuilder = CodeGenHelpler.createMetaBuilder();
 
     }

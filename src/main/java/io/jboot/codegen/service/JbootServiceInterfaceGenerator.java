@@ -44,7 +44,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
 
         this.modelPacket = modelPacket;
         this.basePackage = basePackage;
-        this.template = "io/jboot/codegen/service/service_template.jf";
+        this.template = "io/jboot/codegen/service/service_template.tp";
         this.metaBuilder = CodeGenHelpler.createMetaBuilder();
 
     }
