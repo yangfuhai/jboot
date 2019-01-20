@@ -18,6 +18,7 @@ package io.jboot.support.swagger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.google.common.collect.Maps;
+import com.jfinal.core.JFinal;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.cors.EnableCORS;
@@ -34,22 +35,25 @@ public class JbootSwaggerController extends JbootController {
     JbootSwaggerConfig config = Jboot.config(JbootSwaggerConfig.class);
 
     public void index() {
-        String html = null;
-        String viewPath = config.getPath().endsWith("/") ? config.getPath() : config.getPath() + "/";
+        String html;
         try {
+            String viewPath = config.getPath().endsWith("/") ? config.getPath() : config.getPath() + "/";
             html = renderToString(viewPath + "index.html", Maps.newHashMap());
-        } catch (Throwable ex) {
-        }
-
-        if (html == null) {
-            renderHtml("error，please put  <a href=\"https://github.com/swagger-api/swagger-ui\" target=\"_blank\">swagger-ui</a> into your project path :  " + config.getPath() + " <br />" +
+        } catch (Exception ex) {
+            renderHtml("error，please put  <a href=\"https://github.com/swagger-api/swagger-ui\" target=\"_blank\">swagger-ui</a> " +
+                    "into your project path :  " + config.getPath() + " <br />" +
                     "or click <a href=\"" + config.getPath() + "/json\">here</a>  show swagger json.");
             return;
         }
 
-        html = html.replace("http://petstore.swagger.io/v2/swagger.json", getRequest().getRequestURL() + "/json");
-        html = html.replace("src=\"./", "src=\"" + config.getPath() + "/");
-        html = html.replace("href=\"./", "href=\"" + config.getPath() + "/");
+
+        String jsonUrl = getRequest().getRequestURL().toString() + "/json";
+        String basePath = JFinal.me().getContextPath() + "/" + config.getPath() + "/";
+
+        html = html.replace("http://petstore.swagger.io/v2/swagger.json", jsonUrl);
+        html = html.replace("https://petstore.swagger.io/v2/swagger.json", jsonUrl); // 可能是 https ，看下载的 swagger 版本
+        html = html.replace("src=\"./", "src=\"" + basePath);
+        html = html.replace("href=\"./", "href=\"" + basePath);
 
         renderHtml(html);
     }
