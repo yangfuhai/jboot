@@ -32,7 +32,14 @@ public class JbootApplication {
     }
 
     public static void run(String[] args) {
-        createServer(args).start();
+        start(createServer(args));
+    }
+
+    public static void start(UndertowServer server) {
+        server.start();
+        if (isDevMode()) {
+            new JbootResourceLoader().start();
+        }
     }
 
     /**
