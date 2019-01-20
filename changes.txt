@@ -9,6 +9,8 @@ jboot v2.0-rc.4:
 优化：JbootHttpKit 重命名为 HttpUtil、新增 handle 方法
 优化：重命名代码生成器的模板文件，以 .tp 结尾
 修复: HttpUtil.downlaod() 返回内容错误的问题
+修复：Swagger下载不同版本的资源文件可能导致替换url不正确的问题
+修复：Swagger配置contextPath的情况下无法正确访问的问题
 
 
 jboot v2.0-rc.3:
