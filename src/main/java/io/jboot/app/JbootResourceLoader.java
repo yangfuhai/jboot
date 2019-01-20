@@ -48,6 +48,9 @@ public class JbootResourceLoader {
             for (File resourcesDir : resourcesDirs) {
                 startNewScanner(resourcesDir.getCanonicalFile(), classPath);
             }
+
+            System.out.println("JbootResourceLoader started, resource path name : " + resourcePathName);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,10 +70,8 @@ public class JbootResourceLoader {
 
 
     private void startNewScanner(File resourcesDir, String classPath) throws IOException, URISyntaxException {
-
         // main/webapp/
         String path = "main" + File.separator + resourcePathName + File.separator;
-
         FileScanner scanner = new FileScanner(resourcesDir.getCanonicalPath(), 5) {
             @Override
             public void onChange(String action, String file) {
@@ -81,7 +82,7 @@ public class JbootResourceLoader {
                 int indexOf = file.indexOf(path);
 
                 File target = new File(classPath, resourcePathName + File.separator + file.substring(indexOf + path.length()));
-                System.err.println(action + ":" + target);
+                System.err.println("JbootResourceLoader " + action + " : " + target);
 
                 //文件删除
                 if (FileScanner.ACTION_DELETE.equals(action)) {
@@ -99,5 +100,6 @@ public class JbootResourceLoader {
         };
 
         scanner.start();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> scanner.stop()));
     }
 }
