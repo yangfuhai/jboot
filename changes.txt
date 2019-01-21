@@ -11,6 +11,7 @@ jboot v2.0-rc.4:
 优化：优化通过 Column 和 Columns 查询的时候，生成 Sql 的代码逻辑，增强性能
 优化：JbootHttpKit 重命名为 HttpUtil、新增 handle 方法
 优化：重命名代码生成器的模板文件，以 .tp 结尾
+优化：修改资源文件默认为 classPath 下的 webapp，方便多 maven module 进行热加载
 修复: HttpUtil.downlaod() 返回内容错误的问题
 修复：Swagger下载不同版本的资源文件可能导致替换url不正确的问题
 修复：Swagger配置contextPath的情况下无法正确访问的问题
