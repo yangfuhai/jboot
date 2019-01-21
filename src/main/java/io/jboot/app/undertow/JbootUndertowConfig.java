@@ -29,7 +29,7 @@ public class JbootUndertowConfig extends UndertowConfig {
     @Override
     protected PropExt createPropExt(String undertowConfig) {
 
-        setResourcePath("classpath:webapp," + resourcePath);
+        this.resourcePath = "classpath:webapp," + this.resourcePath;
 
         PropExt propExt = super.createPropExt(undertowConfig)
                 .append(new PropExt(JbootConfigManager.me().getProperties()));
