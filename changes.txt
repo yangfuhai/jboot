@@ -5,8 +5,10 @@ jboot v2.0-rc.4:
 新增：工具类 FileScanner，用于对文件进行扫描和监听文件动态
 新增：JbootResourceLoader，用于在 Maven 多 Module 的情况下自动对文件进行热加载
 新增：JFinalHandlers 添加 getHandlers() 和 setActionHandler() 方法
+新增：Columns 新增 or() 方法的支持，用于添加 Sql 的 OR 逻辑
 优化：save() 和 saveOrUpdate() 方法返回 Object，而不是 `<T> T`
 优化：增强 SPI 功能，当未在 META-INF 定义 Service 接口的时候，可以进行 SPI 发现
+优化：优化通过 Column 和 Columns 查询的时候，生成 Sql 的代码逻辑，增强性能
 优化：JbootHttpKit 重命名为 HttpUtil、新增 handle 方法
 优化：重命名代码生成器的模板文件，以 .tp 结尾
 修复: HttpUtil.downlaod() 返回内容错误的问题
