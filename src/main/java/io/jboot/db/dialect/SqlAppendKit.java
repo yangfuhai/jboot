@@ -16,6 +16,7 @@
 package io.jboot.db.dialect;
 
 import io.jboot.db.model.Column;
+import io.jboot.db.model.Or;
 import io.jboot.utils.ArrayUtil;
 
 import java.util.List;
@@ -33,14 +34,24 @@ public class SqlAppendKit {
 
             int index = 0;
             for (Column column : columns) {
-                if (column.isMustNeedValue()) {
-                    sqlBuilder.append(String.format(" %s %s ? ", column.getName(), column.getLogic()));
-                } else {
-                    sqlBuilder.append(String.format(" %s %s ", column.getName(), column.getLogic()));
+
+                if (column instanceof Or) {
+                    sqlBuilder.append(" OR ");
+                    continue;
                 }
+
+                sqlBuilder.append(column.getName())
+                        .append(" ")
+                        .append(column.getLogic());
+
+                if (column.isMustNeedValue()) {
+                    sqlBuilder.append(" ? ");
+                }
+
                 if (index != columns.size() - 1) {
                     sqlBuilder.append(" AND ");
                 }
+                
                 index++;
             }
         }

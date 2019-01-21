@@ -17,6 +17,7 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import io.jboot.db.model.Column;
+import io.jboot.db.model.Or;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
 
@@ -73,14 +74,25 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
 
             int index = 0;
             for (Column column : columns) {
-                if (column.isMustNeedValue()) {
-                    sqlBuilder.append(String.format(" `%s` %s ? ", column.getName(), column.getLogic()));
-                } else {
-                    sqlBuilder.append(String.format(" `%s` %s ", column.getName(), column.getLogic()));
+
+                if (column instanceof Or) {
+                    sqlBuilder.append(" OR ");
+                    continue;
                 }
+
+                sqlBuilder.append(" `")
+                        .append(column.getName())
+                        .append("` ")
+                        .append(column.getLogic());
+
+                if (column.isMustNeedValue()) {
+                    sqlBuilder.append(" ? ");
+                }
+
                 if (index != columns.size() - 1) {
                     sqlBuilder.append(" AND ");
                 }
+
                 index++;
             }
         }

@@ -19,7 +19,6 @@ import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -193,6 +192,12 @@ public class Columns implements Serializable {
     }
 
 
+    public Columns or() {
+        this.add(new Or());
+        return this;
+    }
+
+
     public boolean isEmpty() {
         return cols == null || cols.isEmpty();
     }
@@ -224,10 +229,14 @@ public class Columns implements Serializable {
         if (isEmpty()) return null;
 
         List<Column> columns = new ArrayList<>(cols);
-        columns.sort(Comparator.comparing(Column::getName));
+//        columns.sort(Comparator.comparing(Column::getName));
 
         StringBuilder s = new StringBuilder();
         for (Column column : columns) {
+            if (column instanceof Or) {
+                s.append("or").append("-");
+                continue;
+            }
             s.append(column.getName()).append("-")
                     .append(getLogicStr(column.getLogic())).append("-");
             Object value = column.getValue();
@@ -236,7 +245,7 @@ public class Columns implements Serializable {
 
         return s.deleteCharAt(s.length() - 1).toString();
     }
-    
+
 
     /**
      * @param logic
@@ -276,6 +285,9 @@ public class Columns implements Serializable {
         System.out.println(columns.getCacheKey());
 
         columns.ge("age", 10);
+        System.out.println(columns.getCacheKey());
+
+        columns.or();
         System.out.println(columns.getCacheKey());
 
         columns.is_not_null("price");
