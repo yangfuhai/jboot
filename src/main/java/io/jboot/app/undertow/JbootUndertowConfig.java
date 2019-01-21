@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 
 public class JbootUndertowConfig extends UndertowConfig {
 
+
     public JbootUndertowConfig(Class<?> jfinalConfigClass) {
         super(jfinalConfigClass);
     }
@@ -27,6 +28,9 @@ public class JbootUndertowConfig extends UndertowConfig {
 
     @Override
     protected PropExt createPropExt(String undertowConfig) {
+
+        setResourcePath("classpath:webapp," + resourcePath);
+
         PropExt propExt = super.createPropExt(undertowConfig)
                 .append(new PropExt(JbootConfigManager.me().getProperties()));
 
