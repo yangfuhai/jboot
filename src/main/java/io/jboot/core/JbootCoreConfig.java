@@ -208,7 +208,10 @@ public class JbootCoreConfig extends JFinalConfig {
 
         handlers.add(new JbootFilterHandler());
         handlers.add(new ActionCacheHandler());
-        handlers.add(new JbootHandler());
+
+        if (handlers.getActionHandler() == null) {
+            handlers.add(new JbootHandler());
+        }
 
     }
 

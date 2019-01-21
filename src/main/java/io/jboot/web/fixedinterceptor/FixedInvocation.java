@@ -71,4 +71,5 @@ public class FixedInvocation {
     public Invocation getInvocation() {
         return invocation;
     }
+
 }

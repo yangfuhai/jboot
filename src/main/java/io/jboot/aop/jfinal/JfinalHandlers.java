@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@ package io.jboot.aop.jfinal;
 
 import com.jfinal.aop.Aop;
 import com.jfinal.config.Handlers;
+import com.jfinal.core.ActionHandler;
 import com.jfinal.handler.Handler;
 
 /**
@@ -40,5 +41,15 @@ public class JfinalHandlers {
         Aop.inject(handler);
         handlers.getHandlerList().add(index, handler);
         return this;
+    }
+
+    public JfinalHandlers setActionHandler(ActionHandler actionHandler) {
+        Aop.inject(actionHandler);
+        handlers.setActionHandler(actionHandler);
+        return this;
+    }
+
+    public Handlers getHandlers() {
+        return handlers;
     }
 }
