@@ -182,7 +182,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.54</version>
+            <version>1.2.55</version>
         </dependency>
 
         <dependency>
@@ -221,7 +221,7 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>1.7.8.Final</version>
+            <version>1.7.9.Final</version>
             <scope>provided</scope>
         </dependency>
 
