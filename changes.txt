@@ -15,7 +15,7 @@ jboot v2.0-rc.4:
 修复: HttpUtil.downlaod() 返回内容错误的问题
 修复：Swagger下载不同版本的资源文件可能导致替换url不正确的问题
 修复：Swagger配置contextPath的情况下无法正确访问的问题
-
+修复：热加载的时候，会导致定时任务多次执行的问题
 
 jboot v2.0-rc.3:
 新增：JbootCache模块的空实现 NoneCacheImpl，方便通过配置关闭缓存功能
