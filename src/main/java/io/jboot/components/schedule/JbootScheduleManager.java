@@ -69,6 +69,10 @@ public class JbootScheduleManager {
         cron4jPlugin.start();
     }
 
+    public void stop(){
+        fixedScheduler.shutdownNow();
+        cron4jPlugin.stop();
+    }
 
     private void initScheduledThreadPoolExecutor() {
         List<Class> fixedDelayClasses = ClassScanner.scanClassByAnnotation(FixedDelay.class, true);
