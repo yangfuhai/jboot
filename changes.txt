@@ -17,6 +17,7 @@ jboot v2.0-rc.4:
 修复：Swagger配置contextPath的情况下无法正确访问的问题
 修复：热加载的时候，会导致定时任务多次执行的问题
 
+
 jboot v2.0-rc.3:
 新增：JbootCache模块的空实现 NoneCacheImpl，方便通过配置关闭缓存功能
 新增：Jboot 代码生成器添加排除表和移除前缀的支持
