@@ -80,4 +80,8 @@ public class DataSourceConfigManager {
     public Map<String, DataSourceConfig> getDatasourceConfigs() {
         return datasourceConfigs;
     }
+
+    public DataSourceConfig getMainDatasourceConfig() {
+        return datasourceConfigs.get(DataSourceConfig.NAME_DEFAULT);
+    }
 }
