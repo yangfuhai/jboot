@@ -25,7 +25,7 @@ import io.jboot.web.directive.base.PaginateDirectiveBase;
 
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class JbootPaginateDirective extends PaginateDirectiveBase {
+public class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
     protected String getUrl(int pageNumber) {
@@ -70,5 +70,7 @@ public abstract class JbootPaginateDirective extends PaginateDirectiveBase {
      *
      * @return
      */
-    protected abstract String getPageAttrName();
+    protected String getPageAttrName() {
+        return "page";
+    }
 }
