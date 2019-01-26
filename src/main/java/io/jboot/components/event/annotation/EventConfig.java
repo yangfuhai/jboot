@@ -21,10 +21,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Documented
 public @interface EventConfig {
-
-	public static final int DEFAULT_WEIGHT = 10;
-
-	int 		weight() 	default DEFAULT_WEIGHT;
 	boolean 	async() 	default true;
 	String[] 	action();
 }
