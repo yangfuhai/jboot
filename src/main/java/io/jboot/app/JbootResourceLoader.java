@@ -28,6 +28,7 @@ import java.util.List;
 public class JbootResourceLoader {
 
     private final String resourcePathName;
+    private List<FileScanner> scanners = new ArrayList<>();
 
     public JbootResourceLoader() {
         this("webapp");
@@ -36,6 +37,7 @@ public class JbootResourceLoader {
     public JbootResourceLoader(String resourcePathName) {
         this.resourcePathName = resourcePathName;
     }
+
 
     public void start() {
         try {
@@ -49,11 +51,17 @@ public class JbootResourceLoader {
                 startNewScanner(resourcesDir.getCanonicalFile(), classPath);
             }
 
-            System.out.println("JbootResourceLoader started, resource path name : " + resourcePathName);
+            System.out.println("JbootResourceLoader started, Resource path name : " + resourcePathName);
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> JbootResourceLoader.this.stop()));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void stop() {
+        scanners.forEach(fileScanner -> fileScanner.stop());
+        System.out.println("JbootResourceLoader stoped ......");
     }
 
     private void findResourcesPath(File root, List<File> resourcesDirs) {
@@ -100,6 +108,6 @@ public class JbootResourceLoader {
         };
 
         scanner.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> scanner.stop()));
+        scanners.add(scanner);
     }
 }
