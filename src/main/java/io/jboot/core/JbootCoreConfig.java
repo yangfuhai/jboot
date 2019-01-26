@@ -235,7 +235,6 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootSwaggerManager.me().init();
 
         JbootAppListenerManager.me().onJFinalStarted();
-        JbootAppListenerManager.me().onJFinalStartedAfter();
     }
 
     @Override
