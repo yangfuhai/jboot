@@ -78,11 +78,6 @@ public class JbootAppListenerBase implements JbootAppListener {
     }
 
     @Override
-    public void onJFinalStartedAfter() {
-
-    }
-
-    @Override
     public void onJFinalStop() {
 
     }

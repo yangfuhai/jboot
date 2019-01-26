@@ -46,8 +46,6 @@ public interface JbootAppListener {
 
     public void onJFinalStarted();
 
-    public void onJFinalStartedAfter();
-
     public void onJFinalStop();
 
 }

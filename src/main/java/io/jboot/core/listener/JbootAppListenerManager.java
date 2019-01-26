@@ -22,12 +22,12 @@ import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.utils.ClassUtil;
+import io.jboot.core.weight.WeightUtil;
 import io.jboot.utils.ClassScanner;
+import io.jboot.utils.ClassUtil;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class JbootAppListenerManager implements JbootAppListener {
@@ -59,13 +59,8 @@ public class JbootAppListenerManager implements JbootAppListener {
                 listeners.add(listener);
             }
         }
-        
-        listeners.sort(new Comparator<JbootAppListener>() {
-            @Override
-            public int compare(JbootAppListener o1, JbootAppListener o2) {
-                return 0;
-            }
-        });
+
+        WeightUtil.sort(listeners);
     }
 
 
@@ -173,17 +168,6 @@ public class JbootAppListenerManager implements JbootAppListener {
         for (JbootAppListener listener : listeners) {
             try {
                 listener.onJFinalStarted();
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
-        }
-    }
-
-    @Override
-    public void onJFinalStartedAfter() {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onJFinalStartedAfter();
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
