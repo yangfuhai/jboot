@@ -108,7 +108,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public boolean saveOrUpdate() {
-        if (null == get(_getPrimaryKey())) {
+        if (null == getIdValue()) {
             return this.save();
         }
         return this.update();
@@ -117,7 +117,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public boolean save() {
-        if (hasColumn(column_created) && get(column_created) == null) {
+        if (_hasColumn(column_created) && get(column_created) == null) {
             set(column_created, new Date());
         }
 
@@ -208,7 +208,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public boolean update() {
-        if (hasColumn(column_modified)) {
+        if (_hasColumn(column_modified)) {
             set(column_modified, new Date());
         }
 
@@ -269,7 +269,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return key.toString();
     }
 
-    protected IJbootModelDialect _getDialect() {
+    public IJbootModelDialect _getDialect() {
         Config config = _getConfig();
         if (config == null) {
             throw new JbootException(
@@ -440,17 +440,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    protected String _getTableName() {
+    public String _getTableName() {
         return _getTable(true).getName();
     }
 
-    protected Table _getTable() {
+    public Table _getTable() {
         return _getTable(false);
     }
 
     private transient Table table;
 
-    protected Table _getTable(boolean validateNull) {
+    public Table _getTable(boolean validateNull) {
         if (table == null) {
             table = super._getTable();
             if (table == null && validateNull) {
@@ -466,13 +466,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    protected String _getPrimaryKey() {
+    public String _getPrimaryKey() {
         return _getPrimaryKeys()[0];
     }
 
     private transient String[] primaryKeys;
 
-    protected String[] _getPrimaryKeys() {
+    public String[] _getPrimaryKeys() {
         if (primaryKeys != null) {
             return primaryKeys;
         }
@@ -487,7 +487,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private transient Class<?> primaryType;
 
-    protected Class<?> _getPrimaryType() {
+    public Class<?> _getPrimaryType() {
         if (primaryType == null) {
             primaryType = _getTable(true).getColumnType(_getPrimaryKey());
         }
@@ -495,7 +495,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    protected boolean hasColumn(String columnLabel) {
+    public boolean _hasColumn(String columnLabel) {
         return _getTable(true).hasColumnLabel(columnLabel);
     }
 
