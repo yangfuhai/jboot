@@ -16,6 +16,8 @@
 package io.jboot.utils;
 
 import io.jboot.app.JbootApplication;
+import io.jboot.app.config.JbootConfigManager;
+import io.jboot.app.config.annotation.ConfigModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,18 +35,17 @@ import java.util.jar.JarFile;
  */
 public class ClassScanner {
 
+    private static Config config = JbootConfigManager.me().get(Config.class);
     private static final Set<Class> appClasses = new HashSet<>();
-
     public static final Set<String> includeJars = new HashSet<>();
-
-    public static void addScanJarPrefix(String prefix) {
-        includeJars.add(prefix);
-    }
-
     public static final Set<String> excludeJars = new HashSet<>();
 
+    public static void addScanJarPrefix(String prefix) {
+        includeJars.add(prefix.trim());
+    }
+
     public static void addUnscanJarPrefix(String prefix) {
-        excludeJars.add(prefix);
+        excludeJars.add(prefix.trim());
     }
 
     static {
@@ -72,11 +73,9 @@ public class ClassScanner {
         excludeJars.add("commons-configuration");
         excludeJars.add("commons-lang");
         excludeJars.add("commons-logging");
-        excludeJars.add("commons-pool");
         excludeJars.add("commons-io");
         excludeJars.add("commons-httpclient");
         excludeJars.add("commons-fileupload");
-        excludeJars.add("commons-configuration");
         excludeJars.add("commons-validator");
         excludeJars.add("commons-email");
         excludeJars.add("commons-text");
@@ -86,7 +85,6 @@ public class ClassScanner {
         excludeJars.add("netty-");
         excludeJars.add("consul-");
         excludeJars.add("gson-");
-        excludeJars.add("httpcore-");
         excludeJars.add("zookeeper-");
         excludeJars.add("slf4j-");
         excludeJars.add("fastjson-");
@@ -157,8 +155,6 @@ public class ClassScanner {
         excludeJars.add("aliyun-sdk-");
         excludeJars.add("archaius-");
         excludeJars.add("aopalliance-");
-        excludeJars.add("caffeine-");
-        excludeJars.add("caffeine-");
         excludeJars.add("HdrHistogram-");
         excludeJars.add("jdom-");
         excludeJars.add("rxjava-");
@@ -169,6 +165,15 @@ public class ClassScanner {
         excludeJars.add("commonmark-");
         excludeJars.add("jaxb-");
         excludeJars.add("json-20");
+    }
+
+    static {
+        for (String prefix : config.getScanJarPrefixes()) {
+            addScanJarPrefix(prefix);
+        }
+        for (String prefix : config.getUnScanJarPrefixes()) {
+            addUnscanJarPrefix(prefix);
+        }
     }
 
     public static <T> List<Class<T>> scanSubClass(Class<T> pclazz) {
@@ -426,6 +431,48 @@ public class ClassScanner {
             }
         }
         return javaHome;
+    }
+
+    @ConfigModel(prefix = "jboot.app.scanner")
+    public static class Config {
+
+        private String scanJarPrefix;
+        private String unScanJarPrefix;
+
+        public String getScanJarPrefix() {
+            return scanJarPrefix;
+        }
+
+        public void setScanJarPrefix(String scanJarPrefix) {
+            this.scanJarPrefix = scanJarPrefix;
+        }
+
+        public String getUnScanJarPrefix() {
+            return unScanJarPrefix;
+        }
+
+        public void setUnScanJarPrefix(String unScanJarPrefix) {
+            this.unScanJarPrefix = unScanJarPrefix;
+        }
+
+        public List<String> getScanJarPrefixes() {
+            return readFrom(scanJarPrefix);
+        }
+
+        public List<String> getUnScanJarPrefixes() {
+            return readFrom(unScanJarPrefix);
+        }
+
+        private List<String> readFrom(String data) {
+            List<String> prefixes = new ArrayList<>();
+            if (data != null) {
+                String[] strings = data.split(",");
+                for (String string : strings) {
+                    prefixes.add(string.trim());
+                }
+            }
+            return prefixes;
+        }
     }
 
 
