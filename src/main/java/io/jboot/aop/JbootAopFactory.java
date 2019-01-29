@@ -1,6 +1,8 @@
 package io.jboot.aop;
 
-import com.jfinal.aop.*;
+import com.jfinal.aop.AopFactory;
+import com.jfinal.aop.Inject;
+import com.jfinal.aop.Singleton;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.app.config.JbootConfigManager;
@@ -87,6 +89,11 @@ public class JbootAopFactory extends AopFactory {
         // Aop.get(obj.getClass()) 可以用 Aop.inject(obj)，所以注掉下一行代码
         // targetClass = (Class<T>)getUsefulClass(targetClass);
 
+        ConfigModel configModel = targetClass.getAnnotation(ConfigModel.class);
+        if (configModel != null) {
+            return JbootConfigManager.me().get(targetClass);
+        }
+
         targetClass = (Class<T>) getMappingClass(targetClass);
 
         Singleton si = targetClass.getAnnotation(Singleton.class);
@@ -129,10 +136,7 @@ public class JbootAopFactory extends AopFactory {
             fieldInjectedClass = field.getType();
         }
 
-        ConfigModel configModel = fieldInjectedClass.getAnnotation(ConfigModel.class);
-        Object fieldInjectedObject = configModel == null
-                ? get(fieldInjectedClass, injectDepth)
-                : JbootConfigManager.me().get(fieldInjectedClass);
+        Object fieldInjectedObject = get(fieldInjectedClass, injectDepth);
 
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
