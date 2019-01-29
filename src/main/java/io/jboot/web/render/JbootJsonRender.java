@@ -127,4 +127,9 @@ public class JbootJsonRender extends JsonRender {
 
         this.jsonText = JsonKit.toJson(map);
     }
+
+    @Override
+    public String getJsonText() {
+        return jsonText;
+    }
 }
