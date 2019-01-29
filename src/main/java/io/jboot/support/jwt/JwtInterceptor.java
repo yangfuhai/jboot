@@ -46,29 +46,31 @@ public class JwtInterceptor implements FixedInterceptor {
         String token = request.getHeader(JwtManager.me().getHttpHeaderName());
 
         if (StrUtil.isBlank(token)) {
-            inv.invoke();
-            processInvokeAfter(inv, null);
+            processInvoke(inv, null);
             return;
         }
 
         Map map = JwtManager.me().parseJwtToken(token);
         if (map == null) {
-            inv.invoke();
-            processInvokeAfter(inv, null);
+            processInvoke(inv, null);
             return;
         }
 
         try {
             JwtManager.me().holdJwts(map);
-            inv.invoke();
-            processInvokeAfter(inv, map);
+            processInvoke(inv, map);
         } finally {
             JwtManager.me().releaseJwts();
         }
     }
 
 
-    private void processInvokeAfter(FixedInvocation inv, Map oldData) {
+
+    private void processInvoke(FixedInvocation inv, Map oldData) {
+
+        inv.invoke();
+
+
         if (!(inv.getController() instanceof JbootController)) {
             return;
         }
@@ -78,7 +80,7 @@ public class JwtInterceptor implements FixedInterceptor {
 
 
         if (jwtMap == null || jwtMap.isEmpty()) {
-            refreshOldJwtIfNecessary(inv, oldData);
+            refreshIfNecessary(inv, oldData);
             return;
         }
 
@@ -88,7 +90,7 @@ public class JwtInterceptor implements FixedInterceptor {
     }
 
     
-    private void refreshOldJwtIfNecessary(FixedInvocation inv, Map oldData) {
+    private void refreshIfNecessary(FixedInvocation inv, Map oldData) {
         if (oldData == null) {
             return;
         }
