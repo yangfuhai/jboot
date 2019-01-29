@@ -5,6 +5,7 @@ import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigInject;
+import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
 import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.components.rpc.Jbootrpc;
@@ -123,13 +124,16 @@ public class JbootAopFactory extends AopFactory {
      * @throws ReflectiveOperationException
      */
     private void injectByJFinalInject(Object targetObject, Field field, Inject inject, int injectDepth) throws ReflectiveOperationException {
-
         Class<?> fieldInjectedClass = inject.value();
         if (fieldInjectedClass == Void.class) {
             fieldInjectedClass = field.getType();
         }
 
-        Object fieldInjectedObject = get(fieldInjectedClass, injectDepth);
+        ConfigModel configModel = fieldInjectedClass.getAnnotation(ConfigModel.class);
+        Object fieldInjectedObject = configModel == null
+                ? get(fieldInjectedClass, injectDepth)
+                : JbootConfigManager.me().get(fieldInjectedClass);
+
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
 
