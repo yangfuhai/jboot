@@ -71,6 +71,22 @@ public class StrUtil extends StrKit {
         return true;
     }
 
+    public static String requireNonBlank(String string) {
+        if (isBlank(string))
+            throw new NullPointerException();
+        return string;
+    }
+
+    public static String requireNonBlank(String string, String message) {
+        if (isBlank(string))
+            throw new NullPointerException(message);
+        return string;
+    }
+
+    public static String obtainDefaultIfBlank(String string, String defaultValue) {
+        return isBlank(string) ? defaultValue : string;
+    }
+
     /**
      * 不是空数据，注意：空格不是空数据
      *
@@ -153,7 +169,6 @@ public class StrUtil extends StrKit {
     public static String uuid() {
         return UUID.randomUUID().toString().replace("-", "");
     }
-
 
 
     /**

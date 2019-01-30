@@ -15,7 +15,9 @@
  */
 package io.jboot.app;
 
+import io.jboot.app.config.JbootConfigManager;
 import io.jboot.utils.FileScanner;
+import io.jboot.utils.StrUtil;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -27,15 +29,16 @@ import java.util.List;
 
 public class JbootResourceLoader {
 
-    private final String resourcePathName;
+    private String resourcePathName;
     private List<FileScanner> scanners = new ArrayList<>();
 
     public JbootResourceLoader() {
-        this("webapp");
+        String configResourcePathName = JbootConfigManager.me().getConfigValue("jboot.app.resourcePathName");
+        this.resourcePathName = StrUtil.obtainDefaultIfBlank(configResourcePathName, "webapp");
     }
 
     public JbootResourceLoader(String resourcePathName) {
-        this.resourcePathName = resourcePathName;
+        this.resourcePathName = StrUtil.requireNonBlank(resourcePathName, "Resource path name must not be blank.");
     }
 
 
