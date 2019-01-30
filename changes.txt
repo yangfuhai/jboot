@@ -1,6 +1,7 @@
 jboot v2.0-rc.4:
 新增：注解可以通过${key}来指定读取配置的功能，支持 ${key:value} 的方式设置默认值
 新增：@Inject 对配置 Model 自动注入的支持，配置 Model 应该是通过 ConfigManager 来进行初始化
+新增：@ConfigInject 可以通过 @ConfigInject(key:value) 的方式进行配置，当key不存在的时候，自动使用value进行赋值
 新增：onJFinalStartedBefore() 监听，可以在项目启动的时候做一些必须的初始化
 新增：JbootActionHandler 新增 getAction() 方法，方便子类复写从而可以实现 "动态路由" 和 Controler 的动态添加功能
 新增：工具类 FileScanner，用于对文件进行扫描和监听文件动态
