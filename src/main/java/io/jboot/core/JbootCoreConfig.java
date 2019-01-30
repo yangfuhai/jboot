@@ -216,7 +216,7 @@ public class JbootCoreConfig extends JFinalConfig {
     }
 
     @Override
-    public void afterJFinalStart() {
+    public void onStart() {
 
         JbootAppListenerManager.me().onJFinalStartedBefore();
 
@@ -238,7 +238,7 @@ public class JbootCoreConfig extends JFinalConfig {
     }
 
     @Override
-    public void beforeJFinalStop() {
+    public void onStop() {
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         if (drivers != null) {
             while (drivers.hasMoreElements()) {
