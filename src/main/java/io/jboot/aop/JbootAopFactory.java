@@ -2,12 +2,10 @@ package io.jboot.aop;
 
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
-import com.jfinal.aop.Singleton;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigInject;
-import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
 import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.components.rpc.Jbootrpc;
@@ -34,92 +32,10 @@ public class JbootAopFactory extends AopFactory {
     @Override
     protected Object createObject(Class<?> targetClass) throws ReflectiveOperationException {
         return com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
-//        Object ret =  com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
-//        return ret; //inject(ret);
     }
 
 
-    @Override
-    public void inject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
-        if ((injectDepth--) <= 0) {
-            return;
-        }
 
-        targetClass = getUsefulClass(targetClass);
-        Field[] fields = targetClass.getDeclaredFields();
-        if (fields.length == 0) {
-            return;
-        }
-
-        for (Field field : fields) {
-
-            Inject inject = field.getAnnotation(Inject.class);
-            if (inject != null) {
-                injectByJFinalInject(targetObject, field, inject, injectDepth);
-                continue;
-            }
-
-            ConfigInject configInject = field.getAnnotation(ConfigInject.class);
-            if (configInject != null) {
-                injectByConfig(targetObject, field, configInject);
-                continue;
-            }
-
-            RPCInject rpcInject = field.getAnnotation(RPCInject.class);
-            if (rpcInject != null) {
-                injectByRPC(targetObject, field, rpcInject);
-                continue;
-            }
-        }
-    }
-
-
-    @Override
-    public <T> T get(Class<T> targetClass) {
-        try {
-            return get(targetClass, injectDepth);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    @SuppressWarnings("unchecked")
-    protected <T> T get(Class<T> targetClass, int injectDepth) throws ReflectiveOperationException {
-        // Aop.get(obj.getClass()) 可以用 Aop.inject(obj)，所以注掉下一行代码
-        // targetClass = (Class<T>)getUsefulClass(targetClass);
-
-        ConfigModel configModel = targetClass.getAnnotation(ConfigModel.class);
-        if (configModel != null) {
-            return JbootConfigManager.me().get(targetClass);
-        }
-
-        targetClass = (Class<T>) getMappingClass(targetClass);
-
-        Singleton si = targetClass.getAnnotation(Singleton.class);
-        boolean singleton = (si != null ? si.value() : this.singleton);
-
-        Object ret;
-        if (!singleton) {
-            ret = createObject(targetClass);
-            inject(targetClass, ret, injectDepth);
-            return (T) ret;
-        }
-
-        ret = singletonCache.get(targetClass);
-        if (ret == null) {
-            synchronized (this) {
-                ret = singletonCache.get(targetClass);
-                if (ret == null) {
-                    ret = createObject(targetClass);
-                    inject(targetClass, ret, injectDepth);
-                    singletonCache.put(targetClass, ret);
-                }
-            }
-        }
-
-        return (T) ret;
-    }
 
 
     /**
@@ -143,6 +59,54 @@ public class JbootAopFactory extends AopFactory {
 
     }
 
+
+    @Override
+    protected void doInject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
+        if ((injectDepth--) <= 0) {
+            return ;
+        }
+
+        targetClass = getUsefulClass(targetClass);
+        Field[] fields = targetClass.getDeclaredFields();
+        if (fields.length == 0) {
+            return ;
+        }
+
+        for (Field field : fields) {
+//            Inject inject = field.getAnnotation(Inject.class);
+//            if (inject == null) {
+//                continue ;
+//            }
+//
+//            Class<?> fieldInjectedClass = inject.value();
+//            if (fieldInjectedClass == Void.class) {
+//                fieldInjectedClass = field.getType();
+//            }
+//
+//            Object fieldInjectedObject = doGet(fieldInjectedClass, injectDepth);
+//            field.setAccessible(true);
+//            field.set(targetObject, fieldInjectedObject);
+
+            Inject inject = field.getAnnotation(Inject.class);
+            if (inject != null) {
+                injectByJFinalInject(targetObject, field, inject, injectDepth);
+                continue;
+            }
+
+            ConfigInject configInject = field.getAnnotation(ConfigInject.class);
+            if (configInject != null) {
+                injectByConfig(targetObject, field, configInject);
+                continue;
+            }
+
+            RPCInject rpcInject = field.getAnnotation(RPCInject.class);
+            if (rpcInject != null) {
+                injectByRPC(targetObject, field, rpcInject);
+                continue;
+            }
+
+        }
+    }
 
     /**
      * 注入 rpc service

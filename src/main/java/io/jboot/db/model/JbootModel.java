@@ -163,11 +163,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     @Override
-    public M findById(Object... idValues) {
+    public M findByIds(Object... idValues) {
         if (idValues == null || idValues.length != _getPrimaryKeys().length) {
             throw new IllegalArgumentException("primary key nubmer must equals id value number and can not be null");
         }
-        return idCacheEnable ? loadByCache(idValues) : super.findById(idValues);
+        return idCacheEnable ? loadByCache(idValues) : super.findByIds(idValues);
     }
 
     protected M loadByCache(Object... idValues) {
@@ -197,8 +197,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     @Override
-    public boolean deleteById(Object... idValues) {
-        boolean success = super.deleteById(idValues);
+    public boolean deleteByIds(Object... idValues) {
+        boolean success = super.deleteByIds(idValues);
         if (success && idCacheEnable) {
             deleteIdCache(idValues);
         }
