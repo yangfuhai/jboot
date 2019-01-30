@@ -159,7 +159,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (idValue == null) {
             throw new IllegalArgumentException("idValue can not be null");
         }
-        return idCacheEnable ? loadByCache(idValue) : super.findById(idValue);
+        return idCacheEnable ? loadByCache(idValue) : super.findByIds(idValue);
     }
 
     @Override
@@ -173,7 +173,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected M loadByCache(Object... idValues) {
         return config.getCache().get(_getTableName()
                 , buildCacheKey(idValues)
-                , () -> JbootModel.super.findById(idValues)
+                , () -> JbootModel.super.findByIds(idValues)
                 , config.getIdCacheTime());
     }
 
