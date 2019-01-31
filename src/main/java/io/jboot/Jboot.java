@@ -17,7 +17,6 @@ package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
 import com.jfinal.aop.Aop;
-import io.jboot.app.JbootApplication;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.components.cache.JbootCache;
 import io.jboot.components.cache.JbootCacheManager;
@@ -42,7 +41,7 @@ public class Jboot {
      * @return
      */
     public static boolean isDevMode() {
-        return JbootApplication.isDevMode();
+        return JbootConfigManager.me().isDevMode();
     }
 
 
@@ -136,14 +135,13 @@ public class Jboot {
 
     /**
      * 读取某个配置信息
+     *
      * @param key
      * @return
      */
     public static String configValue(String key) {
         return JbootConfigManager.me().getConfigValue(key);
     }
-
-
 
 
     /**

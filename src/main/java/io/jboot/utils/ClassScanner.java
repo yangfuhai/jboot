@@ -15,7 +15,6 @@
  */
 package io.jboot.utils;
 
-import io.jboot.app.JbootApplication;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 
@@ -282,14 +281,14 @@ public class ClassScanner {
         findClassPathsAndJars(jarPaths, classPaths, ClassScanner.class.getClassLoader());
 
         for (String jarPath : jarPaths) {
-            if (JbootApplication.isDevMode()) {
+            if (JbootConfigManager.me().isDevMode()) {
                 System.out.println("ClassScanner scan jar : " + jarPath);
             }
             addClassesFromJar(jarPath);
         }
 
         for (String classPath : classPaths) {
-            if (JbootApplication.isDevMode()) {
+            if (JbootConfigManager.me().isDevMode()) {
                 System.out.println("ClassScanner scan classpath : " + classPath);
             }
             addClassesFromClassPath(classPath);
