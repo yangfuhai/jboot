@@ -49,7 +49,9 @@ public class JbootServiceBase<M extends JbootModel<M>>
     protected M initDao() {
         Type type = ClassUtil.getUsefulClass(getClass()).getGenericSuperclass();
         Class<M> modelClass = (Class<M>) ((ParameterizedType) type).getActualTypeArguments()[0];
-        if (modelClass == null) throw new JbootException("can not get modelClass in JbootServiceBase");
+        if (modelClass == null) throw new JbootException("can not get model class name in JbootServiceBase");
+
+        //默认不通过AOP构建DAO，提升性能，若特殊需要重写initDao()方法即可
         return ClassUtil.newInstance(modelClass, false);
     }
 
