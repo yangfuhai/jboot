@@ -229,7 +229,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return super.update();
     }
 
-    protected void deleteIdCache() {
+    public void deleteIdCache() {
         if (_getPrimaryKeys().length == 1) {
             Object idValue = get(_getPrimaryKey());
             deleteIdCache(idValue);
@@ -242,7 +242,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
     }
 
-    private void deleteIdCache(Object... idvalues) {
+    public void deleteIdCache(Object... idvalues) {
         config.getCache().remove(_getTableName(), buildCacheKey(idvalues));
     }
 
