@@ -14,8 +14,6 @@
 
 **Hello World**
 
-Controller：
-
 ```java
 @RequestMapping("/")
 public class HelloworldController extends JbootController {
