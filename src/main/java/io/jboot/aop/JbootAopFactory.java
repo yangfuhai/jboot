@@ -6,6 +6,7 @@ import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigInject;
+import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
 import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.components.rpc.Jbootrpc;
@@ -31,11 +32,11 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     protected Object createObject(Class<?> targetClass) throws ReflectiveOperationException {
-        return com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
+        ConfigModel configModel = targetClass.getAnnotation(ConfigModel.class);
+        return configModel != null
+                ? JbootConfigManager.me().get(targetClass)
+                : com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
     }
-
-
-
 
 
     /**
@@ -63,13 +64,13 @@ public class JbootAopFactory extends AopFactory {
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
         if ((injectDepth--) <= 0) {
-            return ;
+            return;
         }
 
         targetClass = getUsefulClass(targetClass);
         Field[] fields = targetClass.getDeclaredFields();
         if (fields.length == 0) {
-            return ;
+            return;
         }
 
         for (Field field : fields) {
@@ -184,12 +185,7 @@ public class JbootAopFactory extends AopFactory {
                 continue;
             }
 
-            BeanExclude beanExclude = (BeanExclude) implClass.getAnnotation(BeanExclude.class);
-
-            //对某些系统的类 进行排除，例如：Serializable 等
-            Class[] excludes = beanExclude == null
-                    ? default_excludes
-                    : ArrayUtil.concat(default_excludes, beanExclude.value());
+            Class[] excludes = buildExcludeClasses(implClass);
 
             for (Class interfaceClass : interfaceClasses) {
                 if (inExcludes(interfaceClass, excludes) == false) {
@@ -197,6 +193,15 @@ public class JbootAopFactory extends AopFactory {
                 }
             }
         }
+    }
+
+    private Class[] buildExcludeClasses(Class implClass) {
+        BeanExclude beanExclude = (BeanExclude) implClass.getAnnotation(BeanExclude.class);
+
+        //对某些系统的类 进行排除，例如：Serializable 等
+        return beanExclude == null
+                ? default_excludes
+                : ArrayUtil.concat(default_excludes, beanExclude.value());
     }
 
     private boolean inExcludes(Class interfaceClass, Class[] excludes) {
