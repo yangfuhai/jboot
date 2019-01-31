@@ -188,7 +188,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public boolean deleteById(Object idValue) {
         boolean success = super.deleteById(idValue);
         if (success && idCacheEnable) {
-            deleteIdCache(idValue);
+            deleteIdCacheById(idValue);
         }
         return success;
     }
@@ -197,7 +197,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public boolean deleteByIds(Object... idValues) {
         boolean success = super.deleteByIds(idValues);
         if (success && idCacheEnable) {
-            deleteIdCache(idValues);
+            deleteIdCacheById(idValues);
         }
         return success;
     }
@@ -232,17 +232,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public void deleteIdCache() {
         if (_getPrimaryKeys().length == 1) {
             Object idValue = get(_getPrimaryKey());
-            deleteIdCache(idValue);
+            deleteIdCacheById(idValue);
         } else {
             Object[] idvalues = new Object[_getPrimaryKeys().length];
             for (int i = 0; i < idvalues.length; i++) {
                 idvalues[i] = get(_getPrimaryKeys()[i]);
             }
-            deleteIdCache(idvalues);
+            deleteIdCacheById(idvalues);
         }
     }
 
-    public void deleteIdCache(Object... idvalues) {
+    public void deleteIdCacheById(Object... idvalues) {
         config.getCache().remove(_getTableName(), buildCacheKey(idvalues));
     }
 
