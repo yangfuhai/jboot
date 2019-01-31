@@ -218,7 +218,7 @@ public class JbootCoreConfig extends JFinalConfig {
     @Override
     public void onStart() {
 
-        JbootAppListenerManager.me().onJFinalStartedBefore();
+        JbootAppListenerManager.me().onJFinalStartBefore();
 
         /**
          * 配置微信accessToken的缓存
@@ -234,7 +234,7 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootScheduleManager.me().init();
         JbootSwaggerManager.me().init();
 
-        JbootAppListenerManager.me().onJFinalStarted();
+        JbootAppListenerManager.me().onJFinalStart();
     }
 
     @Override

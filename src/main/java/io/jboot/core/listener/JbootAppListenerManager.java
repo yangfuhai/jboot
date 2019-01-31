@@ -153,10 +153,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJFinalStartedBefore() {
+    public void onJFinalStartBefore() {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJFinalStartedBefore();
+                listener.onJFinalStartBefore();
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
@@ -164,10 +164,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJFinalStarted() {
+    public void onJFinalStart() {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJFinalStarted();
+                listener.onJFinalStart();
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }

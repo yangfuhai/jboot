@@ -42,9 +42,9 @@ public interface JbootAppListener {
 
     public void onHandlerConfig(JfinalHandlers handlers);
 
-    public void onJFinalStartedBefore();
+    public void onJFinalStartBefore();
 
-    public void onJFinalStarted();
+    public void onJFinalStart();
 
     public void onJFinalStop();
 
