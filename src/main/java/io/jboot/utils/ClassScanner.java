@@ -165,6 +165,21 @@ public class ClassScanner {
         excludeJars.add("commonmark-");
         excludeJars.add("jaxb-");
         excludeJars.add("json-20");
+        excludeJars.add("jcseg-");
+        excludeJars.add("lucene-");
+        excludeJars.add("elasticsearch-");
+        excludeJars.add("jopt-");
+        excludeJars.add("httpasyncclient-");
+        excludeJars.add("jna-");
+        excludeJars.add("lang-mustache-client-");
+        excludeJars.add("parent-join-client-");
+        excludeJars.add("rank-eval-client-");
+        excludeJars.add("aggs-matrix-stats-client-");
+        excludeJars.add("t-digest-");
+        excludeJars.add("compiler-");
+        excludeJars.add("hppc-");
+        excludeJars.add("libthrift-");
+
     }
 
     static {
