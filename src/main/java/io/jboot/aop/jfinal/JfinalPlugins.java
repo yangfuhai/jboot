@@ -35,4 +35,8 @@ public class JfinalPlugins {
         plugins.add(plugin);
         return this;
     }
+
+    public Plugins getPlugins() {
+        return plugins;
+    }
 }
