@@ -1,10 +1,6 @@
-jboot 2.0 is developing
 
 
 ## 开始
-
-注意：
-> 由于Jboot2.0 还处于 rc 阶段，请不要使用在正式环境里。 
 
 **maven 依赖**
 
@@ -12,7 +8,7 @@ jboot 2.0 is developing
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>2.0-rc.3</version>
+    <version>2.0-rc.4</version>
 </dependency>
 ```
 
@@ -27,13 +23,7 @@ public class HelloworldController extends JbootController {
     public void index(){
         renderText("hello world");
     }
-}
-```
 
-HelloWorldApp:
-
-```java
-public class HelloWorldApp {
 
     public static void main(String[] args){
         JbootApplication.run(args);
