@@ -19,7 +19,7 @@ public class AnnotationUtil {
 
             String defaultValue = null;
             if (indexOf != -1) {
-                defaultValue = key.substring(indexOf + 1, key.length());
+                defaultValue = key.substring(indexOf + 1);
                 key = key.substring(0, indexOf);
             }
 

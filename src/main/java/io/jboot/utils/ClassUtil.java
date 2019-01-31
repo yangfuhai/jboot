@@ -15,16 +15,10 @@
  */
 package io.jboot.utils;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.jfinal.aop.Aop;
 import com.jfinal.log.Log;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -111,10 +105,10 @@ public class ClassUtil {
      * @param clazzName
      * @return
      */
-    public static <T> T newInstance(String clazzName, boolean createByGuice) {
+    public static <T> T newInstance(String clazzName, boolean createByAop) {
         try {
             Class<T> clazz = (Class<T>) Class.forName(clazzName, false, Thread.currentThread().getContextClassLoader());
-            return newInstance(clazz, createByGuice);
+            return newInstance(clazz, createByAop);
         } catch (Exception e) {
             log.error("can not newInstance class:" + clazzName + "\n" + e.toString(), e);
         }
@@ -128,43 +122,5 @@ public class ClassUtil {
         //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
         return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
     }
-
-
-    /**
-     * 类的set方法缓存，用于减少对类的反射工作
-     */
-    private static Multimap<Class<?>, Method> classMethodsCache = Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
-
-    /**
-     * 获取 某class 下的所有set 方法
-     *
-     * @param clazz
-     * @return
-     */
-    public static Collection<Method> getClassSetMethods(Class clazz) {
-
-        Collection<Method> setMethods = classMethodsCache.get(clazz);
-        if (ArrayUtil.isNullOrEmpty(setMethods)) {
-            initSetMethodsCache(clazz);
-            setMethods = classMethodsCache.get(clazz);
-        }
-
-        return setMethods != null ? new ArrayList<>(setMethods) : null;
-    }
-
-    private static void initSetMethodsCache(Class clazz) {
-        synchronized (clazz) {
-            Method[] methods = clazz.getMethods();
-            for (Method method : methods) {
-                if (method.getName().startsWith("set")
-                        && method.getName().length() > 3
-                        && method.getParameterCount() == 1) {
-
-                    classMethodsCache.put(clazz, method);
-                }
-            }
-        }
-    }
-
 
 }
