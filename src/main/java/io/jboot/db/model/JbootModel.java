@@ -16,10 +16,7 @@
 package io.jboot.db.model;
 
 import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.Config;
-import com.jfinal.plugin.activerecord.Model;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Table;
+import com.jfinal.plugin.activerecord.*;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
@@ -269,7 +266,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return key.toString();
     }
 
-    public IJbootModelDialect _getDialect() {
+    protected IJbootModelDialect _getDialect() {
         Config config = _getConfig();
         if (config == null) {
             throw new JbootException(
@@ -440,17 +437,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    public String _getTableName() {
+    protected String _getTableName() {
         return _getTable(true).getName();
     }
 
-    public Table _getTable() {
+    protected Table _getTable() {
         return _getTable(false);
     }
 
     private transient Table table;
 
-    public Table _getTable(boolean validateNull) {
+    protected Table _getTable(boolean validateNull) {
         if (table == null) {
             table = super._getTable();
             if (table == null && validateNull) {
@@ -466,13 +463,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    public String _getPrimaryKey() {
+    protected String _getPrimaryKey() {
         return _getPrimaryKeys()[0];
     }
 
     private transient String[] primaryKeys;
 
-    public String[] _getPrimaryKeys() {
+    protected String[] _getPrimaryKeys() {
         if (primaryKeys != null) {
             return primaryKeys;
         }
@@ -487,7 +484,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private transient Class<?> primaryType;
 
-    public Class<?> _getPrimaryType() {
+    protected Class<?> _getPrimaryType() {
         if (primaryType == null) {
             primaryType = _getTable(true).getColumnType(_getPrimaryKey());
         }
@@ -495,7 +492,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    public boolean _hasColumn(String columnLabel) {
+    protected boolean _hasColumn(String columnLabel) {
         return _getTable(true).hasColumnLabel(columnLabel);
     }
 
