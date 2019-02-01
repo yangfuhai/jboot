@@ -53,7 +53,7 @@ public class JbootAopFactory extends AopFactory {
             fieldInjectedClass = field.getType();
         }
 
-        Object fieldInjectedObject = get(fieldInjectedClass, injectDepth);
+        Object fieldInjectedObject = doGet(fieldInjectedClass, injectDepth);
 
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
