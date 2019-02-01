@@ -566,20 +566,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null) {
+
+        if (o == null || !(o instanceof JbootModel)) {
             return false;
         }
 
-        if (!(o instanceof JbootModel)) {
-            return false;
+        //可能model在rpc的Controller层，没有映射到数据库
+        if (_getTable(false) == null) {
+            return this == o;
         }
 
-        Object id = ((JbootModel) o).get(_getPrimaryKey());
-        if (id == null) {
-            return false;
-        }
-
-        return id.equals(get(_getPrimaryKey()));
+        Object id = ((JbootModel) o)._getIdValue();
+        return id != null && id.equals(_getIdValue());
     }
 
 
