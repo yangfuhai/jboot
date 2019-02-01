@@ -19,7 +19,6 @@ import com.jfinal.aop.Aop;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
-import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.template.Engine;
@@ -39,10 +38,7 @@ import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
 import io.jboot.support.swagger.JbootSwaggerManager;
-import io.jboot.utils.AnnotationUtil;
-import io.jboot.utils.ArrayUtil;
-import io.jboot.utils.ClassScanner;
-import io.jboot.utils.ClassUtil;
+import io.jboot.utils.*;
 import io.jboot.web.JbootJson;
 import io.jboot.web.cache.ActionCacheHandler;
 import io.jboot.web.controller.JbootControllerManager;
@@ -107,6 +103,8 @@ public class JbootCoreConfig extends JFinalConfig {
     @Override
     public void configRoute(Routes routes) {
 
+        routes.setMappingSuperClass(true);
+
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
@@ -118,7 +116,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
                 String viewPath = AnnotationUtil.get(mapping.viewPath());
 
-                if (StrKit.notBlank(viewPath)) {
+                if (StrUtil.isNotBlank(viewPath)) {
                     routes.add(value, clazz, viewPath);
                 } else {
                     routes.add(value, clazz);
