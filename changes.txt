@@ -1,3 +1,9 @@
+jboot v2.0-rc.5:
+优化：把 JbootModel 的 `getIdValue()` 修改为 `_getIdValue()`，防止fastjson自动序列化会调用 get 方法出错的问题
+修复：JbootModel 通过 RPC 请求数据返回客户端，然后进行 equals 会出错的问题
+
+
+
 jboot v2.0-rc.4:
 新增：注解可以通过${key}来指定读取配置的功能，支持 ${key:value} 的方式设置默认值
 新增：@Inject 对配置 Model 自动注入的支持，配置 Model 应该是通过 ConfigManager 来进行初始化
