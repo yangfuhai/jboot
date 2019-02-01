@@ -105,7 +105,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public boolean saveOrUpdate() {
-        if (null == getIdValue()) {
+        if (null == _getIdValue()) {
             return this.save();
         }
         return this.update();
@@ -432,22 +432,22 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                 : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
     }
 
-    public <T> T getIdValue() {
+    public <T> T _getIdValue() {
         return get(_getPrimaryKey());
     }
 
 
-    protected String _getTableName() {
+    public String _getTableName() {
         return _getTable(true).getName();
     }
 
-    protected Table _getTable() {
+    public Table _getTable() {
         return _getTable(false);
     }
 
     private transient Table table;
 
-    protected Table _getTable(boolean validateNull) {
+    public Table _getTable(boolean validateNull) {
         if (table == null) {
             table = super._getTable();
             if (table == null && validateNull) {
@@ -463,13 +463,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    protected String _getPrimaryKey() {
+    public String _getPrimaryKey() {
         return _getPrimaryKeys()[0];
     }
 
     private transient String[] primaryKeys;
 
-    protected String[] _getPrimaryKeys() {
+    public String[] _getPrimaryKeys() {
         if (primaryKeys != null) {
             return primaryKeys;
         }

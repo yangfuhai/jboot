@@ -111,7 +111,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return id if success
      */
     public Object save(M model) {
-        return model.save() ? model.getIdValue() : null;
+        return model.save() ? model._getIdValue() : null;
     }
 
 
@@ -122,10 +122,10 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return id if success
      */
     public Object saveOrUpdate(M model) {
-        if (model.getIdValue() == null) {
+        if (model._getIdValue() == null) {
             return save(model);
         } else if (update(model)) {
-            return model.getIdValue();
+            return model._getIdValue();
         }
         return null;
     }
