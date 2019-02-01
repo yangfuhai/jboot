@@ -24,29 +24,11 @@ package io.jboot;
  */
 public class JbootConsts {
 
-    public static String VERSION = "2.0-rc.4";
+    public static String VERSION = "2.0-rc.5-snapshot";
 
 
     public static final String ATTR_REQUEST = "REQUEST";
     public static final String ATTR_CONTEXT_PATH = "CPATH";
 
 
-    /**
-     * 产品模式：开发、测试、产品
-     */
-    public static enum MODE {
-
-        DEV("dev"), TEST("test"), PRODUCT("product");
-
-        private final String value;
-
-        MODE(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-    }
 }
