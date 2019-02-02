@@ -1,7 +1,10 @@
+jboot v2.0-rc.7:
+修复：Aop 自动注入的一些问题
+
+
 jboot v2.0-rc.6:
 优化：把 JbootModel 的 `getIdValue()` 修改为 `_getIdValue()`，防止fastjson自动序列化会调用 get 方法出错的问题
 修复：JbootModel 通过 RPC 请求数据返回客户端，然后进行 equals 会出错的问题
-
 
 
 jboot v2.0-rc.4:
