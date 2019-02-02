@@ -8,6 +8,7 @@ public class CServiceImpl implements CService {
 
     @Inject
     DService dService;
+    BService bService;
 
     public CServiceImpl() {
         System.out.println("new CServiceImpl...");

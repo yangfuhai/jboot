@@ -21,14 +21,16 @@ import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 
 public class JbootAopFactory extends AopFactory {
 
     private JbootAopInterceptor aopInterceptor = new JbootAopInterceptor();
+    private ThreadLocal<HashMap<Class<?>, Object>> context = ThreadLocal.withInitial(() -> new HashMap<>());
 
     public JbootAopFactory() {
-        setInjectDepth(MAX_INJECT_DEPTH);
+//        setInjectDepth(MAX_INJECT_DEPTH);
         initBeanMapping();
     }
 
@@ -50,13 +52,24 @@ public class JbootAopFactory extends AopFactory {
         }
 
         ret = singletonCache.get(targetClass);
+        if (ret != null){
+            return (T) ret;
+        }
+
+
+        ret = context.get().get(targetClass);
         if (ret == null) {
             synchronized (this) {
                 ret = singletonCache.get(targetClass);
                 if (ret == null) {
+//                    ret = createObject(targetClass);
+//                    doInject(targetClass, ret, injectDepth);
+//                    singletonCache.put(targetClass, ret);
+
                     ret = createObject(targetClass);
-                    singletonCache.put(targetClass, ret);
-                    doInject(targetClass, ret, injectDepth);
+                    context.get().put(targetClass,ret);
+                    doInject(targetClass,ret,injectDepth);
+                    singletonCache.put(targetClass,ret);
                 }
             }
         }
@@ -75,9 +88,9 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
-        if ((injectDepth--) <= 0) {
-            return;
-        }
+//        if ((injectDepth--) <= 0) {
+//            return;
+//        }
 
         targetClass = getUsefulClass(targetClass);
         Field[] fields = targetClass.getDeclaredFields();

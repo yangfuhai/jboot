@@ -7,7 +7,7 @@ import io.jboot.aop.annotation.Bean;
 public class UserServiceImpl implements UserService {
 
     @Inject
-    private AService aService;
+    private OtherService aService;
 
     public UserServiceImpl() {
         System.out.println("new UserServiceImpl...");
