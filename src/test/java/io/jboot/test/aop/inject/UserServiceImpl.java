@@ -7,7 +7,11 @@ import io.jboot.aop.annotation.Bean;
 public class UserServiceImpl implements UserService {
 
     @Inject
-    private OtherService otherService;
+    private AService aService;
+
+    public UserServiceImpl() {
+        System.out.println("new UserServiceImpl...");
+    }
 
     @Override
     public String getName(){

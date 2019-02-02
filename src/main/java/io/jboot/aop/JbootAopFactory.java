@@ -2,6 +2,7 @@ package io.jboot.aop;
 
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
+import com.jfinal.aop.Singleton;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.app.config.JbootConfigManager;
@@ -27,7 +28,40 @@ public class JbootAopFactory extends AopFactory {
     private JbootAopInterceptor aopInterceptor = new JbootAopInterceptor();
 
     public JbootAopFactory() {
+        setInjectDepth(MAX_INJECT_DEPTH);
         initBeanMapping();
+    }
+
+    @Override
+    protected <T> T doGet(Class<T> targetClass, int injectDepth) throws ReflectiveOperationException {
+        // Aop.get(obj.getClass()) 可以用 Aop.inject(obj)，所以注掉下一行代码
+        // targetClass = (Class<T>)getUsefulClass(targetClass);
+
+        targetClass = (Class<T>) getMappingClass(targetClass);
+
+        Singleton si = targetClass.getAnnotation(Singleton.class);
+        boolean singleton = (si != null ? si.value() : this.singleton);
+
+        Object ret;
+        if (!singleton) {
+            ret = createObject(targetClass);
+            doInject(targetClass, ret, injectDepth);
+            return (T) ret;
+        }
+
+        ret = singletonCache.get(targetClass);
+        if (ret == null) {
+            synchronized (this) {
+                ret = singletonCache.get(targetClass);
+                if (ret == null) {
+                    ret = createObject(targetClass);
+                    singletonCache.put(targetClass, ret);
+                    doInject(targetClass, ret, injectDepth);
+                }
+            }
+        }
+
+        return (T) ret;
     }
 
     @Override
@@ -36,28 +70,6 @@ public class JbootAopFactory extends AopFactory {
         return configModel != null
                 ? JbootConfigManager.me().get(targetClass)
                 : com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
-    }
-
-
-    /**
-     * 本地 service 注入
-     *
-     * @param targetObject
-     * @param field
-     * @param inject
-     * @throws ReflectiveOperationException
-     */
-    private void injectByJFinalInject(Object targetObject, Field field, Inject inject, int injectDepth) throws ReflectiveOperationException {
-        Class<?> fieldInjectedClass = inject.value();
-        if (fieldInjectedClass == Void.class) {
-            fieldInjectedClass = field.getType();
-        }
-
-        Object fieldInjectedObject = doGet(fieldInjectedClass, injectDepth);
-
-        field.setAccessible(true);
-        field.set(targetObject, fieldInjectedObject);
-
     }
 
 
@@ -110,6 +122,27 @@ public class JbootAopFactory extends AopFactory {
     }
 
     /**
+     * JFinal 原生 service 注入
+     *
+     * @param targetObject
+     * @param field
+     * @param inject
+     * @throws ReflectiveOperationException
+     */
+    private void injectByJFinalInject(Object targetObject, Field field, Inject inject, int injectDepth) throws ReflectiveOperationException {
+        Class<?> fieldInjectedClass = inject.value();
+        if (fieldInjectedClass == Void.class) {
+            fieldInjectedClass = field.getType();
+        }
+
+        Object fieldInjectedObject = doGet(fieldInjectedClass, injectDepth);
+
+        field.setAccessible(true);
+        field.set(targetObject, fieldInjectedObject);
+
+    }
+
+    /**
      * 注入 rpc service
      *
      * @param targetObject
@@ -151,6 +184,7 @@ public class JbootAopFactory extends AopFactory {
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
     }
+
 
     private String getConfigValue(String key, Object targetObject, Field field) {
         int indexOf = key.indexOf(":");

@@ -8,4 +8,9 @@ public class OtherServiceImpl implements OtherService {
 
     @Inject
     UserService userService;
+
+
+    public OtherServiceImpl() {
+        System.out.println("new OtherServiceImpl...");
+    }
 }
