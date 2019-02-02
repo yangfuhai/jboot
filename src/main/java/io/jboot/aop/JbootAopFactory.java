@@ -30,7 +30,7 @@ public class JbootAopFactory extends AopFactory {
     private ThreadLocal<HashMap<Class<?>, Object>> context = ThreadLocal.withInitial(() -> new HashMap<>());
 
     public JbootAopFactory() {
-//        setInjectDepth(MAX_INJECT_DEPTH);
+        setInjectDepth(MAX_INJECT_DEPTH);
         initBeanMapping();
     }
 
@@ -88,9 +88,9 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
-//        if ((injectDepth--) <= 0) {
-//            return;
-//        }
+        if ((injectDepth--) <= 0) {
+            return;
+        }
 
         targetClass = getUsefulClass(targetClass);
         Field[] fields = targetClass.getDeclaredFields();
