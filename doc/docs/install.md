@@ -9,11 +9,12 @@
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>2.0-rc.4</version>
+    <version>2.0-rc.6</version>
 </dependency>
 ```
 
-注意：建议使用 Jboot 最新版本进行开发，最新版本一般是最稳定、最完善的版本，通过 [https://mvnrepository.com/artifact/io.jboot/jboot](https://mvnrepository.com/artifact/io.jboot/jboot) 可以查看到 Jboot 的最新版本。
+> 注意：
+> 建议使用 Jboot 最新版本进行开发，最新版本一般是最稳定、最完善的版本，通过 [https://mvnrepository.com/artifact/io.jboot/jboot](https://mvnrepository.com/artifact/io.jboot/jboot) 可以查看到 Jboot 的最新版本。
 
 
 

@@ -26,8 +26,14 @@
 
 ## 常见错误
 
+- **错误1：LinkpageError 错误**
 开启热加载的时候，可能会出现 `LinkpageError` 等异常，这个原因是由于用户自定义的 Class 没有被负责热加载的 `HotSwapClassLoader` 接管，需要在 `undertow.txt` 或者 `jboot.properties` 文件添加如下配置：
 
 ```
 undertow.hotSwapClassPrefix = xxx1.com, xxx2.com
 ```
+
+- **错误2：没有热加载**
+  在 idea 开发工具中，可能会出现未正确进行热加载的情况，一般是没有配置 idea 的自动编译功能。
+
+![](./imgs/idea-auto-build.jpg)
