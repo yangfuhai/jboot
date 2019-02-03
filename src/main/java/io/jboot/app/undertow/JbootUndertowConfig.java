@@ -36,8 +36,10 @@ public class JbootUndertowConfig extends UndertowConfig {
 
         String port = propExt.get("undertow.port");
         Integer availablePort = getAvailablePort();
-
-        if (port != null && port.trim().equals("*") && availablePort != null) {
+        if (port == null || port.trim().length() == 0) {
+            propExt.getProperties().put("undertow.port", "8080");
+            JbootConfigManager.me().setBootArg("undertow.port", "8080");
+        } else if (port.trim().equals("*") && availablePort != null) {
             propExt.getProperties().put("undertow.port", availablePort.toString());
             JbootConfigManager.me().setBootArg("undertow.port", availablePort.toString());
         }
