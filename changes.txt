@@ -1,5 +1,6 @@
 jboot v2.0-rc.7:
 修复：Aop 自动注入的一些问题
+优化：当未配置端口号（undertow.port）的时候，默认端口号为：8080
 
 
 jboot v2.0-rc.6:

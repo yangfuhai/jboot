@@ -205,7 +205,8 @@ public class StrUtil extends StrKit {
          "&lt;" represents the < sign.
          "&gt;" represents the > sign.
          "&amp;" represents the & sign.
-         "&quot; represents the " mark.
+         "&quot;" represents the " mark.
+         "&#39;" represents the ' mark.
          */
 
         return unEscapeHtml(content)
