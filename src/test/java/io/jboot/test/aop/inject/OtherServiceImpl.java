@@ -9,8 +9,8 @@ public class OtherServiceImpl implements OtherService {
     @Inject
     UserService userService;
 
-    @Inject
-    AService aService;
+//    @Inject
+//    AService aService;
 
 
     public OtherServiceImpl() {

@@ -52,25 +52,35 @@ public class JbootAopFactory extends AopFactory {
         }
 
         ret = singletonCache.get(targetClass);
-        if (ret != null){
+        if (ret != null) {
             return (T) ret;
         }
 
-
+        //只有在循环依赖的时候，这个context才会有值
         ret = context.get().get(targetClass);
-        if (ret == null) {
-            synchronized (this) {
-                ret = singletonCache.get(targetClass);
-                if (ret == null) {
-//                    ret = createObject(targetClass);
-//                    doInject(targetClass, ret, injectDepth);
-//                    singletonCache.put(targetClass, ret);
+        if (ret != null) {
+            return (T) ret;
+        }
 
-                    ret = createObject(targetClass);
-                    context.get().put(targetClass,ret);
-                    doInject(targetClass,ret,injectDepth);
-                    singletonCache.put(targetClass,ret);
-                }
+        synchronized (this) {
+            ret = singletonCache.get(targetClass);
+            if (ret == null) {
+//              ret = createObject(targetClass);
+//              doInject(targetClass, ret, injectDepth);
+//              singletonCache.put(targetClass, ret);
+
+                ret = createObject(targetClass);
+
+                //保存到本次初始化的上下文
+                context.get().put(targetClass, ret);
+
+                //循环注入
+                doInject(targetClass, ret, injectDepth);
+
+                //保存到缓存、并清除上下文数据
+                singletonCache.put(targetClass, ret);
+                context.get().clear();
+                context.remove();
             }
         }
 
