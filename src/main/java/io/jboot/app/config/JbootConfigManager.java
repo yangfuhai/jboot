@@ -55,14 +55,14 @@ public class JbootConfigManager {
 
     private void init() {
 
-        File jbootPropertiesFile = new File(Utils.getRootClassPath(), "jboot.properties");
-        if (!jbootPropertiesFile.exists()) {
+        File jbf = new File(Utils.getRootClassPath(), "jboot.properties");
+        if (!jbf.exists()) {
             mainProperties = new Properties();
         } else {
             mainProperties = new Prop("jboot.properties").getProperties();
         }
 
-        String mode = getConfigValue("jboot.mode");
+        String mode = getConfigValue("jboot.app.mode");
 
         if (Utils.isNotBlank(mode)) {
             String p = String.format("jboot-%s.properties", mode);
