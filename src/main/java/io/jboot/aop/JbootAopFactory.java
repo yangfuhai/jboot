@@ -62,7 +62,7 @@ public class JbootAopFactory extends AopFactory {
             return (T) ret;
         }
 
-        synchronized (this) {
+        synchronized (targetClass) {
             ret = singletonCache.get(targetClass);
             if (ret == null) {
 //              ret = createObject(targetClass);
