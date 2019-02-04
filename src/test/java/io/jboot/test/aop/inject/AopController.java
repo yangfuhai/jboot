@@ -1,7 +1,7 @@
 package io.jboot.test.aop.inject;
 
 import com.jfinal.aop.Inject;
-import io.jboot.app.config.annotation.ConfigInject;
+import io.jboot.app.config.annotation.InjectConfigValue;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -12,13 +12,13 @@ public class AopController extends JbootController {
     @Inject
     private UserService userService;
 
-    @ConfigInject("undertow.host")
+    @InjectConfigValue("undertow.host")
     private String host;
 
-    @ConfigInject("undertow.port")
+    @InjectConfigValue("undertow.port")
     private int port;
 
-    @ConfigInject("undertow.xxx:123")
+    @InjectConfigValue("undertow.xxx:123")
     private int xxx;
 
 
