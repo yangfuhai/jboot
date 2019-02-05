@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.app.config.annotation;
+package io.jboot.aop.annotation;
 
 import java.lang.annotation.*;
 
@@ -21,6 +21,8 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface InjectConfigModel {
+public @interface ConfigValue {
+
+    String value();
 
 }

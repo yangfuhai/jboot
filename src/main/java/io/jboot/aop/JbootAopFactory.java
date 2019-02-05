@@ -5,9 +5,8 @@ import com.jfinal.aop.Inject;
 import com.jfinal.aop.Singleton;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
+import io.jboot.aop.annotation.ConfigValue;
 import io.jboot.app.config.JbootConfigManager;
-import io.jboot.app.config.annotation.InjectConfigModel;
-import io.jboot.app.config.annotation.InjectConfigValue;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
 import io.jboot.components.mq.JbootmqMessageListener;
@@ -126,19 +125,13 @@ public class JbootAopFactory extends AopFactory {
 
             Inject inject = field.getAnnotation(Inject.class);
             if (inject != null) {
-                injectByJFinalInject(targetObject, field, inject, injectDepth);
+                doInjectJFinalOrginal(targetObject, field, inject, injectDepth);
                 continue;
             }
 
-            InjectConfigValue injectConfigValue = field.getAnnotation(InjectConfigValue.class);
-            if (injectConfigValue != null) {
-                doInjectConfigValue(targetObject, field, injectConfigValue);
-                continue;
-            }
-
-            InjectConfigModel injectConfigModel = field.getAnnotation(InjectConfigModel.class);
-            if (injectConfigModel != null) {
-                doInjectConfigModel(targetObject, field, injectConfigModel);
+            ConfigValue configValue = field.getAnnotation(ConfigValue.class);
+            if (configValue != null) {
+                doInjectConfigValue(targetObject, field, configValue);
                 continue;
             }
 
@@ -151,13 +144,6 @@ public class JbootAopFactory extends AopFactory {
         }
     }
 
-    private void doInjectConfigModel(Object targetObject, Field field, InjectConfigModel injectConfigModel) throws IllegalAccessException {
-        Class<?> fieldInjectedClass = field.getType();
-        Object value = JbootConfigManager.me().get(fieldInjectedClass);
-        field.setAccessible(true);
-        field.set(targetObject, inject(value));
-    }
-
     /**
      * JFinal 原生 service 注入
      *
@@ -166,7 +152,7 @@ public class JbootAopFactory extends AopFactory {
      * @param inject
      * @throws ReflectiveOperationException
      */
-    private void injectByJFinalInject(Object targetObject, Field field, Inject inject, int injectDepth) throws ReflectiveOperationException {
+    private void doInjectJFinalOrginal(Object targetObject, Field field, Inject inject, int injectDepth) throws ReflectiveOperationException {
         Class<?> fieldInjectedClass = inject.value();
         if (fieldInjectedClass == Void.class) {
             fieldInjectedClass = field.getType();
@@ -205,11 +191,11 @@ public class JbootAopFactory extends AopFactory {
      *
      * @param targetObject
      * @param field
-     * @param injectConfigValue
+     * @param configValue
      * @throws IllegalAccessException
      */
-    private void doInjectConfigValue(Object targetObject, Field field, InjectConfigValue injectConfigValue) throws IllegalAccessException {
-        String key = AnnotationUtil.get(injectConfigValue.value());
+    private void doInjectConfigValue(Object targetObject, Field field, ConfigValue configValue) throws IllegalAccessException {
+        String key = AnnotationUtil.get(configValue.value());
         Class<?> fieldInjectedClass = field.getType();
         String value = getConfigValue(key, targetObject, field);
 
