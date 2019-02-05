@@ -25,4 +25,10 @@ public @interface ConfigValue {
 
     String value();
 
+    /**
+     * 当读取配置内容为空的时候，是否进行赋值
+     * @return 默认为 true
+     */
+    boolean requireNullOrBlank() default false;
+
 }
