@@ -2,6 +2,7 @@ jboot v2.0-rc.7:
 修复：Aop 自动注入的一些问题，提升 Aop 性能
 修复：修复 jboot.properties 无法读取mode文件扩展的问题
 优化：当未配置端口号（undertow.port）的时候，默认端口号为：8080
+优化：@ConfigInject 修改为 @ConfigValue 并新增 requireNullOrBlank 配置，当读取配置文件为空的时候，是否进行强行赋值。
 
 
 jboot v2.0-rc.6:
