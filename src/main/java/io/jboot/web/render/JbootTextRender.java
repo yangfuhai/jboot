@@ -56,8 +56,6 @@ public class JbootTextRender extends TextRender {
     public void render() {
         try {
 
-            RenderHelpler.actionCacheExec(text, contentType);
-
             response.setHeader("Pragma", "no-cache");    // HTTP/1.0 caches might not implement Cache-Control and might only implement Pragma: no-cache
             response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Expires", 0);

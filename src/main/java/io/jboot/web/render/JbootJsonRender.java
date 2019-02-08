@@ -90,8 +90,6 @@ public class JbootJsonRender extends JsonRender {
             buildJsonText();
         }
 
-        RenderHelpler.actionCacheExec(jsonText, forIE ? contentTypeForIE : contentType);
-
         try {
             response.setHeader("Pragma", "no-cache");    // HTTP/1.0 caches might not implement Cache-Control and might only implement Pragma: no-cache
             response.setHeader("Cache-Control", "no-cache");

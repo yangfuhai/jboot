@@ -16,11 +16,7 @@
 package io.jboot.web.render;
 
 import com.jfinal.render.RenderException;
-import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.cache.ActionCacheContent;
-import io.jboot.web.cache.ActionCacheContext;
-import io.jboot.web.cache.ActionCacheInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -36,15 +32,6 @@ import java.util.Iterator;
  * @Package io.jboot.web.render
  */
 public class RenderHelpler {
-
-    public static void actionCacheExec(String html, String contentType) {
-        ActionCacheInfo info = ActionCacheContext.get();
-        if (info != null) {
-            ActionCacheContent actionCache = new ActionCacheContent(contentType, html);
-            Jboot.getCache().put(info.getGroup(), info.getKey(), actionCache, info.getLiveSeconds());
-        }
-    }
-
 
     public static void renderHtml(HttpServletResponse response, String html, String contentType) {
         response.setContentType(contentType);

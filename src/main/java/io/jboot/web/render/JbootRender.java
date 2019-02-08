@@ -62,8 +62,6 @@ public class JbootRender extends Render {
         String html = getEngine().getTemplate(view).renderToString(data);
         html = config.isEnable() ? RenderHelpler.processCDN(html, config.getDomain()) : html;
 
-        RenderHelpler.actionCacheExec(html, contentType);
-
         RenderHelpler.renderHtml(response, html, contentType);
     }
 
