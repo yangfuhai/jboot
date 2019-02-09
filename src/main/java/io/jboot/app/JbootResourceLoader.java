@@ -22,7 +22,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +79,7 @@ public class JbootResourceLoader {
     }
 
 
-    private void startNewScanner(File resourcesDir, String classPath) throws IOException, URISyntaxException {
+    private void startNewScanner(File resourcesDir, String classPath) throws IOException {
         // main/webapp/
         String path = "main" + File.separator + resourcePathName + File.separator;
         FileScanner scanner = new FileScanner(resourcesDir.getCanonicalPath(), 5) {
