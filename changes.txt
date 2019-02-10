@@ -1,5 +1,6 @@
 jboot v2.0-rc.8:
 移除：ActionCache 模块
+新增：Limit模块，可以用于没有运维的时候进行代码配置限流和降级
 
 
 jboot v2.0-rc.7:

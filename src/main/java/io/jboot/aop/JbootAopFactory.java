@@ -30,7 +30,7 @@ public class JbootAopFactory extends AopFactory {
     private ThreadLocal<HashMap<Class<?>, Object>> context = ThreadLocal.withInitial(() -> new HashMap<>());
 
     public JbootAopFactory() {
-        setInjectDepth(MAX_INJECT_DEPTH);
+//        setInjectDepth(MAX_INJECT_DEPTH);
         initBeanMapping();
     }
 
@@ -88,7 +88,7 @@ public class JbootAopFactory extends AopFactory {
     }
 
     @Override
-    protected Object createObject(Class<?> targetClass) throws ReflectiveOperationException {
+    protected Object createObject(Class<?> targetClass) {
         ConfigModel configModel = targetClass.getAnnotation(ConfigModel.class);
         return configModel != null
                 ? JbootConfigManager.me().get(targetClass)
@@ -98,9 +98,12 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
-        if ((injectDepth--) <= 0) {
-            return;
-        }
+
+//        注释这部分代码，目的是为了取消 injectDepth 层级的限制，
+//        从而保证系统稳定性（ps：尽管设置 injectDepth 为 7 ，但是还是有些系统出现了无法注入的情况）。
+//        if ((injectDepth--) <= 0) {
+//            return;
+//        }
 
         targetClass = getUsefulClass(targetClass);
         Field[] fields = targetClass.getDeclaredFields();
@@ -209,7 +212,7 @@ public class JbootAopFactory extends AopFactory {
         if (configValue.requireNullOrBlank()) {
             field.setAccessible(true);
             if (fieldInjectedClass == int.class) {
-                field.set(targetObject,0);
+                field.set(targetObject, 0);
             } else if (fieldInjectedClass == boolean.class) {
                 field.set(targetObject, false);
             } else {
