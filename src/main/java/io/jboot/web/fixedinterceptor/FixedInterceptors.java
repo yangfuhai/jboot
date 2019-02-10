@@ -16,6 +16,7 @@
 package io.jboot.web.fixedinterceptor;
 
 import com.jfinal.aop.Aop;
+import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
@@ -45,7 +46,8 @@ public class FixedInterceptors {
      * 默认的 Jboot 系统拦截器
      */
     private FixedInterceptorWapper[] defaultInters = new FixedInterceptorWapper[]{
-            new FixedInterceptorWapper(new CORSInterceptor(), 10) ,
+            new FixedInterceptorWapper(new LimiterInterceptor(), 10),
+            new FixedInterceptorWapper(new CORSInterceptor(), 20),
             new FixedInterceptorWapper(new ParaValidateInterceptor(), 30),
             new FixedInterceptorWapper(new JwtInterceptor(), 40),
             new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),

@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
  * @version V1.0
  * @Package io.jboot.web.handler
  */
-public class FixedInvocation {
+public class FixedInvocation extends Invocation {
 
     private Invocation invocation;
 
@@ -48,24 +48,69 @@ public class FixedInvocation {
     }
 
 
+    @Override
     public Method getMethod() {
         return invocation.getMethod();
     }
 
+    @Override
     public Controller getController() {
         return invocation.getController();
     }
 
+    @Override
     public String getActionKey() {
         return invocation.getActionKey();
     }
 
+    @Override
     public String getControllerKey() {
         return invocation.getControllerKey();
     }
 
+    @Override
     public String getMethodName() {
         return invocation.getMethodName();
+    }
+
+    @Override
+    public boolean isActionInvocation() {
+        return true;
+    }
+
+    @Override
+    public Object getArg(int index) {
+        return invocation.getArg(index);
+    }
+
+    @Override
+    public void setArg(int index, Object value) {
+        invocation.setArg(index, value);
+    }
+
+    @Override
+    public Object[] getArgs() {
+        return invocation.getArgs();
+    }
+
+    @Override
+    public <T> T getTarget() {
+        return invocation.getTarget();
+    }
+
+    @Override
+    public <T> T getReturnValue() {
+        return invocation.getReturnValue();
+    }
+
+    @Override
+    public void setReturnValue(Object returnValue) {
+        invocation.setReturnValue(returnValue);
+    }
+
+    @Override
+    public String getViewPath() {
+        return invocation.getViewPath();
     }
 
     public Invocation getInvocation() {

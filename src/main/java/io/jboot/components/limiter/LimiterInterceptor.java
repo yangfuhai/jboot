@@ -16,44 +16,131 @@
 package io.jboot.components.limiter;
 
 
+import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.limiter.annotation.EnableLimit;
+import io.jboot.utils.AnnotationUtil;
+import io.jboot.utils.StrUtil;
+import io.jboot.web.fixedinterceptor.FixedInterceptor;
+import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.Semaphore;
 
-public class LimiterInterceptor implements Interceptor {
+public class LimiterInterceptor implements FixedInterceptor, Interceptor {
+    @Override
+    public void intercept(FixedInvocation inv) {
+        doProcess(inv);
+    }
+
     @Override
     public void intercept(Invocation inv) {
+        doProcess(inv);
+    }
+
+    private void doProcess(Invocation inv) {
         String packageOrTarget = getPackageOrTarget(inv);
         LimiterManager.TypeAndRate typeAndRate = LimiterManager.me().matchConfig(packageOrTarget);
 
         if (typeAndRate != null) {
-
-
+            doInterceptByTypeAndRate(typeAndRate, packageOrTarget, inv);
             return;
         }
 
+        EnableLimit enableLimit = inv.getMethod().getAnnotation(EnableLimit.class);
+        if (enableLimit != null) {
+            String resource = StrUtil.obtainDefaultIfBlank(enableLimit.resource(), packageOrTarget);
+            doInterceptByLimitInfo(enableLimit, resource, inv);
+            return;
+        }
 
+        inv.invoke();
     }
+
+
+    private void doInterceptByTypeAndRate(LimiterManager.TypeAndRate typeAndRate, String resource, Invocation inv) {
+        switch (typeAndRate.getType()) {
+            case LimitType.CONCURRENCY:
+                doInterceptForConcurrency(typeAndRate.getRate(), resource, null, inv);
+                break;
+            case LimitType.TOKEN_BUCKET:
+                doInterceptForTokenBucket(typeAndRate.getRate(), resource, null, inv);
+                break;
+        }
+    }
+
+    private void doInterceptByLimitInfo(EnableLimit enableLimit, String resource, Invocation inv) {
+        String type = AnnotationUtil.get(enableLimit.type());
+        switch (type) {
+            case LimitType.CONCURRENCY:
+                doInterceptForConcurrency(enableLimit.rate(), resource, enableLimit.failback(), inv);
+                break;
+            case LimitType.TOKEN_BUCKET:
+                doInterceptForTokenBucket(enableLimit.rate(), resource, enableLimit.failback(), inv);
+                break;
+        }
+    }
+
+
+    private void doInterceptForConcurrency(int rate, String resource, String failback, Invocation inv) {
+        Semaphore semaphore = LimiterManager.me().getOrCreateSemaphore(resource, rate);
+        try {
+            if (semaphore.tryAcquire()) {
+                inv.invoke();
+                return;
+            }
+            //不允许通行
+            else {
+                doExecFailback(failback, inv);
+            }
+        } finally {
+            semaphore.release();
+        }
+    }
+
+
+    private void doInterceptForTokenBucket(int rate, String resource, String failback, Invocation inv) {
+        RateLimiter limiter = LimiterManager.me().getOrCreateRateLimiter(resource, rate);
+        //允许通行
+        if (limiter.tryAcquire()) {
+            inv.invoke();
+            return;
+        }
+        //不允许通行
+        else {
+            doExecFailback(failback, inv);
+        }
+    }
+
+    private void doExecFailback(String failback, Invocation inv) {
+        System.out.println("...........doExecFailback...........");
+    }
+
 
     private String getPackageOrTarget(Invocation inv) {
         return inv.isActionInvocation() ? inv.getActionKey() : buildMethodKey(inv.getMethod());
     }
 
-    private String buildMethodKey(Method method) {
-        String packageAndClass = method.getDeclaringClass().getName();
-        String methodName = method.getName();
 
+    private String buildMethodKey(Method method) {
+        StringBuilder keyBuilder = new StringBuilder();
+        keyBuilder.append(method.getDeclaringClass().getName());//packageAndClass
+        keyBuilder.append(".");//packageAndClass
+        keyBuilder.append(method.getName());//methodName
         if (method.getParameterCount() > 0) {
             Class[] paraClasses = method.getParameterTypes();
-            methodName = methodName + ".(";
+            keyBuilder.append(".(");
             for (Class c : paraClasses) {
-                methodName = methodName + c.getSimpleName();
+                keyBuilder.append(c.getSimpleName()).append(",");
             }
-            methodName = methodName + ")";
+            keyBuilder.deleteCharAt(keyBuilder.length() - 1);//del last char ,
+            keyBuilder.append(")");
         } else {
-            methodName = methodName + "()";
+            keyBuilder.append("()");
         }
-        return packageAndClass + "." + methodName;
+        return keyBuilder.toString();
     }
+
+
 }

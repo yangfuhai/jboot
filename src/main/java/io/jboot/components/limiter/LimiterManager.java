@@ -16,6 +16,7 @@
 package io.jboot.components.limiter;
 
 
+import com.google.common.util.concurrent.RateLimiter;
 import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
 
@@ -23,6 +24,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +33,10 @@ public class LimiterManager {
 
     private Set<String> configPackageOrTargets = new HashSet<>();
     private Map<String, TypeAndRate> typeAndRateCache = new HashMap<>();
+
+
+    private Map<String, Semaphore> semaphoreCache = new ConcurrentHashMap<>();
+    private Map<String, RateLimiter> rateLimiterCache = new ConcurrentHashMap<>();
 
     private Boolean enable;
 
@@ -82,7 +89,7 @@ public class LimiterManager {
                     .replace("*", ".*");
 
             configPackageOrTargets.add(packageOrTarget.trim());
-            typeAndRateCache.put(packageOrTarget.trim(), new TypeAndRate(type.trim(), Double.valueOf(rate.trim())));
+            typeAndRateCache.put(packageOrTarget.trim(), new TypeAndRate(type.trim(), Integer.valueOf(rate.trim())));
         }
     }
 
@@ -106,6 +113,34 @@ public class LimiterManager {
         }
 
         return null;
+    }
+
+    public RateLimiter getOrCreateRateLimiter(String resource, int rate) {
+        RateLimiter limiter = rateLimiterCache.get(resource);
+        if (limiter == null || limiter.getRate() != rate) {
+            synchronized (resource) {
+                limiter = rateLimiterCache.get(resource);
+                if (limiter == null) {
+                    limiter = RateLimiter.create(rate);
+                    rateLimiterCache.put(resource, limiter);
+                }
+            }
+        }
+        return limiter;
+    }
+
+    public Semaphore getOrCreateSemaphore(String resource, int rate) {
+        Semaphore semaphore = semaphoreCache.get(resource);
+        if (semaphore == null) {
+            synchronized (resource) {
+                semaphore = semaphoreCache.get(resource);
+                if (semaphore == null) {
+                    semaphore = new Semaphore(rate);
+                    semaphoreCache.put(resource, semaphore);
+                }
+            }
+        }
+        return semaphore;
     }
 
 
@@ -132,7 +167,7 @@ public class LimiterManager {
             return false;
         }
 
-        if (!StrUtil.isDecimal(rate)) {
+        if (!StrUtil.isNumeric(rate)) {
             return false;
         }
 
@@ -148,9 +183,9 @@ public class LimiterManager {
 
     public static class TypeAndRate {
         private String type;
-        private double rate;
+        private int rate;
 
-        public TypeAndRate(String type, double rate) {
+        public TypeAndRate(String type, int rate) {
             this.type = type;
             this.rate = rate;
         }
@@ -163,11 +198,11 @@ public class LimiterManager {
             this.type = type;
         }
 
-        public double getRate() {
+        public int getRate() {
             return rate;
         }
 
-        public void setRate(double rate) {
+        public void setRate(int rate) {
             this.rate = rate;
         }
     }

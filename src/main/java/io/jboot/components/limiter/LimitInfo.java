@@ -24,6 +24,46 @@ public class LimitInfo {
     private String type;
     private double rate;
     private String failback;
-
     private Method failbackMethod;
+
+
+    public String getResource() {
+        return resource;
+    }
+
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+
+    public String getFailback() {
+        return failback;
+    }
+
+    public void setFailback(String failback) {
+        this.failback = failback;
+    }
+
+    public Method getFailbackMethod() {
+        return failbackMethod;
+    }
+
+    public void setFailbackMethod(Method failbackMethod) {
+        this.failbackMethod = failbackMethod;
+    }
 }

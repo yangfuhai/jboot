@@ -22,6 +22,7 @@ import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
 import io.jboot.aop.interceptor.metric.*;
+import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.exception.JbootException;
 import io.jboot.support.metric.JbootMetricManager;
 
@@ -46,14 +47,16 @@ public class JbootAopInvocation extends Invocation {
             new JbootCacheEvictInterceptor(),
             new JbootCachesEvictInterceptor(),
             new JbootCachePutInterceptor(),
-            new JbootCacheInterceptor()
+            new JbootCacheInterceptor(),
+            new LimiterInterceptor()
     };
 
     private static final Interceptor[] NO_METRIC_INTERS = {
             new JbootCacheEvictInterceptor(),
             new JbootCachesEvictInterceptor(),
             new JbootCachePutInterceptor(),
-            new JbootCacheInterceptor()
+            new JbootCacheInterceptor(),
+            new LimiterInterceptor()
     };
 
 
