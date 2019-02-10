@@ -16,14 +16,14 @@
 package io.jboot.components.limiter;
 
 
-public class LimiterManager {
+import java.lang.reflect.Method;
 
-    private static LimiterManager me = new LimiterManager();
+public class LimitInfo {
 
-    private LimiterManager() {
-    }
+    private String resource;
+    private String type;
+    private double rate;
+    private String failback;
 
-    public static LimiterManager me() {
-        return me;
-    }
+    private Method failbackMethod;
 }

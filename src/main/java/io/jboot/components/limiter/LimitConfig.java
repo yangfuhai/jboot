@@ -45,4 +45,17 @@ public class LimitConfig {
     public void setRule(String rule) {
         this.rule = rule;
     }
+
+//    public static void main(String[] args) {
+//        long time = System.currentTimeMillis();
+//        for (int i = 0; i < 10000; i++)
+//            StrUtil.match("com.xxx.aa.aaaa(int,User)", "com.xxx..*.aaa.*\\(int,User\\)");
+////            StrUtil.match("aaa.aa.aa", "aa.aa.*");
+//
+//        System.out.println("time:" + (System.currentTimeMillis() - time));
+//        System.out.println(StrUtil.match("com.xaxx.axxxa.aaaa(int,User)", "com.xxx..*.aaa.*\\(int,User\\)"));
+//        System.out.println(StrUtil.match("com.xxx.bb.aaab(int,User)", "com.xxx..*.aaa.*\\(int,User\\)"));
+//        System.out.println(StrUtil.match("co1m.xxx.cc.aaac(int,User)", "com.xxx..*.aaa.*\\(int,User\\)"));
+//        System.out.println(StrUtil.match("com.xxx.dd.aaaXX(int,User)", "com.xxx..*.aaa.*\\(int,User\\)"));
+//    }
 }
