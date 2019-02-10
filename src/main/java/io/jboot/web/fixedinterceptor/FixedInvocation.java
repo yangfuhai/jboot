@@ -39,6 +39,7 @@ public class FixedInvocation extends Invocation {
     }
 
 
+    @Override
     public void invoke() {
         if (index < inters.length) {
             inters[index++].intercept(this);

@@ -72,7 +72,7 @@ public class LimiterManager {
         String[] rules = rule.split(",");
         for (String r : rules) {
             String[] confs = r.split(":");
-            if (confs == null || confs.length != 4) {
+            if (confs == null || confs.length != 3) {
                 continue;
             }
 

@@ -85,17 +85,20 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
 
     private void doInterceptForConcurrency(int rate, String resource, String failback, Invocation inv) {
         Semaphore semaphore = LimiterManager.me().getOrCreateSemaphore(resource, rate);
+        boolean acquire = false;
         try {
-            if (semaphore.tryAcquire()) {
+            acquire = semaphore.tryAcquire();
+            if (acquire) {
                 inv.invoke();
-                return;
             }
             //不允许通行
             else {
-                doExecFailback(failback, inv);
+                doExecFailback(resource, failback, inv);
             }
         } finally {
-            semaphore.release();
+            if (acquire) {
+                semaphore.release();
+            }
         }
     }
 
@@ -105,16 +108,16 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
         //允许通行
         if (limiter.tryAcquire()) {
             inv.invoke();
-            return;
         }
         //不允许通行
         else {
-            doExecFailback(failback, inv);
+            doExecFailback(resource, failback, inv);
         }
     }
 
-    private void doExecFailback(String failback, Invocation inv) {
+    private void doExecFailback(String resource, String failback, Invocation inv) {
         System.out.println("...........doExecFailback...........");
+        inv.getController().renderText("doExecFailback");
     }
 
 

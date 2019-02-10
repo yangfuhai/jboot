@@ -29,6 +29,7 @@ import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
 import io.jboot.core.listener.JbootAppListenerManager;
@@ -230,6 +231,7 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootShiroManager.me().init(routeList);
         JbootScheduleManager.me().init();
         JbootSwaggerManager.me().init();
+        LimiterManager.me().init();
 
         JbootAppListenerManager.me().onJFinalStart();
     }
