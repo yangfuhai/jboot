@@ -122,6 +122,7 @@ public class StrUtil extends StrKit {
         return matcher.matches();
     }
 
+
     /**
      * 这个字符串是否是全是数字
      *
@@ -134,6 +135,23 @@ public class StrUtil extends StrKit {
         for (int i = str.length(); --i >= 0; ) {
             int chr = str.charAt(i);
             if (chr < 48 || chr > 57)
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 这个字符串是否是小数点
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isDecimal(String str) {
+        if (str == null)
+            return false;
+        for (int i = str.length(); --i >= 0; ) {
+            int chr = str.charAt(i);
+            if ((chr < 48 || chr > 57) && chr != '.')
                 return false;
         }
         return true;

@@ -16,7 +16,22 @@
 package io.jboot.components.limiter;
 
 
+import io.jboot.Jboot;
+import io.jboot.utils.StrUtil;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class LimiterManager {
+
+    private Set<String> configPackageOrTargets = new HashSet<>();
+    private Map<String, TypeAndRate> typeAndRateCache = new HashMap<>();
+
+    private Boolean enable;
 
     private static LimiterManager me = new LimiterManager();
 
@@ -25,5 +40,135 @@ public class LimiterManager {
 
     public static LimiterManager me() {
         return me;
+    }
+
+    public void init() {
+        doParseConfig();
+    }
+
+    /**
+     * 解析用户配置
+     */
+    private void doParseConfig() {
+
+        LimitConfig config = Jboot.config(LimitConfig.class);
+
+        if (!config.isEnable()) {
+            return;
+        }
+
+        String rule = config.getRule();
+        if (StrUtil.isBlank(rule)) {
+            return;
+        }
+
+        String[] rules = rule.split(",");
+        for (String r : rules) {
+            String[] confs = r.split(":");
+            if (confs == null || confs.length != 4) {
+                continue;
+            }
+
+            String packageOrTarget = confs[0];
+            String type = confs[1];
+            String rate = confs[2];
+
+            if (!ensureLegal(packageOrTarget, type, rate.trim())) {
+                continue;
+            }
+            packageOrTarget = packageOrTarget.replace(".", "\\.")
+                    .replace("(", "\\(")
+                    .replace(")", "\\)")
+                    .replace("*", ".*");
+
+            configPackageOrTargets.add(packageOrTarget.trim());
+            typeAndRateCache.put(packageOrTarget.trim(), new TypeAndRate(type.trim(), Double.valueOf(rate.trim())));
+        }
+    }
+
+
+    /**
+     * 匹配用户配置
+     *
+     * @param packageOrTarget
+     * @return
+     */
+    public TypeAndRate matchConfig(String packageOrTarget) {
+
+        if (!isEnable() || configPackageOrTargets.isEmpty()) {
+            return null;
+        }
+
+        for (String configPackageOrTarget : configPackageOrTargets) {
+            if (match(packageOrTarget, configPackageOrTarget)) {
+                return typeAndRateCache.get(configPackageOrTarget);
+            }
+        }
+
+        return null;
+    }
+
+
+    private static boolean match(String string, String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(string);
+        return matcher.matches();
+    }
+
+    /**
+     * 确保配置合法
+     *
+     * @param packageOrTarget
+     * @param type
+     * @param rate
+     * @return
+     */
+    private boolean ensureLegal(String packageOrTarget, String type, String rate) {
+        if (StrUtil.isBlank(packageOrTarget)) {
+            return false;
+        }
+
+        if (!LimitType.CONCURRENCY.equals(type) && !LimitType.TOKEN_BUCKET.equals(type)) {
+            return false;
+        }
+
+        if (!StrUtil.isDecimal(rate)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isEnable() {
+        if (enable == null) {
+            enable = Jboot.config(LimitConfig.class).isEnable();
+        }
+        return enable;
+    }
+
+    public static class TypeAndRate {
+        private String type;
+        private double rate;
+
+        public TypeAndRate(String type, double rate) {
+            this.type = type;
+            this.rate = rate;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public double getRate() {
+            return rate;
+        }
+
+        public void setRate(double rate) {
+            this.rate = rate;
+        }
     }
 }
