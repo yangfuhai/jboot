@@ -54,6 +54,16 @@ public Object saveOrUpdate()
 
 备注：返回的 `Object` 是 Model 的主键值（id）。这么修改的目的是为了在 分布式的情况下。通过 RPC 调用能够直接返回主键。
 
+## 修改 JbootAppListener 的方法名
+
+- `onJfinalConstantConfig` 修改为： `onConstantConfig`
+- `onJfinalRouteConfig` 修改为： `onRouteConfig`
+- `onJfinalEngineConfig` 修改为：`onEngineConfig`
+- `onJfinalPluginConfig` 修改为：`onPluginConfig`
+- `onJFinalStartBefore` 修改为：`onStartBefore`
+- `onJFinalStart` 修改为：`onStart`
+- `onJFinalStop` 修改为：`onStop`
+
 ## 其他的错误
 
 其他错误，都是 **修改了包名**，解决方案是：删除错误的 import ，然后重新导入即可。
