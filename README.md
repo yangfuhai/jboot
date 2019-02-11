@@ -43,6 +43,7 @@ public class HelloworldController extends JbootController {
 - [RPC远程调用](./doc/docs/rpc.md)
 - [MQ消息队列](./doc/docs/mq.md)
 - [任务调度](./doc/docs/schedule.md)
+- [限流](./doc/docs/limit.md)
 - [序列化](./doc/docs/serialize.md)
 - [事件机制](./doc/docs/event.md)
 - [SPI扩展机制](./doc/docs/spi.md)

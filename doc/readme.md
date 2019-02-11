@@ -11,6 +11,7 @@
 - [RPC远程调用](./docs/rpc.md)
 - [MQ消息队列](./docs/mq.md)
 - [任务调度](./docs/schedule.md)
+- [限流](./docs/limit.md)
 - [序列化](./docs/serialize.md)
 - [事件机制](./docs/event.md)
 - [SPI扩展机制](./docs/spi.md)
