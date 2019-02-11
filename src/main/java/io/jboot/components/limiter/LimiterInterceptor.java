@@ -74,16 +74,16 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
         String type = AnnotationUtil.get(enableLimit.type());
         switch (type) {
             case LimitType.CONCURRENCY:
-                doInterceptForConcurrency(enableLimit.rate(), resource, enableLimit.failback(), inv);
+                doInterceptForConcurrency(enableLimit.rate(), resource, enableLimit.fallback(), inv);
                 break;
             case LimitType.TOKEN_BUCKET:
-                doInterceptForTokenBucket(enableLimit.rate(), resource, enableLimit.failback(), inv);
+                doInterceptForTokenBucket(enableLimit.rate(), resource, enableLimit.fallback(), inv);
                 break;
         }
     }
 
 
-    private void doInterceptForConcurrency(int rate, String resource, String failback, Invocation inv) {
+    private void doInterceptForConcurrency(int rate, String resource, String fallback, Invocation inv) {
         Semaphore semaphore = LimiterManager.me().getOrCreateSemaphore(resource, rate);
         boolean acquire = false;
         try {
@@ -93,7 +93,7 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
             }
             //不允许通行
             else {
-                doExecFailback(resource, failback, inv);
+                doExecFallback(resource, fallback, inv);
             }
         } finally {
             if (acquire) {
@@ -103,7 +103,7 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
     }
 
 
-    private void doInterceptForTokenBucket(int rate, String resource, String failback, Invocation inv) {
+    private void doInterceptForTokenBucket(int rate, String resource, String fallback, Invocation inv) {
         RateLimiter limiter = LimiterManager.me().getOrCreateRateLimiter(resource, rate);
         //允许通行
         if (limiter.tryAcquire()) {
@@ -111,13 +111,12 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
         }
         //不允许通行
         else {
-            doExecFailback(resource, failback, inv);
+            doExecFallback(resource, fallback, inv);
         }
     }
 
-    private void doExecFailback(String resource, String failback, Invocation inv) {
-        System.out.println("...........doExecFailback...........");
-        inv.getController().renderText("doExecFailback");
+    private void doExecFallback(String resource, String fallback, Invocation inv) {
+        LimiterManager.me().processFallback(resource,fallback,inv);
     }
 
 
@@ -129,8 +128,10 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
     private String buildMethodKey(Method method) {
         StringBuilder keyBuilder = new StringBuilder();
         keyBuilder.append(method.getDeclaringClass().getName());//packageAndClass
-        keyBuilder.append(".");//packageAndClass
+        keyBuilder.append(".");
         keyBuilder.append(method.getName());//methodName
+
+        //method paras
         if (method.getParameterCount() > 0) {
             Class[] paraClasses = method.getParameterTypes();
             keyBuilder.append(".(");
@@ -142,6 +143,7 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
         } else {
             keyBuilder.append("()");
         }
+
         return keyBuilder.toString();
     }
 

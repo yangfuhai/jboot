@@ -17,13 +17,12 @@ package io.jboot.components.limiter;
 
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
+import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
@@ -39,6 +38,7 @@ public class LimiterManager {
     private Map<String, RateLimiter> rateLimiterCache = new ConcurrentHashMap<>();
 
     private Boolean enable;
+    private LimitFallbackProcesser fallbackProcesser;
 
     private static LimiterManager me = new LimiterManager();
 
@@ -50,7 +50,18 @@ public class LimiterManager {
     }
 
     public void init() {
+        doInitFallbackProcesser();
         doParseConfig();
+    }
+
+    private void doInitFallbackProcesser() {
+        LimitConfig config = Jboot.config(LimitConfig.class);
+        if (StrUtil.isBlank(config.getFallbackProcesser())) {
+            this.fallbackProcesser = new LimitFallbackProcesserDefault();
+        } else {
+            this.fallbackProcesser = Objects.requireNonNull(ClassUtil.newInstance(config.getFallbackProcesser()),
+                    "can not newInstance class for " + config.getFallbackProcesser());
+        }
     }
 
     /**
@@ -179,6 +190,10 @@ public class LimiterManager {
             enable = Jboot.config(LimitConfig.class).isEnable();
         }
         return enable;
+    }
+
+    public void processFallback(String resource, String fallback, Invocation inv) {
+        fallbackProcesser.process(resource, fallback, inv);
     }
 
     public static class TypeAndRate {

@@ -13,43 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.components.limiter.annotation;
+package io.jboot.components.limiter;
 
-import java.lang.annotation.*;
+import com.jfinal.aop.Invocation;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-@Documented
-public @interface EnableLimit {
+/**
+ * 限流降级处理器
+ */
+public interface LimitFallbackProcesser {
 
-    /**
-     * 资源名称
-     *
-     * @return
-     */
-    String resource();
-
-    /**
-     * 类型 ：
-     *
-     * @return
-     */
-    String type();
-
-    /**
-     * 频率
-     *
-     * @return
-     */
-    int rate();
-
-
-    /**
-     * 降级方法
-     *
-     * @return
-     */
-    String fallback();
-
-
+    public void process(String resource, String fallback, Invocation inv);
 }

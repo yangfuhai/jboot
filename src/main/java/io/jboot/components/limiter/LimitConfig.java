@@ -27,8 +27,35 @@ import io.jboot.app.config.annotation.ConfigModel;
 @ConfigModel(prefix = "jboot.app.limit")
 public class LimitConfig {
 
+    /**
+     * 是否开启限流配置，这个的开启或关闭对注解的限流配置不影响
+     */
     private boolean enable = true;
+
+    /**
+     * 限流规则，多个规则用英文逗号隔开
+     */
     private String rule;
+
+    /**
+     * 默认的降级处理器（被限流后的处理器）
+     */
+    private String fallbackProcesser;
+
+    /**
+     * 被限流后，默认的http code
+     */
+    private int defaultHttpCode = 200;
+
+    /**
+     * 被限流后，当ajax请求的时候，返回默认的json传
+     */
+    private String defaultAjaxContent;
+
+    /**
+     * 被限流后，当http请求的时候，默认渲染的html文件
+     */
+    private String defaultHtmlView;
 
     public boolean isEnable() {
         return enable;
@@ -46,4 +73,35 @@ public class LimitConfig {
         this.rule = rule;
     }
 
+    public String getFallbackProcesser() {
+        return fallbackProcesser;
+    }
+
+    public void setFallbackProcesser(String fallbackProcesser) {
+        this.fallbackProcesser = fallbackProcesser;
+    }
+
+    public int getDefaultHttpCode() {
+        return defaultHttpCode;
+    }
+
+    public void setDefaultHttpCode(int defaultHttpCode) {
+        this.defaultHttpCode = defaultHttpCode;
+    }
+
+    public String getDefaultAjaxContent() {
+        return defaultAjaxContent;
+    }
+
+    public void setDefaultAjaxContent(String defaultAjaxContent) {
+        this.defaultAjaxContent = defaultAjaxContent;
+    }
+
+    public String getDefaultHtmlView() {
+        return defaultHtmlView;
+    }
+
+    public void setDefaultHtmlView(String defaultHtmlView) {
+        this.defaultHtmlView = defaultHtmlView;
+    }
 }
