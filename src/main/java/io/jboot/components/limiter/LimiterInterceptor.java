@@ -25,6 +25,7 @@ import io.jboot.utils.StrUtil;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.concurrent.Semaphore;
 
@@ -116,12 +117,19 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
     }
 
     private void doExecFallback(String resource, String fallback, Invocation inv) {
-        LimiterManager.me().processFallback(resource,fallback,inv);
+        LimiterManager.me().processFallback(resource, fallback, inv);
     }
 
 
     private String getPackageOrTarget(Invocation inv) {
-        return inv.isActionInvocation() ? inv.getActionKey() : buildMethodKey(inv.getMethod());
+        return inv.isActionInvocation() ? buildUrl(inv) : buildMethodKey(inv.getMethod());
+    }
+
+    private String buildUrl(Invocation inv) {
+        HttpServletRequest request = inv.getController().getRequest();
+        String uri = request.getRequestURI();
+        String query = request.getQueryString();
+        return StrUtil.isBlank(query) ? uri : uri + "?" + query;
     }
 
 
