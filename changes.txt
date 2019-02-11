@@ -1,6 +1,7 @@
 jboot v2.0-rc.8:
 移除：ActionCache 模块
 新增：Limit模块，可以用于没有运维的时候进行代码配置限流和降级
+新增：WebSocketEndpoint 的配置支持 jboot.web.webSocketEndpoint
 优化：统一 JbootAppListener 的方法名，详情：https://gitee.com/fuhai/jboot/blob/v2.0/doc/docs/upgrade.md#%E4%BF%AE%E6%94%B9-jbootapplistener-%E7%9A%84%E6%96%B9%E6%B3%95%E5%90%8D
 
 
