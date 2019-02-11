@@ -25,13 +25,11 @@ import io.jboot.app.config.annotation.ConfigModel;
 @ConfigModel(prefix = "jboot.web")
 public class JbootWebConfig {
 
-    public static final String ACTION_CACHE_KEYGENERATOR_TYPE_DEFAULT = "default";
-
-    private boolean actionCacheEnable = true;
-    private String actionCacheKeyGeneratorType = ACTION_CACHE_KEYGENERATOR_TYPE_DEFAULT;
-
     public static final String DEFAULT_COOKIE_ENCRYPT_KEY = "JBOOT_DEFAULT_ENCRYPT_KEY";
+
+
     private String cookieEncryptKey = DEFAULT_COOKIE_ENCRYPT_KEY;
+    private String webSocketEndpoint;
 
     public String getCookieEncryptKey() {
         return cookieEncryptKey;
@@ -41,20 +39,11 @@ public class JbootWebConfig {
         this.cookieEncryptKey = cookieEncryptKey;
     }
 
-    public boolean isActionCacheEnable() {
-        return actionCacheEnable;
+    public String getWebSocketEndpoint() {
+        return webSocketEndpoint;
     }
 
-    public void setActionCacheEnable(boolean actionCacheEnable) {
-        this.actionCacheEnable = actionCacheEnable;
+    public void setWebSocketEndpoint(String webSocketEndpoint) {
+        this.webSocketEndpoint = webSocketEndpoint;
     }
-
-    public String getActionCacheKeyGeneratorType() {
-        return actionCacheKeyGeneratorType;
-    }
-
-    public void setActionCacheKeyGeneratorType(String actionCacheKeyGeneratorType) {
-        this.actionCacheKeyGeneratorType = actionCacheKeyGeneratorType;
-    }
-
 }

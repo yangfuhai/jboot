@@ -67,6 +67,7 @@ public class JbootApplication {
                 .configWeb(webBuilder -> {
                     tryAddMetricsSupport(webBuilder);
                     tryAddShiroSupport(webBuilder);
+                    tryAddWebSocketSupport(webBuilder);
                 });
     }
 
@@ -92,6 +93,16 @@ public class JbootApplication {
             webBuilder.addFilter("shiro", "io.jboot.support.shiro.JbootShiroFilter")
                     .addFilterUrlMapping("shiro", urlMapping, DispatcherType.REQUEST);
 
+        }
+    }
+
+    private static void tryAddWebSocketSupport(WebBuilder webBuilder) {
+        String websocketEndpoint = getConfigValue("jboot.web.webSocketEndpoint");
+        if (websocketEndpoint != null && websocketEndpoint.trim().length() > 0) {
+            String[] classStrings = websocketEndpoint.split(",");
+            for (String c : classStrings) {
+                webBuilder.addWebSocketEndpoint(c);
+            }
         }
     }
 
