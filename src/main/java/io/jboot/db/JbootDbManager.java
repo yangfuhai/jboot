@@ -15,7 +15,6 @@
  */
 package io.jboot.db;
 
-import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.Model;
@@ -51,7 +50,7 @@ public class JbootDbManager {
 
     public static JbootDbManager me() {
         if (manager == null) {
-            manager =new JbootDbManager();
+            manager = new JbootDbManager();
         }
         return manager;
     }
@@ -190,13 +189,14 @@ public class JbootDbManager {
     private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
         String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
         if (StrUtil.isNotBlank(sqlTemplatePath)) {
-            if (sqlTemplatePath.startsWith("/")) {
-                activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
-            } else {
-                activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
-            }
+//            if (sqlTemplatePath.startsWith("/")) {
+//                activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
+//            } else {
+//                activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
+//            }
+            activeRecordPlugin.setBaseSqlTemplatePath(sqlTemplatePath);
         } else {
-            activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath());
+            activeRecordPlugin.setBaseSqlTemplatePath(null);
         }
 
 
