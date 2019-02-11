@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
  */
 public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
 
-    private LimitConfig config = Jboot.config(LimitConfig.class);
+    protected LimitConfig config = Jboot.config(LimitConfig.class);
 
     public void process(String resource, String fallback, Invocation inv) {
 
