@@ -15,9 +15,7 @@
  */
 package io.jboot.core.listener;
 
-import com.jfinal.config.Constants;
-import com.jfinal.config.Interceptors;
-import com.jfinal.config.Routes;
+import com.jfinal.config.*;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
@@ -33,22 +31,22 @@ public class JbootAppListenerBase implements JbootAppListener {
     }
 
     @Override
-    public void onJfinalConstantConfig(Constants constants) {
+    public void onConstantConfig(Constants constants) {
 
     }
 
     @Override
-    public void onJfinalRouteConfig(Routes routes) {
+    public void onRouteConfig(Routes routes) {
 
     }
 
     @Override
-    public void onJfinalEngineConfig(Engine engine) {
+    public void onEngineConfig(Engine engine) {
 
     }
 
     @Override
-    public void onJfinalPluginConfig(JfinalPlugins plugins) {
+    public void onPluginConfig(JfinalPlugins plugins) {
 
     }
 
@@ -68,17 +66,17 @@ public class JbootAppListenerBase implements JbootAppListener {
     }
 
     @Override
-    public void onJFinalStartBefore() {
+    public void onStartBefore() {
 
     }
 
     @Override
-    public void onJFinalStart() {
+    public void onStart() {
 
     }
 
     @Override
-    public void onJFinalStop() {
+    public void onStop() {
 
     }
 

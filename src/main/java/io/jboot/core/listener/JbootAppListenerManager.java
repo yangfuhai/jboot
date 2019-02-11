@@ -76,10 +76,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJfinalConstantConfig(Constants constants) {
+    public void onConstantConfig(Constants constants) {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJfinalConstantConfig(constants);
+                listener.onConstantConfig(constants);
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
@@ -87,10 +87,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJfinalRouteConfig(Routes routes) {
+    public void onRouteConfig(Routes routes) {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJfinalRouteConfig(routes);
+                listener.onRouteConfig(routes);
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
@@ -98,10 +98,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJfinalEngineConfig(Engine engine) {
+    public void onEngineConfig(Engine engine) {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJfinalEngineConfig(engine);
+                listener.onEngineConfig(engine);
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
@@ -109,10 +109,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJfinalPluginConfig(JfinalPlugins plugins) {
+    public void onPluginConfig(JfinalPlugins plugins) {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJfinalPluginConfig(plugins);
+                listener.onPluginConfig(plugins);
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
@@ -153,10 +153,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJFinalStartBefore() {
+    public void onStartBefore() {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJFinalStartBefore();
+                listener.onStartBefore();
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
@@ -164,10 +164,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJFinalStart() {
+    public void onStart() {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJFinalStart();
+                listener.onStart();
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }
@@ -175,10 +175,10 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
-    public void onJFinalStop() {
+    public void onStop() {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onJFinalStop();
+                listener.onStop();
             } catch (Throwable ex) {
                 log.error(ex.toString(), ex);
             }

@@ -95,7 +95,7 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setJsonFactory(() -> new JbootJson());
         constants.setInjectDependency(true);
 
-        JbootAppListenerManager.me().onJfinalConstantConfig(constants);
+        JbootAppListenerManager.me().onConstantConfig(constants);
 
     }
 
@@ -129,7 +129,7 @@ public class JbootCoreConfig extends JFinalConfig {
             routes.add(swaggerConfig.getPath(), JbootSwaggerController.class, swaggerConfig.getPath());
         }
 
-        JbootAppListenerManager.me().onJfinalRouteConfig(routes);
+        JbootAppListenerManager.me().onRouteConfig(routes);
 
         for (Routes.Route route : routes.getRouteItemList()) {
             JbootControllerManager.me().setMapping(route.getControllerKey(), route.getControllerClass());
@@ -170,7 +170,7 @@ public class JbootCoreConfig extends JFinalConfig {
             }
         }
 
-        JbootAppListenerManager.me().onJfinalEngineConfig(engine);
+        JbootAppListenerManager.me().onEngineConfig(engine);
     }
 
 
@@ -182,7 +182,7 @@ public class JbootCoreConfig extends JFinalConfig {
             plugins.add(arp);
         }
 
-        JbootAppListenerManager.me().onJfinalPluginConfig(new JfinalPlugins(plugins));
+        JbootAppListenerManager.me().onPluginConfig(new JfinalPlugins(plugins));
 
     }
 
@@ -216,7 +216,7 @@ public class JbootCoreConfig extends JFinalConfig {
     @Override
     public void onStart() {
 
-        JbootAppListenerManager.me().onJFinalStartBefore();
+        JbootAppListenerManager.me().onStartBefore();
 
         /**
          * 配置微信accessToken的缓存
@@ -233,7 +233,7 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootSwaggerManager.me().init();
         LimiterManager.me().init();
 
-        JbootAppListenerManager.me().onJFinalStart();
+        JbootAppListenerManager.me().onStart();
     }
 
     @Override
@@ -249,7 +249,7 @@ public class JbootCoreConfig extends JFinalConfig {
                 }
             }
         }
-        JbootAppListenerManager.me().onJFinalStop();
+        JbootAppListenerManager.me().onStop();
         JbootScheduleManager.me().stop();
     }
 

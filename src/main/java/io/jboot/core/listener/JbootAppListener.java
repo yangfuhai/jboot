@@ -28,13 +28,13 @@ public interface JbootAppListener {
 
     public void onInit();
 
-    public void onJfinalConstantConfig(Constants constants);
+    public void onConstantConfig(Constants constants);
 
-    public void onJfinalRouteConfig(Routes routes);
+    public void onRouteConfig(Routes routes);
 
-    public void onJfinalEngineConfig(Engine engine);
+    public void onEngineConfig(Engine engine);
 
-    public void onJfinalPluginConfig(JfinalPlugins plugins);
+    public void onPluginConfig(JfinalPlugins plugins);
 
     public void onInterceptorConfig(Interceptors interceptors);
 
@@ -42,10 +42,10 @@ public interface JbootAppListener {
 
     public void onHandlerConfig(JfinalHandlers handlers);
 
-    public void onJFinalStartBefore();
+    public void onStartBefore();
 
-    public void onJFinalStart();
+    public void onStart();
 
-    public void onJFinalStop();
+    public void onStop();
 
 }
