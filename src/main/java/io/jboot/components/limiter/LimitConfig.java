@@ -30,7 +30,7 @@ public class LimitConfig {
     /**
      * 是否开启限流配置，这个的开启或关闭对注解的限流配置不影响
      */
-    private boolean enable = true;
+    private boolean enable = false;
 
     /**
      * 限流规则，多个规则用英文逗号隔开

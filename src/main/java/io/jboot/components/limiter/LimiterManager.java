@@ -71,7 +71,7 @@ public class LimiterManager {
 
         LimitConfig config = Jboot.config(LimitConfig.class);
 
-        if (!config.isEnable()) {
+        if (!isEnable()) {
             return;
         }
 

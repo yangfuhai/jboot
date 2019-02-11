@@ -17,7 +17,6 @@ package io.jboot.components.limiter;
 
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
-import com.jfinal.kit.LogKit;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassUtil;
@@ -110,8 +109,8 @@ public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
      * @param inv
      */
     private void doProcessServiceLimit(String resource, Invocation inv) {
-        if (LogKit.isDebugEnabled()) {
-            LogKit.debug(resource + " is limited , return null");
+        if (Jboot.isDevMode()) {
+            System.err.println(resource + " is limited , return null");
         }
     }
 }
