@@ -425,5 +425,13 @@ jboot.redis.maxIdle
 jboot.redis.maxWaitMillis
 jboot.redis.serializer
 jboot.redis.type
+
+
+jboot.limit.enable
+jboot.limit.rule
+jboot.limit.fallbackProcesser
+jboot.limit.defaultHttpCode
+jboot.limit.defaultAjaxContent
+jboot.limit.defaultHtmlView
 ```
 

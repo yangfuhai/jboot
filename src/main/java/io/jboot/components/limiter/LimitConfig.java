@@ -24,7 +24,7 @@ import io.jboot.app.config.annotation.ConfigModel;
  * 1）*.*(*): 所有包下的所有方法的所有参数类型
  * 2）com.xxx.*.aaa*(int,User): com.xxx包下的所有aaa开头的方法，参数类型为(int,User)
  */
-@ConfigModel(prefix = "jboot.app.limit")
+@ConfigModel(prefix = "jboot.limit")
 public class LimitConfig {
 
     /**
