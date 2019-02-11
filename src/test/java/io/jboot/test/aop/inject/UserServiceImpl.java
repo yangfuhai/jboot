@@ -14,7 +14,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getName(){
-        return "UserServiceImpl";
+    public String getName(String para) {
+        return "UserServiceImpl:" + para;
     }
 }

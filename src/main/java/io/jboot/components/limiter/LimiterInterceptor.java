@@ -134,7 +134,7 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
         //method paras
         if (method.getParameterCount() > 0) {
             Class[] paraClasses = method.getParameterTypes();
-            keyBuilder.append(".(");
+            keyBuilder.append("(");
             for (Class c : paraClasses) {
                 keyBuilder.append(c.getSimpleName()).append(",");
             }

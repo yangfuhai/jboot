@@ -3,5 +3,5 @@ package io.jboot.test.aop.inject;
 
 public interface UserService {
 
-    public String getName();
+    public String getName(String para);
 }

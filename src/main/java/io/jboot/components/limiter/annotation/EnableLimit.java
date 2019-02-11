@@ -15,6 +15,8 @@
  */
 package io.jboot.components.limiter.annotation;
 
+import io.jboot.components.limiter.LimitType;
+
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -27,14 +29,14 @@ public @interface EnableLimit {
      *
      * @return
      */
-    String resource();
+    String resource() default "";
 
     /**
      * 类型 ：
      *
      * @return
      */
-    String type();
+    String type() default LimitType.TOKEN_BUCKET;
 
     /**
      * 频率
@@ -49,7 +51,7 @@ public @interface EnableLimit {
      *
      * @return
      */
-    String fallback();
+    String fallback() default "";
 
 
 }
