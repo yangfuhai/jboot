@@ -211,8 +211,7 @@ jboot.app.bannerEnable
 jboot.app.bannerFile
 jboot.app.jfinalConfig
 
-jboot.web.actionCacheEnable
-jboot.web.actionCacheKeyGeneratorType
+jboot.web.webSocketEndpoint
 jboot.web.cookieEncryptKey
 
 jboot.web.session.cookieName
