@@ -46,7 +46,7 @@ public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
         }
     }
 
-    private void doProcessFallback(String fallback, Invocation inv) {
+    protected void doProcessFallback(String fallback, Invocation inv) {
         Method method = getMethodByName(fallback, inv);
         if (method == null) {
             throw new JbootException("can not find method[" + fallback + "] in class " +
@@ -65,7 +65,7 @@ public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
     }
 
 
-    private Method getMethodByName(String methodName, Invocation inv) {
+    protected Method getMethodByName(String methodName, Invocation inv) {
         Class clazz = ClassUtil.getUsefulClass(inv.getTarget().getClass());
         Method[] methods = clazz.getMethods();
         for (Method m : methods) {
@@ -83,7 +83,7 @@ public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
      * @param resource
      * @param inv
      */
-    private void doProcessWebLimit(String resource, Invocation inv) {
+    protected void doProcessWebLimit(String resource, Invocation inv) {
 
         Controller controller = inv.getController();
         controller.getResponse().setStatus(config.getDefaultHttpCode());
@@ -108,7 +108,7 @@ public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
      * @param resource
      * @param inv
      */
-    private void doProcessServiceLimit(String resource, Invocation inv) {
+    protected void doProcessServiceLimit(String resource, Invocation inv) {
         if (Jboot.isDevMode()) {
             System.err.println(resource + " is limited , return null");
         }
