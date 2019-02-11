@@ -39,7 +39,7 @@ public class JbootScheduleManager {
 
     private static final Log LOG = Log.getLog(JbootScheduleManager.class);
 
-    private static JbootScheduleManager manager;
+    private static JbootScheduleManager manager = new JbootScheduleManager();
     private JbootCron4jPlugin cron4jPlugin;
     private ScheduledThreadPoolExecutor fixedScheduler;
     private JbooScheduleConfig config;
@@ -57,9 +57,6 @@ public class JbootScheduleManager {
 
 
     public static final JbootScheduleManager me() {
-        if (manager == null) {
-            manager = ClassUtil.singleton(JbootScheduleManager.class);
-        }
         return manager;
     }
 
