@@ -8,9 +8,9 @@ import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
 @RequestMapping("/dubbo")
-public class DubboClient extends JbootController{
+public class DubboClient extends JbootController {
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
 
         //Undertow端口号配置
@@ -26,10 +26,12 @@ public class DubboClient extends JbootController{
 
 
     @RPCInject
-    private  BlogService blogService;
+    private BlogService blogService;
 
     public void index() {
-        System.out.println(blogService);
+
+        System.out.println("blogService:" + blogService);
+
         renderText("blogId : " + blogService.findById());
     }
 

@@ -7,6 +7,7 @@ public class DubboServer {
 
     public static void main(String[] args) throws InterruptedException {
 
+        JbootApplication.setBootArg("undertow.port", "8887");
 
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
 
