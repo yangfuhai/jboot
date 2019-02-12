@@ -20,6 +20,7 @@ import com.jfinal.server.undertow.UndertowServer;
 import com.jfinal.server.undertow.WebBuilder;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.undertow.JbootUndertowConfig;
+import io.jboot.app.undertow.JbootUndertowServer;
 
 import javax.servlet.DispatcherType;
 import java.net.URISyntaxException;
@@ -62,7 +63,7 @@ public class JbootApplication {
         undertowConfig.addSystemClassPrefix("io.jboot.app");
         undertowConfig.addHotSwapClassPrefix("io.jboot");
 
-        return UndertowServer.create(undertowConfig)
+        return JbootUndertowServer.create(undertowConfig)
                 .setDevMode(isDevMode())
                 .configWeb(webBuilder -> {
                     tryAddMetricsSupport(webBuilder);
