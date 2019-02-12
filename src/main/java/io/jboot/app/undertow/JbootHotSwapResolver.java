@@ -39,7 +39,7 @@ public class JbootHotSwapResolver extends HotSwapResolver {
     public boolean isHotSwapClass(String className) {
         if (unHotSwapClassPrefix != null) {
             for (String prefix : unHotSwapClassPrefix) {
-                if (className.startsWith(prefix)) {
+                if (prefix.trim().length() > 0 && className.startsWith(prefix.trim())) {
                     return false;
                 }
             }
