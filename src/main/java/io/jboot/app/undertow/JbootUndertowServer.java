@@ -15,29 +15,27 @@
  */
 package io.jboot.app.undertow;
 
-import com.alibaba.dubbo.config.DubboShutdownHook;
 import com.jfinal.server.undertow.UndertowConfig;
 import com.jfinal.server.undertow.UndertowServer;
-import com.jfinal.server.undertow.hotswap.HotSwapResolver;
 
 import javax.servlet.ServletException;
 
-/**
- * 修复 dubbo 下热加载的问题
- */
+
 public class JbootUndertowServer extends UndertowServer {
 
-    protected JbootUndertowServer(UndertowConfig undertowConfig) {
+    public JbootUndertowServer(UndertowConfig undertowConfig) {
         super(undertowConfig);
     }
 
     @Override
     protected void doStop() throws ServletException {
         super.doStop();
-        HotSwapResolver resolver = getUndertowConfig().getHotSwapResolver();
-        if (resolver.isHotSwapClass("org.apache.dubbo")
-                || resolver.isHotSwapClass("com.alibaba")) {
-            DubboShutdownHook.getDubboShutdownHook().destroyAll();
-        }
+//        HotSwapResolver resolver = getUndertowConfig().getHotSwapResolver();
+//        if (resolver.isHotSwapClass("org.apache.dubbo")
+//                || resolver.isHotSwapClass("com.alibaba")) {
+//            DubboShutdownHook.getDubboShutdownHook().destroyAll();
+//        }
     }
+
+
 }

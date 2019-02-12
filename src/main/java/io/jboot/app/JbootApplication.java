@@ -63,7 +63,7 @@ public class JbootApplication {
         undertowConfig.addSystemClassPrefix("io.jboot.app");
         undertowConfig.addHotSwapClassPrefix("io.jboot");
 
-        return JbootUndertowServer.create(undertowConfig)
+        return new JbootUndertowServer(undertowConfig)
                 .setDevMode(isDevMode())
                 .configWeb(webBuilder -> {
                     tryAddMetricsSupport(webBuilder);

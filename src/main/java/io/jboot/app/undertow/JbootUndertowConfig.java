@@ -17,6 +17,7 @@ package io.jboot.app.undertow;
 
 import com.jfinal.server.undertow.PropExt;
 import com.jfinal.server.undertow.UndertowConfig;
+import com.jfinal.server.undertow.hotswap.HotSwapResolver;
 import io.jboot.app.config.JbootConfigManager;
 
 import java.io.IOException;
@@ -84,5 +85,20 @@ public class JbootUndertowConfig extends UndertowConfig {
         return null;
     }
 
+    @Override
+    public HotSwapResolver getHotSwapResolver() {
+        if (hotSwapResolver == null) {
+            hotSwapResolver = new JbootHotSwapResolver(getClassPathDirs());
+            // 后续将此代码转移至 HotSwapResolver 中去，保持 UndertowConfig 的简洁
+            if (hotSwapClassPrefix != null) {
+                for (String prefix : hotSwapClassPrefix.split(",")) {
+                    if (notBlank(prefix)) {
+                        hotSwapResolver.addHotSwapClassPrefix(prefix);
+                    }
+                }
+            }
+        }
+        return hotSwapResolver;
+    }
 }
 
