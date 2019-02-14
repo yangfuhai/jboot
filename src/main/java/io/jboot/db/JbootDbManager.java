@@ -15,9 +15,7 @@
  */
 package io.jboot.db;
 
-import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
-import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.Jboot;
 import io.jboot.components.cache.JbootCache;
@@ -101,8 +99,13 @@ public class JbootDbManager {
 
         ActiveRecordPlugin activeRecordPlugin = newRecordPlugin(config);
 
+
         if (StrUtil.isNotBlank(config.getDbProFactory())) {
-            activeRecordPlugin.setDbProFactory(ClassUtil.newInstance(config.getDbProFactory()));
+            IDbProFactory dbProFactory = Objects.requireNonNull(ClassUtil.newInstance(config.getDbProFactory()),
+                    "can not create dbProfactory by class : " + config.getDbProFactory());
+            activeRecordPlugin.setDbProFactory(dbProFactory);
+        } else {
+            activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
         }
 
         if (StrUtil.isNotBlank(config.getContainerFactory())) {
@@ -114,7 +117,6 @@ public class JbootDbManager {
         }
 
         activeRecordPlugin.setShowSql(Jboot.isDevMode());
-        activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
 
         JbootCache jbootCache = Jboot.getCache();
         if (jbootCache != null) {
@@ -189,11 +191,6 @@ public class JbootDbManager {
     private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
         String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
         if (StrUtil.isNotBlank(sqlTemplatePath)) {
-//            if (sqlTemplatePath.startsWith("/")) {
-//                activeRecordPlugin.setBaseSqlTemplatePath(datasourceConfig.getSqlTemplatePath());
-//            } else {
-//                activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/" + datasourceConfig.getSqlTemplatePath());
-//            }
             activeRecordPlugin.setBaseSqlTemplatePath(sqlTemplatePath);
         } else {
             activeRecordPlugin.setBaseSqlTemplatePath(null);
