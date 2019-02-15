@@ -47,17 +47,12 @@ class Utils {
      * @return
      */
     static String engineRender(String template, Method method, Object[] arguments) {
-
         Map<String, Object> datas = new HashMap();
         int x = 0;
-        /**
-         * 在java8下，通过添加 -parameters 进行编译，可以获取 Parameter 的编译前的名字
-         * 否则 只能获取 编译后的名字
-         */
         for (Parameter p : method.getParameters()) {
             if (!p.isNamePresent()) {
-                LOG.warn(" Maven or IDE config is error. see http://www.jfinal.com/doc/3-3 ");
-                break;
+                // 必须通过添加 -parameters 进行编译，才可以获取 Parameter 的编译前的名字
+                throw new RuntimeException(" Maven or IDE config is error. see http://www.jfinal.com/doc/3-3 ");
             }
             datas.put(p.getName(), arguments[x++]);
         }
