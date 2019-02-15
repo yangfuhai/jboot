@@ -106,7 +106,8 @@ public class JbootAopFactory extends AopFactory {
 //        }
 
         targetClass = getUsefulClass(targetClass);
-        Field[] fields = targetClass.getDeclaredFields();
+//        Field[] fields = targetClass.getDeclaredFields();
+        Field[] fields = targetClass.getFields();
         if (fields.length == 0) {
             return;
         }

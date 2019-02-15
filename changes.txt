@@ -1,6 +1,7 @@
 jboot v2.0-rc.9:
 修复：通过配置文件设置 DbProFactory 无效的问题
 修复：第一次启动的时候，Jwt动态配置的Token可能为空的问题
+修复：在父类使用 @Inject 后无法进行正确注入的问题
 
 
 jboot v2.0-rc.8:
