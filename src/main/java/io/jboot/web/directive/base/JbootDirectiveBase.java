@@ -110,13 +110,22 @@ public abstract class JbootDirectiveBase extends Directive {
         return v == null ? defaultValue : v;
     }
 
+    public Boolean getParaToBool(int index, Scope scope) {
+        Object object = getPara(index, scope, null);
+        if (object == null || object instanceof Boolean) return (Boolean) object;
+        return Boolean.valueOf(object.toString());
+    }
+
+    public Boolean getParaToBool(int index, Scope scope, Boolean defaultValue) {
+        Boolean v = getParaToBool(index, scope);
+        return v == null ? defaultValue : v;
+    }
 
     public BigInteger getParaToBigInteger(int index, Scope scope) {
         Object object = getPara(index, scope, null);
         if (object == null || object instanceof BigInteger) return (BigInteger) object;
         return new BigInteger(object.toString());
     }
-
 
     public BigInteger getParaToBigInteger(int index, Scope scope, BigInteger defaultValue) {
         BigInteger v = getParaToBigInteger(index, scope);
