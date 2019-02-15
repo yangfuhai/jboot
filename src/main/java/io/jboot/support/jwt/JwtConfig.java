@@ -54,7 +54,7 @@ public class JwtConfig {
         this.validityPeriod = validityPeriod;
     }
 
-    public boolean isEnable() {
+    public boolean isConfigOk() {
         return StrUtil.isNotBlank(secret);
     }
 

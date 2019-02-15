@@ -15,7 +15,6 @@
  */
 package io.jboot.support.jwt;
 
-import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
@@ -33,11 +32,9 @@ import java.util.Map;
  */
 public class JwtInterceptor implements FixedInterceptor {
 
-    private static JwtConfig jwtConfig = Jboot.config(JwtConfig.class);
-
     @Override
     public void intercept(FixedInvocation inv) {
-        if (!jwtConfig.isEnable()) {
+        if (!JwtManager.me().getConfig().isConfigOk()) {
             inv.invoke();
             return;
         }
@@ -65,7 +62,6 @@ public class JwtInterceptor implements FixedInterceptor {
     }
 
 
-
     private void processInvoke(FixedInvocation inv, Map oldData) {
 
         inv.invoke();
@@ -89,21 +85,21 @@ public class JwtInterceptor implements FixedInterceptor {
         response.addHeader(JwtManager.me().getHttpHeaderName(), token);
     }
 
-    
+
     private void refreshIfNecessary(FixedInvocation inv, Map oldData) {
         if (oldData == null) {
             return;
         }
 
         Long isuuedAtMillis = (Long) oldData.get("isuuedAt");
-        if (isuuedAtMillis == null || jwtConfig.getValidityPeriod() <= 0) {
+        if (isuuedAtMillis == null || JwtManager.me().getConfig().getValidityPeriod() <= 0) {
             return;
         }
 
         Long nowMillis = System.currentTimeMillis();
         long savedMillis = nowMillis - isuuedAtMillis;
 
-        if (savedMillis > jwtConfig.getValidityPeriod() / 2) {
+        if (savedMillis > JwtManager.me().getConfig().getValidityPeriod() / 2) {
             String token = JwtManager.me().createJwtToken(oldData);
             HttpServletResponse response = inv.getController().getResponse();
             response.addHeader(JwtManager.me().getHttpHeaderName(), token);

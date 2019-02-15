@@ -41,7 +41,6 @@ public class JwtManager {
         return me;
     }
 
-    private JwtConfig jwtConfig = Jboot.config(JwtConfig.class);
     private ThreadLocal<Map> jwtThreadLocal = new ThreadLocal<>();
 
     public void holdJwts(Map map) {
@@ -62,7 +61,7 @@ public class JwtManager {
     }
 
     public String getHttpHeaderName() {
-        return jwtConfig.getHttpHeaderName();
+        return getConfig().getHttpHeaderName();
     }
 
     public Map parseJwtToken(String token) {
@@ -94,7 +93,7 @@ public class JwtManager {
 
     public String createJwtToken(Map map) {
 
-        if (!jwtConfig.isEnable()) {
+        if (!getConfig().isConfigOk()) {
             throw new JbootException("can not create jwt,please config jboot.web.jwt.secret in jboot.properties.");
         }
 
@@ -112,8 +111,8 @@ public class JwtManager {
                 .setSubject(subject)
                 .signWith(signatureAlgorithm, secretKey);
 
-        if (jwtConfig.getValidityPeriod() > 0) {
-            long expMillis = nowMillis + jwtConfig.getValidityPeriod();
+        if (getConfig().getValidityPeriod() > 0) {
+            long expMillis = nowMillis + getConfig().getValidityPeriod();
             builder.setExpiration(new Date(expMillis));
         }
 
@@ -122,9 +121,18 @@ public class JwtManager {
 
 
     private SecretKey generalKey() {
-        byte[] encodedKey = DatatypeConverter.parseBase64Binary(jwtConfig.getSecret());
+        byte[] encodedKey = DatatypeConverter.parseBase64Binary(getConfig().getSecret());
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return key;
+    }
+
+    private JwtConfig config;
+
+    public JwtConfig getConfig() {
+        if (config == null) {
+            config = Jboot.config(JwtConfig.class);
+        }
+        return config;
     }
 
 
