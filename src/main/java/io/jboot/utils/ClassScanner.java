@@ -78,6 +78,8 @@ public class ClassScanner {
         excludeJars.add("commons-validator");
         excludeJars.add("commons-email");
         excludeJars.add("commons-text");
+        excludeJars.add("commons-cli");
+        excludeJars.add("audience-");
         excludeJars.add("hessian-");
         excludeJars.add("metrics-");
         excludeJars.add("javapoet-");
