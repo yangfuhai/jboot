@@ -1,8 +1,12 @@
 package io.jboot.aop;
 
+import com.google.common.collect.Lists;
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
+import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Singleton;
+import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Model;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.annotation.ConfigValue;
@@ -14,74 +18,100 @@ import io.jboot.components.rpc.Jbootrpc;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.rpc.annotation.RPCInject;
+import io.jboot.db.model.JbootModel;
+import io.jboot.service.JbootServiceBase;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtil;
+import io.jboot.web.controller.JbootController;
+import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class JbootAopFactory extends AopFactory {
 
     private JbootAopInterceptor aopInterceptor = new JbootAopInterceptor();
-    private ThreadLocal<HashMap<Class<?>, Object>> context = ThreadLocal.withInitial(() -> new HashMap<>());
+
+    // 支持循环注入
+    protected ThreadLocal<HashMap<Class<?>, Object>> singletonTl = ThreadLocal.withInitial(() -> new HashMap<>());
+    protected ThreadLocal<HashMap<Class<?>, Object>> prototypeTl = ThreadLocal.withInitial(() -> new HashMap<>());
+
 
     public JbootAopFactory() {
-//        setInjectDepth(MAX_INJECT_DEPTH);
         initBeanMapping();
     }
 
     @Override
     protected <T> T doGet(Class<T> targetClass, int injectDepth) throws ReflectiveOperationException {
-        // Aop.get(obj.getClass()) 可以用 Aop.inject(obj)，所以注掉下一行代码
-        // targetClass = (Class<T>)getUsefulClass(targetClass);
+        return doGet(targetClass);
+    }
 
+    @SuppressWarnings("unchecked")
+    protected <T> T doGet(Class<T> targetClass) throws ReflectiveOperationException {
         targetClass = (Class<T>) getMappingClass(targetClass);
-
         Singleton si = targetClass.getAnnotation(Singleton.class);
         boolean singleton = (si != null ? si.value() : this.singleton);
 
-        Object ret;
-        if (!singleton) {
-            ret = createObject(targetClass);
-            doInject(targetClass, ret, injectDepth);
-            return (T) ret;
+        if (singleton) {
+            return doGetSingleton(targetClass);
+        } else {
+            return doGetPrototype(targetClass);
         }
+    }
 
-        ret = singletonCache.get(targetClass);
+    @SuppressWarnings("unchecked")
+    protected <T> T doGetSingleton(Class<T> targetClass) throws ReflectiveOperationException {
+        Object ret = singletonCache.get(targetClass);
         if (ret != null) {
             return (T) ret;
         }
 
-        //只有在循环依赖的时候，这个context才会有值
-        ret = context.get().get(targetClass);
-        if (ret != null) {
+        ret = singletonTl.get().get(targetClass);
+        if (ret != null) {        // 发现循环注入
             return (T) ret;
         }
 
         synchronized (this) {
             ret = singletonCache.get(targetClass);
             if (ret == null) {
-//              ret = createObject(targetClass);
-//              doInject(targetClass, ret, injectDepth);
-//              singletonCache.put(targetClass, ret);
-
-                ret = createObject(targetClass);
-
-                //保存到本次初始化的上下文
-                context.get().put(targetClass, ret);
-
-                //循环注入
-                doInject(targetClass, ret, injectDepth);
-
-                //保存到缓存、并清除上下文数据
-                singletonCache.put(targetClass, ret);
-                context.get().clear();
-                context.remove();
+                try {
+                    ret = createObject(targetClass);
+                    singletonTl.get().put(targetClass, ret);
+                    doInject(targetClass, ret);
+                    singletonCache.put(targetClass, ret);
+                } finally {
+                    singletonTl.remove();
+                }
             }
+        }
+
+        return (T) ret;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    protected <T> T doGetPrototype(Class<T> targetClass) throws ReflectiveOperationException {
+        Object ret;
+
+        HashMap<Class<?>, Object> map = prototypeTl.get();
+        if (map.size() > 0) {
+            ret = map.get(targetClass);
+            if (ret != null) {        // 发现循环注入
+                return (T) ret;
+            }
+        }
+
+        try {
+            ret = createObject(targetClass);
+            map.put(targetClass, ret);
+            doInject(targetClass, ret);
+        } finally {
+            map.clear();
         }
 
         return (T) ret;
@@ -98,17 +128,18 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
+        doInject(targetClass, targetObject);
+    }
 
-//        注释这部分代码，目的是为了取消 injectDepth 层级的限制，
-//        从而保证系统稳定性（ps：尽管设置 injectDepth 为 7 ，但是还是有些系统出现了无法注入的情况）。
-//        if ((injectDepth--) <= 0) {
-//            return;
-//        }
+    protected void doInject(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
 
         targetClass = getUsefulClass(targetClass);
 //        Field[] fields = targetClass.getDeclaredFields();
-        Field[] fields = targetClass.getFields();
-        if (fields.length == 0) {
+
+        List<Field> fields = new ArrayList<>();
+        doGetFields(targetClass, fields);
+
+        if (fields.size() == 0) {
             return;
         }
 
@@ -129,7 +160,7 @@ public class JbootAopFactory extends AopFactory {
 
             Inject inject = field.getAnnotation(Inject.class);
             if (inject != null) {
-                doInjectJFinalOrginal(targetObject, field, inject, injectDepth);
+                doInjectJFinalOrginal(targetObject, field, inject);
                 continue;
             }
 
@@ -148,6 +179,26 @@ public class JbootAopFactory extends AopFactory {
         }
     }
 
+    private void doGetFields(Class clazz, List<Field> fields) {
+        Field[] fs = clazz.getDeclaredFields();
+        if (fs.length > 0) {
+            fields.addAll(Lists.newArrayList(fs));
+        }
+        Class supperClass = clazz.getSuperclass();
+        if (supperClass == JbootController.class
+                || supperClass == Controller.class
+                || supperClass == JbootServiceBase.class
+                || supperClass == Interceptor.class
+                || supperClass == FixedInterceptor.class
+                || supperClass == JbootModel.class
+                || supperClass == Model.class
+                || supperClass == Object.class
+                || supperClass == null) {
+            return;
+        }
+        doGetFields(supperClass, fields);
+    }
+
     /**
      * JFinal 原生 service 注入
      *
@@ -156,13 +207,13 @@ public class JbootAopFactory extends AopFactory {
      * @param inject
      * @throws ReflectiveOperationException
      */
-    private void doInjectJFinalOrginal(Object targetObject, Field field, Inject inject, int injectDepth) throws ReflectiveOperationException {
+    private void doInjectJFinalOrginal(Object targetObject, Field field, Inject inject) throws ReflectiveOperationException {
         Class<?> fieldInjectedClass = inject.value();
         if (fieldInjectedClass == Void.class) {
             fieldInjectedClass = field.getType();
         }
 
-        Object fieldInjectedObject = doGet(fieldInjectedClass, injectDepth);
+        Object fieldInjectedObject = doGet(fieldInjectedClass);
 
         field.setAccessible(true);
         field.set(targetObject, fieldInjectedObject);
