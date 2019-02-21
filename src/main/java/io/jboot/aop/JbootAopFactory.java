@@ -1,6 +1,5 @@
 package io.jboot.aop;
 
-import com.google.common.collect.Lists;
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
 import com.jfinal.aop.Interceptor;
@@ -182,7 +181,7 @@ public class JbootAopFactory extends AopFactory {
     private void doGetFields(Class clazz, List<Field> fields) {
         Field[] fs = clazz.getDeclaredFields();
         if (fs.length > 0) {
-            fields.addAll(Lists.newArrayList(fs));
+            for (Field field : fs) fields.add(field);
         }
         Class supperClass = clazz.getSuperclass();
         if (supperClass == JbootController.class
