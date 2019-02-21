@@ -7,7 +7,6 @@ jboot v2.0-rc.9:
 修复：用户添加的 Service 层 Interceptor 无法正确注入的问题
 
 
-
 jboot v2.0-rc.8:
 新增：Limit模块，可以用于没有运维的时候进行代码配置限流和降级
 新增：WebSocketEndpoint 的配置支持 jboot.web.webSocketEndpoint
