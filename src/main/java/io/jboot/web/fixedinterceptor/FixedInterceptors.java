@@ -81,7 +81,6 @@ public class FixedInterceptors {
 
         int i = 0;
         for (FixedInterceptorWapper interceptor : inters) {
-            Aop.inject(interceptor);
             interceptors[i++] = interceptor.getFixedInterceptor();
         }
 
@@ -90,6 +89,7 @@ public class FixedInterceptors {
 
 
     public void add(FixedInterceptor interceptor) {
+        Aop.inject(interceptor);
         userInters.add(new FixedInterceptorWapper(interceptor));
     }
 
@@ -97,7 +97,7 @@ public class FixedInterceptors {
         if (orderNo < 0) {
             orderNo = 0;
         }
-
+        Aop.inject(interceptor);
         userInters.add(new FixedInterceptorWapper(interceptor, orderNo));
     }
 
