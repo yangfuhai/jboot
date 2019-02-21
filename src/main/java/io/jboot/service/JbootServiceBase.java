@@ -33,6 +33,9 @@ public class JbootServiceBase<M extends JbootModel<M>>
         extends JbootServiceJoinerImpl
         implements JbootServiceJoiner {
 
+    protected static final int ACTION_ADD = 1;
+    protected static final int ACTION_DEL = 2;
+    protected static final int ACTION_UPDATE = 3;
 
     protected M DAO = null;
 
@@ -89,7 +92,11 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     public boolean deleteById(Object id) {
-        return DAO.deleteById(id);
+        boolean result = DAO.deleteById(id);
+        if (result) {
+            shouldUpdateCache(ACTION_DEL, id);
+        }
+        return result;
     }
 
 
@@ -100,7 +107,11 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     public boolean delete(M model) {
-        return model.delete();
+        boolean result = model.delete();
+        if (result) {
+            shouldUpdateCache(ACTION_DEL, model);
+        }
+        return result;
     }
 
 
@@ -111,7 +122,12 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return id if success
      */
     public Object save(M model) {
-        return model.save() ? model._getIdValue() : null;
+        boolean result = model.save();
+        if (result) {
+            shouldUpdateCache(ACTION_ADD, model);
+            return model._getIdValue();
+        }
+        return null;
     }
 
 
@@ -137,7 +153,11 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     public boolean update(M model) {
-        return model.update();
+        boolean result = model.update();
+        if (result) {
+            shouldUpdateCache(ACTION_UPDATE, model);
+        }
+        return result;
     }
 
 
@@ -188,5 +208,14 @@ public class JbootServiceBase<M extends JbootModel<M>>
     @Override
     protected JbootModel joinById(Object id) {
         return findById(id);
+    }
+
+    /**
+     * 用于给子类复写，用于刷新缓存
+     *
+     * @param action
+     * @param data
+     */
+    public void shouldUpdateCache(int action, Object data) {
     }
 }
