@@ -21,11 +21,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface CacheEvict {
+
     String name();
-
     String key() default "";
-
     String unless() default "";
-
     boolean beforeInvocation() default false;
+
 }

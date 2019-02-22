@@ -23,15 +23,8 @@ import java.lang.annotation.*;
 public @interface Cacheable {
 
     String name();
-
     String key() default "";
-
-    /**
-     * 0-默认永久
-     */
-    int liveSeconds() default 0;
-
+    int liveSeconds() default 0; // 0 : 永久存储
     boolean nullCacheEnable() default false;
-
     String unless() default "";
 }

@@ -56,8 +56,8 @@ public class DataSourceConfig {
     private String containerFactory;
     private Integer transactionLevel;
 
-    private String table; //此数据源包含哪些表，这个配置会覆盖@Table注解的配置
-    private String exTable; //该数据源排除哪些表，这个配置会修改掉@Table上的配置
+    private String table; //此数据源包含哪些表
+    private String exTable; //该数据源排除哪些表
 
     private String dialectClass;
     private String activeRecordPluginClass;
