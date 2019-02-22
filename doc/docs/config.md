@@ -229,6 +229,36 @@ jboot.web.jwt.validityPeriod
 jboot.web.cdn.enable
 jboot.web.cdn.domain
 
+
+jboot.datasource.name
+jboot.datasource.type
+jboot.datasource.url
+jboot.datasource.user
+jboot.datasource.password
+jboot.datasource.driverClassName = "com.mysql.jdbc.Driver"
+jboot.datasource.connectionInitSql
+jboot.datasource.poolName
+jboot.datasource.cachePrepStmts = true
+jboot.datasource.prepStmtCacheSize = 500
+jboot.datasource.prepStmtCacheSqlLimit = 2048
+jboot.datasource.maximumPoolSize = 10
+jboot.datasource.maxLifetime
+jboot.datasource.idleTimeout
+jboot.datasource.minimumIdle = 0
+jboot.datasource.sqlTemplatePath
+jboot.datasource.sqlTemplate
+jboot.datasource.factory
+jboot.datasource.shardingConfigYaml
+jboot.datasource.dbProFactory
+jboot.datasource.containerFactory
+jboot.datasource.transactionLevel
+jboot.datasource.table //此数据源包含哪些表
+jboot.datasource.exTable //该数据源排除哪些表
+jboot.datasource.dialectClass
+jboot.datasource.activeRecordPluginClass
+jboot.datasource.needAddMapping = true //是否需要添加到映射，当不添加映射的时候，只能通过 model.use("xxx").save()这种方式去调用该数据源
+
+
 jboot.rpc.type
 jboot.rpc.callMode
 jboot.rpc.requestTimeOut
