@@ -110,25 +110,25 @@ public abstract class JbootDirectiveBase extends Directive {
     }
 
 
-    public Long getParaToLang(String key, Scope scope) {
+    public Long getParaToLong(String key, Scope scope) {
         Object object = getPara(key, scope, null);
         if (object == null || object instanceof Long) return (Long) object;
         return Long.valueOf(object.toString());
     }
 
-    public Long getParaToLang(String key, Scope scope, Long defaultValue) {
-        Long v = getParaToLang(key, scope);
+    public Long getParaToLong(String key, Scope scope, Long defaultValue) {
+        Long v = getParaToLong(key, scope);
         return v == null ? defaultValue : v;
     }
 
-    public Long getParaToLang(int index, Scope scope) {
+    public Long getParaToLong(int index, Scope scope) {
         Object object = getPara(index, scope, null);
         if (object == null || object instanceof Long) return (Long) object;
         return Long.valueOf(object.toString());
     }
 
-    public Long getParaToLang(int index, Scope scope, Long defaultValue) {
-        Long v = getParaToLang(index, scope);
+    public Long getParaToLong(int index, Scope scope, Long defaultValue) {
+        Long v = getParaToLong(index, scope);
         return v == null ? defaultValue : v;
     }
 
