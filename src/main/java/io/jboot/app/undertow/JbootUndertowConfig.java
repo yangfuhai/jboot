@@ -60,6 +60,12 @@ public class JbootUndertowConfig extends UndertowConfig {
             JbootConfigManager.me().setBootArg("undertow.port", availablePort.toString());
         }
 
+        String host = propExt.get("undertow.host");
+        if (host == null || host.trim().length() == 0) {
+            propExt.getProperties().put("undertow.host", "0.0.0.0");
+            JbootConfigManager.me().setBootArg("undertow.host", "0.0.0.0");
+        }
+
         return propExt;
     }
 
