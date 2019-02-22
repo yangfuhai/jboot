@@ -68,6 +68,9 @@ public class JbootResourceLoader {
 
     private void findResourcesPath(File root, List<File> resourcesDirs) {
         File[] dirs = root.listFiles(pathname -> pathname.isDirectory());
+        if (dirs == null || dirs.length == 0) {
+            return;
+        }
         for (File dir : dirs) {
             if (dir.getName().equals(resourcePathName)
                     && dir.getParentFile().getName().equals("main")) {
