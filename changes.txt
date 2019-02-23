@@ -1,6 +1,7 @@
 jboot v2.0-rc.10:
 修复：方法名错误的问题 JbootDirectiveBase.getParaToLang 修改为 getParaToLong
 修复：JbootResourceLoader 可能出现空指针异常的问题
+修复：JbootAopFactory 当客户端传入 null 会出现空指针异常的问题
 优化：当 undertow 为对 host 配置的时候，默认host为 0.0.0.0
 
 

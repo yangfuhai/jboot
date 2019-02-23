@@ -52,6 +52,9 @@ public class JbootAopFactory extends AopFactory {
 
     @SuppressWarnings("unchecked")
     protected <T> T doGet(Class<T> targetClass) throws ReflectiveOperationException {
+        if (targetClass == null) {
+            return null;
+        }
         targetClass = (Class<T>) getMappingClass(targetClass);
         Singleton si = targetClass.getAnnotation(Singleton.class);
         boolean singleton = (si != null ? si.value() : this.singleton);
