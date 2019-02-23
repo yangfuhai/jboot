@@ -1,3 +1,9 @@
+jboot v2.0-rc.10:
+修复：方法名错误的问题 JbootDirectiveBase.getParaToLang 修改为 getParaToLong
+修复：JbootResourceLoader 可能出现空指针异常的问题
+优化：当 undertow 为对 host 配置的时候，默认host为 0.0.0.0
+
+
 jboot v2.0-rc.9:
 新增：JbootServiceBase 新增 shouldUpdateCache() 方法，用于给子类复写进行刷新缓存
 修复：通过配置文件设置 DbProFactory 无效的问题
