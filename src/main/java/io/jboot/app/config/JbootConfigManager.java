@@ -180,10 +180,11 @@ public class JbootConfigManager {
 
         if (Utils.isBlank(value)) {
             value = System.getenv(key);
-            if (value == null) value = System.getenv(key.toUpperCase().replace('.', '_'));
         }
 
         if (Utils.isBlank(value)) {
+            // 把xxx.xxx.xxx 转换为 XXX_XXX_XXX，
+            // 例如：jboot.datasource.url 转换为 JBOOT_DATASOURCE_URL
             String tempKey = key.toUpperCase().replace('.', '_');
             value = System.getenv(tempKey);
         }
