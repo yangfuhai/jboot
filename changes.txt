@@ -1,6 +1,6 @@
 jboot v2.0-rc.11:
 新增：Docker 下配置的环境变量 XXX_XXX_XXX 自动转换为 xxx.xx.xx，用于属性读取。
-优化：JbootResourceLoader 输出文章信息
+优化：JbootResourceLoader 输出文字信息
 
 
 jboot v2.0-rc.10:
