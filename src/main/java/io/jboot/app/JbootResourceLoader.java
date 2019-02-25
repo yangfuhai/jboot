@@ -53,8 +53,8 @@ public class JbootResourceLoader {
                 startNewScanner(resourcesDir.getCanonicalFile(), classPath);
             }
 
-            System.out.println("JbootResourceLoader started, Resource path name : " + resourcePathName);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> JbootResourceLoader.this.stop()));
+            System.err.println("JbootResourceLoader started, Watched resource path name : " + resourcePathName);
 
         } catch (Exception e) {
             e.printStackTrace();
