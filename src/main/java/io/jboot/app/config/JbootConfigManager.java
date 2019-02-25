@@ -180,6 +180,12 @@ public class JbootConfigManager {
 
         if (Utils.isBlank(value)) {
             value = System.getenv(key);
+            if (value == null) value = System.getenv(key.toUpperCase().replace('.', '_'));
+        }
+
+        if (Utils.isBlank(value)) {
+            String tempKey = key.toUpperCase().replace('.', '_');
+            value = System.getenv(tempKey);
         }
 
         if (Utils.isBlank(value)) {
@@ -267,8 +273,9 @@ public class JbootConfigManager {
     }
 
 
-    private  Boolean devMode = null;
-    public  boolean isDevMode() {
+    private Boolean devMode = null;
+
+    public boolean isDevMode() {
         if (devMode == null) {
             String appMode = getConfigValue("jboot.app.mode");
             devMode = (null == appMode || "".equals(appMode.trim()) || "dev".equals(appMode));
