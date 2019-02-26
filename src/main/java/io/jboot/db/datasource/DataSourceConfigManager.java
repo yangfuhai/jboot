@@ -49,7 +49,8 @@ public class DataSourceConfigManager {
         Properties prop = JbootConfigManager.me().getProperties();
         Set<String> datasourceNames = new HashSet<>();
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-            String key = entry.getKey().toString();
+            if (entry.getKey() == null) continue;
+            String key = entry.getKey().toString().toLowerCase().replace('_','.');
             if (key.startsWith(DATASOURCE_PREFIX) && entry.getValue() != null) {
                 String[] keySplits = key.split("\\.");
                 if (keySplits.length == 4) {
