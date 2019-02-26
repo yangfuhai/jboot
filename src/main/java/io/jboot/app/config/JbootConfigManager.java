@@ -176,28 +176,40 @@ public class JbootConfigManager {
      */
     public String getConfigValue(Properties properties, String key) {
 
+        //boot arg
         String value = getBootArg(key);
-
-        if (Utils.isBlank(value)) {
-            value = System.getenv(key);
+        if (Utils.isNotBlank(value)) {
+            return value.trim();
         }
 
-        if (Utils.isBlank(value)) {
-            // 把xxx.xxx.xxx 转换为 XXX_XXX_XXX，
-            // 例如：jboot.datasource.url 转换为 JBOOT_DATASOURCE_URL
-            String tempKey = key.toUpperCase().replace('.', '_');
-            value = System.getenv(tempKey);
+        //env
+        value = System.getenv(key);
+        if (Utils.isNotBlank(value)) {
+            return value.trim();
         }
 
-        if (Utils.isBlank(value)) {
-            value = System.getProperty(key);
+        //upperCase env
+        // 把xxx.xxx.xxx 转换为 XXX_XXX_XXX，
+        // 例如：jboot.datasource.url 转换为 JBOOT_DATASOURCE_URL
+        String tempKey = key.toUpperCase().replace('.', '_');
+        value = System.getenv(tempKey);
+        if (Utils.isNotBlank(value)) {
+            return value.trim();
         }
 
-        if (Utils.isBlank(value) && properties != null) {
-            value = (String) properties.get(key);
+        //system property
+        value = System.getProperty(key);
+        if (Utils.isNotBlank(value)) {
+            return value.trim();
         }
 
-        return value == null ? null : value.trim();
+        //user properties
+        value = (String) properties.get(key);
+        if (Utils.isNotBlank(value)) {
+            return value.trim();
+        }
+
+        return null;
     }
 
 
