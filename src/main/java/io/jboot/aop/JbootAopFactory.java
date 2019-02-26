@@ -34,7 +34,7 @@ import java.util.List;
 
 public class JbootAopFactory extends AopFactory {
 
-    private JbootAopInterceptor aopInterceptor = new JbootAopInterceptor();
+    protected JbootAopInterceptor aopInterceptor = new JbootAopInterceptor();
 
     // 支持循环注入
     protected ThreadLocal<HashMap<Class<?>, Object>> singletonTl = ThreadLocal.withInitial(() -> new HashMap<>());
