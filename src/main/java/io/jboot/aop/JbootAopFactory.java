@@ -78,14 +78,14 @@ public class JbootAopFactory extends AopFactory {
 
     public JbootAopFactory addInterceptor(Interceptor interceptor) {
         interceptorWappers.add(new InterceptorWapper(interceptor));
-        changeRebuildAopInterceptorsFlag();
+        clearInterceptorsAndObjectCache();
         return this;
     }
 
 
     public JbootAopFactory addInterceptor(Interceptor interceptor, int orderNo) {
         interceptorWappers.add(new InterceptorWapper(interceptor, orderNo));
-        changeRebuildAopInterceptorsFlag();
+        clearInterceptorsAndObjectCache();
         return this;
     }
 
@@ -97,8 +97,9 @@ public class JbootAopFactory extends AopFactory {
         return aopInterceptors;
     }
 
-    private void changeRebuildAopInterceptorsFlag() {
+    protected void clearInterceptorsAndObjectCache() {
         aopInterceptors = null;
+        singletonCache.clear();
     }
 
     @Override
