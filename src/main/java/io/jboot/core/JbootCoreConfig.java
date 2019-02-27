@@ -68,7 +68,7 @@ public class JbootCoreConfig extends JFinalConfig {
     private List<Routes.Route> routeList = new ArrayList<>();
 
     public JbootCoreConfig() {
-        Aop.setAopFactory(new JbootAopFactory());
+        Aop.setAopFactory(JbootAopFactory.me());
         Aop.inject(this);
         JbootAppListenerManager.me().onInit();
     }

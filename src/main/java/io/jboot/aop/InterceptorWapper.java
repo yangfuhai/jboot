@@ -15,15 +15,36 @@
  */
 package io.jboot.aop;
 
+
 import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
 
-public class JbootAopInterceptor implements Interceptor {
+public class InterceptorWapper {
 
-    @Override
-    public void intercept(Invocation inv) {
-        JbootAopInvocation invocation = new JbootAopInvocation(inv);
-        invocation.invoke();
+    private Interceptor interceptor;
+    private int orderNo = 100;
+
+    public InterceptorWapper(Interceptor interceptor, int orderNo) {
+        this.interceptor = interceptor;
+        this.orderNo = orderNo;
     }
 
+    public InterceptorWapper(Interceptor interceptor) {
+        this.interceptor = interceptor;
+    }
+
+    public Interceptor getInterceptor() {
+        return interceptor;
+    }
+
+    public void setInterceptor(Interceptor interceptor) {
+        this.interceptor = interceptor;
+    }
+
+    public int getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(int orderNo) {
+        this.orderNo = orderNo;
+    }
 }

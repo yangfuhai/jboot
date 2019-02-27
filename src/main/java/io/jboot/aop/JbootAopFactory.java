@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.jboot.aop;
 
 import com.jfinal.aop.AopFactory;
@@ -29,20 +44,57 @@ import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 public class JbootAopFactory extends AopFactory {
 
-    protected JbootAopInterceptor aopInterceptor = new JbootAopInterceptor();
+    private static JbootAopFactory me = new JbootAopFactory();
 
     // 支持循环注入
     protected ThreadLocal<HashMap<Class<?>, Object>> singletonTl = ThreadLocal.withInitial(() -> new HashMap<>());
     protected ThreadLocal<HashMap<Class<?>, Object>> prototypeTl = ThreadLocal.withInitial(() -> new HashMap<>());
 
+    //只用用户配置自己的 service 层的拦截器
+    protected List<InterceptorWapper> interceptorWappers = new ArrayList<>();
+    protected InterceptorWapper defaultAopInterceptor = new InterceptorWapper(new JbootAopInterceptor());
 
-    public JbootAopFactory() {
+    //所有的aop拦截器
+    private Interceptor[] aopInterceptors;
+
+    public static JbootAopFactory me() {
+        return me;
+    }
+
+
+    private JbootAopFactory() {
         initBeanMapping();
+    }
+
+    public JbootAopFactory addInterceptor(Interceptor interceptor) {
+        interceptorWappers.add(new InterceptorWapper(interceptor));
+        changeRebuildAopInterceptorsFlag();
+        return this;
+    }
+
+
+    public JbootAopFactory addInterceptor(Interceptor interceptor, int orderNo) {
+        interceptorWappers.add(new InterceptorWapper(interceptor, orderNo));
+        changeRebuildAopInterceptorsFlag();
+        return this;
+    }
+
+    public List<InterceptorWapper> getInterceptorWappers() {
+        return interceptorWappers;
+    }
+
+    public Interceptor[] getAopInterceptors() {
+        return aopInterceptors;
+    }
+
+    private void changeRebuildAopInterceptorsFlag() {
+        aopInterceptors = null;
     }
 
     @Override
@@ -124,7 +176,31 @@ public class JbootAopFactory extends AopFactory {
         ConfigModel configModel = targetClass.getAnnotation(ConfigModel.class);
         return configModel != null
                 ? JbootConfigManager.me().get(targetClass)
-                : com.jfinal.aop.Enhancer.enhance(targetClass, aopInterceptor);
+                : com.jfinal.aop.Enhancer.enhance(targetClass, buildAopInterceptors());
+    }
+
+    protected Interceptor[] buildAopInterceptors() {
+        if (aopInterceptors != null) {
+            return aopInterceptors;
+        }
+
+        // 只有第一次
+        // 或动态新增、删除拦截器的时候
+        // 会执行
+        synchronized (this) {
+            if (aopInterceptors != null) {
+                if (!interceptorWappers.contains(defaultAopInterceptor)) {
+                    interceptorWappers.add(defaultAopInterceptor);
+                }
+                interceptorWappers.sort(Comparator.comparingInt(InterceptorWapper::getOrderNo));
+                Interceptor[] interceptors = new Interceptor[interceptorWappers.size()];
+                int i = 0;
+                for (InterceptorWapper w : interceptorWappers) interceptors[i++] = w.getInterceptor();
+                aopInterceptors = interceptors;
+            }
+        }
+
+        return aopInterceptors;
     }
 
 
