@@ -192,7 +192,7 @@ public class JbootAopFactory extends AopFactory {
         // 或动态新增、删除拦截器的时候
         // 会执行
         synchronized (this) {
-            if (aopInterceptors != null) {
+            if (aopInterceptors == null) {
                 if (!interceptorWappers.contains(defaultAopInterceptor)) {
                     interceptorWappers.add(defaultAopInterceptor);
                 }
