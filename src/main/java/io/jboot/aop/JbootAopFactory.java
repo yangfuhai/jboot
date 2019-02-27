@@ -47,6 +47,13 @@ import java.util.*;
 
 public class JbootAopFactory extends AopFactory {
 
+    //排除默认的映射
+    private final static Class[] DEFAULT_EXCLUDES_MAPPING_CLASSES = new Class[]{
+            JbootEventListener.class
+            , JbootmqMessageListener.class
+            , Serializable.class
+    };
+
     private static JbootAopFactory me = new JbootAopFactory();
 
     // 支持循环注入
@@ -367,8 +374,6 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    private static Class[] default_excludes = new Class[]{JbootEventListener.class, JbootmqMessageListener.class, Serializable.class};
-
     /**
      * 初始化 @Bean 注解的映射关系
      */
@@ -397,8 +402,8 @@ public class JbootAopFactory extends AopFactory {
 
         //对某些系统的类 进行排除，例如：Serializable 等
         return beanExclude == null
-                ? default_excludes
-                : ArrayUtil.concat(default_excludes, beanExclude.value());
+                ? DEFAULT_EXCLUDES_MAPPING_CLASSES
+                : ArrayUtil.concat(DEFAULT_EXCLUDES_MAPPING_CLASSES, beanExclude.value());
     }
 
     private boolean inExcludes(Class interfaceClass, Class[] excludes) {
