@@ -43,10 +43,7 @@ import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class JbootAopFactory extends AopFactory {
 
@@ -57,7 +54,7 @@ public class JbootAopFactory extends AopFactory {
     protected ThreadLocal<HashMap<Class<?>, Object>> prototypeTl = ThreadLocal.withInitial(() -> new HashMap<>());
 
     //只用用户配置自己的 service 层的拦截器
-    protected List<InterceptorWapper> interceptorWappers = new ArrayList<>();
+    protected List<InterceptorWapper> interceptorWappers = Collections.synchronizedList(new ArrayList<>());
     protected InterceptorWapper defaultAopInterceptor = new InterceptorWapper(new JbootAopInterceptor());
 
     //所有的aop拦截器
