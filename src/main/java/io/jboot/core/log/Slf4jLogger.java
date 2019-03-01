@@ -44,7 +44,6 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void debug(String message, Throwable t) {
-        JbootExceptionHolder.hold(t);
         logger.debug(message, t);
     }
 
@@ -55,7 +54,6 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void info(String message, Throwable t) {
-        JbootExceptionHolder.hold(t);
         logger.info(message, t);
     }
 
@@ -66,7 +64,6 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void warn(String message, Throwable t) {
-        JbootExceptionHolder.hold(t);
         logger.warn(message, t);
     }
 

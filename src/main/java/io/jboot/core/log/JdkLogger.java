@@ -44,7 +44,6 @@ public class JdkLogger extends Log {
     }
 
     public void debug(String message, Throwable t) {
-        JbootExceptionHolder.hold(t);
         log.logp(Level.FINE, clazzName, Thread.currentThread().getStackTrace()[1].getMethodName(), message, t);
     }
 
@@ -53,7 +52,6 @@ public class JdkLogger extends Log {
     }
 
     public void info(String message, Throwable t) {
-        JbootExceptionHolder.hold(t);
         log.logp(Level.INFO, clazzName, Thread.currentThread().getStackTrace()[1].getMethodName(), message, t);
     }
 

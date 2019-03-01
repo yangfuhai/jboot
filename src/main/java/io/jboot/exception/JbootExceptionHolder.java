@@ -15,7 +15,7 @@
  */
 package io.jboot.exception;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -23,25 +23,19 @@ import java.util.List;
  */
 public class JbootExceptionHolder {
 
-    static ThreadLocal<List<Throwable>> throwables = new ThreadLocal<>();
-
-    public static void init() {
-        throwables.set(new ArrayList<>());
-    }
+    static ThreadLocal<List<Throwable>> throwables = ThreadLocal.withInitial(() -> new LinkedList<>());
 
     public static void release() {
-        throwables.get().clear();
-        throwables.remove();
-    }
-
-    public static void hold(Throwable ex) {
-        List<Throwable> list = throwables.get();
-        if (list != null) {
-            list.add(ex);
+        if (!throwables.get().isEmpty()){
+            throwables.get().clear();
         }
     }
 
-    public static List<Throwable> throwables() {
+    public static void hold(Throwable ex) {
+        throwables.get().add(ex);
+    }
+
+    public static List<Throwable> getThrowables() {
         return throwables.get();
     }
 
