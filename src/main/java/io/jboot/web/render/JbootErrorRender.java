@@ -92,7 +92,7 @@ public class JbootErrorRender extends Render {
 
 
     public String build500ErrorInfo() {
-        List<Throwable> throwables = JbootExceptionHolder.throwables();
+        List<Throwable> throwables = JbootExceptionHolder.getThrowables();
         if (throwables == null || throwables.size() == 0) {
             return String.format(html500, "");
         }

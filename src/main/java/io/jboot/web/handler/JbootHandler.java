@@ -23,29 +23,21 @@ import io.jboot.web.session.JbootServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * 用于对 request 封装 和 CPATH 的设置
+ */
 public class JbootHandler extends Handler {
 
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-
-
         JbootServletRequestWrapper requestWrapper = new JbootServletRequestWrapper(request, response);
-        JbootExceptionHolder.init();
-
-
         try {
-            /**
-             * 执行请求逻辑
-             */
             doHandle(target, requestWrapper, response, isHandled);
-
         } finally {
             JbootExceptionHolder.release();
             requestWrapper.refreshSession();
         }
-
     }
 
     private void doHandle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
