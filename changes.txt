@@ -1,3 +1,12 @@
+jboot v2.0-rc.12:
+新增：JbootAopFactory 新增自定义 Service 拦截器，方便 Service 拦截和切面编程。
+修复：当通过环境变量去配置数据源的时候，DataSourceConfigManager无法获取多数据源的问题。
+修复：用户自定义 JbootActionHandler 时的逻辑判断。
+优化：优化 JbootConfigManager 读取 value 值的逻辑优化。
+优化：修改 JbootAopFactory 里 Jboot 默认的 AOP 拦截器为 protected。
+优化：优化 JbootExceptionHolder 逻辑，方便错误时的页面错误输出，同时提高性能。
+
+
 jboot v2.0-rc.11:
 新增：Docker 下配置的环境变量 XXX_XXX_XXX 自动转换为 xxx.xx.xx，用于属性读取。
 优化：JbootResourceLoader 输出文字信息

@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.1.13</version>
+            <version>1.1.14</version>
             <scope>provided</scope>
         </dependency>
 
