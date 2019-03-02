@@ -18,7 +18,6 @@ package io.jboot.support.swagger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.google.common.collect.Maps;
-import com.jfinal.core.JFinal;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.cors.EnableCORS;
@@ -46,8 +45,6 @@ public class JbootSwaggerController extends JbootController {
             return;
         }
 
-        // String jsonUrl = getRequest().getRequestURL().toString() + "/json";
-        // String basePath = JFinal.me().getContextPath() + "/" + config.getPath() + "/";
         String basePath = getRequest().getRequestURL().toString();
         String jsonUrl = basePath + "json";
 
