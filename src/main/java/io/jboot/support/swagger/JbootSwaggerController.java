@@ -46,12 +46,14 @@ public class JbootSwaggerController extends JbootController {
             return;
         }
 
-
-        String jsonUrl = getRequest().getRequestURL().toString() + "/json";
-        String basePath = JFinal.me().getContextPath() + "/" + config.getPath() + "/";
+        // String jsonUrl = getRequest().getRequestURL().toString() + "/json";
+        // String basePath = JFinal.me().getContextPath() + "/" + config.getPath() + "/";
+        String basePath = getRequest().getRequestURL().toString();
+        String jsonUrl = basePath + "json";
 
         html = html.replace("http://petstore.swagger.io/v2/swagger.json", jsonUrl);
-        html = html.replace("https://petstore.swagger.io/v2/swagger.json", jsonUrl); // 可能是 https ，看下载的 swagger 版本
+        // 可能是 https ，看下载的 swagger 版本
+        html = html.replace("https://petstore.swagger.io/v2/swagger.json", jsonUrl);
         html = html.replace("src=\"./", "src=\"" + basePath);
         html = html.replace("href=\"./", "href=\"" + basePath);
 
