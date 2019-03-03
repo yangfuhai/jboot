@@ -197,10 +197,10 @@ public class ClassScanner {
     }
 
 
-    public static <T> List<Class<T>> scanSubClass(Class<T> pclazz, boolean mustCanNewInstance) {
+    public static <T> List<Class<T>> scanSubClass(Class<T> pclazz, boolean isInstantiable) {
         initIfNecessary();
         List<Class<T>> classes = new ArrayList<>();
-        findClassesByParent(classes, pclazz, mustCanNewInstance);
+        findChildClasses(classes, pclazz, isInstantiable);
         return classes;
     }
 
@@ -208,17 +208,17 @@ public class ClassScanner {
         return scanClass(false);
     }
 
-    public static List<Class> scanClass(boolean mustCanNewInstance) {
+    public static List<Class> scanClass(boolean isInstantiable) {
 
         initIfNecessary();
 
-        if (!mustCanNewInstance) {
+        if (!isInstantiable) {
             return new ArrayList<>(appClasses);
         }
 
         List<Class> list = new ArrayList<>();
         for (Class clazz : appClasses) {
-            if (canNewInstance(clazz)) {
+            if (isInstantiable(clazz)) {
                 list.add(clazz);
             }
         }
@@ -227,12 +227,12 @@ public class ClassScanner {
     }
 
 
-    private static boolean canNewInstance(Class clazz) {
+    private static boolean isInstantiable(Class clazz) {
         return !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers());
     }
 
 
-    public static List<Class> scanClassByAnnotation(Class annotationClass, boolean mustCanNewInstance) {
+    public static List<Class> scanClassByAnnotation(Class annotationClass, boolean isInstantiable) {
         initIfNecessary();
 
         List<Class> list = new ArrayList<>();
@@ -242,7 +242,7 @@ public class ClassScanner {
                 continue;
             }
 
-            if (mustCanNewInstance && !canNewInstance(clazz)) {
+            if (isInstantiable && !isInstantiable(clazz)) {
                 continue;
             }
 
@@ -259,14 +259,14 @@ public class ClassScanner {
     }
 
 
-    private static <T> void findClassesByParent(List<Class<T>> classes, Class<T> pclazz, boolean mustCanNewInstance) {
+    private static <T> void findChildClasses(List<Class<T>> classes, Class<T> parent, boolean isInstantiable) {
         for (Class clazz : appClasses) {
 
-            if (!pclazz.isAssignableFrom(clazz)) {
+            if (!parent.isAssignableFrom(clazz)) {
                 continue;
             }
 
-            if (mustCanNewInstance && !canNewInstance(clazz)) {
+            if (isInstantiable && !isInstantiable(clazz)) {
                 continue;
             }
 
