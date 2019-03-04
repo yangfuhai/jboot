@@ -43,7 +43,7 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
 
         if (index != -1) {
             StringBuilder sb = new StringBuilder();
-            sb.append(url.substring(0, index)).append(pageString).append(pageNumber);
+            sb.append(url, 0, index).append(pageString).append(pageNumber);
             int idx = url.indexOf("&", index);
             if (idx != -1) {
                 sb.append(url.substring(idx));
@@ -65,11 +65,6 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
         return JbootControllerContext.get().getAttr(getPageAttrName());
     }
 
-    /**
-     * 获取 page 设置到 requestAttr 里的名字
-     *
-     * @return
-     */
     protected String getPageAttrName() {
         return "page";
     }
