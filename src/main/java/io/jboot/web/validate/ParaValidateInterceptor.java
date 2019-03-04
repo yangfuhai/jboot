@@ -161,7 +161,8 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                     value = null;
                 }
             } else {
-                throw new IllegalArgumentException("para validate not support form type : " + formType + ", you can find support types was defined in class : io.jboot.web.controller.validate.FormType");
+                throw new IllegalArgumentException("para validate not support form type : " + formType + ", " +
+                        "see : io.jboot.web.controller.validate.FormType");
             }
 
             if (value == null || value.trim().length() == 0) {
