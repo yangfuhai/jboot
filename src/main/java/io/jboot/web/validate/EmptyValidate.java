@@ -30,5 +30,9 @@ public @interface EmptyValidate {
 
     String message() default "";
 
+    String redirectUrl() default "";
+
+    String htmlPath() default "";
+
     String renderType() default ValidateRenderType.DEFAULT;
 }

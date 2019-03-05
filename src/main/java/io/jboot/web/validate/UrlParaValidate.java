@@ -15,16 +15,23 @@
  */
 package io.jboot.web.validate;
 
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Package io.jboot.web.controller.validate
- */
-public class ValidateRenderType {
+import java.lang.annotation.*;
 
-    public static final String DEFAULT = "default";
-    public static final String TEXT = "text";
-    public static final String JSON = "json";
-    public static final String HTML = "html";
-    public static final String REDIRECT = "redirect";
+/**
+ * Url Para 非空验证
+ */
+@Documented
+@Target(ElementType.METHOD)
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UrlParaValidate {
+
+    String message() default "";
+
+    String redirectUrl() default "";
+
+    String htmlPath() default "";
+
+    String renderType() default ValidateRenderType.DEFAULT;
+
 }

@@ -18,7 +18,7 @@ package io.jboot.web.validate;
 import java.lang.annotation.*;
 
 /**
- * 非空验证注解
+ * 验证码验证
  */
 @Documented
 @Target(ElementType.METHOD)
@@ -30,7 +30,9 @@ public @interface CaptchaValidate {
 
     String message() default "";
 
-    String flashMessage() default "";
+    String redirectUrl() default "";
+
+    String htmlPath() default "";
 
     String renderType() default ValidateRenderType.DEFAULT;
 
