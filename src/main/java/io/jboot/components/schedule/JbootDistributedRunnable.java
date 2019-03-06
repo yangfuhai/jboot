@@ -24,7 +24,9 @@ import io.jboot.support.redis.JbootRedis;
  * @version V1.0
  * @Title: 分布式任务
  * @Description: 在分布式应用中，处理分布式应用，基于redis。
- * 特点： 1、简单，无需依赖数据库。
+ *
+ * 特点：
+ * 1、简单，无需依赖数据库。
  * 2、高可用，不存在单点故障
  * 3、一致性，在集群环境中，只有一个任务在执行。
  * 4、Failover，支持故障转移

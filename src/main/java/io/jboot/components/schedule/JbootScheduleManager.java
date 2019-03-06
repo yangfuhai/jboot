@@ -121,14 +121,14 @@ public class JbootScheduleManager {
         }
     }
 
+
+    //不支持 cron4jPlugin 的remove
     public void removeSchedule(Class<? extends Runnable> removeClass) {
         Runnable runnable = scheduleRunnableCache.get(removeClass);
         if (runnable != null){
             fixedScheduler.remove(runnable);
             scheduleRunnableCache.remove(removeClass);
         }
-
-        //不支持 cron4jPlugin 的remove
     }
 
     public Map<Class, Runnable> getScheduleRunnableCache() {
@@ -143,24 +143,6 @@ public class JbootScheduleManager {
         return fixedScheduler;
     }
 
-    //    private void initCron4jPlugin() {
-//        List<Class> cronClasses = ClassScanner.scanClassByAnnotation(Cron.class, true);
-//        for (Class clazz : cronClasses) {
-//            Cron cron = (Cron) clazz.getAnnotation(Cron.class);
-//            String value = AnnotationUtil.get(cron.value());
-//            if (Runnable.class.isAssignableFrom(clazz)) {
-//                Runnable runnable = (Runnable) ClassUtil.newInstance(clazz);
-//                Runnable executeRunnable = clazz.getAnnotation(EnableDistributedRunnable.class) == null ? runnable : new JbootDistributedRunnable(runnable);
-//                cron4jPlugin.addTask(value, executeRunnable, cron.daemon());
-//            } else if (ProcessTask.class.isAssignableFrom(clazz)) {
-//                cron4jPlugin.addTask(value, (ProcessTask) ClassUtil.newInstance(clazz), cron.daemon());
-//            } else if (Task.class.isAssignableFrom(clazz)) {
-//                cron4jPlugin.addTask(value, (Task) ClassUtil.newInstance(clazz), cron.daemon());
-//            } else {
-//                throw new RuntimeException("annotation Cron can not use for class : " + clazz);
-//            }
-//        }
-//    }
 
 
 }
