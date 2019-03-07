@@ -101,12 +101,19 @@ class Utils {
         return engineRender(key, method, arguments);
     }
 
-    private static void ensureArgumentNotNull(String argument, Class clazz, Method method) {
+    public static void ensureArgumentNotNull(String argument, Class clazz, Method method) {
         if (argument == null) {
             throw new JbootException("not support empty key for annotation @Cacheable, @CacheEvict or @CachePut " +
                     "at method[" + clazz.getName() + "." + method.getName() + "()] " +
                     "with argument class:" + argument.getClass().getName() + ", " +
                     "please config key properties in @Cacheable, @CacheEvict or @CachePut annotation.");
+        }
+    }
+
+    public static void ensureCachenameAvailable(Method method, Class targetClass, String cacheName) {
+        if (StrUtil.isBlank(cacheName)) {
+            throw new JbootException(String.format("CacheEvict.name() must not empty in method [%s].",
+                    ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
         }
     }
 

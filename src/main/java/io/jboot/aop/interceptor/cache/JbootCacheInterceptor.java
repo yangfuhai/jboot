@@ -19,11 +19,9 @@ package io.jboot.aop.interceptor.cache;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
+import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.annotation.Cacheable;
-import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
-import io.jboot.utils.ClassUtil;
-import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
 
@@ -33,6 +31,8 @@ import java.lang.reflect.Method;
 public class JbootCacheInterceptor implements Interceptor {
 
     private static final String NULL_VALUE = "NULL_VALUE";
+
+    private static final JbootCacheConfig CONFIG = Jboot.config(JbootCacheConfig.class);
 
     @Override
     public void intercept(Invocation inv) {
@@ -52,12 +52,7 @@ public class JbootCacheInterceptor implements Interceptor {
 
         Class targetClass = inv.getTarget().getClass();
         String cacheName = AnnotationUtil.get(cacheable.name());
-
-        if (StrUtil.isBlank(cacheName)) {
-            throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
-                    ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
-        }
-
+        Utils.ensureCachenameAvailable(method, targetClass, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cacheable.key()), targetClass, method, inv.getArgs());
 
         Object data = Jboot.getCache().get(cacheName, cacheKey);
@@ -73,17 +68,15 @@ public class JbootCacheInterceptor implements Interceptor {
         inv.invoke();
 
         data = inv.getReturnValue();
-
-        if (data != null) {
-            cacheData(cacheable, cacheName, cacheKey, data);
-        } else if (data == null && cacheable.nullCacheEnable()) {
-            cacheData(cacheable, cacheName, cacheKey, NULL_VALUE);
-        }
+        putDataToCache(cacheable,cacheName,cacheKey,data == null ? NULL_VALUE : data);
     }
 
-    private void cacheData(Cacheable cacheable, String cacheName, String cacheKey, Object data) {
-        if (cacheable.liveSeconds() > 0) {
-            Jboot.getCache().put(cacheName, cacheKey, data, cacheable.liveSeconds());
+    protected void putDataToCache(Cacheable cacheable, String cacheName, String cacheKey, Object data) {
+        int liveSeconds = cacheable.liveSeconds() > 0
+                ? cacheable.liveSeconds()
+                : CONFIG.getAopCacheLiveSeconds();
+        if (liveSeconds > 0) {
+            Jboot.getCache().put(cacheName, cacheKey, data, liveSeconds);
         } else {
             Jboot.getCache().put(cacheName, cacheKey, data);
         }

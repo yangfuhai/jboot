@@ -21,9 +21,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface CachePut {
-
     String name();
     String key() default "";
-    int liveSeconds() default 0;  // 0 : 永久存储
+    int liveSeconds() default 0;  // 0，系统配置默认，默认情况下永久有效
     String unless() default "";
 }

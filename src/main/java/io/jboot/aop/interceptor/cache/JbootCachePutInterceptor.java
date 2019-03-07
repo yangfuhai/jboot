@@ -19,11 +19,9 @@ package io.jboot.aop.interceptor.cache;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
+import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.annotation.CachePut;
-import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
-import io.jboot.utils.ClassUtil;
-import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
 
@@ -32,6 +30,7 @@ import java.lang.reflect.Method;
  */
 public class JbootCachePutInterceptor implements Interceptor {
 
+    private static final JbootCacheConfig CONFIG = Jboot.config(JbootCacheConfig.class);
 
     @Override
     public void intercept(Invocation inv) {
@@ -45,7 +44,7 @@ public class JbootCachePutInterceptor implements Interceptor {
             return;
         }
 
-        Object result = inv.getReturnValue();
+        Object data = inv.getReturnValue();
 
         String unless = AnnotationUtil.get(cachePut.unless());
         if (Utils.isUnless(unless, method, inv.getArgs())) {
@@ -54,18 +53,22 @@ public class JbootCachePutInterceptor implements Interceptor {
 
         Class targetClass = inv.getTarget().getClass();
         String cacheName = AnnotationUtil.get(cachePut.name());
-
-        if (StrUtil.isBlank(cacheName)) {
-            throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
-                    ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
-        }
-
+        Utils.ensureCachenameAvailable(method, targetClass, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cachePut.key()), targetClass, method, inv.getArgs());
 
-        if (cachePut.liveSeconds() > 0) {
-            Jboot.getCache().put(cacheName, cacheKey, result, cachePut.liveSeconds());
+        putDataToCache(cachePut, cacheName, cacheKey, data);
+    }
+
+
+    protected void putDataToCache(CachePut cachePut, String cacheName, String cacheKey, Object data) {
+        int liveSeconds = cachePut.liveSeconds() > 0
+                ? cachePut.liveSeconds()
+                : CONFIG.getAopCacheLiveSeconds();
+        if (liveSeconds > 0) {
+            Jboot.getCache().put(cacheName, cacheKey, data, liveSeconds);
         } else {
-            Jboot.getCache().put(cacheName, cacheKey, result);
+            Jboot.getCache().put(cacheName, cacheKey, data);
         }
     }
+
 }

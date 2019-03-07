@@ -31,11 +31,23 @@ public class JbootCacheConfig {
 
     private String type = TYPE_EHCACHE;
 
+    // AOP 缓存的默认有效时间，0为永久有效，单位秒，
+    // 当 @Cacheable 和 @CachePut 注解不配置的时候默认用这个配置
+    private int aopCacheLiveSeconds = 0;
+
     public String getType() {
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getAopCacheLiveSeconds() {
+        return aopCacheLiveSeconds;
+    }
+
+    public void setAopCacheLiveSeconds(int aopCacheLiveSeconds) {
+        this.aopCacheLiveSeconds = aopCacheLiveSeconds;
     }
 }
