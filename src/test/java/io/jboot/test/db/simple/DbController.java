@@ -8,6 +8,7 @@ import io.jboot.test.db.model.User;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/db")
@@ -22,9 +23,15 @@ public class DbController extends JbootController {
         JbootApplication.setBootArg("jboot.datasource.user", "root");
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
         JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.db.model");
+        JbootApplication.setBootArg("undertow.devMode", "false");
 
         //启动应用程序
         JbootApplication.run(args);
+
+        Columns columns = Columns.create();
+        columns.between("id",1,5);
+        List<User> users = new User().findListByColumns(columns);
+        System.out.println(Arrays.toString(users.toArray()));
 
     }
 
