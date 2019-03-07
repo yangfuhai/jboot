@@ -231,10 +231,10 @@ public class Columns implements Serializable {
         for (Column column : cols) {
             Object value = column.getValue();
             if (value == null) continue;
-            if (value.getClass().isArray()){
+            if (value.getClass().isArray()) {
                 Object[] vs = (Object[]) value;
                 for (Object v : vs) values.add(v);
-            }else {
+            } else {
                 values.add(value);
             }
         }
@@ -261,7 +261,10 @@ public class Columns implements Serializable {
             s.append(column.getName()).append("-")
                     .append(getLogicStr(column.getLogic())).append("-");
             Object value = column.getValue();
-            if (value != null) s.append(column.getValue()).append("-");
+            if (value == null) continue;
+            if (value.getClass().isArray()) s.append(Arrays.toString((Object[]) column.getValue()));
+            else s.append(column.getValue());
+            s.append("-");
         }
 
         return s.deleteCharAt(s.length() - 1).toString();
@@ -292,6 +295,10 @@ public class Columns implements Serializable {
                 return "isn";
             case Column.LOGIC_IS_NOT_NULL:
                 return "nn";
+            case Column.LOGIC_IN:
+                return "in";
+            case Column.LOGIC_BETWEEN:
+                return "bt";
             default:
                 return "";
         }
@@ -299,16 +306,17 @@ public class Columns implements Serializable {
 
     /**
      * 这个只是用于调试
+     *
      * @return
      */
-    public String toMysqlSql(){
+    public String toMysqlSql() {
         JbootMysqlDialect dialect = new JbootMysqlDialect();
-        return dialect.forFindByColumns("table","*",getList(),null,null);
+        return dialect.forFindByColumns("table", "*", getList(), null, null);
     }
 
-    public String toSqlServerSql(){
+    public String toSqlServerSql() {
         JbootSqlServerDialect dialect = new JbootSqlServerDialect();
-        return dialect.forFindByColumns("table","*",getList(),null,null);
+        return dialect.forFindByColumns("table", "*", getList(), null, null);
     }
 
 
@@ -332,11 +340,11 @@ public class Columns implements Serializable {
         System.out.println(columns.getCacheKey());
         columns.or();
 
-        columns.in("name","123","123","111");
+        columns.in("name", "123", "123", "111");
         System.out.println(columns.getCacheKey());
         columns.or();
 
-        columns.between("name","123","1233");
+        columns.between("name", "123", "1233");
         System.out.println(columns.getCacheKey());
 
         System.out.println(Arrays.toString(columns.getValueArray()));
