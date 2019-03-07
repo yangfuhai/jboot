@@ -11,7 +11,7 @@ import io.jboot.web.controller.annotation.RequestMapping;
 import java.util.List;
 
 @RequestMapping("/db")
-public class DbTesterController extends JbootController {
+public class DbController extends JbootController {
 
 
     public static void main(String[] args) {

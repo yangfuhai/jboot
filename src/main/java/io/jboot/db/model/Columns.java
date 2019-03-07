@@ -183,12 +183,22 @@ public class Columns implements Serializable {
     }
 
 
+    /**
+     *  IS NULL
+     * @param name
+     * @return
+     */
     public Columns is_null(String name) {
         this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
         return this;
     }
 
 
+    /**
+     * IS NOT NULL
+     * @param name
+     * @return
+     */
     public Columns is_not_null(String name) {
         this.add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
         return this;
@@ -201,8 +211,8 @@ public class Columns implements Serializable {
     }
 
 
-    public Columns in(String name, Object... objects) {
-        this.add(Column.create(name, objects, Column.LOGIC_IN));
+    public Columns in(String name, Object... arrays) {
+        this.add(Column.create(name, arrays, Column.LOGIC_IN));
         return this;
     }
 
@@ -223,7 +233,7 @@ public class Columns implements Serializable {
     public Object[] getValueArray() {
 
         if (isEmpty()) {
-            return null;
+            return NULL_PARA_ARRAY;
         }
 
         List<Object> values = new LinkedList<>();
