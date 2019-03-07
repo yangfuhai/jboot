@@ -21,6 +21,7 @@ import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -226,8 +227,16 @@ public class Columns implements Serializable {
         }
 
         List<Object> values = new LinkedList<>();
+
         for (Column column : cols) {
-            if (column.getValue() != null) values.add(column.getValue());
+            Object value = column.getValue();
+            if (value == null) continue;
+            if (value.getClass().isArray()){
+                Object[] vs = (Object[]) value;
+                for (Object v : vs) values.add(v);
+            }else {
+                values.add(value);
+            }
         }
 
         return values.isEmpty() ? NULL_PARA_ARRAY : values.toArray();
@@ -321,7 +330,16 @@ public class Columns implements Serializable {
 
         columns.is_null("nickname");
         System.out.println(columns.getCacheKey());
+        columns.or();
 
+        columns.in("name","123","123","111");
+        System.out.println(columns.getCacheKey());
+        columns.or();
+
+        columns.between("name","123","1233");
+        System.out.println(columns.getCacheKey());
+
+        System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());
         System.out.println(columns.toSqlServerSql());
     }

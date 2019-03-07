@@ -73,12 +73,43 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
             sqlBuilder.append(" WHERE ");
 
             int index = 0;
+            int last = columns.size() - 1;
             for (Column column : columns) {
                 if (column instanceof Or) {
                     // delete last " AND " str
                     sqlBuilder.delete(sqlBuilder.length() - 5,sqlBuilder.length())
                             .append(" OR ");
-                }else {
+                }
+                // in logic
+                else  if (Column.LOGIC_IN.equals(column.getLogic())){
+                    sqlBuilder.append(column.getName())
+                            .append(" ")
+                            .append(column.getLogic());
+
+                    sqlBuilder.append("(");
+                    Object[] values = (Object[]) column.getValue();
+                    for (int i = 0 ;i<values.length;i++){
+                        sqlBuilder.append("?,");
+                    }
+                    sqlBuilder.deleteCharAt(sqlBuilder.length() - 1).append(")");
+                    if (index != last) {
+                        sqlBuilder.append(" AND ");
+                    }
+                }
+
+                // in between
+                else if (Column.LOGIC_BETWEEN.equals(column.getLogic())){
+                    sqlBuilder.append(column.getName())
+                            .append(" ")
+                            .append(column.getLogic());
+
+                    sqlBuilder.append(" ? ").append(" AND ").append(" ? ");
+                    if (index != last) {
+                        sqlBuilder.append(" AND ");
+                    }
+                }
+                // others
+                else {
                     sqlBuilder.append(" `")
                             .append(column.getName())
                             .append("` ")
@@ -88,7 +119,7 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
                         sqlBuilder.append(" ? ");
                     }
 
-                    if (index != columns.size() - 1) {
+                    if (index != last) {
                         sqlBuilder.append(" AND ");
                     }
                 }
