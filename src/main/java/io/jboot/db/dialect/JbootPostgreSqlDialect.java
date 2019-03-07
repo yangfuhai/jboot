@@ -17,10 +17,7 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect;
 import io.jboot.db.model.Column;
-import io.jboot.db.model.Or;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.ArrayUtil;
-import io.jboot.utils.StrUtil;
 
 import java.util.List;
 
@@ -30,17 +27,7 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
     @Override
     public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT ");
-        sqlBuilder.append(loadColumns)
-                .append(" FROM  \"")
-                .append(table).append("\" ");
-
-        appIfNotEmpty(columns, sqlBuilder);
-
-
-        if (StrUtil.isNotBlank(orderBy)) {
-            sqlBuilder.append(" ORDER BY ").append(orderBy);
-        }
+        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table,loadColumns,columns,orderBy,'"');
 
         if (limit == null) {
             return sqlBuilder.toString();
@@ -70,79 +57,8 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
     @Override
     public String forPaginateFrom(String table, List<Column> columns, String orderBy) {
-        StringBuilder sqlBuilder = new StringBuilder(" FROM \"").append(table).append("\"");
-
-        appIfNotEmpty(columns, sqlBuilder);
-
-        if (StrUtil.isNotBlank(orderBy)) {
-            sqlBuilder.append(" ORDER BY ").append(orderBy);
-        }
-
-        return sqlBuilder.toString();
+        return DialectKit.forPaginateFrom(table, columns, orderBy, '"');
     }
 
-
-    private void appIfNotEmpty(List<Column> columns, StringBuilder sqlBuilder) {
-        if (ArrayUtil.isNotEmpty(columns)) {
-            sqlBuilder.append(" WHERE ");
-
-            int index = 0;
-            int last = columns.size() - 1;
-            for (Column column : columns) {
-
-                if (column instanceof Or) {
-                    // delete last " AND " str
-                    sqlBuilder.delete(sqlBuilder.length() - 5,sqlBuilder.length())
-                            .append(" OR ");
-                }
-                // in logic
-                else  if (Column.LOGIC_IN.equals(column.getLogic())){
-                    sqlBuilder.append(column.getName())
-                            .append(" ")
-                            .append(column.getLogic());
-
-                    sqlBuilder.append("(");
-                    Object[] values = (Object[]) column.getValue();
-                    for (int i = 0 ;i<values.length;i++){
-                        sqlBuilder.append("?,");
-                    }
-                    sqlBuilder.deleteCharAt(sqlBuilder.length() - 1).append(")");
-                    if (index != last) {
-                        sqlBuilder.append(" AND ");
-                    }
-                }
-
-                // in between
-                else if (Column.LOGIC_BETWEEN.equals(column.getLogic())){
-                    sqlBuilder.append(column.getName())
-                            .append(" ")
-                            .append(column.getLogic());
-
-                    sqlBuilder.append(" ? ").append(" AND ").append(" ? ");
-                    if (index != last) {
-                        sqlBuilder.append(" AND ");
-                    }
-                }
-                // others
-                else {
-                    sqlBuilder.append(" \"")
-                            .append(column.getName())
-                            .append("\" ")
-                            .append(column.getLogic());
-
-
-                    if (column.isMustNeedValue()) {
-                        sqlBuilder.append(" ? ");
-                    }
-
-                    if (index != last) {
-                        sqlBuilder.append(" AND ");
-                    }
-                }
-
-                index++;
-            }
-        }
-    }
 
 }

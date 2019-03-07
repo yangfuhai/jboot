@@ -17,7 +17,6 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.Sqlite3Dialect;
 import io.jboot.db.model.Column;
-import io.jboot.utils.StrUtil;
 
 import java.util.List;
 
@@ -27,17 +26,7 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
 
     @Override
     public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT ");
-        sqlBuilder.append(loadColumns)
-                .append(" FROM ")
-                .append(table).append(" ");
-
-        SqlAppendKit.appIfNotEmpty(columns, sqlBuilder);
-
-
-        if (StrUtil.isNotBlank(orderBy)) {
-            sqlBuilder.append(" ORDER BY ").append(orderBy);
-        }
+        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table,loadColumns,columns,orderBy,' ');
 
         if (limit != null) {
             sqlBuilder.append(" LIMIT " + limit);
@@ -55,15 +44,7 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
 
     @Override
     public String forPaginateFrom(String table, List<Column> columns, String orderBy) {
-        StringBuilder sqlBuilder = new StringBuilder(" FROM ").append(table);
-
-        SqlAppendKit.appIfNotEmpty(columns, sqlBuilder);
-
-        if (StrUtil.isNotBlank(orderBy)) {
-            sqlBuilder.append(" ORDER BY ").append(orderBy);
-        }
-
-        return sqlBuilder.toString();
+        return DialectKit.forPaginateFrom(table, columns, orderBy, ' ');
     }
 
 
