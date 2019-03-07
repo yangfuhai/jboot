@@ -29,7 +29,8 @@ import io.jboot.components.cache.JbootCacheManager;
 @ConfigModel(prefix = "jboot.model")
 public class JbootModelConfig {
 
-    private String scan;
+    private String scanPackage;
+    private String unscanPackage;
 
     private String columnCreated = "created";
     private String columnModified = "modified";
@@ -38,12 +39,20 @@ public class JbootModelConfig {
     private String idCacheType = Jboot.config(JbootCacheConfig.class).getType();
 
 
-    public String getScan() {
-        return scan;
+    public String getScanPackage() {
+        return scanPackage;
     }
 
-    public void setScan(String scan) {
-        this.scan = scan;
+    public void setScanPackage(String scanPackage) {
+        this.scanPackage = scanPackage;
+    }
+
+    public String getUnscanPackage() {
+        return unscanPackage;
+    }
+
+    public void setUnscanPackage(String unscanPackage) {
+        this.unscanPackage = unscanPackage;
     }
 
     public String getColumnCreated() {

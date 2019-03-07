@@ -97,32 +97,44 @@ public class TableInfoManager {
     }
 
 
-    private void initTableInfos(List<TableInfo> tableInfos) {
+    private void initTableInfos(List<TableInfo> tableInfoList) {
         List<Class<Model>> modelClassList = ClassScanner.scanSubClass(Model.class);
         if (ArrayUtil.isNullOrEmpty(modelClassList)) {
             return;
         }
 
-        String scanPackage = JbootModelConfig.getConfig().getScan();
+        String scanPackage = JbootModelConfig.getConfig().getScanPackage();
+        String unscanPackage = JbootModelConfig.getConfig().getUnscanPackage();
 
         for (Class<Model> clazz : modelClassList) {
             Table tb = clazz.getAnnotation(Table.class);
-            if (tb == null)
+            if (tb == null) {
                 continue;
+            }
 
-            if (scanPackage != null && !clazz.getName().startsWith(scanPackage)) {
+            if (StrUtil.isNotBlank(scanPackage)
+                    && clazz.getName().startsWith(scanPackage.trim())) {
+                addTable(tableInfoList, clazz, tb);
                 continue;
             }
 
 
-            TableInfo tableInfo = new TableInfo();
-            tableInfo.setModelClass(clazz);
-            tableInfo.setPrimaryKey(AnnotationUtil.get(tb.primaryKey()));
-            tableInfo.setTableName(AnnotationUtil.get(tb.tableName()));
+            if (StrUtil.isNotBlank(unscanPackage)
+                    && ("*".equals(unscanPackage.trim()) || clazz.getName().startsWith(unscanPackage.trim()))) {
+                continue;
+            }
 
-
-            tableInfos.add(tableInfo);
+            addTable(tableInfoList, clazz, tb);
         }
 
+    }
+
+    private void addTable(List<TableInfo> tableInfoList, Class<Model> clazz, Table tb) {
+        TableInfo tableInfo = new TableInfo();
+        tableInfo.setModelClass(clazz);
+        tableInfo.setPrimaryKey(AnnotationUtil.get(tb.primaryKey()));
+        tableInfo.setTableName(AnnotationUtil.get(tb.tableName()));
+
+        tableInfoList.add(tableInfo);
     }
 }
