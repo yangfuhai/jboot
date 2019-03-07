@@ -13,7 +13,7 @@ public class MetricsController extends JbootController {
     /**
      * 配置 reporter 为slf4j 输出
      *
-     * 当用户访问的时候，log 定时会输出 index() 的访问次数和当前并发量
+     * 当用户访问的时候，log 定时会输出 index() 的访问次数和当前并发量，1分钟输出一次
      * 同时，配置  jboot.metric.url = /metrics_admin
      * 可以通过浏览器访问 /metrics_admin 查看当前的 index() 的并发量和访问次数
      *
