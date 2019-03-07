@@ -35,23 +35,24 @@ public class SqlAppendKit {
             int index = 0;
             for (Column column : columns) {
 
+
                 if (column instanceof Or) {
-                    sqlBuilder.append(" OR ");
-                    continue;
-                }
+                    // delete last " AND " str
+                    sqlBuilder.delete(sqlBuilder.length() - 5, sqlBuilder.length())
+                            .append(" OR ");
+                } else {
+                    sqlBuilder.append(column.getName())
+                            .append(" ")
+                            .append(column.getLogic());
 
-                sqlBuilder.append(column.getName())
-                        .append(" ")
-                        .append(column.getLogic());
+                    if (column.isMustNeedValue()) {
+                        sqlBuilder.append(" ? ");
+                    }
 
-                if (column.isMustNeedValue()) {
-                    sqlBuilder.append(" ? ");
+                    if (index != columns.size() - 1) {
+                        sqlBuilder.append(" AND ");
+                    }
                 }
-
-                if (index != columns.size() - 1) {
-                    sqlBuilder.append(" AND ");
-                }
-                
                 index++;
             }
         }

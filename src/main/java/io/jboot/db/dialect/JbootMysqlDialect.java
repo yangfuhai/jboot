@@ -74,25 +74,24 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
 
             int index = 0;
             for (Column column : columns) {
-
                 if (column instanceof Or) {
-                    sqlBuilder.append(" OR ");
-                    continue;
+                    // delete last " AND " str
+                    sqlBuilder.delete(sqlBuilder.length() - 5,sqlBuilder.length())
+                            .append(" OR ");
+                }else {
+                    sqlBuilder.append(" `")
+                            .append(column.getName())
+                            .append("` ")
+                            .append(column.getLogic());
+
+                    if (column.isMustNeedValue()) {
+                        sqlBuilder.append(" ? ");
+                    }
+
+                    if (index != columns.size() - 1) {
+                        sqlBuilder.append(" AND ");
+                    }
                 }
-
-                sqlBuilder.append(" `")
-                        .append(column.getName())
-                        .append("` ")
-                        .append(column.getLogic());
-
-                if (column.isMustNeedValue()) {
-                    sqlBuilder.append(" ? ");
-                }
-
-                if (index != columns.size() - 1) {
-                    sqlBuilder.append(" AND ");
-                }
-
                 index++;
             }
         }

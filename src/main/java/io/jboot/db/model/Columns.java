@@ -15,6 +15,8 @@
  */
 package io.jboot.db.model;
 
+import io.jboot.db.dialect.JbootMysqlDialect;
+import io.jboot.db.dialect.JbootSqlServerDialect;
 import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
@@ -198,6 +200,18 @@ public class Columns implements Serializable {
     }
 
 
+    public Columns in(String name, Object... objects) {
+        this.add(Column.create(name, objects, Column.LOGIC_IN));
+        return this;
+    }
+
+
+    public Columns between(String name, Object start, Object end) {
+        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
+        return this;
+    }
+
+
     public boolean isEmpty() {
         return cols == null || cols.isEmpty();
     }
@@ -229,8 +243,6 @@ public class Columns implements Serializable {
         if (isEmpty()) return null;
 
         List<Column> columns = new ArrayList<>(cols);
-//        columns.sort(Comparator.comparing(Column::getName));
-
         StringBuilder s = new StringBuilder();
         for (Column column : columns) {
             if (column instanceof Or) {
@@ -276,6 +288,20 @@ public class Columns implements Serializable {
         }
     }
 
+    /**
+     * 这个只是用于调试
+     * @return
+     */
+    public String toMysqlSql(){
+        JbootMysqlDialect dialect = new JbootMysqlDialect();
+        return dialect.forFindByColumns("table","*",getList(),null,null);
+    }
+
+    public String toSqlServerSql(){
+        JbootSqlServerDialect dialect = new JbootSqlServerDialect();
+        return dialect.forFindByColumns("table","*",getList(),null,null);
+    }
+
 
     public static void main(String[] args) {
         Columns columns = Columns.create();
@@ -295,6 +321,9 @@ public class Columns implements Serializable {
 
         columns.is_null("nickname");
         System.out.println(columns.getCacheKey());
+
+        System.out.println(columns.toMysqlSql());
+        System.out.println(columns.toSqlServerSql());
     }
 
 }
