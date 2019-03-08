@@ -1,3 +1,17 @@
+jboot v2.0-rc.13:
+新增：新增 UrlParaValidate 注解，方便对 URl 参数进行验证
+新增：新增 jboot.cache.aopCacheLiveSeconds 配置，方便给 service 的 注解添加下默认的缓存时间
+新增：Columns 新增 in 和 between 的支持
+新增：jboot.model.scanPackage 和 unscanPackage 的支持，方便自定义扫描的 Model
+新增：新增 dubbo 的 zookeeper 注册中心的测试用例代码
+新增：新增 Metrics 测试用例代码
+修复：swaggerui中index.html中css，js，json资源路径错误的bug，感谢 @ninemm
+修复：修复 Columns 查询时，有 or 是可能造成 sql 逻辑错误的问题
+优化：优化 ClassScanner 配置逻辑，防止热加载时可能意外出错的情况
+优化：优化 JbootScheduleManager 代码逻辑，方便自由添加任何和删除任务
+优化：优化 JbootPaginateDirective 指令代码
+
+
 jboot v2.0-rc.12:
 新增：JbootAopFactory 新增自定义 Service 拦截器，方便 Service 拦截和切面编程。
 修复：当通过环境变量去配置数据源的时候，DataSourceConfigManager无法获取多数据源的问题。
