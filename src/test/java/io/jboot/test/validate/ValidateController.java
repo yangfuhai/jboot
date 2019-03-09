@@ -27,6 +27,6 @@ public class ValidateController extends Controller {
 
     @EmptyValidate(value = @Form(name = "form"),renderType = ValidateRenderType.JSON)
     public void test3(){
-        renderText("test2");
+        renderText("test3");
     }
 }
