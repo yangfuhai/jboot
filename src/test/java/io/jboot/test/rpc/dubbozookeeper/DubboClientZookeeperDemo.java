@@ -12,7 +12,7 @@ public class DubboClientZookeeperDemo extends JbootController {
     public static void main(String[] args) {
 
         //jboot端口号配置
-        JbootApplication.setBootArg("undertow.port", "8088");
+        JbootApplication.setBootArg("undertow.port", "8888");
 
         //RPC配置
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");

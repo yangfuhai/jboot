@@ -10,6 +10,7 @@ public class BlogServiceProvider implements BlogService {
 
     @Override
     public String findById() {
+        System.out.println("BlogServiceProvider.findById() invoked.");
         return "id from provider";
     }
 
