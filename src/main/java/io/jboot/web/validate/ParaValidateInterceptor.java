@@ -79,18 +79,6 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         return false;
     }
 
-    /**
-     * 当 有文件上传的时候，需要通过 controller.getFiles() 才能正常通过 getParam 获取数据
-     *
-     * @param inv
-     */
-    private void parseMultpartRequestIfNecessary(FixedInvocation inv) {
-        Controller controller = inv.getController();
-        if (RequestUtil.isMultipartRequest(controller.getRequest())) {
-            controller.getFiles();
-        }
-    }
-
 
     /**
      * 对验证码进行验证
@@ -105,7 +93,6 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
         }
 
-        parseMultpartRequestIfNecessary(inv);
 
         Controller controller = inv.getController();
         if (controller.validateCaptcha(formName)) {
@@ -136,7 +123,6 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             return true;
         }
 
-        parseMultpartRequestIfNecessary(inv);
 
         for (Form form : forms) {
             String formName = AnnotationUtil.get(form.name());
