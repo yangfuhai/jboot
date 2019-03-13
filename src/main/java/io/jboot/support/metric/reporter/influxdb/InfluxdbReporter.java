@@ -21,7 +21,6 @@ import com.codahale.metrics.ScheduledReporter;
 import io.jboot.Jboot;
 import io.jboot.support.metric.JbootMetricReporter;
 import metrics_influxdb.HttpInfluxdbProtocol;
-import metrics_influxdb.api.measurements.CategoriesMetricMeasurementTransformer;
 
 import java.util.concurrent.TimeUnit;
 
@@ -50,10 +49,10 @@ public class InfluxdbReporter implements JbootMetricReporter {
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .filter(MetricFilter.ALL)
                 .skipIdleMetrics(false)
-                .tag("cluster", config.getTagCluster())
-                .tag("client", config.getTagClient())
+//                .tag("cluster", config.getTagCluster())
+//                .tag("client", config.getTagClient())
 //                .tag("server", serverIP)
-                .transformer(new CategoriesMetricMeasurementTransformer("module", "artifact"))
+//                .transformer(new CategoriesMetricMeasurementTransformer("module", "artifact"))
                 .build();
 
         reporter.start(10, TimeUnit.SECONDS);

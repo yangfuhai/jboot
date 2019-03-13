@@ -26,11 +26,6 @@ public class JbootMetricInfluxdbReporterConfig {
     private String user;
     private String password;
     private String dbName;
-    private String httpHost;
-
-    private String tagCluster;
-    private String tagClient;
-
 
     public String getHost() {
         return host;
@@ -72,29 +67,6 @@ public class JbootMetricInfluxdbReporterConfig {
         this.dbName = dbName;
     }
 
-    public String getHttpHost() {
-        return httpHost;
-    }
-
-    public void setHttpHost(String httpHost) {
-        this.httpHost = httpHost;
-    }
-
-    public String getTagCluster() {
-        return tagCluster;
-    }
-
-    public void setTagCluster(String tagCluster) {
-        this.tagCluster = tagCluster;
-    }
-
-    public String getTagClient() {
-        return tagClient;
-    }
-
-    public void setTagClient(String tagClient) {
-        this.tagClient = tagClient;
-    }
 }
 
 
