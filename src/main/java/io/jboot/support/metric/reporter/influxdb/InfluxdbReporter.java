@@ -15,18 +15,47 @@
  */
 package io.jboot.support.metric.reporter.influxdb;
 
+import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.ScheduledReporter;
+import io.jboot.Jboot;
 import io.jboot.support.metric.JbootMetricReporter;
+import metrics_influxdb.HttpInfluxdbProtocol;
+import metrics_influxdb.api.measurements.CategoriesMetricMeasurementTransformer;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Package io.jboot.component.metric.reporter.jmx
+ * url : https://github.com/davidB/metrics-influxdb
  */
 public class InfluxdbReporter implements JbootMetricReporter {
 
     @Override
     public void report(MetricRegistry metricRegistry) {
 
+        JbootMetricInfluxdbReporterConfig config = Jboot.config(JbootMetricInfluxdbReporterConfig.class);
+
+
+        final ScheduledReporter reporter = metrics_influxdb.InfluxdbReporter.forRegistry(metricRegistry)
+                .protocol(new HttpInfluxdbProtocol("http"
+                        , config.getHost()
+                        , config.getPort()
+                        , config.getUser()
+                        , config.getPassword()
+                        , config.getDbName()))
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .filter(MetricFilter.ALL)
+                .skipIdleMetrics(false)
+                .tag("cluster", config.getTagCluster())
+                .tag("client", config.getTagClient())
+//                .tag("server", serverIP)
+                .transformer(new CategoriesMetricMeasurementTransformer("module", "artifact"))
+                .build();
+
+        reporter.start(10, TimeUnit.SECONDS);
     }
 }
