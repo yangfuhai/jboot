@@ -175,7 +175,7 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isMobileNumber(String phoneNumber) {
-        return Pattern.matches("^(1[3,4,5,7,8,9])\\d{9}$", phoneNumber);
+        return Pattern.matches("^(1[3,4,5,6,7,8,9])\\d{9}$", phoneNumber);
     }
 
 
