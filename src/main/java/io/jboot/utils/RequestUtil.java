@@ -49,14 +49,14 @@ public class RequestUtil {
      *
      * @return
      */
-    public static boolean isMoblieBrowser(HttpServletRequest request) {
+    public static boolean isMobileBrowser(HttpServletRequest request) {
         String ua = request.getHeader("User-Agent");
         if (ua == null) {
             return false;
         }
         ua = ua.toLowerCase();
         for (String mobileAgent : mobileAgents) {
-            if (ua.indexOf(mobileAgent) >= 0) {
+            if (ua.contains(mobileAgent)) {
                 return true;
             }
         }
