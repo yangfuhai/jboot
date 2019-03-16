@@ -36,8 +36,8 @@ public class JbootController extends Controller {
      * @return
      */
     @NotAction
-    public boolean isMoblieBrowser() {
-        return RequestUtil.isMoblieBrowser(getRequest());
+    public boolean isMobileBrowser() {
+        return RequestUtil.isMobileBrowser(getRequest());
     }
 
     /**
