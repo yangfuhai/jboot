@@ -18,6 +18,7 @@ package io.jboot.utils;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -203,51 +204,25 @@ public class StrUtil extends StrKit {
 
         String[] strings = src.split(regex);
         Set<String> set = new HashSet<>();
-        for (String table : strings) {
-            if (StrUtil.isBlank(table)) {
+        for (String s : strings) {
+            if (StrUtil.isBlank(s)) {
                 continue;
             }
-            set.add(table.trim());
+            set.add(s.trim());
         }
         return set;
     }
 
 
+    private static final String[] htmlChars = {"&", "<", ">", "'", "\""};
+    private static final String[] escapeChars = {"&amp;", "&lt;", "&gt;", "&#39;", "&quot;"};
+
     public static String escapeHtml(String content) {
-
-        if (isBlank(content)) {
-            return content;
-        }
-
-        /**
-         "&lt;" represents the < sign.
-         "&gt;" represents the > sign.
-         "&amp;" represents the & sign.
-         "&quot;" represents the " mark.
-         "&#39;" represents the ' mark.
-         */
-
-        return unEscapeHtml(content)
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("'", "&#39;")
-                .replace("\"", "&quot;");
+        return isBlank(content) ? content : StringUtils.replaceEach(unEscapeHtml(content), htmlChars, escapeChars);
     }
 
-
     public static String unEscapeHtml(String content) {
-
-        if (isBlank(content)) {
-            return content;
-        }
-
-        return content
-                .replace("&lt;", "<")
-                .replace("&gt;", ">")
-                .replace("&#39;", "'")
-                .replace("&quot;", "\"")
-                .replace("&amp;", "&");
+        return isBlank(content) ? content : StringUtils.replaceEach(content, escapeChars, htmlChars);
     }
 
 
