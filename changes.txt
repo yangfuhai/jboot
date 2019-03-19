@@ -1,3 +1,11 @@
+jboot v2.0:
+新增：Metrics 的 InfluxdbReporter 支持，方便把信息通过 influx 输入到 grafana
+优化：修改 RequestUtil 工具类的拼写错误问题，isMoblieBrowser 修改为 isMobileBrowser
+优化：修改 StrUtil.isMobileNumber() 新增 166 开头号码的支持
+优化：大幅度优化 StrUtil.escapeHtml() 的性能
+优化：升级 JFinal 到 3.7 最新版本和 JFinal-undertow 到 1.6 最新版本
+
+
 jboot v2.0-rc.13:
 新增：新增 UrlParaValidate 注解，方便对 URl 参数进行验证
 新增：新增 jboot.cache.aopCacheLiveSeconds 配置，方便给 service 的 注解添加下默认的缓存时间
