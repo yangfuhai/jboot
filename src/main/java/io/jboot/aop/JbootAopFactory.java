@@ -18,7 +18,6 @@ package io.jboot.aop;
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
 import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Singleton;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.aop.annotation.Bean;
@@ -43,7 +42,10 @@ import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class JbootAopFactory extends AopFactory {
 
@@ -55,10 +57,6 @@ public class JbootAopFactory extends AopFactory {
     };
 
     private static JbootAopFactory me = new JbootAopFactory();
-
-    // 支持循环注入
-    protected ThreadLocal<HashMap<Class<?>, Object>> singletonTl = ThreadLocal.withInitial(() -> new HashMap<>());
-    protected ThreadLocal<HashMap<Class<?>, Object>> prototypeTl = ThreadLocal.withInitial(() -> new HashMap<>());
 
     //只用用户配置自己的 service 层的拦截器
     protected List<InterceptorWapper> interceptorWappers = Collections.synchronizedList(new ArrayList<>());
@@ -73,8 +71,10 @@ public class JbootAopFactory extends AopFactory {
 
 
     private JbootAopFactory() {
+        setInjectSuperClass(true);
         initBeanMapping();
     }
+
 
     public JbootAopFactory addInterceptor(Interceptor interceptor) {
         interceptorWappers.add(new InterceptorWapper(interceptor));
@@ -100,88 +100,6 @@ public class JbootAopFactory extends AopFactory {
     protected void clearInterceptorsAndObjectCache() {
         aopInterceptors = null;
         singletonCache.clear();
-    }
-
-    @Override
-    protected <T> T doGet(Class<T> targetClass, int injectDepth) throws ReflectiveOperationException {
-        return doGet(targetClass);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T doGet(Class<T> targetClass) throws ReflectiveOperationException {
-        if (targetClass == null) {
-            return null;
-        }
-        targetClass = (Class<T>) getMappingClass(targetClass);
-        Singleton si = targetClass.getAnnotation(Singleton.class);
-        boolean singleton = (si != null ? si.value() : this.singleton);
-
-        if (singleton) {
-            return doGetSingleton(targetClass);
-        } else {
-            return doGetPrototype(targetClass);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T doGetSingleton(Class<T> targetClass) throws ReflectiveOperationException {
-        Object ret = singletonCache.get(targetClass);
-        if (ret != null) {
-            return (T) ret;
-        }
-
-        ret = singletonTl.get().get(targetClass);
-        if (ret != null) {        // 发现循环注入
-            return (T) ret;
-        }
-
-        synchronized (this) {
-            ret = singletonCache.get(targetClass);
-            if (ret == null) {
-                try {
-                    ret = createObject(targetClass);
-                    singletonTl.get().put(targetClass, ret);
-                    doInject(targetClass, ret);
-                    singletonCache.put(targetClass, ret);
-                } finally {
-                    singletonTl.remove();
-                }
-            }
-        }
-
-        return (T) ret;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    protected <T> T doGetPrototype(Class<T> targetClass) throws ReflectiveOperationException {
-        Object ret;
-
-        HashMap<Class<?>, Object> map = prototypeTl.get();
-        if (map.size() > 0) {
-            ret = map.get(targetClass);
-            if (ret != null) {        // 发现循环注入
-                return (T) ret;
-            }
-        }
-
-        try {
-            ret = createObject(targetClass);
-            map.put(targetClass, ret);
-            doInject(targetClass, ret);
-        } finally {
-            map.clear();
-        }
-
-        return (T) ret;
-    }
-
-    @Override
-    protected Object createObject(Class<?> targetClass) {
-        ConfigModel configModel = targetClass.getAnnotation(ConfigModel.class);
-        return configModel != null
-                ? JbootConfigManager.me().get(targetClass)
-                : com.jfinal.aop.Enhancer.enhance(targetClass, buildAopInterceptors());
     }
 
     protected Interceptor[] buildAopInterceptors() {
@@ -210,19 +128,18 @@ public class JbootAopFactory extends AopFactory {
 
 
     @Override
-    protected void doInject(Class<?> targetClass, Object targetObject, int injectDepth) throws ReflectiveOperationException {
-        doInject(targetClass, targetObject);
+    protected Object createObject(Class<?> targetClass) {
+        ConfigModel configModel = targetClass.getAnnotation(ConfigModel.class);
+        return configModel != null
+                ? JbootConfigManager.me().get(targetClass)
+                : com.jfinal.aop.Enhancer.enhance(targetClass, buildAopInterceptors());
     }
 
+    @Override
     protected void doInject(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
-
         targetClass = getUsefulClass(targetClass);
-//        Field[] fields = targetClass.getDeclaredFields();
-
-        List<Field> fields = new ArrayList<>();
-        doGetFields(targetClass, fields);
-
-        if (fields.size() == 0) {
+        Field[] fields = targetClass.getDeclaredFields();
+        if (fields.length == 0) {
             return;
         }
 
@@ -237,9 +154,10 @@ public class JbootAopFactory extends AopFactory {
 //                fieldInjectedClass = field.getType();
 //            }
 //
-//            Object fieldInjectedObject = doGet(fieldInjectedClass, injectDepth);
+//            Object fieldInjectedObject = doGet(fieldInjectedClass);
 //            field.setAccessible(true);
 //            field.set(targetObject, fieldInjectedObject);
+
 
             Inject inject = field.getAnnotation(Inject.class);
             if (inject != null) {
@@ -258,28 +176,24 @@ public class JbootAopFactory extends AopFactory {
                 doInjectRPC(targetObject, field, rpcInject);
                 continue;
             }
+        }
 
+        // 是否对超类进行注入
+        if (injectSuperClass) {
+            Class<?> c = targetClass.getSuperclass();
+            if (c != JbootController.class
+                    && c != Controller.class
+                    && c != JbootServiceBase.class
+                    && c != Object.class
+                    && c != Interceptor.class
+                    && c != FixedInterceptor.class
+                    && c != JbootModel.class
+                    && c != Model.class
+                    && c != null
+            ) {
+                doInject(c, targetObject);
+            }
         }
-    }
-
-    private void doGetFields(Class clazz, List<Field> fields) {
-        Field[] fs = clazz.getDeclaredFields();
-        if (fs.length > 0) {
-            for (Field field : fs) fields.add(field);
-        }
-        Class supperClass = clazz.getSuperclass();
-        if (supperClass == JbootController.class
-                || supperClass == Controller.class
-                || supperClass == JbootServiceBase.class
-                || supperClass == Interceptor.class
-                || supperClass == FixedInterceptor.class
-                || supperClass == JbootModel.class
-                || supperClass == Model.class
-                || supperClass == Object.class
-                || supperClass == null) {
-            return;
-        }
-        doGetFields(supperClass, fields);
     }
 
     /**
