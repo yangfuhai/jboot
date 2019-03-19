@@ -22,7 +22,8 @@ import io.jboot.components.cache.JbootCacheManager;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.*;
-import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,11 +47,13 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
 
     private HttpServletResponse response;
+    private HttpServletRequest originRequest;
     private JbootHttpSession httpSession;
 
 
     public JbootServletRequestWrapper(HttpServletRequest request, HttpServletResponse response) {
         super(request);
+        this.originRequest = request;
         this.response = response;
     }
 
@@ -68,11 +71,11 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
         String sessionId = getCookie(cookieName);
         if (sessionId != null) {
-            httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
+            httpSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId));
             httpSession.setMaxInactiveInterval(maxInactiveInterval);
         } else if (create) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
-            httpSession = new JbootHttpSession(sessionId, getRequest().getServletContext(), createSessionStore(sessionId));
+            httpSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId));
             httpSession.setMaxInactiveInterval(maxInactiveInterval);
             setCookie(cookieName, sessionId, cookieMaxAge);
         }
@@ -83,7 +86,17 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
     private Map<String, Object> createSessionStore(String sessionId) {
         Map<String, Object> store = jbootCache.get(cacheName, sessionId);
         if (store == null) {
-            store = Collections.emptyMap();
+            store = new HashMap<>();
+            HttpSession orginSession = originRequest.getSession();
+            if (orginSession != null) {
+                Enumeration<String> names = orginSession.getAttributeNames();
+                if (names != null) {
+                    while (names.hasMoreElements()) {
+                        String name = names.nextElement();
+                        store.put(name, orginSession.getAttribute(name));
+                    }
+                }
+            }
         }
         return store;
     }
@@ -140,7 +153,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
      * Get cookie object by cookie name.
      */
     private Cookie getCookieObject(String name) {
-        Cookie[] cookies = ((HttpServletRequest) getRequest()).getCookies();
+        Cookie[] cookies = originRequest.getCookies();
         if (cookies != null)
             for (Cookie cookie : cookies)
                 if (cookie.getName().equals(name))
@@ -164,4 +177,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
         response.addCookie(cookie);
     }
 
+    public HttpServletRequest getOriginRequest() {
+        return originRequest;
+    }
 }
