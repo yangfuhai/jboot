@@ -4,6 +4,7 @@ jboot v2.0:
 优化：修改 StrUtil.isMobileNumber() 新增 166 开头号码的支持
 优化：大幅度优化 StrUtil.escapeHtml() 的性能
 优化：升级 JFinal 到 3.7 最新版本和 JFinal-undertow 到 1.6 最新版本
+修复：当使用 shiro 的时候，shiro 设置的session数据通过无法正常获取的问题
 
 
 jboot v2.0-rc.13:

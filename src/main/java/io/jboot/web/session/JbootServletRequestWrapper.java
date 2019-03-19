@@ -48,7 +48,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     private HttpServletResponse response;
     private HttpServletRequest originRequest;
-    private JbootHttpSession httpSession;
+    private JbootHttpSession jbootSession;
 
 
     public JbootServletRequestWrapper(HttpServletRequest request, HttpServletResponse response) {
@@ -65,35 +65,35 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public HttpSession getSession(boolean create) {
-        if (httpSession != null) {
-            return httpSession;
+        if (jbootSession != null) {
+            return jbootSession;
         }
 
         String sessionId = getCookie(cookieName);
         if (sessionId != null) {
-            httpSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId));
-            httpSession.setMaxInactiveInterval(maxInactiveInterval);
+            jbootSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId));
+            jbootSession.setMaxInactiveInterval(maxInactiveInterval);
         } else if (create) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
-            httpSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId));
-            httpSession.setMaxInactiveInterval(maxInactiveInterval);
+            jbootSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId));
+            jbootSession.setMaxInactiveInterval(maxInactiveInterval);
             setCookie(cookieName, sessionId, cookieMaxAge);
         }
 
-        return httpSession;
+        return jbootSession;
     }
 
     private Map<String, Object> createSessionStore(String sessionId) {
         Map<String, Object> store = jbootCache.get(cacheName, sessionId);
         if (store == null) {
             store = new HashMap<>();
-            HttpSession orginSession = originRequest.getSession();
-            if (orginSession != null) {
-                Enumeration<String> names = orginSession.getAttributeNames();
+            HttpSession originSession = originRequest.getSession();
+            if (originSession != null) {
+                Enumeration<String> names = originSession.getAttributeNames();
                 if (names != null) {
                     while (names.hasMoreElements()) {
                         String name = names.nextElement();
-                        store.put(name, orginSession.getAttribute(name));
+                        store.put(name, originSession.getAttribute(name));
                     }
                 }
             }
@@ -106,37 +106,30 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
      * http请求结束时，更新session信息，包括：刷新session的存储时间，更新session数据，清空session数据等
      */
     public void refreshSession() {
-        if (httpSession == null) {
+        if (jbootSession == null) {
             return;
         }
 
-        //session已经被整体删除，调用了session.invalidate()
-        if (!httpSession.isValid()) {
-            jbootCache.remove(cacheName, httpSession.getId());
+        // 空的 jbootSession 数据
+        // 或者 session 已经被整体删除，调用了session.invalidate()
+        if (jbootSession.isEmpty() || !jbootSession.isValid()) {
+            jbootCache.remove(cacheName, jbootSession.getId());
             setCookie(cookieName, null, 0);
         }
-
-        // 空的httpSession数据
-        else if (httpSession.isEmpty()) {
-            jbootCache.remove(cacheName, httpSession.getId());
-            setCookie(cookieName, null, 0);
-        }
-
         //session 已经被修改(session数据的增删改查)
-        else if (httpSession.isDataChanged()) {
-            Map<String, Object> snapshot = httpSession.snapshot();
-
+        else if (jbootSession.isDataChanged()) {
+            Map<String, Object> snapshot = jbootSession.snapshot();
             // 数据已经全部被删除了
             if (snapshot.isEmpty()) {
-                jbootCache.remove(cacheName, httpSession.getId());
+                jbootCache.remove(cacheName, jbootSession.getId());
                 setCookie(cookieName, null, 0);
             } else {
-                jbootCache.put(cacheName, httpSession.getId(), snapshot, maxInactiveInterval);
+                jbootCache.put(cacheName, jbootSession.getId(), snapshot, maxInactiveInterval);
             }
         }
         //更新session存储时间
         else {
-            jbootCache.setTtl(cacheName, httpSession.getId(), maxInactiveInterval);
+            jbootCache.setTtl(cacheName, jbootSession.getId(), maxInactiveInterval);
         }
     }
 
