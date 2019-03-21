@@ -15,6 +15,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    	<fescar.version>0.4.0</fescar.version>
     </properties>
 
     <issueManagement>
@@ -450,7 +451,27 @@
             <scope>provided</scope>
         </dependency>
 
-
+<dependency>
+			<groupId>com.alibaba.fescar</groupId>
+			<artifactId>fescar-tm</artifactId>
+			<version>${fescar.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.fescar</groupId>
+			<artifactId>fescar-spring</artifactId>
+			<version>${fescar.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.fescar</groupId>
+			<artifactId>fescar-dubbo</artifactId>
+			<version>${fescar.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.dubbo</groupId>
+					<artifactId>dubbo</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
     </dependencies>
 
 
