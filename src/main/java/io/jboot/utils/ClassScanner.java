@@ -50,7 +50,7 @@ public class ClassScanner {
         excludeJars.add("undertow-");
         excludeJars.add("xnio-");
         excludeJars.add("javax.");
-        excludeJars.add("HikariCP-");
+        excludeJars.add("hikaricp-");
         excludeJars.add("druid-");
         excludeJars.add("mysql-");
         excludeJars.add("db2jcc-");
@@ -75,6 +75,8 @@ public class ClassScanner {
         excludeJars.add("commons-email");
         excludeJars.add("commons-text");
         excludeJars.add("commons-cli");
+        excludeJars.add("commons-math");
+        excludeJars.add("commons-jxpath");
         excludeJars.add("audience-");
         excludeJars.add("hessian-");
         excludeJars.add("metrics-");
@@ -141,10 +143,10 @@ public class ClassScanner {
         excludeJars.add("org.abego");
         excludeJars.add("antlr-");
         excludeJars.add("antlr4-");
-        excludeJars.add("ST4-");
+        excludeJars.add("st4-");
         excludeJars.add("icu4j-");
         excludeJars.add("idea_rt");
-        excludeJars.add("MRJToolkit");
+        excludeJars.add("mrjtoolkit");
         excludeJars.add("logback-");
         excludeJars.add("log4j-");
         excludeJars.add("log4j2-");
@@ -152,7 +154,7 @@ public class ClassScanner {
         excludeJars.add("aliyun-sdk-");
         excludeJars.add("archaius-");
         excludeJars.add("aopalliance-");
-        excludeJars.add("HdrHistogram-");
+        excludeJars.add("hdrhistogram-");
         excludeJars.add("jdom-");
         excludeJars.add("rxjava-");
         excludeJars.add("jersey-");
@@ -176,7 +178,23 @@ public class ClassScanner {
         excludeJars.add("compiler-");
         excludeJars.add("hppc-");
         excludeJars.add("libthrift-");
-
+        excludeJars.add("fescar-");
+        excludeJars.add("eureka-");
+        excludeJars.add("netflix-");
+        excludeJars.add("nacos-");
+        excludeJars.add("apollo-");
+        excludeJars.add("guice-");
+        excludeJars.add("servlet-");
+        excludeJars.add("debugger-agent.jar");
+        excludeJars.add("xpp3_min-");
+        excludeJars.add("latency");
+        excludeJars.add("micrometer-");
+        excludeJars.add("xstream-");
+        excludeJars.add("jsr311-");
+        excludeJars.add("servo-");
+        excludeJars.add("compactmap-");
+        excludeJars.add("dexx-");
+        excludeJars.add("xmlpull-");
     }
 
     static {
@@ -373,7 +391,7 @@ public class ClassScanner {
 
     private static boolean isIncludeJar(String path) {
 
-        String jarName = new File(path).getName();
+        String jarName = new File(path).getName().toLowerCase();
 
         for (String include : includeJars) {
             if (jarName.startsWith(include)) {
@@ -385,6 +403,11 @@ public class ClassScanner {
             if (jarName.startsWith(exclude)) {
                 return false;
             }
+        }
+
+        //from maven repository
+        if (path.contains(".m2/repository")){
+            return false;
         }
 
         if (path.startsWith(getJavaHome())) {
