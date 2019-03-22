@@ -410,6 +410,62 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <!-- fescar start -->
+        <dependency>
+            <groupId>com.alibaba.fescar</groupId>
+            <artifactId>fescar-core</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.fescar</groupId>
+            <artifactId>fescar-rm</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.fescar</groupId>
+            <artifactId>fescar-rm-datasource</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.fescar</groupId>
+            <artifactId>fescar-tm</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.fescar</groupId>
+            <artifactId>fescar-tcc</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.fescar</groupId>
+            <artifactId>fescar-config</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.fescar</groupId>
+            <artifactId>fescar-dubbo-alibaba</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.alibaba.fescar</groupId>-->
+            <!--<artifactId>fescar-all</artifactId>-->
+            <!--<version>0.4.0</version>-->
+        <!--</dependency>-->
+        <!-- fescar end -->
+
+        <dependency>
             <groupId>net.oschina.j2cache</groupId>
             <artifactId>j2cache-core</artifactId>
             <version>2.7.7-release</version>
