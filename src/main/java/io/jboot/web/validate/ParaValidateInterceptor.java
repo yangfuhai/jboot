@@ -18,6 +18,7 @@ package io.jboot.web.validate;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
+import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
 import io.jboot.utils.AnnotationUtil;
@@ -26,7 +27,6 @@ import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 import java.lang.reflect.Method;
 
@@ -38,7 +38,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     public static final int DEFAULT_ERROR_CODE = 99;
 
     @Override
-    public void intercept(FixedInvocation inv) {
+    public void intercept(Invocation inv) {
 
         Method method = inv.getMethod();
 
@@ -62,7 +62,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
     }
 
-    private boolean validateUrlPara(FixedInvocation inv, UrlParaValidate urlParaValidate) {
+    private boolean validateUrlPara(Invocation inv, UrlParaValidate urlParaValidate) {
         Controller controller = inv.getController();
         if (controller.getPara() != null) {
             return true;
@@ -87,7 +87,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
      * @param captchaValidate
      * @return
      */
-    private boolean validateCaptache(FixedInvocation inv, CaptchaValidate captchaValidate) {
+    private boolean validateCaptache(Invocation inv, CaptchaValidate captchaValidate) {
         String formName = AnnotationUtil.get(captchaValidate.form());
         if (StrUtil.isBlank(formName)) {
             throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
@@ -117,7 +117,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
      * @param emptyParaValidate
      * @return
      */
-    private boolean validateEmpty(FixedInvocation inv, EmptyValidate emptyParaValidate) {
+    private boolean validateEmpty(Invocation inv, EmptyValidate emptyParaValidate) {
         Form[] forms = emptyParaValidate.value();
         if (ArrayUtil.isNullOrEmpty(forms)) {
             return true;

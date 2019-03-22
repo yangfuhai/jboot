@@ -15,6 +15,8 @@
  */
 package io.jboot.web.fixedinterceptor;
 
+import com.jfinal.aop.Invocation;
+
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @title 不会被 @Clear 清除掉的 拦截器
@@ -22,5 +24,5 @@ package io.jboot.web.fixedinterceptor;
  * @Package io.jboot.web.handler
  */
 public interface FixedInterceptor {
-    void intercept(FixedInvocation inv);
+    void intercept(Invocation inv);
 }

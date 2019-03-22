@@ -15,6 +15,7 @@
  */
 package io.jboot.support.shiro;
 
+import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.support.shiro.processer.AuthorizeResult;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
@@ -28,7 +29,7 @@ public class JbootShiroInterceptor implements FixedInterceptor {
     private static JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
 
     @Override
-    public void intercept(FixedInvocation inv) {
+    public void intercept(Invocation inv) {
         if (!config.isConfigOK()) {
             inv.invoke();
             return;
