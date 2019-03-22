@@ -1,5 +1,5 @@
 
-package io.jboot.components.fescar.annotation;
+package io.jboot.support.fescar.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Inherited
-public @interface JbootGlobalTransactional {
+public @interface FescarGlobalTransactional {
 
     /**
      * Global transaction timeoutMills in MILLISECONDS.
