@@ -1,11 +1,24 @@
+/**
+ * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.jboot.support.fescar.interceptor;
 
 import com.alibaba.fescar.common.exception.ShouldNeverHappenException;
 import com.alibaba.fescar.common.util.StringUtils;
-import com.alibaba.fescar.rm.GlobalLockTemplate;
 import com.alibaba.fescar.tm.api.FailureHandler;
 import com.alibaba.fescar.tm.api.TransactionalExecutor;
-import com.alibaba.fescar.tm.api.TransactionalTemplate;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.log.Log;
@@ -24,9 +37,6 @@ import java.lang.reflect.Method;
 public class FescarGlobalTransactionalInterceptor implements Interceptor, FixedInterceptor {
 
     private static final Log LOGGER = Log.getLog(FescarGlobalTransactionalInterceptor.class);
-
-    private final TransactionalTemplate transactionalTemplate = new TransactionalTemplate();
-    private final GlobalLockTemplate<Object> globalLockTemplate = new GlobalLockTemplate<Object>();
 
     public void intercept(Invocation inv) {
         if (!FescarManager.me().isEnable()) {
@@ -52,7 +62,7 @@ public class FescarGlobalTransactionalInterceptor implements Interceptor, FixedI
     }
 
     private void handleGlobalLock(final Invocation inv) throws Exception {
-        globalLockTemplate.execute(() -> {
+        FescarManager.me().getGlobalLockTemplate().execute(() -> {
             try {
                 inv.invoke();
                 return null;
@@ -69,8 +79,8 @@ public class FescarGlobalTransactionalInterceptor implements Interceptor, FixedI
     private Object handleGlobalTransaction(final Invocation invocation, final FescarGlobalTransactional globalTrxAnno)
             throws Throwable {
         try {
-            return transactionalTemplate.execute(new TransactionalExecutor() {
-                public Object execute() throws Throwable {
+            return FescarManager.me().getTransactionalTemplate().execute(new TransactionalExecutor() {
+                public Object execute() {
                     invocation.invoke();
                     return null;
                 }
