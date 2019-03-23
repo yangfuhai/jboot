@@ -24,6 +24,7 @@ import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 public class FescarManager {
 
@@ -77,24 +78,25 @@ public class FescarManager {
             synchronized (this) {
                 if (handler == null) {
                     String failureHandlerClassOrSpiName = config.getFailureHandler();
-
-                    if (failureHandlerClassOrSpiName.contains(".")) {
-                        handler = ClassUtil.newInstance(failureHandlerClassOrSpiName);
-                    }
-
-                    if (handler == null) {
-                        handler = JbootSpiLoader.load(FailureHandler.class, failureHandlerClassOrSpiName);
-                    }
-
-                    if (handler == null) {
+                    if (StrUtil.isBlank(failureHandlerClassOrSpiName)) {
                         handler = new DefaultFailureHandlerImpl();
+                    } else {
+                        if (failureHandlerClassOrSpiName.contains(".")) {
+                            handler = ClassUtil.newInstance(failureHandlerClassOrSpiName);
+                        }
+                        if (handler == null) {
+                            handler = JbootSpiLoader.load(FailureHandler.class, failureHandlerClassOrSpiName);
+                        }
+                        if (handler == null) {
+                            handler = new DefaultFailureHandlerImpl();
+                        }
                     }
                 }
             }
         }
-
         return handler;
     }
+
 
     public TransactionalTemplate getTransactionalTemplate() {
         return transactionalTemplate;
