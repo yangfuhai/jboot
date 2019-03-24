@@ -463,12 +463,18 @@
             <artifactId>fescar-dubbo-alibaba</artifactId>
             <version>0.4.0</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alibaba</groupId>
+                    <artifactId>dubbo</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>com.alibaba.fescar</groupId>-->
-            <!--<artifactId>fescar-all</artifactId>-->
-            <!--<version>0.4.0</version>-->
+        <!--<groupId>com.alibaba.fescar</groupId>-->
+        <!--<artifactId>fescar-all</artifactId>-->
+        <!--<version>0.4.0</version>-->
         <!--</dependency>-->
         <!-- fescar end -->
 
