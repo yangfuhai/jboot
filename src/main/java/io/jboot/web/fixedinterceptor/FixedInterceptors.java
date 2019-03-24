@@ -18,7 +18,6 @@ package io.jboot.web.fixedinterceptor;
 import com.jfinal.aop.Aop;
 import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.support.fescar.interceptor.FescarGlobalTransactionalInterceptor;
-import io.jboot.support.fescar.interceptor.FescarTransactionPropagationInterceptor;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
@@ -54,7 +53,6 @@ public class FixedInterceptors {
             new FixedInterceptorWapper(new JwtInterceptor(), 40),
             new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
             new FixedInterceptorWapper(new JbootMetricInterceptor(), 60),
-            new FixedInterceptorWapper(new FescarTransactionPropagationInterceptor(), 70),
             new FixedInterceptorWapper(new FescarGlobalTransactionalInterceptor(), 80),
     };
 

@@ -16,15 +16,18 @@ public class StockApplication {
 
         //开启 @RPCBean 自动暴露功能，默认情况下是自动暴露的，但是 jboot.properties 文件关闭了，这里需要开启下
         JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
-
+        JbootApplication.setBootArg("jboot.rpc.filter", "fescar");
         JbootApplication.setBootArg("jboot.fescar.enable", true);
-        JbootApplication.setBootArg("jboot.fescar.applicationId", "my_stock_application");
-        JbootApplication.setBootArg("jboot.fescar.txServiceGroup", "my_tx_service_group");
+        JbootApplication.setBootArg("jboot.fescar.failureHandler", "com.alibaba.fescar.tm.api.DefaultFailureHandlerImpl");
+        JbootApplication.setBootArg("jboot.fescar.applicationId", "Dubbo_Fescar_Stock_Service");
+        JbootApplication.setBootArg("jboot.fescar.txServiceGroup", "dubbo_fescar_tx_group");
 
         JbootApplication.setBootArg("jboot.datasource.type", "mysql");
         JbootApplication.setBootArg("jboot.datasource.factory", "fescar");
-        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/fescar");
+        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://139.127.108.187:9527/ilife-mall2.0?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
         JbootApplication.setBootArg("jboot.datasource.user", "root");
+        JbootApplication.setBootArg("jboot.datasource.password", "xjs123456789");
+        
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
         JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.fescar.commons");
 
