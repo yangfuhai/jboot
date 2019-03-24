@@ -8,3 +8,5 @@
 
 其他注意事项：
 1）jboot.fescar.txServiceGroup 配置的值要注意和 file.conf 里的 vgroup_mapping.xxx 保持一致
+2）jboot.datasource.factory=fescar ##数据源代理
+3）jboot.rpc.filter=fescar ##Fescar在Dubbo中的事务传播过滤器
