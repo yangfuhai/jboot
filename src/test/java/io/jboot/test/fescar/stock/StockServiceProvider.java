@@ -3,11 +3,10 @@ package io.jboot.test.fescar.stock;
 
 import io.jboot.components.rpc.annotation.RPCBean;
 import io.jboot.service.JbootServiceBase;
-import io.jboot.test.fescar.account.IAccountService;
 import io.jboot.test.fescar.commons.Stock;
 
 @RPCBean
-public class StockServiceProvider extends JbootServiceBase<Stock> implements IAccountService {
+public class StockServiceProvider extends JbootServiceBase<Stock> implements IStockService {
 
     private static Stock dao = new Stock().dao();
 

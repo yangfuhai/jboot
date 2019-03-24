@@ -9,7 +9,7 @@ public class AccountApplicaiton {
 
         //jboot端口号配置
         JbootApplication.setBootArg("undertow.port", "8082");
-
+        JbootApplication.setBootArg("jboot.rpc.filter", "fescar");
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
         JbootApplication.setBootArg("jboot.rpc.callMode", "registry");//注册中心模式
         JbootApplication.setBootArg("jboot.rpc.registryType", "zookeeper");//注册中心的类型：zookeeper
@@ -20,13 +20,13 @@ public class AccountApplicaiton {
         JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
 
         JbootApplication.setBootArg("jboot.fescar.enable", true);
-        JbootApplication.setBootArg("jboot.fescar.applicationId", "my_account_application");
-        JbootApplication.setBootArg("jboot.fescar.txServiceGroup", "my_tx_service_group");
-
+        JbootApplication.setBootArg("jboot.fescar.failureHandler", "com.alibaba.fescar.tm.api.DefaultFailureHandlerImpl");
+        JbootApplication.setBootArg("jboot.fescar.applicationId", "Dubbo_Fescar_Account_Service");
+        JbootApplication.setBootArg("jboot.fescar.txServiceGroup", "dubbo_fescar_tx_group");
         JbootApplication.setBootArg("jboot.datasource.type", "mysql");
-        JbootApplication.setBootArg("jboot.datasource.factory", "fescar");
-        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/fescar");
+        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://139.127.108.187:9527/ilife-mall2.0?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
         JbootApplication.setBootArg("jboot.datasource.user", "root");
+        JbootApplication.setBootArg("jboot.datasource.password", "xjs123456789");
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
         JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.fescar.commons");
 
