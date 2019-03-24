@@ -26,7 +26,7 @@ import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
 import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.exception.JbootException;
-import io.jboot.support.fescar.interceptor.FescarGlobalTransactionalInterceptor;
+import io.jboot.support.fescar.dubbo.interceptor.FescarGlobalTransactionalInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 
 

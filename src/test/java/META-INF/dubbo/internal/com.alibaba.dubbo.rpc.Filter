@@ -1,2 +1,2 @@
-fescar=io.jboot.support.fescar.TransactionPropagationFilter
+fescar=io.jboot.support.fescar.dubbo.filter.TransactionPropagationFilter
 
