@@ -15,57 +15,43 @@
  */
 package io.jboot.aop;
 
+import java.lang.reflect.Method;
+
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+
 import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
-import io.jboot.aop.interceptor.metric.*;
 import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.exception.JbootException;
-import io.jboot.support.metric.JbootMetricManager;
-
-import java.lang.reflect.Method;
+import io.jboot.support.fescar.interceptor.FescarGlobalTransactionalInterceptor;
+import io.jboot.support.metric.JbootMetricInterceptor;
 
 
 public class JbootAopInvocation extends Invocation {
 
 
-    private Interceptor[] inters;
+    private Interceptor[] inters = ALL_INTERS;
     private Invocation originInvocation;
 
     private int index = 0;
 
 
     private static final Interceptor[] ALL_INTERS = {
-            new JbootMetricCounterAopInterceptor(),
-            new JbootMetricConcurrencyAopInterceptor(),
-            new JbootMetricMeterAopInterceptor(),
-            new JbootMetricTimerAopInterceptor(),
-            new JbootMetricHistogramAopInterceptor(),
+            new JbootMetricInterceptor(),
             new JbootCacheEvictInterceptor(),
             new JbootCachesEvictInterceptor(),
             new JbootCachePutInterceptor(),
             new JbootCacheInterceptor(),
-            new LimiterInterceptor()
+            new LimiterInterceptor(),
+            new FescarGlobalTransactionalInterceptor()
     };
-
-    private static final Interceptor[] NO_METRIC_INTERS = {
-            new JbootCacheEvictInterceptor(),
-            new JbootCachesEvictInterceptor(),
-            new JbootCachePutInterceptor(),
-            new JbootCacheInterceptor(),
-            new LimiterInterceptor()
-    };
-
-
-    private static boolean metricConfigOk = JbootMetricManager.me().isConfigOk();
 
 
     public JbootAopInvocation(Invocation originInvocation) {
         this.originInvocation = originInvocation;
-        this.inters = metricConfigOk ? ALL_INTERS : NO_METRIC_INTERS;
     }
 
 

@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
  */
 public class FixedInvocation extends Invocation {
 
-    private Invocation invocation;
+    private Invocation origin;
 
 
     private FixedInterceptor[] inters = FixedInterceptors.me().all();
@@ -35,7 +35,7 @@ public class FixedInvocation extends Invocation {
 
 
     public FixedInvocation(Invocation invocation) {
-        this.invocation = invocation;
+        this.origin = invocation;
     }
 
 
@@ -44,34 +44,34 @@ public class FixedInvocation extends Invocation {
         if (index < inters.length) {
             inters[index++].intercept(this);
         } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
-            invocation.invoke();
+            origin.invoke();
         }
     }
 
 
     @Override
     public Method getMethod() {
-        return invocation.getMethod();
+        return origin.getMethod();
     }
 
     @Override
     public Controller getController() {
-        return invocation.getController();
+        return origin.getController();
     }
 
     @Override
     public String getActionKey() {
-        return invocation.getActionKey();
+        return origin.getActionKey();
     }
 
     @Override
     public String getControllerKey() {
-        return invocation.getControllerKey();
+        return origin.getControllerKey();
     }
 
     @Override
     public String getMethodName() {
-        return invocation.getMethodName();
+        return origin.getMethodName();
     }
 
     @Override
@@ -81,41 +81,41 @@ public class FixedInvocation extends Invocation {
 
     @Override
     public Object getArg(int index) {
-        return invocation.getArg(index);
+        return origin.getArg(index);
     }
 
     @Override
     public void setArg(int index, Object value) {
-        invocation.setArg(index, value);
+        origin.setArg(index, value);
     }
 
     @Override
     public Object[] getArgs() {
-        return invocation.getArgs();
+        return origin.getArgs();
     }
 
     @Override
     public <T> T getTarget() {
-        return invocation.getTarget();
+        return origin.getTarget();
     }
 
     @Override
     public <T> T getReturnValue() {
-        return invocation.getReturnValue();
+        return origin.getReturnValue();
     }
 
     @Override
     public void setReturnValue(Object returnValue) {
-        invocation.setReturnValue(returnValue);
+        origin.setReturnValue(returnValue);
     }
 
     @Override
     public String getViewPath() {
-        return invocation.getViewPath();
+        return origin.getViewPath();
     }
 
-    public Invocation getInvocation() {
-        return invocation;
+    public Invocation getOrigin() {
+        return origin;
     }
 
 }

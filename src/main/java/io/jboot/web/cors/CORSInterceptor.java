@@ -15,10 +15,10 @@
  */
 package io.jboot.web.cors;
 
+import com.jfinal.aop.Invocation;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,7 +37,7 @@ public class CORSInterceptor implements FixedInterceptor {
     private static final String METHOD_OPTIONS = "OPTIONS";
 
     @Override
-    public void intercept(FixedInvocation inv) {
+    public void intercept(Invocation inv) {
 
         EnableCORS enableCORS = inv.getMethod().getAnnotation(EnableCORS.class);
 
@@ -57,7 +57,7 @@ public class CORSInterceptor implements FixedInterceptor {
         inv.invoke();
     }
 
-    private void doProcessCORS(FixedInvocation inv, EnableCORS enableCORS) {
+    private void doProcessCORS(Invocation inv, EnableCORS enableCORS) {
 
         HttpServletResponse response = inv.getController().getResponse();
 

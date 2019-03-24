@@ -52,7 +52,7 @@ public class JbootMetricManager {
     private HealthCheckRegistry healthCheckRegistry;
     private JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
 
-
+    private boolean enable = false;
     private JbootMetricManager() {
 
         if (!metricsConfig.isConfigOk()) {
@@ -74,12 +74,18 @@ public class JbootMetricManager {
                 LOG.error(ex.toString(), ex);
             }
         }
+
+        this.enable = true;
     }
 
-    public boolean isConfigOk() {
-        return metricsConfig.isConfigOk();
-    }
+//    public boolean isConfigOk() {
+//        return metricsConfig.isConfigOk();
+//    }
 
+
+    public boolean isEnable() {
+        return enable;
+    }
 
     private List<JbootMetricReporter> getReporters() {
         String repoterString = metricsConfig.getReporter();

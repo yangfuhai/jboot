@@ -15,11 +15,11 @@
  */
 package io.jboot.support.shiro;
 
+import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.support.shiro.processer.AuthorizeResult;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -33,7 +33,7 @@ public interface JbootShiroInvokeListener {
      *
      * @param inv
      */
-    public void onInvokeBefore(FixedInvocation inv);
+    public void onInvokeBefore(Invocation inv);
 
     /**
      * 通过这个方法，可以用来自定义shiro 处理结果 和 错误逻辑
@@ -41,7 +41,7 @@ public interface JbootShiroInvokeListener {
      * @param inv
      * @param result
      */
-    public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result);
+    public void onInvokeAfter(Invocation inv, AuthorizeResult result);
 
 
     public static final JbootShiroInvokeListener DEFAULT = new JbootShiroInvokeListener() {
@@ -51,12 +51,12 @@ public interface JbootShiroInvokeListener {
 
 
         @Override
-        public void onInvokeBefore(FixedInvocation inv) {
+        public void onInvokeBefore(Invocation inv) {
             //do nothing
         }
 
         @Override
-        public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
+        public void onInvokeAfter(Invocation inv, AuthorizeResult result) {
             if (result.isOk()) {
                 inv.invoke();
                 return;

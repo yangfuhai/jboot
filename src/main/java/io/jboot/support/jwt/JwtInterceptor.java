@@ -15,10 +15,10 @@
  */
 package io.jboot.support.jwt;
 
+import com.jfinal.aop.Invocation;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +33,7 @@ import java.util.Map;
 public class JwtInterceptor implements FixedInterceptor {
 
     @Override
-    public void intercept(FixedInvocation inv) {
+    public void intercept(Invocation inv) {
         if (!JwtManager.me().getConfig().isConfigOk()) {
             inv.invoke();
             return;
@@ -62,7 +62,7 @@ public class JwtInterceptor implements FixedInterceptor {
     }
 
 
-    private void processInvoke(FixedInvocation inv, Map oldData) {
+    private void processInvoke(Invocation inv, Map oldData) {
 
         inv.invoke();
 
@@ -86,7 +86,7 @@ public class JwtInterceptor implements FixedInterceptor {
     }
 
 
-    private void refreshIfNecessary(FixedInvocation inv, Map oldData) {
+    private void refreshIfNecessary(Invocation inv, Map oldData) {
         if (oldData == null) {
             return;
         }

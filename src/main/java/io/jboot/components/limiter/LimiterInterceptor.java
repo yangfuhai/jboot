@@ -23,24 +23,15 @@ import io.jboot.components.limiter.annotation.EnableLimit;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.concurrent.Semaphore;
 
 public class LimiterInterceptor implements FixedInterceptor, Interceptor {
-    @Override
-    public void intercept(FixedInvocation inv) {
-        doProcess(inv);
-    }
 
     @Override
     public void intercept(Invocation inv) {
-        doProcess(inv);
-    }
-
-    private void doProcess(Invocation inv) {
         String packageOrTarget = getPackageOrTarget(inv);
         LimiterManager.TypeAndRate typeAndRate = LimiterManager.me().matchConfig(packageOrTarget);
 

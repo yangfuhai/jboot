@@ -19,23 +19,25 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Timer;
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
+import io.jboot.support.metric.annotation.*;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.support.metric.annotation.*;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.FixedInvocation;
 
 /**
  * 用于对controller的Metrics 统计
  * 注意：如果 Controller通过 @Clear 来把此 拦截器给清空，那么此方法（action）注入将会失效
  */
-public class JbootMetricInterceptor implements FixedInterceptor {
+public class JbootMetricInterceptor implements Interceptor, FixedInterceptor {
 
     private static JbootMetricConfig config = Jboot.config(JbootMetricConfig.class);
 
+
     @Override
-    public void intercept(FixedInvocation inv) {
+    public void intercept(Invocation inv) {
 
         if (!config.isConfigOk()) {
             inv.invoke();
@@ -120,7 +122,6 @@ public class JbootMetricInterceptor implements FixedInterceptor {
                 timerContext.stop();
             }
         }
-
     }
 
 
