@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 public class CORSInterceptor implements FixedInterceptor {
 
     private static final String ALLOW_ORIGIN = "*";
-    private static final String ALLOW_METHODS = "GET, POST, PUT, DELETE, OPTIONS";
+    private static final String ALLOW_METHODS = "GET,PUT,POST,DELETE,PATCH,OPTIONS";
     private static final int MAX_AGE = 3600;
 
     private static final String METHOD_OPTIONS = "OPTIONS";
@@ -45,19 +45,26 @@ public class CORSInterceptor implements FixedInterceptor {
             enableCORS = inv.getController().getClass().getAnnotation(EnableCORS.class);
         }
 
-        if (enableCORS != null) {
-            String method = inv.getController().getRequest().getMethod();
-            if (METHOD_OPTIONS.equals(method)) {
-                inv.getController().renderText("");
-                return;
-            }
-            doProcessCORS(inv, enableCORS);
+        if (enableCORS == null) {
+            inv.invoke();
+            return;
         }
 
-        inv.invoke();
+        String method = inv.getController().getRequest().getMethod();
+        if (METHOD_OPTIONS.equals(method)) {
+            HttpServletResponse response = inv.getController().getResponse();
+            response.setHeader("Access-Control-Allow-Origin", inv.getController().getHeader("Origin"));
+            response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+            response.setHeader("Access-Control-Allow-Methods", ALLOW_METHODS);
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            inv.getController().renderText("");
+        } else {
+            doConfigCORS(inv, enableCORS);
+            inv.invoke();
+        }
     }
 
-    private void doProcessCORS(Invocation inv, EnableCORS enableCORS) {
+    private void doConfigCORS(Invocation inv, EnableCORS enableCORS) {
 
         HttpServletResponse response = inv.getController().getResponse();
 
