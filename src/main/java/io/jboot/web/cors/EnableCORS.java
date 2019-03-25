@@ -29,13 +29,13 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface EnableCORS {
 
-    String allowOrigin() default "";
+    String allowOrigin() default "*";
 
-    String allowCredentials() default "";
+    String allowCredentials() default "true";
 
-    String allowHeaders() default "";
+    String allowHeaders() default "Origin,X-Requested-With,Content-Type,Accept,Authorization,Jwt";
 
-    String allowMethods() default "";
+    String allowMethods() default "GET,PUT,POST,DELETE,PATCH,OPTIONS";
 
     String exposeHeaders() default "";
 
@@ -45,5 +45,5 @@ public @interface EnableCORS {
 
     String origin() default "";
 
-    int maxAge() default 0;
+    String maxAge() default "3600";
 }

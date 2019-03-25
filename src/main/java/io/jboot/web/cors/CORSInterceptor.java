@@ -30,10 +30,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CORSInterceptor implements FixedInterceptor {
 
-    private static final String ALLOW_ORIGIN = "*";
-    private static final String ALLOW_METHODS = "GET,PUT,POST,DELETE,PATCH,OPTIONS";
-    private static final int MAX_AGE = 3600;
-
     private static final String METHOD_OPTIONS = "OPTIONS";
 
     @Override
@@ -50,16 +46,12 @@ public class CORSInterceptor implements FixedInterceptor {
             return;
         }
 
+        doConfigCORS(inv, enableCORS);
+
         String method = inv.getController().getRequest().getMethod();
         if (METHOD_OPTIONS.equals(method)) {
-            HttpServletResponse response = inv.getController().getResponse();
-            response.setHeader("Access-Control-Allow-Origin", inv.getController().getHeader("Origin"));
-            response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-            response.setHeader("Access-Control-Allow-Methods", ALLOW_METHODS);
-            response.setHeader("Access-Control-Allow-Credentials", "true");
             inv.getController().renderText("");
         } else {
-            doConfigCORS(inv, enableCORS);
             inv.invoke();
         }
     }
@@ -76,24 +68,13 @@ public class CORSInterceptor implements FixedInterceptor {
         String requestHeaders = AnnotationUtil.get(enableCORS.requestHeaders());
         String requestMethod = AnnotationUtil.get(enableCORS.requestMethod());
         String origin = AnnotationUtil.get(enableCORS.origin());
-
-        int maxAge = enableCORS.maxAge();
-
-        allowOrigin = StrUtil.isNotBlank(allowOrigin) ? allowOrigin : ALLOW_ORIGIN;
-        allowMethods = StrUtil.isNotBlank(allowMethods) ? allowMethods : ALLOW_METHODS;
-        maxAge = maxAge > 0 ? maxAge : MAX_AGE;
+        String maxAge = AnnotationUtil.get(enableCORS.maxAge());
 
         response.setHeader("Access-Control-Allow-Origin", allowOrigin);
         response.setHeader("Access-Control-Allow-Methods", allowMethods);
-        response.setHeader("Access-Control-Max-Age", String.valueOf(maxAge));
-
-        if (StrUtil.isNotBlank(allowHeaders)) {
-            response.setHeader("Access-Control-Allow-Headers", allowHeaders);
-        }
-
-        if (StrUtil.isNotBlank(allowCredentials)) {
-            response.setHeader("Access-Control-Allow-Credentials", allowCredentials);
-        }
+        response.setHeader("Access-Control-Allow-Headers", allowHeaders);
+        response.setHeader("Access-Control-Max-Age", maxAge);
+        response.setHeader("Access-Control-Allow-Credentials", allowCredentials);
 
         if (StrUtil.isNotBlank(exposeHeaders)) {
             response.setHeader("Access-Control-Expose-Headers", exposeHeaders);
