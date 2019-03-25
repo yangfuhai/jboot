@@ -1,3 +1,7 @@
+jboot v2.0.2:
+紧急修复不使用 Fescar 时，会出现 NoClassDefFoundError 的问题
+
+
 jboot v2.0.1:
 新增：Fescar 分布式事务的支持，只需要一个 @FescarGlobalTransactional 注解即可完成分布式事务，感谢 [@frank9527](https://my.oschina.net/frank9527)
 新增：代码生成器的 remarks 生成的功能
