@@ -44,6 +44,7 @@ public class FescarManager {
     private TransactionalTemplate transactionalTemplate;
     private GlobalLockTemplate<Object> globalLockTemplate;
 
+
     public void init() {
 
         if (!config.isEnable()) {
@@ -71,8 +72,7 @@ public class FescarManager {
         return enable;
     }
 
-    private FailureHandler handler = null;
-
+    private Object handler;
     public FailureHandler getFailureHandler() {
         if (handler == null) {
             synchronized (this) {
@@ -94,7 +94,7 @@ public class FescarManager {
                 }
             }
         }
-        return handler;
+        return (FailureHandler) handler;
     }
 
 
@@ -113,4 +113,6 @@ public class FescarManager {
     public void setGlobalLockTemplate(GlobalLockTemplate<Object> globalLockTemplate) {
         this.globalLockTemplate = globalLockTemplate;
     }
+
+
 }

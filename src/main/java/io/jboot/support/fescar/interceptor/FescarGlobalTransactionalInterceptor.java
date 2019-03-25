@@ -15,13 +15,8 @@
  */
 package io.jboot.support.fescar.interceptor;
 
-import com.alibaba.fescar.common.exception.ShouldNeverHappenException;
-import com.alibaba.fescar.common.util.StringUtils;
-import com.alibaba.fescar.tm.api.FailureHandler;
-import com.alibaba.fescar.tm.api.TransactionalExecutor;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.log.Log;
 import io.jboot.support.fescar.FescarManager;
 import io.jboot.support.fescar.annotation.FescarGlobalLock;
 import io.jboot.support.fescar.annotation.FescarGlobalTransactional;
@@ -36,7 +31,8 @@ import java.lang.reflect.Method;
  */
 public class FescarGlobalTransactionalInterceptor implements Interceptor, FixedInterceptor {
 
-    private static final Log LOGGER = Log.getLog(FescarGlobalTransactionalInterceptor.class);
+    public FescarGlobalTransactionalInterceptor() {
+    }
 
     public void intercept(Invocation inv) {
         if (!FescarManager.me().isEnable()) {
@@ -76,66 +72,9 @@ public class FescarGlobalTransactionalInterceptor implements Interceptor, FixedI
         });
     }
 
-    private Object handleGlobalTransaction(final Invocation invocation, final FescarGlobalTransactional globalTrxAnno)
-            throws Throwable {
-        try {
-            return FescarManager.me().getTransactionalTemplate().execute(new TransactionalExecutor() {
-                public Object execute() {
-                    invocation.invoke();
-                    return null;
-                }
-
-                public int timeout() {
-                    return globalTrxAnno.timeoutMills();
-                }
-
-                public String name() {
-                    String name = globalTrxAnno.name();
-                    if (!StringUtils.isNullOrEmpty(name)) {
-                        return name;
-                    }
-                    return formatMethod(invocation.getMethod());
-                }
-            });
-        } catch (TransactionalExecutor.ExecutionException e) {
-            FailureHandler failureHandler = FescarManager.me().getFailureHandler();
-            TransactionalExecutor.Code code = e.getCode();
-            switch (code) {
-                case RollbackDone:
-                    throw e.getOriginalException();
-                case BeginFailure:
-                    failureHandler.onBeginFailure(e.getTransaction(), e.getCause());
-                    throw e.getCause();
-                case CommitFailure:
-                    failureHandler.onCommitFailure(e.getTransaction(), e.getCause());
-                    throw e.getCause();
-                case RollbackFailure:
-                    failureHandler.onRollbackFailure(e.getTransaction(), e.getCause());
-                    throw e.getCause();
-                default:
-                    throw new ShouldNeverHappenException("Unknown TransactionalExecutor.Code: " + code);
-
-            }
-        }
+    private Object handleGlobalTransaction(final Invocation invocation, final FescarGlobalTransactional globalTrxAnno) throws Throwable {
+       return FescarGlobalTransactionHandler.handleGlobalTransaction(invocation,globalTrxAnno);
     }
 
-    private String formatMethod(Method method) {
-        StringBuilder sb = new StringBuilder();
 
-        String methodName = method.getName();
-        Class<?>[] params = method.getParameterTypes();
-        sb.append(methodName);
-        sb.append("(");
-
-        int paramPos = 0;
-        for (Class<?> clazz : params) {
-            sb.append(clazz.getName());
-            if (++paramPos < params.length) {
-                sb.append(",");
-            }
-        }
-        sb.append(")");
-        LOGGER.debug(sb.toString());
-        return sb.toString();
-    }
 }
