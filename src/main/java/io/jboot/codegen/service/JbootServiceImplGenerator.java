@@ -75,6 +75,12 @@ public class JbootServiceImplGenerator {
         return this;
     }
 
+
+    public JbootServiceImplGenerator setGenerateRemarks(boolean generateRemarks) {
+        metaBuilder.setGenerateRemarks(generateRemarks);
+        return this;
+    }
+
     public JbootServiceImplGenerator setImplName(String implName) {
         this.implName = implName;
         return this;

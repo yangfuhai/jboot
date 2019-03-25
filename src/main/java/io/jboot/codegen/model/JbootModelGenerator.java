@@ -51,5 +51,10 @@ public class JbootModelGenerator extends ModelGenerator {
         return this;
     }
 
+    public JbootModelGenerator setGenerateRemarks(boolean generateRemarks) {
+        metaBuilder.setGenerateRemarks(generateRemarks);
+        return this;
+    }
+
 
 }
