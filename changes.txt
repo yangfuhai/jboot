@@ -1,3 +1,10 @@
+jboot v2.0.1:
+新增：Fescar 分布式事务的支持，只需要一个 @FescarGlobalTransactional 注解即可完成分布式事务，感谢 [@frank9527](https://my.oschina.net/frank9527)
+新增：代码生成器的 remarks 生成的功能
+修复：html、css、js 的热加载功能 当缺少commons-io的依赖会出错的问题
+修复：@EnableCORS 开启跨域请求功能，在某些情况下不起作用的问题
+
+
 jboot v2.0:
 新增：Metrics 的 InfluxdbReporter 支持，方便把信息通过 influx 输入到 grafana
 优化：修改 RequestUtil 工具类的拼写错误问题，isMoblieBrowser 修改为 isMobileBrowser
