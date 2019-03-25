@@ -1,6 +1,7 @@
 jboot v2.0.1:
 新增：Fescar 分布式事务的支持，只需要一个 @FescarGlobalTransactional 注解即可完成分布式事务，感谢 [@frank9527](https://my.oschina.net/frank9527)
 新增：代码生成器的 remarks 生成的功能
+优化：重构 FixedInterceptor，在其方法传入 Invocation 即可，而不是 FixedInvocation，方便拦截器在 Controller 和 Aop 层的复用。
 修复：html、css、js 的热加载功能 当缺少commons-io的依赖会出错的问题
 修复：@EnableCORS 开启跨域请求功能，在某些情况下不起作用的问题
 
