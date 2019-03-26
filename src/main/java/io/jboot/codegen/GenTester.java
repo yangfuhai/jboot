@@ -44,7 +44,7 @@ public class GenTester {
         System.out.println("generate dir:" + modelDir);
 
 
-        new JbootBaseModelGenerator(baseModelPackage, baseModelDir).generate();
+        new JbootBaseModelGenerator(baseModelPackage, baseModelDir).setGenerateRemarks(true).generate();
         new JbootModelGenerator(modelPackage, baseModelPackage, modelDir).generate();
 
 
