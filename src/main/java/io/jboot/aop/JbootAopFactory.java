@@ -139,44 +139,31 @@ public class JbootAopFactory extends AopFactory {
     protected void doInject(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
         targetClass = getUsefulClass(targetClass);
         Field[] fields = targetClass.getDeclaredFields();
-        if (fields.length == 0) {
-            return;
-        }
 
-        for (Field field : fields) {
-//            Inject inject = field.getAnnotation(Inject.class);
-//            if (inject == null) {
-//                continue ;
-//            }
-//
-//            Class<?> fieldInjectedClass = inject.value();
-//            if (fieldInjectedClass == Void.class) {
-//                fieldInjectedClass = field.getType();
-//            }
-//
-//            Object fieldInjectedObject = doGet(fieldInjectedClass);
-//            field.setAccessible(true);
-//            field.set(targetObject, fieldInjectedObject);
+        if (fields.length != 0) {
 
+            for (Field field : fields) {
 
-            Inject inject = field.getAnnotation(Inject.class);
-            if (inject != null) {
-                doInjectJFinalOrginal(targetObject, field, inject);
-                continue;
-            }
+                Inject inject = field.getAnnotation(Inject.class);
+                if (inject != null) {
+                    doInjectJFinalOrginal(targetObject, field, inject);
+                    continue;
+                }
 
-            ConfigValue configValue = field.getAnnotation(ConfigValue.class);
-            if (configValue != null) {
-                doInjectConfigValue(targetObject, field, configValue);
-                continue;
-            }
+                ConfigValue configValue = field.getAnnotation(ConfigValue.class);
+                if (configValue != null) {
+                    doInjectConfigValue(targetObject, field, configValue);
+                    continue;
+                }
 
-            RPCInject rpcInject = field.getAnnotation(RPCInject.class);
-            if (rpcInject != null) {
-                doInjectRPC(targetObject, field, rpcInject);
-                continue;
+                RPCInject rpcInject = field.getAnnotation(RPCInject.class);
+                if (rpcInject != null) {
+                    doInjectRPC(targetObject, field, rpcInject);
+                    continue;
+                }
             }
         }
+
 
         // 是否对超类进行注入
         if (injectSuperClass) {
