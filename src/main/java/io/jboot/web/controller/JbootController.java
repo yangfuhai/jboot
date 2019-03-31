@@ -19,11 +19,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
-import io.jboot.utils.StrUtil;
 import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
+import io.jboot.utils.StrUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -215,12 +214,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public String getBaseUrl() {
-        HttpServletRequest req = getRequest();
-        int port = req.getServerPort();
-
-        return port == 80
-                ? String.format("%s://%s%s", req.getScheme(), req.getServerName(), req.getContextPath())
-                : String.format("%s://%s%s%s", req.getScheme(), req.getServerName(), ":" + port, req.getContextPath());
+        return RequestUtil.getBaseUrl(getRequest());
 
     }
 

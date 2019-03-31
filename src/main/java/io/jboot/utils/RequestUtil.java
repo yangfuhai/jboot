@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 package io.jboot.utils;
+
+import com.jfinal.core.Controller;
+import io.jboot.web.controller.JbootControllerContext;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -165,5 +168,21 @@ public class RequestUtil {
     public static String getReferer(HttpServletRequest request) {
         return request.getHeader("Referer");
     }
+
+    public static String getBaseUrl(HttpServletRequest request) {
+        int port = request.getServerPort();
+        StringBuilder defaultDomain = new StringBuilder(request.getScheme());
+        defaultDomain.append("://")
+                .append(request.getServerName())
+                .append(port == 80 ? "" : ":" + port)
+                .append(request.getContextPath());
+        return defaultDomain.toString();
+    }
+
+    public static String getBaseUrl() {
+        Controller controller = JbootControllerContext.get();
+        return controller == null ? null : getBaseUrl(controller.getRequest());
+    }
+
 
 }
