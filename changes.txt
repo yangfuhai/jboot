@@ -1,6 +1,7 @@
 jboot v2.0.4:
 优化：优化 JbootController 的 getBaseUrl 性能问题
 优化：当 render 发生错误时，不方便对 Controller 方法进行定位的问题
+优化：升级 druid 和 fescar 到最新版本
 修复：修复 AOP 当子类为定义任何属性的时候，父类无法正常被注入的问题
 修复：修复 ClassScanner 无法扫描自身的问题
 
