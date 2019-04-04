@@ -39,6 +39,10 @@ public class ClassScanner {
         includeJars.add(prefix.trim());
     }
 
+    static {
+        addScanJarPrefix("jboot");
+    }
+
     public static void addUnscanJarPrefix(String prefix) {
         excludeJars.add(prefix.trim());
     }
@@ -406,7 +410,7 @@ public class ClassScanner {
         }
 
         //from maven repository
-        if (path.contains(".m2/repository")){
+        if (path.contains(".m2/repository")) {
             return false;
         }
 
