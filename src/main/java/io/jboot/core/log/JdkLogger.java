@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,7 +60,7 @@ public class JdkLogger extends Log {
     }
 
     public void warn(String message, Throwable t) {
-        JbootExceptionHolder.hold(t);
+        JbootExceptionHolder.hold(message, t);
         log.logp(Level.WARNING, clazzName, Thread.currentThread().getStackTrace()[1].getMethodName(), message, t);
     }
 
@@ -69,7 +69,7 @@ public class JdkLogger extends Log {
     }
 
     public void error(String message, Throwable t) {
-        JbootExceptionHolder.hold(t);
+        JbootExceptionHolder.hold(message, t);
         log.logp(Level.SEVERE, clazzName, Thread.currentThread().getStackTrace()[1].getMethodName(), message, t);
     }
 
@@ -84,7 +84,7 @@ public class JdkLogger extends Log {
      * JdkLog fatal is the same as the error.
      */
     public void fatal(String message, Throwable t) {
-        JbootExceptionHolder.hold(t);
+        JbootExceptionHolder.hold(message, t);
         log.logp(Level.SEVERE, clazzName, Thread.currentThread().getStackTrace()[1].getMethodName(), message, t);
     }
 

@@ -24,19 +24,31 @@ import java.util.List;
 public class JbootExceptionHolder {
 
     static ThreadLocal<List<Throwable>> throwables = ThreadLocal.withInitial(() -> new LinkedList<>());
+    static ThreadLocal<List<String>> messages = ThreadLocal.withInitial(() -> new LinkedList<>());
 
     public static void release() {
         if (!throwables.get().isEmpty()){
             throwables.get().clear();
+        }
+        if (!messages.get().isEmpty()){
+            messages.get().clear();
         }
     }
 
     public static void hold(Throwable ex) {
         throwables.get().add(ex);
     }
+    public static void hold(String message,Throwable ex) {
+        messages.get().add(message);
+        throwables.get().add(ex);
+    }
 
     public static List<Throwable> getThrowables() {
         return throwables.get();
+    }
+
+    public static List<String> getMessages() {
+        return messages.get();
     }
 
 

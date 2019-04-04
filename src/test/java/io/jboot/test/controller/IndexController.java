@@ -14,4 +14,8 @@ public class IndexController extends JbootController {
     public void classPath() {
         renderText(PathKit.getRootClassPath());
     }
+
+    public void error500(){
+
+    }
 }

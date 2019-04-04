@@ -37,12 +37,11 @@ public class JbootErrorRender extends Render {
     protected static final String html401 = "<html><head><title>401 Unauthorized</title></head><body bgcolor='white'><center><h1>401 Unauthorized</h1></center><hr>" + poweredBy + "</body></html>";
     protected static final String html403 = "<html><head><title>403 Forbidden</title></head><body bgcolor='white'><center><h1>403 Forbidden</h1></center><hr>" + poweredBy + "</body></html>";
 
-    protected static final String html500 = "<html><head><title>500 Internal Server Error</title></head>" +
+    protected static final String html500_header = "<html><head><title>500 Internal Server Error</title></head>" +
             "<body bgcolor='white'><center><h1>500 Internal Server Error</h1></center>" +
-            "<hr>" +
-            "%s" +
-            "<hr>" + poweredBy +
-            "</body></html>";
+            "<hr>";
+
+    protected static final String html500_footer = "<hr>" + poweredBy + "</body></html>";
 
     protected int errorCode;
 
@@ -92,21 +91,25 @@ public class JbootErrorRender extends Render {
 
 
     public String build500ErrorInfo() {
-        List<Throwable> throwables = JbootExceptionHolder.getThrowables();
-        if (throwables == null || throwables.size() == 0) {
-            return String.format(html500, "");
+        StringBuilder stringBuilder = new StringBuilder(html500_header);
+
+        List<String> messages = JbootExceptionHolder.getMessages();
+        for (String message : messages) {
+            stringBuilder.append(message).append("<br />");
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
+        List<Throwable> throwables = JbootExceptionHolder.getThrowables();
         for (Throwable throwable : throwables) {
-            stringBuilder.append(throwable.getClass().getName() + " : " + throwable.getMessage() + "<br />");
+            stringBuilder.append(throwable.getClass().getName() + " : " + throwable.getMessage()).append("<br />");
             StackTraceElement[] elems = throwable.getStackTrace();
             for (StackTraceElement element : elems) {
-                stringBuilder.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at " + element + "<br />");
+                stringBuilder.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at ")
+                        .append(element)
+                        .append("<br />");
             }
         }
 
-        return String.format(html500, stringBuilder.toString());
+        return stringBuilder.append(html500_footer).toString();
     }
 }
 

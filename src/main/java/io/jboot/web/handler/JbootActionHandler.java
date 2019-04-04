@@ -30,6 +30,7 @@ import io.jboot.web.flashmessage.FlashMessageManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
@@ -177,7 +178,9 @@ public class JbootActionHandler extends ActionHandler {
         } catch (Exception e) {
             if (log.isErrorEnabled()) {
                 String qs = request.getQueryString();
-                log.error(qs == null ? target : target + "?" + qs, e);
+                String targetInfo = qs == null ? target : target + "?" + qs;
+                String info = buildControllerInfo(controller, action.getMethod());
+                log.error(info + " : "+targetInfo, e);
             }
             renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
         } finally {
@@ -189,6 +192,27 @@ public class JbootActionHandler extends ActionHandler {
                 CPI._clear_(controller);
             }
         }
+    }
+
+    private String buildControllerInfo(Controller controller, Method method) {
+
+        StringBuilder sb = new StringBuilder(controller.getClass().getName()).append(".");
+
+        String methodName = method.getName();
+        Class<?>[] params = method.getParameterTypes();
+        sb.append(methodName);
+        sb.append("(");
+
+        int paramPos = 0;
+        for (Class<?> clazz : params) {
+            sb.append(clazz.getName());
+            if (++paramPos < params.length) {
+                sb.append(",");
+            }
+        }
+        sb.append(")");
+        return sb.toString();
+
     }
 
 
