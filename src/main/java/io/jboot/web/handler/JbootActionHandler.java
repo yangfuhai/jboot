@@ -15,9 +15,6 @@
  */
 package io.jboot.web.handler;
 
-import com.google.common.collect.Sets;
-import com.jfinal.aop.Aop;
-import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.*;
 import com.jfinal.log.Log;
@@ -31,7 +28,6 @@ import io.jboot.web.flashmessage.FlashMessageManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.Set;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -79,13 +75,13 @@ public class JbootActionHandler extends ActionHandler {
             return;
         }
 
-        //对拦截器进行注入
-        injectActionInterceptors(action);
 
         Controller controller = null;
         try {
-            // Controller controller = action.getControllerClass().newInstance();
             controller = controllerFactory.getController(action.getControllerClass());
+            if (injectDependency) {
+                com.jfinal.aop.Aop.inject(controller);
+            }
             JbootControllerContext.hold(controller);
 //            controller.init(request, response, urlPara[0]);
             CPI._init_(controller, action, request, response, urlPara[0]);
@@ -152,51 +148,58 @@ public class JbootActionHandler extends ActionHandler {
                 log.error(qs == null ? target : target + "?" + qs, e);
             }
         } catch (ActionException e) {
-            int errorCode = e.getErrorCode();
-            String msg = null;
-            if (errorCode == 404) {
-                msg = "404 Not Found: ";
-            } else if (errorCode == 401) {
-                msg = "401 Unauthorized: ";
-            } else if (errorCode == 403) {
-                msg = "403 Forbidden: ";
-            }
-
-            if (msg != null) {
-                if (log.isWarnEnabled()) {
-                    String qs = request.getQueryString();
-                    log.warn(msg + (qs == null ? target : target + "?" + qs));
-                }
-            } else {
-                if (log.isErrorEnabled()) {
-                    String qs = request.getQueryString();
-                    log.error(qs == null ? target : target + "?" + qs, e);
-                }
-            }
-
-            e.getErrorRender().setContext(request, response, action.getViewPath()).render();
+            handleActionException(target, request, response, action, e);
         } catch (Exception e) {
             if (log.isErrorEnabled()) {
                 String qs = request.getQueryString();
                 String targetInfo = qs == null ? target : target + "?" + qs;
                 String info = buildControllerInfo(controller, action.getMethod());
-                log.error(info + " : "+targetInfo, e);
+                log.error(info + " : " + targetInfo, e);
             }
             renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
         } finally {
-            if (controller != null) {
+            JbootControllerContext.release();
+            controllerFactory.recycle(controller);
+        }
+    }
 
-                JbootControllerContext.release();
 
-//              controller.clear();
-                CPI._clear_(controller);
+    private void handleActionException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ActionException e) {
+        int errorCode = e.getErrorCode();
+        String msg = null;
+        if (errorCode == 404) {
+            msg = "404 Not Found: ";
+        } else if (errorCode == 400) {
+            msg = "400 Bad Request: ";
+        } else if (errorCode == 401) {
+            msg = "401 Unauthorized: ";
+        } else if (errorCode == 403) {
+            msg = "403 Forbidden: ";
+        }
+
+        if (msg != null) {
+            if (log.isWarnEnabled()) {
+                String qs = request.getQueryString();
+                msg = msg + (qs == null ? target : target + "?" + qs);
+                if (e.getMessage() != null) {
+                    msg = msg + "\n" + e.getMessage();
+                }
+                log.warn(msg);
+            }
+        } else {
+            if (log.isErrorEnabled()) {
+                String qs = request.getQueryString();
+                log.error(errorCode + " Error: " + (qs == null ? target : target + "?" + qs), e);
             }
         }
+
+        e.getErrorRender().setContext(request, response, action.getViewPath()).render();
     }
 
     private String buildControllerInfo(Controller controller, Method method) {
 
-        StringBuilder sb = new StringBuilder(controller.getClass().getName()).append(".");
+        StringBuilder sb = new StringBuilder(controller.getClass().getName())
+                .append(".");
 
         String methodName = method.getName();
         Class<?>[] params = method.getParameterTypes();
@@ -220,33 +223,4 @@ public class JbootActionHandler extends ActionHandler {
         new FixedInvocation(inv).invoke();
     }
 
-    static Set<Action> injectedActions = Sets.newConcurrentHashSet();
-
-    /**
-     * 对所有拦截器进行注入
-     *
-     * @param action
-     */
-    private void injectActionInterceptors(Action action) {
-
-        //获取这个拦截器下的所有拦截器
-        //如果没有拦截器，直接返回
-        Interceptor[] interceptors = action.getInterceptors();
-        if (interceptors == null || interceptors.length == 0) {
-            return;
-        }
-
-        //如果注入过了，就没必要再次注入
-        //因为拦截器是在整个系统中是单例的
-        if (injectedActions.contains(action)) {
-            return;
-        }
-
-        //对所有拦截器进行注入
-        for (Interceptor interceptor : interceptors) {
-            Aop.inject(interceptor);
-        }
-
-        injectedActions.add(action);
-    }
 }
