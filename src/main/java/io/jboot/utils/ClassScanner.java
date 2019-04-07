@@ -299,19 +299,41 @@ public class ClassScanner {
 
         findClassPathsAndJars(jarPaths, classPaths, ClassScanner.class.getClassLoader());
 
-        for (String jarPath : jarPaths) {
-            if (JbootConfigManager.me().isDevMode()) {
-                System.out.println("ClassScanner scan jar : " + jarPath);
-            }
-            addClassesFromJar(jarPath);
-        }
+        String tomcatClassPath = null;
 
         for (String classPath : classPaths) {
+            //过滤tomcat自身的class path
+            if (new File(classPath, "tomcat-api.jar").exists()) {
+                tomcatClassPath = classPath;
+                continue;
+            }
+
             if (JbootConfigManager.me().isDevMode()) {
                 System.out.println("ClassScanner scan classpath : " + classPath);
             }
+
             addClassesFromClassPath(classPath);
         }
+
+        for (String jarPath : jarPaths) {
+
+            //过滤 tomcat 的 jar
+            if (tomcatClassPath != null && jarPath.startsWith(tomcatClassPath)) {
+                continue;
+            }
+
+            if (!isIncludeJar(jarPath)) {
+                continue;
+            }
+
+            if (JbootConfigManager.me().isDevMode()) {
+                System.out.println("ClassScanner scan jar : " + jarPath);
+            }
+
+            addClassesFromJar(jarPath);
+        }
+
+
     }
 
     private static void addClassesFromJar(String jarPath) {
@@ -379,9 +401,7 @@ public class ClassScanner {
                         continue;
                     }
 
-                    if (isIncludeJar(path)) {
-                        jarPaths.add(path);
-                    }
+                    jarPaths.add(path);
                 }
             }
             ClassLoader parent = classLoader.getParent();
