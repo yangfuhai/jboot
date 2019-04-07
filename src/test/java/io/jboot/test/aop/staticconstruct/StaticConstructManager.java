@@ -2,7 +2,7 @@ package io.jboot.test.aop.staticconstruct;
 
 import io.jboot.aop.annotation.StaticConstruct;
 
-@StaticConstruct
+@StaticConstruct("me")
 public class StaticConstructManager {
 
     private static StaticConstructManager me = new StaticConstructManager();
