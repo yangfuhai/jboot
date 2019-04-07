@@ -3,6 +3,7 @@ package io.jboot.test.aop.inject;
 import com.jfinal.aop.Inject;
 import io.jboot.aop.annotation.ConfigValue;
 import io.jboot.components.limiter.annotation.EnableLimit;
+import io.jboot.test.aop.staticconstruct.StaticConstructManager;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -12,6 +13,9 @@ public class AopController extends JbootController {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private StaticConstructManager manager;
 
     @ConfigValue("undertow.host")
     private String host;
