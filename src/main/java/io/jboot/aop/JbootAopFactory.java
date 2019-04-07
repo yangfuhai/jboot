@@ -16,6 +16,7 @@
 package io.jboot.aop;
 
 import com.jfinal.aop.AopFactory;
+import com.jfinal.aop.Enhancer;
 import com.jfinal.aop.Inject;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Controller;
@@ -23,6 +24,7 @@ import com.jfinal.plugin.activerecord.Model;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.annotation.ConfigValue;
+import io.jboot.aop.annotation.StaticConstruct;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
@@ -33,10 +35,7 @@ import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.db.model.JbootModel;
 import io.jboot.service.JbootServiceBase;
-import io.jboot.utils.AnnotationUtil;
-import io.jboot.utils.ArrayUtil;
-import io.jboot.utils.ClassScanner;
-import io.jboot.utils.StrUtil;
+import io.jboot.utils.*;
 import io.jboot.web.controller.JbootController;
 
 import java.io.Serializable;
@@ -129,9 +128,16 @@ public class JbootAopFactory extends AopFactory {
     @Override
     protected Object createObject(Class<?> targetClass) {
         ConfigModel configModel = targetClass.getAnnotation(ConfigModel.class);
-        return configModel != null
-                ? JbootConfigManager.me().get(targetClass)
-                : com.jfinal.aop.Enhancer.enhance(targetClass, buildAopInterceptors());
+        if (configModel != null) {
+            return JbootConfigManager.me().get(targetClass);
+        }
+
+        StaticConstruct staticConstruct = targetClass.getAnnotation(StaticConstruct.class);
+        if (staticConstruct != null) {
+            return ClassUtil.newInstanceByStaticConstruct(targetClass, staticConstruct);
+        }
+
+        return Enhancer.enhance(targetClass, buildAopInterceptors());
     }
 
     @Override

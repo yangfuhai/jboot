@@ -17,8 +17,12 @@ package io.jboot.utils;
 
 import com.jfinal.aop.Aop;
 import com.jfinal.log.Log;
+import io.jboot.aop.annotation.StaticConstruct;
+import io.jboot.exception.JbootException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -85,6 +89,57 @@ public class ClassUtil {
 
             return null;
         }
+    }
+
+    public static <T> T newInstanceByStaticConstruct(Class<T> clazz) {
+        StaticConstruct staticConstruct = clazz.getAnnotation(StaticConstruct.class);
+        if (staticConstruct == null) {
+            return null;
+        }
+
+        return newInstanceByStaticConstruct(clazz, staticConstruct);
+    }
+
+    public static <T> T newInstanceByStaticConstruct(Class<T> clazz, StaticConstruct staticConstruct) {
+
+        Method method = getStaticConstruct(staticConstruct.value(), clazz);
+
+        if (method == null) {
+            throw new JbootException("can not new instance by static constrauct for class : " + clazz);
+        }
+
+        try {
+            return (T) method.invoke(null, null);
+        } catch (Exception e) {
+
+            log.error("can not invoke method:" + method.getName()
+                    + " in class : "
+                    + clazz + "\n"
+                    + e.toString(), e);
+
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+    private static Method getStaticConstruct(String name, Class clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            if (Modifier.isStatic(method.getModifiers())
+                    && Modifier.isPublic(method.getModifiers())
+                    && method.getReturnType() == clazz) {
+                if (StrUtil.isBlank(name)) {
+                    return method;
+                } else if (name.equals(method.getName())) {
+                    return method;
+                }
+            }
+        }
+        return null;
     }
 
     /**
