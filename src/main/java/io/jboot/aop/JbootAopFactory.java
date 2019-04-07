@@ -38,7 +38,6 @@ import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -172,8 +171,6 @@ public class JbootAopFactory extends AopFactory {
                     && c != Controller.class
                     && c != JbootServiceBase.class
                     && c != Object.class
-                    && c != Interceptor.class
-                    && c != FixedInterceptor.class
                     && c != JbootModel.class
                     && c != Model.class
                     && c != null

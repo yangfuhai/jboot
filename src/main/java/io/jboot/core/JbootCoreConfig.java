@@ -16,6 +16,7 @@
 package io.jboot.core;
 
 import com.jfinal.aop.Aop;
+import com.jfinal.aop.AopManager;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
@@ -69,7 +70,7 @@ public class JbootCoreConfig extends JFinalConfig {
     private List<Routes.Route> routeList = new ArrayList<>();
 
     public JbootCoreConfig() {
-        Aop.setAopFactory(JbootAopFactory.me());
+        AopManager.me().setAopFactory(JbootAopFactory.me());
         Aop.inject(this);
         JbootAppListenerManager.me().onInit();
     }
