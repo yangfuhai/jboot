@@ -1,5 +1,10 @@
+jboot v2.0.6:
+
+
+
 jboot v2.0.5:
 升级 JFinal 到 3.8 最新版本
+
 
 jboot v2.0.4:
 优化：优化 JbootController 的 getBaseUrl 性能问题
