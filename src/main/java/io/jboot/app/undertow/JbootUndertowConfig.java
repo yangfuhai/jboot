@@ -25,6 +25,10 @@ import java.net.ServerSocket;
 
 public class JbootUndertowConfig extends UndertowConfig {
 
+    protected static final String UNDERTOW_PORT = "undertow.port";
+    protected static final String UNDERTOW_HOST = "undertow.host";
+    protected static final String UNDERTOW_RESOURCEPATH = "undertow.resourcePath";
+
 
     public JbootUndertowConfig(Class<?> jfinalConfigClass) {
         super(jfinalConfigClass);
@@ -45,25 +49,28 @@ public class JbootUndertowConfig extends UndertowConfig {
     @Override
     protected PropExt createPropExt(String undertowConfig) {
 
-        this.resourcePath = "classpath:webapp," + this.resourcePath;
-
         PropExt propExt = super.createPropExt(undertowConfig)
                 .append(new PropExt(JbootConfigManager.me().getProperties()));
 
-        String port = propExt.get("undertow.port");
+        String port = propExt.get(UNDERTOW_PORT);
         Integer availablePort = getAvailablePort();
         if (port == null || port.trim().length() == 0) {
-            propExt.getProperties().put("undertow.port", "8080");
-            JbootConfigManager.me().setBootArg("undertow.port", "8080");
+            propExt.getProperties().put(UNDERTOW_PORT, "8080");
+            JbootConfigManager.me().setBootArg(UNDERTOW_PORT, "8080");
         } else if (port.trim().equals("*") && availablePort != null) {
-            propExt.getProperties().put("undertow.port", availablePort.toString());
-            JbootConfigManager.me().setBootArg("undertow.port", availablePort.toString());
+            propExt.getProperties().put(UNDERTOW_PORT, availablePort.toString());
+            JbootConfigManager.me().setBootArg(UNDERTOW_PORT, availablePort.toString());
         }
 
-        String host = propExt.get("undertow.host");
+        String host = propExt.get(UNDERTOW_HOST);
         if (host == null || host.trim().length() == 0) {
-            propExt.getProperties().put("undertow.host", "0.0.0.0");
-            JbootConfigManager.me().setBootArg("undertow.host", "0.0.0.0");
+            propExt.getProperties().put(UNDERTOW_HOST, "0.0.0.0");
+            JbootConfigManager.me().setBootArg(UNDERTOW_HOST, "0.0.0.0");
+        }
+
+        String resPath = propExt.get(UNDERTOW_RESOURCEPATH);
+        if (resPath == null || resPath.trim().length() == 0) {
+            propExt.getProperties().put(UNDERTOW_RESOURCEPATH, "classpath:webapp," + this.resourcePath);
         }
 
         return propExt;
