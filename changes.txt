@@ -1,5 +1,8 @@
 jboot v2.0.6:
-
+新增：@StaticConstruct 的支持，用于支持 AOP 自定义的静态构造
+优化：优化 JbootActionHandler 代码，减少不必要的 AOP 注入
+优化：优化 ClassScanner 代码，在 Tomcat 环境下排除对 Tomcat Jar 包的扫描
+优化：优化 JbootUndertowConfig 代码，增加 classpath:webapp 默认设置的支持
 
 
 jboot v2.0.5:
