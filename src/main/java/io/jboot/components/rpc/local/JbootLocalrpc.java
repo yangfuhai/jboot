@@ -15,29 +15,23 @@
  */
 package io.jboot.components.rpc.local;
 
+import com.jfinal.aop.Aop;
+import com.jfinal.aop.AopManager;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import io.jboot.utils.ClassUtil;
 
 
 public class JbootLocalrpc extends JbootrpcBase {
 
-    Map<Class, Object> objectMap = new ConcurrentHashMap<>();
-
-    public JbootLocalrpc() {
-        
-    }
-
     @Override
     public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
-        return (T) objectMap.get(serviceClass);
+        return Aop.get(serviceClass);
     }
 
     @Override
     public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig) {
-        objectMap.put(interfaceClass, object);
+        AopManager.me().addMapping(interfaceClass, ClassUtil.getUsefulClass(object.getClass()));
         return true;
     }
 }

@@ -172,7 +172,7 @@ public class ClassUtil {
     }
 
 
-    public static Class<?> getUsefulClass(Class<?> clazz) {
+    public static Class getUsefulClass(Class<?> clazz) {
         //ControllerTest$ServiceTest$$EnhancerByGuice$$40471411#hello
         //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
         return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
