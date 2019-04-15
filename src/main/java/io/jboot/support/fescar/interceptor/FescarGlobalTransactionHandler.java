@@ -20,7 +20,7 @@ import com.alibaba.fescar.common.util.StringUtils;
 import com.alibaba.fescar.tm.api.FailureHandler;
 import com.alibaba.fescar.tm.api.TransactionalExecutor;
 import com.jfinal.aop.Invocation;
-import io.jboot.support.fescar.FescarManager;
+import io.jboot.support.fescar.JbootFescarManager;
 import io.jboot.support.fescar.annotation.FescarGlobalTransactional;
 
 import java.lang.reflect.Method;
@@ -29,11 +29,11 @@ public class FescarGlobalTransactionHandler {
 
     public static Object handleGlobalTransaction(final Invocation invocation, final FescarGlobalTransactional globalTrxAnno) throws Throwable {
         try {
-            return FescarManager.me().getTransactionalTemplate()
+            return JbootFescarManager.me().getTransactionalTemplate()
                     .execute(new TransactionalExecutor() {
                         public Object execute() {
                             invocation.invoke();
-                            return null;
+                            return invocation.getReturnValue();
                         }
 
                         public int timeout() {
@@ -50,7 +50,7 @@ public class FescarGlobalTransactionHandler {
                     });
 
         } catch (TransactionalExecutor.ExecutionException e) {
-            FailureHandler failureHandler = FescarManager.me().getFailureHandler();
+            FailureHandler failureHandler = JbootFescarManager.me().getFailureHandler();
             TransactionalExecutor.Code code = e.getCode();
             switch (code) {
                 case RollbackDone:

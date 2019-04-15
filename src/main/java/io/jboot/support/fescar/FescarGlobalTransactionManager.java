@@ -15,44 +15,41 @@
  */
 package io.jboot.support.fescar;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.fescar.common.exception.NotSupportYetException;
+import com.alibaba.fescar.common.util.StringUtils;
 import com.alibaba.fescar.config.ConfigurationFactory;
-import com.alibaba.fescar.rm.RMClientAT;
+import com.alibaba.fescar.core.rpc.netty.RmRpcClient;
+import com.alibaba.fescar.core.rpc.netty.ShutdownHook;
+import com.alibaba.fescar.core.rpc.netty.TmRpcClient;
+import com.alibaba.fescar.rm.RMClient;
 import com.alibaba.fescar.tm.TMClient;
 import com.alibaba.fescar.tm.api.DefaultFailureHandlerImpl;
 import com.alibaba.fescar.tm.api.FailureHandler;
+import com.jfinal.log.Log;
 
-/***
- *
- * @author Hobbit Leon_wy@163.com
- *
- */
 public class FescarGlobalTransactionManager {
-    /**
-     *
-     */
-    private String applicationId;
-    private String txServiceGroup;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FescarGlobalTransactionManager.class);
+    private static final long serialVersionUID = 1L;
+    private static final Log LOGGER = Log.getLog(FescarGlobalTransactionManager.class);
 
-    private static final int MT_MODE = 2;
 
-    /**
-     *
-     */
-    @SuppressWarnings("unused")
     private final FailureHandler failureHandlerHook;
     private static final FailureHandler DEFAULT_FAIL_HANDLER = new DefaultFailureHandlerImpl();
-    private static final int AT_MODE = 1;
-    private static final int DEFAULT_MODE = AT_MODE;
-    private int mode;
     private final boolean disableGlobalTransaction = ConfigurationFactory.getInstance()
             .getBoolean("service.disableGlobalTransaction", false);
+
+
+    private static final int AT_MODE = 1;
+    private static final int MT_MODE = 2;
+
+
+    private static final int DEFAULT_MODE = AT_MODE + MT_MODE;
+    private static final int ORDER_NUM = 1024;
+
+
+    private final String applicationId;
+    private final String txServiceGroup;
+    private final int mode;
+
 
     /**
      * Instantiates a new Global transaction manager.
@@ -111,28 +108,39 @@ public class FescarGlobalTransactionManager {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Initializing Global Transaction Clients ... ");
         }
-        if (StringUtils.isEmpty(applicationId) || StringUtils.isEmpty(txServiceGroup)) {
+        if (StringUtils.isNullOrEmpty(applicationId) || StringUtils.isNullOrEmpty(txServiceGroup)) {
             throw new IllegalArgumentException(
                     "applicationId: " + applicationId + ", txServiceGroup: " + txServiceGroup);
         }
+        //init TM
         TMClient.init(applicationId, txServiceGroup);
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Transaction Manager Client is initialized. applicationId[" + applicationId
-                    + "] txServiceGroup[" + txServiceGroup + "]");
+            LOGGER.info(
+                    "Transaction Manager Client is initialized. applicationId[" + applicationId + "] txServiceGroup["
+                            + txServiceGroup + "]");
         }
-        if ((AT_MODE & mode) > 0) {
-            RMClientAT.init(applicationId, txServiceGroup);
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Resource Manager for AT Client is initialized. applicationId[" + applicationId
-                        + "] txServiceGroup[" + txServiceGroup + "]");
-            }
+        //init RM
+        RMClient.init(applicationId, txServiceGroup);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Resource Manager is initialized. applicationId[" + applicationId + "] txServiceGroup[" + txServiceGroup + "]");
         }
-        if ((MT_MODE & mode) > 0) {
-            throw new NotSupportYetException();
-        }
+
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Global Transaction Clients are initialized. ");
         }
+
+        registerSpringShutdownHook();
+    }
+
+
+    private void registerSpringShutdownHook() {
+        ShutdownHook.removeRuntimeShutdownHook();
+        ShutdownHook.getInstance().addDisposable(TmRpcClient.getInstance(applicationId, txServiceGroup));
+        ShutdownHook.getInstance().addDisposable(RmRpcClient.getInstance(applicationId, txServiceGroup));
+    }
+
+    public void destroy() {
+        ShutdownHook.getInstance().destroyAll();
     }
 
     public void init() {

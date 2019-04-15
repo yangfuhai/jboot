@@ -17,7 +17,7 @@ package io.jboot.support.fescar.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.support.fescar.FescarManager;
+import io.jboot.support.fescar.JbootFescarManager;
 import io.jboot.support.fescar.annotation.FescarGlobalLock;
 import io.jboot.support.fescar.annotation.FescarGlobalTransactional;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
@@ -27,6 +27,8 @@ import java.lang.reflect.Method;
 /***
  *
  * @author Hobbit Leon_wy@163.com , Michael Yang (fuhai99@gmail.com)
+ * 参考：https://github.com/seata/seata/blob/develop/spring/src/main/java/
+ * com/alibaba/fescar/spring/annotation/GlobalTransactionalInterceptor.java
  *
  */
 public class FescarGlobalTransactionalInterceptor implements Interceptor, FixedInterceptor {
@@ -35,7 +37,7 @@ public class FescarGlobalTransactionalInterceptor implements Interceptor, FixedI
     }
 
     public void intercept(Invocation inv) {
-        if (!FescarManager.me().isEnable()) {
+        if (!JbootFescarManager.me().isEnable()) {
             inv.invoke();
             return;
         }
@@ -58,13 +60,13 @@ public class FescarGlobalTransactionalInterceptor implements Interceptor, FixedI
     }
 
     private void handleGlobalLock(final Invocation inv) throws Exception {
-        FescarManager.me().getGlobalLockTemplate().execute(() -> {
+        JbootFescarManager.me().getGlobalLockTemplate().execute(() -> {
             try {
                 inv.invoke();
-                return null;
+                return inv.getReturnValue();
             } catch (Throwable e) {
                 if (e instanceof Exception) {
-                    throw (Exception) e;
+                    throw (Exception)e;
                 } else {
                     throw new RuntimeException(e);
                 }

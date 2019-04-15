@@ -19,7 +19,7 @@ import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.rpc.*;
 import com.alibaba.fescar.core.context.RootContext;
 import com.jfinal.log.Log;
-import io.jboot.support.fescar.FescarManager;
+import io.jboot.support.fescar.JbootFescarManager;
 
 /**
  * The type Transaction propagation filter.
@@ -31,7 +31,7 @@ public class TransactionPropagationFilter implements Filter {
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-        if (!FescarManager.me().isEnable()){
+        if (!JbootFescarManager.me().isEnable()){
             return invoker.invoke(invocation);
         }
         String xid = RootContext.getXID();

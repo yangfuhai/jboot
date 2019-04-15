@@ -26,15 +26,15 @@ import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
-public class FescarManager {
+public class JbootFescarManager {
 
-    private static FescarManager fescarManager = new FescarManager();
+    private static JbootFescarManager fescarManager = new JbootFescarManager();
 
-    private FescarManager() {
+    private JbootFescarManager() {
 
     }
 
-    public static FescarManager me() {
+    public static JbootFescarManager me() {
         return fescarManager;
     }
 
@@ -43,6 +43,7 @@ public class FescarManager {
 
     private TransactionalTemplate transactionalTemplate;
     private GlobalLockTemplate<Object> globalLockTemplate;
+    private FescarGlobalTransactionManager transactionManager;
 
 
     public void init() {
@@ -56,12 +57,12 @@ public class FescarManager {
         }
 
 
-        FescarGlobalTransactionManager fgtm = new FescarGlobalTransactionManager(
+        transactionManager = new FescarGlobalTransactionManager(
                 config.getApplicationId(),
                 config.getTxServiceGroup(),
                 config.getMode()
         );
-        fgtm.init();
+        transactionManager.init();
 
         this.transactionalTemplate = new TransactionalTemplate();
         this.globalLockTemplate = new GlobalLockTemplate<>();
@@ -72,7 +73,12 @@ public class FescarManager {
         return enable;
     }
 
+    public void stop() {
+        if (isEnable()) transactionManager.destroy();
+    }
+
     private Object handler;
+
     public FailureHandler getFailureHandler() {
         if (handler == null) {
             synchronized (this) {
