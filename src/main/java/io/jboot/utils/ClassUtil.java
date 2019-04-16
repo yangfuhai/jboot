@@ -181,22 +181,21 @@ public class ClassUtil {
 
     public static String buildMethodString(Method method) {
 
-        StringBuilder sb = new StringBuilder(method.getDeclaringClass().getName())
-                .append(".");
+        StringBuilder sb = new StringBuilder()
+                .append(method.getDeclaringClass().getName())
+                .append(".")
+                .append(method.getName())
+                .append("(");
 
-        String methodName = method.getName();
         Class<?>[] params = method.getParameterTypes();
-        sb.append(methodName);
-        sb.append("(");
-        int paramPos = 0;
+        int in = 0;
         for (Class<?> clazz : params) {
             sb.append(clazz.getName());
-            if (++paramPos < params.length) {
+            if (++in < params.length) {
                 sb.append(",");
             }
         }
-        sb.append(")");
-        return sb.toString();
+        return sb.append(")").toString();
 
     }
 
