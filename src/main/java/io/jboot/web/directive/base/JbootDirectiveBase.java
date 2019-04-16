@@ -18,6 +18,7 @@ package io.jboot.web.directive.base;
 import com.jfinal.aop.Aop;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Env;
+import com.jfinal.template.TemplateException;
 import com.jfinal.template.expr.ast.ExprList;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
@@ -62,7 +63,7 @@ public abstract class JbootDirectiveBase extends Directive {
         try {
             writer.write(text);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new TemplateException(e.getMessage(), location, e);
         }
     }
 
