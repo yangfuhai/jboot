@@ -21,13 +21,13 @@ import com.jfinal.log.Log;
 import com.jfinal.render.RedirectRender;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
 import io.jboot.web.flashmessage.FlashMessageManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -153,7 +153,7 @@ public class JbootActionHandler extends ActionHandler {
             if (log.isErrorEnabled()) {
                 String qs = request.getQueryString();
                 String targetInfo = qs == null ? target : target + "?" + qs;
-                String info = buildControllerInfo(controller, action.getMethod());
+                String info = ClassUtil.buildMethodString(action.getMethod());
                 log.error(info + " : " + targetInfo, e);
             }
             renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
@@ -196,27 +196,6 @@ public class JbootActionHandler extends ActionHandler {
         e.getErrorRender().setContext(request, response, action.getViewPath()).render();
     }
 
-    private String buildControllerInfo(Controller controller, Method method) {
-
-        StringBuilder sb = new StringBuilder(controller.getClass().getName())
-                .append(".");
-
-        String methodName = method.getName();
-        Class<?>[] params = method.getParameterTypes();
-        sb.append(methodName);
-        sb.append("(");
-
-        int paramPos = 0;
-        for (Class<?> clazz : params) {
-            sb.append(clazz.getName());
-            if (++paramPos < params.length) {
-                sb.append(",");
-            }
-        }
-        sb.append(")");
-        return sb.toString();
-
-    }
 
 
     private void invokeInvocation(Invocation inv) {

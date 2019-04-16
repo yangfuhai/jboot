@@ -178,4 +178,26 @@ public class ClassUtil {
         return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
     }
 
+
+    public static String buildMethodString(Method method) {
+
+        StringBuilder sb = new StringBuilder(method.getDeclaringClass().getName())
+                .append(".");
+
+        String methodName = method.getName();
+        Class<?>[] params = method.getParameterTypes();
+        sb.append(methodName);
+        sb.append("(");
+        int paramPos = 0;
+        for (Class<?> clazz : params) {
+            sb.append(clazz.getName());
+            if (++paramPos < params.length) {
+                sb.append(",");
+            }
+        }
+        sb.append(")");
+        return sb.toString();
+
+    }
+
 }

@@ -22,8 +22,7 @@ import com.alibaba.fescar.tm.api.TransactionalExecutor;
 import com.jfinal.aop.Invocation;
 import io.jboot.support.fescar.JbootFescarManager;
 import io.jboot.support.fescar.annotation.FescarGlobalTransactional;
-
-import java.lang.reflect.Method;
+import io.jboot.utils.ClassUtil;
 
 public class FescarGlobalTransactionHandler {
 
@@ -45,7 +44,7 @@ public class FescarGlobalTransactionHandler {
                             if (!StringUtils.isNullOrEmpty(name)) {
                                 return name;
                             }
-                            return formatMethod(invocation.getMethod());
+                            return ClassUtil.buildMethodString(invocation.getMethod());
                         }
                     });
 
@@ -71,22 +70,4 @@ public class FescarGlobalTransactionHandler {
         }
     }
 
-    private static String formatMethod(Method method) {
-        StringBuilder sb = new StringBuilder();
-
-        String methodName = method.getName();
-        Class<?>[] params = method.getParameterTypes();
-        sb.append(methodName);
-        sb.append("(");
-
-        int paramPos = 0;
-        for (Class<?> clazz : params) {
-            sb.append(clazz.getName());
-            if (++paramPos < params.length) {
-                sb.append(",");
-            }
-        }
-        sb.append(")");
-        return sb.toString();
-    }
 }
