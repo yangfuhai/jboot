@@ -44,7 +44,7 @@ public class JbootResourceLoader {
     public void start() {
         try {
             String classPath = JbootResourceLoader.class.getClassLoader().getResource("").toURI().getPath();
-            File srcRootPath = new File(classPath, "../..");
+            File srcRootPath = new File(classPath, "../..").getCanonicalFile();
 
             if (new File(srcRootPath.getParent(), "pom.xml").exists()) {
                 srcRootPath = srcRootPath.getParentFile();
