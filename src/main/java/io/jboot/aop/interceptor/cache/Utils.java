@@ -104,8 +104,7 @@ class Utils {
     public static void ensureArgumentNotNull(String argument, Class clazz, Method method) {
         if (argument == null) {
             throw new JbootException("not support empty key for annotation @Cacheable, @CacheEvict or @CachePut " +
-                    "at method[" + clazz.getName() + "." + method.getName() + "()] " +
-                    "with argument class:" + argument.getClass().getName() + ", " +
+                    "at method[" + ClassUtil.buildMethodString(method) + "], " +
                     "please config key properties in @Cacheable, @CacheEvict or @CachePut annotation.");
         }
     }
@@ -113,7 +112,7 @@ class Utils {
     public static void ensureCachenameAvailable(Method method, Class targetClass, String cacheName) {
         if (StrUtil.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name() must not empty in method [%s].",
-                    ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
+                    ClassUtil.buildMethodString(method)));
         }
     }
 
@@ -193,18 +192,17 @@ class Utils {
         String cacheName = AnnotationUtil.get(evict.name());
         if (StrUtil.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name()  must not empty in method [%s].",
-                    ClassUtil.getUsefulClass(targetClass).getName() + "." + method.getName()));
+                    ClassUtil.buildMethodString(method)));
         }
 
         String cacheKey = AnnotationUtil.get(evict.key());
 
-        if ("*".equals(cacheKey)) {
+        if ("*".equals(cacheKey) || StrUtil.isBlank(cacheKey)) {
             Jboot.getCache().removeAll(cacheName);
-            return;
+        } else {
+            cacheKey = Utils.buildCacheKey(cacheKey, targetClass, method, arguments);
+            Jboot.getCache().remove(cacheName, cacheKey);
         }
-
-        cacheKey = Utils.buildCacheKey(cacheKey, targetClass, method, arguments);
-        Jboot.getCache().remove(cacheName, cacheKey);
     }
 
 
