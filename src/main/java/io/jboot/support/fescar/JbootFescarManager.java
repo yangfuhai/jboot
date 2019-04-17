@@ -17,6 +17,7 @@ package io.jboot.support.fescar;
 
 
 import com.alibaba.fescar.rm.GlobalLockTemplate;
+import com.alibaba.fescar.rm.datasource.DataSourceProxy;
 import com.alibaba.fescar.tm.api.DefaultFailureHandlerImpl;
 import com.alibaba.fescar.tm.api.FailureHandler;
 import com.alibaba.fescar.tm.api.TransactionalTemplate;
@@ -25,6 +26,8 @@ import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
+
+import javax.sql.DataSource;
 
 public class JbootFescarManager {
 
@@ -118,6 +121,12 @@ public class JbootFescarManager {
 
     public void setGlobalLockTemplate(GlobalLockTemplate<Object> globalLockTemplate) {
         this.globalLockTemplate = globalLockTemplate;
+    }
+
+    public DataSource wrapDataSource(DataSource dataSource) {
+        return config.isEnable() && config.isConfigOk()
+                ? new DataSourceProxy(dataSource)
+                : dataSource;
     }
 
 
