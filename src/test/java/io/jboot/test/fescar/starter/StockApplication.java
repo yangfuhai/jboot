@@ -23,7 +23,6 @@ public class StockApplication {
         JbootApplication.setBootArg("jboot.fescar.txServiceGroup", "dubbo_fescar_tx_group");
 
         JbootApplication.setBootArg("jboot.datasource.type", "mysql");
-        JbootApplication.setBootArg("jboot.datasource.factory", "fescar");
         JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://139.127.108.187:9527/ilife-mall2.0?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
         JbootApplication.setBootArg("jboot.datasource.user", "root");
         JbootApplication.setBootArg("jboot.datasource.password", "xjs123456789");

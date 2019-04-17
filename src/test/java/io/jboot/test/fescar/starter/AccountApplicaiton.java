@@ -14,7 +14,6 @@ public class AccountApplicaiton {
         JbootApplication.setBootArg("jboot.rpc.callMode", "registry");//注册中心模式
         JbootApplication.setBootArg("jboot.rpc.registryType", "zookeeper");//注册中心的类型：zookeeper
         JbootApplication.setBootArg("jboot.rpc.registryAddress", "127.0.0.1:2181");//注册中心，即zookeeper的地址
-        JbootApplication.setBootArg("jboot.datasource.factory", "fescar");
 
         //开启 @RPCBean 自动暴露功能，默认情况下是自动暴露的，但是 jboot.properties 文件关闭了，这里需要开启下
         JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);

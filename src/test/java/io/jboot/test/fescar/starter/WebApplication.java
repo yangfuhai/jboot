@@ -13,7 +13,7 @@ public class WebApplication extends JbootController {
 
         //jboot端口号配置
         JbootApplication.setBootArg("undertow.port", "8888");
-        JbootApplication.setBootArg("jboot.datasource.factory", "fescar");
+
         //RPC配置
         JbootApplication.setBootArg("jboot.rpc.filter", "fescar");
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
