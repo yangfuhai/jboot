@@ -1,3 +1,13 @@
+jboot v2.0.7:
+新增：基于 Seata 的分布式事务，新增对 DBCP, C3P0, BoneCP, HikariCP 和 Tomcat-JDBC 连接池的支持
+新增：新增 ClassUtil.buildMethodString() 方法，用于构建方法
+优化：优化当使用 @CacheEvict(name="cacheName") 不指定key时，删除所有的key
+优化：重构 JbootActionHandler 的错入输出代码
+优化：重构 JbootDirectiveBase，当渲染文本错误时，输出行号方便排除
+修复：当 RPC 修改为 Local 模式时，在某些特殊情况下无法获取服务的问题
+修复：修复在多 Module 下，由于上个版本优化 ResourceLoader 导致无法正确加载其他Module静态资源的问题
+
+
 jboot v2.0.6:
 新增：@StaticConstruct 的支持，用于支持 AOP 自定义的静态构造
 优化：优化 JbootActionHandler 代码，减少不必要的 AOP 注入
