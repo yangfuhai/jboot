@@ -20,6 +20,7 @@ import com.jfinal.aop.Enhancer;
 import com.jfinal.aop.Inject;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.LogKit;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
@@ -40,10 +41,7 @@ import io.jboot.web.controller.JbootController;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class JbootAopFactory extends AopFactory {
 
@@ -276,6 +274,38 @@ public class JbootAopFactory extends AopFactory {
 
         String configValue = JbootConfigManager.me().getConfigValue(key.trim());
         return StrUtil.isBlank(configValue) ? defaultValue : configValue;
+    }
+
+
+    /**
+     * 允许多次执行 AddMapping，方便在应用运行中可以切换 Mapping
+     *
+     * @param from
+     * @param to
+     * @param <T>
+     * @return
+     */
+    @Override
+    public synchronized <T> AopFactory addMapping(Class<T> from, Class<? extends T> to) {
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("The parameter from and to can not be null");
+        }
+
+        if (mapping == null) {
+            mapping = new HashMap<>(128, 0.25F);
+        }
+
+        Class mappingClass = mapping.get(from);
+        if (mappingClass != null) {
+            if (mappingClass == to) {
+                return this;
+            } else {
+                LogKit.warn("Aop Class[" + from + "] mapping changed from  " + mappingClass + " to " + to);
+            }
+        }
+
+        mapping.put(from, to);
+        return this;
     }
 
 

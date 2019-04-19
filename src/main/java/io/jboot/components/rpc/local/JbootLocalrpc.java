@@ -31,7 +31,9 @@ public class JbootLocalrpc extends JbootrpcBase {
 
     @Override
     public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig) {
+
         AopManager.me().addMapping(interfaceClass, ClassUtil.getUsefulClass(object.getClass()));
+
         return true;
     }
 }
