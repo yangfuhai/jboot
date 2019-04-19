@@ -204,12 +204,12 @@ public class ClassScanner {
     static {
         String scanJarPrefx = JbootConfigManager.me().getConfigValue("jboot.app.scanner.scanJarPrefix");
         if (scanJarPrefx != null) {
-            for (String prefix : scanJarPrefx.split(",")) addScanJarPrefix(prefix);
+            for (String prefix : scanJarPrefx.split(",")) addScanJarPrefix(prefix.trim());
         }
 
         String unScanJarPrefix = JbootConfigManager.me().getConfigValue("jboot.app.scanner.unScanJarPrefix");
         if (unScanJarPrefix != null) {
-            for (String prefix : unScanJarPrefix.split(",")) addUnscanJarPrefix(prefix);
+            for (String prefix : unScanJarPrefix.split(",")) addUnscanJarPrefix(prefix.trim());
         }
     }
 
@@ -241,6 +241,10 @@ public class ClassScanner {
                 .filter(ClassScanner::isInstantiable)
                 .collect(Collectors.toList());
 
+    }
+
+    public static void clearClassCache(){
+        applicationClassCache.clear();
     }
 
 
@@ -430,15 +434,20 @@ public class ClassScanner {
         }
 
         //from maven repository
-        if (path.contains(".m2/repository")) {
+        if (path.contains("/.m2/repository")
+                || path.contains("\\.m2\\repository")) {
             return false;
         }
 
-        if (path.startsWith(getJavaHome())) {
+        //from jre lib
+        if (path.contains("/jre/lib")
+                || path.contains("\\jre\\lib")) {
             return false;
         }
 
-        if (isJrelibPath(path)) {
+        //from java home
+        if (getJavaHome() != null
+                && path.startsWith(getJavaHome())) {
             return false;
         }
 
@@ -446,10 +455,6 @@ public class ClassScanner {
     }
 
 
-    private static boolean isJrelibPath(String path) {
-        path = path.toLowerCase();
-        return path.indexOf("/jre/lib/") > -1 || path.indexOf("\\jre\\lib\\") > -1;
-    }
 
 
     @SuppressWarnings("unchecked")
