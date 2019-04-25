@@ -23,6 +23,7 @@ import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -247,6 +248,20 @@ public class JbootController extends Controller {
     public String getPara(String name) {
         String value = super.getPara(name);
         return "".equals(value) ? null : value;
+    }
+
+    @NotAction
+    public Map<String,String> getParas(){
+        Map<String,String> map = null;
+        Enumeration<String> names = getParaNames();
+        if (names != null){
+            map = new HashMap<>();
+            while (names.hasMoreElements()){
+                String name = names.nextElement();
+                map.put(name,getPara(name));
+            }
+        }
+        return map;
     }
 
 
