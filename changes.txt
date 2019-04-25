@@ -1,3 +1,10 @@
+jboot v2.0.8:
+优化：JbootAopFactory 在多次新增 Mapping 同一个的时候，只发出警告而不出异常。
+优化：ClassScanner 扫描逻辑，使之更加易于阅读
+优化：JbootAopFactory 在进行 RPC 注入的时候，如果出现异常给出具体的注入类，方便排查
+优化：优化 AnnotationUtil 代码逻辑，防止在某些特殊情况可能出现空指针异常的问题
+
+
 jboot v2.0.7:
 新增：基于 Seata 的分布式事务，新增对 DBCP, C3P0, BoneCP, HikariCP 和 Tomcat-JDBC 连接池的支持
 新增：新增 ClassUtil.buildMethodString() 方法，用于构建方法
