@@ -21,6 +21,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
+import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
@@ -44,6 +45,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class JbootAopFactory extends AopFactory {
+
+    private static final Log LOG = Log.getLog(JbootAopFactory.class);
 
     //排除默认的映射
     private final static Class[] DEFAULT_EXCLUDES_MAPPING_CLASSES = new Class[]{
@@ -200,8 +203,7 @@ public class JbootAopFactory extends AopFactory {
 
         Object fieldInjectedObject = doGet(fieldInjectedClass);
 
-        field.setAccessible(true);
-        field.set(targetObject, fieldInjectedObject);
+        setFiled(field, targetObject, fieldInjectedObject);
 
     }
 
@@ -211,19 +213,22 @@ public class JbootAopFactory extends AopFactory {
      * @param targetObject
      * @param field
      * @param rpcInject
-     * @throws IllegalAccessException
      */
-    private void doInjectRPC(Object targetObject, Field field, RPCInject rpcInject) throws IllegalAccessException {
+    private void doInjectRPC(Object targetObject, Field field, RPCInject rpcInject) {
 
-        JbootrpcServiceConfig serviceConfig = new JbootrpcServiceConfig(rpcInject);
-        Class<?> fieldInjectedClass = field.getType();
+        try {
+            JbootrpcServiceConfig serviceConfig = new JbootrpcServiceConfig(rpcInject);
+            Class<?> fieldInjectedClass = field.getType();
 
-        Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
+            Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
 
-        Object fieldInjectedObject = jbootrpc.serviceObtain(fieldInjectedClass, serviceConfig);
-        field.setAccessible(true);
-        field.set(targetObject, fieldInjectedObject);
+            Object fieldInjectedObject = jbootrpc.serviceObtain(fieldInjectedClass, serviceConfig);
 
+            setFiled(field, targetObject, fieldInjectedObject);
+
+        } catch (Exception ex) {
+            LOG.error("can not inject rpc service in " + targetObject.getClass() + " by config " + rpcInject, ex);
+        }
     }
 
     /**
@@ -241,8 +246,8 @@ public class JbootAopFactory extends AopFactory {
 
         if (StrUtil.isNotBlank(value)) {
             Object fieldInjectedObject = JbootConfigManager.me().convert(fieldInjectedClass, value);
-            field.setAccessible(true);
-            field.set(targetObject, fieldInjectedObject);
+
+            setFiled(field, targetObject, fieldInjectedObject);
             return;
         }
 
@@ -260,20 +265,7 @@ public class JbootAopFactory extends AopFactory {
 
 
     private String getConfigValue(String key, Object targetObject, Field field) {
-        int indexOf = key.indexOf(":");
-
-        String defaultValue = null;
-        if (indexOf != -1) {
-            defaultValue = key.substring(indexOf + 1);
-            key = key.substring(0, indexOf);
-        }
-
-        if (StrUtil.isBlank(key)) {
-            throw new RuntimeException("can not inject config by empty key in " + targetObject.getClass() + ":" + field.getName());
-        }
-
-        String configValue = JbootConfigManager.me().getConfigValue(key.trim());
-        return StrUtil.isBlank(configValue) ? defaultValue : configValue;
+        return AnnotationUtil.getConfigValueByKeyString(key);
     }
 
 
@@ -306,6 +298,15 @@ public class JbootAopFactory extends AopFactory {
 
         mapping.put(from, to);
         return this;
+    }
+
+
+    protected void setFiled(Field filed, Object toObj, Object data) throws IllegalAccessException {
+        if (!filed.isAccessible()) {
+            filed.setAccessible(true);
+        }
+
+        filed.set(toObj, data);
     }
 
 
