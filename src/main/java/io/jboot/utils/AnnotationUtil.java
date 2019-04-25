@@ -15,23 +15,25 @@ public class AnnotationUtil {
 
         if (value.startsWith("${") && value.endsWith("}")) {
             String key = value.substring(2, value.length() - 1);
-            int indexOf = key.indexOf(":");
-
-            String defaultValue = null;
-            if (indexOf != -1) {
-                defaultValue = key.substring(indexOf + 1);
-                key = key.substring(0, indexOf);
-            }
-
-            if (StrUtil.isBlank(key)) throw new RuntimeException("can not config empty propertie key");
-            String configValue = JbootConfigManager.me().getConfigValue(key.trim());
-
-            String returnValue = StrUtil.isBlank(configValue) ? defaultValue.trim() : configValue;
-            return StrUtil.isBlank(returnValue) ? null : returnValue;
+            return getConfigValueByKeyString(key);
         }
 
         return value;
     }
+
+
+    public static String getConfigValueByKeyString(String key){
+        int indexOf = key.indexOf(":");
+        String defaultValue = null;
+        if (indexOf != -1) {
+            defaultValue = key.substring(indexOf + 1);
+            key = key.substring(0, indexOf);
+        }
+        String configValue = JbootConfigManager.me().getConfigValue(key.trim());
+        String returnValue = StrUtil.obtainDefaultIfBlank(configValue,defaultValue);
+        return StrUtil.isBlank(returnValue) ? null : returnValue.trim();
+    }
+
 
     public static Integer getInt(String value) {
         String intValue = get(value);
