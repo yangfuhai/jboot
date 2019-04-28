@@ -68,7 +68,12 @@ public class JbootCacheInterceptor implements Interceptor {
         inv.invoke();
 
         data = inv.getReturnValue();
-        putDataToCache(cacheable,cacheName,cacheKey,data == null ? NULL_VALUE : data);
+
+        if (data != null) {
+            putDataToCache(cacheable, cacheName, cacheKey, data);
+        } else if (cacheable.nullCacheEnable()) {
+            putDataToCache(cacheable, cacheName, cacheKey, NULL_VALUE);
+        }
     }
 
     protected void putDataToCache(Cacheable cacheable, String cacheName, String cacheKey, Object data) {

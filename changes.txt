@@ -3,6 +3,7 @@ jboot v2.0.8:
 优化：ClassScanner 扫描逻辑，使之更加易于阅读
 优化：JbootAopFactory 在进行 RPC 注入的时候，如果出现异常给出具体的注入类，方便排查
 优化：优化 AnnotationUtil 代码逻辑，防止在某些特殊情况可能出现空指针异常的问题
+修复：@Cacheable.nullCacheEnable 设置无效的问题
 
 
 jboot v2.0.7:
