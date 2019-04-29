@@ -1,4 +1,5 @@
 jboot v2.0.8:
+新增：JBootController 新增 Map<String, String> getParas() 方法，用于获取请求列表
 优化：JbootAopFactory 在多次新增 Mapping 同一个的时候，只发出警告而不出异常。
 优化：ClassScanner 扫描逻辑，使之更加易于阅读
 优化：JbootAopFactory 在进行 RPC 注入的时候，如果出现异常给出具体的注入类，方便排查
