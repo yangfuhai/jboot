@@ -251,8 +251,8 @@ public class JbootController extends Controller {
     }
 
     @NotAction
-    public Map<String,String> getParas(){
-        Map<String,String> map = null;
+    public Map<String, String> getParas(){
+        Map<String, String> map = null;
         Enumeration<String> names = getParaNames();
         if (names != null){
             map = new HashMap<>();
