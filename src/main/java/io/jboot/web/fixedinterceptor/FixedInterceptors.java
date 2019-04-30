@@ -17,9 +17,9 @@ package io.jboot.web.fixedinterceptor;
 
 import com.jfinal.aop.Aop;
 import io.jboot.components.limiter.LimiterInterceptor;
-import io.jboot.support.fescar.interceptor.FescarGlobalTransactionalInterceptor;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
+import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
 import io.jboot.web.validate.ParaValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
@@ -53,7 +53,7 @@ public class FixedInterceptors {
             new FixedInterceptorWapper(new JwtInterceptor(), 40),
             new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
             new FixedInterceptorWapper(new JbootMetricInterceptor(), 60),
-            new FixedInterceptorWapper(new FescarGlobalTransactionalInterceptor(), 80),
+            new FixedInterceptorWapper(new SeataGlobalTransactionalInterceptor(), 80),
     };
 
     private List<FixedInterceptorWapper> userInters = new ArrayList<>();

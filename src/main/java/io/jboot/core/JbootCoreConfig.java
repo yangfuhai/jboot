@@ -36,7 +36,7 @@ import io.jboot.components.schedule.JbootScheduleManager;
 import io.jboot.core.listener.JbootAppListenerManager;
 import io.jboot.core.log.Slf4jLogFactory;
 import io.jboot.db.JbootDbManager;
-import io.jboot.support.fescar.JbootFescarManager;
+import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
@@ -233,7 +233,7 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootScheduleManager.me().init();
         JbootSwaggerManager.me().init();
         LimiterManager.me().init();
-        JbootFescarManager.me().init();
+        JbootSeataManager.me().init();
 
         JbootAppListenerManager.me().onStart();
     }
@@ -253,7 +253,7 @@ public class JbootCoreConfig extends JFinalConfig {
         }
         JbootAppListenerManager.me().onStop();
         JbootScheduleManager.me().stop();
-        JbootFescarManager.me().stop();
+        JbootSeataManager.me().stop();
     }
 
 

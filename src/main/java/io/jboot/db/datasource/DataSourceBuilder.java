@@ -18,7 +18,7 @@ package io.jboot.db.datasource;
 import com.jfinal.kit.PathKit;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
-import io.jboot.support.fescar.JbootFescarManager;
+import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.utils.StrUtil;
 import io.shardingsphere.shardingjdbc.api.yaml.YamlShardingDataSourceFactory;
 
@@ -41,7 +41,7 @@ public class DataSourceBuilder {
         // 不启用分库分表的配置
         if (StrUtil.isBlank(shardingConfigYaml)) {
             DataSource ds = createDataSource(config);
-            return JbootFescarManager.me().wrapDataSource(ds);
+            return JbootSeataManager.me().wrapDataSource(ds);
         }
 
 
