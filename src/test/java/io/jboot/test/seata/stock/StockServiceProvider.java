@@ -1,9 +1,9 @@
-package io.jboot.test.fescar.stock;
+package io.jboot.test.seata.stock;
 
 
 import io.jboot.components.rpc.annotation.RPCBean;
 import io.jboot.service.JbootServiceBase;
-import io.jboot.test.fescar.commons.Stock;
+import io.jboot.test.seata.commons.Stock;
 
 @RPCBean
 public class StockServiceProvider extends JbootServiceBase<Stock> implements IStockService {
@@ -16,7 +16,7 @@ public class StockServiceProvider extends JbootServiceBase<Stock> implements ISt
         account.set("Stock", account.getInt("Stock") + stock);
 
         if (stock > 1000) {
-            throw new RuntimeException("Dubbo Fescar Exception By Hobbit");
+            throw new RuntimeException("Dubbo Seata Exception By Hobbit");
         }
 
         return account.update();

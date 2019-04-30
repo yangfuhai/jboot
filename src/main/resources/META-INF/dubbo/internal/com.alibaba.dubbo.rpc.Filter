@@ -1,2 +1,2 @@
-fescar=io.jboot.support.fescar.filter.TransactionPropagationFilter
+seata=io.jboot.support.seata.filter.TransactionPropagationFilter
 
