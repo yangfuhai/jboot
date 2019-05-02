@@ -292,6 +292,7 @@ public class JbootAopFactory extends AopFactory {
             if (mappingClass == to) {
                 return this;
             } else {
+                singletonCache.remove(mappingClass);
                 LogKit.warn("Aop Class[" + from + "] mapping changed from  " + mappingClass + " to " + to);
             }
         }
