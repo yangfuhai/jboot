@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  *
  * 通过 shiro.ini 的进行配置，配置如下 ：
  *
- * shiroCacheManager = io.jboot.component.shiro.cache.JbootShiroCacheManager
+ * shiroCacheManager = io.jboot.support.shiro.cache.JbootShiroCacheManager
  * securityManager.cacheManager = $shiroCacheManager
  */
 public class JbootShiroCacheManager implements CacheManager {
