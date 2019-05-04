@@ -154,14 +154,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public M findById(Object idValue) {
         if (idValue == null) {
-            throw new IllegalArgumentException("idValue can not be null");
+            return null;
         }
         return idCacheEnable ? loadByCache(idValue) : super.findByIds(idValue);
     }
 
     @Override
     public M findByIds(Object... idValues) {
-        if (idValues == null || idValues.length != _getPrimaryKeys().length) {
+        if (idValues == null){
+            return null;
+        }
+        if (idValues.length != _getPrimaryKeys().length) {
             throw new IllegalArgumentException("primary key nubmer must equals id value number and can not be null");
         }
         return idCacheEnable ? loadByCache(idValues) : super.findByIds(idValues);
