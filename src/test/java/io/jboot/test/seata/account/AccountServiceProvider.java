@@ -15,7 +15,7 @@ public class AccountServiceProvider extends JbootServiceBase<Account> implements
         account.set("Money", account.getInt("Money") + money);
 
         if (money > 1000) {
-            throw new RuntimeException("Dubbo Seata Exception By Hobbit");
+            throw new RuntimeException(AccountServiceProvider.class.getSimpleName()+"Dubbo Seata Exception By Hobbit");
         }
 
         return account.update();

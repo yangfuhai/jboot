@@ -16,7 +16,7 @@ public class StockServiceProvider extends JbootServiceBase<Stock> implements ISt
         account.set("Stock", account.getInt("Stock") + stock);
 
         if (stock > 1000) {
-            throw new RuntimeException("Dubbo Seata Exception By Hobbit");
+            throw new RuntimeException(StockServiceProvider.class.getSimpleName()+"Dubbo Seata Exception By Hobbit");
         }
 
         return account.update();

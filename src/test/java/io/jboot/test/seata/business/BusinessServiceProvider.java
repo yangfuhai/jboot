@@ -15,7 +15,7 @@ public class BusinessServiceProvider extends JbootServiceBase<Account> {
 	@RPCInject
 	private IStockService stockService;
 
-	@SeataGlobalTransactional(timeoutMills = 300000, name = "Dubbo_Seata_Account_Service")
+	@SeataGlobalTransactional(timeoutMills = 300000, name = "Dubbo_Seata_Business_Transactional")
 	public boolean deposit(Integer accountId) {
 		accountService.deposit(accountId, 1000);
 		stockService.deposit(accountId, 2000);
