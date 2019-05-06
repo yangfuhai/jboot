@@ -16,19 +16,19 @@ public class StockApplication {
 
         //开启 @RPCBean 自动暴露功能，默认情况下是自动暴露的，但是 jboot.properties 文件关闭了，这里需要开启下
         JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
-        JbootApplication.setBootArg("jboot.rpc.filter", "io.seata");
-        JbootApplication.setBootArg("jboot.io.seata.enable", true);
-        JbootApplication.setBootArg("jboot.io.seata.failureHandler", "com.alibaba.io.seata.tm.api.DefaultFailureHandlerImpl");
-        JbootApplication.setBootArg("jboot.io.seata.applicationId", "Dubbo_Seata_Stock_Service");
-        JbootApplication.setBootArg("jboot.io.seata.txServiceGroup", "dubbo_io.seata_tx_group");
+        JbootApplication.setBootArg("jboot.rpc.filter", "seata");
+        JbootApplication.setBootArg("jboot.seata.enable", true);
+        JbootApplication.setBootArg("jboot.seata.failureHandler", "com.alibaba.io.seata.tm.api.DefaultFailureHandlerImpl");
+        JbootApplication.setBootArg("jboot.seata.applicationId", "Dubbo_Seata_Stock_Service");
+        JbootApplication.setBootArg("jboot.seata.txServiceGroup", "dubbo_seata_tx_group");
 
         JbootApplication.setBootArg("jboot.datasource.type", "mysql");
-        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://139.127.108.187:9527/ilife-mall2.0?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
+        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://192.168.0.100:3306/mini?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
         JbootApplication.setBootArg("jboot.datasource.user", "root");
-        JbootApplication.setBootArg("jboot.datasource.password", "xjs123456789");
+        JbootApplication.setBootArg("jboot.datasource.password", "123456");
         
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
-        JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.io.seata.commons");
+        JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.seata.commons");
 
         JbootApplication.run(args);
 
