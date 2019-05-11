@@ -50,18 +50,19 @@ public class JbootApplication {
      * @return 返回 UndertowServer
      */
     public static UndertowServer createServer(String[] args) {
+        JbootApplicationConfig appConfig = getAppConfig(args);
+        return createServer(appConfig, createUndertowConfig(appConfig), null);
+    }
 
-        JbootConfigManager.me().parseArgs(args);
 
-        JbootApplicationConfig appConfig = getConfig(JbootApplicationConfig.class);
+    public static UndertowServer createServer(JbootApplicationConfig appConfig
+            , UndertowConfig undertowConfig
+            , JbootWebBuilderConfiger configer
+    ) {
 
         printBannerInfo(appConfig);
         printApplicationInfo(appConfig);
         printClassPath();
-
-        UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
-        undertowConfig.addSystemClassPrefix("io.jboot.app");
-        undertowConfig.addHotSwapClassPrefix("io.jboot");
 
         return new JbootUndertowServer(undertowConfig)
                 .setDevMode(isDevMode())
@@ -69,7 +70,23 @@ public class JbootApplication {
                     tryAddMetricsSupport(webBuilder);
                     tryAddShiroSupport(webBuilder);
                     tryAddWebSocketSupport(webBuilder);
+                    if (configer != null) {
+                        configer.onConfig(webBuilder);
+                    }
                 });
+    }
+
+
+    public static JbootApplicationConfig getAppConfig(String[] args) {
+        JbootConfigManager.me().parseArgs(args);
+        return getConfig(JbootApplicationConfig.class);
+    }
+
+    public static UndertowConfig createUndertowConfig(JbootApplicationConfig appConfig) {
+        UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
+        undertowConfig.addSystemClassPrefix("io.jboot.app");
+        undertowConfig.addHotSwapClassPrefix("io.jboot");
+        return undertowConfig;
     }
 
 
