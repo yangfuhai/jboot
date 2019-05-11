@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,13 @@ public class JbootResourceLoader {
 
     public void start() {
         try {
-            String classPath = JbootResourceLoader.class.getClassLoader().getResource("").toURI().getPath();
+
+            URL url = JbootResourceLoader.class.getClassLoader().getResource("");
+            if (url == null) {
+                return;
+            }
+
+            String classPath = url.toURI().getPath();
             File srcRootPath = new File(classPath, "../..").getCanonicalFile();
 
             if (new File(srcRootPath.getParent(), "pom.xml").exists()) {
