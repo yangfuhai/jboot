@@ -20,7 +20,6 @@ import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  *
  * 通过 shiro.ini 的进行配置，配置如下 ：
  *
- * shiroCacheManager = io.jboot.component.shiro.cache.JbootShiroCacheManager
+ * shiroCacheManager = io.jboot.support.shiro.cache.JbootShiroCacheManager
  * securityManager.cacheManager = $shiroCacheManager
  */
 public class JbootShiroCacheManager implements CacheManager {
@@ -44,12 +43,7 @@ public class JbootShiroCacheManager implements CacheManager {
 
     public <K, V> Cache<K, V> getCache(String name) throws CacheException {
         try {
-            return guavaCache.get(name, new Callable<Cache>() {
-                @Override
-                public Cache call() throws Exception {
-                    return new JbootShiroCache(name);
-                }
-            });
+            return guavaCache.get(name, () -> new JbootShiroCache(name));
         } catch (ExecutionException e) {
             throw new CacheException(e);
         }

@@ -182,7 +182,7 @@ public class ClassScanner {
         excludeJars.add("compiler-");
         excludeJars.add("hppc-");
         excludeJars.add("libthrift-");
-        excludeJars.add("fescar-");
+        excludeJars.add("seata-");
         excludeJars.add("eureka-");
         excludeJars.add("netflix-");
         excludeJars.add("nacos-");

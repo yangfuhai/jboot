@@ -31,6 +31,7 @@ import java.util.Set;
 public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public static final String AUTO_COPY_MODEL = "_auto_copy_model_";
+    private static final String DATASOURCE_CACHE_PREFIX = "__ds__";
 
     private static JbootModelConfig config = JbootModelConfig.getConfig();
     private static String column_created = config.getColumnCreated();
@@ -86,13 +87,14 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     @Override
     public M use(String configName) {
-        M m = this.get("__ds__" + configName);
+        M m = this.get(DATASOURCE_CACHE_PREFIX + configName);
         if (m == null) {
             synchronized (configName) {
-                m = this.get("__ds__" + configName);
-                if (m != null) return m;
-                m = this.copy().superUse(configName);
-                this.put("__ds__" + configName, m);
+                m = this.get(DATASOURCE_CACHE_PREFIX + configName);
+                if (m == null) {
+                    m = this.copy().superUse(configName);
+                    this.put(DATASOURCE_CACHE_PREFIX + configName, m);
+                }
             }
         }
         return m;
@@ -154,15 +156,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     @Override
     public M findById(Object idValue) {
         if (idValue == null) {
-            throw new IllegalArgumentException("idValue can not be null");
+            return null;
         }
-        return idCacheEnable ? loadByCache(idValue) : super.findByIds(idValue);
+        return idCacheEnable ? loadByCache(idValue) : super.findById(idValue);
     }
 
     @Override
     public M findByIds(Object... idValues) {
-        if (idValues == null || idValues.length != _getPrimaryKeys().length) {
-            throw new IllegalArgumentException("primary key nubmer must equals id value number and can not be null");
+        if (idValues == null) {
+            return null;
+        }
+        if (idValues.length != _getPrimaryKeys().length) {
+            throw new IllegalArgumentException("idValues.length != _getPrimaryKeys().length");
         }
         return idCacheEnable ? loadByCache(idValues) : super.findByIds(idValues);
     }
@@ -270,10 +275,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         Config config = _getConfig();
         if (config == null) {
             throw new JbootException(
-                    String.format("class %s can not mapping to database table, " +
-                                    "maybe application cannot connect to database , " +
-                                    "please check jboot.properties " +
-                                    "or config @Table(datasource=xxx) correct if you use multi datasource."
+                    String.format("class %s can not mapping to database table, maybe cannot connect to database. "
                             , _getUsefulClass().getName()));
 
         }
@@ -452,10 +454,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             table = super._getTable();
             if (table == null && validateNull) {
                 throw new JbootException(
-                        String.format("class %s can not mapping to database table, " +
-                                        "maybe application cannot connect to database , " +
-                                        "please check jboot.properties " +
-                                        "or config @Table(datasource=xxx) correct if you use multi datasource."
+                        String.format("class %s can not mapping to database table,maybe application cannot connect to database. "
                                 , _getUsefulClass().getName()));
             }
         }
@@ -476,7 +475,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         primaryKeys = _getTable(true).getPrimaryKey();
 
         if (primaryKeys == null) {
-            throw new JbootException(String.format("get PrimaryKey is error in[%s]", getClass()));
+            throw new JbootException(String.format("primaryKeys == null in [%s]", getClass()));
         }
         return primaryKeys;
     }

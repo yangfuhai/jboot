@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot;
-
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Title: Jboot 常量定义
- */
-public class JbootConsts {
-
-    public static String VERSION = "2.0.9";
+package io.jboot.app;
 
 
-    public static final String ATTR_REQUEST = "REQUEST";
-    public static final String ATTR_CONTEXT_PATH = "CPATH";
+import com.jfinal.server.undertow.WebBuilder;
 
+public interface JbootWebBuilderConfiger {
 
+    public void onConfig(WebBuilder webBuilder);
 }

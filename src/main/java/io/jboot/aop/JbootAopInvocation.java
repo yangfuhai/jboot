@@ -23,8 +23,8 @@ import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
 import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
 import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.exception.JbootException;
-import io.jboot.support.fescar.interceptor.FescarGlobalTransactionalInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
+import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
 
 import java.lang.reflect.Method;
 
@@ -45,7 +45,7 @@ public class JbootAopInvocation extends Invocation {
             new JbootCachePutInterceptor(),
             new JbootCacheInterceptor(),
             new LimiterInterceptor(),
-            new FescarGlobalTransactionalInterceptor()
+            new SeataGlobalTransactionalInterceptor()
     };
 
 
