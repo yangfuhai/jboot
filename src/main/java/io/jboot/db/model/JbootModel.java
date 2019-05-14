@@ -89,7 +89,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public M use(String configName) {
         M m = this.get(DATASOURCE_CACHE_PREFIX + configName);
         if (m == null) {
-            synchronized (configName) {
+            synchronized (configName.intern()) {
                 m = this.get(DATASOURCE_CACHE_PREFIX + configName);
                 if (m == null) {
                     m = this.copy().superUse(configName);

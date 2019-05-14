@@ -129,7 +129,7 @@ public class LimiterManager {
     public RateLimiter getOrCreateRateLimiter(String resource, int rate) {
         RateLimiter limiter = rateLimiterCache.get(resource);
         if (limiter == null || limiter.getRate() != rate) {
-            synchronized (resource) {
+            synchronized (resource.intern()) {
                 limiter = rateLimiterCache.get(resource);
                 if (limiter == null) {
                     limiter = RateLimiter.create(rate);
@@ -143,7 +143,7 @@ public class LimiterManager {
     public Semaphore getOrCreateSemaphore(String resource, int rate) {
         Semaphore semaphore = semaphoreCache.get(resource);
         if (semaphore == null) {
-            synchronized (resource) {
+            synchronized (resource.intern()) {
                 semaphore = semaphoreCache.get(resource);
                 if (semaphore == null) {
                     semaphore = new Semaphore(rate);

@@ -56,7 +56,7 @@ public class JbootCacheManager {
             return cache;
         }
 
-        synchronized (type) {
+        synchronized (type.intern()) {
             if (cache == null) {
                 JbootCacheConfig cacheConfig = new JbootCacheConfig();
                 cacheConfig.setType(type);
