@@ -46,11 +46,10 @@ public class JbootHttpResponse {
         }
 
         try {
-            file.createNewFile();
             this.file = file;
             this.outputStream = new FileOutputStream(file);
         } catch (Exception e) {
-            setError(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -153,4 +152,5 @@ public class JbootHttpResponse {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
+
 }
