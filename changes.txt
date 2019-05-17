@@ -1,3 +1,10 @@
+jboot v2.1.0:
+优化：重构 JbootApplication ，使之更加方便灵活。
+修复：JbootResourceLoader 在 fatjar 里可能出现空指针异常的问题。
+修复：JbootCacheManager/LimiterManager 的 synchronized 不正确的问题。
+修复：JbootHttpResponse在 某些情况下可能出现空指针异常的问题。
+
+
 jboot v2.0.9:
 优化：升级分布式事务 fescar 到 seata 0.5.1 最新版本，感谢 @LeonM
 优化：当 JbootAopFactory 在多次添加同一个银色的时候移除之前缓存的对象
