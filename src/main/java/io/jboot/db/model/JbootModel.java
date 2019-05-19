@@ -16,6 +16,7 @@
 package io.jboot.db.model;
 
 import com.jfinal.core.JFinal;
+import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootException;
@@ -30,6 +31,7 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
+    private static final Log LOG = Log.getLog(JbootModel.class);
     public static final String AUTO_COPY_MODEL = "_auto_copy_model_";
     private static final String DATASOURCE_CACHE_PREFIX = "__ds__";
 
@@ -173,10 +175,25 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     protected M loadByCache(Object... idValues) {
-        return config.getCache().get(_getTableName()
-                , buildCacheKey(idValues)
-                , () -> JbootModel.super.findByIds(idValues)
-                , config.getIdCacheTime());
+        try {
+            return config.getCache().get(_getTableName()
+                    , buildCacheKey(idValues)
+                    , () -> JbootModel.super.findByIds(idValues)
+                    , config.getIdCacheTime());
+        } catch (Exception ex) {
+            LOG.error(ex.toString(), ex);
+            safeDeleteCache(idValues);
+        }
+        return JbootModel.super.findByIds(idValues);
+    }
+
+    protected void safeDeleteCache(Object... idValues) {
+        try {
+            config.getCache().remove(_getTableName()
+                    , buildCacheKey(idValues));
+        } catch (Exception ex) {
+            LOG.error(ex.toString(), ex);
+        }
     }
 
 
@@ -248,7 +265,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public void deleteIdCacheById(Object... idvalues) {
-        config.getCache().remove(_getTableName(), buildCacheKey(idvalues));
+        safeDeleteCache(idvalues);
     }
 
 
