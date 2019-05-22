@@ -18,8 +18,6 @@ package io.jboot.aop.interceptor.cache;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.Jboot;
-import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.annotation.CachePut;
 import io.jboot.utils.AnnotationUtil;
 
@@ -29,8 +27,6 @@ import java.lang.reflect.Method;
  * 缓存设置拦截器
  */
 public class JbootCachePutInterceptor implements Interceptor {
-
-    private static final JbootCacheConfig CONFIG = Jboot.config(JbootCacheConfig.class);
 
     @Override
     public void intercept(Invocation inv) {
@@ -56,19 +52,8 @@ public class JbootCachePutInterceptor implements Interceptor {
         Utils.ensureCachenameAvailable(method, targetClass, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cachePut.key()), targetClass, method, inv.getArgs());
 
-        putDataToCache(cachePut, cacheName, cacheKey, data);
+        Utils.putDataToCache(cachePut.liveSeconds(),cacheName,cacheKey,data);
     }
 
-
-    protected void putDataToCache(CachePut cachePut, String cacheName, String cacheKey, Object data) {
-        int liveSeconds = cachePut.liveSeconds() > 0
-                ? cachePut.liveSeconds()
-                : CONFIG.getAopCacheLiveSeconds();
-        if (liveSeconds > 0) {
-            Jboot.getCache().put(cacheName, cacheKey, data, liveSeconds);
-        } else {
-            Jboot.getCache().put(cacheName, cacheKey, data);
-        }
-    }
 
 }

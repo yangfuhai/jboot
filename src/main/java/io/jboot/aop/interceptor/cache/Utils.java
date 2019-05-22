@@ -18,6 +18,9 @@ package io.jboot.aop.interceptor.cache;
 import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
+import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.JbootCacheConfig;
+import io.jboot.components.cache.JbootCacheManager;
 import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
@@ -197,12 +200,37 @@ class Utils {
 
         String cacheKey = AnnotationUtil.get(evict.key());
 
-        if ("*".equals(cacheKey) || StrUtil.isBlank(cacheKey)) {
-            Jboot.getCache().removeAll(cacheName);
+        if (StrUtil.isBlank(cacheKey) || "*".equals(cacheKey)) {
+            getAopCache().removeAll(cacheName);
         } else {
             cacheKey = Utils.buildCacheKey(cacheKey, targetClass, method, arguments);
-            Jboot.getCache().remove(cacheName, cacheKey);
+            getAopCache().remove(cacheName, cacheKey);
         }
+    }
+
+    private static final JbootCacheConfig CONFIG = Jboot.config(JbootCacheConfig.class);
+
+    static void putDataToCache(int liveSeconds, String cacheName, String cacheKey, Object data) {
+         liveSeconds = liveSeconds > 0
+                ? liveSeconds
+                : CONFIG.getAopCacheLiveSeconds();
+        if (liveSeconds > 0) {
+            getAopCache().put(cacheName, cacheKey, data, liveSeconds);
+        } else {
+            getAopCache().put(cacheName, cacheKey, data);
+        }
+    }
+
+    private static JbootCache aopCache;
+    static JbootCache getAopCache(){
+        if (aopCache == null){
+            synchronized (Utils.class){
+                if (aopCache == null){
+                    aopCache = JbootCacheManager.me().getCache(CONFIG.getAopCacheType());
+                }
+            }
+        }
+        return aopCache;
     }
 
 

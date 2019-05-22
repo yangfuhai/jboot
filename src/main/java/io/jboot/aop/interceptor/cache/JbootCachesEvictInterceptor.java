@@ -45,21 +45,22 @@ public class JbootCachesEvictInterceptor implements Interceptor {
         }
 
         CacheEvict[] evicts = cachesEvict.value();
-        List<CacheEvict> beforeInvocations = new ArrayList<>();
-        List<CacheEvict> afterInvocations = new ArrayList<>();
+        List<CacheEvict> beforeInvocations = null;
+        List<CacheEvict> afterInvocations = null;
 
         for (CacheEvict evict : evicts) {
             if (evict.beforeInvocation()) {
+                if (beforeInvocations == null) beforeInvocations = new ArrayList<>();
                 beforeInvocations.add(evict);
             } else {
+                if (afterInvocations == null) afterInvocations = new ArrayList<>();
                 afterInvocations.add(evict);
             }
         }
 
         Class targetClass = inv.getTarget().getClass();
-
-        doCachesEvict(inv.getArgs(), targetClass, method, beforeInvocations);
         try {
+            doCachesEvict(inv.getArgs(), targetClass, method, beforeInvocations);
             inv.invoke();
         } finally {
             doCachesEvict(inv.getArgs(), targetClass, method, afterInvocations);
@@ -67,7 +68,10 @@ public class JbootCachesEvictInterceptor implements Interceptor {
     }
 
 
-    private void doCachesEvict(Object[] arguments, Class targetClass, Method method, List<CacheEvict> cacheEvicts) {
+    private void doCachesEvict(Object[] arguments
+            , Class targetClass
+            , Method method
+            , List<CacheEvict> cacheEvicts) {
 
         if (cacheEvicts == null || cacheEvicts.isEmpty()) {
             return;

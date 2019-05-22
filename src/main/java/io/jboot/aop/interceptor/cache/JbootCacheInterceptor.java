@@ -55,7 +55,7 @@ public class JbootCacheInterceptor implements Interceptor {
         Utils.ensureCachenameAvailable(method, targetClass, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cacheable.key()), targetClass, method, inv.getArgs());
 
-        Object data = Jboot.getCache().get(cacheName, cacheKey);
+        Object data = Utils.getAopCache().get(cacheName, cacheKey);
         if (data != null) {
             if (NULL_VALUE.equals(data)) {
                 inv.setReturnValue(null);
@@ -70,20 +70,9 @@ public class JbootCacheInterceptor implements Interceptor {
         data = inv.getReturnValue();
 
         if (data != null) {
-            putDataToCache(cacheable, cacheName, cacheKey, data);
+            Utils.putDataToCache(cacheable.liveSeconds(),cacheName,cacheKey,data);
         } else if (cacheable.nullCacheEnable()) {
-            putDataToCache(cacheable, cacheName, cacheKey, NULL_VALUE);
-        }
-    }
-
-    protected void putDataToCache(Cacheable cacheable, String cacheName, String cacheKey, Object data) {
-        int liveSeconds = cacheable.liveSeconds() > 0
-                ? cacheable.liveSeconds()
-                : CONFIG.getAopCacheLiveSeconds();
-        if (liveSeconds > 0) {
-            Jboot.getCache().put(cacheName, cacheKey, data, liveSeconds);
-        } else {
-            Jboot.getCache().put(cacheName, cacheKey, data);
+            Utils.putDataToCache(cacheable.liveSeconds(),cacheName,cacheKey,NULL_VALUE);
         }
     }
 
