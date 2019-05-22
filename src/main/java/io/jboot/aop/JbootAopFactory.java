@@ -16,13 +16,12 @@
 package io.jboot.aop;
 
 import com.jfinal.aop.AopFactory;
-import com.jfinal.aop.Enhancer;
 import com.jfinal.aop.Inject;
-import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.proxy.Proxy;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.annotation.ConfigValue;
@@ -42,7 +41,8 @@ import io.jboot.web.controller.JbootController;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 public class JbootAopFactory extends AopFactory {
 
@@ -57,12 +57,6 @@ public class JbootAopFactory extends AopFactory {
 
     private static JbootAopFactory me = new JbootAopFactory();
 
-    //只用用户配置自己的 service 层的拦截器
-    protected List<InterceptorWapper> interceptorWappers = Collections.synchronizedList(new ArrayList<>());
-    protected InterceptorWapper defaultAopInterceptor = new InterceptorWapper(new JbootAopInterceptor());
-
-    //所有的aop拦截器
-    private Interceptor[] aopInterceptors;
 
     public static JbootAopFactory me() {
         return me;
@@ -72,57 +66,6 @@ public class JbootAopFactory extends AopFactory {
     private JbootAopFactory() {
         setInjectSuperClass(true);
         initBeanMapping();
-    }
-
-
-    public JbootAopFactory addInterceptor(Interceptor interceptor) {
-        interceptorWappers.add(new InterceptorWapper(interceptor));
-        clearInterceptorsAndObjectCache();
-        return this;
-    }
-
-
-    public JbootAopFactory addInterceptor(Interceptor interceptor, int orderNo) {
-        interceptorWappers.add(new InterceptorWapper(interceptor, orderNo));
-        clearInterceptorsAndObjectCache();
-        return this;
-    }
-
-    public List<InterceptorWapper> getInterceptorWappers() {
-        return interceptorWappers;
-    }
-
-    public Interceptor[] getAopInterceptors() {
-        return aopInterceptors;
-    }
-
-    protected void clearInterceptorsAndObjectCache() {
-        aopInterceptors = null;
-        singletonCache.clear();
-    }
-
-    protected Interceptor[] buildAopInterceptors() {
-        if (aopInterceptors != null) {
-            return aopInterceptors;
-        }
-
-        // 只有第一次
-        // 或动态新增、删除拦截器的时候
-        // 会执行
-        synchronized (this) {
-            if (aopInterceptors == null) {
-                if (!interceptorWappers.contains(defaultAopInterceptor)) {
-                    interceptorWappers.add(defaultAopInterceptor);
-                }
-                interceptorWappers.sort(Comparator.comparingInt(InterceptorWapper::getOrderNo));
-                Interceptor[] interceptors = new Interceptor[interceptorWappers.size()];
-                int i = 0;
-                for (InterceptorWapper w : interceptorWappers) interceptors[i++] = w.getInterceptor();
-                aopInterceptors = interceptors;
-            }
-        }
-
-        return aopInterceptors;
     }
 
 
@@ -138,7 +81,7 @@ public class JbootAopFactory extends AopFactory {
             return ClassUtil.newInstanceByStaticConstruct(targetClass, staticConstruct);
         }
 
-        return Enhancer.enhance(targetClass, buildAopInterceptors());
+        return Proxy.get(targetClass);
     }
 
     @Override

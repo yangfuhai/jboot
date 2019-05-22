@@ -28,6 +28,7 @@ import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
+import io.jboot.aop.JbootAopInterceptor;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.components.limiter.LimiterManager;
@@ -192,6 +193,8 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void configInterceptor(Interceptors interceptors) {
+
+        interceptors.addGlobalServiceInterceptor(new JbootAopInterceptor());
 
         JbootAppListenerManager.me().onInterceptorConfig(interceptors);
         JbootAppListenerManager.me().onFixedInterceptorConfig(FixedInterceptors.me());

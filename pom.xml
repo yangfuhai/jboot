@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal</artifactId>
-            <version>3.8</version>
+            <version>4.0</version>
         </dependency>
 
         <dependency>
@@ -419,48 +419,48 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-core</artifactId>
-            <version>0.5.1</version>
+            <version>0.5.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-rm</artifactId>
-            <version>0.5.1</version>
+            <version>0.5.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-rm-datasource</artifactId>
-            <version>0.5.1</version>
+            <version>0.5.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tm</artifactId>
-            <version>0.5.1</version>
+            <version>0.5.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tcc</artifactId>
-            <version>0.5.1</version>
+            <version>0.5.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-config-core</artifactId>
-            <version>0.5.1</version>
+            <version>0.5.2</version>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-dubbo-alibaba</artifactId>
-            <version>0.5.1</version>
+            <version>0.5.2</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
