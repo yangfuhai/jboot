@@ -1,3 +1,10 @@
+jboot v2.1.1:
+优化：升级 JFinal 到 v4.0 最新版本
+优化：升级 Seata 到 0.5.2 最新版本
+优化：当开启 findById 自动缓存后，当缓存出错时通过数据库查询数据，而不是直接不可用。
+新增：新增自定义 AOP 的缓存类型的支持
+
+
 jboot v2.1.0:
 优化：重构 JbootApplication ，使之更加方便灵活。
 修复：JbootResourceLoader 在 fatjar 里可能出现空指针异常的问题。
