@@ -22,6 +22,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.proxy.ProxyManager;
 import com.jfinal.template.Engine;
 import com.jfinal.template.ext.directive.NowDirective;
 import com.jfinal.weixin.sdk.api.ApiConfig;
@@ -67,7 +68,7 @@ import java.util.List;
 
 public class JbootCoreConfig extends JFinalConfig {
 
-    static final Log log = Log.getLog(JbootCoreConfig.class);
+    static final Log LOG = Log.getLog(JbootCoreConfig.class);
     private List<Routes.Route> routeList = new ArrayList<>();
 
     public JbootCoreConfig() {
@@ -98,6 +99,12 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setControllerFactory(JbootControllerManager.me());
         constants.setJsonFactory(() -> new JbootJson());
         constants.setInjectDependency(true);
+
+        //close proxy console print
+        ProxyManager.me().getProxyFactory().
+                getProxyGenerator()
+                .setPrintGeneratedClassToConsole(false);
+
 
         JbootAppListenerManager.me().onConstantConfig(constants);
 
@@ -250,7 +257,7 @@ public class JbootCoreConfig extends JFinalConfig {
                     Driver driver = drivers.nextElement();
                     DriverManager.deregisterDriver(driver);
                 } catch (Exception e) {
-                    log.error(e.toString(), e);
+                    LOG.error(e.toString(), e);
                 }
             }
         }

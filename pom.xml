@@ -240,7 +240,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.11.3</version>
+            <version>1.12.1</version>
         </dependency>
 
         <dependency>
@@ -250,28 +250,31 @@
         </dependency>
 
         <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>4.0.5</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.shardingsphere</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
             <version>3.1.0</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+
+
+
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-graphite</artifactId>
-            <version>4.0.5</version>
+            <version>4.1.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
-            <version>4.0.5</version>
+            <version>4.1.0</version>
         </dependency>
 
         <dependency>
