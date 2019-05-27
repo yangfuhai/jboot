@@ -161,8 +161,22 @@ public class ClassUtil {
      * @return
      */
     public static <T> T newInstance(String clazzName, boolean createByAop) {
+        return newInstance(clazzName, createByAop, Thread.currentThread().getContextClassLoader());
+    }
+
+
+    /**
+     * 创建新的实例
+     *
+     * @param clazzName
+     * @param createByAop
+     * @param classLoader
+     * @param <T>
+     * @return
+     */
+    public static <T> T newInstance(String clazzName, boolean createByAop, ClassLoader classLoader) {
         try {
-            Class<T> clazz = (Class<T>) Class.forName(clazzName, false, Thread.currentThread().getContextClassLoader());
+            Class<T> clazz = (Class<T>) Class.forName(clazzName, false, classLoader);
             return newInstance(clazz, createByAop);
         } catch (Exception e) {
             log.error("can not newInstance class:" + clazzName + "\n" + e.toString(), e);
