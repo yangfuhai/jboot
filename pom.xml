@@ -422,48 +422,55 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-core</artifactId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-common</artifactId>
+            <version>0.6.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-rm</artifactId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-rm-datasource</artifactId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tm</artifactId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tcc</artifactId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-config-core</artifactId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-dubbo-alibaba</artifactId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>

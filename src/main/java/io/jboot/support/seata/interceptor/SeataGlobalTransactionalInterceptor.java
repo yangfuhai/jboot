@@ -15,20 +15,20 @@
  */
 package io.jboot.support.seata.interceptor;
 
-import java.lang.reflect.Method;
-
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-
 import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.support.seata.annotation.SeataGlobalLock;
 import io.jboot.support.seata.annotation.SeataGlobalTransactional;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
+import java.lang.reflect.Method;
+
 /***
  *
  * @author Hobbit Leon_wy@163.com , Michael Yang (fuhai99@gmail.com)
- * 参考：https://github.com/seata/seata/blob/develop/spring/src/main/java/io/seata/spring/annotation/GlobalTransactionalInterceptor.java
+ * 参考：https://github.com/seata/seata/blob/develop/spring/src/main/java/
+ * io/seata/spring/annotation/GlobalTransactionalInterceptor.java
  *
  */
 public class SeataGlobalTransactionalInterceptor implements Interceptor, FixedInterceptor {
