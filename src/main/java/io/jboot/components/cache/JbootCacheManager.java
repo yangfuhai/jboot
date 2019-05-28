@@ -16,6 +16,7 @@
 package io.jboot.components.cache;
 
 import io.jboot.Jboot;
+import io.jboot.components.cache.caffeine.CaffeineCacheImpl;
 import io.jboot.components.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.components.cache.ehredis.JbootEhredisCacheImpl;
 import io.jboot.components.cache.j2cache.J2cacheImpl;
@@ -80,6 +81,8 @@ public class JbootCacheManager {
                 return new JbootEhredisCacheImpl();
             case JbootCacheConfig.TYPE_J2CACHE:
                 return new J2cacheImpl();
+            case JbootCacheConfig.TYPE_CAFFEINE:
+                return new CaffeineCacheImpl();
             case JbootCacheConfig.TYPE_NONE:
                 return new NoneCacheImpl();
             default:
