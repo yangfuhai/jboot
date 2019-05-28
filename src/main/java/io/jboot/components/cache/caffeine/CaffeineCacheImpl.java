@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CaffeineCacheImpl extends JbootCacheBase {
 
-    private static Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
+    private Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
 
     protected Cache getCacheOnly(String cacheName) {
         return cacheMap.get(cacheName);
@@ -38,7 +38,7 @@ public class CaffeineCacheImpl extends JbootCacheBase {
         if (cache == null) {
             synchronized (CaffeineCacheImpl.class) {
                 if (cache == null) {
-                    cache = createCacheBuilder().build(cacheName);
+                    cache = createCacheBuilder().build();
                     cacheMap.put(cacheName,cache);
                 }
             }
