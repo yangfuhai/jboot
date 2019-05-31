@@ -45,11 +45,19 @@
 
 
     <dependencies>
+
         <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal</artifactId>
-            <version>4.0</version>
+            <version>4.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.2.12</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.jfinal</groupId>

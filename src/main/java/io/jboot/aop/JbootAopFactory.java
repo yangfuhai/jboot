@@ -21,11 +21,11 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
-import com.jfinal.proxy.Proxy;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.annotation.ConfigValue;
 import io.jboot.aop.annotation.StaticConstruct;
+import io.jboot.aop.cglib.Cglib;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
@@ -81,7 +81,8 @@ public class JbootAopFactory extends AopFactory {
             return ClassUtil.newInstanceByStaticConstruct(targetClass, staticConstruct);
         }
 
-        return Proxy.get(targetClass);
+//        return Proxy.get(targetClass);
+        return Cglib.get(targetClass);
     }
 
     @Override
