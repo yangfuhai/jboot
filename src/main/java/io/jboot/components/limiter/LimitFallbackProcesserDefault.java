@@ -110,7 +110,7 @@ public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
      */
     protected void doProcessServiceLimit(String resource, Invocation inv) {
         if (Jboot.isDevMode()) {
-            System.err.println(resource + " is limited , return null");
+            System.err.println(resource + " is limited by LimitFallbackProcesser, return null");
         }
     }
 }

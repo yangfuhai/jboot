@@ -21,11 +21,11 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.components.limiter.annotation.EnableLimit;
 import io.jboot.utils.AnnotationUtil;
+import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
 import java.util.concurrent.Semaphore;
 
 public class LimiterInterceptor implements FixedInterceptor, Interceptor {
@@ -113,7 +113,7 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
 
 
     private String getPackageOrTarget(Invocation inv) {
-        return inv.isActionInvocation() ? buildUrl(inv) : buildMethodKey(inv.getMethod());
+        return inv.isActionInvocation() ? buildUrl(inv) : ClassUtil.buildMethodString(inv.getMethod());
     }
 
     private String buildUrl(Invocation inv) {
@@ -122,29 +122,5 @@ public class LimiterInterceptor implements FixedInterceptor, Interceptor {
         String query = request.getQueryString();
         return StrUtil.isBlank(query) ? uri : uri + "?" + query;
     }
-
-
-    private String buildMethodKey(Method method) {
-        StringBuilder keyBuilder = new StringBuilder();
-        keyBuilder.append(method.getDeclaringClass().getName());//packageAndClass
-        keyBuilder.append(".");
-        keyBuilder.append(method.getName());//methodName
-
-        //method paras
-        if (method.getParameterCount() > 0) {
-            Class[] paraClasses = method.getParameterTypes();
-            keyBuilder.append("(");
-            for (Class c : paraClasses) {
-                keyBuilder.append(c.getSimpleName()).append(",");
-            }
-            keyBuilder.deleteCharAt(keyBuilder.length() - 1);//del last char ,
-            keyBuilder.append(")");
-        } else {
-            keyBuilder.append("()");
-        }
-
-        return keyBuilder.toString();
-    }
-
 
 }
