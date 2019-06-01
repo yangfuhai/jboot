@@ -25,7 +25,6 @@ import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import java.lang.reflect.Method;
@@ -186,9 +185,6 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                 );
                 break;
             case ValidateRenderType.REDIRECT:
-                if (controller instanceof JbootController) {
-                    ((JbootController) controller).setFlashAttr("message", message);
-                }
                 controller.redirect(redirectUrl);
                 break;
             case ValidateRenderType.HTML:

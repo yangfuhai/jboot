@@ -113,45 +113,6 @@ public class JbootController extends Controller {
     }
 
 
-    protected HashMap<String, Object> flash;
-
-    @NotAction
-    public Controller setFlashAttr(String name, Object value) {
-        if (flash == null) {
-            flash = new HashMap<>();
-        }
-
-        flash.put(name, value);
-        return this;
-    }
-
-
-    @NotAction
-    public Controller setFlashMap(Map map) {
-        if (map == null) {
-            throw new NullPointerException("map is null");
-        }
-        if (flash == null) {
-            flash = new HashMap<>();
-        }
-
-        flash.putAll(map);
-        return this;
-    }
-
-
-    @NotAction
-    public <T> T getFlashAttr(String name) {
-        return flash == null ? null : (T) flash.get(name);
-    }
-
-
-    @NotAction
-    public HashMap<String, Object> getFlashAttrs() {
-        return flash;
-    }
-
-
     private HashMap<String, Object> jwtMap;
 
     @NotAction

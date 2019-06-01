@@ -18,13 +18,11 @@ package io.jboot.web.handler;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.*;
 import com.jfinal.log.Log;
-import com.jfinal.render.RedirectRender;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
-import io.jboot.web.flashmessage.FlashMessageManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -114,34 +112,7 @@ public class JbootActionHandler extends ActionHandler {
                 render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
             }
 
-
-            boolean isRedirect = render instanceof RedirectRender;
-
-
-            /**
-             * 如果当前是redirect
-             * 尝试设置 FlashMessage 数据到 session
-             */
-            if (isRedirect) {
-                FlashMessageManager.me().init(controller);
-            }
-            /**
-             * 如果当前不是redirect
-             * 尝试去渲染 FlashMessage 的数据
-             */
-            else {
-                FlashMessageManager.me().renderTo(controller);
-            }
-
             render.setContext(request, response, action.getViewPath()).render();
-
-            /**
-             * 如果当前不是redirect，那么尝试去清空FlashMessage数据
-             */
-            if (!isRedirect) {
-                FlashMessageManager.me().release(controller);
-            }
-
         } catch (RenderException e) {
             if (log.isErrorEnabled()) {
                 String qs = request.getQueryString();
