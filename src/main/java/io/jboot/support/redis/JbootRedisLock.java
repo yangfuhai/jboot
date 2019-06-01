@@ -59,7 +59,7 @@ public class JbootRedisLock {
      */
     public JbootRedisLock(String lockName) {
         if (lockName == null) {
-            throw new RuntimeException("lockName must not null !");
+            throw new NullPointerException("lockName must not null !");
         }
         this.lockName = lockName;
         this.redis = Jboot.getRedis();
@@ -73,7 +73,7 @@ public class JbootRedisLock {
      */
     public JbootRedisLock(String lockName, long timeoutMsecs) {
         if (lockName == null) {
-            throw new RuntimeException("lockName must not null !");
+            throw new NullPointerException("lockName must not null !");
         }
         this.lockName = lockName;
         this.timeoutMsecs = timeoutMsecs;

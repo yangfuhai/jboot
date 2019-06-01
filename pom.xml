@@ -53,13 +53,6 @@
         </dependency>
 
         <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>3.2.12</version>
-        </dependency>
-
-
-        <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>cos</artifactId>
             <version>2017.5</version>
@@ -75,6 +68,12 @@
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal-undertow</artifactId>
             <version>1.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.2.12</version>
         </dependency>
 
         <dependency>
@@ -430,55 +429,55 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-core</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-common</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-rm</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-rm-datasource</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tm</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tcc</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-config-core</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-dubbo-alibaba</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
