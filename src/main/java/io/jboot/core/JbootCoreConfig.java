@@ -22,7 +22,6 @@ import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.proxy.ProxyManager;
 import com.jfinal.template.Engine;
 import com.jfinal.template.ext.directive.NowDirective;
 import com.jfinal.weixin.sdk.api.ApiConfig;
@@ -99,12 +98,6 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setControllerFactory(JbootControllerManager.me());
         constants.setJsonFactory(() -> new JbootJson());
         constants.setInjectDependency(true);
-
-        //close proxy console print
-        ProxyManager.me().getProxyFactory().
-                getProxyGenerator()
-                .setPrintGeneratedClassToConsole(false);
-
 
         JbootAppListenerManager.me().onConstantConfig(constants);
 

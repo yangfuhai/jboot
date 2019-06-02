@@ -18,14 +18,16 @@ package io.jboot.aop;
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
+import com.jfinal.ext.proxy.CglibProxyFactory;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.proxy.Proxy;
+import com.jfinal.proxy.ProxyManager;
 import io.jboot.aop.annotation.Bean;
 import io.jboot.aop.annotation.BeanExclude;
 import io.jboot.aop.annotation.ConfigValue;
 import io.jboot.aop.annotation.StaticConstruct;
-import io.jboot.aop.cglib.Cglib;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
@@ -64,6 +66,7 @@ public class JbootAopFactory extends AopFactory {
 
 
     private JbootAopFactory() {
+        ProxyManager.me().setProxyFactory(new CglibProxyFactory());
         setInjectSuperClass(true);
         initBeanMapping();
     }
@@ -81,8 +84,7 @@ public class JbootAopFactory extends AopFactory {
             return ClassUtil.newInstanceByStaticConstruct(targetClass, staticConstruct);
         }
 
-//        return Proxy.get(targetClass);
-        return Cglib.get(targetClass);
+        return Proxy.get(targetClass);
     }
 
     @Override
