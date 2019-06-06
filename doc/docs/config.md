@@ -45,10 +45,10 @@ String port = Jboot.configValue("undertow.port")
 
 public class AopController extends JbootController {
 
-    @ConfigInject("undertow.host")
+    @ConfigValue("undertow.host")
     private String host;
 
-    @ConfigInject("undertow.port")
+    @ConfigValue("undertow.port")
     private int port;
 
     public void index(){

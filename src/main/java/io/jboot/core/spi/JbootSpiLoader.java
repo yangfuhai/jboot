@@ -54,7 +54,7 @@ public class JbootSpiLoader {
             return null;
         }
 
-        List<Class<T>> classes = ClassScanner.scanSubClass(clazz);
+        List<Class<T>> classes = ClassScanner.scanSubClass(clazz,true);
         if (classes == null || classes.isEmpty()) {
             return null;
         }
