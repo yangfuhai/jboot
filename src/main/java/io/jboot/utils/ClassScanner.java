@@ -306,9 +306,12 @@ public class ClassScanner {
         String tomcatClassPath = null;
 
         for (String classPath : classPaths) {
-            //过滤tomcat自身的class path
-            if (new File(classPath, "tomcat-api.jar").exists()) {
-                tomcatClassPath = classPath;
+            //过滤tomcat自身的lib 以及 bin 下的jar
+            File tomcatApiJarFile = new File(classPath, "tomcat-api.jar");
+            if (tomcatApiJarFile.exists()) {
+                tomcatClassPath = tomcatApiJarFile
+                        .getParentFile()
+                        .getParentFile().getAbsolutePath();
                 continue;
             }
 
