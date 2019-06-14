@@ -40,7 +40,19 @@ public class JbootDbPro extends DbPro {
     public List<Record> find(String sql, Object... paras) {
         debugPrintParas(paras);
         return super.find(sql, paras);
+    }
 
+
+    @Override
+    public <T> List<T> query(String sql, Object... paras) {
+        debugPrintParas(paras);
+        return super.query(sql, paras);
+    }
+
+    @Override
+    public int update(String sql, Object... paras) {
+        debugPrintParas(paras);
+        return super.update(sql, paras);
     }
 
     private void debugPrintParas(Object... objects) {
