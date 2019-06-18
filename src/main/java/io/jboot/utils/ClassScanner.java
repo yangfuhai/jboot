@@ -61,6 +61,7 @@ public class ClassScanner {
         excludeJars.add("db2jcc4-");
         excludeJars.add("ojdbc");
         excludeJars.add("junit-");
+        excludeJars.add("org.junit");
         excludeJars.add("hamcrest-");
         excludeJars.add("jboss-");
         excludeJars.add("motan-");
