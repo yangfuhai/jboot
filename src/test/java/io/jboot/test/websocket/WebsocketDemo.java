@@ -1,6 +1,5 @@
 package io.jboot.test.websocket;
 
-import com.jfinal.core.Controller;
 import io.jboot.app.JbootApplication;
 
 import javax.websocket.OnMessage;
@@ -9,7 +8,7 @@ import javax.websocket.server.ServerEndpoint;
 
 
 @ServerEndpoint("/myapp.ws")
-public class WebsocketDemo extends Controller {
+public class WebsocketDemo {
 
     /**
      * 运行 main 方法后，访问 http://127.0.0.1:8888/websocketdemo 查看效果
