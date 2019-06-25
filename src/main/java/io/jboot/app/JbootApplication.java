@@ -119,7 +119,7 @@ public class JbootApplication {
         if (websocketEndpoint != null && websocketEndpoint.trim().length() > 0) {
             String[] classStrings = websocketEndpoint.split(",");
             for (String c : classStrings) {
-                webBuilder.addWebSocketEndpoint(c);
+                webBuilder.addWebSocketEndpoint(c.trim());
             }
         }
     }
