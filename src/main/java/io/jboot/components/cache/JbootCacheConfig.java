@@ -17,6 +17,7 @@ package io.jboot.components.cache;
 
 
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.utils.StrUtil;
 
 
 @ConfigModel(prefix = "jboot.cache")
@@ -36,7 +37,7 @@ public class JbootCacheConfig {
     // AOP 缓存的默认有效时间，0为永久有效，单位秒，
     // 当 @Cacheable 和 @CachePut 注解不配置的时候默认用这个配置
     private int aopCacheLiveSeconds = 0;
-    private String aopCacheType = type;
+    private String aopCacheType;
 
     public String getType() {
         return type;
@@ -55,6 +56,9 @@ public class JbootCacheConfig {
     }
 
     public String getAopCacheType() {
+        if (StrUtil.isBlank(aopCacheType)){
+            aopCacheType = getType();
+        }
         return aopCacheType;
     }
 
