@@ -1461,7 +1461,7 @@ public class JbootJedisImpl extends JbootRedisBase {
                         jedis.subscribe(binaryListener, channels);
                         LOG.warn("Disconnect to redis channel in subscribe binaryListener!");
                         break;
-                    } catch (JedisConnectionException e) {
+                    } catch (Throwable e) {
                         LOG.error("Failed connect to redis, reconnect it.", e);
                         try {
                             Thread.sleep(1000);
