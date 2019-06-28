@@ -1,3 +1,14 @@
+jboot v2.1.2:
+新增：添加 Swagger 的相关测试代码和demo
+新增：添加 Websocket 的相关测试代码和demo
+优化：重构 ClassScanner ，在 tomcat 环境不去扫码 tomcat 自身的相关jar文件
+优化：优化 JbootDbPro，在 Db.update 的时候正常打印相关参数
+优化：优化 当不配置 aop 缓存类型时，默认是 ehcache 的问题
+优化：优化 Jedis 的 subscribe 监听，当序列化出差时可能异常退出的问题
+优化：优化 FileUtil 在对 zip 解压缩时，可能出现恶意构造路线可能导致的安全问题
+修复：修复 Jboot Config 配置文档编写错误的问题
+
+
 jboot v2.1.1:
 新增：新增自定义 AOP 的缓存类型的支持
 新增：新增缓存类型 caffeine 和 caredis 类型
