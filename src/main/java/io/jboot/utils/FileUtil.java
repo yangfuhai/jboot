@@ -108,7 +108,7 @@ public class FileUtil {
                     try {
                         ZipEntry zipEntry = (ZipEntry) entryEnum.nextElement();
                         if (!zipEntry.isDirectory()) {
-                            if (safeUnzip && zipEntry.getName().contains("..")) {
+                            if (safeUnzip && isNotSafeFile(zipEntry.getName())) {
                                 continue;
                             }
                             File targetFile = new File(targetPath + File.separator + zipEntry.getName());
@@ -131,6 +131,11 @@ public class FileUtil {
         } finally {
             zipFile.close();
         }
+    }
+
+    private static boolean isNotSafeFile(String name) {
+        name = name.toLowerCase();
+        return name.contains("..") || name.endsWith(".jsp") || name.endsWith(".jspx");
     }
 
 }
