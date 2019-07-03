@@ -16,9 +16,12 @@
 package io.jboot.db.dbpro;
 
 import com.jfinal.core.JFinal;
+import com.jfinal.plugin.activerecord.Config;
 import com.jfinal.plugin.activerecord.DbPro;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,27 +35,30 @@ public class JbootDbPro extends DbPro {
     public JbootDbPro() {
     }
 
+
     public JbootDbPro(String configName) {
         super(configName);
     }
 
+
     @Override
-    public List<Record> find(String sql, Object... paras) {
+    protected List<Record> find(Config config, Connection conn, String sql, Object... paras) throws SQLException {
         debugPrintParas(paras);
-        return super.find(sql, paras);
+        return super.find(config, conn, sql, paras);
     }
 
 
     @Override
-    public <T> List<T> query(String sql, Object... paras) {
+    protected <T> List<T> query(Config config, Connection conn, String sql, Object... paras) throws SQLException {
         debugPrintParas(paras);
-        return super.query(sql, paras);
+        return super.query(config, conn, sql, paras);
     }
 
+
     @Override
-    public int update(String sql, Object... paras) {
+    protected int update(Config config, Connection conn, String sql, Object... paras) throws SQLException {
         debugPrintParas(paras);
-        return super.update(sql, paras);
+        return super.update(config, conn, sql, paras);
     }
 
     private void debugPrintParas(Object... objects) {
