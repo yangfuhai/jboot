@@ -329,6 +329,10 @@ public class Columns implements Serializable {
         return dialect.forFindByColumns("table", "*", getList(), null, null);
     }
 
+    @Override
+    public String toString() {
+        return getCacheKey();
+    }
 
     public static void main(String[] args) {
         Columns columns = Columns.create();
