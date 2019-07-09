@@ -153,18 +153,7 @@ class Utils {
             return String.valueOf(((java.util.Date) object).getTime());
         }
 
-        if (object instanceof java.sql.Date) {
-            return String.valueOf(((java.sql.Date) object).getTime());
-        }
-        if (object instanceof java.sql.Timestamp) {
-            return String.valueOf(((java.sql.Timestamp) object).getTime());
-        }
-        if (object instanceof java.sql.Time) {
-            return String.valueOf(((java.sql.Time) object).getTime());
-        }
-
         return String.valueOf(object);
-
     }
 
 
@@ -179,10 +168,7 @@ class Utils {
                 .append(")")
                 .toString();
 
-        String unlessBoolString = engineRender(template,
-                method, arguments);
-
-        return "true".equals(unlessBoolString);
+        return "true".equals(engineRender(template,method, arguments));
     }
 
 
