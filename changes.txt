@@ -1,3 +1,10 @@
+jboot v2.1.4:
+新增：FileUtil在解压缩的时候，对非安全文件进行过滤的功能
+优化：重写 Columns 的 toString() 方法，方便进行自动缓存的功能
+优化：升级 Guava 依赖到最新版本 v28.0
+优化：删除 AOP 缓存是多余的逻辑判断
+
+
 jboot v2.1.3:
 优化：升级 JFinal 到 4.3 最新版本
 优化：升级 JFinal-Undertow 到 1.7 最新版本
