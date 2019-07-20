@@ -325,8 +325,11 @@ public class ClassScanner {
 
         for (String jarPath : jarPaths) {
 
-            //过滤 tomcat 的 jar
-            if (tomcatClassPath != null && jarPath.startsWith(tomcatClassPath)) {
+            //过滤 tomcat 的 jar，但是不能过滤 webapps 目录下的
+            if (tomcatClassPath != null
+                    && jarPath.startsWith(tomcatClassPath)
+                    && !jarPath.contains(File.separator+"webapps"+File.separator))
+            {
                 continue;
             }
 
