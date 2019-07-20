@@ -1,3 +1,7 @@
+jboot v2.1.5:
+修复：紧急修复当项目部署在tomcat的webapps目录下，无法扫描到对应的jar的额问题
+
+
 jboot v2.1.4:
 新增：FileUtil在解压缩的时候，对非安全文件进行过滤的功能
 优化：重写 Columns 的 toString() 方法，方便进行自动缓存的功能

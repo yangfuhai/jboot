@@ -244,7 +244,7 @@ public class ClassScanner {
 
     }
 
-    public static void clearClassCache(){
+    public static void clearClassCache() {
         applicationClassCache.clear();
     }
 
@@ -328,8 +328,7 @@ public class ClassScanner {
             //过滤 tomcat 的 jar，但是不能过滤 webapps 目录下的
             if (tomcatClassPath != null
                     && jarPath.startsWith(tomcatClassPath)
-                    && !jarPath.contains(File.separator+"webapps"+File.separator))
-            {
+                    && !jarPath.contains(File.separator + "webapps" + File.separator)) {
                 continue;
             }
 
@@ -460,8 +459,6 @@ public class ClassScanner {
 
         return true;
     }
-
-
 
 
     @SuppressWarnings("unchecked")
