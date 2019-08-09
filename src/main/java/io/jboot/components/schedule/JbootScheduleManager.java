@@ -45,10 +45,10 @@ public class JbootScheduleManager {
     private ScheduledThreadPoolExecutor fixedScheduler;
     private JbooScheduleConfig config;
 
-    private Map<Class,Runnable> scheduleRunnableCache = new ConcurrentHashMap<>();
-    
+    private Map<Class, Runnable> scheduleRunnableCache = new ConcurrentHashMap<>();
+
     // add by lixin 08.08, 用于 remove fixedScheduler 
-    private Map<Class,ScheduledFuture>  scheduleFuture = new ConcurrentHashMap<>();
+    private Map<Class, ScheduledFuture> scheduleFuture = new ConcurrentHashMap<>();
 
     public JbootScheduleManager() {
         config = Jboot.config(JbooScheduleConfig.class);
@@ -92,7 +92,7 @@ public class JbootScheduleManager {
                     ? runnable
                     : new JbootDistributedRunnable(runnable, fixedDelayJob.period());
             try {
-                scheduleRunnableCache.put(runnableClass,executeRunnable);
+                scheduleRunnableCache.put(runnableClass, executeRunnable);
                 // modified by lixin 08.08, 用于remove fixedScheduler
                 // fixedScheduler.scheduleWithFixedDelay(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
                 scheduleFuture.put(runnableClass, fixedScheduler.scheduleWithFixedDelay(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS));
@@ -108,7 +108,7 @@ public class JbootScheduleManager {
                     ? runnable
                     : new JbootDistributedRunnable(runnable, fixedRateJob.period());
             try {
-                scheduleRunnableCache.put(runnableClass,executeRunnable);
+                scheduleRunnableCache.put(runnableClass, executeRunnable);
                 // modified by lixin 08.08, 用于remove fixedScheduler
                 // fixedScheduler.scheduleAtFixedRate(executeRunnable, fixedRateJob.initialDelay(), fixedRateJob.period(), TimeUnit.SECONDS);
                 scheduleFuture.put(runnableClass, fixedScheduler.scheduleAtFixedRate(executeRunnable, fixedRateJob.initialDelay(), fixedRateJob.period(), TimeUnit.SECONDS));
@@ -125,7 +125,7 @@ public class JbootScheduleManager {
             Runnable executeRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class) == null
                     ? runnable
                     : new JbootDistributedRunnable(runnable);
-            scheduleRunnableCache.put(runnableClass,executeRunnable);
+            scheduleRunnableCache.put(runnableClass, executeRunnable);
             cron4jPlugin.addTask(value, executeRunnable, cron.daemon());
         }
     }
@@ -134,11 +134,15 @@ public class JbootScheduleManager {
     //不支持 cron4jPlugin 的remove
     public void removeSchedule(Class<? extends Runnable> removeClass) {
         Runnable runnable = scheduleRunnableCache.get(removeClass);
-        if (runnable != null){
+        if (runnable != null) {
             fixedScheduler.remove(runnable);
             scheduleRunnableCache.remove(removeClass);
-            //add by lixin 08.08, 用于remove fixedScheduler
-            scheduleFuture.get(removeClass).cancel(true);
+        }
+
+        //add by lixin 08.08, 用于remove fixedScheduler
+        ScheduledFuture sf = scheduleFuture.get(removeClass);
+        if (sf != null) {
+            sf.cancel(true);
         }
     }
 
@@ -153,7 +157,6 @@ public class JbootScheduleManager {
     public ScheduledThreadPoolExecutor getFixedScheduler() {
         return fixedScheduler;
     }
-
 
 
 }
