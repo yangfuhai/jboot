@@ -1,3 +1,7 @@
+jboot v2.1.6:
+修复：修复 JbootScheduleManager 无法移除已经添加的任务的问题
+
+
 jboot v2.1.5:
 修复：紧急修复当项目部署在tomcat的webapps目录下，无法扫描到对应的jar的额问题
 
