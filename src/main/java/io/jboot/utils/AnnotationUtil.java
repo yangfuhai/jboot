@@ -5,6 +5,9 @@ import io.jboot.app.config.JbootConfigManager;
 
 public class AnnotationUtil {
 
+    private  static final String EXPR_PREFIX = "${";
+    private  static final String EXPR_SUFFIX = "}";
+
 
     public static String get(String value) {
         if (StrUtil.isBlank(value)) {
@@ -13,7 +16,7 @@ public class AnnotationUtil {
             value = value.trim();
         }
 
-        if (value.startsWith("${") && value.endsWith("}")) {
+        if (value.startsWith(EXPR_PREFIX) && value.endsWith(EXPR_SUFFIX)) {
             String key = value.substring(2, value.length() - 1);
             return getConfigValueByKeyString(key);
         }
