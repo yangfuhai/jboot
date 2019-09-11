@@ -13,7 +13,6 @@
 - Session 
 - Cookie
 - Jwt ： Json Web Token
-- FlashMessage
 - Validate ： 验证器
 - 安全
 
