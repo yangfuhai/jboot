@@ -32,6 +32,7 @@ public class HelloworldController extends JbootController {
 
 ## 帮助文档
 
+- [demos](./src/test/java/io/jboot/test)
 - [安装](./doc/docs/install.md)
 - [2分钟快速开始](./doc/docs/quickstart.md)
 - [配置文件](./doc/docs/config.md)
