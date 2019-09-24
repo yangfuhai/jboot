@@ -367,6 +367,7 @@ public class Columns implements Serializable {
         columns.or();
 
         columns.not_in("nickname","aaa","bbb");
+        System.out.println(columns.getCacheKey());
 
         columns.between("name", "123", "1233");
         System.out.println(columns.getCacheKey());
