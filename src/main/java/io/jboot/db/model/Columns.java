@@ -216,6 +216,12 @@ public class Columns implements Serializable {
         return this;
     }
 
+    public Columns not_in(String name, Object... arrays) {
+        this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
+        return this;
+    }
+
+
 
     public Columns between(String name, Object start, Object end) {
         this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
@@ -307,6 +313,8 @@ public class Columns implements Serializable {
                 return "nn";
             case Column.LOGIC_IN:
                 return "in";
+            case Column.LOGIC_NOT_IN:
+                return "nin";
             case Column.LOGIC_BETWEEN:
                 return "bt";
             default:
@@ -357,6 +365,8 @@ public class Columns implements Serializable {
         columns.in("name", "123", "123", "111");
         System.out.println(columns.getCacheKey());
         columns.or();
+
+        columns.not_in("nickname","aaa","bbb");
 
         columns.between("name", "123", "1233");
         System.out.println(columns.getCacheKey());

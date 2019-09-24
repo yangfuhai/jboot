@@ -31,6 +31,7 @@ public class Column implements Serializable {
     public static final String LOGIC_IS_NOT_NULL = " IS NOT NULL ";
 
     public static final String LOGIC_IN = " IN ";
+    public static final String LOGIC_NOT_IN = " NOT IN ";
     public static final String LOGIC_BETWEEN = " BETWEEN ";
 
 

@@ -30,42 +30,45 @@ import java.util.List;
 public class DialectKit {
 
     public static void appIfNotEmpty(List<Column> columns, StringBuilder sqlBuilder, char separator) {
-        if (ArrayUtil.isNotEmpty(columns)) {
-            sqlBuilder.append(" WHERE ");
-            int index = 0;
-            int last = columns.size() - 1;
-            for (Column column : columns) {
 
-                // or
-                if (column instanceof Or) {
-                    appendOrLogic(sqlBuilder);
-                }
-                // in logic
-                else if (Column.LOGIC_IN.equals(column.getLogic())) {
-                    appendInLogic(sqlBuilder, index, last, column, separator);
-                }
+        if (ArrayUtil.isNullOrEmpty(columns)) {
+            return;
+        }
 
-                // between logic
-                else if (Column.LOGIC_BETWEEN.equals(column.getLogic())) {
-                    appendBetweenLogic(sqlBuilder, index, last, column, separator);
-                }
-                // others
-                else {
-                    sqlBuilder.append(separator)
-                            .append(column.getName())
-                            .append(separator)
-                            .append(column.getLogic());
+        sqlBuilder.append(" WHERE ");
+        int index = 0;
+        int last = columns.size() - 1;
+        for (Column column : columns) {
 
-                    if (column.isMustNeedValue()) {
-                        sqlBuilder.append(" ? ");
-                    }
-
-                    if (index != last) {
-                        sqlBuilder.append(" AND ");
-                    }
-                }
-                index++;
+            // or
+            if (column instanceof Or) {
+                appendOrLogic(sqlBuilder);
             }
+            // in logic
+            else if (Column.LOGIC_IN.equals(column.getLogic()) || Column.LOGIC_NOT_IN.equals(column.getLogic())) {
+                appendInLogic(sqlBuilder, index, last, column, separator);
+            }
+
+            // between logic
+            else if (Column.LOGIC_BETWEEN.equals(column.getLogic())) {
+                appendBetweenLogic(sqlBuilder, index, last, column, separator);
+            }
+            // others
+            else {
+                sqlBuilder.append(separator)
+                        .append(column.getName())
+                        .append(separator)
+                        .append(column.getLogic());
+
+                if (column.isMustNeedValue()) {
+                    sqlBuilder.append(" ? ");
+                }
+
+                if (index != last) {
+                    sqlBuilder.append(" AND ");
+                }
+            }
+            index++;
         }
     }
 
