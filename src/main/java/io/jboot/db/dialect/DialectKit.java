@@ -29,7 +29,11 @@ import java.util.List;
  */
 public class DialectKit {
 
-    public static void appIfNotEmpty(List<Column> columns, StringBuilder sqlBuilder, char separator) {
+    public static void buildMysqlWhereSql(StringBuilder sqlBuilder, List<Column> columns) {
+        buildWhereSql(sqlBuilder, columns, '`');
+    }
+
+    public static void buildWhereSql(StringBuilder sqlBuilder, List<Column> columns, char separator) {
 
         if (ArrayUtil.isNullOrEmpty(columns)) {
             return;
@@ -116,7 +120,7 @@ public class DialectKit {
                 .append(table)
                 .append(separator);
 
-        appIfNotEmpty(columns, sqlBuilder, separator);
+        buildWhereSql(sqlBuilder, columns, separator);
 
         if (StrUtil.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
@@ -131,7 +135,7 @@ public class DialectKit {
                 .append(table)
                 .append(separator);
 
-        appIfNotEmpty(columns, sqlBuilder, separator);
+        buildWhereSql(sqlBuilder, columns, separator);
 
         if (StrUtil.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
