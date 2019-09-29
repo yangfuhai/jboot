@@ -26,13 +26,18 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
 
     @Override
     public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table,loadColumns,columns,orderBy,' ');
+        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table, loadColumns, columns, orderBy, ' ');
 
         if (limit != null) {
             sqlBuilder.append(" LIMIT " + limit);
         }
 
         return sqlBuilder.toString();
+    }
+
+    @Override
+    public String forDeleteByColumns(String table, List<Column> columns) {
+        return DialectKit.forDeleteByColumns(table,columns,' ');
     }
 
 

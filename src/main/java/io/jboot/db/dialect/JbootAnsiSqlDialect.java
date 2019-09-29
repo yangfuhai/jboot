@@ -36,6 +36,11 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements IJbootModelDi
         return sqlBuilder.toString();
     }
 
+    @Override
+    public String forDeleteByColumns(String table, List<Column> columns) {
+        return DialectKit.forDeleteByColumns(table,columns,' ');
+    }
+
 
     @Override
     public String forPaginateSelect(String loadColumns) {

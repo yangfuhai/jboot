@@ -33,6 +33,14 @@ public class DialectKit {
         buildWhereSql(sqlBuilder, columns, '`');
     }
 
+    public static String forDeleteByColumns(String table, List<Column> columns, char separator) {
+        StringBuilder sql = new StringBuilder(45);
+        sql.append("DELETE FROM ").append(separator).append(table).append(separator);
+        DialectKit.buildWhereSql(sql, columns, ' ');
+        return sql.toString();
+    }
+
+
     public static void buildWhereSql(StringBuilder sqlBuilder, List<Column> columns, char separator) {
 
         if (ArrayUtil.isNullOrEmpty(columns)) {
