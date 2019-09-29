@@ -56,7 +56,7 @@ public class JbootDbPro extends DbPro {
 
 
     @Override
-    protected int update(Config config, Connection conn, String sql, Object... paras) throws SQLException {
+    public int update(Config config, Connection conn, String sql, Object... paras) throws SQLException {
         debugPrintParas(paras);
         return super.update(config, conn, sql, paras);
     }

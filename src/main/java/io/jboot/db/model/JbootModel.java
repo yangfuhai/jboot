@@ -22,6 +22,9 @@ import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -222,6 +225,46 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             deleteIdCacheById(idValues);
         }
         return success;
+    }
+
+
+    public boolean deleteByColumn(Column column) {
+        return deleteByColumns(Arrays.asList(column));
+    }
+
+
+    public boolean deleteByColumns(Columns columns) {
+        return deleteByColumns(columns.getList());
+    }
+
+
+    public boolean deleteByColumns(List<Column> columns) {
+        Config config = this._getConfig();
+        Connection conn = null;
+
+        Object[] values = new Object[columns.size()];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = columns.get(i).getValue();
+        }
+        try {
+            conn = config.getConnection();
+            String sql = _getDialect().forDeleteByColumns(_getTableName(), columns);
+            return update(conn, sql, values) >= 1;
+        } catch (Exception ex) {
+            throw new ActiveRecordException(ex);
+        } finally {
+            config.close(conn);
+        }
+    }
+
+    protected int update(Connection conn, String sql, Object... paras) throws SQLException {
+        PreparedStatement pst = conn.prepareStatement(sql);
+        try {
+            _getConfig().getDialect().fillStatement(pst, paras);
+            return pst.executeUpdate();
+        } finally {
+            if (pst != null) pst.close();
+        }
     }
 
 
@@ -450,6 +493,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                 ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)
                 : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
     }
+
 
     public <T> T _getIdValue() {
         return get(_getPrimaryKey());
