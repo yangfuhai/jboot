@@ -375,6 +375,10 @@ public class Columns implements Serializable {
         System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());
         System.out.println(columns.toSqlServerSql());
+
+        JbootMysqlDialect dialect = new JbootMysqlDialect();
+        System.out.println(dialect.forDeleteByColumns("table",columns.getList()));
+
     }
 
 }

@@ -257,6 +257,14 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
     }
 
+    public boolean batchDeleteByIds(Object... idValues) {
+        boolean success = deleteByColumns(Columns.create().in(_getPrimaryKey(), idValues));
+        if (success && idCacheEnable) {
+            for (Object id : idValues) deleteIdCacheById(id);
+        }
+        return success;
+    }
+
     protected int update(Connection conn, String sql, Object... paras) throws SQLException {
         PreparedStatement pst = conn.prepareStatement(sql);
         try {
