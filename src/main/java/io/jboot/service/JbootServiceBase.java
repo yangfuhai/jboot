@@ -16,6 +16,7 @@
 package io.jboot.service;
 
 import com.jfinal.plugin.activerecord.Page;
+import io.jboot.db.model.Column;
 import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
@@ -76,12 +77,79 @@ public class JbootServiceBase<M extends JbootModel<M>>
 
 
     /**
+     * 根据 Columns 查找单条数据
+     * @param columns
+     * @return
+     */
+    public M findFirstByColumns(Columns columns) {
+        return findFirstByColumns(columns, null);
+    }
+
+
+    /**
+     * 根据 Columns 查找单条数据
+     * @param columns
+     * @param orderBy
+     * @return
+     */
+    public M findFirstByColumns(Columns columns, String orderBy) {
+        return DAO.findFirstByColumns(columns, orderBy);
+    }
+
+
+    /**
      * 查找全部数据
      *
      * @return
      */
     public List<M> findAll() {
         return DAO.findAll();
+    }
+
+
+    /**
+     * 根据 Columns 查找数据
+     *
+     * @param columns
+     * @return
+     */
+    public List<M> findListByColumns(Columns columns) {
+        return DAO.findListByColumns(columns);
+    }
+
+
+    /**
+     * 根据 Columns 查找数据
+     *
+     * @param columns
+     * @param orderBy
+     * @return
+     */
+    public List<M> findListByColumns(Columns columns, String orderBy) {
+        return DAO.findListByColumns(columns, orderBy);
+    }
+
+    /**
+     * 根据 Columns 查找数据
+     *
+     * @param columns
+     * @param count
+     * @return
+     */
+    public List<M> findListByColumns(Columns columns, Integer count) {
+        return DAO.findListByColumns(columns, count);
+    }
+
+    /**
+     * 根据 Columns 查找数据
+     *
+     * @param columns
+     * @param orderBy
+     * @param count
+     * @return
+     */
+    public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
+        return DAO.findListByColumns(columns, orderBy, count);
     }
 
 
@@ -110,6 +178,49 @@ public class JbootServiceBase<M extends JbootModel<M>>
         boolean result = model.delete();
         if (result) {
             shouldUpdateCache(ACTION_DEL, model);
+        }
+        return result;
+    }
+
+
+    /**
+     * 根据 多个 id 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    public boolean batchDeleteByIds(Object... ids) {
+        boolean result = DAO.batchDeleteByIds(ids);
+        if (result) {
+            shouldUpdateCache(ACTION_DEL, ids);
+        }
+        return result;
+    }
+
+    /**
+     * 根据列进行删除
+     *
+     * @param column
+     * @return
+     */
+    public boolean deleteByColumn(Column column) {
+        boolean result = DAO.deleteByColumn(column);
+        if (result) {
+            shouldUpdateCache(ACTION_DEL, column);
+        }
+        return result;
+    }
+
+    /**
+     * 根据条件进行删除
+     *
+     * @param columns
+     * @return
+     */
+    public boolean deleteByColumns(Columns columns) {
+        boolean result = DAO.deleteByColumns(columns);
+        if (result) {
+            shouldUpdateCache(ACTION_DEL, columns);
         }
         return result;
     }
