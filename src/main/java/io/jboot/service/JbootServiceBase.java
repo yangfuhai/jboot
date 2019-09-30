@@ -16,7 +16,6 @@
 package io.jboot.service;
 
 import com.jfinal.plugin.activerecord.Page;
-import io.jboot.db.model.Column;
 import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
@@ -210,19 +209,6 @@ public class JbootServiceBase<M extends JbootModel<M>>
         return result;
     }
 
-    /**
-     * 根据列进行删除
-     *
-     * @param column
-     * @return
-     */
-    public boolean deleteByColumn(Column column) {
-        boolean result = DAO.deleteByColumn(column);
-        if (result) {
-            shouldUpdateCache(ACTION_DEL, column);
-        }
-        return result;
-    }
 
     /**
      * 根据条件进行删除
