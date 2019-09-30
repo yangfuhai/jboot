@@ -492,7 +492,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return findCountByColumns(columns.getList());
     }
 
-    public Long findCountByColumns(List<Column> columns) {
+    public long findCountByColumns(List<Column> columns) {
 
         String sql = _getDialect().forFindCountByColumns(_getTableName(), columns);
 
@@ -501,7 +501,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             values[i] = columns.get(i).getValue();
         }
 
-        return Db.use(_getConfig().getName()).queryLong(sql, values);
+        Long value = Db.use(_getConfig().getName()).queryLong(sql, values);
+        return value == null ? 0 : value;
     }
 
 
