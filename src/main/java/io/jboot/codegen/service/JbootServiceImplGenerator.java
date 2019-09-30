@@ -41,6 +41,7 @@ public class JbootServiceImplGenerator {
 
     private String template;
     private String implName = "impl";
+    private String outputDir;
 
 
     public JbootServiceImplGenerator(String basePackage, String modelPackage) {
@@ -49,6 +50,16 @@ public class JbootServiceImplGenerator {
         this.modelPackage = modelPackage;
         this.template = "io/jboot/codegen/service/service_impl_template.tp";
         this.metaBuilder = CodeGenHelpler.createMetaBuilder();
+        this.outputDir = buildOutPutDir();
+
+    }
+    public JbootServiceImplGenerator(String basePackage,String outputDir ,String modelPackage) {
+
+        this.basePackage = basePackage;
+        this.modelPackage = modelPackage;
+        this.template = "io/jboot/codegen/service/service_impl_template.tp";
+        this.metaBuilder = CodeGenHelpler.createMetaBuilder();
+        this.outputDir = outputDir;
 
     }
 
@@ -88,7 +99,7 @@ public class JbootServiceImplGenerator {
 
     public void generate(List<TableMeta> tableMetas) {
         System.out.println("Generate Service Impl ...");
-        System.out.println("Service Impl Output Dir: " + buildOutPutDir());
+        System.out.println("Service Impl Output Dir: " + outputDir);
 
         Engine engine = Engine.create("forServiceImpl");
         engine.setSourceFactory(new ClassPathSourceFactory());
@@ -130,12 +141,12 @@ public class JbootServiceImplGenerator {
      * base model 覆盖写入
      */
     protected void writeToFile(TableMeta tableMeta) throws IOException {
-        File dir = new File(buildOutPutDir());
+        File dir = new File(outputDir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        String target = buildOutPutDir() + File.separator + tableMeta.modelName + "Service" + StrKit.firstCharToUpperCase(implName) + ".java";
+        String target =outputDir + File.separator + tableMeta.modelName + "Service" + StrKit.firstCharToUpperCase(implName) + ".java";
 
         File targetFile = new File(target);
         if (targetFile.exists()) {
