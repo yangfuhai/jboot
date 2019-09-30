@@ -1,3 +1,21 @@
+jboot v2.2.0:
+新增：JbootModel 新增 deleteByColumns 的方法
+新增：JbootModel 新增 batchDeleteByIds 的方法
+新增：JbootModel 新增 findCountByColumns 的方法
+新增：Columns 查询新增 not in 的功能
+新增：代码生成器新增 findFirstByColumns 系列方法
+新增：代码生成器新增 findListByColumns 系列方法
+新增：代码生成器新增 findCountByColumns 系列方法
+新增：代码生成器新增 paginateByColumns 系列方法
+新增：代码生成器新增 deleteByColumns 系列方法
+优化：优化Service层的代码生成器
+优化：AnnotationUtil 的性能问题
+优化：更新 jboot/cglib/fastjson/druid/HikariCP 等依赖
+优化：完善 docker 部署的相关问题
+优化：优化 DialectKit 的方法逻辑，使之更加容易阅读
+修复：修复 fatjar 打包时，获取classpath 和 banner等不正确的问题
+
+
 jboot v2.1.6:
 修复：修复 JbootScheduleManager 无法移除已经添加的任务的问题
 
