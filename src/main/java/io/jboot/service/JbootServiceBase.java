@@ -160,7 +160,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @param columns
      * @return
      */
-    public Long findCountByColumns(Columns columns) {
+    public long findCountByColumns(Columns columns) {
         return DAO.findCountByColumns(columns);
     }
 
