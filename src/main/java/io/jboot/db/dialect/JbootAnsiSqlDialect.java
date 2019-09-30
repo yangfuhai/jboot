@@ -27,7 +27,7 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements IJbootModelDi
 
     @Override
     public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table,loadColumns,columns,orderBy,' ');
+        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table, loadColumns, columns, orderBy, ' ');
 
         if (limit != null) {
             throw new JbootException("limit param not finished JbootAnsiSqlDialect.");
@@ -37,8 +37,13 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements IJbootModelDi
     }
 
     @Override
+    public String forFindCountByColumns(String table, List<Column> columns) {
+        return DialectKit.forFindCountByColumns(table, columns, ' ');
+    }
+
+    @Override
     public String forDeleteByColumns(String table, List<Column> columns) {
-        return DialectKit.forDeleteByColumns(table,columns,' ');
+        return DialectKit.forDeleteByColumns(table, columns, ' ');
     }
 
 

@@ -57,6 +57,11 @@ public class JbootOracleDialect extends OracleDialect implements IJbootModelDial
     }
 
     @Override
+    public String forFindCountByColumns(String table, List<Column> columns) {
+        return DialectKit.forFindCountByColumns(table, columns, ' ');
+    }
+
+    @Override
     public String forDeleteByColumns(String table, List<Column> columns) {
         return DialectKit.forDeleteByColumns(table,columns,' ');
     }

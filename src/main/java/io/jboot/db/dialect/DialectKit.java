@@ -151,4 +151,15 @@ public class DialectKit {
 
         return sqlBuilder.toString();
     }
+
+    public static String forFindCountByColumns(String table, List<Column> columns, char separator) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT count(*) FROM ")
+                .append(separator)
+                .append(table)
+                .append(separator);
+
+        buildWhereSql(sqlBuilder, columns, separator);
+
+        return sqlBuilder.toString();
+    }
 }

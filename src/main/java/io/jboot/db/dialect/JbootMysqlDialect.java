@@ -35,6 +35,11 @@ public class JbootMysqlDialect extends MysqlDialect implements IJbootModelDialec
     }
 
     @Override
+    public String forFindCountByColumns(String table, List<Column> columns) {
+        return DialectKit.forFindCountByColumns(table, columns, '`');
+    }
+
+    @Override
     public String forDeleteByColumns(String table, List<Column> columns) {
         return DialectKit.forDeleteByColumns(table,columns,'`');
     }

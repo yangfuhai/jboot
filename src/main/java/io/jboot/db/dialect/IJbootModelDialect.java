@@ -26,6 +26,9 @@ public interface IJbootModelDialect {
     public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit);
 
 
+    public String forFindCountByColumns(String table, List<Column> columns);
+
+
     public String forDeleteByColumns(String table, List<Column> columns);
 
 

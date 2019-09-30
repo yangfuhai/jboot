@@ -36,6 +36,11 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
     }
 
     @Override
+    public String forFindCountByColumns(String table, List<Column> columns) {
+        return DialectKit.forFindCountByColumns(table, columns, ' ');
+    }
+
+    @Override
     public String forDeleteByColumns(String table, List<Column> columns) {
         return DialectKit.forDeleteByColumns(table,columns,' ');
     }
