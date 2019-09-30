@@ -78,6 +78,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
 
     /**
      * 根据 Columns 查找单条数据
+     *
      * @param columns
      * @return
      */
@@ -88,6 +89,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
 
     /**
      * 根据 Columns 查找单条数据
+     *
      * @param columns
      * @param orderBy
      * @return
@@ -150,6 +152,17 @@ public class JbootServiceBase<M extends JbootModel<M>>
      */
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
         return DAO.findListByColumns(columns, orderBy, count);
+    }
+
+
+    /**
+     * 根据提交查询数据量
+     *
+     * @param columns
+     * @return
+     */
+    public Long findCountByColumns(Columns columns) {
+        return DAO.findCountByColumns(columns);
     }
 
 

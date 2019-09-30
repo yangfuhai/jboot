@@ -378,6 +378,7 @@ public class Columns implements Serializable {
 
         JbootMysqlDialect dialect = new JbootMysqlDialect();
         System.out.println(dialect.forDeleteByColumns("table",columns.getList()));
+        System.out.println(dialect.forFindCountByColumns("table",columns.getList()));
 
     }
 
