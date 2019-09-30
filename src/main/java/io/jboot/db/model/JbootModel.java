@@ -22,9 +22,6 @@ import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -239,22 +236,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public boolean deleteByColumns(List<Column> columns) {
-        Config config = this._getConfig();
-        Connection conn = null;
+
+        String sql = _getDialect().forDeleteByColumns(_getTableName(), columns);
 
         Object[] values = new Object[columns.size()];
         for (int i = 0; i < values.length; i++) {
             values[i] = columns.get(i).getValue();
         }
-        try {
-            conn = config.getConnection();
-            String sql = _getDialect().forDeleteByColumns(_getTableName(), columns);
-            return update(conn, sql, values) >= 1;
-        } catch (Exception ex) {
-            throw new ActiveRecordException(ex);
-        } finally {
-            config.close(conn);
-        }
+
+        return Db.use(_getConfig().getName()).update(sql, values) >= 1;
     }
 
     public boolean batchDeleteByIds(Object... idValues) {
@@ -263,16 +253,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             for (Object id : idValues) deleteIdCacheById(id);
         }
         return success;
-    }
-
-    protected int update(Connection conn, String sql, Object... paras) throws SQLException {
-        PreparedStatement pst = conn.prepareStatement(sql);
-        try {
-            _getConfig().getDialect().fillStatement(pst, paras);
-            return pst.executeUpdate();
-        } finally {
-            if (pst != null) pst.close();
-        }
     }
 
 
@@ -500,6 +480,28 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return columns.isEmpty()
                 ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)
                 : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
+    }
+
+
+    public long findCountByColumn(Column column) {
+        return findCountByColumns(Columns.create(column));
+    }
+
+
+    public long findCountByColumns(Columns columns) {
+        return findCountByColumns(columns.getList());
+    }
+
+    public Long findCountByColumns(List<Column> columns) {
+
+        String sql = _getDialect().forFindCountByColumns(_getTableName(), columns);
+
+        Object[] values = new Object[columns.size()];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = columns.get(i).getValue();
+        }
+
+        return Db.use(_getConfig().getName()).queryLong(sql, values);
     }
 
 
