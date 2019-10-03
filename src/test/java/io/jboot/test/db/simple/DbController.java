@@ -3,6 +3,7 @@ package io.jboot.test.db.simple;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import io.jboot.app.JbootApplication;
+import io.jboot.db.JbootDb;
 import io.jboot.db.model.Columns;
 import io.jboot.test.db.model.User;
 import io.jboot.web.controller.JbootController;
@@ -21,6 +22,7 @@ public class DbController extends JbootController {
         JbootApplication.setBootArg("jboot.datasource.type", "mysql");
         JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/jbootdemo");
         JbootApplication.setBootArg("jboot.datasource.user", "root");
+        JbootApplication.setBootArg("jboot.datasource.password", "123456");
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
         JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.db.model");
         JbootApplication.setBootArg("undertow.devMode", "false");
@@ -74,5 +76,19 @@ public class DbController extends JbootController {
         List<User> users = dao.findListByColumns(columns);
         renderJson(users);
     }
+
+
+
+    public void find4(){
+        List<Record> users = JbootDb.find("user",Columns.create());
+        renderJson(users);
+    }
+
+
+    public void find5(){
+        List<Record> users = JbootDb.find("user",Columns.create("login_name","aaa"));
+        renderJson(users);
+    }
+
 
 }
