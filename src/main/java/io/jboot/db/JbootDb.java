@@ -36,29 +36,28 @@ public class JbootDb extends Db {
 
 
     public static List<Record> find(String tableName, Columns columns) {
-        return find(null, tableName, columns, null, null);
+        return find(tableName, columns, null, null);
     }
 
 
     public static List<Record> find(String tableName, Columns columns, String orderBy) {
-        return find(null, tableName, columns, orderBy, null);
+        return find(tableName, columns, orderBy, null);
     }
 
 
     public static List<Record> find(String tableName, Columns columns, Object limit) {
-        return find(null, tableName, columns, null, limit);
+        return find(tableName, columns, null, limit);
     }
 
 
     public static List<Record> find(String tableName, Columns columns, String orderBy, Object limit) {
-        return use().find(tableName,columns,orderBy,limit);
+        return use().find(tableName, columns, orderBy, limit);
     }
 
 
     public static int delete(String tableName, Columns columns) {
-        return use().delete(tableName,columns);
+        return use().delete(tableName, columns);
     }
-
 
 
 }
