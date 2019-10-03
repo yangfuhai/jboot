@@ -19,6 +19,8 @@ import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Config;
 import com.jfinal.plugin.activerecord.DbPro;
 import com.jfinal.plugin.activerecord.Record;
+import io.jboot.db.dialect.IJbootModelDialect;
+import io.jboot.db.model.Columns;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -67,5 +69,33 @@ public class JbootDbPro extends DbPro {
         }
     }
 
+
+    public List<Record> find(String tableName, Columns columns) {
+        return find(tableName, columns, null, null);
+    }
+
+
+    public List<Record> find(String tableName, Columns columns, String orderBy) {
+        return find(tableName, columns, orderBy, null);
+    }
+
+
+    public List<Record> find(String tableName, Columns columns, Object limit) {
+        return find(tableName, columns, null, limit);
+    }
+
+
+    public List<Record> find(String tableName, Columns columns, String orderBy, Object limit) {
+        IJbootModelDialect dialect = (IJbootModelDialect) getConfig().getDialect();
+        String sql = dialect.forFindByColumns(tableName, "*", columns.getList(), orderBy, limit);
+        return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
+    }
+
+
+    public int delete(String tableName, Columns columns) {
+        IJbootModelDialect dialect = (IJbootModelDialect) getConfig().getDialect();
+        String sql = dialect.forDeleteByColumns(tableName, columns.getList());
+        return columns.isEmpty() ? delete(sql) : delete(sql, columns.getValueArray());
+    }
 
 }
