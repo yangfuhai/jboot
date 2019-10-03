@@ -38,22 +38,22 @@ import java.util.*;
 /**
  * 数据库 管理
  */
-public class JbootDbManager {
+public class ArpManager {
 
-    private static JbootDbManager manager;
+    private static ArpManager manager;
 
 
     private List<ActiveRecordPlugin> activeRecordPlugins = new ArrayList<>();
 
 
-    public static JbootDbManager me() {
+    public static ArpManager me() {
         if (manager == null) {
-            manager = new JbootDbManager();
+            manager = new ArpManager();
         }
         return manager;
     }
 
-    public JbootDbManager() {
+    public ArpManager() {
 
 
         Map<String, DataSourceConfig> allDatasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();

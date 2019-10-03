@@ -36,7 +36,7 @@ import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
 import io.jboot.core.listener.JbootAppListenerManager;
 import io.jboot.core.log.Slf4jLogFactory;
-import io.jboot.db.JbootDbManager;
+import io.jboot.db.ArpManager;
 import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
@@ -181,7 +181,7 @@ public class JbootCoreConfig extends JFinalConfig {
     @Override
     public void configPlugin(Plugins plugins) {
 
-        List<ActiveRecordPlugin> arps = JbootDbManager.me().getActiveRecordPlugins();
+        List<ActiveRecordPlugin> arps = ArpManager.me().getActiveRecordPlugins();
         for (ActiveRecordPlugin arp : arps) {
             plugins.add(arp);
         }
