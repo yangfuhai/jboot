@@ -1,3 +1,9 @@
+jboot v2.2.1:
+优化：findCountByColumns 返回的类型由 Long 改为 long
+优化：JbootDbManager 重命名为 ArpManager
+新增：JbootDb 工具类，及其 JbootDb.findByColumns 及其 JbootDb.deleteByColumns 系列方法
+
+
 jboot v2.2.0:
 新增：JbootModel 新增 deleteByColumns 的方法
 新增：JbootModel 新增 batchDeleteByIds 的方法
