@@ -569,67 +569,14 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected boolean _hasColumn(String columnLabel) {
         return _getTable(true).hasColumnLabel(columnLabel);
     }
-
-    // -----------------------------Override----------------------------
-    @Override
-    public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
-        return super.paginate(pageNumber, pageSize, select, sqlExceptSelect);
-    }
+    
 
     @Override
-    public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
-        return super.paginate(pageNumber, pageSize, select, sqlExceptSelect, paras);
-    }
-
-    @Override
-    public Page<M> paginate(int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect,
-                            Object... paras) {
-        return super.paginate(pageNumber, pageSize, isGroupBySql, select, sqlExceptSelect, paras);
-    }
-
-    @Override
-    public List<M> find(String sql, Object... paras) {
-
+    protected List<M> find(Config config, String sql, Object... paras) {
         debugPrintParas(paras);
-        return super.find(sql, paras);
+        return super.find(config, sql, paras);
     }
 
-
-    @Override
-    public M findFirst(String sql, Object... paras) {
-        debugPrintParas(paras);
-        return super.findFirst(sql, paras);
-    }
-
-    @Override
-    public List<M> findByCache(String cacheName, Object key, String sql, Object... paras) {
-        return super.findByCache(cacheName, key, sql, paras);
-    }
-
-
-    @Override
-    public M findFirstByCache(String cacheName, Object key, String sql, Object... paras) {
-        return super.findFirstByCache(cacheName, key, sql, paras);
-    }
-
-    @Override
-    public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select,
-                                   String sqlExceptSelect, Object... paras) {
-        return super.paginateByCache(cacheName, key, pageNumber, pageSize, select, sqlExceptSelect, paras);
-    }
-
-    @Override
-    public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, boolean isGroupBySql,
-                                   String select, String sqlExceptSelect, Object... paras) {
-        return super.paginateByCache(cacheName, key, pageNumber, pageSize, isGroupBySql, select,
-                sqlExceptSelect, paras);
-    }
-
-    @Override
-    public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select,
-                                   String sqlExceptSelect) {
-        return super.paginateByCache(cacheName, key, pageNumber, pageSize, select, sqlExceptSelect);
-    }
 
     private void debugPrintParas(Object... objects) {
         if (JFinal.me().getConstants().getDevMode()) {
