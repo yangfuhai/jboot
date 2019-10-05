@@ -17,10 +17,10 @@ package io.jboot.aop;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.aop.interceptor.cache.JbootCacheEvictInterceptor;
-import io.jboot.aop.interceptor.cache.JbootCacheInterceptor;
-import io.jboot.aop.interceptor.cache.JbootCachePutInterceptor;
-import io.jboot.aop.interceptor.cache.JbootCachesEvictInterceptor;
+import io.jboot.components.cache.interceptor.JbootCacheEvictInterceptor;
+import io.jboot.components.cache.interceptor.JbootCacheInterceptor;
+import io.jboot.components.cache.interceptor.JbootCachePutInterceptor;
+import io.jboot.components.cache.interceptor.JbootCachesEvictInterceptor;
 import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.exception.JbootException;
 import io.jboot.support.metric.JbootMetricInterceptor;
