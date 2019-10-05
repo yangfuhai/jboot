@@ -362,8 +362,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findAll() {
-        String sql = _getDialect().forFindByColumns(_getTableName(), "*", null, null, null);
-        return find(sql);
+        return super.findAll();
+    }
+
+    public List<M> findListByIds(Object... ids) {
+        return findListByColumns(Columns.create().in(_getPrimaryKey(), ids));
     }
 
 
