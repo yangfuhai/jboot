@@ -30,6 +30,8 @@ import java.util.List;
  */
 public class Columns implements Serializable {
 
+    public static final Columns EMPTY = Columns.create();
+
     private List<Column> cols;
 
 
