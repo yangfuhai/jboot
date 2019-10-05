@@ -18,9 +18,8 @@ package io.jboot.components.cache.interceptor;
 import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
-import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.JbootCacheConfig;
-import io.jboot.components.cache.JbootCacheManager;
 import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
@@ -187,10 +186,10 @@ class Utils {
         String cacheKey = AnnotationUtil.get(evict.key());
 
         if (StrUtil.isBlank(cacheKey) || "*".equals(cacheKey)) {
-            getAopCache().removeAll(cacheName);
+            AopCache.removeAll(cacheName);
         } else {
             cacheKey = Utils.buildCacheKey(cacheKey, targetClass, method, arguments);
-            getAopCache().remove(cacheName, cacheKey);
+            AopCache.remove(cacheName, cacheKey);
         }
     }
 
@@ -201,38 +200,10 @@ class Utils {
                 ? liveSeconds
                 : CONFIG.getAopCacheLiveSeconds();
         if (liveSeconds > 0) {
-            getAopCache().put(cacheName, cacheKey, data, liveSeconds);
+            AopCache.put(cacheName, cacheKey, data, liveSeconds);
         } else {
-            getAopCache().put(cacheName, cacheKey, data);
+            AopCache.put(cacheName, cacheKey, data);
         }
-    }
-
-    private static JbootCache aopCache;
-    static JbootCache getAopCache(){
-        if (aopCache == null){
-            synchronized (Utils.class){
-                if (aopCache == null){
-                    aopCache = JbootCacheManager.me().getCache(CONFIG.getAopCacheType());
-                }
-            }
-        }
-        return aopCache;
-    }
-
-
-    public static void main(String[] args) {
-
-        Map<String, Object> datas = new HashMap();
-        datas.put("key", "value");
-
-        String template = "#(key)";
-
-        long time = System.currentTimeMillis();
-        for (int i = 0; i < 1000000; i++) {
-            ENGINE.getTemplateByString(template).renderToString(datas);
-        }
-
-        System.out.println("time : " + (System.currentTimeMillis() - time));
     }
 
 }

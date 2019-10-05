@@ -19,6 +19,7 @@ package io.jboot.components.cache.interceptor;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
+import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.annotation.Cacheable;
 import io.jboot.utils.AnnotationUtil;
@@ -55,7 +56,7 @@ public class JbootCacheInterceptor implements Interceptor {
         Utils.ensureCachenameAvailable(method, targetClass, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cacheable.key()), targetClass, method, inv.getArgs());
 
-        Object data = Utils.getAopCache().get(cacheName, cacheKey);
+        Object data = AopCache.get(cacheName, cacheKey);
         if (data != null) {
             if (NULL_VALUE.equals(data)) {
                 inv.setReturnValue(null);
