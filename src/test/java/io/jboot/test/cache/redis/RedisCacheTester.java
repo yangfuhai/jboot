@@ -10,6 +10,12 @@ import org.junit.Test;
 
 public class RedisCacheTester {
 
+    @Before
+    public void config() {
+        JbootApplication.setBootArg("jboot.cache.type", "redis");
+        JbootApplication.setBootArg("jboot.cache.redis.host", "127.0.0.1");
+        JbootApplication.setBootArg("jboot.cache.redis.port", "6379");
+    }
 
     @Test
     public void testCacheType() {
@@ -32,10 +38,5 @@ public class RedisCacheTester {
     }
 
 
-    @Before
-    public void config() {
-        JbootApplication.setBootArg("jboot.cache.type", "redis");
-        JbootApplication.setBootArg("jboot.cache.redis.host", "127.0.0.1");
-        JbootApplication.setBootArg("jboot.cache.redis.port", "6379");
-    }
+
 }
