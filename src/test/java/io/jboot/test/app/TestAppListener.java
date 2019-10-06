@@ -9,13 +9,6 @@ import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.core.listener.JbootAppListener;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Title: (请输入文件名称)
- * @Description: (用一句话描述该文件做什么)
- * @Package io.jboot.test.app
- */
 public class TestAppListener implements JbootAppListener {
     @Override
     public void onInit() {
