@@ -109,4 +109,84 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
 #### 显式代码调用
 
+Jboot 提供了一个工具类 CacheUtil，我们可以直接通过 CacheUtil 来操作缓存。
+
+```
+# 添加内容到缓存
+CacheUtil.put("cacheName","key","value")
+
+# 添加内容到缓存，并设置该缓存的有效期为 10 秒钟
+CacheUtil.put("cacheName","key","value",10) 
+
+# 获取缓存内容
+String value = CacheUtil.get("cacheName","key");
+
+# 删除缓存
+CacheUtl.remove("cacheName","key")
+
+# 重新设置某个缓存的有效期
+CacheUtil.setTtl("cacheName","key")
+
+```
+
+当一个系统有多个缓存组件的时候，可能有 redis 或者 ehcache 等，则可以使用如下use("type") 进行操作。
+```
+CacheUtil.use("redis").put("cacheName","key","value")
+
+
+CacheUtil.use("ehcache").put("cacheName","key","value") 
+```
+
+
 #### 通过注解使用缓存
+
+- @Cacheable
+- @CacheEvict
+- @CachesEvict
+- @CachePut
+
+在 service 中，Jboot 提供了以上的 4 个组件，方便我们进行缓存操作，而无需使用 CacheUtil 来显示调用。
+
+例如：
+
+```java
+@Bean
+public class CommentServiceImpl implements CommentService {
+
+    @Override
+    public String getCommentById(String id) {
+        return "id:" + id + "  data:" + UUID.randomUUID();
+    }
+
+    @Override
+    @Cacheable(name = "cacheName", key = "#(id)")
+    public String getCommentByIdWithCache(String id) {
+        return "id:" + id + "  data:" + UUID.randomUUID();
+    }
+
+
+    @Override
+    @Cacheable(name = "cacheName", key = "#(id)", liveSeconds = 5)
+    public String getCommentByIdWithCacheTime(String id) {
+        return "id:" + id + "  data:" + UUID.randomUUID();
+    }
+
+
+    @Override
+    @CachePut(name = "cacheName", key = "#(id)")
+    public String updateCache(String id) {
+        return "id:" + id + "  data:" + UUID.randomUUID();
+    }
+
+    @Override
+    @CacheEvict(name = "cacheName", key = "#(id)")
+    public void delCache(String id) {
+    }
+}
+```
+
+- `getCommentById` 方法没有使用任何注解，每次调用的时候,data后面的都是一个新的随机数。
+- `getCommentByIdWithCache` 使用 `@Cacheable` 注解，缓存的 key 是传入进来的 id，因此只要是同一个 id 值，每次返回的随机数都是一样的，因为随机数已经被缓存起来了。
+- `getCommentByIdWithCacheTime` 使用 `@Cacheable` 注解，但是添加了 `5秒` 的时间限制，因此，在 5秒钟内，无论调用多少次，返回的随机数都是一样的，5秒之后缓存被删除，再次调用之后会是一个新的随机数，新的随机数会继续缓存 5秒钟。
+- `updateCache` 使用了注解 `@CachePut` ，每次调用此方法之后，会更新掉该 id 值的缓存
+- `delCache` 使用了 `@CacheEvict` 注解，每次调用会删除该 id 值的缓存
