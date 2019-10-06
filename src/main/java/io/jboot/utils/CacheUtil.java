@@ -17,11 +17,21 @@ package io.jboot.utils;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.JbootCacheManager;
 
 import java.util.List;
 
-
+/**
+ * Usage：
+ * 1、CacheUtil.get("cacheName","key")
+ * 2、CacheUtil.use("redis").get("cacheName","key")
+ */
 public class CacheUtil {
+
+    public static JbootCache use(String type){
+        return JbootCacheManager.me().getCache(type);
+    }
 
     public <T> T get(String cacheName, Object key) {
         return Jboot.getCache().get(cacheName, key);
