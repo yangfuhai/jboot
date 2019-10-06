@@ -1,3 +1,13 @@
+jboot v2.2.2:
+新增：新增 AopCache 工具类，方便直接操作 AOP 缓存
+新增：Model 新增 findListByIds() 方法，用于更加多个ID查询多个Model
+新增：CacheUtil 新增 use() 方法，方便通过 CacheUtil 对不同的缓存进行操作
+优化：重构 Cache AOP 拦截器的包结构，使之更加合理
+优化：优化 Cache 的相关工具类，删除多余的无用代码
+优化：添加 Columns.EMPTY 变量，用于查询时在某些情况无需创建变量
+优化：find 系列方法更好的答应 debug sql，同时删除 JbootModel 无需重写的某些方法
+
+
 jboot v2.2.1:
 优化：findCountByColumns 返回的类型由 Long 改为 long
 优化：JbootDbManager 重命名为 ArpManager
