@@ -52,15 +52,14 @@ public class HelloworldController extends JbootController {
 - [项目构建](./doc/docs/build.md)
 - [项目部署](./doc/docs/deploy.md)
 - [Jboot与Docker](./doc/docs/docker.md)
-- [Jboot与Devops](./doc/docs/devops.md)
 - [1.x 升级到 2.x 教程](./doc/docs/upgrade.md)
 - [交流社区、QQ群和微信群](./doc/docs/communication.md)
 - 第三方组件的支持
   - [redis](./doc/docs/redis.md)
   - [shiro](./doc/docs/shiro.md)
   - [jwt](./doc/docs/jwt.md)
-  - [metrics]()
-  - [swagger]()
+  - [metrics](./doc/docs/metrics.md)
+  - [swagger](./doc/docs/swagger.md)
 
 
 ## 微信交流群
