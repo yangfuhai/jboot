@@ -45,6 +45,7 @@ public class HelloworldController extends JbootController {
 - [MQ消息队列](./doc/docs/mq.md)
 - [任务调度](./doc/docs/schedule.md)
 - [限流](./doc/docs/limit.md)
+- [监控](./doc/docs/metrics.md)
 - [序列化](./doc/docs/serialize.md)
 - [事件机制](./doc/docs/event.md)
 - [SPI扩展机制](./doc/docs/spi.md)
@@ -58,7 +59,6 @@ public class HelloworldController extends JbootController {
   - [redis](./doc/docs/redis.md)
   - [shiro](./doc/docs/shiro.md)
   - [jwt](./doc/docs/jwt.md)
-  - [metrics](./doc/docs/metrics.md)
   - [swagger](./doc/docs/swagger.md)
 
 
