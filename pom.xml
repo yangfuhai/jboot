@@ -413,6 +413,7 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-core</artifactId>
             <version>1.5.21</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
