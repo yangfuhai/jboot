@@ -17,10 +17,10 @@ package io.jboot.app.config;
 
 /**
  * Jboot Config 的内容解密器，加密方式由可客户自己编写的加密算法来加密
- *
+ * <p>
  * 此时，只需要给 JbootConfigManager 配置上 Decryptor 进行解密即可
  */
 public interface JbootConfigDecryptor {
 
-    public String decrypt(String encryptContent);
+    public String decrypt(String key, String encryptContent);
 }

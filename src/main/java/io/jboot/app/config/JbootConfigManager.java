@@ -178,8 +178,8 @@ public class JbootConfigManager {
 
 
     public String getConfigValue(Properties properties, String key) {
-        String originalValue = getOriginalConfigValue(properties,key);
-        return decryptor != null ?  decryptor.decrypt(originalValue) : originalValue;
+        String originalValue = getOriginalConfigValue(properties, key);
+        return decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
     }
 
 
