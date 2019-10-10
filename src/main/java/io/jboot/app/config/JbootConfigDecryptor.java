@@ -22,5 +22,5 @@ package io.jboot.app.config;
  */
 public interface JbootConfigDecryptor {
 
-    public String decrypt(String key, String encryptContent);
+    public String decrypt(String key, String originalContent);
 }

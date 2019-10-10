@@ -1,4 +1,4 @@
-# 配置文件
+# 配置
 
 
 
@@ -9,6 +9,7 @@
 - 注入配置
 - 注解配置
 - 配置实体类
+- 配置内容加密解密
 - 设计原因
 - 常见问题
 - Jboot所有配置参考
@@ -158,6 +159,37 @@ Component1Config config = Jboot.config(Component1Config.class);
 ```
 
 > 备注：`@ConfigModel(prefix="component1")` 注解的含义是 `Component1Config` 的前缀是 `component1` ，因此，其属性 `host` 是来至配置文件的 `component1.host` 的值。
+
+## 配置内容加密解密
+
+为了安全起见，很多时候我们需要对配置里的一些安全和隐私内容进行加密，比如数据库的账号密码等，防止web服务器被黑客入侵时保证数据库的安全。
+
+配置的内容加密是由用户自己编写加密算法。此时，Jboot 读取的只是加密的内容，为了能正常还原解密之后的内容，用户需要给 `JbootConfigManager` 配置上解密的实现 JbootConfigDecryptor。
+
+一般情况下，我们需要在 JbootAppListener 的 onInit() 里去配置。例如：
+
+```java
+public MyApplicationListener implements JbootAppListener {
+
+    public void onInit() {
+        JbootConfigManager.me().setDecryptor(new MyConfigDecriptor());
+    }
+
+}
+```
+
+我们需要在 `MyConfigDecriptor` 的 `decrypt` 方法里去实现自己的解密算法。例如：
+
+```java
+public MyConfigDecriptor implements JbootConfigDecryptor {
+
+    public String decrypt(String key, String originalContent){
+        //在这里实现你自己的解密算法
+        //key : 很多时候我们并不是针对所有的配置都进行加密，只是加密了个别配置
+        //此时，我们可以通过 key 来判断那些无需加密的内容，不需要加密直接返回 originalContent 即可
+    }
+}
+```
 
 ## 设计原因
 
