@@ -38,6 +38,8 @@ public class JbootConfigManager {
 
     private ConcurrentHashMap<String, Object> configCache = new ConcurrentHashMap<>();
 
+    private JbootConfigDecryptor decryptor;
+
 
     private static JbootConfigManager instance;
 
@@ -70,9 +72,15 @@ public class JbootConfigManager {
                 mainProperties.putAll(new Prop(p).getProperties());
             }
         }
-
     }
 
+    public JbootConfigDecryptor getDecryptor() {
+        return decryptor;
+    }
+
+    public void setDecryptor(JbootConfigDecryptor decryptor) {
+        this.decryptor = decryptor;
+    }
 
     public <T> T get(Class<T> clazz) {
         ConfigModel propertyConfig = clazz.getAnnotation(ConfigModel.class);
@@ -168,13 +176,20 @@ public class JbootConfigManager {
         return getConfigValue(mainProperties, key);
     }
 
+
+    public String getConfigValue(Properties properties, String key) {
+        String originalValue = getOriginalConfigValue(properties,key);
+        return decryptor != null ?  decryptor.decrypt(originalValue) : originalValue;
+    }
+
+
     /**
      * 获取值的优先顺序：1、启动配置  2、环境变量   3、properties配置文件
      *
      * @param key
      * @return
      */
-    public String getConfigValue(Properties properties, String key) {
+    private String getOriginalConfigValue(Properties properties, String key) {
 
         //boot arg
         String value = getBootArg(key);
@@ -211,7 +226,6 @@ public class JbootConfigManager {
 
         return null;
     }
-
 
     /**
      * 获取Jboot默认的配置信息
