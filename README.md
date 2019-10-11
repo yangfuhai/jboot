@@ -22,7 +22,6 @@ public class HelloworldController extends JbootController {
         renderText("hello world");
     }
 
-
     public static void main(String[] args){
         JbootApplication.run(args);
     }
@@ -35,9 +34,9 @@ public class HelloworldController extends JbootController {
 - [demos](./src/test/java/io/jboot/test)
 - [安装](./doc/docs/install.md)
 - [2分钟快速开始](./doc/docs/quickstart.md)
-- [配置文件](./doc/docs/config.md)
 - [热加载](./doc/docs/hotload.md)
-- [Undertow配置](./doc/docs/undertow.md)
+- [Undertow](./doc/docs/undertow.md)
+- [配置](./doc/docs/config.md)
 - [MVC](./doc/docs/mvc.md)
 - [数据库](./doc/docs/db.md)
 - [缓存](./doc/docs/cache.md)
