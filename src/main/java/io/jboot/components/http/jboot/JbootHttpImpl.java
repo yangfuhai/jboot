@@ -72,11 +72,14 @@ public class JbootHttpImpl implements JbootHttp {
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
 
-                /**
-                 * 处理 非文件上传的 post 请求
-                 */
-                if (!request.isMultipartFormData()) {
-
+                //处理文件上传的post提交
+                if (request.isMultipartFormData()){
+                    if (ArrayUtil.isNotEmpty(request.getParams())) {
+                        uploadData(request, connection);
+                    }
+                }
+                //处理正常的post提交
+                else  {
                     String postContent = request.getPostContent();
                     if (StrUtil.isNotEmpty(postContent)) {
                         DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
@@ -86,18 +89,8 @@ public class JbootHttpImpl implements JbootHttp {
                     }
 
                 }
-
-                /**
-                 * 处理文件上传的post请求
-                 */
-                else {
-
-                    if (ArrayUtil.isNotEmpty(request.getParams())) {
-                        uploadData(request, connection);
-                    }
-
-                }
             }
+
 
             stream = getInutStream(connection);
 
