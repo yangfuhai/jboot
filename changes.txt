@@ -1,3 +1,15 @@
+jboot v2.2.3:
+新增：新增 JbootConfigDecryptor 配置，方便对配置内容进行加密，并完善 JbootConfigDecryptor 的使用文档
+优化：升级 JFinal、fastjson、commons-lang3 等到最新版本
+文档：完善 MVC 的相关文档
+文档：完善 CacheUtil 及 Cache 相关的使用文档
+文档：完善 代码生成器 的相关文档
+文档：完善 MQ消息队列 的相关文档
+文档：完善 自定义序列化 及 SPI 的相关文档
+文档：完善 Swagger 的相关文档和测试用例
+文档：完善 Metrics监控 的相关文档
+
+
 jboot v2.2.2:
 新增：新增 AopCache 工具类，方便直接操作 AOP 缓存
 新增：Model 新增 findListByIds() 方法，用于更加多个ID查询多个Model
