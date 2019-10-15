@@ -27,22 +27,14 @@ import java.util.List;
 public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
 
 
-    private String previousClass = "previous";
-    private String nextClass = "next";
-    private String activeClass = "active";
-    private String disabledClass = "disabled";
-    private String anchor = "anchor";
-    private boolean onlyShowPreviousAndNext = false;
-
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
 
-        previousClass = getPara("previousClass", scope, "previous");
-        nextClass = getPara("nextClass", scope, "next");
-        activeClass = getPara("activeClass", scope, "active");
-        disabledClass = getPara("disabledClass", scope, "disabled");
-        anchor = getPara("anchor", scope, null);
-        onlyShowPreviousAndNext = getPara("onlyShowPreviousAndNext", scope, false);
+        String previousClass = getPara("previousClass", scope, "previous");
+        String nextClass = getPara("nextClass", scope, "next");
+        String activeClass = getPara("activeClass", scope, "active");
+        String disabledClass = getPara("disabledClass", scope, "disabled");
+        boolean onlyShowPreviousAndNext = getPara("onlyShowPreviousAndNext", scope, false);
 
         String previousText = getPara("previousText", scope, "上一页");
         String nextText = getPara("nextText", scope, "下一页");
@@ -111,23 +103,6 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         scope.setLocal(getPageItemsName(), pages);
 
         renderBody(env, scope, writer);
-    }
-
-
-    public String getPrevious() {
-        return previousClass;
-    }
-
-    public String getNext() {
-        return nextClass;
-    }
-
-    public String getDisabled() {
-        return disabledClass;
-    }
-
-    public String getAnchor() {
-        return anchor;
     }
 
 
