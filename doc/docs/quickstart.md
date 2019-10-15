@@ -48,7 +48,7 @@ public class HelloworldController extends JbootController {
     }
 }
 ```
-> 备注：真正项目开发中，建议不要把 `main` 方法写在 `Controller` 里，否则会导致这个 Controller 的热加载出现问题。
+> 注意：真正项目开发中，建议不要把 `main` 方法写在 `Controller` 里，否则会导致这个 Controller 的热加载出现问题。
 
 ## 启动 `main()` 方法，并在浏览器查看
 

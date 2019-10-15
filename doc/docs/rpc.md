@@ -7,7 +7,7 @@
 - 高级功能
 
 ## 配置
-在 Jboot 中，默认实现了对 Dubbo、motan、zbus 的 RPC 调用支持。在使用 RPC 远程调用之前，需要做一些基本的配置。
+在 Jboot 中，默认实现了对 Dubbo、motan 的 RPC 调用支持。在使用 RPC 远程调用之前，需要做一些基本的配置。
 
 
 例如 ：
@@ -23,7 +23,7 @@ jboot.rpc.directUrl = 127.0.0.1:8000
   - registry ： 注册中心模式（服务注册和服务发现）
 - jboot.rpc.directUrl ： 当 callMode 为 direct 直联模式时，需要配置直联模式的服务器 IP 地址和端口号。
 
-> 更多的配置请查看 
+> 更多的配置请查看 [config.md](./config.md)
 
 ## 开始使用
 

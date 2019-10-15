@@ -34,11 +34,11 @@ JFinal 的相关文档： [https://www.jfinal.com/doc/3-1](https://www.jfinal.co
 
  ## Action
 
-Action 的相关文档请参考： 【https://www.jfinal.com/doc/3-2](https://www.jfinal.com/doc/3-2) 。
+Action 的相关文档请参考： [https://www.jfinal.com/doc/3-2](https://www.jfinal.com/doc/3-2) 
 
 ## Interceptor ： 拦截器
 
-Interceptor 拦截器的相关文档请参考 [https://www.jfinal.com/doc/4-2](https://www.jfinal.com/doc/4-2) 。
+Interceptor 拦截器的相关文档请参考 [https://www.jfinal.com/doc/4-2](https://www.jfinal.com/doc/4-2) 
 
 ## FixedInterceptor ：永久拦截器
 
@@ -46,11 +46,11 @@ FixedInterceptor 的用法和 Interceptor 一样，但是 `FixedInterceptor` 不
 
 ## Handler ： 处理器
 
-Handler  处理器是 JFinal 的核心，用于预先处理 Web 的所有请求，其架构可以参考 [https://www.jfinal.com/doc/13-2](https://www.jfinal.com/doc/13-2) 。用法参考：[https://www.jfinal.com/doc/2-7](https://www.jfinal.com/doc/2-7) 。
+Handler  处理器是 JFinal 的核心，用于预先处理 Web 的所有请求，其架构可以参考 [https://www.jfinal.com/doc/13-2](https://www.jfinal.com/doc/13-2) ，用法参考：[https://www.jfinal.com/doc/2-7](https://www.jfinal.com/doc/2-7) 
 
 ## Render ：渲染器
 
-Render 请参加 JFinal 的文档 [https://www.jfinal.com/doc/3-7](https://www.jfinal.com/doc/3-7) 。
+Render 请参加 JFinal 的文档 [https://www.jfinal.com/doc/3-7](https://www.jfinal.com/doc/3-7) 
 
 ## Session
 
