@@ -8,4 +8,4 @@
 
 其他注意事项：
 1）jboot.seata.txServiceGroup 配置的值要注意和 file.conf 里的 vgroup_mapping.xxx 保持一致
-3）jboot.rpc.filter=seata ##seata在Dubbo中的事务传播过滤器
+2）jboot.rpc.filter=seata ##seata在Dubbo中的事务传播过滤器

@@ -16,12 +16,11 @@ Jboot 数据库功能基于 JFinal 的 ActiveRecordPlugin 插件和 Apache shard
 
 ## 描述
 
-Jboot 的数据库是依赖 JFinal 的 ORM 做基本的数据库操作，同时依赖 apahce-sphere 来做分库、分表和分布式事务。
-
-因此，在使用 Jboot 操作数据库的时候，建议对 JFinal 的 ORM 功能和 Apache Sharding-Sphere 有所了解。
+Jboot 的数据库是依赖 JFinal 的 ORM 做基本的数据库操作，同时依赖 apahce-sphere 来做分库、分表和依赖 Seata 来做分布式事务。因此，在使用 Jboot 操作数据库的时候，建议对 JFinal 的 ORM 功能和 Apache Sharding-Sphere 有所了解。
 
 - JFinal的数据库操作相关文档：https://www.jfinal.com/doc/5-1
 - Apache Sharding-Sphere 文档：http://shardingsphere.io/document/current/cn/overview/
+- Seata 的帮助文档：https://github.com/seata/seata/wiki/Home_Chinese
 
 
 ## 基本增删改查
@@ -249,3 +248,104 @@ Page<User> userPage = userService.paginate(1, 10);
 Jboot 的分库分表功能使用了 Sharding-jdbc 实现的，若在 Jboot 应用在需要用到分库分表功能，需要添加 `jboot.datasource.shardingConfigYaml = xxx.yaml ` 的配置，其中 `xxx.yaml` 配置需要放在 classpath 目录下，配置内容参考：https://shardingsphere.apache.org/document/current/cn/manual/sharding-jdbc/configuration/config-yaml/
 
 **注意：** 当在 `jboot.properties` 文件配置 `jboot.datasource.shardingConfigYaml = xxx.yaml`之后，不再需要在 `jboot.properties` 配置 `jboot.datasource.url` 、 `jboot.datasource.user` 和 `jboot.datasource.password` 等，这些配置都转义到 `xxx.yaml` 里进行配置了。
+
+## 分布式事务
+
+Jboot 的分布式事务依赖 Seata 来进行实现，在开始分布式事务之前，请先做好 Seata 的相关配置。
+
+- 创建 Seata 数据库
+- 启动 Seata
+
+参考：https://github.com/seata/seata/wiki/Quick-Start
+
+正常启动 Seata 之后，需要在 jboot.properties 配置文件添加如下配置
+
+```
+jboot.rpc.filter = seata
+jboot.rpc.type = dubbo
+jboot.seata.enable = true
+jboot.seata.failureHandler = com.alibaba.io.seata.tm.api.DefaultFailureHandlerImpl
+jboot.seata.applicationId = Dubbo_Seata_Account_Service
+jboot.seata.txServiceGroup = dubbo_seata_tx_group
+```
+
+同时，在 resource 目录下添加 file.conf 文件，内容如下：
+
+```
+transport {
+  # tcp udt unix-domain-socket
+  type = "TCP"
+  #NIO NATIVE
+  server = "NIO"
+  #enable heartbeat
+  heartbeat = true
+  #thread factory for netty
+  thread-factory {
+    boss-thread-prefix = "NettyBoss"
+    worker-thread-prefix = "NettyServerNIOWorker"
+    server-executor-thread-prefix = "NettyServerBizHandler"
+    share-boss-worker = false
+    client-selector-thread-prefix = "NettyClientSelector"
+    client-selector-thread-size = 1
+    client-worker-thread-prefix = "NettyClientWorkerThread"
+    # netty boss thread size,will not be used for UDT
+    boss-thread-size = 1
+    #auto default pin or 8
+    worker-thread-size = 8
+  }
+}
+## transaction log store
+store {
+  ## store mode: file、db
+  mode = "file"
+
+  ## file store
+  file {
+    dir = "sessionStore"
+
+    # branch session size , if exceeded first try compress lockkey, still exceeded throws exceptions
+    max-branch-session-size = 16384
+    # globe session size , if exceeded throws exceptions
+    max-global-session-size = 512
+    # file buffer size , if exceeded allocate new buffer
+    file-write-buffer-cache-size = 16384
+    # when recover batch read size
+    session.reload.read_size = 100
+    # async, sync
+    flush-disk-mode = async
+  }
+
+ ## database store
+  db {
+    driver_class = ""
+    url = ""
+    user = ""
+    password = ""
+  }
+
+}
+
+service {
+  #vgroup->rgroup
+  vgroup_mapping.dubbo_seata_tx_group = "default"
+  #only support single node
+  default.grouplist = "192.168.0.250:8091"
+  #degrade current not support
+  enableDegrade = false
+  #disable
+  disable = false
+}
+
+client {
+  async.commit.buffer.limit = 10000
+  lock {
+    retry.internal = 10
+    retry.times = 30
+  }
+  report.retry.count = 5
+}
+```
+
+> 注意：
+> 1、jboot.seata.txServiceGroup 配置的值要注意和 file.conf 里的 vgroup_mapping.xxx 保持一致
+> 2、jboot.rpc.filter=seata ##seata在Dubbo中的事务传播过滤器
