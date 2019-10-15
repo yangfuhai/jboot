@@ -16,11 +16,7 @@
 package io.jboot.web.render;
 
 import com.jfinal.render.ContentType;
-import com.jfinal.render.RenderException;
 import com.jfinal.render.TextRender;
-
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -28,53 +24,15 @@ import java.io.PrintWriter;
  * @Package io.jboot.web.render
  */
 public class JbootTextRender extends TextRender {
-
-    // 与 encoding 与 contentType 在 render() 方法中分开设置，效果相同
-    private static final String DEFAULT_CONTENT_TYPE = "text/plain";
-
-    private String text;
-    private String contentType;
-
     public JbootTextRender(String text) {
         super(text);
-        this.text = text;
-        this.contentType = DEFAULT_CONTENT_TYPE;
     }
 
     public JbootTextRender(String text, String contentType) {
         super(text, contentType);
-        this.text = text;
-        this.contentType = contentType;
     }
 
     public JbootTextRender(String text, ContentType contentType) {
         super(text, contentType);
-        this.text = text;
-        this.contentType = contentType.value();
-    }
-
-    public void render() {
-        try {
-
-            response.setHeader("Pragma", "no-cache");    // HTTP/1.0 caches might not implement Cache-Control and might only implement Pragma: no-cache
-            response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Expires", 0);
-
-            response.setContentType(contentType);
-            response.setCharacterEncoding(getEncoding());    // 与 contentType 分开设置
-
-            PrintWriter writer = response.getWriter();
-            writer.write(text);
-        } catch (IOException e) {
-            throw new RenderException(e);
-        }
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public String getContentType() {
-        return contentType;
     }
 }
