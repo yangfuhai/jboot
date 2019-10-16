@@ -55,6 +55,7 @@ public class CodeGenHelpler {
 
     public static MetaBuilder createMetaBuilder() {
         MetaBuilder metaBuilder = new MetaBuilder(getDatasource());
+        metaBuilder.setGenerateRemarks(true);
         DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
         switch (datasourceConfig.getType()) {
             case DataSourceConfig.TYPE_MYSQL:

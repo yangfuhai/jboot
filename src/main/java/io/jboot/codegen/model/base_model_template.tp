@@ -27,7 +27,12 @@ public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModel
 		return (M)this;
 		#end
 	}
-	
+
+    #if (cm.remarks)
+    /**
+     * #(cm.remarks)
+     */
+     #end
 	#set(getterOfModel = getterTypeMap.get(cm.javaType))
 	#if(isBlank(getterOfModel))
 		#set(getterOfModel = 'get')
