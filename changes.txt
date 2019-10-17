@@ -1,3 +1,15 @@
+jboot v2.2.4:
+修复：修复 PaginateDirectiveBase 在某些情况下的个别属性存在线程安全问题
+修复：代码生成器默认情况不对 remarks 进行输出的问题
+优化：CacheUtil 的方法改为静态方法方便直接使用
+优化：JbootJsonRender 使用 JFinal 的 JsonRender 进行渲染
+优化：JbootTextRender 使用 JFinal 的 TextRender 进行渲染
+优化：优化 SeataGlobalTransactionHandler 的 formatMethod 性能问题
+优化：更新 Seata 到 0.9.0 最新版本
+文档：优化 mvc 的文档参考文案
+文档：添加 seata 使用的相关文案
+
+
 jboot v2.2.3:
 新增：新增 JbootConfigDecryptor 配置，方便对配置内容进行加密，并完善 JbootConfigDecryptor 的使用文档
 优化：升级 JFinal、fastjson、commons-lang3 等到最新版本
