@@ -15,16 +15,12 @@
  */
 package io.jboot.support.seata.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import io.seata.tm.api.transaction.TransactionInfo;
 
+import java.lang.annotation.*;
+
 /**
- * The interface Global transactional.
+ * The interface Seata Global transactional.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

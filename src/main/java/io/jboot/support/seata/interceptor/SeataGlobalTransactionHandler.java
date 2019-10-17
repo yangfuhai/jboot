@@ -15,13 +15,7 @@
  */
 package io.jboot.support.seata.interceptor;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.jfinal.aop.Invocation;
-
 import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.support.seata.annotation.SeataGlobalTransactional;
 import io.seata.common.exception.ShouldNeverHappenException;
@@ -31,6 +25,12 @@ import io.seata.tm.api.TransactionalExecutor;
 import io.seata.tm.api.transaction.NoRollbackRule;
 import io.seata.tm.api.transaction.RollbackRule;
 import io.seata.tm.api.transaction.TransactionInfo;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SeataGlobalTransactionHandler {
 
@@ -100,8 +100,9 @@ public class SeataGlobalTransactionHandler {
 	}
 
 	private static String formatMethod(Method method) {
-		String paramTypes = Arrays.stream(method.getParameterTypes()).map(Class::getName)
-				.reduce((p1, p2) -> String.format("%s, %s", p1, p2)).orElse("");
-		return method.getName() + "(" + paramTypes + ")";
+		String paramTypes = Arrays.stream(method.getParameterTypes())
+				.map(Class::getName)
+				.collect(Collectors.joining(", ", "(", ")"));
+		return method.getName() + paramTypes;
 	}
 }
