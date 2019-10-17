@@ -29,47 +29,47 @@ import java.util.List;
  */
 public class CacheUtil {
 
-    public static JbootCache use(String type){
+    public static JbootCache use(String type) {
         return JbootCacheManager.me().getCache(type);
     }
 
-    public <T> T get(String cacheName, Object key) {
+    public static <T> T get(String cacheName, Object key) {
         return Jboot.getCache().get(cacheName, key);
     }
 
-    public void put(String cacheName, Object key, Object value) {
+    public static void put(String cacheName, Object key, Object value) {
         Jboot.getCache().put(cacheName, key, value);
     }
 
-    public void put(String cacheName, Object key, Object value, int liveSeconds) {
+    public static void put(String cacheName, Object key, Object value, int liveSeconds) {
         Jboot.getCache().put(cacheName, key, value, liveSeconds);
     }
 
-    public List getKeys(String cacheName) {
+    public static List getKeys(String cacheName) {
         return Jboot.getCache().getKeys(cacheName);
     }
 
-    public void remove(String cacheName, Object key) {
+    public static void remove(String cacheName, Object key) {
         Jboot.getCache().remove(cacheName, key);
     }
 
-    public void removeAll(String cacheName) {
+    public static void removeAll(String cacheName) {
         Jboot.getCache().removeAll(cacheName);
     }
 
-    public <T> T get(String cacheName, Object key, IDataLoader dataLoader) {
+    public static <T> T get(String cacheName, Object key, IDataLoader dataLoader) {
         return Jboot.getCache().get(cacheName, key, dataLoader);
     }
 
-    public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
+    public static <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
         return Jboot.getCache().get(cacheName, key, dataLoader, liveSeconds);
     }
 
-    public Integer getTtl(String cacheName, Object key) {
+    public static Integer getTtl(String cacheName, Object key) {
         return Jboot.getCache().getTtl(cacheName, key);
     }
 
-    public void setTtl(String cacheName, Object key, int seconds) {
+    public static void setTtl(String cacheName, Object key, int seconds) {
         Jboot.getCache().setTtl(cacheName, key, seconds);
     }
 }
