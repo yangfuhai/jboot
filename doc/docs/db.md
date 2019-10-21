@@ -268,6 +268,86 @@ jboot.seata.failureHandler = com.alibaba.io.seata.tm.api.DefaultFailureHandlerIm
 jboot.seata.applicationId = Dubbo_Seata_Account_Service
 jboot.seata.txServiceGroup = dubbo_seata_tx_group
 ```
+同时，在 resource 目录下添加 `registry.conf` 文件，用于对 seata 进行 registry 配置，内容如下：
+
+```
+registry {
+  # file 、nacos 、eureka、redis、zk、consul、etcd3、sofa
+  type = "file"
+
+  nacos {
+    serverAddr = "localhost"
+    namespace = ""
+    cluster = "default"
+  }
+  eureka {
+    serviceUrl = "http://localhost:8761/eureka"
+    application = "default"
+    weight = "1"
+  }
+  redis {
+    serverAddr = "localhost:6379"
+    db = "0"
+  }
+  zk {
+    cluster = "default"
+    serverAddr = "127.0.0.1:2181"
+    session.timeout = 6000
+    connect.timeout = 2000
+  }
+  consul {
+    cluster = "default"
+    serverAddr = "127.0.0.1:8500"
+  }
+  etcd3 {
+    cluster = "default"
+    serverAddr = "http://localhost:2379"
+  }
+  sofa {
+    serverAddr = "127.0.0.1:9603"
+    application = "default"
+    region = "DEFAULT_ZONE"
+    datacenter = "DefaultDataCenter"
+    cluster = "default"
+    group = "SEATA_GROUP"
+    addressWaitTime = "3000"
+  }
+  file {
+    name = "file.conf"
+  }
+}
+
+config {
+  # file、nacos 、apollo、zk、consul、etcd3
+  type = "file"
+
+  nacos {
+    serverAddr = "localhost"
+    namespace = ""
+  }
+  consul {
+    serverAddr = "127.0.0.1:8500"
+  }
+  apollo {
+    app.id = "seata-server"
+    apollo.meta = "http://192.168.1.204:8801"
+  }
+  zk {
+    serverAddr = "127.0.0.1:2181"
+    session.timeout = 6000
+    connect.timeout = 2000
+  }
+  etcd3 {
+    serverAddr = "http://localhost:2379"
+  }
+  file {
+    name = "file.conf"
+  }
+}
+```
+
+> PS：如果不想叫 registry.conf ,请在环境变量里配置 `seata.config.name = yourname` ，那么可以使用 yourname.conf 代替 registry.conf。
+
 
 同时，在 resource 目录下添加 file.conf 文件，内容如下：
 
@@ -293,7 +373,38 @@ transport {
     #auto default pin or 8
     worker-thread-size = 8
   }
+  shutdown {
+    # when destroy server, wait seconds
+    wait = 3
+  }
+  serialization = "seata"
+  compressor = "none"
 }
+service {
+  #vgroup->rgroup
+  vgroup_mapping.dubbo_seata_tx_group = "default"
+  #only support single node
+  default.grouplist = "127.0.0.1:8091"
+  #degrade current not support
+  enableDegrade = false
+  #disable
+  disable = false
+  #unit ms,s,m,h,d represents milliseconds, seconds, minutes, hours, days, default permanent
+  max.commit.retry.timeout = "-1"
+  max.rollback.retry.timeout = "-1"
+}
+
+client {
+  async.commit.buffer.limit = 10000
+  lock {
+    retry.internal = 10
+    retry.times = 30
+  }
+  report.retry.count = 5
+  tm.commit.retry.count = 1
+  tm.rollback.retry.count = 1
+}
+
 ## transaction log store
 store {
   ## store mode: file、db
@@ -315,37 +426,76 @@ store {
     flush-disk-mode = async
   }
 
- ## database store
+  ## database store
   db {
-    driver_class = ""
-    url = ""
-    user = ""
-    password = ""
+    ## the implement of javax.sql.DataSource, such as DruidDataSource(druid)/BasicDataSource(dbcp) etc.
+    datasource = "dbcp"
+    ## mysql/oracle/h2/oceanbase etc.
+    db-type = "mysql"
+    driver-class-name = "com.mysql.jdbc.Driver"
+    url = "jdbc:mysql://127.0.0.1:3306/seata"
+    user = "mysql"
+    password = "mysql"
+    min-conn = 1
+    max-conn = 3
+    global.table = "global_table"
+    branch.table = "branch_table"
+    lock-table = "lock_table"
+    query-limit = 100
+  }
+}
+lock {
+  ## the lock store mode: local、remote
+  mode = "remote"
+
+  local {
+    ## store locks in user's database
   }
 
-}
-
-service {
-  #vgroup->rgroup
-  vgroup_mapping.dubbo_seata_tx_group = "default"
-  #only support single node
-  default.grouplist = "192.168.0.250:8091"
-  #degrade current not support
-  enableDegrade = false
-  #disable
-  disable = false
-}
-
-client {
-  async.commit.buffer.limit = 10000
-  lock {
-    retry.internal = 10
-    retry.times = 30
+  remote {
+    ## store locks in the seata's server
   }
-  report.retry.count = 5
+}
+recovery {
+  #schedule committing retry period in milliseconds
+  committing-retry-period = 1000
+  #schedule asyn committing retry period in milliseconds
+  asyn-committing-retry-period = 1000
+  #schedule rollbacking retry period in milliseconds
+  rollbacking-retry-period = 1000
+  #schedule timeout retry period in milliseconds
+  timeout-retry-period = 1000
+}
+
+transaction {
+  undo.data.validation = true
+  undo.log.serialization = "jackson"
+  undo.log.save.days = 7
+  #schedule delete expired undo_log in milliseconds
+  undo.log.delete.period = 86400000
+  undo.log.table = "undo_log"
+}
+
+## metrics settings
+metrics {
+  enabled = false
+  registry-type = "compact"
+  # multi exporters use comma divided
+  exporter-list = "prometheus"
+  exporter-prometheus-port = 9898
+}
+
+support {
+  ## spring
+  spring {
+    # auto proxy the DataSource bean
+    datasource.autoproxy = false
+  }
 }
 ```
 
 > 注意：
 > 1、jboot.seata.txServiceGroup 配置的值要注意和 file.conf 里的 vgroup_mapping.xxx 保持一致
 > 2、jboot.rpc.filter=seata ##seata在Dubbo中的事务传播过滤器
+
+以上配置完毕后如何使用呢？点击 [这里](../../src/test/java/io/jboot/test/seata) 查看代码实例。
