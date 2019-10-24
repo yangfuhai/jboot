@@ -27,6 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 
 public class JbootPaginateDirective extends PaginateDirectiveBase {
 
+    private static final String URL_PAGE_INFO = "page=";
+    private static final String URL_QMARK = "?";
+    private static final String URL_AMARK = "&";
+
     @Override
     protected String getUrl(int pageNumber) {
         HttpServletRequest request = JbootControllerContext.get().getRequest();
@@ -38,26 +42,24 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
             url = url.concat("?").concat(queryString);
         }
 
-        String pageString = "page=";
-        int index = url.indexOf(pageString);
+        int index = url.indexOf(URL_PAGE_INFO);
 
         if (index != -1) {
             StringBuilder sb = new StringBuilder();
-            sb.append(url, 0, index).append(pageString).append(pageNumber);
+            sb.append(url, 0, index).append(URL_PAGE_INFO).append(pageNumber);
             int idx = url.indexOf("&", index);
             if (idx != -1) {
                 sb.append(url.substring(idx));
             }
-            url = sb.toString();
-        } else {
-            if (url.contains("?")) {
-                url = url.concat(String.format("&page=%s", pageNumber));
-            } else {
-                url = url.concat(String.format("?page=%s", pageNumber));
-            }
+            return sb.toString();
         }
 
-        return url;
+        if (StrUtil.isNotBlank(queryString)) {
+            return url.concat(URL_QMARK).concat(URL_PAGE_INFO).concat(String.valueOf(pageNumber));
+        }
+
+        return url.concat(URL_AMARK).concat(URL_PAGE_INFO).concat(String.valueOf(pageNumber));
+
     }
 
 
