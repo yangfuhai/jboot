@@ -60,12 +60,11 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
         return url;
     }
 
+
     @Override
     protected Page<?> getPage(Env env, Scope scope, Writer writer) {
-        return JbootControllerContext.get().getAttr(getPageAttrName());
+        String pageAttr = getPara("pageAttr", scope, "page");
+        return JbootControllerContext.get().getAttr(pageAttr);
     }
 
-    protected String getPageAttrName() {
-        return "page";
-    }
 }

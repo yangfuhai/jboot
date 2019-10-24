@@ -38,6 +38,8 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
 
         String previousText = getPara("previousText", scope, "上一页");
         String nextText = getPara("nextText", scope, "下一页");
+        String pageItemsName = getPara("pageItemsName", scope, "page");
+
 
         Page<?> page = getPage(env, scope, writer);
 
@@ -100,8 +102,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
             pages.add(new PaginateDirectiveBase.PaginateItem(nextClass, getUrl(currentPage + 1), nextText));
         }
 
-        scope.setLocal(getPageItemsName(), pages);
-
+        scope.setLocal(pageItemsName, pages);
         renderBody(env, scope, writer);
     }
 
@@ -111,15 +112,11 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     protected abstract Page<?> getPage(Env env, Scope scope, Writer writer);
 
 
-    protected String getPageItemsName() {
-        return "pages";
-    }
-
-
     @Override
     public boolean hasEnd() {
         return true;
     }
+
 
 
     public static class PaginateItem {
