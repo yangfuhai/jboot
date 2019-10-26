@@ -114,7 +114,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
                 String queueName = channel.queueDeclare().getQueue();
                 channel.queueBind(queueName, toChannel, toChannel);
             } catch (IOException e) {
-                throw new JbootException("can not createChannel", e);
+                throw new JbootException("can not create channel", e);
             }
 
             if (channel != null) {
