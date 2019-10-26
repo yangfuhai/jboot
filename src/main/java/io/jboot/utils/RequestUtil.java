@@ -54,13 +54,12 @@ public class RequestUtil {
      */
     public static boolean isMobileBrowser(HttpServletRequest request) {
         String ua = request.getHeader("User-Agent");
-        if (ua == null) {
-            return false;
-        }
-        ua = ua.toLowerCase();
-        for (String mobileAgent : mobileAgents) {
-            if (ua.contains(mobileAgent)) {
-                return true;
+        if (StrUtil.isNotBlank(ua)) {
+            ua = ua.toLowerCase();
+            for (String mobileAgent : mobileAgents) {
+                if (ua.indexOf(mobileAgent) > -1) {
+                    return true;
+                }
             }
         }
         return false;
@@ -73,14 +72,7 @@ public class RequestUtil {
      */
     public static boolean isWechatBrowser(HttpServletRequest request) {
         String ua = request.getHeader("User-Agent");
-        if (ua == null) {
-            return false;
-        }
-        ua = ua.toLowerCase();
-        if (ua.indexOf("micromessenger") > 0) {
-            return true;
-        }
-        return false;
+        return StrUtil.isNotBlank(ua) && ua.toLowerCase().indexOf("micromessenger") > -1;
     }
 
 
@@ -92,14 +84,7 @@ public class RequestUtil {
      */
     public static boolean isWechatPcBrowser(HttpServletRequest request) {
         String ua = request.getHeader("User-Agent");
-        if (ua == null) {
-            return false;
-        }
-        ua = ua.toLowerCase();
-        if (ua.indexOf("windowswechat") > 0) {
-            return true;
-        }
-        return false;
+        return StrUtil.isNotBlank(ua) && ua.toLowerCase().indexOf("windowswechat") > -1;
     }
 
     /**
@@ -109,23 +94,23 @@ public class RequestUtil {
      */
     public static boolean isIEBrowser(HttpServletRequest request) {
         String ua = request.getHeader("User-Agent");
-        if (ua == null) {
+        if (StrUtil.isBlank(ua)) {
             return false;
         }
 
         ua = ua.toLowerCase();
-        if (ua.indexOf("msie") > 0) {
+        if (ua.indexOf("msie") > -1) {
             return true;
         }
 
-        if (ua.indexOf("gecko") > 0 && ua.indexOf("rv:11") > 0) {
+        if (ua.indexOf("gecko") > -1 && ua.indexOf("rv:11") > -1) {
             return true;
         }
+
         return false;
     }
 
     public static String getIpAddress(HttpServletRequest request) {
-
         String ip = request.getHeader("X-requested-For");
         if (StrUtil.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Forwarded-For");

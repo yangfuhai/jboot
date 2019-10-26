@@ -226,8 +226,4 @@ public class StrUtil extends StrKit {
     }
 
 
-    public static void main(String[] args) {
-        String url = "http://www.baidu.com?username=aaa";
-        System.out.println(StrUtil.urlEncode(url));
-    }
 }
