@@ -5,8 +5,8 @@ import io.jboot.app.config.JbootConfigManager;
 
 public class AnnotationUtil {
 
-    private  static final String EXPR_PREFIX = "${";
-    private  static final String EXPR_SUFFIX = "}";
+    private static final String EXPR_PREFIX = "${";
+    private static final String EXPR_SUFFIX = "}";
 
 
     public static String get(String value) {
@@ -25,7 +25,7 @@ public class AnnotationUtil {
     }
 
 
-    public static String getConfigValueByKeyString(String key){
+    public static String getConfigValueByKeyString(String key) {
         int indexOf = key.indexOf(":");
         String defaultValue = null;
         if (indexOf != -1) {
@@ -33,7 +33,7 @@ public class AnnotationUtil {
             key = key.substring(0, indexOf);
         }
         String configValue = JbootConfigManager.me().getConfigValue(key.trim());
-        String returnValue = StrUtil.obtainDefaultIfBlank(configValue,defaultValue);
+        String returnValue = StrUtil.obtainDefaultIfBlank(configValue, defaultValue);
         return StrUtil.isBlank(returnValue) ? null : returnValue.trim();
     }
 
