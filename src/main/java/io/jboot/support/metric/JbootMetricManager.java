@@ -78,10 +78,6 @@ public class JbootMetricManager {
         this.enable = true;
     }
 
-//    public boolean isConfigOk() {
-//        return metricsConfig.isConfigOk();
-//    }
-
 
     public boolean isEnable() {
         return enable;
