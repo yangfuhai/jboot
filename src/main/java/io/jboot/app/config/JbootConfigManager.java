@@ -296,6 +296,10 @@ public class JbootConfigManager {
         return properties;
     }
 
+    public Map<String, Object> getConfigCache() {
+        return configCache;
+    }
+
 
     /**
      * 解析启动参数
