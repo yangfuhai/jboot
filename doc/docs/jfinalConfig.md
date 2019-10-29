@@ -13,10 +13,15 @@ public class DemoConfig extends JFinalConfig {
 }
 ```
 
-我们可以写自己的 Config 继承 JFinalConfig 然后对 JFinal 进行一些列的配置，那么，在 Jboot 中如何来对 JFinal 进行配置呢？
+默认情况下，我们不需要对 JFinal 进行任何的配置，因为 Jboot 已经对 JFinal 进行了默认的配置，同时，Controller 等的配置完全是通过注解
+@RequestMapping 来配置了，数据库也只是在 jboot.properties 里添加就可以。
+
+
+但是可能在某些特殊情况下，我们对 JFinal 进行自己特殊的配置，如何来做呢？
 
 - 第一步：编写一个类继承 JbootAppListenerBase ，编写的类的名称可以自定义（Jboot 的 ClassScanner 会自动扫描到），一个应用在可以存在多个继承至 JbootAppListenerBase 的类
 - 第二步：复写对应的方法
+
 
 JbootAppListenerBase 提供的方法如下：
 
