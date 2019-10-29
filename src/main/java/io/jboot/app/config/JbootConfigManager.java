@@ -102,7 +102,7 @@ public class JbootConfigManager {
     public <T> T get(Class<T> clazz, String prefix, String file) {
 
         /**
-         * 开发模式下，热加载会导致由于Config是不同的 ClassLoader，
+         * 开发模式下，热加载会导致由于 Config 是不同的 ClassLoader 而导致异常，
          * 如果走缓存会Class转化异常
          */
         if (isDevMode()) {
@@ -123,8 +123,48 @@ public class JbootConfigManager {
         return (T) configObject;
     }
 
-    public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
 
+    /**
+     * 刷新数据，并返回新的数据
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public <T> T refreshAndGet(Class<T> clazz) {
+        ConfigModel propertyConfig = clazz.getAnnotation(ConfigModel.class);
+        if (propertyConfig == null) {
+            return refreshAndGet(clazz, null, null);
+        }
+        return refreshAndGet(clazz, propertyConfig.prefix(), propertyConfig.file());
+    }
+
+
+    /**
+     * 刷新数据，并返回新的数据
+     *
+     * @param clazz
+     * @param prefix
+     * @param file
+     * @param <T>
+     * @return
+     */
+    public <T> T refreshAndGet(Class<T> clazz, String prefix, String file) {
+        configCache.remove(clazz.getName() + prefix);
+        return get(clazz, prefix, file);
+    }
+
+
+    /**
+     * 创建一个新的配置对象（Object）
+     *
+     * @param clazz
+     * @param prefix
+     * @param file
+     * @param <T>
+     * @return
+     */
+    public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
         Object configObject = Utils.newInstance(clazz);
         List<Method> setMethods = Utils.getClassSetMethods(clazz);
         if (setMethods != null) {
@@ -133,7 +173,7 @@ public class JbootConfigManager {
                 String key = buildKey(prefix, method);
                 String value = getConfigValue(key);
 
-                if (Utils.isNotBlank(file)) {
+                if (Utils.isNotBlank(file) && getClass().getClassLoader().getResource(file) != null) {
                     try {
                         Prop prop = new Prop(file);
                         String filePropValue = getConfigValue(prop.getProperties(), key);
@@ -304,8 +344,12 @@ public class JbootConfigManager {
 
     public boolean isDevMode() {
         if (devMode == null) {
-            String appMode = getConfigValue("jboot.app.mode");
-            devMode = (null == appMode || "".equals(appMode.trim()) || "dev".equals(appMode));
+            synchronized (this) {
+                if (devMode == null) {
+                    String appMode = getConfigValue("jboot.app.mode");
+                    devMode = (null == appMode || "".equals(appMode.trim()) || "dev".equals(appMode));
+                }
+            }
         }
         return devMode;
     }
