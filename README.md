@@ -37,6 +37,7 @@ public class HelloworldController extends JbootController {
 - [热加载](./doc/docs/hotload.md)
 - [Undertow](./doc/docs/undertow.md)
 - [配置](./doc/docs/config.md)
+- [JFinalConfig](./doc/docs/jfinalConfig.md)
 - [MVC](./doc/docs/mvc.md)
 - [数据库](./doc/docs/db.md)
 - [缓存](./doc/docs/cache.md)
