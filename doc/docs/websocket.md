@@ -5,14 +5,14 @@ Jboot 内置了 Undertow 服务器，完美支持 websocket 功能， tomcat8 �
 在使用 websocket 之前，需要添加如下配置：
 
 ```
-boot.web.webSocketEndpoint=your-endpoint-class-name
+jboot.web.webSocketEndpoint=your-endpoint-class-name
 ```
 
 例如：
 
 ```
 //多个 endpoint 用英文逗号（,） 隔开。
-boot.web.webSocketEndpoint=io.jboot.test.websocket.WebsocketDemo
+jboot.web.webSocketEndpoint=io.jboot.test.websocket.WebsocketDemo
 ```
 
 WebsocketDemo 的代码如下：
