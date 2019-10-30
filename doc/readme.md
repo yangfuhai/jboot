@@ -7,6 +7,7 @@
 - [Undertow](./docs/undertow.md)
 - [配置](./docs/config.md)
 - [JFinalConfig](./docs/jfinalConfig.md)
+- [WebSocket](./docs/websocket.md)
 - [MVC](./docs/mvc.md)
 - [数据库](./docs/db.md)
 - [缓存](./docs/cache.md)
