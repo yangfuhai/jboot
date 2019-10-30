@@ -1,3 +1,12 @@
+jboot v2.2.5:
+新增：JbootConfigManager 新增 refreshAndGet 方法，用于读取配置文件发生变化时的新内容
+优化：指令 JbootPaginateDirective 可以传入 pageAttr 来指定 page 设置的属性
+优化：优化 RequestUtil 的判断浏览器的代码逻辑
+优化：升级 JFinal 、 Metrics 等到最新版本
+文档：给出 seata 分布式事务的相关文档及测试demo
+文档：新增 JFinalConfig 配置的相关文档
+
+
 jboot v2.2.4:
 修复：修复 PaginateDirectiveBase 在某些情况下的个别属性存在线程安全问题
 修复：代码生成器默认情况不对 remarks 进行输出的问题
