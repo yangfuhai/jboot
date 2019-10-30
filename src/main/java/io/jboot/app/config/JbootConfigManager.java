@@ -150,8 +150,31 @@ public class JbootConfigManager {
      * @return
      */
     public <T> T refreshAndGet(Class<T> clazz, String prefix, String file) {
+
         configCache.remove(clazz.getName() + prefix);
+        refreshMainProperties();
+
         return get(clazz, prefix, file);
+    }
+
+    private void refreshMainProperties(){
+
+        Properties jbootProperties = new Prop("jboot.properties").getProperties();
+        if (jbootProperties == null){
+            return;
+        }
+
+        mainProperties.putAll(jbootProperties);
+
+        String mode = getConfigValue(jbootProperties, "jboot.app.mode");
+        if (Utils.isNotBlank(mode)) {
+            String p = String.format("jboot-%s.properties", mode);
+            if (new File(Utils.getRootClassPath(), p).exists()) {
+                mainProperties.putAll(new Prop(p).getProperties());
+            }
+        }
+
+
     }
 
 
