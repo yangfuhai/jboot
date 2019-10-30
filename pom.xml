@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>com.jfinal</groupId>
 			<artifactId>jfinal</artifactId>
-			<version>4.6</version>
+			<version>4.7</version>
 		</dependency>
 
 		<dependency>

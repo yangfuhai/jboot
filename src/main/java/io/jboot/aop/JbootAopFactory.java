@@ -249,11 +249,17 @@ public class JbootAopFactory extends AopFactory {
 
 
     protected void setFiled(Field filed, Object toObj, Object data) throws IllegalAccessException {
-        if (!filed.isAccessible()) {
-            filed.setAccessible(true);
+        boolean accessible = filed.isAccessible();
+        if (accessible) {
+            filed.set(toObj, data);
+        } else {
+            try {
+                filed.setAccessible(true);
+                filed.set(toObj, data);
+            } finally {
+                filed.setAccessible(false);
+            }
         }
-
-        filed.set(toObj, data);
     }
 
 
