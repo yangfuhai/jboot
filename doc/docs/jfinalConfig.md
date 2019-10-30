@@ -19,7 +19,7 @@ public class DemoConfig extends JFinalConfig {
 
 但是可能在某些特殊情况下，我们对 JFinal 进行自己特殊的配置，如何来做呢？
 
-- 第一步：编写一个类继承 JbootAppListenerBase ，编写的类的名称可以自定义（Jboot 的 ClassScanner 会自动扫描到），一个应用在可以存在多个继承至 JbootAppListenerBase 的类
+- 第一步：编写一个类继承 JbootAppListenerBase 
 - 第二步：复写对应的方法
 
 
@@ -87,3 +87,5 @@ public class JbootAppListenerBase implements JbootAppListener {
 
 }
 ```
+
+编写的继承 JbootAppListenerBase 的类名可以是任意名称，Jboot 的 ClassScanner 会自动扫描到并在 App 启动的时候自动执行，同时 ，一个应用在可以存在多个继承至 JbootAppListenerBase 的类，这样更加方便团队配合和模块化开发，每个团队（或模块）都可以有自己的配置类，不会造成代码冲突。
