@@ -38,7 +38,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
 
         String previousText = getPara("previousText", scope, "上一页");
         String nextText = getPara("nextText", scope, "下一页");
-        String pageItemsName = getPara("pageItemsName", scope, "page");
+        String pageItemsName = getPara("pageItemsName", scope, "pages");
 
 
         Page<?> page = getPage(env, scope, writer);
