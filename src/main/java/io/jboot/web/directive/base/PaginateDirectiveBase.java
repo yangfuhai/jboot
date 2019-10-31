@@ -71,12 +71,12 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         if (currentPage == 1) {
             pages.add(new PaginateDirectiveBase.PaginateItem(previousClass + " " + disabledClass, "javascript:;", previousText));
         } else {
-            pages.add(new PaginateDirectiveBase.PaginateItem(previousClass, getUrl(currentPage - 1), previousText));
+            pages.add(new PaginateDirectiveBase.PaginateItem(previousClass, getUrl(currentPage - 1, env, scope, writer), previousText));
         }
 
         if (currentPage > 8 && !onlyShowPreviousAndNext) {
-            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(1), "1"));
-            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(2), "2"));
+            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(1, env, scope, writer), "1"));
+            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(2, env, scope, writer), "2"));
             pages.add(new PaginateDirectiveBase.PaginateItem(disabledClass, "javascript:;", "..."));
         }
 
@@ -85,21 +85,21 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
                 if (currentPage == i) {
                     pages.add(new PaginateDirectiveBase.PaginateItem(activeClass, "javascript:;", i));
                 } else {
-                    pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(i), i));
+                    pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(i, env, scope, writer), i));
                 }
             }
         }
 
         if ((totalPage - currentPage) >= 8 && !onlyShowPreviousAndNext) {
             pages.add(new PaginateDirectiveBase.PaginateItem(disabledClass, "javascript:;", "..."));
-            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(totalPage - 1), totalPage - 1));
-            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(totalPage), totalPage));
+            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(totalPage - 1, env, scope, writer), totalPage - 1));
+            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(totalPage, env, scope, writer), totalPage));
         }
 
         if (currentPage == totalPage) {
             pages.add(new PaginateDirectiveBase.PaginateItem(nextClass + " " + disabledClass, "javascript:;", nextText));
         } else {
-            pages.add(new PaginateDirectiveBase.PaginateItem(nextClass, getUrl(currentPage + 1), nextText));
+            pages.add(new PaginateDirectiveBase.PaginateItem(nextClass, getUrl(currentPage + 1, env, scope, writer), nextText));
         }
 
         scope.setLocal(pageItemsName, pages);
@@ -107,7 +107,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     }
 
 
-    protected abstract String getUrl(int pageNumber);
+    protected abstract String getUrl(int pageNumber, Env env, Scope scope, Writer writer);
 
     protected abstract Page<?> getPage(Env env, Scope scope, Writer writer);
 
@@ -116,7 +116,6 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     public boolean hasEnd() {
         return true;
     }
-
 
 
     public static class PaginateItem {

@@ -32,33 +32,60 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
     private static final String URL_AMARK = "&";
 
     @Override
-    protected String getUrl(int pageNumber) {
+    protected String getUrl(int pageNumber, Env env, Scope scope, Writer writer) {
         HttpServletRequest request = JbootControllerContext.get().getRequest();
         String queryString = request.getQueryString();
 
         String url = request.getRequestURI();
 
         if (StrUtil.isNotBlank(queryString)) {
-            url = url.concat("?").concat(queryString);
+            url = url.concat(URL_QMARK).concat(queryString);
         }
+
+        /**
+         * 锚链接
+         */
+        String anchor = getPara("anchor", scope, "");
+
 
         int index = url.indexOf(URL_PAGE_INFO);
 
+        /**
+         * 已经有 page=xx 参数了
+         */
         if (index != -1) {
             StringBuilder sb = new StringBuilder();
             sb.append(url, 0, index).append(URL_PAGE_INFO).append(pageNumber);
-            int idx = url.indexOf("&", index);
+            int idx = url.indexOf(URL_AMARK, index);
             if (idx != -1) {
                 sb.append(url.substring(idx));
             }
-            return sb.toString();
+            return sb.append(anchor).toString();
         }
 
+        /**
+         * 没有 page=xx 参数，但是已经有 query 请求
+         */
         if (StrUtil.isNotBlank(queryString)) {
-            return url.concat(URL_QMARK).concat(URL_PAGE_INFO).concat(String.valueOf(pageNumber));
+            StringBuilder sb = new StringBuilder(url);
+            return sb.append(URL_AMARK)
+                    .append(URL_PAGE_INFO)
+                    .append(pageNumber)
+                    .append(anchor)
+                    .toString();
         }
 
-        return url.concat(URL_AMARK).concat(URL_PAGE_INFO).concat(String.valueOf(pageNumber));
+        /**
+         * 没有 query 请求
+         */
+        else {
+            StringBuilder sb = new StringBuilder(url);
+            return sb.append(URL_QMARK)
+                    .append(URL_PAGE_INFO)
+                    .append(pageNumber)
+                    .append(anchor)
+                    .toString();
+        }
 
     }
 
