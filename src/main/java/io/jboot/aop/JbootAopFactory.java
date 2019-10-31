@@ -149,7 +149,7 @@ public class JbootAopFactory extends AopFactory {
 
         Object fieldInjectedObject = doGet(fieldInjectedClass);
 
-        setFiled(field, targetObject, fieldInjectedObject);
+        setFieldValue(field, targetObject, fieldInjectedObject);
 
     }
 
@@ -170,7 +170,7 @@ public class JbootAopFactory extends AopFactory {
 
             Object fieldInjectedObject = jbootrpc.serviceObtain(fieldInjectedClass, serviceConfig);
 
-            setFiled(field, targetObject, fieldInjectedObject);
+            setFieldValue(field, targetObject, fieldInjectedObject);
 
         } catch (Exception ex) {
             LOG.error("can not inject rpc service in " + targetObject.getClass() + " by config " + rpcInject, ex);
@@ -193,7 +193,7 @@ public class JbootAopFactory extends AopFactory {
         if (StrUtil.isNotBlank(value)) {
             Object fieldInjectedObject = JbootConfigManager.me().convert(fieldInjectedClass, value);
 
-            setFiled(field, targetObject, fieldInjectedObject);
+            setFieldValue(field, targetObject, fieldInjectedObject);
             return;
         }
 
@@ -248,9 +248,9 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    protected void setFiled(Field filed, Object toObj, Object data) throws IllegalAccessException {
-        filed.setAccessible(true);
-        filed.set(toObj, data);
+    protected void setFieldValue(Field field, Object toObj, Object data) throws IllegalAccessException {
+        field.setAccessible(true);
+        field.set(toObj, data);
     }
 
 
