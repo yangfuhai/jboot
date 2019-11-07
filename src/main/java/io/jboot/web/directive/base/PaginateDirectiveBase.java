@@ -26,19 +26,39 @@ import java.util.List;
 
 public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
 
+    private static final String PREVIOUS_CLASS_KEY = "previousClass";
+    private static final String NEXT_CLASS_KEY = "nextClass";
+    private static final String ACTIVE_CLASS_KEY = "activeClass";
+    private static final String DISABLED_CLASS_KEY = "disabledClass";
+    private static final String ONLY_SHOW_PREVIOUS_AND_NEXT_KEY = "onlyShowPreviousAndNext";
+
+    private static final String PREVIOUS_TEXT_KEY = "previousText";
+    private static final String NEXT_TEXT_KEY = "nextText";
+    private static final String PAGE_ITEMS_NAME_KEY = "pageItemsName";
+
+
+    private static final String DEFAULT_PREVIOUS_CLASS = "previous";
+    private static final String DEFAULT_NEXT_CLASS = "next";
+    private static final String DEFAULT_ACTIVE_CLASS = "active";
+    private static final String DEFAULT_DISABLED_CLASS = "disabled";
+
+    private static final String DEFAULT_PREVIOUS_TEXT = "上一页";
+    private static final String DEFAULT_NEXT_TEXT = "下一页";
+    private static final String DEFAULT_PAGE_ITEMS_NAME = "pages";
+
 
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
 
-        String previousClass = getPara("previousClass", scope, "previous");
-        String nextClass = getPara("nextClass", scope, "next");
-        String activeClass = getPara("activeClass", scope, "active");
-        String disabledClass = getPara("disabledClass", scope, "disabled");
-        boolean onlyShowPreviousAndNext = getPara("onlyShowPreviousAndNext", scope, false);
+        String previousClass = getPara(PREVIOUS_CLASS_KEY, scope, DEFAULT_PREVIOUS_CLASS);
+        String nextClass = getPara(NEXT_CLASS_KEY, scope, DEFAULT_NEXT_CLASS);
+        String activeClass = getPara(ACTIVE_CLASS_KEY, scope, DEFAULT_ACTIVE_CLASS);
+        String disabledClass = getPara(DISABLED_CLASS_KEY, scope, DEFAULT_DISABLED_CLASS);
+        boolean onlyShowPreviousAndNext = getParaToBool(ONLY_SHOW_PREVIOUS_AND_NEXT_KEY, scope, false);
 
-        String previousText = getPara("previousText", scope, "上一页");
-        String nextText = getPara("nextText", scope, "下一页");
-        String pageItemsName = getPara("pageItemsName", scope, "pages");
+        String previousText = getPara(PREVIOUS_TEXT_KEY, scope, DEFAULT_PREVIOUS_TEXT);
+        String nextText = getPara(NEXT_TEXT_KEY, scope, DEFAULT_NEXT_TEXT);
+        String pageItemsName = getPara(PAGE_ITEMS_NAME_KEY, scope, DEFAULT_PAGE_ITEMS_NAME);
 
 
         Page<?> page = getPage(env, scope, writer);
