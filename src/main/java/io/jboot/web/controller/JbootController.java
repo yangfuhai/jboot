@@ -129,7 +129,7 @@ public class JbootController extends Controller {
     @NotAction
     public Controller setJwtMap(Map map) {
         if (map == null) {
-            throw new NullPointerException("map is null, u show invoke setJwtAttr() before. ");
+            throw new NullPointerException("map is null");
         }
         if (jwtMap == null) {
             jwtMap = new HashMap<>();
