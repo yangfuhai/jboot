@@ -33,6 +33,8 @@ public class StrUtil extends StrKit {
 
     private static final Log log = Log.getLog(StrUtil.class);
 
+    public static final String EMPTY = "";
+
     public static String urlDecode(String string) {
         try {
             return URLDecoder.decode(string, JFinal.me().getConstants().getEncoding());

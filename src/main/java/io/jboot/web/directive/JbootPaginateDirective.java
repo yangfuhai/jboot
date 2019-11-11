@@ -31,6 +31,10 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
     private static final String URL_QMARK = "?";
     private static final String URL_AMARK = "&";
 
+    private static final String KEY_ANCHOR = "anchor";
+    private static final String KEY_PAGE_ATTR = "pageAttr";
+    private static final String DEFAULT_PAGE_ATTR = "page";
+
     @Override
     protected String getUrl(int pageNumber, Env env, Scope scope, Writer writer) {
         HttpServletRequest request = JbootControllerContext.get().getRequest();
@@ -45,9 +49,7 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
         /**
          * 锚链接
          */
-        String anchor = getPara("anchor", scope, "");
-
-
+        String anchor = getPara(KEY_ANCHOR, scope, StrUtil.EMPTY);
         int index = url.indexOf(URL_PAGE_INFO);
 
         /**
@@ -92,7 +94,7 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
     protected Page<?> getPage(Env env, Scope scope, Writer writer) {
-        String pageAttr = getPara("pageAttr", scope, "page");
+        String pageAttr = getPara(KEY_PAGE_ATTR, scope, DEFAULT_PAGE_ATTR);
         return JbootControllerContext.get().getAttr(pageAttr);
     }
 
