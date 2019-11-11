@@ -19,6 +19,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.template.Env;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
+import io.jboot.utils.StrUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,9 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
     private static final String DEFAULT_PREVIOUS_TEXT = "上一页";
     private static final String DEFAULT_NEXT_TEXT = "下一页";
     private static final String DEFAULT_PAGE_ITEMS_NAME = "pages";
+
+    private static final String JAVASCRIPT_TEXT = "javascript:;";
+    private static final String ELLIPSIS_TEXT = "...";
 
 
     @Override
@@ -89,35 +93,35 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
 
         List<PaginateItem> pages = new ArrayList<PaginateItem>();
         if (currentPage == 1) {
-            pages.add(new PaginateDirectiveBase.PaginateItem(previousClass + " " + disabledClass, "javascript:;", previousText));
+            pages.add(new PaginateDirectiveBase.PaginateItem(previousClass + StrUtil.SPACE + disabledClass, JAVASCRIPT_TEXT, previousText));
         } else {
             pages.add(new PaginateDirectiveBase.PaginateItem(previousClass, getUrl(currentPage - 1, env, scope, writer), previousText));
         }
 
         if (currentPage > 8 && !onlyShowPreviousAndNext) {
-            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(1, env, scope, writer), "1"));
-            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(2, env, scope, writer), "2"));
-            pages.add(new PaginateDirectiveBase.PaginateItem(disabledClass, "javascript:;", "..."));
+            pages.add(new PaginateDirectiveBase.PaginateItem(StrUtil.EMPTY, getUrl(1, env, scope, writer), 1));
+            pages.add(new PaginateDirectiveBase.PaginateItem(StrUtil.EMPTY, getUrl(2, env, scope, writer), 2));
+            pages.add(new PaginateDirectiveBase.PaginateItem(disabledClass, JAVASCRIPT_TEXT, ELLIPSIS_TEXT));
         }
 
         if (!onlyShowPreviousAndNext) {
             for (int i = startPage; i <= endPage; i++) {
                 if (currentPage == i) {
-                    pages.add(new PaginateDirectiveBase.PaginateItem(activeClass, "javascript:;", i));
+                    pages.add(new PaginateDirectiveBase.PaginateItem(activeClass, JAVASCRIPT_TEXT, i));
                 } else {
-                    pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(i, env, scope, writer), i));
+                    pages.add(new PaginateDirectiveBase.PaginateItem(StrUtil.EMPTY, getUrl(i, env, scope, writer), i));
                 }
             }
         }
 
         if ((totalPage - currentPage) >= 8 && !onlyShowPreviousAndNext) {
-            pages.add(new PaginateDirectiveBase.PaginateItem(disabledClass, "javascript:;", "..."));
-            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(totalPage - 1, env, scope, writer), totalPage - 1));
-            pages.add(new PaginateDirectiveBase.PaginateItem("", getUrl(totalPage, env, scope, writer), totalPage));
+            pages.add(new PaginateDirectiveBase.PaginateItem(disabledClass, JAVASCRIPT_TEXT, ELLIPSIS_TEXT));
+            pages.add(new PaginateDirectiveBase.PaginateItem(StrUtil.EMPTY, getUrl(totalPage - 1, env, scope, writer), totalPage - 1));
+            pages.add(new PaginateDirectiveBase.PaginateItem(StrUtil.EMPTY, getUrl(totalPage, env, scope, writer), totalPage));
         }
 
         if (currentPage == totalPage) {
-            pages.add(new PaginateDirectiveBase.PaginateItem(nextClass + " " + disabledClass, "javascript:;", nextText));
+            pages.add(new PaginateDirectiveBase.PaginateItem(nextClass + StrUtil.SPACE + disabledClass, JAVASCRIPT_TEXT, nextText));
         } else {
             pages.add(new PaginateDirectiveBase.PaginateItem(nextClass, getUrl(currentPage + 1, env, scope, writer), nextText));
         }
@@ -152,7 +156,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         public PaginateItem(String style, String url, int text) {
             this.style = style;
             this.url = url;
-            this.text = text + "";
+            this.text = String.valueOf(text);
         }
 
         public String getStyle() {

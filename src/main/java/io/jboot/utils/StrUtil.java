@@ -34,6 +34,7 @@ public class StrUtil extends StrKit {
     private static final Log log = Log.getLog(StrUtil.class);
 
     public static final String EMPTY = "";
+    public static final String SPACE = " ";
 
     public static String urlDecode(String string) {
         try {
@@ -67,7 +68,7 @@ public class StrUtil extends StrKit {
             return false;
 
         for (String string : strings) {
-            if (string == null || "".equals(string)) {
+            if (string == null || EMPTY.equals(string)) {
                 return false;
             }
         }
