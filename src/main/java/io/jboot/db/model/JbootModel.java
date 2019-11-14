@@ -252,15 +252,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (idValues == null || idValues.length == 0) {
             return false;
         }
-        Columns columns = Columns.create();
-        for (int i = 0; i < idValues.length; i++) {
-            columns.add(_getPrimaryKey(), idValues[i]);
-            if (i != idValues.length - 1) {
-                columns.or();
-            }
-        }
-
-        boolean success = deleteByColumns(columns);
+        boolean success = deleteByColumns(Columns.create().orEqs(_getPrimaryKey(), idValues));
         if (success && idCacheEnable) {
             for (Object id : idValues) deleteIdCacheById(id);
         }
