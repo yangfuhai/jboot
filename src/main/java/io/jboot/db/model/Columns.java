@@ -259,25 +259,7 @@ public class Columns implements Serializable {
     static final Object[] NULL_PARA_ARRAY = new Object[0];
 
     public Object[] getValueArray() {
-
-        if (isEmpty()) {
-            return NULL_PARA_ARRAY;
-        }
-
-        List<Object> values = new LinkedList<>();
-
-        for (Column column : cols) {
-            Object value = column.getValue();
-            if (value == null) continue;
-            if (value.getClass().isArray()) {
-                Object[] vs = (Object[]) value;
-                for (Object v : vs) values.add(v);
-            } else {
-                values.add(value);
-            }
-        }
-
-        return values.isEmpty() ? NULL_PARA_ARRAY : values.toArray();
+        return Util.getValueArray(cols);
     }
 
 

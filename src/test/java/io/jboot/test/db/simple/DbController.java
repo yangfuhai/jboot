@@ -1,5 +1,6 @@
 package io.jboot.test.db.simple;
 
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import io.jboot.app.JbootApplication;
@@ -75,6 +76,12 @@ public class DbController extends JbootController {
 
         List<User> users = dao.findListByColumns(columns);
         renderJson(users);
+    }
+
+    public void del1(){
+        User dao = new User();
+        dao.batchDeleteByIds("1",2,3);
+        renderJson(Ret.ok());
     }
 
 

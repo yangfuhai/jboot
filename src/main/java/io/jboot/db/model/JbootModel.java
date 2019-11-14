@@ -236,15 +236,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public boolean deleteByColumns(List<Column> columns) {
-
         String sql = _getDialect().forDeleteByColumns(_getTableName(), columns);
-
-        Object[] values = new Object[columns.size()];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = columns.get(i).getValue();
-        }
-
-        return Db.use(_getConfig().getName()).update(sql, values) >= 1;
+        return Db.use(_getConfig().getName()).update(sql, Util.getValueArray(columns)) >= 1;
     }
 
 
@@ -501,15 +494,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public long findCountByColumns(List<Column> columns) {
-
         String sql = _getDialect().forFindCountByColumns(_getTableName(), columns);
-
-        Object[] values = new Object[columns.size()];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = columns.get(i).getValue();
-        }
-
-        Long value = Db.use(_getConfig().getName()).queryLong(sql, values);
+        Long value = Db.use(_getConfig().getName()).queryLong(sql, Util.getValueArray(columns));
         return value == null ? 0 : value;
     }
 
