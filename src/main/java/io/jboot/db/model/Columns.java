@@ -186,7 +186,8 @@ public class Columns implements Serializable {
 
 
     /**
-     *  IS NULL
+     * IS NULL
+     *
      * @param name
      * @return
      */
@@ -198,6 +199,7 @@ public class Columns implements Serializable {
 
     /**
      * IS NOT NULL
+     *
      * @param name
      * @return
      */
@@ -213,6 +215,25 @@ public class Columns implements Serializable {
     }
 
 
+    public Columns ors(String name, String logic, Object... values) {
+        for (int i = 0; i < values.length; i++) {
+            Object value = values[i];
+            if (value != null) {
+                this.add(Column.create(name, value, logic));
+                if (i != values.length - 1) {
+                    or();
+                }
+            }
+        }
+        return this;
+    }
+
+
+    public Columns orEqs(String name, Object... values) {
+        return ors(name, Column.LOGIC_EQUALS, values);
+    }
+
+
     public Columns in(String name, Object... arrays) {
         this.add(Column.create(name, arrays, Column.LOGIC_IN));
         return this;
@@ -222,7 +243,6 @@ public class Columns implements Serializable {
         this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
         return this;
     }
-
 
 
     public Columns between(String name, Object start, Object end) {
@@ -368,7 +388,7 @@ public class Columns implements Serializable {
         System.out.println(columns.getCacheKey());
         columns.or();
 
-        columns.not_in("nickname","aaa","bbb");
+        columns.not_in("nickname", "aaa", "bbb");
         System.out.println(columns.getCacheKey());
 
         columns.between("name", "123", "1233");
@@ -379,8 +399,8 @@ public class Columns implements Serializable {
         System.out.println(columns.toSqlServerSql());
 
         JbootMysqlDialect dialect = new JbootMysqlDialect();
-        System.out.println(dialect.forDeleteByColumns("table",columns.getList()));
-        System.out.println(dialect.forFindCountByColumns("table",columns.getList()));
+        System.out.println(dialect.forDeleteByColumns("table", columns.getList()));
+        System.out.println(dialect.forFindCountByColumns("table", columns.getList()));
 
     }
 
