@@ -256,8 +256,6 @@ public class Columns implements Serializable {
     }
 
 
-    static final Object[] NULL_PARA_ARRAY = new Object[0];
-
     public Object[] getValueArray() {
         return Util.getValueArray(cols);
     }
