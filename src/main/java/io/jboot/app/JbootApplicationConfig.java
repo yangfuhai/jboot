@@ -22,6 +22,7 @@ import io.jboot.app.config.annotation.ConfigModel;
 public class JbootApplicationConfig {
 
     private String mode = "dev";
+    private String name = "jboot";
     private String version = JbootConsts.VERSION;
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
@@ -36,8 +37,12 @@ public class JbootApplicationConfig {
         this.mode = mode;
     }
 
-    public String getVersion() {
-        return version;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isBannerEnable() {
@@ -56,7 +61,6 @@ public class JbootApplicationConfig {
         this.bannerFile = bannerFile;
     }
 
-
     public String getJfinalConfig() {
         return jfinalConfig;
     }
@@ -65,11 +69,11 @@ public class JbootApplicationConfig {
         this.jfinalConfig = jfinalConfig;
     }
 
-
     @Override
     public String toString() {
         return "JbootApplication {" +
-                " mode='" + mode + '\'' +
+                " name='" + name + '\'' +
+                ", mode='" + mode + '\'' +
                 ", version='" + version + '\'' +
                 ", jfinalConfig='" + jfinalConfig + '\'' +
                 " }";
