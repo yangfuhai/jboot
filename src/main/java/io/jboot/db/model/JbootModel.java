@@ -247,12 +247,25 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return Db.use(_getConfig().getName()).update(sql, values) >= 1;
     }
 
+
     public boolean batchDeleteByIds(Object... idValues) {
-        boolean success = deleteByColumns(Columns.create().in(_getPrimaryKey(), idValues));
+        if (idValues == null || idValues.length == 0) {
+            return false;
+        }
+        Columns columns = Columns.create();
+        for (int i = 0; i < idValues.length; i++) {
+            columns.add(_getPrimaryKey(), idValues[i]);
+            if (i != idValues.length - 1) {
+                columns.or();
+            }
+        }
+
+        boolean success = deleteByColumns(columns);
         if (success && idCacheEnable) {
             for (Object id : idValues) deleteIdCacheById(id);
         }
         return success;
+
     }
 
 
@@ -569,7 +582,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected boolean _hasColumn(String columnLabel) {
         return _getTable(true).hasColumnLabel(columnLabel);
     }
-    
+
 
     @Override
     protected List<M> find(Config config, String sql, Object... paras) {
