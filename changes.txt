@@ -1,3 +1,12 @@
+jboot v2.2.7:
+新增：Columns 新增 ors() 和 orEqs() 方法，方便使用 or
+新增：JbootApplicationConfig 新增 name 的配置，方便以后进行分布式的应用申明
+优化：PaginateDirectiveBase 代码，提取必要的静态变量
+优化：JbootController 的提示错误问题
+修复：JbootModel.batchDeleteByIds() 当id是String类型是无法正确删除的问题
+修复：JbootModel.findCountByColumns() 当有 or() 时无法正确返回数据的问题
+
+
 jboot v2.2.6:
 优化：优化 JbootAopFactory.setFieldValue 的逻辑和修改错别字
 优化：优化 JbootPaginateDirective.getUrl 方法，添加 scope 等参数
