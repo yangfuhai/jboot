@@ -19,6 +19,7 @@ import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +43,23 @@ public class ModelCopier {
         return modelList.stream()
                 .map(ModelCopier::copy)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * copy model set
+     *
+     * @param modelList
+     * @param <M>
+     * @return
+     */
+    public static <M extends JbootModel> Set<M> copy(Set<M> modelList) {
+        if (modelList == null || modelList.isEmpty()) {
+            return modelList;
+        }
+
+        return modelList.stream()
+                .map(ModelCopier::copy)
+                .collect(Collectors.toSet());
     }
 
     /**

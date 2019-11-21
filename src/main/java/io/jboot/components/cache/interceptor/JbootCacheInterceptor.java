@@ -18,22 +18,27 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.Jboot;
+import com.jfinal.plugin.activerecord.Page;
 import io.jboot.components.cache.AopCache;
-import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.annotation.Cacheable;
+import io.jboot.db.model.JbootModel;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.ModelCopier;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 缓存操作的拦截器
+ *
+ * @author michael yang
  */
 public class JbootCacheInterceptor implements Interceptor {
 
     private static final String NULL_VALUE = "NULL_VALUE";
-
-    private static final JbootCacheConfig CONFIG = Jboot.config(JbootCacheConfig.class);
 
     @Override
     public void intercept(Invocation inv) {
@@ -60,6 +65,8 @@ public class JbootCacheInterceptor implements Interceptor {
         if (data != null) {
             if (NULL_VALUE.equals(data)) {
                 inv.setReturnValue(null);
+            } else if (cacheable.returnCopyEnable()) {
+                setReturnValueByCopy(inv, data);
             } else {
                 inv.setReturnValue(data);
             }
@@ -71,10 +78,37 @@ public class JbootCacheInterceptor implements Interceptor {
         data = inv.getReturnValue();
 
         if (data != null) {
-            Utils.putDataToCache(cacheable.liveSeconds(),cacheName,cacheKey,data);
+            Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, data);
         } else if (cacheable.nullCacheEnable()) {
-            Utils.putDataToCache(cacheable.liveSeconds(),cacheName,cacheKey,NULL_VALUE);
+            Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, NULL_VALUE);
         }
+    }
+
+
+    private void setReturnValueByCopy(Invocation inv, Object data) {
+        try {
+            if (data instanceof List) {
+                inv.setReturnValue(ModelCopier.copy((List<? extends JbootModel>) data));
+            } else if (data instanceof Set) {
+                inv.setReturnValue(ModelCopier.copy((Set<? extends JbootModel>) data));
+            } else if (data instanceof Page) {
+                inv.setReturnValue(ModelCopier.copy((Page<? extends JbootModel>) data));
+            } else if (data instanceof JbootModel) {
+                inv.setReturnValue(ModelCopier.copy((JbootModel) data));
+            } else {
+                throw newException(null, inv, data);
+            }
+        } catch (Exception ex) {
+            throw newException(ex, inv, data);
+        }
+
+    }
+
+    private JbootException newException(Exception ex, Invocation inv, Object data) {
+        String msg = "can not copy data for type [" + data.getClass().getName() + "] in method :"
+                + ClassUtil.buildMethodString(inv.getMethod()) + " , can not set @Cacheable(returnCopyEnable=true)";
+
+        return ex == null ? new JbootException(msg) : new JbootException(msg, ex);
     }
 
 
