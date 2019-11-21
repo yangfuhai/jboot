@@ -27,6 +27,8 @@ import java.lang.annotation.Target;
  * stage<br/>
  * <p>
  * use this annotation instead of GlobalTransaction in the situation mentioned above will help performance.
+ *
+ * @author michael yang
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

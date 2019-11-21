@@ -18,6 +18,9 @@ package io.jboot.core.weight;
 
 import java.util.List;
 
+/**
+ * @author michael yang
+ */
 public class WeightUtil {
 
     public static void sort(List list) {

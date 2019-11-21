@@ -17,6 +17,9 @@ package io.jboot.core.spi;
 
 import java.lang.annotation.*;
 
+/**
+ * @author michael yang
+ */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

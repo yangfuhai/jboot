@@ -16,8 +16,6 @@
 package io.jboot.support.seata;
 
 
-import javax.sql.DataSource;
-
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
@@ -28,6 +26,8 @@ import io.seata.rm.datasource.DataSourceProxy;
 import io.seata.tm.api.DefaultFailureHandlerImpl;
 import io.seata.tm.api.FailureHandler;
 import io.seata.tm.api.TransactionalTemplate;
+
+import javax.sql.DataSource;
 
 public class JbootSeataManager {
 
@@ -77,7 +77,9 @@ public class JbootSeataManager {
     }
 
     public void stop() {
-        if (isEnable()) transactionManager.destroy();
+        if (isEnable()) {
+            transactionManager.destroy();
+        }
     }
 
     private Object handler;

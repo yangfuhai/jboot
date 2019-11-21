@@ -34,6 +34,8 @@ import java.util.ServiceLoader;
  * 第三步：给jboot.properties配置上类型，jboot.rpc.type = myrpc
  * <p>
  * 通过这三步，就可以扩展自己的Jbootrpc实现
+ *
+ * @author michael yang
  */
 public class JbootSpiLoader {
 

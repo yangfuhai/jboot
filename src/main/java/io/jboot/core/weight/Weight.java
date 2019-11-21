@@ -17,6 +17,9 @@ package io.jboot.core.weight;
 
 import java.lang.annotation.*;
 
+/**
+ * @author michael yang
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented

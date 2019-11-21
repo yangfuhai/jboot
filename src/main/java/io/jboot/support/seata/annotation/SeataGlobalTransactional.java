@@ -21,6 +21,7 @@ import java.lang.annotation.*;
 
 /**
  * The interface Seata Global transactional.
+ * @author michael yang
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

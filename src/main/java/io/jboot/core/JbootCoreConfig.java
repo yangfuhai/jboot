@@ -23,7 +23,6 @@ import com.jfinal.json.JsonManager;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.template.Engine;
-import com.jfinal.template.ext.directive.NowDirective;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
@@ -144,12 +143,6 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void configEngine(Engine engine) {
-
-        /**
-         * now 并没有被添加到默认的指令当中
-         * 查看：EngineConfig
-         */
-        engine.addDirective("now", NowDirective.class);
 
         List<Class> directiveClasses = ClassScanner.scanClass();
         for (Class clazz : directiveClasses) {
