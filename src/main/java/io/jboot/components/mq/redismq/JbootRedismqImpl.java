@@ -43,7 +43,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
         if (redis == null) {
             throw new JbootIllegalConfigException("can not use redis mq (redis mq is default), " +
-                    "please config jboot.redis.host=yourhost or use other mq component. ");
+                    "please config jboot.redis.host=your-host , or use other mq component. ");
         }
     }
 

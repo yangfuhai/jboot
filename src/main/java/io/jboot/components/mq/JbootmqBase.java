@@ -157,7 +157,9 @@ public abstract class JbootmqBase implements Jbootmq {
 
     @Override
     public boolean startListening() {
-        if (isStartListen) throw new JbootException("jboot mq is started before");
+        if (isStartListen) {
+            throw new JbootException("jboot mq is started before.");
+        }
 
         if (channels == null || channels.isEmpty()) {
             throw new JbootException("mq channels is null or empty, please config channels");
