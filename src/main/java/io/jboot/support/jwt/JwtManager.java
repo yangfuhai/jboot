@@ -15,7 +15,7 @@
  */
 package io.jboot.support.jwt;
 
-import com.jfinal.json.FastJson;
+import com.alibaba.fastjson.JSON;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
@@ -71,13 +71,13 @@ public class JwtManager {
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token).getBody();
 
-            String subject = claims.getSubject();
+            String jsonString = claims.getSubject();
 
-            if (StrUtil.isBlank(subject)) {
+            if (StrUtil.isBlank(jsonString)) {
                 return null;
             }
 
-            return FastJson.getJson().parse(subject, HashMap.class);
+            return JSON.parseObject(jsonString, HashMap.class);
 
         } catch (SignatureException | MalformedJwtException e) {
             // don't trust the JWT!
@@ -94,7 +94,7 @@ public class JwtManager {
     public String createJwtToken(Map map) {
 
         if (!getConfig().isConfigOk()) {
-            throw new JbootException("can not create jwt,please config jboot.web.jwt.secret in jboot.properties.");
+            throw new JbootException("can not create jwt, please config jboot.web.jwt.secret in jboot.properties.");
         }
 
         SecretKey secretKey = generalKey();
@@ -104,7 +104,7 @@ public class JwtManager {
         Date now = new Date(nowMillis);
 
         map.put(JwtInterceptor.ISUUED_AT, nowMillis);
-        String subject = FastJson.getJson().toJson(map);
+        String subject = JSON.toJSONString(map);
 
         JwtBuilder builder = Jwts.builder()
                 .setIssuedAt(now)
