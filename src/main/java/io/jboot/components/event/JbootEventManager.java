@@ -18,11 +18,8 @@ package io.jboot.components.event;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.core.weight.WeightUtil;
-import io.jboot.utils.AnnotationUtil;
-import io.jboot.utils.ClassUtil;
-import io.jboot.utils.ClassScanner;
+import io.jboot.utils.*;
 import io.jboot.components.event.annotation.EventConfig;
-import io.jboot.utils.ArrayUtil;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -40,7 +37,7 @@ public class JbootEventManager {
     public JbootEventManager() {
         threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                 60L, TimeUnit.SECONDS,
-                new SynchronousQueue<>());
+                new SynchronousQueue<>(), new NamedThreadFactory("jbootevent"));
         asyncListenerMap = new ConcurrentHashMap<>();
         listenerMap = new ConcurrentHashMap<>();
 

@@ -32,7 +32,7 @@ public interface Jbootmq {
 
     public void removeAllListeners();
 
-    public Collection<JbootmqMessageListener> getAllChannelListeners();
+    public Collection<JbootmqMessageListener> getGlobalListeners();
 
     public Collection<JbootmqMessageListener> getListenersByChannel(String channel);
 

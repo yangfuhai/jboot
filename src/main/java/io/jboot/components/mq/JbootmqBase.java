@@ -23,6 +23,7 @@ import io.jboot.Jboot;
 import io.jboot.components.serializer.JbootSerializer;
 import io.jboot.components.serializer.JbootSerializerManager;
 import io.jboot.exception.JbootException;
+import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
 
 import java.util.Collection;
@@ -35,17 +36,18 @@ public abstract class JbootmqBase implements Jbootmq {
 
     private static final Log LOG = Log.getLog(JbootmqBase.class);
 
-    private List<JbootmqMessageListener> allChannelListeners = new CopyOnWriteArrayList<>();
-    private Multimap<String, JbootmqMessageListener> listenersMap = ArrayListMultimap.create();
+    private List<JbootmqMessageListener> globalListeners = new CopyOnWriteArrayList<>();
+    private Multimap<String, JbootmqMessageListener> channelListeners = ArrayListMultimap.create();
     protected JbootmqConfig config = Jboot.config(JbootmqConfig.class);
 
     protected Set<String> channels = Sets.newHashSet();
     protected Set<String> syncRecevieMessageChannels = Sets.newHashSet();
     protected JbootSerializer serializer;
 
+
     private final ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
             60L, TimeUnit.SECONDS,
-            new SynchronousQueue<>());
+            new SynchronousQueue<>(), new NamedThreadFactory("jbootmq"));
 
 
     public JbootmqBase() {
@@ -64,7 +66,7 @@ public abstract class JbootmqBase implements Jbootmq {
 
     @Override
     public void addMessageListener(JbootmqMessageListener listener) {
-        allChannelListeners.add(listener);
+        globalListeners.add(listener);
     }
 
     @Override
@@ -74,48 +76,49 @@ public abstract class JbootmqBase implements Jbootmq {
             if (StrUtil.isBlank(channel)) {
                 continue;
             }
-            listenersMap.put(channel.trim(), listener);
+            channelListeners.put(channel.trim(), listener);
         }
     }
 
     @Override
     public void removeListener(JbootmqMessageListener listener) {
-        allChannelListeners.remove(listener);
-        for (String channel : listenersMap.keySet()) {
-            listenersMap.remove(channel, listener);
+        globalListeners.remove(listener);
+        for (String channel : channelListeners.keySet()) {
+            channelListeners.remove(channel, listener);
         }
     }
 
     @Override
     public void removeAllListeners() {
-        allChannelListeners.clear();
-        listenersMap.clear();
+        globalListeners.clear();
+        channelListeners.clear();
     }
 
 
     @Override
-    public Collection<JbootmqMessageListener> getAllChannelListeners() {
-        return allChannelListeners;
+    public Collection<JbootmqMessageListener> getGlobalListeners() {
+        return globalListeners;
     }
 
 
     @Override
     public Collection<JbootmqMessageListener> getListenersByChannel(String channel) {
-        return listenersMap.get(channel);
+        return channelListeners.get(channel);
     }
 
     public void notifyListeners(String channel, Object message) {
-        boolean globalResult = notifyAll(channel, message, allChannelListeners);
-        boolean channelResult = notifyAll(channel, message, listenersMap.get(channel));
+
+        boolean globalResult = notifyListeners(channel, message, globalListeners);
+        boolean channelResult = notifyListeners(channel, message, channelListeners.get(channel));
 
         if (!globalResult && !channelResult) {
-            LOG.warn("recevie mq message, bug has not mq listener to process. channel:" +
-                    channel + "  message:" + String.valueOf(message));
+            LOG.error("application has recevied mq message, bug has no listener to process it. channel:" +
+                    channel + "  message:" + message);
         }
     }
 
 
-    protected boolean notifyAll(String channel, Object message, Collection<JbootmqMessageListener> listeners) {
+    protected boolean notifyListeners(String channel, Object message, Collection<JbootmqMessageListener> listeners) {
         if (listeners == null || listeners.size() == 0) {
             return false;
         }
@@ -126,7 +129,7 @@ public abstract class JbootmqBase implements Jbootmq {
                     listener.onMessage(channel, message);
                 } catch (Throwable ex) {
                     LOG.warn("listener[" + listener.getClass().getName() + "] execute mq message is error. channel:" +
-                            channel + "  message:" + String.valueOf(message));
+                            channel + "  message:" + message);
                 }
             }
         } else {
