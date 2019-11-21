@@ -103,7 +103,7 @@ public class JwtManager {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
-        map.put("isuuedAt", nowMillis);
+        map.put(JwtInterceptor.ISUUED_AT, nowMillis);
         String subject = FastJson.getJson().toJson(map);
 
         JwtBuilder builder = Jwts.builder()

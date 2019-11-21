@@ -28,6 +28,11 @@ public class JwtConfig {
 
     private String httpHeaderName = "Jwt";
     private String secret;
+
+    /**
+     * 有效期，单位毫秒，
+     * 不配置时，或者 小于等于 0 时，永久有效
+     */
     private long validityPeriod = 0;
 
     public String getHttpHeaderName() {

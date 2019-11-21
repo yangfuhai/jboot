@@ -32,6 +32,8 @@ import java.util.Map;
  */
 public class JwtInterceptor implements FixedInterceptor {
 
+    public static final String ISUUED_AT = "isuuedAt";
+
     @Override
     public void intercept(Invocation inv) {
         if (!JwtManager.me().getConfig().isConfigOk()) {
@@ -91,7 +93,8 @@ public class JwtInterceptor implements FixedInterceptor {
             return;
         }
 
-        Long isuuedAtMillis = (Long) oldData.get("isuuedAt");
+        // Jwt token 的发布时间
+        Long isuuedAtMillis = (Long) oldData.get(ISUUED_AT);
         if (isuuedAtMillis == null || JwtManager.me().getConfig().getValidityPeriod() <= 0) {
             return;
         }
