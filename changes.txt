@@ -1,3 +1,14 @@
+jboot v2.2.8:
+新增：新增工具类 NamedThreadFactory，方便用于构建线程池
+新增：新增工具类 NamedThreadPools，方便代替 Executors 的使用
+新增：新增 Model 的拷贝工具类 ModelCopier，方便对 Model 进行拷贝
+新增：对缓存注解 @Cacheable 新增 returnCopyEnable 的支持
+新增：对验证器注解 @EmptyValidate 等新增 errorCode 配置的支持
+优化：优化 JbootMQ 中的一些异常提示文字错误
+优化：添加 JWt 的 validityPeriod 配置说明
+优化：对 ScheduleManager 的 ScheduledThreadPoolExecutor 添加线程命名
+
+
 jboot v2.2.7:
 新增：Columns 新增 ors() 和 orEqs() 方法，方便使用 or
 新增：JbootApplicationConfig 新增 name 的配置，方便以后进行分布式的应用申明
