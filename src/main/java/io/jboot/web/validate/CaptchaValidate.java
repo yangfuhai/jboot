@@ -19,6 +19,7 @@ import java.lang.annotation.*;
 
 /**
  * 验证码验证
+ * @author michael yang
  */
 @Documented
 @Target(ElementType.METHOD)
@@ -35,5 +36,7 @@ public @interface CaptchaValidate {
     String htmlPath() default "";
 
     String renderType() default ValidateRenderType.DEFAULT;
+
+    int errorCode() default 1;
 
 }

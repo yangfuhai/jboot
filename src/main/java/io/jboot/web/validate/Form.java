@@ -19,6 +19,7 @@ import java.lang.annotation.*;
 
 /**
  * 非空验证注解
+ * @author michael yang
  */
 @Documented
 @Target(ElementType.METHOD)
@@ -31,4 +32,6 @@ public @interface Form {
     String message() default "";
 
     String type() default FormType.FORM_DATA;
+
+    int errorCode() default 1;
 }

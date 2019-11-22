@@ -19,6 +19,7 @@ import java.lang.annotation.*;
 
 /**
  * 非空验证注解
+ * @author michael yang
  */
 @Documented
 @Target(ElementType.METHOD)
@@ -35,4 +36,5 @@ public @interface EmptyValidate {
     String htmlPath() default "";
 
     String renderType() default ValidateRenderType.DEFAULT;
+
 }

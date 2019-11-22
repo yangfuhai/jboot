@@ -34,8 +34,6 @@ import java.lang.reflect.Method;
  */
 public class ParaValidateInterceptor implements FixedInterceptor {
 
-    public static final int DEFAULT_ERROR_CODE = 99;
-
     @Override
     public void intercept(Invocation inv) {
 
@@ -73,7 +71,10 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                 , null
                 , AnnotationUtil.get(urlParaValidate.message())
                 , AnnotationUtil.get(urlParaValidate.redirectUrl())
-                , AnnotationUtil.get(urlParaValidate.htmlPath()));
+                , AnnotationUtil.get(urlParaValidate.htmlPath())
+                , urlParaValidate.errorCode()
+        );
+
 
         return false;
     }
@@ -103,7 +104,9 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                 , formName
                 , AnnotationUtil.get(captchaValidate.message())
                 , AnnotationUtil.get(captchaValidate.redirectUrl())
-                , AnnotationUtil.get(captchaValidate.htmlPath()));
+                , AnnotationUtil.get(captchaValidate.htmlPath())
+                , captchaValidate.errorCode()
+        );
 
         return false;
     }
@@ -155,7 +158,9 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                         , formName
                         , AnnotationUtil.get(form.message())
                         , AnnotationUtil.get(emptyParaValidate.redirectUrl())
-                        , AnnotationUtil.get(emptyParaValidate.htmlPath()));
+                        , AnnotationUtil.get(emptyParaValidate.htmlPath())
+                        , form.errorCode()
+                );
                 return false;
             }
         }
@@ -164,14 +169,14 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     }
 
 
-    private void renderError(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath) {
+    private void renderError(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
         switch (renderType) {
             case ValidateRenderType.DEFAULT:
                 if (RequestUtil.isAjaxRequest(controller.getRequest())) {
                     controller.renderJson(
                             Ret.fail("message", message)
-                                    .set("code", DEFAULT_ERROR_CODE)
-                                    .setIfNotNull("form", formName)
+                                    .set("errorCode", errorCode)
+                                    .setIfNotNull("formName", formName)
                     );
                 } else {
                     controller.renderError(404);
@@ -180,8 +185,8 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             case ValidateRenderType.JSON:
                 controller.renderJson(
                         Ret.fail("message", message)
-                                .set("code", DEFAULT_ERROR_CODE)
-                                .setIfNotNull("form", formName)
+                                .set("errorCode", errorCode)
+                                .setIfNotNull("formName", formName)
                 );
                 break;
             case ValidateRenderType.REDIRECT:

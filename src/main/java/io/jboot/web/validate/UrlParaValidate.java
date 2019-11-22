@@ -19,6 +19,7 @@ import java.lang.annotation.*;
 
 /**
  * Url Para 非空验证
+ * @author michael yang
  */
 @Documented
 @Target(ElementType.METHOD)
@@ -33,5 +34,7 @@ public @interface UrlParaValidate {
     String htmlPath() default "";
 
     String renderType() default ValidateRenderType.DEFAULT;
+
+    int errorCode() default 1;
 
 }
