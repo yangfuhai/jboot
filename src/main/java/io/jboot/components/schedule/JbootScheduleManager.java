@@ -26,6 +26,7 @@ import io.jboot.components.schedule.annotation.FixedRate;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.NamedThreadFactory;
 
 import java.io.File;
 import java.util.List;
@@ -52,7 +53,7 @@ public class JbootScheduleManager {
 
     public JbootScheduleManager() {
         config = Jboot.config(JbooScheduleConfig.class);
-        fixedScheduler = new ScheduledThreadPoolExecutor(config.getPoolSize());
+        fixedScheduler = new ScheduledThreadPoolExecutor(config.getPoolSize(),new NamedThreadFactory("jboot-scheduler"));
 
         File cron4jProperties = new File(PathKit.getRootClassPath(), config.getCron4jFile());
         cron4jPlugin = cron4jProperties.exists()
