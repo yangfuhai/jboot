@@ -1,3 +1,6 @@
+jboot v2.3.0:
+
+
 jboot v2.2.8:
 新增：新增工具类 NamedThreadFactory，方便用于构建线程池
 新增：新增工具类 NamedThreadPools，方便代替 Executors 的使用
