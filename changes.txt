@@ -1,4 +1,8 @@
 jboot v2.3.0:
+新增：CacheTime 工具类，方便注解使用
+新增：JbootModel 新增 _getIdValues() 方法，方便在多主键时使用
+优化：更新 jackson 的依赖到最新版本
+优化：重构 JbootServiceBase.shouldUpdateCache 方法，增加 id 变量
 
 
 jboot v2.2.8:
