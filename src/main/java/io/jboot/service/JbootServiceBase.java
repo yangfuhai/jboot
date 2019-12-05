@@ -15,6 +15,7 @@
  */
 package io.jboot.service;
 
+import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
@@ -52,7 +53,9 @@ public class JbootServiceBase<M extends JbootModel<M>>
     protected M initDao() {
         Type type = ClassUtil.getUsefulClass(getClass()).getGenericSuperclass();
         Class<M> modelClass = (Class<M>) ((ParameterizedType) type).getActualTypeArguments()[0];
-        if (modelClass == null) throw new JbootException("can not get model class name in JbootServiceBase");
+        if (modelClass == null) {
+            throw new JbootException("can not get model class name in JbootServiceBase");
+        }
 
         //默认不通过AOP构建DAO，提升性能，若特殊需要重写initDao()方法即可
         return ClassUtil.newInstance(modelClass, false);
@@ -174,7 +177,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
     public boolean deleteById(Object id) {
         boolean result = DAO.deleteById(id);
         if (result) {
-            shouldUpdateCache(ACTION_DEL, id);
+            shouldUpdateCache(ACTION_DEL, null, id);
         }
         return result;
     }
@@ -189,7 +192,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
     public boolean delete(M model) {
         boolean result = model.delete();
         if (result) {
-            shouldUpdateCache(ACTION_DEL, model);
+            shouldUpdateCache(ACTION_DEL, model, model._getIdValue());
         }
         return result;
     }
@@ -204,22 +207,9 @@ public class JbootServiceBase<M extends JbootModel<M>>
     public boolean batchDeleteByIds(Object... ids) {
         boolean result = DAO.batchDeleteByIds(ids);
         if (result) {
-            shouldUpdateCache(ACTION_DEL, ids);
-        }
-        return result;
-    }
-
-
-    /**
-     * 根据条件进行删除
-     *
-     * @param columns
-     * @return
-     */
-    public boolean deleteByColumns(Columns columns) {
-        boolean result = DAO.deleteByColumns(columns);
-        if (result) {
-            shouldUpdateCache(ACTION_DEL, columns);
+            for (Object id : ids) {
+                shouldUpdateCache(ACTION_DEL, null, id);
+            }
         }
         return result;
     }
@@ -234,7 +224,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
     public Object save(M model) {
         boolean result = model.save();
         if (result) {
-            shouldUpdateCache(ACTION_ADD, model);
+            shouldUpdateCache(ACTION_ADD, model, model._getIdValue());
             return model._getIdValue();
         }
         return null;
@@ -265,7 +255,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
     public boolean update(M model) {
         boolean result = model.update();
         if (result) {
-            shouldUpdateCache(ACTION_UPDATE, model);
+            shouldUpdateCache(ACTION_UPDATE, model, model._getIdValue());
         }
         return result;
     }
@@ -324,8 +314,9 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * 用于给子类复写，用于刷新缓存
      *
      * @param action
-     * @param data
+     * @param model
+     * @param id
      */
-    public void shouldUpdateCache(int action, Object data) {
+    public void shouldUpdateCache(int action, Model model, Object id) {
     }
 }
