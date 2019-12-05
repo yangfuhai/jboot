@@ -28,13 +28,16 @@ public class JbootUndertowServer extends UndertowServer {
     }
 
     @Override
+    protected void init() {
+        super.init();
+
+        //让 undertow 支持 音视频在线播放
+//        HttpContentTypes.init(deploymentInfo);
+    }
+
+    @Override
     protected void doStop() throws ServletException {
         super.doStop();
-//        HotSwapResolver resolver = getUndertowConfig().getHotSwapResolver();
-//        if (resolver.isHotSwapClass("org.apache.dubbo")
-//                || resolver.isHotSwapClass("com.alibaba")) {
-//            DubboShutdownHook.getDubboShutdownHook().destroyAll();
-//        }
     }
 
 }
