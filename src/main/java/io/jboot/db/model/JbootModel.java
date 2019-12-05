@@ -248,7 +248,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
         boolean success = deleteByColumns(Columns.create().orEqs(_getPrimaryKey(), idValues));
         if (success && idCacheEnable) {
-            for (Object id : idValues) deleteIdCacheById(id);
+            for (Object id : idValues) {
+                deleteIdCacheById(id);
+            }
         }
         return success;
 
@@ -359,10 +361,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return columns.isEmpty() ? findFirst(sql) : findFirst(sql, columns.getValueArray());
     }
 
-
-    public List<M> findAll() {
-        return super.findAll();
-    }
 
     public List<M> findListByIds(Object... ids) {
         return findListByColumns(Columns.create().in(_getPrimaryKey(), ids));
@@ -636,7 +634,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                 }
             }
 
-            if (isContinue) continue;
+            if (isContinue) {
+                continue;
+            }
             set(attrName, StrUtil.escapeHtml((String) value));
         }
 
