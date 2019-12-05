@@ -22,6 +22,7 @@ import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -504,11 +505,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return get(_getPrimaryKey());
     }
 
+    public <T> T[] _getIdValues(Class<T> clazz) {
+        String[] pkeys = _getPrimaryKeys();
+        T[] values = (T[]) Array.newInstance(clazz, pkeys.length);
+
+        int i = 0;
+        for (String key : pkeys) {
+            values[i++] = get(key);
+        }
+        return values;
+    }
+
 
     public String _getTableName() {
         return _getTable(true).getName();
     }
 
+    @Override
     public Table _getTable() {
         return _getTable(false);
     }
