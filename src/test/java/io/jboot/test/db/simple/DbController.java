@@ -85,6 +85,14 @@ public class DbController extends JbootController {
     }
 
 
+    public void del2(){
+        User dao = new User();
+        dao.set("id",1);
+        dao.delete();
+        renderJson(Ret.ok());
+    }
+
+
 
     public void find4(){
         List<Record> users = JbootDb.find("user",Columns.create());
