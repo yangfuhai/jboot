@@ -54,9 +54,16 @@ public class SqlDebugger {
 
             if (paras != null) {
                 for (Object value : paras) {
-                    if (value instanceof Number) {
+                    // null
+                    if (value == null) {
+                        sql = sql.replaceFirst("\\?", "null");
+                    }
+                    // number
+                    else if (value instanceof Number) {
                         sql = sql.replaceFirst("\\?", String.valueOf(value));
-                    } else {
+                    }
+                    // other
+                    else {
                         StringBuilder sb = new StringBuilder();
                         sb.append("'");
                         if (value instanceof Date) {
