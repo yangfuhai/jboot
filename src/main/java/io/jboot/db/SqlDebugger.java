@@ -30,12 +30,12 @@ public class SqlDebugger {
 
         @Override
         public boolean isPrint(Config config, String sql, Object... paras) {
-            return config.isDevMode();
+            return config.isShowSql();
         }
 
         @Override
         public void print(String sql) {
-            System.out.println("\r\nexec sql >>> " + sql);
+            System.out.println("\r\njboot exec sql >>> " + sql);
         }
     };
 
@@ -54,13 +54,19 @@ public class SqlDebugger {
 
             if (paras != null) {
                 for (Object value : paras) {
-                    String paraValue;
-                    if (value instanceof Date) {
-                        paraValue = DateKit.toStr((Date) value, DateKit.timeStampPattern);
+                    if (value instanceof Number) {
+                        sql = sql.replaceFirst("\\?", String.valueOf(value));
                     } else {
-                        paraValue = String.valueOf(value);
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("'");
+                        if (value instanceof Date) {
+                            sb.append(DateKit.toStr((Date) value, DateKit.timeStampPattern));
+                        } else {
+                            sb.append(value);
+                        }
+                        sb.append("'");
+                        sql = sql.replaceFirst("\\?", sb.toString());
                     }
-                    sql = sql.replaceFirst("\\?", paraValue);
                 }
             }
 
