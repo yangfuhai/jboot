@@ -29,11 +29,13 @@ import java.util.List;
 import java.util.Set;
 
 
+/**
+ * @author michael yang
+ */
 @SuppressWarnings("serial")
 public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private static final Log LOG = Log.getLog(JbootModel.class);
-    public static final String AUTO_COPY_MODEL = "_auto_copy_model_";
     private static final String DATASOURCE_CACHE_PREFIX = "__ds__";
 
     private static JbootModelConfig config = JbootModelConfig.getConfig();
@@ -129,25 +131,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(_getPrimaryKey(), generatePrimaryValue());
         }
 
-        boolean saveSuccess = false;
-
-        Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        if (autoCopyModel != null && autoCopyModel == true) {
-            M copyModel = copyModel();
-            saveSuccess = copyModel.superSave();
-
-            if (saveSuccess && !needInitPrimaryKey) {
-                this.set(_getPrimaryKey(), copyModel.get(_getPrimaryKey()));
-            }
-        } else {
-            saveSuccess = this.superSave();
-        }
-
-        return saveSuccess;
-    }
-
-
-    protected boolean superSave() {
         return super.save();
     }
 
@@ -262,7 +245,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(column_modified, new Date());
         }
 
-        boolean success = isAutoCopyModel() ? copyModel().superUpdate() : this.superUpdate();
+        boolean success = super.update();
 
         if (success && idCacheEnable) {
             deleteIdCache();
@@ -271,16 +254,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return success;
     }
 
-
-    private boolean isAutoCopyModel() {
-        Boolean autoCopyModel = get(AUTO_COPY_MODEL);
-        return autoCopyModel != null && autoCopyModel == true;
-    }
-
-
-    protected boolean superUpdate() {
-        return super.update();
-    }
 
     public void deleteIdCache() {
         if (_getPrimaryKeys().length == 1) {
@@ -625,18 +598,19 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                 continue;
             }
 
-            boolean isContinue = false;
+            boolean isIgnoreAttr = false;
             for (String ignoreAttr : ignoreAttrs) {
                 if (attrName.equals(ignoreAttr)) {
-                    isContinue = true;
+                    isIgnoreAttr = true;
                     break;
                 }
             }
 
-            if (isContinue) {
+            if (isIgnoreAttr) {
                 continue;
+            } else {
+                set(attrName, StrUtil.escapeHtml((String) value));
             }
-            set(attrName, StrUtil.escapeHtml((String) value));
         }
 
         return (M) this;
