@@ -15,8 +15,8 @@
  */
 package io.jboot.db;
 
-import com.jfinal.core.JFinal;
 import com.jfinal.ext.kit.DateKit;
+import com.jfinal.plugin.activerecord.Config;
 
 import java.util.Date;
 
@@ -28,11 +28,9 @@ public class SqlDebugger {
 
     private static SqlDebugPrinter defaultPrinter = new SqlDebugPrinter() {
 
-        private boolean isPrint = JFinal.me().getConstants().getDevMode();
-
         @Override
-        public boolean isPrint() {
-            return isPrint;
+        public boolean isPrint(Config config, String sql, Object... paras) {
+            return config.isDevMode();
         }
 
         @Override
@@ -51,8 +49,8 @@ public class SqlDebugger {
         SqlDebugger.printer = printer;
     }
 
-    public static void debug(String sql, Object... paras) {
-        if (printer.isPrint()) {
+    public static void debug(Config config, String sql, Object... paras) {
+        if (printer.isPrint(config, sql, paras)) {
 
             if (paras != null) {
                 for (Object value : paras) {
@@ -73,7 +71,7 @@ public class SqlDebugger {
 
     public static interface SqlDebugPrinter {
 
-        public boolean isPrint();
+        public boolean isPrint(Config config, String sql, Object... paras);
 
         public void print(String sql);
     }

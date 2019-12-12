@@ -547,7 +547,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     protected List<M> find(Config config, String sql, Object... paras) {
-        SqlDebugger.debug(sql, paras);
+        SqlDebugger.debug(config, sql, paras);
         return super.find(config, sql, paras);
     }
 
