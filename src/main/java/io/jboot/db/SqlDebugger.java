@@ -17,6 +17,7 @@ package io.jboot.db;
 
 import com.jfinal.ext.kit.DateKit;
 import com.jfinal.plugin.activerecord.Config;
+import io.jboot.Jboot;
 
 import java.util.Date;
 
@@ -30,7 +31,7 @@ public class SqlDebugger {
 
         @Override
         public boolean isPrint(Config config, String sql, Object... paras) {
-            return config.isShowSql();
+            return Jboot.isDevMode();
         }
 
         @Override

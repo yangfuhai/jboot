@@ -116,7 +116,8 @@ public class ArpManager {
             activeRecordPlugin.setTransactionLevel(config.getTransactionLevel());
         }
 
-        activeRecordPlugin.setShowSql(Jboot.isDevMode());
+        // 使用 Jboot 的 SqlDebugger 代替了
+        activeRecordPlugin.setShowSql(false);
 
         JbootCache jbootCache = Jboot.getCache();
         if (jbootCache != null) {
