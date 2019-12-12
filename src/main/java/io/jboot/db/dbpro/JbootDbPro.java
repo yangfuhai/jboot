@@ -15,16 +15,15 @@
  */
 package io.jboot.db.dbpro;
 
-import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Config;
 import com.jfinal.plugin.activerecord.DbPro;
 import com.jfinal.plugin.activerecord.Record;
+import io.jboot.db.SqlDebugger;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.db.model.Columns;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,30 +44,23 @@ public class JbootDbPro extends DbPro {
 
     @Override
     protected List<Record> find(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        debugPrintParas(paras);
+        SqlDebugger.debug(sql, paras);
         return super.find(config, conn, sql, paras);
     }
 
 
     @Override
     protected <T> List<T> query(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        debugPrintParas(paras);
+        SqlDebugger.debug(sql, paras);
         return super.query(config, conn, sql, paras);
     }
 
 
     @Override
     public int update(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        debugPrintParas(paras);
+        SqlDebugger.debug(sql, paras);
         return super.update(config, conn, sql, paras);
     }
-
-    private void debugPrintParas(Object... objects) {
-        if (JFinal.me().getConstants().getDevMode()) {
-            System.out.println("\r\n---------------Paras: " + Arrays.toString(objects) + "----------------");
-        }
-    }
-
 
     public List<Record> find(String tableName, Columns columns) {
         return find(tableName, columns, null, null);

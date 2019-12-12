@@ -15,9 +15,9 @@
  */
 package io.jboot.db.model;
 
-import com.jfinal.core.JFinal;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
+import io.jboot.db.SqlDebugger;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
@@ -547,15 +547,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     protected List<M> find(Config config, String sql, Object... paras) {
-        debugPrintParas(paras);
+        SqlDebugger.debug(sql, paras);
         return super.find(config, sql, paras);
-    }
-
-
-    private void debugPrintParas(Object... objects) {
-        if (JFinal.me().getConstants().getDevMode()) {
-            System.out.println("\r\n---------------Paras: " + Arrays.toString(objects) + "----------------");
-        }
     }
 
 
