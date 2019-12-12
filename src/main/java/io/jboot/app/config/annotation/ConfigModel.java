@@ -18,6 +18,9 @@ package io.jboot.app.config.annotation;
 import java.lang.annotation.*;
 
 
+/**
+ * @author michael yang
+ */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
