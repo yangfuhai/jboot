@@ -15,32 +15,26 @@
  */
 package io.jboot.core.log;
 
-import com.jfinal.log.ILogFactory;
 import com.jfinal.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.spi.LocationAwareLogger;
 
-public class Slf4jLogFactory implements ILogFactory {
-
-
-    private static Slf4jLogFactory factory;
-
-    public static Slf4jLogFactory me() {
-        if (factory == null) {
-            factory = new Slf4jLogFactory();
-            factory.slf4jIsOk = new Slf4jLogger("").isOk();
-        }
-        return factory;
-    }
-
-    private boolean slf4jIsOk;
+/**
+ * @author michael
+ */
+public class Slf4jLogFactory extends com.jfinal.log.Slf4jLogFactory {
 
 
     @Override
     public Log getLog(Class<?> clazz) {
-        return slf4jIsOk ? new Slf4jLogger(clazz) : new JdkLogger(clazz);
+        Logger log = LoggerFactory.getLogger(clazz);
+        return log instanceof LocationAwareLogger ? new Slf4jLogger((LocationAwareLogger)log) : new Slf4jSimpleLogger(log);
     }
 
     @Override
     public Log getLog(String name) {
-        return slf4jIsOk ? new Slf4jLogger(name) : new JdkLogger(name);
+        Logger log = LoggerFactory.getLogger(name);
+        return log instanceof LocationAwareLogger ? new Slf4jLogger((LocationAwareLogger)log) : new Slf4jSimpleLogger(log);
     }
 }

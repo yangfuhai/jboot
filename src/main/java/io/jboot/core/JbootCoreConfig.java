@@ -90,7 +90,7 @@ public class JbootCoreConfig extends JFinalConfig {
             ApiConfigKit.putApiConfig(apiConfig);
         }
 
-        constants.setLogFactory(Slf4jLogFactory.me());
+        constants.setLogFactory(new Slf4jLogFactory());
         constants.setMaxPostSize(1024 * 1024 * 2000);
         constants.setReportAfterInvocation(false);
 

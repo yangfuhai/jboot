@@ -16,101 +16,167 @@
 package io.jboot.core.log;
 
 import com.jfinal.log.Log;
+import com.jfinal.log.Slf4jLog;
 import io.jboot.exception.JbootExceptionHolder;
-import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.NOPLogger;
+import org.slf4j.helpers.FormattingTuple;
+import org.slf4j.helpers.MessageFormatter;
+import org.slf4j.spi.LocationAwareLogger;
 
+/**
+ * @author michael
+ */
 public class Slf4jLogger extends Log {
 
-    private org.slf4j.Logger logger;
+    private LocationAwareLogger log;
 
-    public Slf4jLogger(Class<?> clazz) {
-        logger = LoggerFactory.getLogger(clazz);
+    private static final Object[] NULL_ARGS = new Object[0];
+    private static final String callerFQCN = Slf4jLog.class.getName();
+
+    public Slf4jLogger(LocationAwareLogger log) {
+        this.log = log;
     }
 
-    public Slf4jLogger(String name) {
-        logger = LoggerFactory.getLogger(name);
+    @Override
+    public void trace(String message) {
+        log.log(null, callerFQCN, LocationAwareLogger.TRACE_INT, message, NULL_ARGS, null);
     }
 
-
-    public boolean isOk() {
-        return logger.getClass() != NOPLogger.class;
+    @Override
+    public void trace(String message, Throwable t) {
+        log.log(null, callerFQCN, LocationAwareLogger.TRACE_INT, message, NULL_ARGS, t);
     }
 
     @Override
     public void debug(String message) {
-        logger.debug(message);
+        log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, message, NULL_ARGS, null);
     }
 
     @Override
     public void debug(String message, Throwable t) {
-        logger.debug(message, t);
+        log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, message, NULL_ARGS, t);
     }
 
     @Override
     public void info(String message) {
-        logger.info(message);
+        log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, message, NULL_ARGS, null);
     }
 
     @Override
     public void info(String message, Throwable t) {
-        logger.info(message, t);
+        log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, message, NULL_ARGS, t);
     }
 
     @Override
     public void warn(String message) {
-        logger.warn(message);
+        log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, message, NULL_ARGS, null);
     }
 
     @Override
     public void warn(String message, Throwable t) {
-        logger.warn(message, t);
+        log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, message, NULL_ARGS, t);
     }
 
     @Override
     public void error(String message) {
-        logger.error(message);
+        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, message, NULL_ARGS, null);
     }
 
     @Override
     public void error(String message, Throwable t) {
         JbootExceptionHolder.hold(message, t);
-        logger.error(message, t);
+        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, message, NULL_ARGS, t);
     }
 
     @Override
     public void fatal(String message) {
-        logger.error(message);
+        // throw new UnsupportedOperationException("slf4j logger does not support fatal level");
+        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, message, NULL_ARGS, null);
     }
 
     @Override
     public void fatal(String message, Throwable t) {
         JbootExceptionHolder.hold(message, t);
-        logger.error(message, t);
+        // throw new UnsupportedOperationException("slf4j logger does not support fatal level");
+        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, message, NULL_ARGS, t);
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return log.isTraceEnabled();
     }
 
     @Override
     public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
+        return log.isDebugEnabled();
     }
 
     @Override
     public boolean isInfoEnabled() {
-        return logger.isInfoEnabled();
+        return log.isInfoEnabled();
     }
 
     @Override
     public boolean isWarnEnabled() {
-        return logger.isWarnEnabled();
+        return log.isWarnEnabled();
     }
 
     @Override
     public boolean isErrorEnabled() {
-        return logger.isErrorEnabled();
+        return log.isErrorEnabled();
     }
 
     @Override
     public boolean isFatalEnabled() {
-        return true;
+        // throw new UnsupportedOperationException("slf4j logger does not support fatal level");
+        return log.isErrorEnabled();
+    }
+
+    // -------------------------------------------------------
+
+    @Override
+    public void trace(String format, Object... args) {
+        if (isTraceEnabled()) {
+            FormattingTuple ft = MessageFormatter.arrayFormat(format, args);
+            log.log(null, callerFQCN, LocationAwareLogger.TRACE_INT, ft.getMessage(), NULL_ARGS, ft.getThrowable());
+        }
+    }
+
+    @Override
+    public void debug(String format, Object... args) {
+        if (isDebugEnabled()) {
+            FormattingTuple ft = MessageFormatter.arrayFormat(format, args);
+            log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, ft.getMessage(), NULL_ARGS, ft.getThrowable());
+        }
+    }
+
+    @Override
+    public void info(String format, Object... args) {
+        if (isInfoEnabled()) {
+            FormattingTuple ft = MessageFormatter.arrayFormat(format, args);
+            log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, ft.getMessage(), NULL_ARGS, ft.getThrowable());
+        }
+    }
+
+    @Override
+    public void warn(String format, Object... args) {
+        if (isWarnEnabled()) {
+            FormattingTuple ft = MessageFormatter.arrayFormat(format, args);
+            log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, ft.getMessage(), NULL_ARGS, ft.getThrowable());
+        }
+    }
+
+    @Override
+    public void error(String format, Object... args) {
+        if (isErrorEnabled()) {
+            FormattingTuple ft = MessageFormatter.arrayFormat(format, args);
+            JbootExceptionHolder.hold(ft.getMessage(), ft.getThrowable());
+            log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, ft.getMessage(), NULL_ARGS, ft.getThrowable());
+        }
+    }
+
+    @Override
+    public void fatal(String format, Object... args) {
+        // throw new UnsupportedOperationException("slf4j logger does not support fatal level");
+        error(format, args);
     }
 }
