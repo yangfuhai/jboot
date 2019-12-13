@@ -78,6 +78,25 @@ public class DbController extends JbootController {
         renderJson(users);
     }
 
+
+    public void find4(){
+        List<Record> users = JbootDb.find("user",Columns.create());
+        renderJson(users);
+    }
+
+
+    public void find5(){
+        List<Record> users = JbootDb.find("user",Columns.create("login_name","aaa"));
+        renderJson(users);
+    }
+
+
+    public void find6(){
+        List<Record> users = JbootDb.use().find("user",Columns.create("login_name","aaa"));
+        renderJson(users);
+    }
+
+
     public void del1(){
         User dao = new User();
         dao.batchDeleteByIds("1",2,3);
@@ -91,19 +110,5 @@ public class DbController extends JbootController {
         dao.delete();
         renderJson(Ret.ok());
     }
-
-
-
-    public void find4(){
-        List<Record> users = JbootDb.find("user",Columns.create());
-        renderJson(users);
-    }
-
-
-    public void find5(){
-        List<Record> users = JbootDb.find("user",Columns.create("login_name","aaa"));
-        renderJson(users);
-    }
-
 
 }
