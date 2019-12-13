@@ -1,3 +1,12 @@
+jboot v2.3.1:
+新增：新增 SqlDebugger，方便执行 SQL 时对完整 SQL 的输出
+优化：升级 JFinal 和 JFinal-Undertow 到最新版本
+优化：改进 Log 以支持 JFinal 最新的日志接口
+优化：删除 JbootModel 的 auto_copy 特性，以提高性能
+优化：修改 Sharding-JDBC 为 provided ，只有在需要的时候增加即可
+优化：优化 pom.xml ，定义 DependencyManagement 以减少 Maven 传递依赖的版本冲突
+
+
 jboot v2.3.0:
 新增：CacheTime 工具类，方便注解使用
 新增：JbootModel 新增 _getIdValues() 方法，方便在多主键时使用
