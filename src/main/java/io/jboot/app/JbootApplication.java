@@ -36,6 +36,10 @@ public class JbootApplication {
         start(createServer(args));
     }
 
+    public static void run(String[] args, JbootWebBuilderConfiger configer) {
+        start(createServer(args, configer));
+    }
+
     public static void start(UndertowServer server) {
         server.start();
         if (isDevMode()) {
@@ -54,11 +58,24 @@ public class JbootApplication {
         return createServer(appConfig, createUndertowConfig(appConfig), null);
     }
 
+    /**
+     * 创建 Undertow 服务器，public 用于可以给第三方创建创建着急的 Server
+     * <p>
+     * JbootApplication.start(JbootApplication.createServer(args,new MyWebBuilderConfiger()))
+     *
+     * @param args
+     * @param configer 可以通过 Configer 来进行自定义配置
+     * @return
+     */
+    public static UndertowServer createServer(String[] args, JbootWebBuilderConfiger configer) {
+        JbootApplicationConfig appConfig = getAppConfig(args);
+        return createServer(appConfig, createUndertowConfig(appConfig), configer);
+    }
+
 
     public static UndertowServer createServer(JbootApplicationConfig appConfig
             , UndertowConfig undertowConfig
-            , JbootWebBuilderConfiger configer
-    ) {
+            , JbootWebBuilderConfiger configer) {
 
         printBannerInfo(appConfig);
         printApplicationInfo(appConfig);
@@ -106,7 +123,9 @@ public class JbootApplication {
         String iniConfig = getConfigValue("jboot.shiro.ini");
         if (iniConfig != null) {
             String urlMapping = getConfigValue("jboot.shiro.urlMapping");
-            if (urlMapping == null) urlMapping = "/*";
+            if (urlMapping == null) {
+                urlMapping = "/*";
+            }
             webBuilder.addListener("org.apache.shiro.web.env.EnvironmentLoaderListener");
             webBuilder.addFilter("shiro", "io.jboot.support.shiro.JbootShiroFilter")
                     .addFilterUrlMapping("shiro", urlMapping, DispatcherType.REQUEST);
