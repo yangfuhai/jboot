@@ -17,16 +17,17 @@ package io.jboot.db.model;
 
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
+import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.*;
 
 
 /**
@@ -131,7 +132,44 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(_getPrimaryKey(), generatePrimaryValue());
         }
 
-        return super.save();
+
+        filter(FILTER_BY_SAVE);
+
+        Config config = _getConfig();
+        Table table = _getTable();
+
+        StringBuilder sql = new StringBuilder();
+        List<Object> paras = new ArrayList<Object>();
+
+        Dialect dialect = _getConfig().getDialect();
+
+        dialect.forModelSave(table, _getAttrs(), sql, paras);
+        // if (paras.size() == 0)	return false;	// The sql "insert into tableName() values()" works fine, so delete this line
+
+        // --------
+        Connection conn = null;
+        PreparedStatement pst = null;
+        int result = 0;
+        try {
+            conn = config.getConnection();
+            if (dialect.isOracle()) {
+                pst = conn.prepareStatement(sql.toString(), table.getPrimaryKey());
+            } else {
+                pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+            }
+            dialect.fillStatement(pst, paras);
+            result = pst.executeUpdate();
+            dialect.getModelGeneratedKey(this, pst, table);
+            _getModifyFlag().clear();
+            return result >= 1;
+        } catch (Exception e) {
+            throw new ActiveRecordException(e);
+        } finally {
+
+            //add sqlDebugger print sql
+            SqlDebugger.debug(config, sql.toString(), paras.toArray());
+            config.close(pst, conn);
+        }
     }
 
 
