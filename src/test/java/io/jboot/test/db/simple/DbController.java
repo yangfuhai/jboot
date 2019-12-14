@@ -111,4 +111,12 @@ public class DbController extends JbootController {
         renderJson(Ret.ok());
     }
 
+    public void save1(){
+        User user = new User();
+        user.set("login_name","michael");
+        user.set("nickname","michael123");
+        user.save();
+        renderJson(Ret.ok());
+    }
+
 }
