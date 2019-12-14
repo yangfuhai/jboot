@@ -15,15 +15,14 @@
  */
 package io.jboot.db.dbpro;
 
-import com.jfinal.plugin.activerecord.Config;
-import com.jfinal.plugin.activerecord.DbPro;
-import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.*;
+import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
 import io.jboot.db.dialect.IJbootModelDialect;
 import io.jboot.db.model.Columns;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,6 +60,41 @@ public class JbootDbPro extends DbPro {
         SqlDebugger.debug(config, sql, paras);
         return super.update(config, conn, sql, paras);
     }
+
+
+    @Override
+    protected boolean save(Config config, Connection conn, String tableName, String primaryKey, Record record) throws SQLException {
+        String[] pKeys = primaryKey.split(",");
+        List<Object> paras = new ArrayList<Object>();
+        StringBuilder sql = new StringBuilder();
+
+        Dialect dialect = config.getDialect();
+
+        dialect.forDbSave(tableName, pKeys, record, sql, paras);
+
+        PreparedStatement pst;
+        if (dialect.isOracle()) {
+            pst = conn.prepareStatement(sql.toString(), pKeys);
+        } else {
+            pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+        }
+        dialect.fillStatement(pst, paras);
+        int result = pst.executeUpdate();
+        dialect.getRecordGeneratedKey(pst, record, pKeys);
+
+        if (pst != null) {
+            try {
+                pst.close();
+            } catch (SQLException e) {
+                throw new ActiveRecordException(e);
+            }
+        }
+        //add sql debug support
+        SqlDebugger.debug(config, sql.toString(), paras.toArray());
+
+        return result >= 1;
+    }
+
 
     public List<Record> find(String tableName, Columns columns) {
         return find(tableName, columns, null, null);

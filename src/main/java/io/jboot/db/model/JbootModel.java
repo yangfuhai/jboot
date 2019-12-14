@@ -165,7 +165,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         } catch (Exception e) {
             throw new ActiveRecordException(e);
         } finally {
-
             //add sqlDebugger print sql
             SqlDebugger.debug(config, sql.toString(), paras.toArray());
             config.close(pst, conn);
