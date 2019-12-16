@@ -40,7 +40,8 @@ public class CookieUtil {
     private static String COOKIE_ENCRYPT_KEY = Jboot.config(JbootWebConfig.class).getCookieEncryptKey();
     private static Log log = Log.getLog(CookieUtil.class);
 
-    private static int COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+    // 2 days
+    private static int COOKIE_MAX_AGE = 60 * 60 * 24 * 2;
 
 
     /**
