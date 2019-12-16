@@ -63,27 +63,28 @@ public class CookieUtil {
     }
 
 
-    public static void put(Controller ctr, String key, String value) {
-        put(ctr, key, value, COOKIE_MAX_AGE);
+    public static void put(Controller ctr, String key, Object value) {
+        put(ctr, key, value, COOKIE_MAX_AGE, null, null, COOKIE_ENCRYPT_KEY);
     }
 
-    public static void put(Controller ctr, String key, Object value) {
-        put(ctr, key, value.toString());
+
+    public static void put(Controller ctr, String key, Object value, String secretKey) {
+        put(ctr, key, value, COOKIE_MAX_AGE, null, null, secretKey);
     }
 
 
     public static void put(Controller ctr, String key, String value, int maxAgeInSeconds) {
-        String cookie = buildCookieValue(value, maxAgeInSeconds);
-        ctr.setCookie(key, cookie, maxAgeInSeconds);
+        put(ctr, key, value, maxAgeInSeconds, null, null, COOKIE_ENCRYPT_KEY);
     }
 
-    public static void put(Controller ctr, String key, String value, String domain) {
-        put(ctr, key, value, COOKIE_MAX_AGE, domain);
+    public static void put(Controller ctr, String key, String value, int maxAgeInSeconds, String secretKey) {
+        put(ctr, key, value, maxAgeInSeconds, null, null, secretKey);
     }
 
-    public static void put(Controller ctr, String key, String value, int maxAgeInSeconds, String domain) {
-        String cookie = buildCookieValue(value, maxAgeInSeconds);
-        ctr.setCookie(key, cookie, maxAgeInSeconds, null, domain, false);
+
+    public static void put(Controller ctr, String key, Object value, int maxAgeInSeconds, String path, String domain, String secretKey) {
+        String cookie = buildCookieValue(value.toString(), maxAgeInSeconds, secretKey);
+        ctr.setCookie(key, cookie, maxAgeInSeconds, path, domain, true);
     }
 
 
@@ -96,8 +97,10 @@ public class CookieUtil {
     }
 
     public static String get(Controller ctr, String key) {
+        return get(ctr, key, COOKIE_ENCRYPT_KEY);
+    }
 
-        String encrypt_key = COOKIE_ENCRYPT_KEY;
+    public static String get(Controller ctr, String key, String secretKey) {
         String cookieValue = ctr.getCookie(key);
 
         if (cookieValue == null) {
@@ -105,14 +108,13 @@ public class CookieUtil {
         }
 
         String value = new String(Base64Kit.decode(cookieValue));
-        return getFromCookieInfo(encrypt_key, value);
+        return getFromCookieInfo(secretKey, value);
     }
 
 
-    public static String buildCookieValue(String value, int maxAgeInSeconds) {
-        String encrypt_key = COOKIE_ENCRYPT_KEY;
+    public static String buildCookieValue(String value, int maxAgeInSeconds, String secretKey) {
         long saveTime = System.currentTimeMillis();
-        String encrypt_value = encrypt(encrypt_key, saveTime, maxAgeInSeconds, value);
+        String encrypt_value = encrypt(secretKey, saveTime, maxAgeInSeconds, value);
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(encrypt_value);
@@ -126,15 +128,15 @@ public class CookieUtil {
         return Base64Kit.encode(stringBuilder.toString());
     }
 
-    private static String encrypt(String encrypt_key, Object saveTime, Object maxAgeInSeconds, String value) {
-        if (JbootWebConfig.DEFAULT_COOKIE_ENCRYPT_KEY.equals(encrypt_key)) {
+    private static String encrypt(String secretKey, Object saveTime, Object maxAgeInSeconds, String value) {
+        if (JbootWebConfig.DEFAULT_COOKIE_ENCRYPT_KEY.equals(secretKey)) {
             log.warn("warn!!! encrypt key is defalut value. please config \"jboot.web.cookieEncryptKey = xxx\" in jboot.properties ");
         }
-        return HashKit.md5(encrypt_key + saveTime.toString() + maxAgeInSeconds.toString() + value);
+        return HashKit.md5(secretKey + saveTime.toString() + maxAgeInSeconds.toString() + value);
     }
 
 
-    public static String getFromCookieInfo(String encrypt_key, String cookieValue) {
+    public static String getFromCookieInfo(String secretKey, String cookieValue) {
         if (StrUtil.isBlank(cookieValue)) {
             return null;
         }
@@ -149,7 +151,7 @@ public class CookieUtil {
         String maxAgeInSeconds = cookieStrings[2];
         String value = Base64Kit.decodeToStr(cookieStrings[3]);
 
-        String encrypt = encrypt(encrypt_key, Long.valueOf(saveTime), maxAgeInSeconds, value);
+        String encrypt = encrypt(secretKey, Long.valueOf(saveTime), maxAgeInSeconds, value);
 
         // 非常重要，确保 cookie 不被人为修改
         if (!encrypt.equals(encrypt_value)) {
@@ -169,7 +171,6 @@ public class CookieUtil {
         else {
             return null;
         }
-
     }
 
     public static Long getLong(Controller ctr, String key) {
