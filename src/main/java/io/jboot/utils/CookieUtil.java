@@ -40,6 +40,9 @@ public class CookieUtil {
     private static String COOKIE_ENCRYPT_KEY = Jboot.config(JbootWebConfig.class).getCookieEncryptKey();
     private static Log log = Log.getLog(CookieUtil.class);
 
+    private static int COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+
+
     /**
      * 在使用之前，小调用此方法进行加密key的设置
      *
@@ -49,9 +52,17 @@ public class CookieUtil {
         COOKIE_ENCRYPT_KEY = key;
     }
 
+    /**
+     * 设置 默认的 Cookie 有效时间
+     * @param seconds
+     */
+    public static void initDefaultCookieMaxAge(int seconds){
+        COOKIE_MAX_AGE = seconds;
+    }
+
 
     public static void put(Controller ctr, String key, String value) {
-        put(ctr, key, value, 60 * 60 * 24 * 7);
+        put(ctr, key, value, COOKIE_MAX_AGE);
     }
 
     public static void put(Controller ctr, String key, Object value) {
@@ -65,7 +76,7 @@ public class CookieUtil {
     }
 
     public static void put(Controller ctr, String key, String value, String domain) {
-        put(ctr, key, value, 60 * 60 * 24 * 7, domain);
+        put(ctr, key, value, COOKIE_MAX_AGE, domain);
     }
 
     public static void put(Controller ctr, String key, String value, int maxAgeInSeconds, String domain) {
