@@ -55,9 +55,10 @@ public class CookieUtil {
 
     /**
      * 设置 默认的 Cookie 有效时间
+     *
      * @param seconds
      */
-    public static void initDefaultCookieMaxAge(int seconds){
+    public static void initDefaultCookieMaxAge(int seconds) {
         COOKIE_MAX_AGE = seconds;
     }
 
@@ -111,7 +112,7 @@ public class CookieUtil {
     public static String buildCookieValue(String value, int maxAgeInSeconds) {
         String encrypt_key = COOKIE_ENCRYPT_KEY;
         long saveTime = System.currentTimeMillis();
-        String encrypt_value = encrypt(encrypt_key, saveTime, maxAgeInSeconds + "", value);
+        String encrypt_value = encrypt(encrypt_key, saveTime, maxAgeInSeconds, value);
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(encrypt_value);
@@ -125,11 +126,11 @@ public class CookieUtil {
         return Base64Kit.encode(stringBuilder.toString());
     }
 
-    private static String encrypt(String encrypt_key, long saveTime, String maxAgeInSeconds, String value) {
+    private static String encrypt(String encrypt_key, Object saveTime, Object maxAgeInSeconds, String value) {
         if (JbootWebConfig.DEFAULT_COOKIE_ENCRYPT_KEY.equals(encrypt_key)) {
             log.warn("warn!!! encrypt key is defalut value. please config \"jboot.web.cookieEncryptKey = xxx\" in jboot.properties ");
         }
-        return HashKit.md5(encrypt_key + saveTime + maxAgeInSeconds + value);
+        return HashKit.md5(encrypt_key + saveTime.toString() + maxAgeInSeconds.toString() + value);
     }
 
 
