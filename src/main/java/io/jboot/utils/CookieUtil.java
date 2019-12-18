@@ -18,6 +18,7 @@ package io.jboot.utils;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Base64Kit;
 import com.jfinal.kit.HashKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.web.JbootWebConfig;
@@ -107,8 +108,17 @@ public class CookieUtil {
             return null;
         }
 
-        String value = new String(Base64Kit.decode(cookieValue));
-        return getFromCookieInfo(secretKey, value);
+        try {
+            String value = new String(Base64Kit.decode(cookieValue));
+            return getFromCookieInfo(secretKey, value);
+        }
+
+        //倘若 cookie 被人为修改的情况下能会出现异常情况
+        catch (Exception ex) {
+            LogKit.error(ex.toString(), ex);
+        }
+
+        return null;
     }
 
 
