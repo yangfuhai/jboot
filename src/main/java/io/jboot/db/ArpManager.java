@@ -145,11 +145,11 @@ public class ArpManager {
             return activeRecordPlugin;
         }
 
-        for (TableInfo ti : tableInfos) {
-            if (StrUtil.isNotBlank(ti.getPrimaryKey())) {
-                activeRecordPlugin.addMapping(ti.getTableName(), ti.getPrimaryKey(), (Class<? extends Model<?>>) ti.getModelClass());
+        for (TableInfo table : tableInfos) {
+            if (StrUtil.isNotBlank(table.getPrimaryKey())) {
+                activeRecordPlugin.addMapping(table.getTableName(), table.getPrimaryKey(), (Class<? extends Model<?>>) table.getModelClass());
             } else {
-                activeRecordPlugin.addMapping(ti.getTableName(), (Class<? extends Model<?>>) ti.getModelClass());
+                activeRecordPlugin.addMapping(table.getTableName(), (Class<? extends Model<?>>) table.getModelClass());
             }
         }
 
