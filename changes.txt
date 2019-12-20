@@ -1,3 +1,10 @@
+jboot v2.3.2:
+新增：save() 方法打印完整 sql 的支持
+新增：新增 CookieUtil 可以设置默认有效期的支持
+优化：移除代码生成器对 deleteByColumns() 方法的生成
+优化：修改 CookieUtil 对默认有效期为 2 天。
+
+
 jboot v2.3.1:
 新增：新增 SqlDebugger，方便执行 SQL 时对完整 SQL 的输出
 优化：升级 JFinal 和 JFinal-Undertow 到最新版本
