@@ -18,6 +18,7 @@ package io.jboot.db;
 import com.jfinal.ext.kit.DateKit;
 import com.jfinal.plugin.activerecord.Config;
 import io.jboot.Jboot;
+import io.jboot.utils.StrUtil;
 
 import java.util.Date;
 
@@ -61,7 +62,11 @@ public class SqlDebugger {
                     }
                     // number
                     else if (value instanceof Number) {
-                        sql = sql.replaceFirst("\\?", String.valueOf(value));
+                        sql = sql.replaceFirst("\\?", value.toString());
+                    }
+                    // numeric
+                    else if (value instanceof String && StrUtil.isNumeric((String) value)) {
+                        sql = sql.replaceFirst("\\?", (String) value);
                     }
                     // other
                     else {
@@ -70,7 +75,7 @@ public class SqlDebugger {
                         if (value instanceof Date) {
                             sb.append(DateKit.toStr((Date) value, DateKit.timeStampPattern));
                         } else {
-                            sb.append(value);
+                            sb.append(value.toString());
                         }
                         sb.append("'");
                         sql = sql.replaceFirst("\\?", sb.toString());
