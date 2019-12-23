@@ -64,8 +64,9 @@ public class StrUtil extends StrKit {
     }
 
     public static boolean areNotEmpty(String... strings) {
-        if (strings == null || strings.length == 0)
+        if (strings == null || strings.length == 0) {
             return false;
+        }
 
         for (String string : strings) {
             if (string == null || EMPTY.equals(string)) {
@@ -76,14 +77,16 @@ public class StrUtil extends StrKit {
     }
 
     public static String requireNonBlank(String string) {
-        if (isBlank(string))
+        if (isBlank(string)) {
             throw new NullPointerException();
+        }
         return string;
     }
 
     public static String requireNonBlank(String string, String message) {
-        if (isBlank(string))
+        if (isBlank(string)) {
             throw new NullPointerException(message);
+        }
         return string;
     }
 
@@ -134,12 +137,14 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isNumeric(String str) {
-        if (str == null)
+        if (str == null) {
             return false;
+        }
         for (int i = str.length(); --i >= 0; ) {
             int chr = str.charAt(i);
-            if (chr < 48 || chr > 57)
+            if (chr < 48 || chr > 57) {
                 return false;
+            }
         }
         return true;
     }
@@ -151,12 +156,14 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isDecimal(String str) {
-        if (str == null)
+        if (str == null) {
             return false;
+        }
         for (int i = str.length(); --i >= 0; ) {
             int chr = str.charAt(i);
-            if ((chr < 48 || chr > 57) && chr != '.')
+            if ((chr < 48 || chr > 57) && chr != '.') {
                 return false;
+            }
         }
         return true;
     }
