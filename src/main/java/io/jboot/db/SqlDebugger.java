@@ -21,6 +21,7 @@ import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
 
 import java.util.Date;
+import java.util.regex.Matcher;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -78,7 +79,7 @@ public class SqlDebugger {
                             sb.append(value.toString());
                         }
                         sb.append("'");
-                        sql = sql.replaceFirst("\\?", sb.toString());
+                        sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(sb.toString()));
                     }
                 }
             }
