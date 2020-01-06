@@ -147,13 +147,7 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         private String url;
         private String text;
 
-        public PaginateItem(String style, String url, String text) {
-            this.style = style;
-            this.url = url;
-            this.text = text;
-        }
-
-        public PaginateItem(String style, String url, int text) {
+        public PaginateItem(String style, String url, Object text) {
             this.style = style;
             this.url = url;
             this.text = String.valueOf(text);
