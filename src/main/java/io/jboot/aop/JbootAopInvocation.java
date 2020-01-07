@@ -25,20 +25,15 @@ import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.exception.JbootException;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
+import io.jboot.support.sentinel.SentinelInterceptor;
 
 import java.lang.reflect.Method;
 
 
 public class JbootAopInvocation extends Invocation {
 
-
-    private Interceptor[] inters = ALL_INTERS;
-    private Invocation originInvocation;
-
-    private int index = 0;
-
-
     private static final Interceptor[] ALL_INTERS = {
+            new SentinelInterceptor(),
             new JbootMetricInterceptor(),
             new JbootCacheEvictInterceptor(),
             new JbootCachesEvictInterceptor(),
@@ -47,6 +42,12 @@ public class JbootAopInvocation extends Invocation {
             new LimiterInterceptor(),
             new SeataGlobalTransactionalInterceptor()
     };
+
+
+    private Interceptor[] inters = ALL_INTERS;
+    private Invocation originInvocation;
+
+    private int index = 0;
 
 
     public JbootAopInvocation(Invocation originInvocation) {
@@ -58,7 +59,9 @@ public class JbootAopInvocation extends Invocation {
     public void invoke() {
         if (index < inters.length) {
             inters[index++].intercept(this);
-        } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
+        }
+        // index++ ensure invoke action only one time
+        else if (index++ == inters.length) {
             try {
                 originInvocation.invoke();
             } catch (Throwable throwable) {
