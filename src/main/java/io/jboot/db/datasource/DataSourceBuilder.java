@@ -20,7 +20,7 @@ import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
 import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.utils.StrUtil;
-import io.shardingsphere.shardingjdbc.api.yaml.YamlShardingDataSourceFactory;
+import org.apache.shardingsphere.shardingjdbc.api.yaml.YamlShardingDataSourceFactory;
 
 import javax.sql.DataSource;
 import java.io.File;

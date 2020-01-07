@@ -327,9 +327,9 @@
 
 
         <dependency>
-            <groupId>io.shardingsphere</groupId>
+            <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
-            <version>3.1.0</version>
+            <version>4.0.0-RC3</version>
             <scope>provided</scope>
         </dependency>
 
