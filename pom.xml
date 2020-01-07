@@ -481,7 +481,7 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tm</artifactId>
-            <version>0.9.0</version>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>ch.qos.logback</groupId>
@@ -493,25 +493,25 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-rm-datasource</artifactId>
-            <version>0.9.0</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-config-core</artifactId>
-            <version>0.9.0</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-codec-seata</artifactId>
-            <version>0.9.0</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-core</artifactId>
-            <version>0.9.0</version>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.seata</groupId>
@@ -523,7 +523,7 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-common</artifactId>
-            <version>0.9.0</version>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>ch.qos.logback</groupId>
