@@ -24,7 +24,6 @@ public class JbootmqConfig {
     public static final String TYPE_ACTIVEMQ = "activemq";
     public static final String TYPE_ALIYUNMQ = "aliyunmq";
     public static final String TYPE_RABBITMQ = "rabbitmq";
-    public static final String TYPE_ZBUS = "zbus";
     public static final String TYPE_QPID = "qpid";
 
     private String type = TYPE_REDIS;

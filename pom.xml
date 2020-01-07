@@ -470,13 +470,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.zbus</groupId>
-            <artifactId>zbus</artifactId>
-            <version>0.11.5</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-core</artifactId>
             <version>1.5.21</version>
