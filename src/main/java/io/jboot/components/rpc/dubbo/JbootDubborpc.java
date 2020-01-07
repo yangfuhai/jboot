@@ -15,12 +15,12 @@
  */
 package io.jboot.components.rpc.dubbo;
 
-import com.alibaba.dubbo.config.*;
 import io.jboot.Jboot;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
+import org.apache.dubbo.config.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
