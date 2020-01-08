@@ -49,7 +49,7 @@ public class SentinelInterceptor extends AbstractSentinelInterceptor {
             inv.invoke();
         } catch (BlockException ex) {
             try {
-                handleBlockException(inv, annotation, ex);
+                inv.setReturnValue(handleBlockException(inv, annotation, ex));
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
@@ -63,7 +63,7 @@ public class SentinelInterceptor extends AbstractSentinelInterceptor {
             if (exceptionBelongsTo(ex, annotation.exceptionsToTrace())) {
                 traceException(ex);
                 try {
-                    handleFallback(inv, annotation, ex);
+                    inv.setReturnValue(handleFallback(inv, annotation, ex));
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
