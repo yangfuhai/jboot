@@ -32,6 +32,7 @@ public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
 
     protected LimitConfig config = Jboot.config(LimitConfig.class);
 
+    @Override
     public void process(String resource, String fallback, Invocation inv) {
 
         if (StrUtil.isNotBlank(fallback)) {
