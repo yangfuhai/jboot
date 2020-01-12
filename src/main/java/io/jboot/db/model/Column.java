@@ -19,21 +19,21 @@ package io.jboot.db.model;
 import java.io.Serializable;
 
 public class Column implements Serializable {
-    public static final String LOGIC_LIKE = " LIKE ";
-    public static final String LOGIC_GT = " > ";
-    public static final String LOGIC_GE = " >= ";
-    public static final String LOGIC_LT = " < ";
-    public static final String LOGIC_LE = " <= ";
-    public static final String LOGIC_EQUALS = " = ";
-    public static final String LOGIC_NOT_EQUALS = " != ";
+    public static final String LOGIC_LIKE = "LIKE";
+    public static final String LOGIC_GT = ">";
+    public static final String LOGIC_GE = ">=";
+    public static final String LOGIC_LT = "<";
+    public static final String LOGIC_LE = "<=";
+    public static final String LOGIC_EQUALS = "=";
+    public static final String LOGIC_NOT_EQUALS = "!=";
 
-    public static final String LOGIC_IS_NULL = " IS NULL ";
-    public static final String LOGIC_IS_NOT_NULL = " IS NOT NULL ";
+    public static final String LOGIC_IS_NULL = "IS NULL";
+    public static final String LOGIC_IS_NOT_NULL = "IS NOT NULL";
 
-    public static final String LOGIC_IN = " IN ";
-    public static final String LOGIC_NOT_IN = " NOT IN ";
-    public static final String LOGIC_BETWEEN = " BETWEEN ";
-    public static final String LOGIC_NOT_BETWEEN = " NOT BETWEEN ";
+    public static final String LOGIC_IN = "IN";
+    public static final String LOGIC_NOT_IN = "NOT IN";
+    public static final String LOGIC_BETWEEN = "BETWEEN";
+    public static final String LOGIC_NOT_BETWEEN = "NOT BETWEEN";
 
 
     private String name;

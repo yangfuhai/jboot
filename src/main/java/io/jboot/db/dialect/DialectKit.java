@@ -49,112 +49,79 @@ public class DialectKit {
         }
 
         sqlBuilder.append(" WHERE ");
-        int index = 0;
-        int last = columns.size() - 1;
-        for (Column column : columns) {
+        buildByColumns(sqlBuilder,columns,separator);
+
+
+    }
+
+    private static void buildByColumns(StringBuilder sqlBuilder, List<Column> columns, char separator) {
+        for (int i = 0; i < columns.size(); i++) {
+            Column curent = columns.get(i);
+            Column next = i >= columns.size() - 1 ? null : columns.get(i + 1);
+            boolean isLast = i >= columns.size() -1;
 
             // or
-            if (column instanceof Or) {
-                appendOrLogic(sqlBuilder);
+            if (curent instanceof Or) {
+                continue;
             }
             // group
-            else if (column instanceof Group) {
-                appendGroupLogic(sqlBuilder, index, last, ((Group) column).getColumns().getList(), separator);
+            else if (curent instanceof Group) {
+                appendGroupLogic(sqlBuilder, ((Group) curent).getColumns().getList(), separator);
             }
             // in logic
-            else if (Column.LOGIC_IN.equals(column.getLogic()) || Column.LOGIC_NOT_IN.equals(column.getLogic())) {
-                appendInLogic(sqlBuilder, index, last, column, separator);
+            else if (Column.LOGIC_IN.equals(curent.getLogic()) || Column.LOGIC_NOT_IN.equals(curent.getLogic())) {
+                appendInLogic(sqlBuilder, curent, separator);
             }
 
             // between logic
-            else if (Column.LOGIC_BETWEEN.equals(column.getLogic())) {
-                appendBetweenLogic(sqlBuilder, index, last, column, separator);
+            else if (Column.LOGIC_BETWEEN.equals(curent.getLogic()) || Column.LOGIC_NOT_BETWEEN.equals(curent.getLogic())) {
+                appendBetweenLogic(sqlBuilder, curent, separator);
             }
             // others
             else {
                 sqlBuilder.append(separator)
-                        .append(column.getName())
+                        .append(curent.getName())
                         .append(separator)
-                        .append(column.getLogic());
+                        .append(" ")
+                        .append(curent.getLogic());
 
-                if (column.hasPara()) {
-                    sqlBuilder.append(" ? ");
-                }
-
-                if (index != last) {
-                    sqlBuilder.append(" AND ");
+                if (curent.hasPara()) {
+                    sqlBuilder.append(" ?");
                 }
             }
 
-            index++;
+            appendLinkString(sqlBuilder, next, isLast);
         }
     }
 
-    public static void appendGroupLogic(StringBuilder sqlBuilder, int bindex, int blast, List<Column> columns, char separator) {
+    private static void appendLinkString(StringBuilder sqlBuilder, Column next, boolean isLast) {
+        if (isLast) {
+            return;
+        }
+        sqlBuilder.append(next instanceof Or ? " OR " : " AND ");
+    }
 
+
+
+
+    public static void appendGroupLogic(StringBuilder sqlBuilder, List<Column> columns, char separator) {
         if (ArrayUtil.isNullOrEmpty(columns)) {
             return;
         }
 
-        sqlBuilder.append(" ( ");
-        int index = 0;
-        int last = columns.size() - 1;
-        for (Column column : columns) {
-
-            // or
-            if (column instanceof Or) {
-                appendOrLogic(sqlBuilder);
-            }
-            // group
-            else if (column instanceof Group) {
-                appendGroupLogic(sqlBuilder, index, last, ((Group) column).getColumns().getList(), separator);
-            }
-            // in logic
-            else if (Column.LOGIC_IN.equals(column.getLogic()) || Column.LOGIC_NOT_IN.equals(column.getLogic())) {
-                appendInLogic(sqlBuilder, index, last, column, separator);
-            }
-
-            // between logic
-            else if (Column.LOGIC_BETWEEN.equals(column.getLogic())) {
-                appendBetweenLogic(sqlBuilder, index, last, column, separator);
-            }
-            // others
-            else {
-                sqlBuilder.append(separator)
-                        .append(column.getName())
-                        .append(separator)
-                        .append(column.getLogic());
-
-                if (column.hasPara()) {
-                    sqlBuilder.append(" ? ");
-                }
-
-                if (index != last) {
-                    sqlBuilder.append(" AND ");
-                }
-            }
-
-            index++;
-        }
-
-        sqlBuilder.append(" ) ");
-
-        if (bindex != blast) {
-            sqlBuilder.append(" AND ");
-        }
+        sqlBuilder.append("(");
+        buildByColumns(sqlBuilder,columns,separator);
+        sqlBuilder.append(")");
     }
 
-    public static void appendOrLogic(StringBuilder sqlBuilder) {
-        // delete last " AND " str
-        sqlBuilder.delete(sqlBuilder.length() - 5, sqlBuilder.length())
-                .append(" OR ");
-    }
 
-    public static void appendInLogic(StringBuilder sqlBuilder, int index, int last, Column column, char separator) {
+    public static void appendInLogic(StringBuilder sqlBuilder, Column column, char separator) {
         sqlBuilder.append(separator)
                 .append(column.getName())
                 .append(separator)
-                .append(column.getLogic());
+                .append(" ")
+                .append(column.getLogic())
+                .append(" ");
 
         sqlBuilder.append("(");
         Object[] values = (Object[]) column.getValue();
@@ -162,22 +129,17 @@ public class DialectKit {
             sqlBuilder.append("?,");
         }
         sqlBuilder.deleteCharAt(sqlBuilder.length() - 1).append(")");
-        if (index != last) {
-            sqlBuilder.append(" AND ");
-        }
     }
 
 
-    public static void appendBetweenLogic(StringBuilder sqlBuilder, int index, int last, Column column, char separator) {
+    public static void appendBetweenLogic(StringBuilder sqlBuilder, Column column, char separator) {
         sqlBuilder.append(separator)
                 .append(column.getName())
                 .append(separator)
+                .append(" ")
                 .append(column.getLogic());
 
-        sqlBuilder.append(" ? ").append(" AND ").append(" ? ");
-        if (index != last) {
-            sqlBuilder.append(" AND ");
-        }
+        sqlBuilder.append(" ? AND ?");
     }
 
     public static StringBuilder forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, char separator) {

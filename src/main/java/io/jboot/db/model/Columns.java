@@ -398,6 +398,7 @@ public class Columns implements Serializable {
         columns.or();
 
         columns.between("name", "123", "1233");
+        columns.eq("a","b");
         System.out.println(columns.getCacheKey());
 
         System.out.println(Arrays.toString(columns.getValueArray()));
