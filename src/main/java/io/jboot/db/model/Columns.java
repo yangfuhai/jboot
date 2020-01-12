@@ -191,7 +191,7 @@ public class Columns implements Serializable {
      * @param name
      * @return
      */
-    public Columns is_null(String name) {
+    public Columns isNull(String name) {
         this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
         return this;
     }
@@ -203,7 +203,7 @@ public class Columns implements Serializable {
      * @param name
      * @return
      */
-    public Columns is_not_null(String name) {
+    public Columns isNotNull(String name) {
         this.add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
         return this;
     }
@@ -245,7 +245,7 @@ public class Columns implements Serializable {
         return this;
     }
 
-    public Columns not_in(String name, Object... arrays) {
+    public Columns notIn(String name, Object... arrays) {
         this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
         return this;
     }
@@ -253,6 +253,11 @@ public class Columns implements Serializable {
 
     public Columns between(String name, Object start, Object end) {
         this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
+        return this;
+    }
+
+    public Columns notBetween(String name, Object start, Object end) {
+        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
         return this;
     }
 
@@ -345,6 +350,8 @@ public class Columns implements Serializable {
                 return "nin";
             case Column.LOGIC_BETWEEN:
                 return "bt";
+            case Column.LOGIC_NOT_BETWEEN:
+                return "nbt";
             default:
                 return "";
         }
@@ -385,7 +392,7 @@ public class Columns implements Serializable {
 
         columns.or();
 
-        columns.group(Columns.create().is_not_null("price").is_null("nickname").group(Columns.create().in("name", "123", "123", "111").not_in("nickname", "aaa", "bbb")));
+        columns.group(Columns.create().isNotNull("price").isNull("nickname").group(Columns.create().in("name", "123", "123", "111").notIn("nickname", "aaa", "bbb")));
 
         System.out.println(columns.getCacheKey());
         columns.or();
