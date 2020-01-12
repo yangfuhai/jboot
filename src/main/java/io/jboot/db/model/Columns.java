@@ -209,6 +209,28 @@ public class Columns implements Serializable {
     }
 
 
+    public Columns in(String name, Object... arrays) {
+        this.add(Column.create(name, arrays, Column.LOGIC_IN));
+        return this;
+    }
+
+    public Columns notIn(String name, Object... arrays) {
+        this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
+        return this;
+    }
+
+
+    public Columns between(String name, Object start, Object end) {
+        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
+        return this;
+    }
+
+    public Columns notBetween(String name, Object start, Object end) {
+        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
+        return this;
+    }
+
+
     public Columns group(Columns columns) {
         this.add(new Group(columns));
         return this;
@@ -237,28 +259,6 @@ public class Columns implements Serializable {
 
     public Columns orEqs(String name, Object... values) {
         return ors(name, Column.LOGIC_EQUALS, values);
-    }
-
-
-    public Columns in(String name, Object... arrays) {
-        this.add(Column.create(name, arrays, Column.LOGIC_IN));
-        return this;
-    }
-
-    public Columns notIn(String name, Object... arrays) {
-        this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
-        return this;
-    }
-
-
-    public Columns between(String name, Object start, Object end) {
-        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
-        return this;
-    }
-
-    public Columns notBetween(String name, Object start, Object end) {
-        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
-        return this;
     }
 
 
@@ -310,13 +310,34 @@ public class Columns implements Serializable {
                 continue;
             }
             if (value.getClass().isArray()) {
-                s.append(Arrays.toString((Object[]) column.getValue()));
+                s.append(array2String((Object[]) column.getValue()));
             } else {
                 s.append(column.getValue());
             }
             s.append("-");
         }
         s.deleteCharAt(s.length() - 1);
+    }
+
+    private static String array2String(Object[] a) {
+        if (a == null) {
+            return "null";
+        }
+
+        int iMax = a.length - 1;
+        if (iMax == -1) {
+            return "[]";
+        }
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = 0; ; i++) {
+            b.append(a[i]);
+            if (i == iMax) {
+                return b.append(']').toString();
+            }
+            b.append("-");
+        }
     }
 
 
@@ -398,7 +419,6 @@ public class Columns implements Serializable {
         columns.or();
 
         columns.between("name", "123", "1233");
-        columns.eq("a","b");
         System.out.println(columns.getCacheKey());
 
         System.out.println(Arrays.toString(columns.getValueArray()));

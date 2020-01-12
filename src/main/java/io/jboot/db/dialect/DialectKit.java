@@ -49,16 +49,16 @@ public class DialectKit {
         }
 
         sqlBuilder.append(" WHERE ");
-        buildByColumns(sqlBuilder,columns,separator);
+        buildByColumns(sqlBuilder, columns, separator);
 
 
     }
 
     private static void buildByColumns(StringBuilder sqlBuilder, List<Column> columns, char separator) {
         for (int i = 0; i < columns.size(); i++) {
+
             Column curent = columns.get(i);
             Column next = i >= columns.size() - 1 ? null : columns.get(i + 1);
-            boolean isLast = i >= columns.size() -1;
 
             // or
             if (curent instanceof Or) {
@@ -90,18 +90,17 @@ public class DialectKit {
                 }
             }
 
-            appendLinkString(sqlBuilder, next, isLast);
+            appendLinkString(sqlBuilder, next);
         }
     }
 
-    private static void appendLinkString(StringBuilder sqlBuilder, Column next, boolean isLast) {
-        if (isLast) {
+    private static void appendLinkString(StringBuilder sqlBuilder, Column next) {
+        if (next == null) {
             return;
+        } else {
+            sqlBuilder.append(next instanceof Or ? " OR " : " AND ");
         }
-        sqlBuilder.append(next instanceof Or ? " OR " : " AND ");
     }
-
-
 
 
     public static void appendGroupLogic(StringBuilder sqlBuilder, List<Column> columns, char separator) {
@@ -110,7 +109,7 @@ public class DialectKit {
         }
 
         sqlBuilder.append("(");
-        buildByColumns(sqlBuilder,columns,separator);
+        buildByColumns(sqlBuilder, columns, separator);
         sqlBuilder.append(")");
     }
 
