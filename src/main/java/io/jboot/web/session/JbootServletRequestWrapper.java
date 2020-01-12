@@ -147,10 +147,13 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
      */
     private Cookie getCookieObject(String name) {
         Cookie[] cookies = originRequest.getCookies();
-        if (cookies != null)
-            for (Cookie cookie : cookies)
-                if (cookie.getName().equals(name))
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(name)) {
                     return cookie;
+                }
+            }
+        }
         return null;
     }
 
@@ -160,14 +163,16 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
      * @param maxAgeInSeconds
      */
     private void setCookie(String name, String value, int maxAgeInSeconds) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(maxAgeInSeconds);
-        cookie.setPath(cookiePath);
-        if (cookieDomain != null) {
-            cookie.setDomain(cookieDomain);
+        if (!response.isCommitted()) {
+            Cookie cookie = new Cookie(name, value);
+            cookie.setMaxAge(maxAgeInSeconds);
+            cookie.setPath(cookiePath);
+            if (cookieDomain != null) {
+                cookie.setDomain(cookieDomain);
+            }
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
         }
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
     }
 
     public HttpServletRequest getOriginRequest() {
