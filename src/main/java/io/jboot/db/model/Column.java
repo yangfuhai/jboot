@@ -33,6 +33,7 @@ public class Column implements Serializable {
     public static final String LOGIC_IN = " IN ";
     public static final String LOGIC_NOT_IN = " NOT IN ";
     public static final String LOGIC_BETWEEN = " BETWEEN ";
+    public static final String LOGIC_NOT_BETWEEN = " NOT BETWEEN ";
 
 
     private String name;
