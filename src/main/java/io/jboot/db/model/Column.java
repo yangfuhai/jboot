@@ -90,7 +90,7 @@ public class Column implements Serializable {
         this.logic = logic;
     }
 
-    public boolean isMustNeedValue() {
+    public boolean hasPara() {
         return !LOGIC_IS_NULL.equals(getLogic())
                 && !LOGIC_IS_NOT_NULL.equals(getLogic());
     }

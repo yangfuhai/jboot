@@ -66,7 +66,7 @@ public class Columns implements Serializable {
     public void add(Column column) {
 
         //do not add null value column
-        if (column.isMustNeedValue() && column.getValue() == null) {
+        if (column.hasPara() && column.getValue() == null) {
             return;
         }
 
@@ -209,6 +209,12 @@ public class Columns implements Serializable {
     }
 
 
+    public Columns group(Columns columns) {
+        this.add(new Group(columns));
+        return this;
+    }
+
+
     public Columns or() {
         this.add(new Or());
         return this;
@@ -267,25 +273,45 @@ public class Columns implements Serializable {
 
 
     public String getCacheKey() {
-        if (isEmpty()) return null;
+        if (isEmpty()) {
+            return null;
+        }
 
         List<Column> columns = new ArrayList<>(cols);
         StringBuilder s = new StringBuilder();
+        buildCacheKey(s, columns);
+
+        return s.toString();
+    }
+
+    private void buildCacheKey(StringBuilder s, List<Column> columns) {
         for (Column column : columns) {
             if (column instanceof Or) {
                 s.append("or").append("-");
                 continue;
             }
-            s.append(column.getName()).append("-")
-                    .append(getLogicStr(column.getLogic())).append("-");
+            if (column instanceof Group) {
+                s.append("(");
+                buildCacheKey(s, ((Group) column).getColumns().getList());
+                s.append(")-");
+                continue;
+            }
+            s.append(column.getName())
+                    .append("-")
+                    .append(getLogicStr(column.getLogic()))
+                    .append("-");
             Object value = column.getValue();
-            if (value == null) continue;
-            if (value.getClass().isArray()) s.append(Arrays.toString((Object[]) column.getValue()));
-            else s.append(column.getValue());
+            if (value == null) {
+                continue;
+            }
+            if (value.getClass().isArray()) {
+                s.append(Arrays.toString((Object[]) column.getValue()));
+            } else {
+                s.append(column.getValue());
+            }
             s.append("-");
         }
-
-        return s.deleteCharAt(s.length() - 1).toString();
+        s.deleteCharAt(s.length() - 1);
     }
 
 
@@ -354,22 +380,15 @@ public class Columns implements Serializable {
         columns.ge("age", 10);
         System.out.println(columns.getCacheKey());
 
-        columns.or();
+        columns.group(Columns.create().likeAppendPercent("name", "lisi").eq("age", 20));
         System.out.println(columns.getCacheKey());
 
-        columns.is_not_null("price");
-        System.out.println(columns.getCacheKey());
-
-        columns.is_null("nickname");
-        System.out.println(columns.getCacheKey());
         columns.or();
 
-        columns.in("name", "123", "123", "111");
+        columns.group(Columns.create().is_not_null("price").is_null("nickname").group(Columns.create().in("name", "123", "123", "111").not_in("nickname", "aaa", "bbb")));
+
         System.out.println(columns.getCacheKey());
         columns.or();
-
-        columns.not_in("nickname", "aaa", "bbb");
-        System.out.println(columns.getCacheKey());
 
         columns.between("name", "123", "1233");
         System.out.println(columns.getCacheKey());

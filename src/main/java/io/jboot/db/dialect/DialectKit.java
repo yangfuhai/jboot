@@ -16,6 +16,7 @@
 package io.jboot.db.dialect;
 
 import io.jboot.db.model.Column;
+import io.jboot.db.model.Group;
 import io.jboot.db.model.Or;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
@@ -56,6 +57,10 @@ public class DialectKit {
             if (column instanceof Or) {
                 appendOrLogic(sqlBuilder);
             }
+            // group
+            else if (column instanceof Group) {
+                appendGroupLogic(sqlBuilder, index, last, ((Group) column).getColumns().getList(), separator);
+            }
             // in logic
             else if (Column.LOGIC_IN.equals(column.getLogic()) || Column.LOGIC_NOT_IN.equals(column.getLogic())) {
                 appendInLogic(sqlBuilder, index, last, column, separator);
@@ -72,7 +77,7 @@ public class DialectKit {
                         .append(separator)
                         .append(column.getLogic());
 
-                if (column.isMustNeedValue()) {
+                if (column.hasPara()) {
                     sqlBuilder.append(" ? ");
                 }
 
@@ -80,7 +85,62 @@ public class DialectKit {
                     sqlBuilder.append(" AND ");
                 }
             }
+
             index++;
+        }
+    }
+
+    public static void appendGroupLogic(StringBuilder sqlBuilder, int bindex, int blast, List<Column> columns, char separator) {
+
+        if (ArrayUtil.isNullOrEmpty(columns)) {
+            return;
+        }
+
+        sqlBuilder.append(" ( ");
+        int index = 0;
+        int last = columns.size() - 1;
+        for (Column column : columns) {
+
+            // or
+            if (column instanceof Or) {
+                appendOrLogic(sqlBuilder);
+            }
+            // group
+            else if (column instanceof Group) {
+                appendGroupLogic(sqlBuilder, index, last, ((Group) column).getColumns().getList(), separator);
+            }
+            // in logic
+            else if (Column.LOGIC_IN.equals(column.getLogic()) || Column.LOGIC_NOT_IN.equals(column.getLogic())) {
+                appendInLogic(sqlBuilder, index, last, column, separator);
+            }
+
+            // between logic
+            else if (Column.LOGIC_BETWEEN.equals(column.getLogic())) {
+                appendBetweenLogic(sqlBuilder, index, last, column, separator);
+            }
+            // others
+            else {
+                sqlBuilder.append(separator)
+                        .append(column.getName())
+                        .append(separator)
+                        .append(column.getLogic());
+
+                if (column.hasPara()) {
+                    sqlBuilder.append(" ? ");
+                }
+
+                if (index != last) {
+                    sqlBuilder.append(" AND ");
+                }
+            }
+
+            index++;
+        }
+
+        sqlBuilder.append(" ) ");
+
+        if (bindex != blast) {
+            sqlBuilder.append(" AND ");
         }
     }
 

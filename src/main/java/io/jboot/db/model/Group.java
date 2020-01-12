@@ -16,7 +16,21 @@
 package io.jboot.db.model;
 
 
-public class Or extends Column {
+public class Group extends Column {
+
+    private Columns columns;
+
+    public Group(Columns columns) {
+        this.columns = columns;
+    }
+
+    public Columns getColumns() {
+        return columns;
+    }
+
+    public void setColumns(Columns columns) {
+        this.columns = columns;
+    }
 
     @Override
     public boolean hasPara() {
