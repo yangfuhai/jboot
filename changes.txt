@@ -1,1 +1,8 @@
 jboot v3.0.0-rc.1:
+新增：Columns 查询新增 group 以及 notBetween 的功能
+新增：新增对 sentinel 分布式限流、降级的初步支持
+升级：升级 alibaba Dubbo 到 Apache Dubbo
+升级：升级 Sharding-JDBC 到 Apache ShardingsSphere 4.0 最新版
+升级：升级 Seata 分布式事务到 1.0 正式版
+优化：优化通过 Columns 查询时对 SQL 生成的性能
+移除：移除对 Zbus MQ 以及 Zbus RPC 的支持
