@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.0.0-rc.1</version>
+    <version>3.0.0-rc.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -46,14 +46,14 @@
         <jfinal-undertow.version>2.0</jfinal-undertow.version>
         <jfinal-weixin.version>2.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
-        <HikariCP.version>3.4.1</HikariCP.version>
+        <HikariCP.version>3.4.2</HikariCP.version>
         <jackson.version>2.10.1</jackson.version>
         <mysql.version>5.1.48</mysql.version>
-        <undertow.version>2.0.28.Final</undertow.version>
+        <undertow.version>2.0.29.Final</undertow.version>
         <slf4j.version>1.7.29</slf4j.version>
         <fst.version>2.57</fst.version>
         <fastjson.version>1.2.62</fastjson.version>
-        <guava.version>28.1-jre</guava.version>
+        <guava.version>28.2-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>2.10.2</jedis.version>
         <jsoup.version>1.12.1</jsoup.version>
@@ -336,7 +336,7 @@
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
-            <version>4.0.0-RC3</version>
+            <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -344,7 +344,7 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>4.1.1</version>
+            <version>4.1.2</version>
         </dependency>
 
 
@@ -358,7 +358,7 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
-            <version>4.1.1</version>
+            <version>4.1.2</version>
         </dependency>
 
         <dependency>
