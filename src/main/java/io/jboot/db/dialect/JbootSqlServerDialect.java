@@ -17,6 +17,7 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.SqlServerDialect;
 import io.jboot.db.model.Column;
+import io.jboot.db.model.Join;
 import io.jboot.exception.JbootException;
 
 import java.util.List;
@@ -26,9 +27,9 @@ public class JbootSqlServerDialect extends SqlServerDialect implements IJbootMod
 
 
     @Override
-    public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
+    public String forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
 
-        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table, loadColumns, columns, orderBy, ' ');
+        StringBuilder sqlBuilder = DialectKit.forFindByColumns(joins, table, loadColumns, columns, orderBy, ' ');
 
         if (limit == null) {
             return sqlBuilder.toString();
@@ -67,7 +68,7 @@ public class JbootSqlServerDialect extends SqlServerDialect implements IJbootMod
 
     @Override
     public String forDeleteByColumns(String table, List<Column> columns) {
-        return DialectKit.forDeleteByColumns(table,columns,' ');
+        return DialectKit.forDeleteByColumns(table, columns, ' ');
     }
 
 
@@ -78,8 +79,8 @@ public class JbootSqlServerDialect extends SqlServerDialect implements IJbootMod
 
 
     @Override
-    public String forPaginateFrom(String table, List<Column> columns, String orderBy) {
-        return DialectKit.forPaginateFrom(table, columns, orderBy, ' ');
+    public String forPaginateFrom(List<Join> joins, String table, List<Column> columns, String orderBy) {
+        return DialectKit.forPaginateFrom(joins, table, columns, orderBy, ' ');
     }
 
 

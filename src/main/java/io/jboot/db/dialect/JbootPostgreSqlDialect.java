@@ -17,6 +17,7 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect;
 import io.jboot.db.model.Column;
+import io.jboot.db.model.Join;
 import io.jboot.exception.JbootException;
 
 import java.util.List;
@@ -26,8 +27,8 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
 
     @Override
-    public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table, loadColumns, columns, orderBy, '"');
+    public String forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
+        StringBuilder sqlBuilder = DialectKit.forFindByColumns(joins, table, loadColumns, columns, orderBy, '"');
 
         if (limit == null) {
             return sqlBuilder.toString();
@@ -66,8 +67,8 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
 
     @Override
-    public String forPaginateFrom(String table, List<Column> columns, String orderBy) {
-        return DialectKit.forPaginateFrom(table, columns, orderBy, '"');
+    public String forPaginateFrom(List<Join> joins,String table, List<Column> columns, String orderBy) {
+        return DialectKit.forPaginateFrom(joins, table, columns, orderBy, '"');
     }
 
 

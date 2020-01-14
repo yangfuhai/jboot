@@ -385,12 +385,12 @@ public class Columns implements Serializable {
      */
     public String toMysqlSql() {
         JbootMysqlDialect dialect = new JbootMysqlDialect();
-        return dialect.forFindByColumns("table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null,"table", "*", getList(), null, null);
     }
 
     public String toSqlServerSql() {
         JbootSqlServerDialect dialect = new JbootSqlServerDialect();
-        return dialect.forFindByColumns("table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null,"table", "*", getList(), null, null);
     }
 
     @Override

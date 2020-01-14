@@ -113,7 +113,7 @@ public class JbootDbPro extends DbPro {
 
     public List<Record> find(String tableName, Columns columns, String orderBy, Object limit) {
         IJbootModelDialect dialect = (IJbootModelDialect) getConfig().getDialect();
-        String sql = dialect.forFindByColumns(tableName, "*", columns.getList(), orderBy, limit);
+        String sql = dialect.forFindByColumns(null,tableName, "*", columns.getList(), orderBy, limit);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 

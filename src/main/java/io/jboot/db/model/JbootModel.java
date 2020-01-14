@@ -47,31 +47,46 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected List<Join> joins = null;
 
     public Joiner<M> leftJoin(String table) {
-        return joining(Join.TYPE_LEFT, table);
+        return joining(Join.TYPE_LEFT, table, true);
     }
 
+    public Joiner<M> leftJoin(String table, boolean effective) {
+        return joining(Join.TYPE_LEFT, table, effective);
+    }
 
     public Joiner<M> rightJoin(String table) {
-        return joining(Join.TYPE_RIGHT, table);
+        return joining(Join.TYPE_RIGHT, table, true);
+    }
+
+    public Joiner<M> rightJoin(String table, boolean effective) {
+        return joining(Join.TYPE_RIGHT, table, effective);
     }
 
 
     public Joiner<M> innerJoin(String table) {
-        return joining(Join.TYPE_INNER, table);
+        return joining(Join.TYPE_INNER, table, true);
+    }
+
+    public Joiner<M> innerJoin(String table, boolean effective) {
+        return joining(Join.TYPE_INNER, table, effective);
     }
 
 
     public Joiner<M> fullJoin(String table) {
-        return joining(Join.TYPE_FULL, table);
+        return joining(Join.TYPE_FULL, table, true);
+    }
+
+    public Joiner<M> fullJoin(String table, boolean effective) {
+        return joining(Join.TYPE_FULL, table, effective);
     }
 
 
-    protected Joiner<M> joining(String type, String table) {
+    protected Joiner<M> joining(String type, String table, boolean effective) {
         M model = joins == null ? copy() : (M) this;
         if (joins == null) {
             joins = new LinkedList<>();
         }
-        Join join = new Join(type, table);
+        Join join = new Join(type, table, effective);
         this.joins.add(join);
         return new Joiner<>(model, join);
     }
@@ -398,7 +413,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public M findFirstByColumns(Columns columns, String orderby) {
-        String sql = _getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), orderby, 1);
+        String sql = _getDialect().forFindByColumns(joins, _getTableName(), "*", columns.getList(), orderby, 1);
         return columns.isEmpty() ? findFirst(sql) : findFirst(sql, columns.getValueArray());
     }
 
@@ -474,7 +489,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
-        String sql = _getDialect().forFindByColumns(_getTableName(), "*", columns.getList(), orderBy, count);
+        String sql = _getDialect().forFindByColumns(joins, _getTableName(), "*", columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 
@@ -516,7 +531,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy) {
         String selectPartSql = _getDialect().forPaginateSelect("*");
-        String fromPartSql = _getDialect().forPaginateFrom(_getTableName(), columns.getList(), orderBy);
+        String fromPartSql = _getDialect().forPaginateFrom(joins, _getTableName(), columns.getList(), orderBy);
 
         return columns.isEmpty()
                 ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)

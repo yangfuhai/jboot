@@ -17,6 +17,7 @@ package io.jboot.db.dialect;
 
 import io.jboot.db.model.Column;
 import io.jboot.db.model.Group;
+import io.jboot.db.model.Join;
 import io.jboot.db.model.Or;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
@@ -141,13 +142,15 @@ public class DialectKit {
         sqlBuilder.append(" ? AND ?");
     }
 
-    public static StringBuilder forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, char separator) {
+    public static StringBuilder forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, char separator) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT ");
         sqlBuilder.append(loadColumns)
                 .append(" FROM ")
                 .append(separator)
                 .append(table)
                 .append(separator);
+
+        buildJoinSql(sqlBuilder, joins, separator);
 
         buildWhereSql(sqlBuilder, columns, separator);
 
@@ -158,12 +161,14 @@ public class DialectKit {
         return sqlBuilder;
     }
 
-    public static String forPaginateFrom(String table, List<Column> columns, String orderBy, char separator) {
+    public static String forPaginateFrom(List<Join> joins, String table, List<Column> columns, String orderBy, char separator) {
         StringBuilder sqlBuilder = new StringBuilder(" FROM ")
                 .append(separator)
                 .append(table)
                 .append(separator);
 
+
+        buildJoinSql(sqlBuilder, joins, separator);
         buildWhereSql(sqlBuilder, columns, separator);
 
         if (StrUtil.isNotBlank(orderBy)) {
@@ -172,6 +177,23 @@ public class DialectKit {
 
         return sqlBuilder.toString();
     }
+
+    private static void buildJoinSql(StringBuilder sqlBuilder, List<Join> joins, char separator) {
+        if (joins == null || joins.isEmpty()) {
+            return;
+        }
+        for (Join join : joins) {
+            if (join.isEffective()) {
+                sqlBuilder.append(join.getType())
+                        .append(separator)
+                        .append(join.getTable())
+                        .append(separator)
+                        .append(" ON ")
+                        .append(join.getOn());
+            }
+        }
+    }
+
 
     public static String forFindCountByColumns(String table, List<Column> columns, char separator) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT count(*) FROM ")

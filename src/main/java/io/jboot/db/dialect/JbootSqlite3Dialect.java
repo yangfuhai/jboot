@@ -17,6 +17,7 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.Sqlite3Dialect;
 import io.jboot.db.model.Column;
+import io.jboot.db.model.Join;
 
 import java.util.List;
 
@@ -25,8 +26,8 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
 
 
     @Override
-    public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table, loadColumns, columns, orderBy, ' ');
+    public String forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
+        StringBuilder sqlBuilder = DialectKit.forFindByColumns(joins, table, loadColumns, columns, orderBy, ' ');
 
         if (limit != null) {
             sqlBuilder.append(" LIMIT " + limit);
@@ -42,7 +43,7 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
 
     @Override
     public String forDeleteByColumns(String table, List<Column> columns) {
-        return DialectKit.forDeleteByColumns(table,columns,' ');
+        return DialectKit.forDeleteByColumns(table, columns, ' ');
     }
 
 
@@ -53,8 +54,8 @@ public class JbootSqlite3Dialect extends Sqlite3Dialect implements IJbootModelDi
 
 
     @Override
-    public String forPaginateFrom(String table, List<Column> columns, String orderBy) {
-        return DialectKit.forPaginateFrom(table, columns, orderBy, ' ');
+    public String forPaginateFrom(List<Join> joins, String table, List<Column> columns, String orderBy) {
+        return DialectKit.forPaginateFrom(joins, table, columns, orderBy, ' ');
     }
 
 

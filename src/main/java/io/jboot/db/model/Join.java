@@ -21,18 +21,20 @@ package io.jboot.db.model;
  */
 public class Join {
 
-    static final String TYPE_LEFT = "LEFT";
-    static final String TYPE_RIGHT = "RIGHT";
-    static final String TYPE_INNER = "INNER";
-    static final String TYPE_FULL = "FULL";
+    static final String TYPE_LEFT = " LEFT JOIN ";
+    static final String TYPE_RIGHT = " RIGHT JOIN ";
+    static final String TYPE_INNER = " INNER JOIN ";
+    static final String TYPE_FULL = " FULL JOIN ";
 
     private String type;
     private String table;
     private String on;
+    private boolean effective;
 
-    public Join(String type,String table) {
+    public Join(String type,String table,boolean effective) {
         this.type = type;
         this.table = table;
+        this.effective = effective;
     }
 
     public String getType() {
@@ -59,4 +61,11 @@ public class Join {
         this.on = on;
     }
 
+    public boolean isEffective() {
+        return effective;
+    }
+
+    public void setEffective(boolean effective) {
+        this.effective = effective;
+    }
 }
