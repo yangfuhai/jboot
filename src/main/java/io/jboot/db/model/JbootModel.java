@@ -44,6 +44,38 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private static String column_modified = config.getColumnModified();
     private static boolean idCacheEnable = config.isIdCacheEnable();
 
+    protected List<Join> joins = null;
+
+    public Joiner<M> leftJoin(String table) {
+        return joining(Join.TYPE_LEFT, table);
+    }
+
+
+    public Joiner<M> rightJoin(String table) {
+        return joining(Join.TYPE_RIGHT, table);
+    }
+
+
+    public Joiner<M> innerJoin(String table) {
+        return joining(Join.TYPE_INNER, table);
+    }
+
+
+    public Joiner<M> fullJoin(String table) {
+        return joining(Join.TYPE_FULL, table);
+    }
+
+
+    protected Joiner<M> joining(String type, String table) {
+        M model = joins == null ? copy() : (M) this;
+        if (joins == null) {
+            joins = new LinkedList<>();
+        }
+        Join join = new Join(type, table);
+        this.joins.add(join);
+        return new Joiner<>(model, join);
+    }
+
 
     /**
      * copy new model with all attrs
