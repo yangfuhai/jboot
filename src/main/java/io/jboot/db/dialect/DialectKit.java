@@ -73,27 +73,40 @@ public class DialectKit {
             else if (Column.LOGIC_IN.equals(curent.getLogic()) || Column.LOGIC_NOT_IN.equals(curent.getLogic())) {
                 appendInLogic(sqlBuilder, curent, separator);
             }
-
             // between logic
             else if (Column.LOGIC_BETWEEN.equals(curent.getLogic()) || Column.LOGIC_NOT_BETWEEN.equals(curent.getLogic())) {
                 appendBetweenLogic(sqlBuilder, curent, separator);
             }
             // others
             else {
-                sqlBuilder.append(separator)
-                        .append(curent.getName())
-                        .append(separator)
-                        .append(" ")
-                        .append(curent.getLogic());
+
+                appendColumnName(sqlBuilder, curent, separator);
 
                 if (curent.hasPara()) {
-                    sqlBuilder.append(" ?");
+                    sqlBuilder.append("?");
                 }
             }
 
             appendLinkString(sqlBuilder, next);
         }
     }
+
+    private static void appendColumnName(StringBuilder sqlBuilder, Column column, char separator) {
+        if (column.getName().contains(".")) {
+            sqlBuilder.append(column.getName())
+                    .append(" ")
+                    .append(column.getLogic())
+                    .append(" ");
+        } else {
+            sqlBuilder.append(separator)
+                    .append(column.getName())
+                    .append(separator)
+                    .append(" ")
+                    .append(column.getLogic())
+                    .append(" ");
+        }
+    }
+
 
     private static void appendLinkString(StringBuilder sqlBuilder, Column next) {
         if (next == null) {
@@ -116,19 +129,18 @@ public class DialectKit {
 
 
     public static void appendInLogic(StringBuilder sqlBuilder, Column column, char separator) {
-        sqlBuilder.append(separator)
-                .append(column.getName())
-                .append(separator)
-                .append(" ")
-                .append(column.getLogic())
-                .append(" ");
+
+        appendColumnName(sqlBuilder, column, separator);
 
         sqlBuilder.append("(");
         Object[] values = (Object[]) column.getValue();
         for (int i = 0; i < values.length; i++) {
-            sqlBuilder.append("?,");
+            sqlBuilder.append("?");
+            if (i != values.length - 1) {
+                sqlBuilder.append(",");
+            }
         }
-        sqlBuilder.deleteCharAt(sqlBuilder.length() - 1).append(")");
+        sqlBuilder.append(")");
     }
 
 

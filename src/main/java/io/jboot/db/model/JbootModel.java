@@ -83,11 +83,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     protected Joiner<M> joining(String type, String table, boolean effective) {
         M model = joins == null ? copy() : (M) this;
-        if (joins == null) {
-            joins = new LinkedList<>();
+        if (model.joins == null) {
+            model.joins = new LinkedList<>();
         }
         Join join = new Join(type, table, effective);
-        this.joins.add(join);
+        model.joins.add(join);
         return new Joiner<>(model, join);
     }
 
@@ -413,7 +413,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public M findFirstByColumns(Columns columns, String orderby) {
-        String sql = _getDialect().forFindByColumns(joins, _getTableName(), "*", columns.getList(), orderby, 1);
+        return findFirstByColumns(columns, orderby, "*");
+    }
+
+    public M findFirstByColumns(Columns columns, String orderby, String loadColumns) {
+        String sql = _getDialect().forFindByColumns(joins, _getTableName(), loadColumns, columns.getList(), orderby, 1);
         return columns.isEmpty() ? findFirst(sql) : findFirst(sql, columns.getValueArray());
     }
 
@@ -487,9 +491,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return findListByColumns(columns, null, count);
     }
 
-
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
-        String sql = _getDialect().forFindByColumns(joins, _getTableName(), "*", columns.getList(), orderBy, count);
+        return findListByColumns(columns, orderBy, count, "*");
+    }
+
+    public List<M> findListByColumns(Columns columns, String orderBy, Integer count, String loadColumns) {
+        String sql = _getDialect().forFindByColumns(joins, _getTableName(), loadColumns, columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 
@@ -530,7 +537,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy) {
-        String selectPartSql = _getDialect().forPaginateSelect("*");
+        return paginateByColumns(pageNumber, pageSize, columns, orderBy, "*");
+    }
+
+    public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy, String loadColumns) {
+        String selectPartSql = _getDialect().forPaginateSelect(loadColumns);
         String fromPartSql = _getDialect().forPaginateFrom(joins, _getTableName(), columns.getList(), orderBy);
 
         return columns.isEmpty()
