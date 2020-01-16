@@ -19,7 +19,7 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
-import io.jboot.db.dialect.IJbootModelDialect;
+import io.jboot.db.dialect.JbootDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 
@@ -376,7 +376,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return key.toString();
     }
 
-    protected IJbootModelDialect _getDialect() {
+    protected JbootDialect _getDialect() {
         Config config = _getConfig();
         if (config == null) {
             throw new JbootException(
@@ -384,7 +384,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                             , _getUsefulClass().getName()));
 
         }
-        return (IJbootModelDialect) config.getDialect();
+        return (JbootDialect) config.getDialect();
     }
 
 

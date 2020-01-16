@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.db.dialect;
+package io.jboot.db.model;
 
-import io.jboot.db.model.*;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
 
@@ -26,7 +25,7 @@ import java.util.List;
  * @version V1.0
  * @Package io.jboot.db.dialect
  */
-public class DialectKit {
+public class SqlBuilderUtil {
 
     public static void buildMysqlWhereSql(StringBuilder sqlBuilder, List<Column> columns) {
         buildWhereSql(sqlBuilder, columns, '`');
@@ -35,7 +34,7 @@ public class DialectKit {
     public static String forDeleteByColumns(String table, List<Column> columns, char separator) {
         StringBuilder sql = new StringBuilder(45);
         sql.append("DELETE FROM ").append(separator).append(table).append(separator);
-        DialectKit.buildWhereSql(sql, columns, ' ');
+        SqlBuilderUtil.buildWhereSql(sql, columns, ' ');
         return sql.toString();
     }
 

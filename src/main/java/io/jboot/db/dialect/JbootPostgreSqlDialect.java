@@ -17,18 +17,19 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect;
 import io.jboot.db.model.Column;
+import io.jboot.db.model.SqlBuilderUtil;
 import io.jboot.db.model.Join;
 import io.jboot.exception.JbootException;
 
 import java.util.List;
 
 
-public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootModelDialect {
+public class JbootPostgreSqlDialect extends PostgreSqlDialect implements JbootDialect {
 
 
     @Override
     public String forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = DialectKit.forFindByColumns(joins, table, loadColumns, columns, orderBy, '"');
+        StringBuilder sqlBuilder = SqlBuilderUtil.forFindByColumns(joins, table, loadColumns, columns, orderBy, '"');
 
         if (limit == null) {
             return sqlBuilder.toString();
@@ -51,12 +52,12 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
     @Override
     public String forFindCountByColumns(String table, List<Column> columns) {
-        return DialectKit.forFindCountByColumns(table, columns, '"');
+        return SqlBuilderUtil.forFindCountByColumns(table, columns, '"');
     }
 
     @Override
     public String forDeleteByColumns(String table, List<Column> columns) {
-        return DialectKit.forDeleteByColumns(table,columns,'"');
+        return SqlBuilderUtil.forDeleteByColumns(table,columns,'"');
     }
 
 
@@ -68,7 +69,7 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
     @Override
     public String forPaginateFrom(List<Join> joins,String table, List<Column> columns, String orderBy) {
-        return DialectKit.forPaginateFrom(joins, table, columns, orderBy, '"');
+        return SqlBuilderUtil.forPaginateFrom(joins, table, columns, orderBy, '"');
     }
 
 

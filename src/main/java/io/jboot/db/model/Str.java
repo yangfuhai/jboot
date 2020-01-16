@@ -16,7 +16,7 @@
 package io.jboot.db.model;
 
 
-public class Str extends Column {
+class Str extends Column {
 
     private String string;
 
