@@ -15,10 +15,7 @@
  */
 package io.jboot.db.dialect;
 
-import io.jboot.db.model.Column;
-import io.jboot.db.model.Group;
-import io.jboot.db.model.Join;
-import io.jboot.db.model.Or;
+import io.jboot.db.model.*;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
 
@@ -64,6 +61,10 @@ public class DialectKit {
             // or
             if (curent instanceof Or) {
                 continue;
+            }
+            // string
+            else if (curent instanceof Str){
+                sqlBuilder.append(((Str)curent).getString());
             }
             // group
             else if (curent instanceof Group) {

@@ -232,7 +232,16 @@ public class Columns implements Serializable {
 
 
     public Columns group(Columns columns) {
-        this.add(new Group(columns));
+        if (!columns.isEmpty()) {
+            this.add(new Group(columns));
+        }
+        return this;
+    }
+
+    public Columns string(String string) {
+        if (StrUtil.isNotBlank(string)) {
+            this.add(new Str(string));
+        }
         return this;
     }
 
@@ -249,7 +258,7 @@ public class Columns implements Serializable {
             if (value != null) {
                 this.add(Column.create(name, value, logic));
                 if (i != values.length - 1) {
-                    or();
+                    this.add(new Or());
                 }
             }
         }
@@ -293,30 +302,44 @@ public class Columns implements Serializable {
         for (Column column : columns) {
             if (column instanceof Or) {
                 s.append("or").append("-");
-                continue;
-            }
-            if (column instanceof Group) {
+            } else if (column instanceof Group) {
                 s.append("(");
                 buildCacheKey(s, ((Group) column).getColumns().getList());
                 s.append(")-");
-                continue;
-            }
-            s.append(column.getName())
-                    .append("-")
-                    .append(getLogicStr(column.getLogic()))
-                    .append("-");
-            Object value = column.getValue();
-            if (value == null) {
-                continue;
-            }
-            if (value.getClass().isArray()) {
-                s.append(array2String((Object[]) column.getValue()));
+            } else if (column instanceof Str) {
+                s.append(deleteWhitespace(((Str) column).getString())).append("-");
             } else {
-                s.append(column.getValue());
+                s.append(column.getName())
+                        .append("-")
+                        .append(getLogicStr(column.getLogic()))
+                        .append("-");
+                Object value = column.getValue();
+                if (value != null) {
+                    if (value.getClass().isArray()) {
+                        s.append(array2String((Object[]) column.getValue()));
+                    } else {
+                        s.append(column.getValue());
+                    }
+                    s.append("-");
+                }
             }
-            s.append("-");
         }
         s.deleteCharAt(s.length() - 1);
+    }
+
+    private static String deleteWhitespace(String str) {
+        final int strLen = str.length();
+        final char[] chs = new char[strLen];
+        int count = 0;
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                chs[count++] = str.charAt(i);
+            }
+        }
+        if (count == strLen) {
+            return str;
+        }
+        return new String(chs, 0, count);
     }
 
     private static String array2String(Object[] a) {
@@ -385,12 +408,12 @@ public class Columns implements Serializable {
      */
     public String toMysqlSql() {
         JbootMysqlDialect dialect = new JbootMysqlDialect();
-        return dialect.forFindByColumns(null,"table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null, "table", "*", getList(), null, null);
     }
 
     public String toSqlServerSql() {
         JbootSqlServerDialect dialect = new JbootSqlServerDialect();
-        return dialect.forFindByColumns(null,"table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null, "table", "*", getList(), null, null);
     }
 
     @Override
@@ -406,6 +429,7 @@ public class Columns implements Serializable {
         System.out.println(columns.getCacheKey());
 
         columns.ge("age", 10);
+        columns.string("user.id != 1");
         System.out.println(columns.getCacheKey());
 
         columns.group(Columns.create().likeAppendPercent("name", "lisi").eq("age", 20));
