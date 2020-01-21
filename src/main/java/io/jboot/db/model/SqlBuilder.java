@@ -25,7 +25,7 @@ import java.util.List;
  * @version V1.0
  * @Package io.jboot.db.dialect
  */
-public class SqlBuilderUtil {
+public class SqlBuilder {
 
     public static void buildMysqlWhereSql(StringBuilder sqlBuilder, List<Column> columns) {
         buildWhereSql(sqlBuilder, columns, '`');
@@ -34,7 +34,7 @@ public class SqlBuilderUtil {
     public static String forDeleteByColumns(String table, List<Column> columns, char separator) {
         StringBuilder sql = new StringBuilder(45);
         sql.append("DELETE FROM ").append(separator).append(table).append(separator);
-        SqlBuilderUtil.buildWhereSql(sql, columns, ' ');
+        SqlBuilder.buildWhereSql(sql, columns, ' ');
         return sql.toString();
     }
 
