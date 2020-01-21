@@ -15,9 +15,24 @@
  */
 package io.jboot.support.sentinel;
 
+import com.alibaba.csp.sentinel.cluster.ClusterStateManager;
+
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/1/7
  */
 public class SentinelManager {
+
+    private SentinelManager(){}
+
+    private static SentinelManager me = new SentinelManager();
+
+    public static SentinelManager me(){
+        return me;
+    }
+
+    public void init(){
+        ClusterStateManager.applyState(ClusterStateManager.CLUSTER_CLIENT);
+
+    }
 }
