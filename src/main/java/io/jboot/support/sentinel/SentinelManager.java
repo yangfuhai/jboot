@@ -15,7 +15,11 @@
  */
 package io.jboot.support.sentinel;
 
-import com.alibaba.csp.sentinel.cluster.ClusterStateManager;
+import com.alibaba.csp.sentinel.util.AppNameUtil;
+import io.jboot.app.JbootApplicationConfig;
+import io.jboot.app.config.JbootConfigManager;
+
+import java.lang.reflect.Field;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -32,7 +36,15 @@ public class SentinelManager {
     }
 
     public void init(){
-        ClusterStateManager.applyState(ClusterStateManager.CLUSTER_CLIENT);
+
+        try {
+            JbootApplicationConfig appConfig = JbootConfigManager.me().get(JbootApplicationConfig.class);
+            Field field = AppNameUtil.class.getDeclaredField("appName");
+            field.setAccessible(true);
+            field.set(null,appConfig.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }
