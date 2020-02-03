@@ -1,3 +1,18 @@
+jboot v3.0.0-rc.2:
+新增：添加 Join 的 sql 查询操作
+新增：新增 Columns 的 string() 方法，方便自由添加相应的 sql
+优化：完善对 Sentinel 的相关测试
+优化：重命名 IJbootModelDialect 为 JbootDialect
+优化：重命名 Columns 的相关方法：not_in() 为 notIn() 、 is_null() 为 isNull() 、 is_not_null() 为 isNotNull()
+优化：重命名 DialectKit 为 SqlBuilder
+优化：升级Jboot的相关依赖
+    - sharding-jdbc:4.0.0
+    - metrics:4.1.2
+    - guava:28.2
+    - HikariCP:3.4.2
+
+
+
 jboot v3.0.0-rc.1:
 新增：Columns 查询新增 group 以及 notBetween 的功能
 新增：新增对 sentinel 分布式限流、降级的初步支持
