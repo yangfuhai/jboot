@@ -171,6 +171,7 @@ public class JbootHttpSession implements HttpSession {
         dataChanged = true;
     }
 
+    @Override
     public boolean isNew() {
         return Boolean.TRUE;
     }

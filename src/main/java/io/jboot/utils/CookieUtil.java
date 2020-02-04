@@ -151,7 +151,7 @@ public class CookieUtil {
             return null;
         }
 
-        String cookieStrings[] = cookieValue.split(COOKIE_SEPARATOR);
+        String[] cookieStrings = cookieValue.split(COOKIE_SEPARATOR);
         if (cookieStrings == null || cookieStrings.length != 4) {
             return null;
         }
