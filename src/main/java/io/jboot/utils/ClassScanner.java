@@ -49,7 +49,7 @@ public class ClassScanner {
 
     static {
         excludeJars.add("jfinal-");
-        excludeJars.add("cos-2017.5.jar");
+        excludeJars.add("cos-20");
         excludeJars.add("cglib-");
         excludeJars.add("undertow-");
         excludeJars.add("xnio-");
@@ -66,7 +66,6 @@ public class ClassScanner {
         excludeJars.add("jboss-");
         excludeJars.add("motan-");
         excludeJars.add("commons-pool");
-        excludeJars.add("commons-pool2");
         excludeJars.add("commons-beanutils");
         excludeJars.add("commons-codec");
         excludeJars.add("commons-collections");
@@ -129,6 +128,7 @@ public class ClassScanner {
         excludeJars.add("validation-");
         excludeJars.add("httpclient-");
         excludeJars.add("httpcore-");
+        excludeJars.add("httpmime-");
         excludeJars.add("jcip-");
         excludeJars.add("jcl-");
         excludeJars.add("microprofile-");
