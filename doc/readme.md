@@ -9,7 +9,7 @@
 - [JFinalConfig](./docs/jfinalConfig.md)
 - [WebSocket](./docs/websocket.md)
 - [MVC](./docs/mvc.md)
-- [数据库](./docs/db.md)
+- [数据库操作](./docs/db.md)
 - [缓存](./docs/cache.md)
 - [RPC远程调用](./docs/rpc.md)
 - [MQ消息队列](./docs/mq.md)
