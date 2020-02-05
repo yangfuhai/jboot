@@ -137,6 +137,7 @@ public class JbootCron4jPlugin implements IPlugin {
         return addTask(cron, task, true, true);
     }
 
+    @Override
     public boolean start() {
         for (JbootCron4jPlugin.TaskInfo taskInfo : taskInfoList) {
             taskInfo.schedule();
@@ -147,6 +148,7 @@ public class JbootCron4jPlugin implements IPlugin {
         return true;
     }
 
+    @Override
     public boolean stop() {
         for (JbootCron4jPlugin.TaskInfo taskInfo : taskInfoList) {
             taskInfo.stop();

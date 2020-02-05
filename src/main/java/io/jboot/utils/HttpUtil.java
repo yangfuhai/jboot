@@ -207,7 +207,9 @@ public class HttpUtil {
     public static String upload(String url, Map<String, Object> paras, Map<String, String> headers, File file) {
 
         Map<String, Object> newParas = new HashMap();
-        if (paras != null) newParas.putAll(paras);
+        if (paras != null) {
+            newParas.putAll(paras);
+        }
 
         newParas.put("uploadFile", file);
 

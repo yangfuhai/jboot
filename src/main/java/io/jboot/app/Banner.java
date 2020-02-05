@@ -91,16 +91,18 @@ class Banner {
     }
 
     private static void close(InputStream is, OutputStream os) {
-        if (is != null)
+        if (is != null) {
             try {
                 is.close();
             } catch (IOException e) {
             }
-        if (os != null)
+        }
+        if (os != null) {
             try {
                 os.close();
             } catch (IOException e) {
             }
+        }
     }
 
 }

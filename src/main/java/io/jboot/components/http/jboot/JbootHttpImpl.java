@@ -167,8 +167,9 @@ public class JbootHttpImpl implements JbootHttp {
 
 
     private static void configConnection(HttpURLConnection connection, JbootHttpRequest request) throws ProtocolException {
-        if (connection == null)
+        if (connection == null) {
             return;
+        }
         connection.setReadTimeout(request.getReadTimeOut());
         connection.setConnectTimeout(request.getConnectTimeOut());
         connection.setRequestMethod(request.getMethod());
@@ -240,18 +241,22 @@ public class JbootHttpImpl implements JbootHttp {
     }
 
     private static X509TrustManager trustAnyTrustManager = new X509TrustManager() {
+        @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) {
         }
 
+        @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType) {
         }
 
+        @Override
         public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
     };
 
     private static HostnameVerifier hnv = new HostnameVerifier() {
+        @Override
         public boolean verify(String hostname, SSLSession session) {
             return true;
         }

@@ -50,10 +50,14 @@ public class JbootCachesEvictInterceptor implements Interceptor {
 
         for (CacheEvict evict : evicts) {
             if (evict.beforeInvocation()) {
-                if (beforeInvocations == null) beforeInvocations = new ArrayList<>();
+                if (beforeInvocations == null) {
+                    beforeInvocations = new ArrayList<>();
+                }
                 beforeInvocations.add(evict);
             } else {
-                if (afterInvocations == null) afterInvocations = new ArrayList<>();
+                if (afterInvocations == null) {
+                    afterInvocations = new ArrayList<>();
+                }
                 afterInvocations.add(evict);
             }
         }

@@ -76,7 +76,9 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
             list = redisCacheImpl.getKeys(cacheName);
             if (list == null) {
                 synchronized (cacheName.intern()) {
-                    if (list == null) list = new ArrayList();
+                    if (list == null) {
+                        list = new ArrayList();
+                    }
                 }
             }
             keysCache.put(cacheName, list);

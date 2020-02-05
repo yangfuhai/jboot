@@ -28,6 +28,7 @@ public class JbootXmlRender extends JbootRender {
         super(view);
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }

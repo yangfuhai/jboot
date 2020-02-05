@@ -59,7 +59,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
             }
         }, redis.keysToBytesArray(channels));
 
-        dequeueThread = new Thread(this);
+        dequeueThread = new Thread(this,"redis-dequeue-thread");
         dequeueThread.start();
     }
 

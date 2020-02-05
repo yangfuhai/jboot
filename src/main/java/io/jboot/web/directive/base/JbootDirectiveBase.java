@@ -90,7 +90,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public Integer getParaToInt(String key, Scope scope) {
         Object object = getPara(key, scope, null);
-        if (object == null || object instanceof Integer) return (Integer) object;
+        if (object == null || object instanceof Integer) {
+            return (Integer) object;
+        }
         return Integer.valueOf(object.toString());
     }
 
@@ -101,7 +103,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public Integer getParaToInt(int index, Scope scope) {
         Object object = getPara(index, scope, null);
-        if (object == null || object instanceof Integer) return (Integer) object;
+        if (object == null || object instanceof Integer) {
+            return (Integer) object;
+        }
         return Integer.valueOf(object.toString());
     }
 
@@ -113,7 +117,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public Long getParaToLong(String key, Scope scope) {
         Object object = getPara(key, scope, null);
-        if (object == null || object instanceof Long) return (Long) object;
+        if (object == null || object instanceof Long) {
+            return (Long) object;
+        }
         return Long.valueOf(object.toString());
     }
 
@@ -124,7 +130,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public Long getParaToLong(int index, Scope scope) {
         Object object = getPara(index, scope, null);
-        if (object == null || object instanceof Long) return (Long) object;
+        if (object == null || object instanceof Long) {
+            return (Long) object;
+        }
         return Long.valueOf(object.toString());
     }
 
@@ -135,7 +143,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public Boolean getParaToBool(String key, Scope scope) {
         Object object = getPara(key, scope, null);
-        if (object == null || object instanceof Boolean) return (Boolean) object;
+        if (object == null || object instanceof Boolean) {
+            return (Boolean) object;
+        }
         return Boolean.valueOf(object.toString());
     }
 
@@ -146,7 +156,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public Boolean getParaToBool(int index, Scope scope) {
         Object object = getPara(index, scope, null);
-        if (object == null || object instanceof Boolean) return (Boolean) object;
+        if (object == null || object instanceof Boolean) {
+            return (Boolean) object;
+        }
         return Boolean.valueOf(object.toString());
     }
 
@@ -157,7 +169,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public BigInteger getParaToBigInteger(String key, Scope scope) {
         Object object = getPara(key, scope, null);
-        if (object == null || object instanceof BigInteger) return (BigInteger) object;
+        if (object == null || object instanceof BigInteger) {
+            return (BigInteger) object;
+        }
         return new BigInteger(object.toString());
     }
 
@@ -168,7 +182,9 @@ public abstract class JbootDirectiveBase extends Directive {
 
     public BigInteger getParaToBigInteger(int index, Scope scope) {
         Object object = getPara(index, scope, null);
-        if (object == null || object instanceof BigInteger) return (BigInteger) object;
+        if (object == null || object instanceof BigInteger) {
+            return (BigInteger) object;
+        }
         return new BigInteger(object.toString());
     }
 

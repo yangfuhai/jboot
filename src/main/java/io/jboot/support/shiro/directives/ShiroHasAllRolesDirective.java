@@ -48,15 +48,18 @@ public class ShiroHasAllRolesDirective extends JbootShiroDirectiveBase {
     public void onRender(Env env, Scope scope, Writer writer) {
         if (getSubject() != null && ArrayUtil.isNotEmpty(exprList.getExprArray())) {
             List<String> roles = new ArrayList<String>();
-            for (Expr expr : exprList.getExprArray())
+            for (Expr expr : exprList.getExprArray()) {
                 roles.add(expr.eval(scope).toString());
+            }
 
-            if (getSubject().hasAllRoles(roles))
+            if (getSubject().hasAllRoles(roles)) {
                 renderBody(env, scope, writer);
+            }
 
         }
     }
 
+    @Override
     public boolean hasEnd() {
         return true;
     }

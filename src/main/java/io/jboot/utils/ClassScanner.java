@@ -205,12 +205,16 @@ public class ClassScanner {
     static {
         String scanJarPrefx = JbootConfigManager.me().getConfigValue("jboot.app.scanner.scanJarPrefix");
         if (scanJarPrefx != null) {
-            for (String prefix : scanJarPrefx.split(",")) addScanJarPrefix(prefix.trim());
+            for (String prefix : scanJarPrefx.split(",")) {
+                addScanJarPrefix(prefix.trim());
+            }
         }
 
         String unScanJarPrefix = JbootConfigManager.me().getConfigValue("jboot.app.scanner.unScanJarPrefix");
         if (unScanJarPrefix != null) {
-            for (String prefix : unScanJarPrefix.split(",")) addUnscanJarPrefix(prefix.trim());
+            for (String prefix : unScanJarPrefix.split(",")) {
+                addUnscanJarPrefix(prefix.trim());
+            }
         }
     }
 
@@ -361,11 +365,12 @@ public class ClassScanner {
             }
         } catch (IOException e1) {
         } finally {
-            if (jarFile != null)
+            if (jarFile != null) {
                 try {
                     jarFile.close();
                 } catch (IOException e) {
                 }
+            }
         }
     }
 
@@ -388,7 +393,9 @@ public class ClassScanner {
     }
 
     private static void addClass(Class clazz) {
-        if (clazz != null) applicationClassCache.add(clazz);
+        if (clazz != null) {
+            applicationClassCache.add(clazz);
+        }
     }
 
 
@@ -474,9 +481,10 @@ public class ClassScanner {
 
 
     private static void scanClassFile(List<File> fileList, String path) {
-        File files[] = new File(path).listFiles();
-        if (null == files || files.length == 0)
+        File[] files = new File(path).listFiles();
+        if (null == files || files.length == 0) {
             return;
+        }
         for (File file : files) {
             if (file.isDirectory()) {
                 scanClassFile(fileList, file.getAbsolutePath());

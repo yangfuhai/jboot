@@ -52,10 +52,12 @@ public class ShiroNotHasRoleDirective extends JbootShiroDirectiveBase {
                 }
             }
         }
-        if (!hasAnyRole)
+        if (!hasAnyRole) {
             renderBody(env, scope, writer);
+        }
     }
 
+    @Override
     public boolean hasEnd() {
         return true;
     }

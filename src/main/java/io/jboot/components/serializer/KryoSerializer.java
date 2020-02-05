@@ -41,7 +41,9 @@ public class KryoSerializer implements JbootSerializer {
 
     @Override
     public byte[] serialize(Object obj) {
-        if (obj == null) return null;
+        if (obj == null) {
+            return null;
+        }
         Output output = null;
         Kryo kryo = kryoPool.borrow();
         try {
@@ -58,8 +60,9 @@ public class KryoSerializer implements JbootSerializer {
 
     @Override
     public Object deserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0)
+        if (bytes == null || bytes.length == 0) {
             return null;
+        }
         ByteBufferInput input = null;
         Kryo kryo = kryoPool.borrow();
         try {

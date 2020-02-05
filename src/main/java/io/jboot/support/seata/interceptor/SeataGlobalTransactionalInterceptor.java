@@ -36,6 +36,7 @@ public class SeataGlobalTransactionalInterceptor implements Interceptor, FixedIn
     public SeataGlobalTransactionalInterceptor() {
     }
 
+    @Override
     public void intercept(Invocation inv) {
         if (!JbootSeataManager.me().isEnable()) {
             inv.invoke();

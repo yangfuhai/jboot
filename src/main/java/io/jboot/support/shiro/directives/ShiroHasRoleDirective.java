@@ -42,14 +42,18 @@ public class ShiroHasRoleDirective extends JbootShiroDirectiveBase {
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
         boolean hasRole = false;
-        if (getSubject() != null && ArrayUtil.isNotEmpty(exprList.getExprArray()))
-            if (getSubject().hasRole(getPara(0, scope).toString()))
+        if (getSubject() != null && ArrayUtil.isNotEmpty(exprList.getExprArray())) {
+            if (getSubject().hasRole(getPara(0, scope).toString())) {
                 hasRole = true;
+            }
+        }
 
-        if (hasRole)
+        if (hasRole) {
             renderBody(env, scope, writer);
+        }
     }
 
+    @Override
     public boolean hasEnd() {
         return true;
     }

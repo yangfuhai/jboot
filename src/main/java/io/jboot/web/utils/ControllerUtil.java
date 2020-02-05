@@ -32,10 +32,12 @@ public class ControllerUtil {
         ActionKey ak = method.getAnnotation(ActionKey.class);
         if (ak != null) {
             actionKey = ak.value().trim();
-            if ("".equals(actionKey))
+            if ("".equals(actionKey)) {
                 throw new IllegalArgumentException(controllerClass.getName() + "." + methodName + "(): The argument of ActionKey can not be blank.");
-            if (!actionKey.startsWith(SLASH))
+            }
+            if (!actionKey.startsWith(SLASH)) {
                 actionKey = SLASH + actionKey;
+            }
         } else if (methodName.equals("index")) {
             actionKey = controllerKey;
         } else {

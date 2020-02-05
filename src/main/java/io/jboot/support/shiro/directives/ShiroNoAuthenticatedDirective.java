@@ -32,10 +32,12 @@ public class ShiroNoAuthenticatedDirective extends JbootShiroDirectiveBase {
 
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
-        if (getSubject() != null && !getSubject().isAuthenticated())
+        if (getSubject() != null && !getSubject().isAuthenticated()) {
             renderBody(env, scope, writer);
+        }
     }
 
+    @Override
     public boolean hasEnd() {
         return true;
     }

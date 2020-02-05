@@ -50,6 +50,7 @@ public class JbootErrorRender extends Render {
         this.view = view;
     }
 
+    @Override
     public void render() {
         response.setStatus(getErrorCode());
 
@@ -74,14 +75,18 @@ public class JbootErrorRender extends Render {
 
     public String getErrorHtml() {
         int errorCode = getErrorCode();
-        if (errorCode == 404)
+        if (errorCode == 404) {
             return html404;
-        if (errorCode == 401)
+        }
+        if (errorCode == 401) {
             return html401;
-        if (errorCode == 403)
+        }
+        if (errorCode == 403) {
             return html403;
-        if (errorCode == 500)
+        }
+        if (errorCode == 500) {
             return build500ErrorInfo();
+        }
         return "<html><head><title>" + errorCode + " Error</title></head><body bgcolor='white'><center><h1>" + errorCode + " Error</h1></center><hr>" + poweredBy + "</body></html>";
     }
 

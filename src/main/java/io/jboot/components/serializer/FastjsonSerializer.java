@@ -26,7 +26,9 @@ public class FastjsonSerializer implements JbootSerializer {
 
     @Override
     public byte[] serialize(Object obj) {
-        if (obj == null) return null;
+        if (obj == null) {
+            return null;
+        }
         FastJsonCacheObject object = new FastJsonCacheObject(obj.getClass(), obj);
         String string = JSON.toJSONString(object);
         return string.getBytes();
@@ -34,7 +36,9 @@ public class FastjsonSerializer implements JbootSerializer {
 
     @Override
     public Object deserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
         String json = new String(bytes);
         JSONObject jsonObject = JSON.parseObject(json);
         Class clazz = null;

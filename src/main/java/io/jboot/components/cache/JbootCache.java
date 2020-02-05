@@ -22,16 +22,20 @@ import java.util.List;
 
 public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache {
 
+    @Override
     public <T> T get(String cacheName, Object key);
 
+    @Override
     public void put(String cacheName, Object key, Object value);
 
     public void put(String cacheName, Object key, Object value, int liveSeconds);
 
     public List getKeys(String cacheName);
 
+    @Override
     public void remove(String cacheName, Object key);
 
+    @Override
     public void removeAll(String cacheName);
 
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader);

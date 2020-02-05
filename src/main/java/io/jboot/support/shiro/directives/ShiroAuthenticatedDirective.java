@@ -40,6 +40,7 @@ public class ShiroAuthenticatedDirective extends JbootShiroDirectiveBase {
     }
 
 
+    @Override
     public boolean hasEnd() {
         return true;
     }

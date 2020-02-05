@@ -41,6 +41,7 @@ public class JbootShiroCacheManager implements CacheManager {
             .build();
 
 
+    @Override
     public <K, V> Cache<K, V> getCache(String name) throws CacheException {
         try {
             return guavaCache.get(name, () -> new JbootShiroCache(name));

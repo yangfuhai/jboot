@@ -56,6 +56,7 @@ public class JbootActionHandler extends ActionHandler {
      * 2: new Invocation(...).invoke()
      * 3: render(...)
      */
+    @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
         if (target.indexOf('.') != -1) {
             return;

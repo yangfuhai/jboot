@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DefaultCaffeineCacheBuilder implements CaffeineCacheBuilder{
 
+    @Override
     public Cache build(){
         return Caffeine.newBuilder()
                 .expireAfterWrite(24, TimeUnit.HOURS)

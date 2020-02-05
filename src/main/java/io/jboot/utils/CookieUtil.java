@@ -124,10 +124,10 @@ public class CookieUtil {
 
     public static String buildCookieValue(String value, int maxAgeInSeconds, String secretKey) {
         long saveTime = System.currentTimeMillis();
-        String encrypt_value = encrypt(secretKey, saveTime, maxAgeInSeconds, value);
+        String encryptValue = encrypt(secretKey, saveTime, maxAgeInSeconds, value);
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(encrypt_value);
+        stringBuilder.append(encryptValue);
         stringBuilder.append(COOKIE_SEPARATOR);
         stringBuilder.append(saveTime);
         stringBuilder.append(COOKIE_SEPARATOR);
@@ -156,7 +156,7 @@ public class CookieUtil {
             return null;
         }
 
-        String encrypt_value = cookieStrings[0];
+        String encryptValue = cookieStrings[0];
         String saveTime = cookieStrings[1];
         String maxAgeInSeconds = cookieStrings[2];
         String value = Base64Kit.decodeToStr(cookieStrings[3]);
@@ -164,7 +164,7 @@ public class CookieUtil {
         String encrypt = encrypt(secretKey, Long.valueOf(saveTime), maxAgeInSeconds, value);
 
         // 非常重要，确保 cookie 不被人为修改
-        if (!encrypt.equals(encrypt_value)) {
+        if (!encrypt.equals(encryptValue)) {
             return null;
         }
 

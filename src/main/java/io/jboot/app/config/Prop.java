@@ -40,10 +40,12 @@ class Prop {
         } catch (IOException e) {
             throw new RuntimeException("error loading properties file.", e);
         } finally {
-            if (inputStream != null) try {
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

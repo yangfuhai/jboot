@@ -358,7 +358,9 @@ public class JbootConfigManager {
      * @return
      */
     public String getBootArg(String key) {
-        if (argMap == null) return null;
+        if (argMap == null) {
+            return null;
+        }
         return argMap.get(key);
     }
 

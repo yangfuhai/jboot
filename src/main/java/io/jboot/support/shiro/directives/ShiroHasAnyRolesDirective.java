@@ -53,6 +53,7 @@ public class ShiroHasAnyRolesDirective extends JbootShiroDirectiveBase {
         }
     }
 
+    @Override
     public boolean hasEnd() {
         return true;
     }

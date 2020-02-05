@@ -54,6 +54,7 @@ public class ShiroHasAnyPermissionDirective extends JbootShiroDirectiveBase {
         }
     }
 
+    @Override
     public boolean hasEnd() {
         return true;
     }

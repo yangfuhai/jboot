@@ -66,6 +66,7 @@ public class JbootRender extends Render {
     }
 
 
+    @Override
     public String toString() {
         return view;
     }

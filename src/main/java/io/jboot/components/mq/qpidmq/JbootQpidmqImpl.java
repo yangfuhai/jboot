@@ -193,7 +193,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
                     } else {
                         BytesMessage bytesMessage = (BytesMessage) message;
                         int dataLen = bytesMessage.getIntProperty("data-len");
-                        byte data[] = new byte[dataLen];
+                        byte[] data = new byte[dataLen];
                         if (dataLen != bytesMessage.readBytes(data)) {
                             continue;
                         }

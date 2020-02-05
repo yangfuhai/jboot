@@ -273,13 +273,14 @@ public class JbootHttpRequest {
 
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            if (entry.getKey() != null && StrUtil.isNotBlank(entry.getValue()))
+            if (entry.getKey() != null && StrUtil.isNotBlank(entry.getValue())) {
                 try {
                     builder.append(entry.getKey().trim()).append("=")
                             .append(URLEncoder.encode(entry.getValue().toString(), getCharset())).append("&");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+            }
         }
 
         if (builder.charAt(builder.length() - 1) == '&') {

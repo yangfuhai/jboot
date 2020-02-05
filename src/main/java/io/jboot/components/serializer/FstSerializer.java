@@ -27,7 +27,9 @@ public class FstSerializer implements JbootSerializer {
 
     @Override
     public byte[] serialize(Object obj) {
-        if (obj == null) return null;
+        if (obj == null) {
+            return null;
+        }
         return fst.asByteArray(obj);
     }
 
