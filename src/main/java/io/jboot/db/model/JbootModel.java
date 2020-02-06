@@ -62,7 +62,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return joining(Join.TYPE_RIGHT, table, effective);
     }
 
-
     public Joiner<M> innerJoin(String table) {
         return joining(Join.TYPE_INNER, table, true);
     }
@@ -70,7 +69,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public Joiner<M> innerJoin(String table, boolean effective) {
         return joining(Join.TYPE_INNER, table, effective);
     }
-
 
     public Joiner<M> fullJoin(String table) {
         return joining(Join.TYPE_FULL, table, true);

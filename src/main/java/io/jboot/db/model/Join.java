@@ -28,6 +28,7 @@ public class Join {
 
     private String type;
     private String table;
+    private String as;
     private String on;
     private boolean effective;
 
@@ -51,6 +52,15 @@ public class Join {
 
     public void setTable(String table) {
         this.table = table;
+    }
+
+
+    public String getAs() {
+        return as;
+    }
+
+    public void setAs(String as) {
+        this.as = as;
     }
 
     public String getOn() {

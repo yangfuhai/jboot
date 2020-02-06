@@ -62,8 +62,8 @@ public class SqlBuilder {
                 continue;
             }
             // string
-            else if (curent instanceof Str){
-                sqlBuilder.append(((Str)curent).getString());
+            else if (curent instanceof Str) {
+                sqlBuilder.append(((Str) curent).getString());
             }
             // group
             else if (curent instanceof Group) {
@@ -199,8 +199,13 @@ public class SqlBuilder {
                 sqlBuilder.append(join.getType())
                         .append(separator)
                         .append(join.getTable())
-                        .append(separator)
-                        .append(" ON ")
+                        .append(separator);
+
+                if (StrUtil.isNotBlank(join.getAs())) {
+                    sqlBuilder.append(" AS ").append(join.getAs());
+                }
+
+                sqlBuilder.append(" ON ")
                         .append(join.getOn());
             }
         }

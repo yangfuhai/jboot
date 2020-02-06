@@ -29,6 +29,11 @@ public class Joiner<M extends JbootModel<M>> {
         this.join = join;
     }
 
+    public Joiner<M> as(String as){
+        join.setAs(as);
+        return this;
+    }
+
     public M on(String on) {
         join.setOn(on);
         return model;
