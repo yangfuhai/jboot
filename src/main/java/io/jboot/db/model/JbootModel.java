@@ -50,41 +50,41 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return joining(Join.TYPE_LEFT, table, true);
     }
 
-    public Joiner<M> leftJoin(String table, boolean effective) {
-        return joining(Join.TYPE_LEFT, table, effective);
+    public Joiner<M> leftJoinIf(String table, boolean condition) {
+        return joining(Join.TYPE_LEFT, table, condition);
     }
 
     public Joiner<M> rightJoin(String table) {
         return joining(Join.TYPE_RIGHT, table, true);
     }
 
-    public Joiner<M> rightJoin(String table, boolean effective) {
-        return joining(Join.TYPE_RIGHT, table, effective);
+    public Joiner<M> rightJoinIf(String table, boolean condition) {
+        return joining(Join.TYPE_RIGHT, table, condition);
     }
 
     public Joiner<M> innerJoin(String table) {
         return joining(Join.TYPE_INNER, table, true);
     }
 
-    public Joiner<M> innerJoin(String table, boolean effective) {
-        return joining(Join.TYPE_INNER, table, effective);
+    public Joiner<M> innerJoinIf(String table, boolean condition) {
+        return joining(Join.TYPE_INNER, table, condition);
     }
 
     public Joiner<M> fullJoin(String table) {
         return joining(Join.TYPE_FULL, table, true);
     }
 
-    public Joiner<M> fullJoin(String table, boolean effective) {
-        return joining(Join.TYPE_FULL, table, effective);
+    public Joiner<M> fullJoinIf(String table, boolean condition) {
+        return joining(Join.TYPE_FULL, table, condition);
     }
 
 
-    protected Joiner<M> joining(String type, String table, boolean effective) {
+    protected Joiner<M> joining(String type, String table, boolean condition) {
         M model = joins == null ? copy() : (M) this;
         if (model.joins == null) {
             model.joins = new LinkedList<>();
         }
-        Join join = new Join(type, table, effective);
+        Join join = new Join(type, table, condition);
         model.joins.add(join);
         return new Joiner<>(model, join);
     }

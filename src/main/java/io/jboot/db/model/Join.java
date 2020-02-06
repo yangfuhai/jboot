@@ -15,11 +15,15 @@
  */
 package io.jboot.db.model;
 
+import java.io.Serializable;
+
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/1/14
  */
-public class Join {
+public class Join implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     static final String TYPE_LEFT = " LEFT JOIN ";
     static final String TYPE_RIGHT = " RIGHT JOIN ";

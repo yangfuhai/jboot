@@ -195,19 +195,21 @@ public class SqlBuilder {
             return;
         }
         for (Join join : joins) {
-            if (join.isEffective()) {
-                sqlBuilder.append(join.getType())
-                        .append(separator)
-                        .append(join.getTable())
-                        .append(separator);
-
-                if (StrUtil.isNotBlank(join.getAs())) {
-                    sqlBuilder.append(" AS ").append(join.getAs());
-                }
-
-                sqlBuilder.append(" ON ")
-                        .append(join.getOn());
+            if (!join.isEffective()) {
+                continue;
             }
+
+            sqlBuilder.append(join.getType())
+                    .append(separator)
+                    .append(join.getTable())
+                    .append(separator);
+
+            if (StrUtil.isNotBlank(join.getAs())) {
+                sqlBuilder.append(" AS ").append(join.getAs());
+            }
+
+            sqlBuilder.append(" ON ")
+                    .append(join.getOn());
         }
     }
 
