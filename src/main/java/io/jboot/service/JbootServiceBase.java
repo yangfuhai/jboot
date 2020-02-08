@@ -22,7 +22,6 @@ import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassUtil;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -51,8 +50,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     protected M initDao() {
-        Type type = ClassUtil.getUsefulClass(getClass()).getGenericSuperclass();
-        Class<M> modelClass = (Class<M>) ((ParameterizedType) type).getActualTypeArguments()[0];
+        Class<M> modelClass = ClassUtil.getGenericClass(getClass());
         if (modelClass == null) {
             throw new JbootException("can not get model class name in JbootServiceBase");
         }

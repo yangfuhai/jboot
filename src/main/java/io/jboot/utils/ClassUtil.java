@@ -20,9 +20,7 @@ import com.jfinal.log.Log;
 import io.jboot.aop.annotation.StaticConstruct;
 import io.jboot.exception.JbootException;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -190,6 +188,12 @@ public class ClassUtil {
         //ControllerTest$ServiceTest$$EnhancerByGuice$$40471411#hello
         //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
         return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
+    }
+
+
+    public static Class getGenericClass(Class<?> clazz){
+        Type type = getUsefulClass(clazz).getGenericSuperclass();
+        return (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
     }
 
 
