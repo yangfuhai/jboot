@@ -32,38 +32,38 @@ public class ApolloConfigManager {
 
     private static final ApolloConfigManager ME = new ApolloConfigManager();
 
-    public static ApolloConfigManager me(){
+    public static ApolloConfigManager me() {
         return ME;
     }
 
-    public void init(){
+    public void init() {
 
         Config config = getDefaultConfig();
+
+        Set<String> propNames = config.getPropertyNames();
+        if (propNames != null && !propNames.isEmpty()) {
+            for (String name : propNames) {
+                String value = config.getProperty(name, null);
+                JbootConfigManager.me().setRemoteProperty(name, value);
+            }
+        }
 
         config.addChangeListener(changeEvent -> {
             for (String key : changeEvent.changedKeys()) {
                 ConfigChange change = changeEvent.getChange(key);
-                JbootConfigManager.me().setRemoteProperty(change.getPropertyName(),change.getNewValue());
+                JbootConfigManager.me().setRemoteProperty(change.getPropertyName(), change.getNewValue());
             }
+
+            JbootConfigManager.me().notifyChangeListeners(changeEvent.changedKeys());
         });
 
-
-        Set<String>  propNames = config.getPropertyNames();
-        if (propNames != null && !propNames.isEmpty()){
-            for (String name : propNames){
-                String value = config.getProperty(name,null);
-                if (StrUtil.isNotBlank(value)){
-                    JbootConfigManager.me().setRemoteProperty(name,value);
-                }
-            }
-        }
     }
 
-    private Config getDefaultConfig(){
+    private Config getDefaultConfig() {
         ApolloServerConfig apolloServerConfig = Jboot.config(ApolloServerConfig.class);
-        if (StrUtil.isNotBlank(apolloServerConfig.getDefaultNamespace())){
+        if (StrUtil.isNotBlank(apolloServerConfig.getDefaultNamespace())) {
             return ConfigService.getConfig(apolloServerConfig.getDefaultNamespace());
-        }else {
+        } else {
             return ConfigService.getAppConfig();
         }
     }

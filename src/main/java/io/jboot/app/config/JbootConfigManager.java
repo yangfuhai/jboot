@@ -15,14 +15,13 @@
  */
 package io.jboot.app.config;
 
+import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.app.config.support.JbootConfigChangeListener;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,6 +39,9 @@ public class JbootConfigManager {
     private Map remoteProperties;
 
     private Map<String, Object> configCache = new ConcurrentHashMap<>();
+
+    private Map<String, JbootConfigChangeListener> changeListenerMap = new ConcurrentHashMap<>();
+    private Map<JbootConfigChangeListener,Class> listenerClassMapping = new ConcurrentHashMap<>();
 
     //配置内容解密工具
     private JbootConfigDecryptor decryptor;
@@ -161,10 +163,10 @@ public class JbootConfigManager {
         return get(clazz, prefix, file);
     }
 
-    private void refreshMainProperties(){
+    private void refreshMainProperties() {
 
         Properties jbootProperties = new Prop("jboot.properties").getProperties();
-        if (jbootProperties == null){
+        if (jbootProperties == null) {
             return;
         }
 
@@ -261,9 +263,9 @@ public class JbootConfigManager {
         String value = null;
 
         //优先读取分布式配置内容
-        if (remoteProperties != null){
+        if (remoteProperties != null) {
             value = (String) remoteProperties.get(key);
-            if (Utils.isNotBlank(value)){
+            if (Utils.isNotBlank(value)) {
                 return value.trim();
             }
         }
@@ -332,7 +334,7 @@ public class JbootConfigManager {
             }
         }
 
-        if (remoteProperties != null){
+        if (remoteProperties != null) {
             properties.putAll(remoteProperties);
         }
 
@@ -344,15 +346,74 @@ public class JbootConfigManager {
     }
 
 
-    public void setRemoteProperty(String key,String value){
-        if (remoteProperties == null){
-            synchronized (this){
-                if (remoteProperties == null){
+    public void setRemoteProperty(String key, String value) {
+        if (remoteProperties == null) {
+            synchronized (this) {
+                if (remoteProperties == null) {
                     remoteProperties = new ConcurrentHashMap();
                 }
             }
         }
-        remoteProperties.put(key,value);
+        remoteProperties.put(key, value);
+    }
+
+    public <T> void addConfigChangeListener(JbootConfigChangeListener<T> listener, Class<T> forClass) {
+        ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
+        if (configModel == null) {
+            throw new IllegalArgumentException("forClass:" + forClass + " has no @ConfigModel annotation");
+        }
+
+        listenerClassMapping.put(listener,forClass);
+
+        String prefix = configModel.prefix();
+        List<Method> setMethods = Utils.getClassSetMethods(forClass);
+        if (setMethods != null) {
+            for (Method method : setMethods) {
+                String key = buildKey(prefix, method);
+                changeListenerMap.put(key, listener);
+            }
+        }
+    }
+
+
+    public void removeConfigChangeListener(JbootConfigChangeListener listener){
+        listenerClassMapping.remove(listener);
+        for (Iterator<Map.Entry<String, JbootConfigChangeListener>> it = changeListenerMap.entrySet().iterator(); it.hasNext();){
+            Map.Entry<String, JbootConfigChangeListener> item = it.next();
+            if (item.getValue().equals(listener)){
+                it.remove();
+            }
+        }
+    }
+
+    public void notifyChangeListeners(Set<String> changedKeys) {
+        if (changedKeys == null || changedKeys.isEmpty()) {
+            return;
+        }
+
+        List<JbootConfigChangeListener> listeners = new ArrayList<>();
+        for (String key : changedKeys) {
+            JbootConfigChangeListener listener = changeListenerMap.get(key);
+            if (!listeners.contains(listener)) {
+                listeners.add(listener);
+            }
+        }
+
+        for (JbootConfigChangeListener listener : listeners) {
+            try {
+                if (listener != null) {
+                    Class<?> forClass = listenerClassMapping.get(listener);
+                    ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
+
+                    Object oldObj = configCache.get(forClass.getName() + configModel.prefix());
+                    Object newObj = createConfigObject(forClass,configModel.prefix(),null);
+
+                    listener.onChange(newObj, oldObj);
+                }
+            } catch (Throwable ex) {
+                LogKit.error(ex.toString(), ex);
+            }
+        }
     }
 
 
@@ -414,5 +475,6 @@ public class JbootConfigManager {
         }
         return devMode;
     }
+
 
 }
