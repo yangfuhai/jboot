@@ -30,6 +30,8 @@ import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.JbootAopInterceptor;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.app.config.support.apollo.ApolloConfigManager;
+import io.jboot.app.config.support.nacos.NacosConfigManager;
 import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
@@ -71,9 +73,14 @@ public class JbootCoreConfig extends JFinalConfig {
     private List<Routes.Route> routeList = new ArrayList<>();
 
     public JbootCoreConfig() {
+
+        ApolloConfigManager.me().init();
+        NacosConfigManager.me().init();
+
         AopManager.me().setInjectDependency(true);
         AopManager.me().setAopFactory(JbootAopFactory.me());
         Aop.inject(this);
+
         JbootAppListenerManager.me().onInit();
     }
 
