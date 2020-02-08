@@ -41,7 +41,7 @@ public class JbootConfigManager {
     private Map<String, Object> configCache = new ConcurrentHashMap<>();
 
     private Map<String, JbootConfigChangeListener> changeListenerMap = new ConcurrentHashMap<>();
-    private Map<JbootConfigChangeListener,Class> listenerClassMapping = new ConcurrentHashMap<>();
+    private Map<JbootConfigChangeListener, Class> listenerClassMapping = new ConcurrentHashMap<>();
 
     //配置内容解密工具
     private JbootConfigDecryptor decryptor;
@@ -356,6 +356,7 @@ public class JbootConfigManager {
         }
         remoteProperties.put(key, value);
     }
+
     public void setRemoteProperties(Map map) {
         if (remoteProperties == null) {
             synchronized (this) {
@@ -373,7 +374,7 @@ public class JbootConfigManager {
             throw new IllegalArgumentException("forClass:" + forClass + " has no @ConfigModel annotation");
         }
 
-        listenerClassMapping.put(listener,forClass);
+        listenerClassMapping.put(listener, forClass);
 
         String prefix = configModel.prefix();
         List<Method> setMethods = Utils.getClassSetMethods(forClass);
@@ -386,15 +387,16 @@ public class JbootConfigManager {
     }
 
 
-    public void removeConfigChangeListener(JbootConfigChangeListener listener){
+    public void removeConfigChangeListener(JbootConfigChangeListener listener) {
         listenerClassMapping.remove(listener);
-        for (Iterator<Map.Entry<String, JbootConfigChangeListener>> it = changeListenerMap.entrySet().iterator(); it.hasNext();){
+        for (Iterator<Map.Entry<String, JbootConfigChangeListener>> it = changeListenerMap.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<String, JbootConfigChangeListener> item = it.next();
-            if (item.getValue().equals(listener)){
+            if (item.getValue().equals(listener)) {
                 it.remove();
             }
         }
     }
+
 
     public void notifyChangeListeners(Set<String> changedKeys) {
         if (changedKeys == null || changedKeys.isEmpty()) {
@@ -402,26 +404,28 @@ public class JbootConfigManager {
         }
 
         List<JbootConfigChangeListener> listeners = new ArrayList<>();
+
         for (String key : changedKeys) {
             JbootConfigChangeListener listener = changeListenerMap.get(key);
-            if (!listeners.contains(listener)) {
+            if (listener != null && !listeners.contains(listener)) {
                 listeners.add(listener);
             }
         }
 
         for (JbootConfigChangeListener listener : listeners) {
+
+            Class<?> forClass = listenerClassMapping.get(listener);
+            ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
+
+            Object oldObj = configCache.get(forClass.getName() + configModel.prefix());
+            Object newObj = createConfigObject(forClass, configModel.prefix(), null);
+
             try {
-                if (listener != null) {
-                    Class<?> forClass = listenerClassMapping.get(listener);
-                    ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
-
-                    Object oldObj = configCache.get(forClass.getName() + configModel.prefix());
-                    Object newObj = createConfigObject(forClass,configModel.prefix(),null);
-
-                    listener.onChange(newObj, oldObj);
-                }
+                listener.onChange(newObj, oldObj);
             } catch (Throwable ex) {
                 LogKit.error(ex.toString(), ex);
+            } finally {
+                configCache.put(forClass.getName() + configModel.prefix(), newObj);
             }
         }
     }

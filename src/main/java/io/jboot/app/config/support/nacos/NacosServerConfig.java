@@ -16,8 +16,10 @@
 package io.jboot.app.config.support.nacos;
 
 
+import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.utils.StrUtil;
 
+@ConfigModel(prefix = "jboot.config.nacos")
 public class NacosServerConfig {
 
     private boolean enable = false;
