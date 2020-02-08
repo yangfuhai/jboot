@@ -38,6 +38,11 @@ public class ApolloConfigManager {
 
     public void init() {
 
+        ApolloServerConfig apolloServerConfig = Jboot.config(ApolloServerConfig.class);
+        if (!apolloServerConfig.isEnable() || !apolloServerConfig.isConfigOk()){
+            return;
+        }
+
         Config config = getDefaultConfig();
 
         Set<String> propNames = config.getPropertyNames();
