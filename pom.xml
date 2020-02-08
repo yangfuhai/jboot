@@ -247,6 +247,14 @@
             <version>${sentinel.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.ctrip.framework.apollo</groupId>
+            <artifactId>apollo-client</artifactId>
+            <version>1.5.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+
 
         <dependency>
             <groupId>com.weibo</groupId>

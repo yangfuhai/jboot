@@ -36,8 +36,12 @@ public class JbootConfigManager {
     //jboot.properties 和 jboot-dev.properties 等内容
     private Properties mainProperties;
 
-    private ConcurrentHashMap<String, Object> configCache = new ConcurrentHashMap<>();
+    //分布式配置
+    private Map remoteProperties;
 
+    private Map<String, Object> configCache = new ConcurrentHashMap<>();
+
+    //配置内容解密工具
     private JbootConfigDecryptor decryptor;
 
 
@@ -254,8 +258,18 @@ public class JbootConfigManager {
      */
     private String getOriginalConfigValue(Properties properties, String key) {
 
+        String value = null;
+
+        //优先读取分布式配置内容
+        if (remoteProperties != null){
+            value = (String) remoteProperties.get(key);
+            if (Utils.isNotBlank(value)){
+                return value.trim();
+            }
+        }
+
         //boot arg
-        String value = getBootArg(key);
+        value = getBootArg(key);
         if (Utils.isNotBlank(value)) {
             return value.trim();
         }
@@ -306,9 +320,11 @@ public class JbootConfigManager {
             }
         }
 
+
         if (System.getProperties() != null) {
             properties.putAll(System.getProperties());
         }
+
 
         if (getBootArgs() != null) {
             for (Map.Entry<String, String> entry : getBootArgs().entrySet()) {
@@ -316,11 +332,27 @@ public class JbootConfigManager {
             }
         }
 
+        if (remoteProperties != null){
+            properties.putAll(remoteProperties);
+        }
+
         return properties;
     }
 
     public Map<String, Object> getConfigCache() {
         return configCache;
+    }
+
+
+    public void setRemoteProperty(String key,String value){
+        if (remoteProperties == null){
+            synchronized (this){
+                if (remoteProperties == null){
+                    remoteProperties = new ConcurrentHashMap();
+                }
+            }
+        }
+        remoteProperties.put(key,value);
     }
 
 

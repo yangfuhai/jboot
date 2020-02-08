@@ -19,6 +19,7 @@ import com.jfinal.server.undertow.UndertowConfig;
 import com.jfinal.server.undertow.UndertowServer;
 import com.jfinal.server.undertow.WebBuilder;
 import io.jboot.app.config.JbootConfigManager;
+import io.jboot.app.config.support.apollo.ApolloServerConfig;
 import io.jboot.app.undertow.JbootUndertowConfig;
 import io.jboot.app.undertow.JbootUndertowServer;
 
@@ -81,6 +82,9 @@ public class JbootApplication {
         printApplicationInfo(appConfig);
         printClassPath();
 
+        //设置必要的系统参数：有些组件，比如 apollo、sentinel 等配置需要通过 System Properites来进行配置的
+        initSystemProperties();
+
         return new JbootUndertowServer(undertowConfig)
                 .setDevMode(isDevMode())
                 .configWeb(webBuilder -> {
@@ -91,6 +95,17 @@ public class JbootApplication {
                         configer.onConfig(webBuilder);
                     }
                 });
+    }
+
+    private static void initSystemProperties() {
+
+        //apollo 配置
+        ApolloServerConfig apolloConfig = getConfig(ApolloServerConfig.class);
+        if (apolloConfig.isEnable() && apolloConfig.isConfigOk()){
+            System.setProperty("app.id",apolloConfig.getAppId());
+            System.setProperty("apollo.meta",apolloConfig.getMeta());
+        }
+
     }
 
 
