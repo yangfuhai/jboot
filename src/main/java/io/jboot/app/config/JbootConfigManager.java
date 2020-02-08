@@ -356,6 +356,16 @@ public class JbootConfigManager {
         }
         remoteProperties.put(key, value);
     }
+    public void setRemoteProperties(Map map) {
+        if (remoteProperties == null) {
+            synchronized (this) {
+                if (remoteProperties == null) {
+                    remoteProperties = new ConcurrentHashMap();
+                }
+            }
+        }
+        remoteProperties.putAll(map);
+    }
 
     public <T> void addConfigChangeListener(JbootConfigChangeListener<T> listener, Class<T> forClass) {
         ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
