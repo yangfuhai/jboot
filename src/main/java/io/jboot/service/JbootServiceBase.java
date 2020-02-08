@@ -22,7 +22,6 @@ import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassUtil;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
