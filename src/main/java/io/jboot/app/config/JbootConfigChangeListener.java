@@ -1,4 +1,4 @@
-package io.jboot.app.config.support;
+package io.jboot.app.config;
 
 /**
  * @author michael yang (fuhai999@gmail.com)

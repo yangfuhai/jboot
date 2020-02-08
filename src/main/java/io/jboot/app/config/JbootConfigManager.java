@@ -17,7 +17,6 @@ package io.jboot.app.config;
 
 import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
-import io.jboot.app.config.support.JbootConfigChangeListener;
 
 import java.io.File;
 import java.lang.reflect.Method;
