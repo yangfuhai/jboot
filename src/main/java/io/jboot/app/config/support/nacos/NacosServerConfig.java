@@ -16,5 +16,48 @@
 package io.jboot.app.config.support.nacos;
 
 
+import io.jboot.utils.StrUtil;
+
 public class NacosServerConfig {
+
+    private boolean enable = false;
+    private String serverAddr;
+    private String dataId;
+    private String group;
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
+    public String getServerAddr() {
+        return serverAddr;
+    }
+
+    public void setServerAddr(String serverAddr) {
+        this.serverAddr = serverAddr;
+    }
+
+    public String getDataId() {
+        return dataId;
+    }
+
+    public void setDataId(String dataId) {
+        this.dataId = dataId;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public boolean isConfigOk() {
+        return StrUtil.areNotEmpty(serverAddr, dataId, group);
+    }
 }

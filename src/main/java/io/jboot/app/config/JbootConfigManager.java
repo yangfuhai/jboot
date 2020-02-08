@@ -36,6 +36,7 @@ public class JbootConfigManager {
 
     //分布式配置
     private Map remoteProperties;
+//    private List<RemoteConfigReader> readers;
 
     private Map<String, Object> configCache = new ConcurrentHashMap<>();
 
