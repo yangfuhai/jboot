@@ -20,6 +20,8 @@ import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +43,10 @@ public class ModelCopier {
             return modelList;
         }
 
-        List<M> list = newInstance(modelList.getClass());
+        List<M> list = modelList instanceof ArrayList
+                ? new ArrayList<>(modelList.size())
+                : newInstance(modelList.getClass());
+
         for (M m : modelList) {
             list.add(copy(m));
         }
@@ -61,7 +66,10 @@ public class ModelCopier {
             return modelSet;
         }
 
-        Set<M> set = newInstance(modelSet.getClass());
+        Set<M> set = modelSet instanceof HashSet
+                ? new HashSet<>(modelSet.size())
+                : newInstance(modelSet.getClass());
+
         for (M m : modelSet) {
             set.add(copy(m));
         }
