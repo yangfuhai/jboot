@@ -35,7 +35,7 @@ import java.util.concurrent.Executor;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/2/8
  */
-public class NacosConfigManager implements Listener {
+public class NacosConfigManager {
 
     private static final NacosConfigManager ME = new NacosConfigManager();
 
@@ -78,7 +78,17 @@ public class NacosConfigManager implements Listener {
 
                     configService.addListener(nacosServerConfig.getDataId()
                             , nacosServerConfig.getGroup()
-                            , this);
+                            , new Listener() {
+                                @Override
+                                public Executor getExecutor() {
+                                    return null;
+                                }
+
+                                @Override
+                                public void receiveConfigInfo(String configInfo) {
+                                    doReceiveConfigInfo(configInfo);
+                                }
+                            });
 
                 } catch (NacosException e) {
                     e.printStackTrace();
@@ -101,13 +111,7 @@ public class NacosConfigManager implements Listener {
         return null;
     }
 
-    @Override
-    public Executor getExecutor() {
-        return null;
-    }
-
-    @Override
-    public void receiveConfigInfo(String configInfo) {
+    public void doReceiveConfigInfo(String configInfo) {
         Properties properties = str2Properties(configInfo);
         Set<String> changedKeys = new HashSet<>();
         if (contentProperties == null){
