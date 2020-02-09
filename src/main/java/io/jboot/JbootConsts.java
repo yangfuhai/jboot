@@ -22,7 +22,7 @@ package io.jboot;
  */
 public class JbootConsts {
 
-    public static String VERSION = "3.0.0-rc.2";
+    public static String VERSION = "3.0.0";
 
 
     public static final String ATTR_REQUEST = "REQUEST";
