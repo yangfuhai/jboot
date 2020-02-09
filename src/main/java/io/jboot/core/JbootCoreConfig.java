@@ -20,7 +20,7 @@ import com.jfinal.aop.AopManager;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
-import com.jfinal.log.Log;
+import com.jfinal.kit.LogKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.template.Engine;
 import com.jfinal.weixin.sdk.api.ApiConfig;
@@ -31,6 +31,7 @@ import io.jboot.aop.JbootAopInterceptor;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.app.config.support.apollo.ApolloConfigManager;
+import io.jboot.app.config.support.apollo.ApolloServerConfig;
 import io.jboot.app.config.support.nacos.NacosConfigManager;
 import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.rpc.JbootrpcManager;
@@ -69,10 +70,11 @@ import java.util.List;
 
 public class JbootCoreConfig extends JFinalConfig {
 
-    static final Log LOG = Log.getLog(JbootCoreConfig.class);
     private List<Routes.Route> routeList = new ArrayList<>();
 
     public JbootCoreConfig() {
+
+        initSystemProperties();
 
         ApolloConfigManager.me().init();
         NacosConfigManager.me().init();
@@ -82,6 +84,22 @@ public class JbootCoreConfig extends JFinalConfig {
         Aop.inject(this);
 
         JbootAppListenerManager.me().onInit();
+    }
+
+
+    /**
+     * 设置必要的系统参数：
+     * 有些组件，比如 apollo、sentinel 等配置需要通过 System Properites来进行配置的
+     */
+    private void initSystemProperties() {
+
+        //apollo 配置
+        ApolloServerConfig apolloConfig = Jboot.config(ApolloServerConfig.class);
+        if (apolloConfig.isEnable() && apolloConfig.isConfigOk()){
+            System.setProperty("app.id",apolloConfig.getAppId());
+            System.setProperty("apollo.meta",apolloConfig.getMeta());
+        }
+
     }
 
 
@@ -256,7 +274,7 @@ public class JbootCoreConfig extends JFinalConfig {
                     Driver driver = drivers.nextElement();
                     DriverManager.deregisterDriver(driver);
                 } catch (Exception e) {
-                    LOG.error(e.toString(), e);
+                    LogKit.error(e.toString(), e);
                 }
             }
         }
