@@ -50,6 +50,7 @@ public class ModelCopier {
         for (M m : modelList) {
             list.add(copy(m));
         }
+
         return list;
     }
 
@@ -73,6 +74,7 @@ public class ModelCopier {
         for (M m : modelSet) {
             set.add(copy(m));
         }
+
         return set;
     }
 

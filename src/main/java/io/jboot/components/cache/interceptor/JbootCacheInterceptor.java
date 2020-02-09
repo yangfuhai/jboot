@@ -66,15 +66,22 @@ public class JbootCacheInterceptor implements Interceptor {
             if (NULL_VALUE.equals(data)) {
                 inv.setReturnValue(null);
             } else if (cacheable.returnCopyEnable()) {
-                setReturnValueByCopy(inv, data);
+                inv.setReturnValue(getCopyObject(inv, data));
             } else {
                 inv.setReturnValue(data);
             }
-        }else {
+        } else {
             inv.invoke();
             data = inv.getReturnValue();
             if (data != null) {
+
                 Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, data);
+
+                //当启用返回 copy 值的时候，返回的内容应该是一个进行copy之后的值
+                if (cacheable.returnCopyEnable()) {
+                    inv.setReturnValue(getCopyObject(inv, data));
+                }
+
             } else if (cacheable.nullCacheEnable()) {
                 Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, NULL_VALUE);
             }
@@ -82,28 +89,28 @@ public class JbootCacheInterceptor implements Interceptor {
     }
 
 
-    private void setReturnValueByCopy(Invocation inv, Object data) {
-        try {
-            if (data instanceof List) {
-                inv.setReturnValue(ModelCopier.copy((List<? extends JbootModel>) data));
-            } else if (data instanceof Set) {
-                inv.setReturnValue(ModelCopier.copy((Set<? extends JbootModel>) data));
-            } else if (data instanceof Page) {
-                inv.setReturnValue(ModelCopier.copy((Page<? extends JbootModel>) data));
-            } else if (data instanceof JbootModel) {
-                inv.setReturnValue(ModelCopier.copy((JbootModel) data));
-            } else {
-                throw newException(null, inv, data);
-            }
-        } catch (Exception ex) {
-            throw newException(ex, inv, data);
+    private <M extends JbootModel> Object getCopyObject(Invocation inv, Object data) {
+        if (data instanceof List) {
+            return ModelCopier.copy((List<? extends JbootModel>) data);
+        } else if (data instanceof Set) {
+            return ModelCopier.copy((Set<? extends JbootModel>) data);
+        } else if (data instanceof Page) {
+            return ModelCopier.copy((Page<? extends JbootModel>) data);
+        } else if (data instanceof JbootModel) {
+            return ModelCopier.copy((JbootModel) data);
+        } else if (data.getClass().isArray()
+                && JbootModel.class.isAssignableFrom(data.getClass().getComponentType())) {
+            return ModelCopier.copy((M[]) data);
+        } else {
+            throw newException(null, inv, data);
         }
-
     }
+
 
     private JbootException newException(Exception ex, Invocation inv, Object data) {
         String msg = "can not copy data for type [" + data.getClass().getName() + "] in method :"
-                + ClassUtil.buildMethodString(inv.getMethod()) + " , can not set @Cacheable(returnCopyEnable=true)";
+                + ClassUtil.buildMethodString(inv.getMethod())
+                + " , can not use @Cacheable(returnCopyEnable=true) annotation";
 
         return ex == null ? new JbootException(msg) : new JbootException(msg, ex);
     }
