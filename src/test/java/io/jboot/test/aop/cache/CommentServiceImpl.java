@@ -4,7 +4,10 @@ import io.jboot.aop.annotation.Bean;
 import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.components.cache.annotation.CachePut;
 import io.jboot.components.cache.annotation.Cacheable;
+import io.jboot.test.db.model.User;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Bean
@@ -38,5 +41,20 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @CacheEvict(name = "cacheName", key = "#(id)")
     public void delCache(String id) {
+    }
+
+    @Override
+    @Cacheable(name = "cacheName",returnCopyEnable = true)
+    public List<User> findList() {
+        List<User> userList = new ArrayList<>();
+        userList.add(new User());
+        return userList;
+    }
+
+    @Override
+    @Cacheable(name = "cacheName",returnCopyEnable = true)
+    public User[] findArray() {
+        User[] users = new User[]{new User()};
+        return users;
     }
 }
