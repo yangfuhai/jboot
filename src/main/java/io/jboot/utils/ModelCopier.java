@@ -17,7 +17,9 @@ package io.jboot.utils;
 
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
+import io.jboot.exception.JbootException;
 
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Set;
 
@@ -34,13 +36,13 @@ public class ModelCopier {
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> List<M> copy(List<M> modelList)  {
+    public static <M extends JbootModel> List<M> copy(List<M> modelList) {
         if (modelList == null || modelList.isEmpty()) {
             return modelList;
         }
 
-        List<M> list = ClassUtil.newInstance(modelList.getClass(),false);
-        for (M m : modelList){
+        List<M> list = newInstance(modelList.getClass());
+        for (M m : modelList) {
             list.add(copy(m));
         }
         return list;
@@ -59,11 +61,25 @@ public class ModelCopier {
             return modelSet;
         }
 
-        Set<M> set = ClassUtil.newInstance(modelSet.getClass(),false);
-        for (M m : modelSet){
+        Set<M> set = newInstance(modelSet.getClass());
+        for (M m : modelSet) {
             set.add(copy(m));
         }
         return set;
+    }
+
+
+    public static <M extends JbootModel> M[] copy(M[] models) {
+        if (models == null || models.length == 0) {
+            return models;
+        }
+
+        M[] array = (M[]) Array.newInstance(models[0].getClass(), models.length);
+        int i = 0;
+        for (M m : models) {
+            array[i++] = copy(m);
+        }
+        return array;
     }
 
 
@@ -89,7 +105,6 @@ public class ModelCopier {
     }
 
 
-
     /**
      * copy model
      *
@@ -100,4 +115,14 @@ public class ModelCopier {
     public static <M extends JbootModel> M copy(M model) {
         return model == null ? null : (M) model.copy();
     }
+
+
+    private static <T> T newInstance(Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {
+            throw new JbootException("can not newInstance class:" + clazz + "\n" + e.toString(), e);
+        }
+    }
+
 }
