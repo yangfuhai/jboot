@@ -88,7 +88,7 @@ public class ModelCopier {
             return models;
         }
 
-        M[] array = (M[]) Array.newInstance(models[0].getClass(), models.length);
+        M[] array = (M[]) Array.newInstance(models.getClass().getComponentType(), models.length);
         int i = 0;
         for (M m : models) {
             array[i++] = copy(m);
