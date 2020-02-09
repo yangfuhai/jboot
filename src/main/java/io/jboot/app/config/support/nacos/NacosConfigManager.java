@@ -17,8 +17,6 @@ package io.jboot.app.config.support.nacos;
 
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
-import com.alibaba.nacos.api.config.listener.Listener;
-import com.alibaba.nacos.api.exception.NacosException;
 import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.utils.StrUtil;
@@ -29,7 +27,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Executor;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -44,7 +41,6 @@ public class NacosConfigManager {
     }
 
 
-    private ConfigService configService;
     private Properties contentProperties;
 
     public void init() {
@@ -54,50 +50,61 @@ public class NacosConfigManager {
             return;
         }
 
-
-        new Thread(() -> {
+        try {
             Properties properties = new Properties();
             properties.put("serverAddr", nacosServerConfig.getServerAddr());
-            try {
-                configService = NacosFactory.createConfigService(properties);
-            } catch (NacosException e) {
-                e.printStackTrace();
-            }
+            ConfigService configService = NacosFactory.createConfigService(properties);
 
-            if (configService != null) {
-                try {
-                    String content = configService.getConfig(nacosServerConfig.getDataId()
-                            , nacosServerConfig.getGroup(), 5000);
+            String content = configService.getConfig(nacosServerConfig.getDataId()
+                    , nacosServerConfig.getGroup(), 3000);
 
-                    if (StrUtil.isNotBlank(content)){
-                        contentProperties = str2Properties(content);
-                        if (contentProperties != null){
-                            JbootConfigManager.me().setRemoteProperties(contentProperties);
-                        }
-                    }
-
-                    configService.addListener(nacosServerConfig.getDataId()
-                            , nacosServerConfig.getGroup()
-                            , new Listener() {
-                                @Override
-                                public Executor getExecutor() {
-                                    return null;
-                                }
-
-                                @Override
-                                public void receiveConfigInfo(String configInfo) {
-                                    doReceiveConfigInfo(configInfo);
-                                }
-                            });
-
-                } catch (NacosException e) {
-                    e.printStackTrace();
+            if (StrUtil.isNotBlank(content)) {
+                contentProperties = str2Properties(content);
+                if (contentProperties != null) {
+                    JbootConfigManager.me().setRemoteProperties(contentProperties);
                 }
             }
-        }).start();
 
+            new NacosConfigIniter(this).initListener(configService,nacosServerConfig);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+
+
+    public void doReceiveConfigInfo(String configInfo) {
+        Properties properties = str2Properties(configInfo);
+        Set<String> changedKeys = new HashSet<>();
+        if (contentProperties == null) {
+            contentProperties = properties;
+
+            for (Object key : properties.keySet()) {
+                changedKeys.add(key.toString());
+            }
+
+            JbootConfigManager.me().setRemoteProperties(properties);
+            JbootConfigManager.me().notifyChangeListeners(changedKeys);
+
+        } else {
+
+            for (Object key : properties.keySet()) {
+                String newValue = properties.getProperty(key.toString());
+                String oldValue = contentProperties.getProperty(key.toString());
+
+                if (!Objects.equals(newValue, oldValue)) {
+                    changedKeys.add(key.toString());
+                    contentProperties.put(key, newValue);
+                    JbootConfigManager.me().setRemoteProperty(key.toString(), newValue);
+                }
+            }
+
+            JbootConfigManager.me().notifyChangeListeners(changedKeys);
+        }
+    }
+
+
 
 
     private Properties str2Properties(String content) {
@@ -109,35 +116,5 @@ public class NacosConfigManager {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public void doReceiveConfigInfo(String configInfo) {
-        Properties properties = str2Properties(configInfo);
-        Set<String> changedKeys = new HashSet<>();
-        if (contentProperties == null){
-            contentProperties = properties;
-
-            for (Object key : properties.keySet()){
-                changedKeys.add(key.toString());
-            }
-
-            JbootConfigManager.me().setRemoteProperties(properties);
-            JbootConfigManager.me().notifyChangeListeners(changedKeys);
-
-        }else {
-
-            for (Object key : properties.keySet()){
-                String newValue = properties.getProperty(key.toString());
-                String oldValue = contentProperties.getProperty(key.toString());
-
-                if (!Objects.equals(newValue,oldValue)){
-                    changedKeys.add(key.toString());
-                    contentProperties.put(key,newValue);
-                    JbootConfigManager.me().setRemoteProperty(key.toString(),newValue);
-                }
-            }
-
-            JbootConfigManager.me().notifyChangeListeners(changedKeys);
-        }
     }
 }
