@@ -4,7 +4,7 @@ jboot v3.0.0:
 新增：JbootController 新增 getTrimPara() 和 getCurrentUrl() 方法
 新增：Sql Join 系列支持 AS 的写法
 新增：ClassUtil 工具类新增 getGenericClass() 方法获取泛型类型
-优化：优化 ClassScanner 对排除的模块
+优化：ClassScanner 对扫描模块的准确排除
 修复：ModelCopier 在 Copy 的时候返回旧的 List 或者 Set 的问题
 
 
