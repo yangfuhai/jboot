@@ -20,7 +20,6 @@ import io.jboot.db.model.JbootModel;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -35,32 +34,38 @@ public class ModelCopier {
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> List<M> copy(List<M> modelList) {
+    public static <M extends JbootModel> List<M> copy(List<M> modelList)  {
         if (modelList == null || modelList.isEmpty()) {
             return modelList;
         }
 
-        return modelList.stream()
-                .map(ModelCopier::copy)
-                .collect(Collectors.toList());
+        List<M> list = ClassUtil.newInstance(modelList.getClass(),false);
+        for (M m : modelList){
+            list.add(copy(m));
+        }
+        return list;
     }
+
 
     /**
      * copy model set
      *
-     * @param modelList
+     * @param modelSet
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> Set<M> copy(Set<M> modelList) {
-        if (modelList == null || modelList.isEmpty()) {
-            return modelList;
+    public static <M extends JbootModel> Set<M> copy(Set<M> modelSet) {
+        if (modelSet == null || modelSet.isEmpty()) {
+            return modelSet;
         }
 
-        return modelList.stream()
-                .map(ModelCopier::copy)
-                .collect(Collectors.toSet());
+        Set<M> set = ClassUtil.newInstance(modelSet.getClass(),false);
+        for (M m : modelSet){
+            set.add(copy(m));
+        }
+        return set;
     }
+
 
     /**
      * copy model page
@@ -82,6 +87,7 @@ public class ModelCopier {
         modelPage.setList(copy(modelList));
         return modelPage;
     }
+
 
 
     /**
