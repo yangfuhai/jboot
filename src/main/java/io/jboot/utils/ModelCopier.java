@@ -77,6 +77,12 @@ public class ModelCopier {
     }
 
 
+    /**
+     * copy model array
+     * @param models
+     * @param <M>
+     * @return
+     */
     public static <M extends JbootModel> M[] copy(M[] models) {
         if (models == null || models.length == 0) {
             return models;
