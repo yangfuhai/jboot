@@ -70,17 +70,14 @@ public class JbootCacheInterceptor implements Interceptor {
             } else {
                 inv.setReturnValue(data);
             }
-            return;
-        }
-
-        inv.invoke();
-
-        data = inv.getReturnValue();
-
-        if (data != null) {
-            Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, data);
-        } else if (cacheable.nullCacheEnable()) {
-            Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, NULL_VALUE);
+        }else {
+            inv.invoke();
+            data = inv.getReturnValue();
+            if (data != null) {
+                Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, data);
+            } else if (cacheable.nullCacheEnable()) {
+                Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, NULL_VALUE);
+            }
         }
     }
 
