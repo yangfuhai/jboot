@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -201,6 +201,16 @@ public class StrUtil extends StrKit {
 
 
     /**
+     * 根据逗号分隔为set
+     *
+     * @param src
+     * @return
+     */
+    public static Set<String> splitToSetByComma(String src) {
+        return splitToSet(src, ",");
+    }
+
+    /**
      * 把字符串拆分成一个set
      *
      * @param src
@@ -213,7 +223,7 @@ public class StrUtil extends StrKit {
         }
 
         String[] strings = src.split(regex);
-        Set<String> set = new HashSet<>();
+        Set<String> set = new LinkedHashSet<>();
         for (String s : strings) {
             if (StrUtil.isBlank(s)) {
                 continue;
