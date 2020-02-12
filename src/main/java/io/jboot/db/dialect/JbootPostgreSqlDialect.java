@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,19 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect;
 import io.jboot.db.model.Column;
+import io.jboot.db.model.SqlBuilder;
+import io.jboot.db.model.Join;
 import io.jboot.exception.JbootException;
 
 import java.util.List;
 
 
-public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootModelDialect {
+public class JbootPostgreSqlDialect extends PostgreSqlDialect implements JbootDialect {
 
 
     @Override
-    public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = DialectKit.forFindByColumns(table, loadColumns, columns, orderBy, '"');
+    public String forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
+        StringBuilder sqlBuilder = SqlBuilder.forFindByColumns(joins, table, loadColumns, columns, orderBy, '"');
 
         if (limit == null) {
             return sqlBuilder.toString();
@@ -50,12 +52,12 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
     @Override
     public String forFindCountByColumns(String table, List<Column> columns) {
-        return DialectKit.forFindCountByColumns(table, columns, '"');
+        return SqlBuilder.forFindCountByColumns(table, columns, '"');
     }
 
     @Override
     public String forDeleteByColumns(String table, List<Column> columns) {
-        return DialectKit.forDeleteByColumns(table,columns,'"');
+        return SqlBuilder.forDeleteByColumns(table,columns,'"');
     }
 
 
@@ -66,8 +68,8 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements IJbootM
 
 
     @Override
-    public String forPaginateFrom(String table, List<Column> columns, String orderBy) {
-        return DialectKit.forPaginateFrom(table, columns, orderBy, '"');
+    public String forPaginateFrom(List<Join> joins,String table, List<Column> columns, String orderBy) {
+        return SqlBuilder.forPaginateFrom(joins, table, columns, orderBy, '"');
     }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ public class LimitFallbackProcesserDefault implements LimitFallbackProcesser {
 
     protected LimitConfig config = Jboot.config(LimitConfig.class);
 
+    @Override
     public void process(String resource, String fallback, Invocation inv) {
 
         if (StrUtil.isNotBlank(fallback)) {

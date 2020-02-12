@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.jboot.db.model;
 
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,13 +33,17 @@ class Util {
         List<Object> values = new LinkedList<>();
 
         for (Column column : columns) {
+            if (!column.hasPara()) {
+                continue;
+            }
             Object value = column.getValue();
-            if (value == null || !column.isMustNeedValue()) continue;
-            if (value.getClass().isArray()) {
-                Object[] vs = (Object[]) value;
-                for (Object v : vs) values.add(v);
-            } else {
-                values.add(value);
+            if (value != null) {
+                if (value.getClass().isArray()) {
+                    Object[] vs = (Object[]) value;
+                    Collections.addAll(values, vs);
+                } else {
+                    values.add(value);
+                }
             }
         }
 

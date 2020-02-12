@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package io.jboot.components.rpc.dubbo;
 
-import com.alibaba.dubbo.config.*;
 import io.jboot.Jboot;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
+import org.apache.dubbo.config.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

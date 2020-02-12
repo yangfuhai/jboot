@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -207,7 +207,9 @@ public class HttpUtil {
     public static String upload(String url, Map<String, Object> paras, Map<String, String> headers, File file) {
 
         Map<String, Object> newParas = new HashMap();
-        if (paras != null) newParas.putAll(paras);
+        if (paras != null) {
+            newParas.putAll(paras);
+        }
 
         newParas.put("uploadFile", file);
 

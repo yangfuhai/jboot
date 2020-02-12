@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,11 +44,12 @@ public class ShiroHasAllPermissionDirective extends JbootShiroDirectiveBase {
     public void onRender(Env env, Scope scope, Writer writer) {
         if (getSubject() != null && ArrayUtil.isNotEmpty(exprList.getExprArray())) {
             boolean hasAllPermission = true;
-            for (Expr expr : exprList.getExprArray())
+            for (Expr expr : exprList.getExprArray()) {
                 if (!getSubject().isPermitted(expr.eval(scope).toString())) {
                     hasAllPermission = false;
                     break;
                 }
+            }
 
             if (hasAllPermission) {
                 renderBody(env, scope, writer);
@@ -57,6 +58,7 @@ public class ShiroHasAllPermissionDirective extends JbootShiroDirectiveBase {
         }
     }
 
+    @Override
     public boolean hasEnd() {
         return true;
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,21 @@ package io.jboot.db.model;
 import java.io.Serializable;
 
 public class Column implements Serializable {
-    public static final String LOGIC_LIKE = " LIKE ";
-    public static final String LOGIC_GT = " > ";
-    public static final String LOGIC_GE = " >= ";
-    public static final String LOGIC_LT = " < ";
-    public static final String LOGIC_LE = " <= ";
-    public static final String LOGIC_EQUALS = " = ";
-    public static final String LOGIC_NOT_EQUALS = " != ";
+    public static final String LOGIC_LIKE = "LIKE";
+    public static final String LOGIC_GT = ">";
+    public static final String LOGIC_GE = ">=";
+    public static final String LOGIC_LT = "<";
+    public static final String LOGIC_LE = "<=";
+    public static final String LOGIC_EQUALS = "=";
+    public static final String LOGIC_NOT_EQUALS = "!=";
 
-    public static final String LOGIC_IS_NULL = " IS NULL ";
-    public static final String LOGIC_IS_NOT_NULL = " IS NOT NULL ";
+    public static final String LOGIC_IS_NULL = "IS NULL";
+    public static final String LOGIC_IS_NOT_NULL = "IS NOT NULL";
 
-    public static final String LOGIC_IN = " IN ";
-    public static final String LOGIC_NOT_IN = " NOT IN ";
-    public static final String LOGIC_BETWEEN = " BETWEEN ";
+    public static final String LOGIC_IN = "IN";
+    public static final String LOGIC_NOT_IN = "NOT IN";
+    public static final String LOGIC_BETWEEN = "BETWEEN";
+    public static final String LOGIC_NOT_BETWEEN = "NOT BETWEEN";
 
 
     private String name;
@@ -90,7 +91,7 @@ public class Column implements Serializable {
         this.logic = logic;
     }
 
-    public boolean isMustNeedValue() {
+    public boolean hasPara() {
         return !LOGIC_IS_NULL.equals(getLogic())
                 && !LOGIC_IS_NOT_NULL.equals(getLogic());
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 package io.jboot.db.dialect;
 
 import io.jboot.db.model.Column;
+import io.jboot.db.model.Join;
 
 import java.util.List;
 
 
-public interface IJbootModelDialect {
+public interface JbootDialect {
 
 
-    public String forFindByColumns(String table, String loadColumns, List<Column> columns, String orderBy, Object limit);
+    public String forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit);
 
 
     public String forFindCountByColumns(String table, List<Column> columns);
@@ -35,7 +36,7 @@ public interface IJbootModelDialect {
     public String forPaginateSelect(String loadColumns);
 
 
-    public String forPaginateFrom(String table, List<Column> columns, String orderBy);
+    public String forPaginateFrom(List<Join> joins, String table, List<Column> columns, String orderBy);
 
 
 }

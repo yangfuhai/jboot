@@ -6,6 +6,9 @@ Jboot 数据库功能基于 JFinal 的 ActiveRecordPlugin 插件和 Apache shard
 
 - 描述
 - 基本增删改查
+    - Db + Record 模式
+    - Model 映射方式
+    - Column 查询方式
 - 关联查询
 - 分页查询
 - 批量插入
@@ -31,141 +34,8 @@ JFinal 操作数据库，提供了两种方式对数据库进行操作，他们�
 
 ### Db + Record 方式
 
-Db 可以理解为一个工具类，而 Record 是一个类似 Map 的数据结构（其实内部就是通过 Map 来实现的），Db 查询的返回的数据是一个 `Record` 或者是 `List<Record>` , Db 提供了如下操作数据库的系列方法：
 
-
-| 方法         |  描述  |
-| ------------- | -----|
-|query(String, Object...)|...|
-|query(String)|...|
-|queryFirst(String, Object...)|...|
-|queryFirst(String)|...|
-|queryColumn(String, Object...)|...|
-|queryColumn(String)|...|
-|queryStr(String, Object...)|...|
-|queryStr(String)|...|
-|queryInt(String, Object...)|...|
-|queryInt(String)|...|
-|queryLong(String, Object...)|...|
-|queryLong(String)|...|
-|queryDouble(String, Object...)
-|queryDouble(String)|...|
-|queryFloat(String, Object...)|...|
-|queryFloat(String)|...|
-|queryBigDecimal(String, Object...)|...|
-|queryBigDecimal(String)|...|
-|queryBytes(String, Object...)|...|
-|queryBytes(String)|...|
-|queryDate(String, Object...)|...|
-|queryDate(String)|...|
-|queryTime(String, Object...)|...|
-|queryTime(String)|...|
-|queryTimestamp(String, Object...)|...|
-|queryTimestamp(String)|...|
-|queryBoolean(String, Object...)|...|
-|queryBoolean(String)|...|
-|queryShort(String, Object...)|...|
-|queryShort(String)|...|
-|queryByte(String, Object...)|...|
-|queryByte(String)|...|
-|queryNumber(String, Object...)|...|
-|queryNumber(String)|...|
-|update(String, Object...)|...|
-|update(String)|...|
-|find(String, Object...)|...|
-|find(String)|...|
-|findFirst(String, Object...)|...|
-|findFirst(String)|...|
-|findById(String, Object)|...|
-|findById(String, String, Object...)|...|
-|deleteById(String, Object)|...|
-|deleteById(String, String, Object...)|...|
-|delete(String, String, Record)|...|
-|delete(String, Record)|...|
-|delete(String, Object...)|...|
-|delete(String)|...|
-|paginate(int, int, String, String, Object...)|...|
-|paginate(int, int, boolean, String, String, Object...)|...|
-|paginate(int, int, String, String)|...|
-|paginateByFullSql(int, int, String, String, Object...)|...|
-|paginateByFullSql(int, int, boolean, String, String, Object...)|...|
-|save(Config, java.sql.Connection, String, String, Record)|...|
-|save(String, String, Record)|...|
-|save(String, Record)|...|
-|update(Config, java.sql.Connection, String, String, Record)|...|
-|update(String, String, Record)|...|
-|update(String, Record)|...|
-|execute(ICallback)|...|
-|execute(Config, ICallback)|...|
-|tx(Config, int, IAtom)|...|
-|tx(int, IAtom)|...|
-|tx(IAtom)|...|
-|findByCache(String, Object, String, Object...)|...|
-|findByCache(String, Object, String)|...|
-|findFirstByCache(String, Object, String, Object...)|...|
-|findFirstByCache(String, Object, String)|...|
-|paginateByCache(String, Object, int, int, String, String, Object...)|...|
-|paginateByCache(String, Object, int, int, boolean, String, String, Object...)|...|
-|paginateByCache(String, Object, int, int, String, String)|...|
-|batch(String, Object[][], int)|...|
-|batch(String, String, List, int)|...|
-|batch(List<String>, int)|...|
-|batchSave(List<? extends Model>, int)|...|
-|batchSave(String, List<Record>, int)|...|
-|batchUpdate(List<? extends Model>, int)|...|
-|batchUpdate(String, String, List<Record>, int)|...|
-|batchUpdate(String, List<Record>, int)|...|
-|getSql|...|
-|getSqlPara(String, Record)|...|
-|getSqlPara(String, Model)|...|
-|getSqlPara(String, Map)|...|
-|getSqlPara(String, Object...)|...|
-|find(SqlPara)|...|
-|findFirst(SqlPara)|...|
-|update(SqlPara)|...|
-|paginate(int, int, SqlPara)|...|
-
-以下是 Db + Record 模式的一些示例：
-
-```java
-// 创建name属性为James,age属性为25的record对象并添加到数据库
-Record user = new Record()
-.set("name", "James")
-.set("age", 25);
-
-Db.save("user", user);
- 
-// 删除id值为25的user表中的记录
-Db.deleteById("user", 25);
- 
-// 查询id值为25的Record将其name属性改为James并更新到数据库
-user = Db.findById("user", 25).set("name", "James");
-Db.update("user", user);
- 
-// 获取user的name属性
-String userName = user.getStr("name");
-// 获取user的age属性
-Integer userAge = user.getInt("age");
- 
-// 查询所有年龄大于18岁的user
-List<Record> users = Db.find("select * from user where age > 18");
- 
-// 分页查询年龄大于18的user,当前页号为1,每页10个user
-Page<Record> userPage = Db.paginate(1, 10, "select *", "from user where age > ?", 18);
-
-```
-
-在单数据库下，以下是 Db 工具进行的事务操作：
-
-```java
-boolean succeed = Db.tx(() -> {
-    int count = Db.update("update account set cash = cash - ? where id = ?", 100, 123);
-    int count2 = Db.update("update account set cash = cash + ? where id = ?", 100, 456);
-    return count == 1 && count2 == 1;
-});
-```
-
-  以上两次数据库更新操作在一个事务中执行，如果执行过程中发生异常或者return false，则自动回滚事务。
+参考 JFinal 的文档：https://jfinal.com/doc/5-5
 
 
 ### Model 映射方式
@@ -235,6 +105,67 @@ userService.update(user);
  
 // 分页查询user,当前页号为1,每页10个user
 Page<User> userPage = userService.paginate(1, 10);
+```
+
+
+### Columns 查询
+
+在 JFinal 的基础上上，Jboot 提供了一套更加便利的查询方法，根据列查询。
+
+比如，一个 `tb_user` 表中有以下字段：
+
+```sql
+CREATE TABLE `user` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `username` varchar(128) DEFAULT NULL COMMENT '登录名',
+  `nickname` varchar(128) DEFAULT NULL COMMENT '昵称',
+  `realname` varchar(128) DEFAULT NULL COMMENT '实名',
+  `email` varchar(64) DEFAULT NULL COMMENT '邮件',
+  `mobile` varchar(32) DEFAULT NULL COMMENT '手机电话',
+  `gender` varchar(16) DEFAULT NULL COMMENT '性别',
+  `signature` varchar(2048) DEFAULT NULL COMMENT '签名',
+  `birthday` datetime DEFAULT NULL COMMENT '生日',
+  `company` varchar(256) DEFAULT NULL COMMENT '公司',
+  `occupation` varchar(256) DEFAULT NULL COMMENT '职位、职业',
+  `address` varchar(256) DEFAULT NULL COMMENT '地址',
+  `zipcode` varchar(128) DEFAULT NULL COMMENT '邮政编码',
+  `site` varchar(256) DEFAULT NULL COMMENT '个人网址',
+  `graduateschool` varchar(256) DEFAULT NULL COMMENT '毕业学校',
+  `education` varchar(256) DEFAULT NULL COMMENT '学历',
+  `avatar` varchar(256) DEFAULT NULL COMMENT '头像',
+  `idcardtype` varchar(128) DEFAULT NULL COMMENT '证件类型：身份证 护照 军官证等',
+  `idcard` varchar(128) DEFAULT NULL COMMENT '证件号码',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表，保存用户信息。';
+```
+
+假设我们根据 `username` 查询，可以如下：
+
+```java
+String name = "michael";
+DAO.findFirstByColumns(Columns.create("username",name));
+```
+
+当有关联查询的时候，可以使用 DAO 的 join 系列方法，如下：
+
+```java
+/**
+*查询所有用户，left join 文章表
+*/
+public List<User> findList(){
+   DAO.leftJoin("article").on("user.id = article.user_id")
+      .rightJoin("...").on(".....")
+      .findAll()
+}
+
+/**
+* 根据用户年龄和文章标题查询
+*/
+public List<User> findListBy(int userAge,String articleTitle){
+   DAO.leftJoin("article").on("user.id = article.user_id")
+      .rightJoin("...").on(".....")
+      .findByColumns(Columns.create().ge("user.age",userAge).like("article.title",articleTitle))
+}
 ```
 
 ## 读写分离

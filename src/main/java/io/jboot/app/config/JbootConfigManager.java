@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,12 @@
  */
 package io.jboot.app.config;
 
+import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -36,8 +34,16 @@ public class JbootConfigManager {
     //jboot.properties 和 jboot-dev.properties 等内容
     private Properties mainProperties;
 
-    private ConcurrentHashMap<String, Object> configCache = new ConcurrentHashMap<>();
+    //分布式配置
+    private Map remoteProperties;
+//    private List<RemoteConfigReader> readers;
 
+    private Map<String, Object> configCache = new ConcurrentHashMap<>();
+
+    private Map<String, JbootConfigChangeListener> changeListenerMap = new ConcurrentHashMap<>();
+    private Map<JbootConfigChangeListener, Class> listenerClassMapping = new ConcurrentHashMap<>();
+
+    //配置内容解密工具
     private JbootConfigDecryptor decryptor;
 
 
@@ -157,10 +163,10 @@ public class JbootConfigManager {
         return get(clazz, prefix, file);
     }
 
-    private void refreshMainProperties(){
+    private void refreshMainProperties() {
 
         Properties jbootProperties = new Prop("jboot.properties").getProperties();
-        if (jbootProperties == null){
+        if (jbootProperties == null) {
             return;
         }
 
@@ -254,8 +260,18 @@ public class JbootConfigManager {
      */
     private String getOriginalConfigValue(Properties properties, String key) {
 
+        String value = null;
+
+        //优先读取分布式配置内容
+        if (remoteProperties != null) {
+            value = (String) remoteProperties.get(key);
+            if (Utils.isNotBlank(value)) {
+                return value.trim();
+            }
+        }
+
         //boot arg
-        String value = getBootArg(key);
+        value = getBootArg(key);
         if (Utils.isNotBlank(value)) {
             return value.trim();
         }
@@ -306,9 +322,11 @@ public class JbootConfigManager {
             }
         }
 
+
         if (System.getProperties() != null) {
             properties.putAll(System.getProperties());
         }
+
 
         if (getBootArgs() != null) {
             for (Map.Entry<String, String> entry : getBootArgs().entrySet()) {
@@ -316,11 +334,100 @@ public class JbootConfigManager {
             }
         }
 
+        if (remoteProperties != null) {
+            properties.putAll(remoteProperties);
+        }
+
         return properties;
     }
 
     public Map<String, Object> getConfigCache() {
         return configCache;
+    }
+
+
+    public void setRemoteProperty(String key, String value) {
+        if (remoteProperties == null) {
+            synchronized (this) {
+                if (remoteProperties == null) {
+                    remoteProperties = new ConcurrentHashMap();
+                }
+            }
+        }
+        remoteProperties.put(key, value);
+    }
+
+    public void setRemoteProperties(Map map) {
+        if (remoteProperties == null) {
+            synchronized (this) {
+                if (remoteProperties == null) {
+                    remoteProperties = new ConcurrentHashMap();
+                }
+            }
+        }
+        remoteProperties.putAll(map);
+    }
+
+    public <T> void addConfigChangeListener(JbootConfigChangeListener<T> listener, Class<T> forClass) {
+        ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
+        if (configModel == null) {
+            throw new IllegalArgumentException("forClass:" + forClass + " has no @ConfigModel annotation");
+        }
+
+        listenerClassMapping.put(listener, forClass);
+
+        String prefix = configModel.prefix();
+        List<Method> setMethods = Utils.getClassSetMethods(forClass);
+        if (setMethods != null) {
+            for (Method method : setMethods) {
+                String key = buildKey(prefix, method);
+                changeListenerMap.put(key, listener);
+            }
+        }
+    }
+
+
+    public void removeConfigChangeListener(JbootConfigChangeListener listener) {
+        listenerClassMapping.remove(listener);
+        for (Iterator<Map.Entry<String, JbootConfigChangeListener>> it = changeListenerMap.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<String, JbootConfigChangeListener> item = it.next();
+            if (item.getValue().equals(listener)) {
+                it.remove();
+            }
+        }
+    }
+
+
+    public void notifyChangeListeners(Set<String> changedKeys) {
+        if (changedKeys == null || changedKeys.isEmpty()) {
+            return;
+        }
+
+        List<JbootConfigChangeListener> listeners = new ArrayList<>();
+
+        for (String key : changedKeys) {
+            JbootConfigChangeListener listener = changeListenerMap.get(key);
+            if (listener != null && !listeners.contains(listener)) {
+                listeners.add(listener);
+            }
+        }
+
+        for (JbootConfigChangeListener listener : listeners) {
+
+            Class<?> forClass = listenerClassMapping.get(listener);
+            ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
+
+            Object oldObj = configCache.get(forClass.getName() + configModel.prefix());
+            Object newObj = createConfigObject(forClass, configModel.prefix(), null);
+
+            try {
+                listener.onChange(newObj, oldObj);
+            } catch (Throwable ex) {
+                LogKit.error(ex.toString(), ex);
+            } finally {
+                configCache.put(forClass.getName() + configModel.prefix(), newObj);
+            }
+        }
     }
 
 
@@ -358,7 +465,9 @@ public class JbootConfigManager {
      * @return
      */
     public String getBootArg(String key) {
-        if (argMap == null) return null;
+        if (argMap == null) {
+            return null;
+        }
         return argMap.get(key);
     }
 
@@ -380,5 +489,6 @@ public class JbootConfigManager {
         }
         return devMode;
     }
+
 
 }

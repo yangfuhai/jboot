@@ -96,6 +96,17 @@ public class DbController extends JbootController {
         renderJson(users);
     }
 
+    public void find7(){
+        User dao = new User();
+
+        Columns columns = Columns.create();
+        columns.in("user.`id`",1,2,3,4);
+        columns.likeAppendPercent("login_name","c");
+
+        List<User> users = dao.leftJoin("article").as("a").on("user.id=a.user_id").findListByColumns(columns);
+        renderJson(users);
+    }
+
 
     public void del1(){
         User dao = new User();

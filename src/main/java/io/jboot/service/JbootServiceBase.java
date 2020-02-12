@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassUtil;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -51,8 +49,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     protected M initDao() {
-        Type type = ClassUtil.getUsefulClass(getClass()).getGenericSuperclass();
-        Class<M> modelClass = (Class<M>) ((ParameterizedType) type).getActualTypeArguments()[0];
+        Class<M> modelClass = ClassUtil.getGenericClass(getClass());
         if (modelClass == null) {
             throw new JbootException("can not get model class name in JbootServiceBase");
         }

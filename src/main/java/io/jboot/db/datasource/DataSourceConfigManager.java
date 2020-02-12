@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,9 @@ public class DataSourceConfigManager {
         Properties prop = JbootConfigManager.me().getProperties();
         Set<String> datasourceNames = new HashSet<>();
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-            if (entry.getKey() == null) continue;
+            if (entry.getKey() == null) {
+                continue;
+            }
             String key = entry.getKey().toString().toLowerCase().replace('_','.');
             if (key.startsWith(DATASOURCE_PREFIX) && entry.getValue() != null) {
                 String[] keySplits = key.split("\\.");

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,6 +81,7 @@ public class JbootApplication {
         printApplicationInfo(appConfig);
         printClassPath();
 
+
         return new JbootUndertowServer(undertowConfig)
                 .setDevMode(isDevMode())
                 .configWeb(webBuilder -> {
@@ -92,6 +93,8 @@ public class JbootApplication {
                     }
                 });
     }
+
+
 
 
     public static JbootApplicationConfig getAppConfig(String[] args) {

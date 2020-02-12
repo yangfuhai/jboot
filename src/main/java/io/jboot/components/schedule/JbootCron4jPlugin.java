@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,6 +137,7 @@ public class JbootCron4jPlugin implements IPlugin {
         return addTask(cron, task, true, true);
     }
 
+    @Override
     public boolean start() {
         for (JbootCron4jPlugin.TaskInfo taskInfo : taskInfoList) {
             taskInfo.schedule();
@@ -147,6 +148,7 @@ public class JbootCron4jPlugin implements IPlugin {
         return true;
     }
 
+    @Override
     public boolean stop() {
         for (JbootCron4jPlugin.TaskInfo taskInfo : taskInfoList) {
             taskInfo.stop();

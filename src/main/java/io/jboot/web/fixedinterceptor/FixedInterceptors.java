@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
+import io.jboot.support.sentinel.SentinelInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
 import io.jboot.web.validate.ParaValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
@@ -47,6 +48,7 @@ public class FixedInterceptors {
      * 默认的 Jboot 系统拦截器
      */
     private FixedInterceptorWapper[] defaultInters = new FixedInterceptorWapper[]{
+            new FixedInterceptorWapper(new SentinelInterceptor(), 9),
             new FixedInterceptorWapper(new LimiterInterceptor(), 10),
             new FixedInterceptorWapper(new CORSInterceptor(), 20),
             new FixedInterceptorWapper(new ParaValidateInterceptor(), 30),

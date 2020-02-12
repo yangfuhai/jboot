@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ public class FstSerializer implements JbootSerializer {
 
     @Override
     public byte[] serialize(Object obj) {
-        if (obj == null) return null;
+        if (obj == null) {
+            return null;
+        }
         return fst.asByteArray(obj);
     }
 

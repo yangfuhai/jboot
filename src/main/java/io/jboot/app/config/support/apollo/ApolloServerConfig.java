@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,51 @@
  */
 package io.jboot.app.config.support.apollo;
 
+import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.utils.StrUtil;
 
+@ConfigModel(prefix = "jboot.config.apollo")
 public class ApolloServerConfig {
+
+    private boolean enable = false;
+    private String meta;
+    private String appId;
+    private String defaultNamespace;
+
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getMeta() {
+        return meta;
+    }
+
+    public void setMeta(String meta) {
+        this.meta = meta;
+    }
+
+    public String getDefaultNamespace() {
+        return defaultNamespace;
+    }
+
+    public void setDefaultNamespace(String defaultNamespace) {
+        this.defaultNamespace = defaultNamespace;
+    }
+
+    public boolean isConfigOk() {
+        return StrUtil.areNotEmpty(appId, meta);
+    }
 }

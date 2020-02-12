@@ -17,10 +17,13 @@ package io.jboot.utils;
 
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
+import io.jboot.exception.JbootException;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -40,27 +43,61 @@ public class ModelCopier {
             return modelList;
         }
 
-        return modelList.stream()
-                .map(ModelCopier::copy)
-                .collect(Collectors.toList());
+        List<M> list = modelList instanceof ArrayList
+                ? new ArrayList<>(modelList.size())
+                : newInstance(modelList.getClass());
+
+        for (M m : modelList) {
+            list.add(copy(m));
+        }
+
+        return list;
     }
+
 
     /**
      * copy model set
      *
-     * @param modelList
+     * @param modelSet
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> Set<M> copy(Set<M> modelList) {
-        if (modelList == null || modelList.isEmpty()) {
-            return modelList;
+    public static <M extends JbootModel> Set<M> copy(Set<M> modelSet) {
+        if (modelSet == null || modelSet.isEmpty()) {
+            return modelSet;
         }
 
-        return modelList.stream()
-                .map(ModelCopier::copy)
-                .collect(Collectors.toSet());
+        Set<M> set = modelSet instanceof HashSet
+                ? new HashSet<>(modelSet.size())
+                : newInstance(modelSet.getClass());
+
+        for (M m : modelSet) {
+            set.add(copy(m));
+        }
+
+        return set;
     }
+
+
+    /**
+     * copy model array
+     * @param models
+     * @param <M>
+     * @return
+     */
+    public static <M extends JbootModel> M[] copy(M[] models) {
+        if (models == null || models.length == 0) {
+            return models;
+        }
+
+        M[] array = (M[]) Array.newInstance(models.getClass().getComponentType(), models.length);
+        int i = 0;
+        for (M m : models) {
+            array[i++] = copy(m);
+        }
+        return array;
+    }
+
 
     /**
      * copy model page
@@ -94,4 +131,14 @@ public class ModelCopier {
     public static <M extends JbootModel> M copy(M model) {
         return model == null ? null : (M) model.copy();
     }
+
+
+    private static <T> T newInstance(Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {
+            throw new JbootException("can not newInstance class:" + clazz + "\n" + e.toString(), e);
+        }
+    }
+
 }

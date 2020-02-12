@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,6 +154,7 @@ public class RequestUtil {
         return request.getHeader("Referer");
     }
 
+
     public static String getBaseUrl(HttpServletRequest request) {
         int port = request.getServerPort();
         StringBuilder defaultDomain = new StringBuilder(request.getScheme());
@@ -164,9 +165,37 @@ public class RequestUtil {
         return defaultDomain.toString();
     }
 
+
     public static String getBaseUrl() {
         Controller controller = JbootControllerContext.get();
         return controller == null ? null : getBaseUrl(controller.getRequest());
+    }
+
+
+    public static String getCurrentUrl() {
+        Controller controller = JbootControllerContext.get();
+        return controller == null ? null : getCurrentUrl(controller.getRequest());
+    }
+
+
+    public static String getCurrentUrl(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        String url = getBaseUrl(request) + request.getRequestURI();
+        if (StrUtil.isNotBlank(queryString)) {
+            url = url.concat("?").concat(queryString);
+        }
+        return url;
+    }
+
+
+    public static String getCurrentEncodeUrl() {
+        Controller controller = JbootControllerContext.get();
+        return controller == null ? null : getCurrentEncodeUrl(controller.getRequest());
+    }
+
+
+    public static String getCurrentEncodeUrl(HttpServletRequest request) {
+        return StrUtil.urlEncode(getCurrentUrl(request));
     }
 
 

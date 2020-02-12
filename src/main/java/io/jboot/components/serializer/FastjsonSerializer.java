@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,9 @@ public class FastjsonSerializer implements JbootSerializer {
 
     @Override
     public byte[] serialize(Object obj) {
-        if (obj == null) return null;
+        if (obj == null) {
+            return null;
+        }
         FastJsonCacheObject object = new FastJsonCacheObject(obj.getClass(), obj);
         String string = JSON.toJSONString(object);
         return string.getBytes();
@@ -34,7 +36,9 @@ public class FastjsonSerializer implements JbootSerializer {
 
     @Override
     public Object deserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
         String json = new String(bytes);
         JSONObject jsonObject = JSON.parseObject(json);
         Class clazz = null;

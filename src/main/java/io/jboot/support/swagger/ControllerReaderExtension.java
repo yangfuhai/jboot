@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ public class ControllerReaderExtension {
     private static List<String> parseStringValues(String str) {
         return parseAnnotationValues(str, new Function<String, String>() {
 
+            @Override
             public String apply(String value) {
                 return value;
             }
@@ -289,6 +290,7 @@ public class ControllerReaderExtension {
         if (apiAnnotation != null) {
             tags.addAll(Collections2.filter(Arrays.asList(apiAnnotation.tags()), new Predicate<String>() {
 
+                @Override
                 public boolean apply(String input) {
                     return StringUtils.isNotBlank(input);
                 }
@@ -300,6 +302,7 @@ public class ControllerReaderExtension {
         if (apiOperation != null) {
             tags.addAll(Collections2.filter(Arrays.asList(apiOperation.tags()), new Predicate<String>() {
 
+                @Override
                 public boolean apply(String input) {
                     return StringUtils.isNotBlank(input);
                 }
@@ -457,31 +460,37 @@ public class ControllerReaderExtension {
 
     enum ParameterFactory {
         PATH("path") {
+            @Override
             protected Parameter create() {
                 return new PathParameter();
             }
         },
         QUERY("query") {
+            @Override
             protected Parameter create() {
                 return new QueryParameter();
             }
         },
         FORM("form") {
+            @Override
             protected Parameter create() {
                 return new FormParameter();
             }
         },
         FORM_DATA("formData") {
+            @Override
             protected Parameter create() {
                 return new FormParameter();
             }
         },
         HEADER("header") {
+            @Override
             protected Parameter create() {
                 return new HeaderParameter();
             }
         },
         BODY("body") {
+            @Override
             protected Parameter create() {
                 return new BodyParameter();
             }
@@ -508,21 +517,25 @@ public class ControllerReaderExtension {
 
     enum ContainerWrapper {
         LIST("list") {
+            @Override
             protected Property doWrap(Property property) {
                 return new ArrayProperty(property);
             }
         },
         ARRAY("array") {
+            @Override
             protected Property doWrap(Property property) {
                 return new ArrayProperty(property);
             }
         },
         MAP("map") {
+            @Override
             protected Property doWrap(Property property) {
                 return new MapProperty(property);
             }
         },
         SET("set") {
+            @Override
             protected Property doWrap(Property property) {
                 ArrayProperty arrayProperty = new ArrayProperty(property);
                 arrayProperty.setUniqueItems(true);

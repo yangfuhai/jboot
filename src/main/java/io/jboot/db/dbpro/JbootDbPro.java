@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package io.jboot.db.dbpro;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
-import io.jboot.db.dialect.IJbootModelDialect;
+import io.jboot.db.dialect.JbootDialect;
 import io.jboot.db.model.Columns;
 
 import java.sql.*;
@@ -112,14 +112,14 @@ public class JbootDbPro extends DbPro {
 
 
     public List<Record> find(String tableName, Columns columns, String orderBy, Object limit) {
-        IJbootModelDialect dialect = (IJbootModelDialect) getConfig().getDialect();
-        String sql = dialect.forFindByColumns(tableName, "*", columns.getList(), orderBy, limit);
+        JbootDialect dialect = (JbootDialect) getConfig().getDialect();
+        String sql = dialect.forFindByColumns(null,tableName, "*", columns.getList(), orderBy, limit);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 
 
     public int delete(String tableName, Columns columns) {
-        IJbootModelDialect dialect = (IJbootModelDialect) getConfig().getDialect();
+        JbootDialect dialect = (JbootDialect) getConfig().getDialect();
         String sql = dialect.forDeleteByColumns(tableName, columns.getList());
         return columns.isEmpty() ? delete(sql) : delete(sql, columns.getValueArray());
     }

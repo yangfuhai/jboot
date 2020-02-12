@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -273,13 +273,14 @@ public class JbootHttpRequest {
 
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            if (entry.getKey() != null && StrUtil.isNotBlank(entry.getValue()))
+            if (entry.getKey() != null && StrUtil.isNotBlank(entry.getValue())) {
                 try {
                     builder.append(entry.getKey().trim()).append("=")
                             .append(URLEncoder.encode(entry.getValue().toString(), getCharset())).append("&");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+            }
         }
 
         if (builder.charAt(builder.length() - 1) == '&') {

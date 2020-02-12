@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,13 @@ public abstract class FileScanner {
     private final Map<String, TimeSize> curScan = new HashMap<>();
 
     public FileScanner(String rootDir, int interval) {
-        if (rootDir == null)
+        if (rootDir == null) {
             throw new IllegalArgumentException("The parameter rootDir can not be null.");
+        }
         this.rootDir = rootDir;
-        if (interval <= 0)
+        if (interval <= 0) {
             throw new IllegalArgumentException("The parameter interval must more than zero.");
+        }
         this.interval = interval;
     }
 
@@ -69,8 +71,9 @@ public abstract class FileScanner {
     }
 
     protected void scan(File file) {
-        if (file == null || !file.exists())
+        if (file == null || !file.exists()) {
             return;
+        }
 
         if (file.isFile()) {
             try {
@@ -99,20 +102,23 @@ public abstract class FileScanner {
         }
 
         for (Map.Entry<String, TimeSize> entry : curScan.entrySet()) {
-            if (preScan.get(entry.getKey()) == null)
+            if (preScan.get(entry.getKey()) == null) {
                 onChange(ACTION_ADD, entry.getKey());
+            }
         }
 
         for (Map.Entry<String, TimeSize> entry : preScan.entrySet()) {
-            if (curScan.get(entry.getKey()) == null)
+            if (curScan.get(entry.getKey()) == null) {
                 onChange(ACTION_DELETE, entry.getKey());
+            }
         }
 
 
         for (Map.Entry<String, TimeSize> entry : curScan.entrySet()) {
             TimeSize pre = preScan.get(entry.getKey());
-            if (pre != null && !pre.equals(entry.getValue()))
+            if (pre != null && !pre.equals(entry.getValue())) {
                 onChange(ACTION_UPDATE, entry.getKey());
+            }
         }
 
     }
@@ -149,10 +155,12 @@ public abstract class FileScanner {
         }
 
 
+        @Override
         public int hashCode() {
             return (int) (time ^ size);
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o instanceof TimeSize) {
                 TimeSize ts = (TimeSize) o;

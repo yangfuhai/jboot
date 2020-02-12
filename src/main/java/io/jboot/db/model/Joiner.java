@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.components.mq.zbus;
+package io.jboot.db.model;
 
-import io.jboot.app.config.annotation.ConfigModel;
+/**
+ * @author michael yang (fuhai999@gmail.com)
+ * @Date: 2020/1/14
+ */
+public class Joiner<M extends JbootModel<M>> {
 
+    private M model;
+    private Join join;
 
-@ConfigModel(prefix = "jboot.mq.zbus")
-public class JbootZbusmqConfig {
-
-    private String queue;
-    private String broker;
-
-
-    public String getQueue() {
-        return queue;
+    public Joiner(M model, Join join) {
+        this.model = model;
+        this.join = join;
     }
 
-    public void setQueue(String queue) {
-        this.queue = queue;
+    public Joiner<M> as(String as){
+        join.setAs(as);
+        return this;
     }
 
-    public String getBroker() {
-        return broker;
-    }
-
-    public void setBroker(String broker) {
-        this.broker = broker;
+    public M on(String on) {
+        join.setOn(on);
+        return model;
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.components.rpc.zbus;
+package io.jboot.db.model;
 
 
-import io.zbus.rpc.bootstrap.mq.ServiceBootstrap;
+class Str extends Column {
 
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Package io.jboot.core.rpc.zbus
- */
-public class JbootServiceBootstrap extends ServiceBootstrap {
+    private String string;
 
-    public ServiceBootstrap addModule(Class clazz, Object impl, String group, String version) {
-        String module = ZbusUtil.buildModule(clazz, group, version);
-        this.processor.addModule(module, impl);
-        return this;
+    public Str(String string) {
+        this.string = string;
     }
 
+    public String getString() {
+        return string;
+    }
 
+    public void setString(String string) {
+        this.string = string;
+    }
+
+    @Override
+    public boolean hasPara() {
+        return false;
+    }
 }

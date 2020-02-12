@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,20 @@ import java.util.List;
 
 public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache {
 
+    @Override
     public <T> T get(String cacheName, Object key);
 
+    @Override
     public void put(String cacheName, Object key, Object value);
 
     public void put(String cacheName, Object key, Object value, int liveSeconds);
 
     public List getKeys(String cacheName);
 
+    @Override
     public void remove(String cacheName, Object key);
 
+    @Override
     public void removeAll(String cacheName);
 
     public <T> T get(String cacheName, Object key, IDataLoader dataLoader);

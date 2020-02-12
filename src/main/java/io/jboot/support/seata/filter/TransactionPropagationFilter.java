@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,11 @@
  */
 package io.jboot.support.seata.filter;
 
-import com.alibaba.dubbo.common.extension.Activate;
-import com.alibaba.dubbo.rpc.Filter;
-import com.alibaba.dubbo.rpc.Invocation;
-import com.alibaba.dubbo.rpc.Invoker;
-import com.alibaba.dubbo.rpc.Result;
-import com.alibaba.dubbo.rpc.RpcContext;
-import com.alibaba.dubbo.rpc.RpcException;
 import com.jfinal.log.Log;
-import io.seata.core.context.RootContext;
-
 import io.jboot.support.seata.JbootSeataManager;
+import io.seata.core.context.RootContext;
+import org.apache.dubbo.common.extension.Activate;
+import org.apache.dubbo.rpc.*;
 
 /**
  * The type Transaction propagation filter.

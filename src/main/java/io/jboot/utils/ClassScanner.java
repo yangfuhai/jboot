@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class ClassScanner {
 
     static {
         excludeJars.add("jfinal-");
-        excludeJars.add("cos-2017.5.jar");
+        excludeJars.add("cos-20");
         excludeJars.add("cglib-");
         excludeJars.add("undertow-");
         excludeJars.add("xnio-");
@@ -66,7 +66,6 @@ public class ClassScanner {
         excludeJars.add("jboss-");
         excludeJars.add("motan-");
         excludeJars.add("commons-pool");
-        excludeJars.add("commons-pool2");
         excludeJars.add("commons-beanutils");
         excludeJars.add("commons-codec");
         excludeJars.add("commons-collections");
@@ -129,6 +128,7 @@ public class ClassScanner {
         excludeJars.add("validation-");
         excludeJars.add("httpclient-");
         excludeJars.add("httpcore-");
+        excludeJars.add("httpmime-");
         excludeJars.add("jcip-");
         excludeJars.add("jcl-");
         excludeJars.add("microprofile-");
@@ -205,12 +205,16 @@ public class ClassScanner {
     static {
         String scanJarPrefx = JbootConfigManager.me().getConfigValue("jboot.app.scanner.scanJarPrefix");
         if (scanJarPrefx != null) {
-            for (String prefix : scanJarPrefx.split(",")) addScanJarPrefix(prefix.trim());
+            for (String prefix : scanJarPrefx.split(",")) {
+                addScanJarPrefix(prefix.trim());
+            }
         }
 
         String unScanJarPrefix = JbootConfigManager.me().getConfigValue("jboot.app.scanner.unScanJarPrefix");
         if (unScanJarPrefix != null) {
-            for (String prefix : unScanJarPrefix.split(",")) addUnscanJarPrefix(prefix.trim());
+            for (String prefix : unScanJarPrefix.split(",")) {
+                addUnscanJarPrefix(prefix.trim());
+            }
         }
     }
 
@@ -361,11 +365,12 @@ public class ClassScanner {
             }
         } catch (IOException e1) {
         } finally {
-            if (jarFile != null)
+            if (jarFile != null) {
                 try {
                     jarFile.close();
                 } catch (IOException e) {
                 }
+            }
         }
     }
 
@@ -388,7 +393,9 @@ public class ClassScanner {
     }
 
     private static void addClass(Class clazz) {
-        if (clazz != null) applicationClassCache.add(clazz);
+        if (clazz != null) {
+            applicationClassCache.add(clazz);
+        }
     }
 
 
@@ -474,9 +481,10 @@ public class ClassScanner {
 
 
     private static void scanClassFile(List<File> fileList, String path) {
-        File files[] = new File(path).listFiles();
-        if (null == files || files.length == 0)
+        File[] files = new File(path).listFiles();
+        if (null == files || files.length == 0) {
             return;
+        }
         for (File file : files) {
             if (file.isDirectory()) {
                 scanClassFile(fileList, file.getAbsolutePath());

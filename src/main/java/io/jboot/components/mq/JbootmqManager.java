@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import io.jboot.components.mq.aliyunmq.JbootAliyunmqImpl;
 import io.jboot.components.mq.qpidmq.JbootQpidmqImpl;
 import io.jboot.components.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.components.mq.redismq.JbootRedismqImpl;
-import io.jboot.components.mq.zbus.JbootZbusmqImpl;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.ClassUtil;
 
@@ -63,8 +62,6 @@ public class JbootmqManager {
                 return new JbootAliyunmqImpl();
             case JbootmqConfig.TYPE_RABBITMQ:
                 return new JbootRabbitmqImpl();
-            case JbootmqConfig.TYPE_ZBUS:
-                return new JbootZbusmqImpl();
             case JbootmqConfig.TYPE_QPID:
                 return new JbootQpidmqImpl();
             case JbootmqConfig.TYPE_ACTIVEMQ:

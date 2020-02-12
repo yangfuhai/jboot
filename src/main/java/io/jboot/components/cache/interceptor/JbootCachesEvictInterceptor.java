@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,10 +50,14 @@ public class JbootCachesEvictInterceptor implements Interceptor {
 
         for (CacheEvict evict : evicts) {
             if (evict.beforeInvocation()) {
-                if (beforeInvocations == null) beforeInvocations = new ArrayList<>();
+                if (beforeInvocations == null) {
+                    beforeInvocations = new ArrayList<>();
+                }
                 beforeInvocations.add(evict);
             } else {
-                if (afterInvocations == null) afterInvocations = new ArrayList<>();
+                if (afterInvocations == null) {
+                    afterInvocations = new ArrayList<>();
+                }
                 afterInvocations.add(evict);
             }
         }

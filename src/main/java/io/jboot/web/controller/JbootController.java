@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,7 +177,12 @@ public class JbootController extends Controller {
     @NotAction
     public String getBaseUrl() {
         return RequestUtil.getBaseUrl(getRequest());
+    }
 
+
+    @NotAction
+    public String getCurrentUrl(){
+        return RequestUtil.getCurrentUrl(getRequest());
     }
 
     /**
@@ -211,15 +216,16 @@ public class JbootController extends Controller {
         return "".equals(value) ? null : value;
     }
 
+
     @NotAction
-    public Map<String, String> getParas(){
+    public Map<String, String> getParas() {
         Map<String, String> map = null;
         Enumeration<String> names = getParaNames();
-        if (names != null){
+        if (names != null) {
             map = new HashMap<>();
-            while (names.hasMoreElements()){
+            while (names.hasMoreElements()) {
                 String name = names.nextElement();
-                map.put(name,getPara(name));
+                map.put(name, getPara(name));
             }
         }
         return map;
@@ -227,8 +233,24 @@ public class JbootController extends Controller {
 
 
     @NotAction
-    public String getEscapePara(String name) {
+    public String getTrimPara(String name) {
         String value = super.getPara(name);
+        value = (value == null ? null : value.trim());
+        return "".equals(value) ? null : value;
+    }
+
+
+    @NotAction
+    public String getTrimPara(int index) {
+        String value = super.getPara(index);
+        value = (value == null ? null : value.trim());
+        return "".equals(value) ? null : value;
+    }
+
+
+    @NotAction
+    public String getEscapePara(String name) {
+        String value = getTrimPara(name);
         if (value == null || "".equals(value)) {
             return null;
         }
@@ -238,7 +260,7 @@ public class JbootController extends Controller {
 
     @NotAction
     public String getEscapePara(String name, String defaultValue) {
-        String value = super.getPara(name);
+        String value = getTrimPara(name);
         if (value == null || "".equals(value)) {
             return defaultValue;
         }

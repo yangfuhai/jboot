@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.components.rpc.zbus;
+package io.jboot.db.model;
 
-/**
- * @author Michael Yang 杨福海 （fuhai999@gmail.com）
- * @version V1.0
- * @Package io.jboot.core.rpc.zbus
- */
-class ZbusUtil {
 
-    public static String buildModule(Class clazz, String group, String version) {
-        StringBuilder builder = new StringBuilder(clazz.getName());
-        builder.append("-").append(group)
-                .append("-").append(version);
+public class Group extends Column {
 
-        return builder.toString();
+    private Columns columns;
+
+    public Group(Columns columns) {
+        this.columns = columns;
+    }
+
+    public Columns getColumns() {
+        return columns;
+    }
+
+    public void setColumns(Columns columns) {
+        this.columns = columns;
+    }
+
+    @Override
+    public boolean hasPara() {
+        return false;
     }
 }

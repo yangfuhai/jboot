@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class Columns implements Serializable {
     public void add(Column column) {
 
         //do not add null value column
-        if (column.isMustNeedValue() && column.getValue() == null) {
+        if (column.hasPara() && column.getValue() == null) {
             return;
         }
 
@@ -191,7 +191,7 @@ public class Columns implements Serializable {
      * @param name
      * @return
      */
-    public Columns is_null(String name) {
+    public Columns isNull(String name) {
         this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
         return this;
     }
@@ -203,8 +203,45 @@ public class Columns implements Serializable {
      * @param name
      * @return
      */
-    public Columns is_not_null(String name) {
+    public Columns isNotNull(String name) {
         this.add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
+        return this;
+    }
+
+
+    public Columns in(String name, Object... arrays) {
+        this.add(Column.create(name, arrays, Column.LOGIC_IN));
+        return this;
+    }
+
+    public Columns notIn(String name, Object... arrays) {
+        this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
+        return this;
+    }
+
+
+    public Columns between(String name, Object start, Object end) {
+        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
+        return this;
+    }
+
+    public Columns notBetween(String name, Object start, Object end) {
+        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
+        return this;
+    }
+
+
+    public Columns group(Columns columns) {
+        if (!columns.isEmpty()) {
+            this.add(new Group(columns));
+        }
+        return this;
+    }
+
+    public Columns string(String string) {
+        if (StrUtil.isNotBlank(string)) {
+            this.add(new Str(string));
+        }
         return this;
     }
 
@@ -221,7 +258,7 @@ public class Columns implements Serializable {
             if (value != null) {
                 this.add(Column.create(name, value, logic));
                 if (i != values.length - 1) {
-                    or();
+                    this.add(new Or());
                 }
             }
         }
@@ -231,23 +268,6 @@ public class Columns implements Serializable {
 
     public Columns orEqs(String name, Object... values) {
         return ors(name, Column.LOGIC_EQUALS, values);
-    }
-
-
-    public Columns in(String name, Object... arrays) {
-        this.add(Column.create(name, arrays, Column.LOGIC_IN));
-        return this;
-    }
-
-    public Columns not_in(String name, Object... arrays) {
-        this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
-        return this;
-    }
-
-
-    public Columns between(String name, Object start, Object end) {
-        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
-        return this;
     }
 
 
@@ -267,25 +287,80 @@ public class Columns implements Serializable {
 
 
     public String getCacheKey() {
-        if (isEmpty()) return null;
+        if (isEmpty()) {
+            return null;
+        }
 
         List<Column> columns = new ArrayList<>(cols);
         StringBuilder s = new StringBuilder();
+        buildCacheKey(s, columns);
+
+        return s.toString();
+    }
+
+    private void buildCacheKey(StringBuilder s, List<Column> columns) {
         for (Column column : columns) {
             if (column instanceof Or) {
                 s.append("or").append("-");
-                continue;
+            } else if (column instanceof Group) {
+                s.append("(");
+                buildCacheKey(s, ((Group) column).getColumns().getList());
+                s.append(")-");
+            } else if (column instanceof Str) {
+                s.append(deleteWhitespace(((Str) column).getString())).append("-");
+            } else {
+                s.append(column.getName())
+                        .append("-")
+                        .append(getLogicStr(column.getLogic()))
+                        .append("-");
+                Object value = column.getValue();
+                if (value != null) {
+                    if (value.getClass().isArray()) {
+                        s.append(array2String((Object[]) column.getValue()));
+                    } else {
+                        s.append(column.getValue());
+                    }
+                    s.append("-");
+                }
             }
-            s.append(column.getName()).append("-")
-                    .append(getLogicStr(column.getLogic())).append("-");
-            Object value = column.getValue();
-            if (value == null) continue;
-            if (value.getClass().isArray()) s.append(Arrays.toString((Object[]) column.getValue()));
-            else s.append(column.getValue());
-            s.append("-");
+        }
+        s.deleteCharAt(s.length() - 1);
+    }
+
+    private static String deleteWhitespace(String str) {
+        final int strLen = str.length();
+        final char[] chs = new char[strLen];
+        int count = 0;
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                chs[count++] = str.charAt(i);
+            }
+        }
+        if (count == strLen) {
+            return str;
+        }
+        return new String(chs, 0, count);
+    }
+
+    private static String array2String(Object[] a) {
+        if (a == null) {
+            return "null";
         }
 
-        return s.deleteCharAt(s.length() - 1).toString();
+        int iMax = a.length - 1;
+        if (iMax == -1) {
+            return "[]";
+        }
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = 0; ; i++) {
+            b.append(a[i]);
+            if (i == iMax) {
+                return b.append(']').toString();
+            }
+            b.append("-");
+        }
     }
 
 
@@ -319,6 +394,8 @@ public class Columns implements Serializable {
                 return "nin";
             case Column.LOGIC_BETWEEN:
                 return "bt";
+            case Column.LOGIC_NOT_BETWEEN:
+                return "nbt";
             default:
                 return "";
         }
@@ -331,12 +408,12 @@ public class Columns implements Serializable {
      */
     public String toMysqlSql() {
         JbootMysqlDialect dialect = new JbootMysqlDialect();
-        return dialect.forFindByColumns("table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null, "table", "*", getList(), null, null);
     }
 
     public String toSqlServerSql() {
         JbootSqlServerDialect dialect = new JbootSqlServerDialect();
-        return dialect.forFindByColumns("table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null, "table", "*", getList(), null, null);
     }
 
     @Override
@@ -352,24 +429,18 @@ public class Columns implements Serializable {
         System.out.println(columns.getCacheKey());
 
         columns.ge("age", 10);
+        columns.string("user.id != 1");
+        System.out.println(columns.getCacheKey());
+
+        columns.group(Columns.create().likeAppendPercent("name", "lisi").eq("age", 20));
         System.out.println(columns.getCacheKey());
 
         columns.or();
-        System.out.println(columns.getCacheKey());
 
-        columns.is_not_null("price");
-        System.out.println(columns.getCacheKey());
+        columns.group(Columns.create().isNotNull("price").isNull("nickname").group(Columns.create().in("name", "123", "123", "111").notIn("nickname", "aaa", "bbb")));
 
-        columns.is_null("nickname");
         System.out.println(columns.getCacheKey());
         columns.or();
-
-        columns.in("name", "123", "123", "111");
-        System.out.println(columns.getCacheKey());
-        columns.or();
-
-        columns.not_in("nickname", "aaa", "bbb");
-        System.out.println(columns.getCacheKey());
 
         columns.between("name", "123", "1233");
         System.out.println(columns.getCacheKey());

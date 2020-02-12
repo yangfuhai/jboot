@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ public class JbootrpcConfig {
     public static final String TYPE_MOTAN = "motan";
     public static final String TYPE_THRIFT = "thrift";
     public static final String TYPE_LOCAL = "local";
-    public static final String TYPE_ZBUS = "zbus";
 
     public static final String REGISTRY_TYPE_CONSUL = "consul";
     public static final String REGISTRY_TYPE_ZOOKEEPER = "zookeeper";

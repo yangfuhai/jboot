@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2019, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import io.jboot.components.rpc.annotation.RPCBean;
 import io.jboot.components.rpc.dubbo.JbootDubborpc;
 import io.jboot.components.rpc.local.JbootLocalrpc;
 import io.jboot.components.rpc.motan.JbootMotanrpc;
-import io.jboot.components.rpc.zbus.JbootZbusrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootRpcException;
@@ -123,8 +122,6 @@ public class JbootrpcManager {
                 return new JbootLocalrpc();
             case JbootrpcConfig.TYPE_DUBBO:
                 return new JbootDubborpc();
-            case JbootrpcConfig.TYPE_ZBUS:
-                return new JbootZbusrpc();
             default:
                 return JbootSpiLoader.load(Jbootrpc.class, type);
         }
