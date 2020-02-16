@@ -63,12 +63,12 @@ public class StrUtil extends StrKit {
         return redirect;
     }
 
-    public static boolean areNotEmpty(String... strings) {
-        if (strings == null || strings.length == 0) {
+    public static boolean areNotEmpty(String... strs) {
+        if (strs == null || strs.length == 0) {
             return false;
         }
 
-        for (String string : strings) {
+        for (String string : strs) {
             if (string == null || EMPTY.equals(string)) {
                 return false;
             }
@@ -76,43 +76,54 @@ public class StrUtil extends StrKit {
         return true;
     }
 
-    public static String requireNonBlank(String string) {
-        if (isBlank(string)) {
+    public static String requireNonBlank(String str) {
+        if (isBlank(str)) {
             throw new NullPointerException();
         }
-        return string;
+        return str;
     }
 
-    public static String requireNonBlank(String string, String message) {
-        if (isBlank(string)) {
+    public static String requireNonBlank(String str, String message) {
+        if (isBlank(str)) {
             throw new NullPointerException(message);
         }
-        return string;
+        return str;
     }
 
-    public static String obtainDefaultIfBlank(String string, String defaultValue) {
-        return isBlank(string) ? defaultValue : string;
+    public static String obtainDefaultIfBlank(String str, String defaultValue) {
+        return isBlank(str) ? defaultValue : str;
     }
 
     /**
      * 不是空数据，注意：空格不是空数据
      *
-     * @param string
+     * @param str
      * @return
      */
-    public static boolean isNotEmpty(String string) {
-        return string != null && !string.equals("");
+    public static boolean isNotEmpty(String str) {
+        return str != null && !str.equals("");
     }
 
 
     /**
      * 确保不是空白字符串
      *
-     * @param o
+     * @param str
      * @return
      */
-    public static boolean isNotBlank(Object o) {
-        return o == null ? false : notBlank(o.toString());
+    public static boolean isNotBlank(Object str) {
+        return str == null ? false : notBlank(str.toString());
+    }
+
+
+    /**
+     * null 或者 空内容字符串
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isNullOrBlank(String str) {
+        return isBlank(str);
     }
 
 
@@ -150,7 +161,7 @@ public class StrUtil extends StrKit {
     }
 
     /**
-     * 这个字符串是否是小数点
+     * 这个字符串是否是可能包含小数点的数字
      *
      * @param str
      * @return
@@ -159,10 +170,18 @@ public class StrUtil extends StrKit {
         if (str == null) {
             return false;
         }
+        boolean hasDot  = false;
         for (int i = str.length(); --i >= 0; ) {
             int chr = str.charAt(i);
             if ((chr < 48 || chr > 57) && chr != '.') {
                 return false;
+            }
+            if (chr == '.'){
+                if (hasDot){
+                    return false;
+                }else {
+                    hasDot = true;
+                }
             }
         }
         return true;
