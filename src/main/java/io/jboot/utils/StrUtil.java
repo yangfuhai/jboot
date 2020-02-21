@@ -18,12 +18,15 @@ package io.jboot.utils;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
+import com.jfinal.plugin.activerecord.Model;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -262,6 +265,45 @@ public class StrUtil extends StrKit {
 
     public static String unEscapeHtml(String content) {
         return isBlank(content) ? content : StringUtils.replaceEach(content, escapeChars, htmlChars);
+    }
+
+    public static Model escapeModel(Model model, String... ignoreAttrs) {
+        String[] attrNames = model._getAttrNames();
+        for (String attr : attrNames) {
+
+            if (ArrayUtils.contains(ignoreAttrs, attr)) {
+                continue;
+            }
+
+            Object value = model.get(attr);
+
+            if (value != null && value instanceof String) {
+                model.set(attr, escapeHtml(value.toString()));
+            }
+        }
+
+        return model;
+    }
+
+    public static Map escapeMap(Map map, Object... ignoreKeys) {
+        if (map == null || map.isEmpty()) {
+            return map;
+        }
+
+        Set<? extends Object> keys = map.keySet();
+        for (Object key : keys) {
+            if (ArrayUtils.contains(ignoreKeys, key)) {
+                continue;
+            }
+
+            Object value = map.get(key);
+
+            if (value != null && value instanceof String) {
+                map.put(key, escapeHtml(value.toString()));
+            }
+        }
+
+        return map;
     }
 
 
