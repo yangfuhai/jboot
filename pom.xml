@@ -66,6 +66,7 @@
         <netty.version>4.1.45.Final</netty.version>
         <sentinel.version>1.7.1</sentinel.version>
         <dubbo.version>2.7.5</dubbo.version>
+        <seata.version>1.1.0</seata.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -234,18 +235,21 @@
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-core</artifactId>
             <version>${sentinel.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-cluster-client-default</artifactId>
             <version>${sentinel.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-transport-simple-http</artifactId>
             <version>${sentinel.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -495,7 +499,8 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tm</artifactId>
-            <version>1.0.0</version>
+            <version>${seata.version}</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>ch.qos.logback</groupId>
@@ -507,25 +512,29 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-rm-datasource</artifactId>
-            <version>1.0.0</version>
+            <version>${seata.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-config-core</artifactId>
-            <version>1.0.0</version>
+            <version>${seata.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-codec-seata</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-core</artifactId>
-            <version>1.0.0</version>
+            <version>${seata.version}</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>io.seata</groupId>
@@ -534,10 +543,12 @@
             </exclusions>
         </dependency>
 
+
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-common</artifactId>
-            <version>1.0.0</version>
+            <version>${seata.version}</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>ch.qos.logback</groupId>
@@ -545,6 +556,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
 
         <dependency>
             <groupId>net.oschina.j2cache</groupId>
