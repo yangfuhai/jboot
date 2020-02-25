@@ -16,6 +16,7 @@
 package io.jboot.utils;
 
 import com.jfinal.core.JFinal;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
 
 import java.io.*;
@@ -58,6 +59,7 @@ public class FileUtil {
             }
             return new String(baos.toByteArray(), JFinal.me().getConstants().getEncoding());
         } catch (Exception e) {
+            LogKit.error(e.toString(), e);
         } finally {
             close(fis, baos);
         }
@@ -70,34 +72,37 @@ public class FileUtil {
             fos = new FileOutputStream(file, false);
             fos.write(string.getBytes(JFinal.me().getConstants().getEncoding()));
         } catch (Exception e) {
+            LogKit.error(e.toString(), e);
         } finally {
-            close(null, fos);
+            close(fos);
         }
     }
 
-    private static void close(InputStream is, OutputStream os) {
-        if (is != null) {
-            try {
-                is.close();
-            } catch (IOException e) {
-            }
-        }
-        if (os != null) {
-            try {
-                os.close();
-            } catch (IOException e) {
+    public static void close(Closeable... closeable) {
+        if (closeable != null || closeable.length != 0) {
+            for (Closeable c : closeable) {
+                if (c != null) {
+                    try {
+                        c.close();
+                    } catch (IOException e) {
+                        LogKit.error(e.toString(), e);
+                    }
+                }
             }
         }
     }
+
 
     public static void unzip(String zipFilePath) throws IOException {
         String targetPath = zipFilePath.substring(0, zipFilePath.lastIndexOf("."));
         unzip(zipFilePath, targetPath, true);
     }
 
+
     public static void unzip(String zipFilePath, String targetPath) throws IOException {
         unzip(zipFilePath, targetPath, true);
     }
+
 
     public static void unzip(String zipFilePath, String targetPath, boolean safeUnzip) throws IOException {
         ZipFile zipFile = new ZipFile(zipFilePath);
@@ -131,7 +136,7 @@ public class FileUtil {
                 }
             }
         } finally {
-            zipFile.close();
+            close(zipFile);
         }
     }
 
