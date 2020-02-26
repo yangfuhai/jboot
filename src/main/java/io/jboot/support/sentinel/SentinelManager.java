@@ -27,24 +27,37 @@ import java.lang.reflect.Field;
  */
 public class SentinelManager {
 
-    private SentinelManager(){}
+    private SentinelManager() {
+    }
 
     private static SentinelManager me = new SentinelManager();
 
-    public static SentinelManager me(){
+    public static SentinelManager me() {
         return me;
     }
 
-    public void init(){
+    private SentinelProcesser processer;
+
+    public void init() {
 
         try {
+
+//          throw ClassNotFoundException if not dependency sentinel
+            Class.forName("com.alibaba.csp.sentinel.Sph");
+
             JbootApplicationConfig appConfig = JbootConfigManager.me().get(JbootApplicationConfig.class);
             Field field = AppNameUtil.class.getDeclaredField("appName");
             field.setAccessible(true);
-            field.set(null,appConfig.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            field.set(null, appConfig.getName());
 
+            processer = new SentinelProcesser();
+
+        } catch (Exception e) {
+            // do nothing...
+        }
+    }
+
+    public SentinelProcesser getProcesser() {
+        return processer;
     }
 }

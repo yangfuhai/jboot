@@ -21,9 +21,7 @@ import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.util.MethodUtil;
 import com.alibaba.csp.sentinel.util.StringUtil;
-import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,7 +33,7 @@ import java.util.Arrays;
  *
  * @author Eric Zhao
  */
-public abstract class AbstractSentinelInterceptor implements Interceptor, FixedInterceptor {
+public abstract class AbstractSentinelProccesser {
 
     protected void traceException(Throwable ex) {
         Tracer.trace(ex);
