@@ -1,3 +1,12 @@
+jboot v3.0.2:
+新增：StrUtil 新增 splitToSetByComma() 方法
+新增：StrUtil 新增 escapeModel() 和 escapeMap() 方法
+优化：StrUti.isDecimal() 方法，防止在某些极端情况下出现判断不正确的问题
+优化：对 pom.xml 进行优化，排除非必要的依赖
+优化：重构 Sentinel 模块，修改为非必须依赖
+
+
+
 jboot v3.0.1:
 修复：紧急修复 v3.0.0 必须依赖 nacos-client 的问题
 
