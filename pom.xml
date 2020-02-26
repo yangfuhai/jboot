@@ -67,11 +67,14 @@
         <sentinel.version>1.7.1</sentinel.version>
         <dubbo.version>2.7.5</dubbo.version>
         <seata.version>1.1.0</seata.version>
+        <motan.version>1.1.7</motan.version>
+        <metrics.version>4.1.2</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     </properties>
 
 
@@ -270,7 +273,7 @@
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-core</artifactId>
-            <version>1.1.6</version>
+            <version>${motan.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -287,7 +290,7 @@
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-transport-netty4</artifactId>
-            <version>1.1.6</version>
+            <version>${motan.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -304,7 +307,7 @@
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-registry-consul</artifactId>
-            <version>1.1.6</version>
+            <version>${motan.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -321,7 +324,7 @@
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-registry-zookeeper</artifactId>
-            <version>1.1.6</version>
+            <version>${motan.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -372,11 +375,32 @@
             <scope>provided</scope>
         </dependency>
 
-
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>4.1.2</version>
+            <version>${metrics.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-servlets</artifactId>
+            <version>${metrics.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-healthchecks</artifactId>
+            <version>${metrics.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.github.davidb</groupId>
+            <artifactId>metrics-influxdb</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
         </dependency>
 
 
@@ -384,19 +408,6 @@
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-graphite</artifactId>
             <version>4.1.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-servlets</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.davidb</groupId>
-            <artifactId>metrics-influxdb</artifactId>
-            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
 
