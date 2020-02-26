@@ -9,6 +9,8 @@
 - 注入配置
 - 注解配置
 - 配置实体类
+- 开启 Nacos 分布式配置中心
+- 开启 Apollo 分布式配置中心
 - 配置内容加密解密
 - 设计原因
 - 常见问题
@@ -22,9 +24,10 @@
 - 环境变量
 - Jvm 系统属性
 - 启动参数
+- 分布式配置中心（目前支持 Apollo 和 Nacos）
 
 > 注意：如果同一个属性被多处配置，那么 Jboot 读取配置的优先顺序是：
-> `启动参数` > `Jvm 系统属性` > `环境变量` > `jboot.properties 配置`
+> `分布式配置中心` > `启动参数` > `Jvm 系统属性` > `环境变量` > `jboot.properties 配置`
 
 
 
@@ -86,7 +89,8 @@ public class UserServiceProvider extends UserService{
 }
 ```
 
-但是，无论是 `@RequestMapping("/user")` 或者是 `@RPCBean(group="myGroup",version="myVersion",port=...)` , 其参数配置都是固定的，因此，Jboot 提供了一种动态的配置方法，可以用于读取配置文件的内容。
+但是，无论是 `@RequestMapping("/user")` 或者是 `@RPCBean(group="myGroup",version="myVersion",port=...)` , 
+其参数配置都是固定的，因此，Jboot 提供了一种动态的配置方法，可以用于读取配置文件的内容。
 
 例如：
 
@@ -160,6 +164,38 @@ Component1Config config = Jboot.config(Component1Config.class);
 
 > 备注：`@ConfigModel(prefix="component1")` 注解的含义是 `Component1Config` 的前缀是 `component1` ，因此，其属性 `host` 是来至配置文件的 `component1.host` 的值。
 
+
+
+
+## 开启 Nacos 分布式配置中心
+
+**第一步，启动 nacos**
+相关文档在 https://nacos.io/zh-cn/
+
+
+**第二步，在 jboot.properties 添加如下配置**
+
+```java
+jboot.config.nacos.enable = true
+jboot.config.nacos.serverAddr = 127.0.0.1:8848
+jboot.config.nacos.dataId = jboot
+jboot.config.nacos.group = jboot
+```
+
+## 开启 Apollo 分布式配置中心
+
+**第一步，启动 Apollo**
+相关文档在 https://github.com/ctripcorp/apollo/wiki/Quick-Start
+
+**第二步，在 jboot.properties 添加如下配置**
+
+```
+jboot.config.apollo.enable = true
+jboot.config.apollo.appId = SampleApp
+jboot.config.apollo.meta = http://106.54.227.205:8080
+```
+
+
 ## 配置内容加密解密
 
 为了安全起见，很多时候我们需要对配置里的一些安全和隐私内容进行加密，比如数据库的账号密码等，防止web服务器被黑客入侵时保证数据库的安全。
@@ -208,9 +244,12 @@ public MyConfigDecriptor implements JbootConfigDecryptor {
 > 答：和启动参数一样，只需要把 `--` 换成 `-D`，例如： java -jar -Dundertow.port=8080 -Dundertow.host=0.0.0.0
 
 
-2、如何设置系统环境变量 ？
+3、如何设置系统环境变量 ？
 > 答：在 Docker 下，启动 Docker 容器的时候，只需要添加 -e 参数即可，例如： `docker run -e undertow.port=8080 xxxx`
 > Linux、Window、Mac 搜索引擎自行搜索关键字： `环境变量配置`
+
+注意：在设置的系统环境变量的key、value中，例如：jboot.app.mode = dev 可以修改为 JBOOT_APP_MODE  = dev ，其他同理把全部小写
+修改为大写，符号点（.）修改为下划线（_）。
 
 
 ## Jboot 所有配置参考
