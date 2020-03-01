@@ -58,6 +58,7 @@
         <jedis.version>2.10.2</jedis.version>
         <jsoup.version>1.12.2</jsoup.version>
         <ehcache.version>2.10.6</ehcache.version>
+        <caffeine.version>2.8.1</caffeine.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-codec.version>1.13</commons-codec.version>
@@ -203,6 +204,12 @@
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
         </dependency>
 
         <dependency>
