@@ -55,6 +55,10 @@ public class JbootmqManager {
             throw new IllegalArgumentException("config must not be null");
         }
 
+        if (!config.isConfigOk()){
+            return null;
+        }
+
         switch (config.getType()) {
             case JbootmqConfig.TYPE_REDIS:
                 return new JbootRedismqImpl();

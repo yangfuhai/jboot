@@ -16,6 +16,7 @@
 package io.jboot.components.mq;
 
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.utils.StrUtil;
 
 
 @ConfigModel(prefix = "jboot.mq")
@@ -26,7 +27,7 @@ public class JbootmqConfig {
     public static final String TYPE_RABBITMQ = "rabbitmq";
     public static final String TYPE_QPID = "qpid";
 
-    private String type = TYPE_REDIS;
+    private String type;
     private String channel;
     private String syncRecevieMessageChannel; //可同步接收消息的channel配置
     private String serializer;
@@ -62,5 +63,9 @@ public class JbootmqConfig {
 
     public void setSyncRecevieMessageChannel(String syncRecevieMessageChannel) {
         this.syncRecevieMessageChannel = syncRecevieMessageChannel;
+    }
+
+    public boolean isConfigOk(){
+        return StrUtil.isNotEmpty(type);
     }
 }
