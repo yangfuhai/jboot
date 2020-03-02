@@ -18,4 +18,13 @@ package io.jboot.components.cache;
 
 public abstract class JbootCacheBase implements JbootCache {
 
+    @Override
+    public void refresh(String cacheName, Object key) {
+
+    }
+
+    @Override
+    public void refresh(String cacheName) {
+
+    }
 }

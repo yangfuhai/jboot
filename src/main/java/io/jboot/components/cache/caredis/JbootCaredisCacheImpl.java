@@ -198,7 +198,18 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
         } finally {
             publishMessage(JbootCaredisMessage.ACTION_REMOVE, cacheName, key);
         }
+    }
 
+
+    @Override
+    public void refresh(String cacheName, Object key) {
+        publishMessage(JbootCaredisMessage.ACTION_REMOVE, cacheName, key);
+    }
+
+
+    @Override
+    public void refresh(String cacheName) {
+        publishMessage(JbootCaredisMessage.ACTION_REMOVE_ALL, cacheName, null);
     }
 
 

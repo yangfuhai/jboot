@@ -159,6 +159,8 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         getOrAddCache(cacheName).put(element);
     }
 
+
+
     public CacheManager getCacheManager() {
         return cacheManager;
     }

@@ -16,11 +16,13 @@
 package io.jboot.components.cache.j2cache;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
-import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.JbootCacheBase;
 import io.jboot.exception.JbootException;
+import net.oschina.j2cache.CacheChannel;
 import net.oschina.j2cache.CacheObject;
 import net.oschina.j2cache.J2Cache;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +32,7 @@ import java.util.List;
  * @version V1.0
  * @Package io.jboot.core.cache.j2cache
  */
-public class J2cacheImpl implements JbootCache {
+public class J2cacheImpl extends JbootCacheBase {
 
     @Override
     public <T> T get(String cacheName, Object key) {
@@ -89,6 +91,68 @@ public class J2cacheImpl implements JbootCache {
         }
         return (T) data;
     }
+
+    private Method sendEvictCmdMethod;
+
+    @Override
+    public void refresh(String cacheName, Object key) {
+        if (sendEvictCmdMethod == null) {
+            synchronized (this) {
+                if (sendEvictCmdMethod == null) {
+                    sendEvictCmdMethod = getSendEvictCmdMethod();
+                }
+            }
+        }
+        try {
+            sendEvictCmdMethod.invoke(J2Cache.getChannel(), cacheName, key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private Method sendClearCmdMethod;
+
+    @Override
+    public void refresh(String cacheName) {
+        if (sendClearCmdMethod == null) {
+            synchronized (this) {
+                if (sendClearCmdMethod == null) {
+                    sendClearCmdMethod = getSendClearCmdMethod();
+                }
+            }
+        }
+        try {
+            sendClearCmdMethod.invoke(J2Cache.getChannel(), cacheName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private Method getSendEvictCmdMethod() {
+        try {
+            Method method = CacheChannel.class.getDeclaredMethod("sendEvictCmd", String.class, String[].class);
+            method.setAccessible(true);
+            return method;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private Method getSendClearCmdMethod() {
+        try {
+            Method method = CacheChannel.class.getDeclaredMethod("sendClearCmd", String.class);
+            method.setAccessible(true);
+            return method;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     @Override
     public Integer getTtl(String cacheName, Object key) {

@@ -74,4 +74,14 @@ public class NoneCacheImpl implements JbootCache {
     public void setTtl(String cacheName, Object key, int seconds) {
         //do nothing
     }
+
+    @Override
+    public void refresh(String cacheName, Object key) {
+
+    }
+
+    @Override
+    public void refresh(String cacheName) {
+
+    }
 }

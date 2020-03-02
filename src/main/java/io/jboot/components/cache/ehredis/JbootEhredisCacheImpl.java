@@ -214,6 +214,20 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
         keysCache.invalidate(cacheName);
     }
 
+
+    @Override
+    public void refresh(String cacheName, Object key) {
+        publishMessage(JbootEhredisMessage.ACTION_REMOVE, cacheName, key);
+    }
+
+
+    @Override
+    public void refresh(String cacheName) {
+        publishMessage(JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName,null);
+    }
+
+
+
     public void onMessage(String channel, Object obj) {
 
         JbootEhredisMessage message = (JbootEhredisMessage) obj;

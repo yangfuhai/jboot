@@ -46,4 +46,8 @@ public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache 
 
     public void setTtl(String cacheName, Object key, int seconds);
 
+    public void refresh(String cacheName, Object key);
+
+    public void refresh(String cacheName);
+
 }
