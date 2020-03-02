@@ -34,6 +34,15 @@ public class Group extends Column {
 
     @Override
     public boolean hasPara() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public Object getValue() {
+        if (columns == null || columns.isEmpty()){
+            return null;
+        }else {
+            return Util.getValueArray(columns.getList());
+        }
     }
 }
