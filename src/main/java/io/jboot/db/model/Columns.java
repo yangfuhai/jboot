@@ -197,6 +197,20 @@ public class Columns implements Serializable {
     }
 
 
+
+
+    /**
+     *
+     * @param name
+     * @param condition
+     * @return
+     */
+    public Columns isNullIf(String name,boolean condition) {
+        this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
+        return this;
+    }
+
+
     /**
      * IS NOT NULL
      *
@@ -209,28 +223,73 @@ public class Columns implements Serializable {
     }
 
 
+    /**
+     * IS NOT NULL
+     * @param name
+     * @param condition
+     * @return
+     */
+    public Columns isNotNullIf(String name,boolean condition) {
+        if (condition) {
+            this.add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
+        }
+        return this;
+    }
+
+
+    /**
+     * in arrays
+     * @param name
+     * @param arrays
+     * @return
+     */
     public Columns in(String name, Object... arrays) {
         this.add(Column.create(name, arrays, Column.LOGIC_IN));
         return this;
     }
 
+    /**
+     * not int arrays
+     * @param name
+     * @param arrays
+     * @return
+     */
     public Columns notIn(String name, Object... arrays) {
         this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
         return this;
     }
 
 
+    /**
+     * between
+     * @param name
+     * @param start
+     * @param end
+     * @return
+     */
     public Columns between(String name, Object start, Object end) {
         this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
         return this;
     }
 
+    /**
+     * not between
+     * @param name
+     * @param start
+     * @param end
+     * @return
+     */
     public Columns notBetween(String name, Object start, Object end) {
         this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
         return this;
     }
 
 
+    /**
+     * group
+     * @param columns
+     * @return
+     */
     public Columns group(Columns columns) {
         if (!columns.isEmpty()) {
             this.add(new Group(columns));
@@ -238,8 +297,42 @@ public class Columns implements Serializable {
         return this;
     }
 
+
+    /**
+     *
+     * @param columns
+     * @param conditon
+     * @return
+     */
+    public Columns groupIf(Columns columns,boolean conditon) {
+        if (conditon && !columns.isEmpty()) {
+            this.add(new Group(columns));
+        }
+        return this;
+    }
+
+
+    /**
+     * customize string sql
+     * @param string
+     * @return
+     */
     public Columns string(String string) {
         if (StrUtil.isNotBlank(string)) {
+            this.add(new Str(string));
+        }
+        return this;
+    }
+
+
+    /**
+     * customize string sql
+     * @param string
+     * @param condition
+     * @return
+     */
+    public Columns stringIf(String string,boolean condition) {
+        if (condition && StrUtil.isNotBlank(string)) {
             this.add(new Str(string));
         }
         return this;
@@ -298,21 +391,22 @@ public class Columns implements Serializable {
         return s.toString();
     }
 
+    private static final char SQL_CACHE_SEPARATOR = '-';
     private void buildCacheKey(StringBuilder s, List<Column> columns) {
         for (Column column : columns) {
             if (column instanceof Or) {
-                s.append("or").append("-");
+                s.append("or").append(SQL_CACHE_SEPARATOR);
             } else if (column instanceof Group) {
-                s.append("(");
+                s.append('(');
                 buildCacheKey(s, ((Group) column).getColumns().getList());
-                s.append(")-");
+                s.append(')').append(SQL_CACHE_SEPARATOR);
             } else if (column instanceof Str) {
                 s.append(deleteWhitespace(((Str) column).getString())).append("-");
             } else {
                 s.append(column.getName())
-                        .append("-")
+                        .append(SQL_CACHE_SEPARATOR)
                         .append(getLogicStr(column.getLogic()))
-                        .append("-");
+                        .append(SQL_CACHE_SEPARATOR);
                 Object value = column.getValue();
                 if (value != null) {
                     if (value.getClass().isArray()) {
@@ -320,7 +414,7 @@ public class Columns implements Serializable {
                     } else {
                         s.append(column.getValue());
                     }
-                    s.append("-");
+                    s.append(SQL_CACHE_SEPARATOR);
                 }
             }
         }
