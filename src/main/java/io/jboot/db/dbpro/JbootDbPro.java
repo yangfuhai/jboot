@@ -72,6 +72,9 @@ public class JbootDbPro extends DbPro {
 
         dialect.forDbSave(tableName, pKeys, record, sql, paras);
 
+        //add sql debug support
+        SqlDebugger.debug(config, sql.toString(), paras.toArray());
+
         PreparedStatement pst;
         if (dialect.isOracle()) {
             pst = conn.prepareStatement(sql.toString(), pKeys);
@@ -89,8 +92,6 @@ public class JbootDbPro extends DbPro {
                 throw new ActiveRecordException(e);
             }
         }
-        //add sql debug support
-        SqlDebugger.debug(config, sql.toString(), paras.toArray());
 
         return result >= 1;
     }
@@ -123,5 +124,6 @@ public class JbootDbPro extends DbPro {
         String sql = dialect.forDeleteByColumns(tableName, columns.getList());
         return columns.isEmpty() ? delete(sql) : delete(sql, columns.getValueArray());
     }
+
 
 }

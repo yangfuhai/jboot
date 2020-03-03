@@ -53,39 +53,42 @@ public class SqlDebugger {
     }
 
     public static void debug(Config config, String sql, Object... paras) {
-        if (printer.isPrint(config, sql, paras)) {
 
-            if (paras != null) {
-                for (Object value : paras) {
-                    // null
-                    if (value == null) {
-                        sql = sql.replaceFirst("\\?", "null");
+        if (!printer.isPrint(config, sql, paras)) {
+            return;
+        }
+
+
+        if (paras != null) {
+            for (Object value : paras) {
+                // null
+                if (value == null) {
+                    sql = sql.replaceFirst("\\?", "null");
+                }
+                // number
+                else if (value instanceof Number) {
+                    sql = sql.replaceFirst("\\?", value.toString());
+                }
+                // numeric
+                else if (value instanceof String && StrUtil.isNumeric((String) value)) {
+                    sql = sql.replaceFirst("\\?", (String) value);
+                }
+                // other
+                else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("'");
+                    if (value instanceof Date) {
+                        sb.append(DateKit.toStr((Date) value, DateKit.timeStampPattern));
+                    } else {
+                        sb.append(value.toString());
                     }
-                    // number
-                    else if (value instanceof Number) {
-                        sql = sql.replaceFirst("\\?", value.toString());
-                    }
-                    // numeric
-                    else if (value instanceof String && StrUtil.isNumeric((String) value)) {
-                        sql = sql.replaceFirst("\\?", (String) value);
-                    }
-                    // other
-                    else {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("'");
-                        if (value instanceof Date) {
-                            sb.append(DateKit.toStr((Date) value, DateKit.timeStampPattern));
-                        } else {
-                            sb.append(value.toString());
-                        }
-                        sb.append("'");
-                        sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(sb.toString()));
-                    }
+                    sb.append("'");
+                    sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(sb.toString()));
                 }
             }
-
-            printer.print(sql);
         }
+
+        printer.print(sql);
     }
 
 
