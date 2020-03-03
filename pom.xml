@@ -47,7 +47,7 @@
         <jfinal-weixin.version>2.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>3.4.2</HikariCP.version>
-        <jackson.version>2.10.2</jackson.version>
+        <jackson.version>2.10.3</jackson.version>
         <mysql.version>5.1.48</mysql.version>
         <undertow.version>2.0.29.Final</undertow.version>
         <slf4j.version>1.7.30</slf4j.version>
