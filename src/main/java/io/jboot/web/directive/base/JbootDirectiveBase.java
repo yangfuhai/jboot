@@ -22,6 +22,7 @@ import com.jfinal.template.TemplateException;
 import com.jfinal.template.expr.ast.ExprList;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
+import io.jboot.utils.StrUtil;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -93,7 +94,8 @@ public abstract class JbootDirectiveBase extends Directive {
         if (object == null || object instanceof Integer) {
             return (Integer) object;
         }
-        return Integer.valueOf(object.toString());
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : Integer.valueOf(objStr);
     }
 
     public Integer getParaToInt(String key, Scope scope, Integer defaultValue) {
@@ -106,7 +108,8 @@ public abstract class JbootDirectiveBase extends Directive {
         if (object == null || object instanceof Integer) {
             return (Integer) object;
         }
-        return Integer.valueOf(object.toString());
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : Integer.valueOf(objStr);
     }
 
     public Integer getParaToInt(int index, Scope scope, Integer defaultValue) {
@@ -120,7 +123,8 @@ public abstract class JbootDirectiveBase extends Directive {
         if (object == null || object instanceof Long) {
             return (Long) object;
         }
-        return Long.valueOf(object.toString());
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : Long.valueOf(objStr);
     }
 
     public Long getParaToLong(String key, Scope scope, Long defaultValue) {
@@ -133,7 +137,8 @@ public abstract class JbootDirectiveBase extends Directive {
         if (object == null || object instanceof Long) {
             return (Long) object;
         }
-        return Long.valueOf(object.toString());
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : Long.valueOf(objStr);
     }
 
     public Long getParaToLong(int index, Scope scope, Long defaultValue) {
@@ -146,7 +151,8 @@ public abstract class JbootDirectiveBase extends Directive {
         if (object == null || object instanceof Boolean) {
             return (Boolean) object;
         }
-        return Boolean.valueOf(object.toString());
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : Boolean.valueOf(objStr);
     }
 
     public Boolean getParaToBool(String key, Scope scope, Boolean defaultValue) {
@@ -159,7 +165,8 @@ public abstract class JbootDirectiveBase extends Directive {
         if (object == null || object instanceof Boolean) {
             return (Boolean) object;
         }
-        return Boolean.valueOf(object.toString());
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : Boolean.valueOf(objStr);
     }
 
     public Boolean getParaToBool(int index, Scope scope, Boolean defaultValue) {
@@ -172,7 +179,8 @@ public abstract class JbootDirectiveBase extends Directive {
         if (object == null || object instanceof BigInteger) {
             return (BigInteger) object;
         }
-        return new BigInteger(object.toString());
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : new BigInteger(objStr);
     }
 
     public BigInteger getParaToBigInteger(String key, Scope scope, BigInteger defaultValue) {
@@ -185,7 +193,8 @@ public abstract class JbootDirectiveBase extends Directive {
         if (object == null || object instanceof BigInteger) {
             return (BigInteger) object;
         }
-        return new BigInteger(object.toString());
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : new BigInteger(objStr);
     }
 
     public BigInteger getParaToBigInteger(int index, Scope scope, BigInteger defaultValue) {
