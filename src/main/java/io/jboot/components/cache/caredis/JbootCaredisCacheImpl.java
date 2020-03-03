@@ -226,9 +226,8 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     public void onMessage(String channel, Object obj) {
 
         JbootCaredisMessage message = (JbootCaredisMessage) obj;
-        /**
-         * 不处理自己发送的消息
-         */
+
+        //不处理自己发送的消息
         if (clientId.equals(message.getClientId())) {
             return;
         }
@@ -237,8 +236,6 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
 
         switch (message.getAction()) {
             case JbootCaredisMessage.ACTION_PUT:
-                caffeineCacheImpl.remove(message.getCacheName(), message.getKey());
-                break;
             case JbootCaredisMessage.ACTION_REMOVE:
                 caffeineCacheImpl.remove(message.getCacheName(), message.getKey());
                 break;

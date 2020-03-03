@@ -200,7 +200,6 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_REMOVE, cacheName, key);
         }
-
     }
 
 
@@ -223,17 +222,15 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
 
     @Override
     public void refresh(String cacheName) {
-        publishMessage(JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName,null);
+        publishMessage(JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null);
     }
-
 
 
     public void onMessage(String channel, Object obj) {
 
         JbootEhredisMessage message = (JbootEhredisMessage) obj;
-        /**
-         * 不处理自己发送的消息
-         */
+
+        //不处理自己发送的消息
         if (clientId.equals(message.getClientId())) {
             return;
         }
@@ -242,8 +239,6 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
 
         switch (message.getAction()) {
             case JbootEhredisMessage.ACTION_PUT:
-                ehcacheImpl.remove(message.getCacheName(), message.getKey());
-                break;
             case JbootEhredisMessage.ACTION_REMOVE:
                 ehcacheImpl.remove(message.getCacheName(), message.getKey());
                 break;
