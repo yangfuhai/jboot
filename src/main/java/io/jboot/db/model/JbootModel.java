@@ -171,10 +171,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(column_created, new Date());
         }
 
-        boolean needInitPrimaryKey = (String.class == _getPrimaryType() && null == get(_getPrimaryKey()));
+//        boolean needInitPrimaryKey = (String.class == _getPrimaryType() && null == get(_getPrimaryKey()));
+//
+//        if (needInitPrimaryKey) {
+//            set(_getPrimaryKey(), generatePrimaryValue());
+//        }
 
-        if (needInitPrimaryKey) {
-            set(_getPrimaryKey(), generatePrimaryValue());
+        // 生成主键
+        if (get(_getPrimaryKey()) == null ) {
+            set(_getPrimaryKey(), config.getPrimarykeyValueGeneratorObj().genValue(this, _getPrimaryType()));
         }
 
 
@@ -217,8 +222,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    protected String generatePrimaryValue() {
-        return StrUtil.uuid();
+    @Override
+    protected void filter(int filterBy) {
+        config.getFilterObj().filter(this, filterBy);
     }
 
     @Override

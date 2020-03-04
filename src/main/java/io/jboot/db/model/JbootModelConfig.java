@@ -20,6 +20,8 @@ import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.cache.JbootCache;
 import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.JbootCacheManager;
+import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -36,6 +38,11 @@ public class JbootModelConfig {
     private String columnModified = "modified";
     private int idCacheTime = 60 * 60 * 1; // id 缓存默认缓存1个小时
     private boolean idCacheEnable = true; // 是否启用ID自动缓存
+
+    private String filter;
+    private String primarykeyValueGenerator;
+
+
     private String idCacheType = Jboot.config(JbootCacheConfig.class).getType();
 
 
@@ -94,6 +101,57 @@ public class JbootModelConfig {
     public void setIdCacheType(String idCacheType) {
         this.idCacheType = idCacheType;
     }
+
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public String getPrimarykeyValueGenerator() {
+        return primarykeyValueGenerator;
+    }
+
+    public void setPrimarykeyValueGenerator(String primarykeyValueGenerator) {
+        this.primarykeyValueGenerator = primarykeyValueGenerator;
+    }
+
+    private JbootModelFilter filterObj;
+    public JbootModelFilter getFilterObj() {
+        if (filterObj == null){
+            if (StrUtil.isNotBlank(filter)){
+                synchronized (this){
+                    if (filterObj == null){
+                        filterObj = ClassUtil.newInstance(filter);
+                    }
+                }
+            }else {
+                filterObj = JbootModelFilter.DEFAULT;
+            }
+        }
+        return filterObj;
+    }
+
+
+    private PrimarykeyValueGenerator primarykeyValueGeneratorObj;
+    public PrimarykeyValueGenerator getPrimarykeyValueGeneratorObj() {
+        if (primarykeyValueGeneratorObj == null){
+            if (StrUtil.isNotBlank(primarykeyValueGenerator)){
+                synchronized (this){
+                    if (primarykeyValueGeneratorObj == null){
+                        primarykeyValueGeneratorObj = ClassUtil.newInstance(primarykeyValueGenerator);
+                    }
+                }
+            }else {
+                primarykeyValueGeneratorObj = PrimarykeyValueGenerator.DEFAULT;
+            }
+        }
+        return primarykeyValueGeneratorObj;
+    }
+
 
     private static JbootModelConfig config;
 
