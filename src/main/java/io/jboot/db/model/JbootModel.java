@@ -177,9 +177,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 //            set(_getPrimaryKey(), generatePrimaryValue());
 //        }
 
-        // 生成主键
-        if (get(_getPrimaryKey()) == null ) {
-            set(_getPrimaryKey(), config.getPrimarykeyValueGeneratorObj().genValue(this, _getPrimaryType()));
+        // 生成主键，只对单一主键的表生成，如果是多主键，不生成。
+        String[] pkeys = _getPrimaryKeys();
+        if (pkeys != null && pkeys.length == 1 && get(pkeys[0]) == null) {
+            Object value = config.getPrimarykeyValueGeneratorObj().genValue(this, _getPrimaryType());
+            if (value != null) {
+                set(pkeys[0], value);
+            }
         }
 
 
