@@ -36,10 +36,27 @@ public class JbootModelConfig {
 
     private String columnCreated = "created";
     private String columnModified = "modified";
-    private int idCacheTime = 60 * 60 * 1; // id 缓存默认缓存1个小时
-    private boolean idCacheEnable = true; // 是否启用ID自动缓存
 
+    /**
+     * 是否启用 id 缓存，如果启用，当根据 id 查询的时候，会自动存入缓存
+     * 下次再通过 id 查询的时候，直接从缓存中获取 Model
+     */
+    private boolean idCacheEnable = true;
+
+    /**
+     * id 缓存的时间，默认为 1 个小时，单位：秒
+     */
+    private int idCacheTime = 60 * 60 * 1;
+
+    /**
+     * Model 过滤器，可以通过这个配置来防止 xss 等问题
+     * filter 会在 save 和 update 的时候被执行
+     */
     private String filter;
+
+    /**
+     * 主键的值的生成器，可以通过配置这个来自定义主键的生成策略
+     */
     private String primarykeyValueGenerator;
 
 
