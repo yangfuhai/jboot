@@ -1,3 +1,15 @@
+jboot v3.0.3:
+新增：Cache 模块新增 refresh() 的方法，在分布式缓存在某些极端情况下出现不同步的时候进行刷新。
+新增：对 Columns 优化，新增 gourpIf()/stringIf()/isNullIf() 等方法
+新增：新增 PrimaryKeyValueGenerator 对 Model 的主键值生成策略配置
+新增：新增 JbootModelFilter 对 Model 的过滤器策略配置，可以用于在 save 或者 update 的时候防止 Model 存在 xss 等问题
+优化：对 MQ 进行优化，当不配置的时候可能返回一个错误的 MQ 对象的问题
+优化：升级 JFinal-Wexin、Fastjson、Fastxml 等依赖到最新版本
+优化：JbootDirectiveBase 当传入空值的时候明确返回 null
+修复：当 Columns 查询的时候，使用 group 会出现 value 内容缺失的问题
+
+
+
 jboot v3.0.2:
 新增：StrUtil 新增 splitToSetByComma() 方法
 新增：StrUtil 新增 escapeModel() 和 escapeMap() 方法
