@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.0.3-SNAPSHOT</version>
+    <version>3.0.3</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -44,7 +44,7 @@
         <jfinal.version>4.8</jfinal.version>
         <jfinal-cos.version>2019.8</jfinal-cos.version>
         <jfinal-undertow.version>2.0</jfinal-undertow.version>
-        <jfinal-weixin.version>2.4</jfinal-weixin.version>
+        <jfinal-weixin.version>2.5</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>3.4.2</HikariCP.version>
         <jackson.version>2.10.3</jackson.version>
