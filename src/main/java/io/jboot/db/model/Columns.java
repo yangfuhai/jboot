@@ -539,6 +539,8 @@ public class Columns implements Serializable {
         columns.between("name", "123", "1233");
         System.out.println(columns.getCacheKey());
 
+        columns.string("group by xxx");
+
         System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());
         System.out.println(columns.toSqlServerSql());
