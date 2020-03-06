@@ -16,20 +16,20 @@
 package io.jboot.db.model;
 
 
-class Str extends Column {
+class SqlPart extends Column {
 
-    private String string;
+    private String sql;
 
-    public Str(String string) {
-        this.string = string;
+    public SqlPart(String sql) {
+        this.sql = sql;
     }
 
-    public String getString() {
-        return string;
+    public String getSql() {
+        return sql;
     }
 
-    public void setString(String string) {
-        this.string = string;
+    public void setSql(String sql) {
+        this.sql = sql;
     }
 
     @Override

@@ -197,16 +197,15 @@ public class Columns implements Serializable {
     }
 
 
-
-
     /**
-     *
      * @param name
      * @param condition
      * @return
      */
-    public Columns isNullIf(String name,boolean condition) {
-        this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
+    public Columns isNullIf(String name, boolean condition) {
+        if (condition) {
+            this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
+        }
         return this;
     }
 
@@ -225,11 +224,12 @@ public class Columns implements Serializable {
 
     /**
      * IS NOT NULL
+     *
      * @param name
      * @param condition
      * @return
      */
-    public Columns isNotNullIf(String name,boolean condition) {
+    public Columns isNotNullIf(String name, boolean condition) {
         if (condition) {
             this.add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
         }
@@ -239,6 +239,7 @@ public class Columns implements Serializable {
 
     /**
      * in arrays
+     *
      * @param name
      * @param arrays
      * @return
@@ -250,6 +251,7 @@ public class Columns implements Serializable {
 
     /**
      * not int arrays
+     *
      * @param name
      * @param arrays
      * @return
@@ -262,6 +264,7 @@ public class Columns implements Serializable {
 
     /**
      * between
+     *
      * @param name
      * @param start
      * @param end
@@ -274,6 +277,7 @@ public class Columns implements Serializable {
 
     /**
      * not between
+     *
      * @param name
      * @param start
      * @param end
@@ -287,6 +291,7 @@ public class Columns implements Serializable {
 
     /**
      * group
+     *
      * @param columns
      * @return
      */
@@ -299,12 +304,11 @@ public class Columns implements Serializable {
 
 
     /**
-     *
      * @param columns
      * @param conditon
      * @return
      */
-    public Columns groupIf(Columns columns,boolean conditon) {
+    public Columns groupIf(Columns columns, boolean conditon) {
         if (conditon && !columns.isEmpty()) {
             this.add(new Group(columns));
         }
@@ -314,12 +318,13 @@ public class Columns implements Serializable {
 
     /**
      * customize string sql
-     * @param string
+     *
+     * @param sql
      * @return
      */
-    public Columns string(String string) {
-        if (StrUtil.isNotBlank(string)) {
-            this.add(new Str(string));
+    public Columns sqlPart(String sql) {
+        if (StrUtil.isNotBlank(sql)) {
+            this.add(new SqlPart(sql));
         }
         return this;
     }
@@ -327,13 +332,14 @@ public class Columns implements Serializable {
 
     /**
      * customize string sql
-     * @param string
+     *
+     * @param sql
      * @param condition
      * @return
      */
-    public Columns stringIf(String string,boolean condition) {
-        if (condition && StrUtil.isNotBlank(string)) {
-            this.add(new Str(string));
+    public Columns sqlPartIf(String sql, boolean condition) {
+        if (condition && StrUtil.isNotBlank(sql)) {
+            this.add(new SqlPart(sql));
         }
         return this;
     }
@@ -392,6 +398,7 @@ public class Columns implements Serializable {
     }
 
     private static final char SQL_CACHE_SEPARATOR = '-';
+
     private void buildCacheKey(StringBuilder s, List<Column> columns) {
         for (Column column : columns) {
             if (column instanceof Or) {
@@ -400,8 +407,8 @@ public class Columns implements Serializable {
                 s.append('(');
                 buildCacheKey(s, ((Group) column).getColumns().getList());
                 s.append(')').append(SQL_CACHE_SEPARATOR);
-            } else if (column instanceof Str) {
-                s.append(deleteWhitespace(((Str) column).getString())).append("-");
+            } else if (column instanceof SqlPart) {
+                s.append(deleteWhitespace(((SqlPart) column).getSql())).append("-");
             } else {
                 s.append(column.getName())
                         .append(SQL_CACHE_SEPARATOR)
@@ -523,7 +530,7 @@ public class Columns implements Serializable {
         System.out.println(columns.getCacheKey());
 
         columns.ge("age", 10);
-        columns.string("user.id != 1");
+        columns.sqlPart("and user.id != 1");
         System.out.println(columns.getCacheKey());
 
         columns.group(Columns.create().likeAppendPercent("name", "lisi").eq("age", 20));
@@ -539,7 +546,7 @@ public class Columns implements Serializable {
         columns.between("name", "123", "1233");
         System.out.println(columns.getCacheKey());
 
-        columns.string("group by xxx");
+        columns.sqlPart("group by xxx");
 
         System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());

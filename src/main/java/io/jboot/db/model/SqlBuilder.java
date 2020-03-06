@@ -62,8 +62,8 @@ public class SqlBuilder {
                 continue;
             }
             // string
-            else if (curent instanceof Str) {
-                sqlBuilder.append(' ').append(((Str) curent).getString());
+            else if (curent instanceof SqlPart) {
+                sqlBuilder.append(' ').append(((SqlPart) curent).getSql());
             }
             // group
             else if (curent instanceof Group) {
@@ -87,8 +87,8 @@ public class SqlBuilder {
                 }
             }
 
-            // if next is Str, no need append 'AND' or 'OR'
-            if (!(next instanceof Str)) {
+            // if next is SqlPart, no need append 'AND' or 'OR'
+            if (!(next instanceof SqlPart)) {
                 appendLinkString(sqlBuilder, next);
             }
         }
