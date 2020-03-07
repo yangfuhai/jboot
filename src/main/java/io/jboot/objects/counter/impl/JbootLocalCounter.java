@@ -13,17 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.objects.counter;
+package io.jboot.objects.counter.impl;
+
+import io.jboot.objects.counter.JbootCounter;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
- * @Date: 2020/2/28
+ * @Date: 2020/3/7
  */
-public interface JbootCounter {
+public class JbootLocalCounter implements JbootCounter {
 
-    public void increment();
-    public void decrement();
-    public Long get();
-    public void set(long newValue);
+    AtomicLong atomicLong = new AtomicLong();
 
+    public JbootLocalCounter() {
+    }
+
+    @Override
+    public void increment() {
+        atomicLong.incrementAndGet();
+    }
+
+    @Override
+    public void decrement() {
+        atomicLong.decrementAndGet();
+    }
+
+    @Override
+    public Long get() {
+        return atomicLong.get();
+    }
+
+    @Override
+    public void set(long newValue) {
+        atomicLong.set(newValue);
+    }
 }
