@@ -17,6 +17,7 @@ package io.jboot.components.mq;
 
 import io.jboot.Jboot;
 import io.jboot.components.mq.aliyunmq.JbootAliyunmqImpl;
+import io.jboot.components.mq.local.JbootLocalmqImpl;
 import io.jboot.components.mq.qpidmq.JbootQpidmqImpl;
 import io.jboot.components.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.components.mq.redismq.JbootRedismqImpl;
@@ -55,7 +56,7 @@ public class JbootmqManager {
             throw new IllegalArgumentException("config must not be null");
         }
 
-        if (!config.isConfigOk()){
+        if (!config.isConfigOk()) {
             return null;
         }
 
@@ -70,6 +71,8 @@ public class JbootmqManager {
                 return new JbootQpidmqImpl();
             case JbootmqConfig.TYPE_ACTIVEMQ:
                 throw new RuntimeException("not finished!!!!");
+            case JbootmqConfig.TYPE_LOCAL:
+                return new JbootLocalmqImpl();
             default:
                 return JbootSpiLoader.load(Jbootmq.class, config.getType());
         }
