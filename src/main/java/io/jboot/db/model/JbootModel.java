@@ -180,7 +180,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         // 生成主键，只对单一主键的表生成，如果是多主键，不生成。
         String[] pkeys = _getPrimaryKeys();
         if (pkeys != null && pkeys.length == 1 && get(pkeys[0]) == null) {
-            Object value = config.getPrimarykeyValueGeneratorObj().genValue(this, _getPrimaryType());
+            Object value = config.getPrimarykeyValueGenerator().genValue(this, _getPrimaryType());
             if (value != null) {
                 set(pkeys[0], value);
             }
@@ -228,7 +228,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     protected void filter(int filterBy) {
-        config.getFilterObj().filter(this, filterBy);
+        config.getFilter().filter(this, filterBy);
     }
 
     @Override
@@ -252,7 +252,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     protected M loadByCache(Object... idValues) {
         try {
-            return config.getCache().get(_getTableName()
+            return config.getIdCache().get(_getTableName()
                     , buildCacheKey(idValues)
                     , () -> JbootModel.super.findByIds(idValues)
                     , config.getIdCacheTime());
@@ -265,7 +265,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     protected void safeDeleteCache(Object... idValues) {
         try {
-            config.getCache().remove(_getTableName()
+            config.getIdCache().remove(_getTableName()
                     , buildCacheKey(idValues));
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);

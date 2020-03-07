@@ -52,12 +52,12 @@ public class JbootModelConfig {
      * Model 过滤器，可以通过这个配置来防止 xss 等问题
      * filter 会在 save 和 update 的时候被执行
      */
-    private String filter;
+    private String filterClass;
 
     /**
      * 主键的值的生成器，可以通过配置这个来自定义主键的生成策略
      */
-    private String primarykeyValueGenerator;
+    private String primarykeyValueGeneratorClass;
 
 
     private String idCacheType = Jboot.config(JbootCacheConfig.class).getType();
@@ -119,54 +119,62 @@ public class JbootModelConfig {
         this.idCacheType = idCacheType;
     }
 
+    public String getFilterClass() {
+        return filterClass;
+    }
 
-    public String getFilter() {
+    public void setFilterClass(String filterClass) {
+        this.filterClass = filterClass;
+    }
+
+    public String getPrimarykeyValueGeneratorClass() {
+        return primarykeyValueGeneratorClass;
+    }
+
+    public void setPrimarykeyValueGeneratorClass(String primarykeyValueGeneratorClass) {
+        this.primarykeyValueGeneratorClass = primarykeyValueGeneratorClass;
+    }
+
+    private JbootModelFilter filter;
+    public JbootModelFilter getFilter() {
+        if (filter == null){
+            if (StrUtil.isNotBlank(filterClass)){
+                synchronized (this){
+                    if (filter == null){
+                        filter = ClassUtil.newInstance(filterClass);
+                    }
+                }
+            }else {
+                filter = JbootModelFilter.DEFAULT;
+            }
+        }
         return filter;
     }
 
-    public void setFilter(String filter) {
+    public void setFilter(JbootModelFilter filter) {
         this.filter = filter;
     }
 
-    public String getPrimarykeyValueGenerator() {
+
+    private PrimarykeyValueGenerator primarykeyValueGenerator;
+    public PrimarykeyValueGenerator getPrimarykeyValueGenerator() {
+        if (primarykeyValueGenerator == null){
+            if (StrUtil.isNotBlank(primarykeyValueGeneratorClass)){
+                synchronized (this){
+                    if (primarykeyValueGenerator == null){
+                        primarykeyValueGenerator = ClassUtil.newInstance(primarykeyValueGeneratorClass);
+                    }
+                }
+            }else {
+                primarykeyValueGenerator = PrimarykeyValueGenerator.DEFAULT;
+            }
+        }
         return primarykeyValueGenerator;
     }
 
-    public void setPrimarykeyValueGenerator(String primarykeyValueGenerator) {
+
+    public void setPrimarykeyValueGenerator(PrimarykeyValueGenerator primarykeyValueGenerator) {
         this.primarykeyValueGenerator = primarykeyValueGenerator;
-    }
-
-    private JbootModelFilter filterObj;
-    public JbootModelFilter getFilterObj() {
-        if (filterObj == null){
-            if (StrUtil.isNotBlank(filter)){
-                synchronized (this){
-                    if (filterObj == null){
-                        filterObj = ClassUtil.newInstance(filter);
-                    }
-                }
-            }else {
-                filterObj = JbootModelFilter.DEFAULT;
-            }
-        }
-        return filterObj;
-    }
-
-
-    private PrimarykeyValueGenerator primarykeyValueGeneratorObj;
-    public PrimarykeyValueGenerator getPrimarykeyValueGeneratorObj() {
-        if (primarykeyValueGeneratorObj == null){
-            if (StrUtil.isNotBlank(primarykeyValueGenerator)){
-                synchronized (this){
-                    if (primarykeyValueGeneratorObj == null){
-                        primarykeyValueGeneratorObj = ClassUtil.newInstance(primarykeyValueGenerator);
-                    }
-                }
-            }else {
-                primarykeyValueGeneratorObj = PrimarykeyValueGenerator.DEFAULT;
-            }
-        }
-        return primarykeyValueGeneratorObj;
     }
 
 
@@ -179,12 +187,16 @@ public class JbootModelConfig {
         return config;
     }
 
-    private JbootCache jbootCache;
+    private JbootCache idCache;
 
-    public JbootCache getCache() {
-        if (jbootCache == null) {
-            jbootCache = JbootCacheManager.me().getCache(idCacheType);
+    public JbootCache getIdCache() {
+        if (idCache == null) {
+            idCache = JbootCacheManager.me().getCache(idCacheType);
         }
-        return jbootCache;
+        return idCache;
+    }
+
+    public void setIdCache(JbootCache idCache) {
+        this.idCache = idCache;
     }
 }
