@@ -329,6 +329,19 @@ public class Columns implements Serializable {
         return this;
     }
 
+    /**
+     * customize string sql
+     *
+     * @param sql
+     * @param paras
+     * @return
+     */
+    public Columns sqlPart(String sql, Object... paras) {
+        if (StrUtil.isNotBlank(sql)) {
+            this.add(new SqlPart(sql, paras));
+        }
+        return this;
+    }
 
     /**
      * customize string sql
@@ -340,6 +353,77 @@ public class Columns implements Serializable {
     public Columns sqlPartIf(String sql, boolean condition) {
         if (condition && StrUtil.isNotBlank(sql)) {
             this.add(new SqlPart(sql));
+        }
+        return this;
+    }
+
+    /**
+     * customize string sql
+     *
+     * @param sql
+     * @param condition
+     * @param paras
+     * @return
+     */
+    public Columns sqlPartIf(String sql, boolean condition, Object... paras) {
+        if (condition && StrUtil.isNotBlank(sql)) {
+            this.add(new SqlPart(sql, paras));
+        }
+        return this;
+    }
+
+    /**
+     * customize string sql
+     *
+     * @param sql
+     * @return
+     */
+    public Columns sqlPartWithoutLink(String sql) {
+        if (StrUtil.isNotBlank(sql)) {
+            this.add(new SqlPart(sql, true));
+        }
+        return this;
+    }
+
+    /**
+     * customize string sql
+     *
+     * @param sql
+     * @param paras
+     * @return
+     */
+    public Columns sqlPartWithoutLink(String sql, Object... paras) {
+        if (StrUtil.isNotBlank(sql)) {
+            this.add(new SqlPart(sql, paras, true));
+        }
+        return this;
+    }
+
+    /**
+     * customize string sql
+     *
+     * @param sql
+     * @param condition
+     * @return
+     */
+    public Columns sqlPartIfWithoutLink(String sql, boolean condition) {
+        if (condition && StrUtil.isNotBlank(sql)) {
+            this.add(new SqlPart(sql, true));
+        }
+        return this;
+    }
+
+    /**
+     * customize string sql
+     *
+     * @param sql
+     * @param condition
+     * @param paras
+     * @return
+     */
+    public Columns sqlPartIfWithoutLink(String sql, boolean condition, Object... paras) {
+        if (condition && StrUtil.isNotBlank(sql)) {
+            this.add(new SqlPart(sql, paras, true));
         }
         return this;
     }
@@ -408,7 +492,19 @@ public class Columns implements Serializable {
                 buildCacheKey(s, ((Group) column).getColumns().getList());
                 s.append(')').append(SQL_CACHE_SEPARATOR);
             } else if (column instanceof SqlPart) {
-                s.append(deleteWhitespace(((SqlPart) column).getSql())).append("-");
+                String sqlpart = ((SqlPart) column).getSql();
+                Object value = column.getValue();
+                if (value != null) {
+                    if (value.getClass().isArray()) {
+                        Object[] values = (Object[]) value;
+                        for (Object v : values) {
+                            sqlpart = Util.replaceSqlPara(sqlpart, v);
+                        }
+                    } else {
+                        sqlpart = Util.replaceSqlPara(sqlpart, value);
+                    }
+                }
+                s.append(Util.deleteWhitespace(sqlpart)).append(SQL_CACHE_SEPARATOR);
             } else {
                 s.append(column.getName())
                         .append(SQL_CACHE_SEPARATOR)
@@ -417,7 +513,7 @@ public class Columns implements Serializable {
                 Object value = column.getValue();
                 if (value != null) {
                     if (value.getClass().isArray()) {
-                        s.append(array2String((Object[]) column.getValue()));
+                        s.append(Util.array2String((Object[]) value));
                     } else {
                         s.append(column.getValue());
                     }
@@ -426,42 +522,6 @@ public class Columns implements Serializable {
             }
         }
         s.deleteCharAt(s.length() - 1);
-    }
-
-    private static String deleteWhitespace(String str) {
-        final int strLen = str.length();
-        final char[] chs = new char[strLen];
-        int count = 0;
-        for (int i = 0; i < strLen; i++) {
-            if (!Character.isWhitespace(str.charAt(i))) {
-                chs[count++] = str.charAt(i);
-            }
-        }
-        if (count == strLen) {
-            return str;
-        }
-        return new String(chs, 0, count);
-    }
-
-    private static String array2String(Object[] a) {
-        if (a == null) {
-            return "null";
-        }
-
-        int iMax = a.length - 1;
-        if (iMax == -1) {
-            return "[]";
-        }
-
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (int i = 0; ; i++) {
-            b.append(a[i]);
-            if (i == iMax) {
-                return b.append(']').toString();
-            }
-            b.append("-");
-        }
     }
 
 
@@ -530,13 +590,19 @@ public class Columns implements Serializable {
         System.out.println(columns.getCacheKey());
 
         columns.ge("age", 10);
-        columns.sqlPart("and user.id != 1");
-        System.out.println(columns.getCacheKey());
-
-        columns.group(Columns.create().likeAppendPercent("name", "lisi").eq("age", 20));
+        columns.or();
+        columns.sqlPart("user.id != ? and xxx= ?", 1, "abc2");
         System.out.println(columns.getCacheKey());
 
         columns.or();
+        columns.group(Columns.create().likeAppendPercent("name", null).or()
+                .eq("age", null));
+        System.out.println(columns.getCacheKey());
+
+        columns.or();
+        columns.group(Columns.create().likeAppendPercent("name", null).or()
+                .eq("age", null));
+//        columns.or();
 
         columns.group(Columns.create().isNotNull("price").isNull("nickname").group(Columns.create().in("name", "123", "123", "111").notIn("nickname", "aaa", "bbb")));
 

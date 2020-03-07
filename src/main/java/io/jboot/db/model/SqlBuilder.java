@@ -27,6 +27,9 @@ import java.util.List;
  */
 public class SqlBuilder {
 
+    private static final String OR = " OR ";
+    private static final String AND = " AND ";
+
     public static void buildMysqlWhereSql(StringBuilder sqlBuilder, List<Column> columns) {
         buildWhereSql(sqlBuilder, columns, '`');
     }
@@ -54,8 +57,9 @@ public class SqlBuilder {
     private static void buildByColumns(StringBuilder sqlBuilder, List<Column> columns, char separator) {
         for (int i = 0; i < columns.size(); i++) {
 
+            Column before = i > 0 ? columns.get(i - 1) : null;
             Column curent = columns.get(i);
-            Column next = i >= columns.size() - 1 ? null : columns.get(i + 1);
+//
 
             // or
             if (curent instanceof Or) {
@@ -63,11 +67,13 @@ public class SqlBuilder {
             }
             // string
             else if (curent instanceof SqlPart) {
-                sqlBuilder.append(' ').append(((SqlPart) curent).getSql());
+                appendSqlPartLogic(sqlBuilder, before, (SqlPart) curent);
+                continue;
             }
             // group
             else if (curent instanceof Group) {
-                appendGroupLogic(sqlBuilder, ((Group) curent).getColumns().getList(), separator);
+                appendGroupLogic(sqlBuilder, before, (Group) curent, separator);
+                continue;
             }
             // in logic
             else if (Column.LOGIC_IN.equals(curent.getLogic()) || Column.LOGIC_NOT_IN.equals(curent.getLogic())) {
@@ -87,12 +93,20 @@ public class SqlBuilder {
                 }
             }
 
-            // if next is SqlPart, no need append 'AND' or 'OR'
-            if (!(next instanceof SqlPart)) {
-                appendLinkString(sqlBuilder, next);
-            }
+            Column next1 = i >= columns.size() - 1 ? null : columns.get(i + 1);
+            Column next2 = i >= columns.size() - 2 ? null : columns.get(i + 2);
+            appendLinkString(sqlBuilder, next1, next2);
         }
     }
+
+
+    private static void appendSqlPartLogic(StringBuilder sqlBuilder, Column before, SqlPart sqlPart) {
+        if (!sqlPart.isWithoutLink()) {
+            sqlBuilder.append(before instanceof Or ? OR : AND);
+        }
+        sqlBuilder.append(' ').append(sqlPart.getSql());
+    }
+
 
     private static void appendColumnName(StringBuilder sqlBuilder, Column column, char separator) {
         if (column.getName().contains(".")) {
@@ -111,23 +125,39 @@ public class SqlBuilder {
     }
 
 
-    private static void appendLinkString(StringBuilder sqlBuilder, Column next) {
-        if (next == null) {
+    private static void appendLinkString(StringBuilder sqlBuilder, Column next1, Column next2) {
+        if (next1 == null) {
+            return;
+        }
+        //if next is Group ,  'AND' or 'OR' append by appendGroupLogic()
+        else if (next1 instanceof Group || (next1 instanceof Or && next2 instanceof Group)) {
+            return;
+        }
+        //if next is SqlPart,  'AND' or 'OR' append by appendSqlPartLogic()
+        else if (next1 instanceof SqlPart || (next1 instanceof Or && next2 instanceof SqlPart)) {
             return;
         } else {
-            sqlBuilder.append(next instanceof Or ? " OR " : " AND ");
+            sqlBuilder.append(next1 instanceof Or ? OR : AND);
         }
     }
 
 
-    public static void appendGroupLogic(StringBuilder sqlBuilder, List<Column> columns, char separator) {
+    public static void appendGroupLogic(StringBuilder sqlBuilder, Column before, Group group, char separator) {
+        List<Column> columns = group.getColumns().getList();
         if (ArrayUtil.isNullOrEmpty(columns)) {
             return;
         }
 
-        sqlBuilder.append("(");
-        buildByColumns(sqlBuilder, columns, separator);
-        sqlBuilder.append(")");
+        StringBuilder groupSqlBuilder = new StringBuilder();
+        buildByColumns(groupSqlBuilder, columns, separator);
+
+        String groupSql = groupSqlBuilder.toString();
+        if (StrUtil.isNotBlank(groupSql)) {
+            sqlBuilder.append(before instanceof Or ? OR : AND);
+            sqlBuilder.append("(");
+            sqlBuilder.append(groupSql);
+            sqlBuilder.append(")");
+        }
     }
 
 

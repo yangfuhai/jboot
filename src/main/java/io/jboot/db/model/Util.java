@@ -16,9 +16,14 @@
 package io.jboot.db.model;
 
 
+import com.jfinal.ext.kit.DateKit;
+import io.jboot.utils.StrUtil;
+
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 class Util {
 
@@ -48,5 +53,69 @@ class Util {
         }
 
         return values.isEmpty() ? NULL_PARA_ARRAY : values.toArray();
+    }
+
+
+    static String replaceSqlPara(String sql, Object value) {
+        // null
+        if (value == null) {
+            return sql.replaceFirst("\\?", "null");
+        }
+        // number
+        else if (value instanceof Number) {
+            return sql.replaceFirst("\\?", value.toString());
+        }
+        // numeric
+        else if (value instanceof String && StrUtil.isNumeric((String) value)) {
+            return sql.replaceFirst("\\?", (String) value);
+        }
+        // other
+        else {
+            StringBuilder sb = new StringBuilder();
+            if (value instanceof Date) {
+                sb.append(DateKit.toStr((Date) value, DateKit.timeStampPattern));
+            } else {
+                sb.append(value.toString());
+            }
+            return sql.replaceFirst("\\?", Matcher.quoteReplacement(sb.toString()));
+        }
+    }
+
+
+    static String deleteWhitespace(String str) {
+        final int strLen = str.length();
+        final char[] chs = new char[strLen];
+        int count = 0;
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                chs[count++] = str.charAt(i);
+            }
+        }
+        if (count == strLen) {
+            return str;
+        }
+        return new String(chs, 0, count);
+    }
+
+
+    static String array2String(Object[] a) {
+        if (a == null) {
+            return "null";
+        }
+
+        int iMax = a.length - 1;
+        if (iMax == -1) {
+            return "[]";
+        }
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = 0; ; i++) {
+            b.append(a[i]);
+            if (i == iMax) {
+                return b.append(']').toString();
+            }
+            b.append("-");
+        }
     }
 }
