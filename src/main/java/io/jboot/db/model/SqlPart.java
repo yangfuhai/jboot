@@ -19,9 +19,27 @@ package io.jboot.db.model;
 class SqlPart extends Column {
 
     private String sql;
+    private Object para;
+    private boolean withoutLink = false;
 
     public SqlPart(String sql) {
         this.sql = sql;
+    }
+
+    public SqlPart(String sql, Object para) {
+        this.sql = sql;
+        this.para = para;
+    }
+
+    public SqlPart(String sql, boolean withoutLink) {
+        this.sql = sql;
+        this.withoutLink = withoutLink;
+    }
+
+    public SqlPart(String sql, Object para, boolean withoutLink) {
+        this.sql = sql;
+        this.para = para;
+        this.withoutLink = withoutLink;
     }
 
     public String getSql() {
@@ -32,8 +50,29 @@ class SqlPart extends Column {
         this.sql = sql;
     }
 
+    public Object getPara() {
+        return para;
+    }
+
+    public void setPara(Object para) {
+        this.para = para;
+    }
+
+    public boolean isWithoutLink() {
+        return withoutLink;
+    }
+
+    public void setWithoutLink(boolean withoutLink) {
+        this.withoutLink = withoutLink;
+    }
+
     @Override
     public boolean hasPara() {
-        return false;
+        return para != null;
+    }
+
+    @Override
+    public Object getValue() {
+        return para;
     }
 }
