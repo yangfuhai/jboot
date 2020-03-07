@@ -406,7 +406,7 @@ public class Columns implements Serializable {
      * @param condition
      * @return
      */
-    public Columns sqlPartIfWithoutLink(String sql, boolean condition) {
+    public Columns sqlPartWithoutLinkIf(String sql, boolean condition) {
         if (condition && StrUtil.isNotBlank(sql)) {
             this.add(new SqlPart(sql, true));
         }
@@ -421,12 +421,13 @@ public class Columns implements Serializable {
      * @param paras
      * @return
      */
-    public Columns sqlPartIfWithoutLink(String sql, boolean condition, Object... paras) {
+    public Columns sqlPartWithoutLinkIf(String sql, boolean condition, Object... paras) {
         if (condition && StrUtil.isNotBlank(sql)) {
             this.add(new SqlPart(sql, paras, true));
         }
         return this;
     }
+
 
 
     public Columns or() {
@@ -612,7 +613,7 @@ public class Columns implements Serializable {
         columns.between("name", "123", "1233");
         System.out.println(columns.getCacheKey());
 
-        columns.sqlPart("group by xxx");
+        columns.sqlPartWithoutLink("group by xxx");
 
         System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());
