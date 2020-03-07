@@ -1403,6 +1403,7 @@ public class JbootJedisImpl extends JbootRedisBase {
      * @param listener
      * @param channels
      */
+    @Override
     public void subscribe(JedisPubSub listener, final String... channels) {
         /**
          * https://github.com/xetorthio/jedis/wiki/AdvancedUsage
@@ -1443,6 +1444,7 @@ public class JbootJedisImpl extends JbootRedisBase {
      * @param binaryListener
      * @param channels
      */
+    @Override
     public void subscribe(BinaryJedisPubSub binaryListener, final byte[]... channels) {
         /**
          * https://github.com/xetorthio/jedis/wiki/AdvancedUsage
