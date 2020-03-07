@@ -151,7 +151,7 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isNumeric(String str) {
-        if (str == null) {
+        if (isBlank(str)) {
             return false;
         }
         for (int i = str.length(); --i >= 0; ) {
@@ -170,7 +170,7 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isDecimal(String str) {
-        if (str == null) {
+        if (isBlank(str)) {
             return false;
         }
         boolean hasDot  = false;
@@ -197,18 +197,18 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isEmail(String email) {
-        return Pattern.matches("\\w+@(\\w+.)+[a-z]{2,3}", email);
+        return isBlank(email) ? false : Pattern.matches("\\w+@(\\w+.)+[a-z]{2,3}", email);
     }
 
 
     /**
      * 是否是中国地区手机号码
      *
-     * @param phoneNumber
+     * @param mobileNumber
      * @return
      */
-    public static boolean isMobileNumber(String phoneNumber) {
-        return Pattern.matches("^(1[3,4,5,6,7,8,9])\\d{9}$", phoneNumber);
+    public static boolean isMobileNumber(String mobileNumber) {
+        return isBlank(mobileNumber) ? false : Pattern.matches("^(1[3,4,5,6,7,8,9])\\d{9}$", mobileNumber);
     }
 
 
