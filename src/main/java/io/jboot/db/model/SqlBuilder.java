@@ -59,7 +59,6 @@ public class SqlBuilder {
 
             Column before = i > 0 ? columns.get(i - 1) : null;
             Column curent = columns.get(i);
-//
 
             // or
             if (curent instanceof Or) {
@@ -68,12 +67,10 @@ public class SqlBuilder {
             // string
             else if (curent instanceof SqlPart) {
                 appendSqlPartLogic(sqlBuilder, before, (SqlPart) curent);
-                continue;
             }
             // group
             else if (curent instanceof Group) {
                 appendGroupLogic(sqlBuilder, before, (Group) curent, separator);
-                continue;
             }
             // in logic
             else if (Column.LOGIC_IN.equals(curent.getLogic()) || Column.LOGIC_NOT_IN.equals(curent.getLogic())) {
@@ -135,6 +132,10 @@ public class SqlBuilder {
         }
         //if next is SqlPart,  'AND' or 'OR' append by appendSqlPartLogic()
         else if (next1 instanceof SqlPart || (next1 instanceof Or && next2 instanceof SqlPart)) {
+            return;
+        }
+        //if the last is OR
+        else if (next1 instanceof Or && next2 == null) {
             return;
         } else {
             sqlBuilder.append(next1 instanceof Or ? OR : AND);

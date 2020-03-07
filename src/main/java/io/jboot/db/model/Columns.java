@@ -585,43 +585,49 @@ public class Columns implements Serializable {
 
     public static void main(String[] args) {
         Columns columns = Columns.create();
-        System.out.println(columns.getCacheKey());
-
+//        System.out.println(columns.getCacheKey());
+//
         columns.add("name", "zhangsan");
-        System.out.println(columns.getCacheKey());
-
-        columns.ge("age", 10);
-        columns.or();
-        columns.sqlPart("user.id != ? and xxx= ?", 1, "abc2");
-        System.out.println(columns.getCacheKey());
-
-        columns.or();
-        columns.group(Columns.create().likeAppendPercent("name", null).or()
-                .eq("age", null));
-        System.out.println(columns.getCacheKey());
+//        System.out.println(columns.getCacheKey());
+//
+//        columns.ge("age", 10);
+//        columns.or();
+//        columns.sqlPart("user.id != ? and xxx= ?", 1, "abc2");
+//        System.out.println(columns.getCacheKey());
 
         columns.or();
         columns.group(Columns.create().likeAppendPercent("name", null).or()
+                .eq("age", null).or().eq("ddd","null").eq("ccc","ccc"));
+//
+        columns.or();
+        columns.group(Columns.create().likeAppendPercent("name", null).or()
+                .eq("age", "18").eq("ddd","ddd"));
+//        System.out.println(columns.getCacheKey());
+//
+        columns.or();
+        columns.group(Columns.create().likeAppendPercent("name", "aaa").or()
                 .eq("age", null));
 //        columns.or();
-
-        columns.group(Columns.create().isNotNull("price").isNull("nickname").group(Columns.create().in("name", "123", "123", "111").notIn("nickname", "aaa", "bbb")));
-
-        System.out.println(columns.getCacheKey());
+//
+//        columns.group(Columns.create().isNotNull("price").isNull("nickname").group(Columns.create().in("name", "123", "123", "111").notIn("nickname", "aaa", "bbb")));
+//
+//        System.out.println(columns.getCacheKey());
         columns.or();
-
+//
         columns.between("name", "123", "1233");
-        System.out.println(columns.getCacheKey());
-
+//        System.out.println(columns.getCacheKey());
+//
         columns.sqlPartWithoutLink("group by xxx");
+
+
 
         System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());
-        System.out.println(columns.toSqlServerSql());
+//        System.out.println(columns.toSqlServerSql());
 
-        JbootMysqlDialect dialect = new JbootMysqlDialect();
-        System.out.println(dialect.forDeleteByColumns("table", columns.getList()));
-        System.out.println(dialect.forFindCountByColumns("table", columns.getList()));
+//        JbootMysqlDialect dialect = new JbootMysqlDialect();
+//        System.out.println(dialect.forDeleteByColumns("table", columns.getList()));
+//        System.out.println(dialect.forFindCountByColumns("table", columns.getList()));
 
     }
 
