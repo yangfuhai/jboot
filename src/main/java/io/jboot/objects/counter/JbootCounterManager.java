@@ -15,9 +15,36 @@
  */
 package io.jboot.objects.counter;
 
+import io.jboot.Jboot;
+import io.jboot.core.spi.JbootSpiLoader;
+import io.jboot.objects.counter.impl.JbootLocalCounter;
+import io.jboot.objects.counter.impl.JbootRedicCounter;
+
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/2/28
  */
 public class JbootCounterManager {
+
+    private static JbootCounterManager instance = new JbootCounterManager();
+    public static JbootCounterManager me() {
+        return instance;
+    }
+
+
+    private JbootCounterConfig config = Jboot.config(JbootCounterConfig.class);
+
+    public JbootCounter create(String name){
+        switch (config.getType()){
+            case JbootCounterConfig.TYPE_LOCAL:
+                return new JbootLocalCounter();
+            case JbootCounterConfig.TYPE_REDIS:
+                return new JbootRedicCounter(name);
+            default:
+                return JbootSpiLoader.load(JbootCounter.class,config.getType());
+        }
+
+
+    }
+
 }
