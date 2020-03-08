@@ -35,7 +35,7 @@ class Util {
             return NULL_PARA_ARRAY;
         }
 
-        List<Object> values = new LinkedList<>();
+        List<Object> paras = new LinkedList<>();
 
         for (Column column : columns) {
             if (!column.hasPara()) {
@@ -44,15 +44,15 @@ class Util {
             Object value = column.getValue();
             if (value != null) {
                 if (value.getClass().isArray()) {
-                    Object[] vs = (Object[]) value;
-                    Collections.addAll(values, vs);
+                    Object[] values = (Object[]) value;
+                    Collections.addAll(paras, values);
                 } else {
-                    values.add(value);
+                    paras.add(value);
                 }
             }
         }
 
-        return values.isEmpty() ? NULL_PARA_ARRAY : values.toArray();
+        return paras.isEmpty() ? NULL_PARA_ARRAY : paras.toArray();
     }
 
 
