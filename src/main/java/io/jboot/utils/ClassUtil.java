@@ -73,6 +73,27 @@ public class ClassUtil {
     }
 
 
+    /**
+     * 创建新的实例，并传入初始化参数
+     *
+     * @param clazz
+     * @param paras
+     * @param <T>
+     * @return
+     */
+    public static <T> T newInstance(Class<T> clazz, Object... paras) {
+        return newInstance(clazz, true, paras);
+    }
+
+
+    /**
+     * 是否通过 AOP 来实例化
+     *
+     * @param clazz
+     * @param createByAop
+     * @param <T>
+     * @return
+     */
     public static <T> T newInstance(Class<T> clazz, boolean createByAop) {
         if (createByAop) {
             return Aop.get(clazz);
@@ -89,6 +110,32 @@ public class ClassUtil {
         }
     }
 
+
+    public static <T> T newInstance(Class<T> clazz, boolean createByAop, Object... paras) {
+        try {
+            Class[] classes = new Class[paras.length];
+            for (int i = 0; i < paras.length; i++) {
+                Object data = paras[i];
+                if (data == null) {
+                    throw new IllegalArgumentException("paras must not null");
+                }
+                classes[i] = data.getClass();
+            }
+            Constructor constructor = clazz.getDeclaredConstructor(classes);
+            constructor.setAccessible(true);
+            Object ret = constructor.newInstance(paras);
+            if (createByAop) {
+                Aop.inject(ret);
+            }
+            return (T) ret;
+        } catch (Exception e) {
+            log.error("can not newInstance class:" + clazz + "\n" + e.toString(), e);
+        }
+
+        return null;
+    }
+
+
     public static <T> T newInstanceByStaticConstruct(Class<T> clazz) {
         StaticConstruct staticConstruct = clazz.getAnnotation(StaticConstruct.class);
         if (staticConstruct == null) {
@@ -97,6 +144,7 @@ public class ClassUtil {
 
         return newInstanceByStaticConstruct(clazz, staticConstruct);
     }
+
 
     public static <T> T newInstanceByStaticConstruct(Class<T> clazz, StaticConstruct staticConstruct) {
 
@@ -184,14 +232,16 @@ public class ClassUtil {
     }
 
 
+    private static final String ENHANCER_BY = "$$EnhancerBy";
+
     public static Class getUsefulClass(Class<?> clazz) {
         //ControllerTest$ServiceTest$$EnhancerByGuice$$40471411#hello
         //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
-        return clazz.getName().indexOf("$$EnhancerBy") == -1 ? clazz : clazz.getSuperclass();
+        return clazz.getName().indexOf(ENHANCER_BY) == -1 ? clazz : clazz.getSuperclass();
     }
 
 
-    public static Class getGenericClass(Class<?> clazz){
+    public static Class getGenericClass(Class<?> clazz) {
         Type type = getUsefulClass(clazz).getGenericSuperclass();
         return (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
     }
