@@ -1,3 +1,15 @@
+jboot v3.0.4:
+新增：Jboot MQ 新增 Local 类型
+新增：sqlPart 支持参数设置
+优化：修改 Columns.string() 为 Columns.sqlPart()
+优化：JbootModelConfig 的 primarykeyValueGenerator 和 Filter 支持通过 api 动态配置
+优化：StrUtil.isNumeric、isDecimal、isEmail 等方法
+优化：完善 JbootCounter 功能
+修复：当 Columns.group() 内容为空的时候，构建了错误Sql的问题
+修复：Columns.isNullIf 条件判断错误的问题
+
+
+
 jboot v3.0.3:
 新增：Cache 模块新增 refresh() 的方法，在分布式缓存在某些极端情况下出现不同步的时候进行刷新。
 新增：对 Columns 优化，新增 gourpIf()/stringIf()/isNullIf() 等方法
