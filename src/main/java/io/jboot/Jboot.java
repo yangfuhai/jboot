@@ -16,7 +16,6 @@
 package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
-import com.jfinal.aop.Aop;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.components.cache.JbootCache;
 import io.jboot.components.cache.JbootCacheManager;
@@ -185,30 +184,5 @@ public class Jboot {
     public static void sendEvent(String action, Object data) {
         sendEvent(new JbootEvent(action, data));
     }
-
-
-    /**
-     * 使用 Aop.get 代替
-     *
-     * @param clazz
-     * @param <T>
-     * @return
-     */
-    @Deprecated
-    public static <T> T bean(Class<T> clazz) {
-        return Aop.get(clazz);
-    }
-
-
-    /**
-     * 使用  Aop.inject 代替
-     *
-     * @param object
-     */
-    @Deprecated
-    public static void injectMembers(Object object) {
-        Aop.inject(object);
-    }
-
 
 }
