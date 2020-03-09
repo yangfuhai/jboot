@@ -296,6 +296,9 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns group(Columns columns) {
+        if (columns == this){
+            throw new IllegalArgumentException("Columns.group(...) need a new Columns");
+        }
         if (!columns.isEmpty()) {
             this.add(new Group(columns));
         }
@@ -309,6 +312,9 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns groupIf(Columns columns, boolean conditon) {
+        if (columns == this){
+            throw new IllegalArgumentException("Columns.group(...) need a new Columns");
+        }
         if (conditon && !columns.isEmpty()) {
             this.add(new Group(columns));
         }
@@ -485,9 +491,15 @@ public class Columns implements Serializable {
     private static final char SQL_CACHE_SEPARATOR = '-';
 
     private void buildCacheKey(StringBuilder s, List<Column> columns) {
-        for (Column column : columns) {
+        for (int i = 0; i < columns.size(); i++) {
+
+            Column column = columns.get(i);
+
             if (column instanceof Or) {
-                s.append("or").append(SQL_CACHE_SEPARATOR);
+                Column before = i > 0 ? columns.get(i - 1) : null;
+                if (before != null && !(before instanceof Or) ) {
+                    s.append("or").append(SQL_CACHE_SEPARATOR);
+                }
             } else if (column instanceof Group) {
                 s.append('(');
                 buildCacheKey(s, ((Group) column).getColumns().getList());
@@ -583,51 +595,45 @@ public class Columns implements Serializable {
         return getCacheKey();
     }
 
+
     public static void main(String[] args) {
-        Columns columns = Columns.create();
-//        System.out.println(columns.getCacheKey());
-//
-        columns.add("name", "zhangsan");
-//        System.out.println(columns.getCacheKey());
-//
-//        columns.ge("age", 10);
-//        columns.or();
-//        columns.sqlPart("user.id != ? and xxx= ?", 1, "abc2");
-//        System.out.println(columns.getCacheKey());
+
+        Columns columns = Columns.create().or().or().or().eq("aa","bb").or().or().or().notIn("aaa",123,456,789).like("titile","a");
+        columns.group(Columns.create().or().or().sqlPart("aa=bb"));
+        columns.group(Columns.create("aa","bb").eq("cc","dd")
+                .group(Columns.create("aa","bb").eq("cc","dd"))
+                .group(Columns.create("aa","bb").eq("cc","dd").group(Columns.create("aa","bb").eq("cc","dd"))));
+
+        columns.ge("age", 10);
+        columns.or();
+        columns.or();
+        columns.or();
+        columns.or();
+        columns.sqlPart("user.id != ? and xxx= ?", 1, "abc2");
+        columns.sqlPart("user.id != ? and xxx= ?", 1, "abc2");
 
         columns.or();
-        columns.group(Columns.create().likeAppendPercent("name", null).or()
-                .eq("age", null).or().eq("ddd","null").eq("ccc","ccc"));
-//
         columns.or();
-        columns.group(Columns.create().likeAppendPercent("name", null).or()
+        columns.or();
+        columns.group(Columns.create().likeAppendPercent("name", "null").or().or().or()
                 .eq("age", "18").eq("ddd","ddd"));
-//        System.out.println(columns.getCacheKey());
-//
+
         columns.or();
-        columns.group(Columns.create().likeAppendPercent("name", "aaa").or()
-                .eq("age", null));
-//        columns.or();
-//
-//        columns.group(Columns.create().isNotNull("price").isNull("nickname").group(Columns.create().in("name", "123", "123", "111").notIn("nickname", "aaa", "bbb")));
-//
-//        System.out.println(columns.getCacheKey());
         columns.or();
-//
+
+        columns.group(Columns.create().or().or().sqlPart("name = ? ", "zhangsan"));
+        columns.or();
+        columns.or();
+        columns.or();
+
         columns.between("name", "123", "1233");
-//        System.out.println(columns.getCacheKey());
-//
+        columns.between("name", "123", "1233");
+
         columns.sqlPartWithoutLink("group by xxx");
 
-
-
+        System.out.println(columns.getCacheKey());
         System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());
-//        System.out.println(columns.toSqlServerSql());
-
-//        JbootMysqlDialect dialect = new JbootMysqlDialect();
-//        System.out.println(dialect.forDeleteByColumns("table", columns.getList()));
-//        System.out.println(dialect.forFindCountByColumns("table", columns.getList()));
 
     }
 

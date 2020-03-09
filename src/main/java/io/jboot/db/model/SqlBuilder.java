@@ -48,9 +48,14 @@ public class SqlBuilder {
             return;
         }
 
-        sqlBuilder.append(" WHERE ");
-        buildByColumns(sqlBuilder, columns, separator);
+        StringBuilder whereSqlBuilder = new StringBuilder();
+        buildByColumns(whereSqlBuilder, columns, separator);
 
+        String whereSql = whereSqlBuilder.toString();
+
+        if (StrUtil.isNotBlank(whereSql)) {
+            sqlBuilder.append(" WHERE ").append(whereSql);
+        }
 
     }
 
@@ -60,11 +65,10 @@ public class SqlBuilder {
             Column before = i > 0 ? columns.get(i - 1) : null;
             Column curent = columns.get(i);
 
-            // or
             if (curent instanceof Or) {
                 continue;
             }
-            // string
+            // sqlPart
             else if (curent instanceof SqlPart) {
                 appendSqlPartLogic(sqlBuilder, before, (SqlPart) curent);
             }
@@ -74,32 +78,30 @@ public class SqlBuilder {
             }
             // in logic
             else if (Column.LOGIC_IN.equals(curent.getLogic()) || Column.LOGIC_NOT_IN.equals(curent.getLogic())) {
+                appendLinkString(sqlBuilder, before);
                 appendInLogic(sqlBuilder, curent, separator);
             }
             // between logic
             else if (Column.LOGIC_BETWEEN.equals(curent.getLogic()) || Column.LOGIC_NOT_BETWEEN.equals(curent.getLogic())) {
+                appendLinkString(sqlBuilder, before);
                 appendBetweenLogic(sqlBuilder, curent, separator);
             }
             // others
             else {
-
+                appendLinkString(sqlBuilder, before);
                 appendColumnName(sqlBuilder, curent, separator);
 
                 if (curent.hasPara()) {
-                    sqlBuilder.append("?");
+                    sqlBuilder.append('?');
                 }
             }
-
-            Column next1 = i >= columns.size() - 1 ? null : columns.get(i + 1);
-            Column next2 = i >= columns.size() - 2 ? null : columns.get(i + 2);
-            appendLinkString(sqlBuilder, next1, next2);
         }
     }
 
 
     private static void appendSqlPartLogic(StringBuilder sqlBuilder, Column before, SqlPart sqlPart) {
         if (!sqlPart.isWithoutLink()) {
-            sqlBuilder.append(before instanceof Or ? OR : AND);
+            appendLinkString(sqlBuilder, before);
         }
         sqlBuilder.append(' ').append(sqlPart.getSql());
     }
@@ -108,37 +110,25 @@ public class SqlBuilder {
     private static void appendColumnName(StringBuilder sqlBuilder, Column column, char separator) {
         if (column.getName().contains(".")) {
             sqlBuilder.append(column.getName())
-                    .append(" ")
+                    .append(' ')
                     .append(column.getLogic())
-                    .append(" ");
+                    .append(' ');
         } else {
             sqlBuilder.append(separator)
                     .append(column.getName())
                     .append(separator)
-                    .append(" ")
+                    .append(' ')
                     .append(column.getLogic())
-                    .append(" ");
+                    .append(' ');
         }
     }
 
 
-    private static void appendLinkString(StringBuilder sqlBuilder, Column next1, Column next2) {
-        if (next1 == null) {
-            return;
-        }
-        //if next is Group ,  'AND' or 'OR' append by appendGroupLogic()
-        else if (next1 instanceof Group || (next1 instanceof Or && next2 instanceof Group)) {
-            return;
-        }
-        //if next is SqlPart,  'AND' or 'OR' append by appendSqlPartLogic()
-        else if (next1 instanceof SqlPart || (next1 instanceof Or && next2 instanceof SqlPart)) {
-            return;
-        }
-        //if the last is OR
-        else if (next1 instanceof Or && next2 == null) {
+    private static void appendLinkString(StringBuilder sqlBuilder, Column before) {
+        if (sqlBuilder.length() == 0 || before == null) {
             return;
         } else {
-            sqlBuilder.append(next1 instanceof Or ? OR : AND);
+            sqlBuilder.append(before instanceof Or ? OR : AND);
         }
     }
 
@@ -154,10 +144,10 @@ public class SqlBuilder {
 
         String groupSql = groupSqlBuilder.toString();
         if (StrUtil.isNotBlank(groupSql)) {
-            sqlBuilder.append(before instanceof Or ? OR : AND);
-            sqlBuilder.append("(");
+            appendLinkString(sqlBuilder, before);
+            sqlBuilder.append('(');
             sqlBuilder.append(groupSql);
-            sqlBuilder.append(")");
+            sqlBuilder.append(')');
         }
     }
 
@@ -166,15 +156,15 @@ public class SqlBuilder {
 
         appendColumnName(sqlBuilder, column, separator);
 
-        sqlBuilder.append("(");
+        sqlBuilder.append('(');
         Object[] values = (Object[]) column.getValue();
         for (int i = 0; i < values.length; i++) {
-            sqlBuilder.append("?");
+            sqlBuilder.append('?');
             if (i != values.length - 1) {
-                sqlBuilder.append(",");
+                sqlBuilder.append(',');
             }
         }
-        sqlBuilder.append(")");
+        sqlBuilder.append(')');
     }
 
 
@@ -182,7 +172,7 @@ public class SqlBuilder {
         sqlBuilder.append(separator)
                 .append(column.getName())
                 .append(separator)
-                .append(" ")
+                .append(' ')
                 .append(column.getLogic());
 
         sqlBuilder.append(" ? AND ?");
