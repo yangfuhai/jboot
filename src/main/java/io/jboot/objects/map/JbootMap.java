@@ -15,9 +15,41 @@
  */
 package io.jboot.objects.map;
 
+import java.util.List;
+
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/2/28
  */
 public interface JbootMap {
+
+    /**
+     * put value
+     * @param key
+     * @param value
+     */
+    public void put(String key, Object value);
+
+    /**
+     * get value
+     * @param key
+     * @param <T>
+     * @return
+     */
+    public <T> T get(String key);
+
+    /**
+     * get all values
+     * @param <T>
+     * @return
+     */
+    public <T> List<T> values();
+
+    /**
+     * get all keys
+     * @return
+     */
+    public List<String> keys();
+
+
 }
