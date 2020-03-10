@@ -103,7 +103,7 @@ public class SqlBuilder {
         if (!sqlPart.isWithoutLink()) {
             appendLinkString(sqlBuilder, before);
         }
-        sqlBuilder.append(' ').append(sqlPart.getSql());
+        sqlBuilder.append(' ').append(sqlPart.getSql()).append(' ');
     }
 
 

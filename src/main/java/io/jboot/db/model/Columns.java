@@ -621,15 +621,19 @@ public class Columns implements Serializable {
         columns.or();
         columns.or();
 
-        columns.group(Columns.create().or().or().sqlPart("name = ? ", "zhangsan"));
+        columns.group(Columns.create().or().or().sqlPart("name = ?", "zhangsan"));
         columns.or();
         columns.or();
         columns.or();
 
         columns.between("name", "123", "1233");
         columns.between("name", "123", "1233");
+        columns.or();
 
         columns.sqlPartWithoutLink("group by xxx");
+        columns.or();
+        columns.or();
+        columns.or();
 
         System.out.println(columns.getCacheKey());
         System.out.println(Arrays.toString(columns.getValueArray()));
