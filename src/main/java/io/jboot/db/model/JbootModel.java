@@ -260,6 +260,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             LOG.error(ex.toString(), ex);
             safeDeleteCache(idValues);
         }
+
         return JbootModel.super.findByIds(idValues);
     }
 
@@ -268,7 +269,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             config.getIdCache().remove(_getTableName()
                     , buildCacheKey(idValues));
         } catch (Exception ex) {
-            LOG.error(ex.toString(), ex);
+            LOG.error("remove cache exception by name [" + _getTableName() + "] and key [" + buildCacheKey(idValues) + "]", ex);
         }
     }
 
