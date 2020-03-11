@@ -1,6 +1,7 @@
 package io.jboot.test.aop.cache;
 
 import com.jfinal.aop.Inject;
+import io.jboot.aop.annotation.Bean;
 import io.jboot.test.db.model.User;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
@@ -14,8 +15,15 @@ public class AopCacheController extends JbootController {
     @Inject
     private CommentService commentService;
 
+    @Inject
+    @Bean(name = "myCommentServiceFromConfiguration")
+    private CommentService myCommentService;
+
 
     public void index() {
+        System.out.println("commentService:"+commentService);
+        System.out.println("myCommentService:"+myCommentService);
+
         renderText("text from : " + commentService.getCommentById("index"));
     }
 

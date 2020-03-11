@@ -103,7 +103,7 @@ public class JbootAopFactory extends AopFactory {
                 if (inject != null) {
                     Bean bean = field.getAnnotation(Bean.class);
                     if (bean != null && StrUtil.isNotBlank(bean.name())) {
-                        doInjectByName(targetObject, field, bean.name());
+                        doInjectByName(targetObject, field, inject, bean.name());
                     } else {
                         doInjectJFinalOrginal(targetObject, field, inject);
                     }
@@ -142,9 +142,14 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    private void doInjectByName(Object targetObject, Field field, String name) throws ReflectiveOperationException {
+    private void doInjectByName(Object targetObject, Field field, Inject inject, String name) throws ReflectiveOperationException {
         Object fieldInjectedObject = beansMap.get(name);
-        setFieldValue(field, targetObject, fieldInjectedObject);
+        if (fieldInjectedObject != null) {
+            setFieldValue(field, targetObject, fieldInjectedObject);
+        } else {
+            LOG.warn("can not inject by name [" + name + "] in " + targetObject.getClass()+"."+field.getName()+", use default.");
+            doInjectJFinalOrginal(targetObject, field, inject);
+        }
     }
 
     /**
