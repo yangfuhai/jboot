@@ -19,7 +19,7 @@ import java.lang.annotation.*;
 
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
-public @interface Bean {
+@Target({ElementType.TYPE})
+public @interface Configuration {
     String name() default "";
 }

@@ -24,10 +24,7 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.proxy.Proxy;
 import com.jfinal.proxy.ProxyManager;
-import io.jboot.aop.annotation.Bean;
-import io.jboot.aop.annotation.BeanExclude;
-import io.jboot.aop.annotation.ConfigValue;
-import io.jboot.aop.annotation.StaticConstruct;
+import io.jboot.aop.annotation.*;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
@@ -43,8 +40,11 @@ import io.jboot.web.controller.JbootController;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class JbootAopFactory extends AopFactory {
 
@@ -63,6 +63,9 @@ public class JbootAopFactory extends AopFactory {
     public static JbootAopFactory me() {
         return me;
     }
+
+
+    private Map<String, Object> beansMap = new ConcurrentHashMap<>();
 
 
     private JbootAopFactory() {
@@ -98,7 +101,12 @@ public class JbootAopFactory extends AopFactory {
 
                 Inject inject = field.getAnnotation(Inject.class);
                 if (inject != null) {
-                    doInjectJFinalOrginal(targetObject, field, inject);
+                    Bean bean = field.getAnnotation(Bean.class);
+                    if (bean != null && StrUtil.isNotBlank(bean.name())) {
+                        doInjectByName(targetObject, field, bean.name());
+                    } else {
+                        doInjectJFinalOrginal(targetObject, field, inject);
+                    }
                     continue;
                 }
 
@@ -133,6 +141,12 @@ public class JbootAopFactory extends AopFactory {
         }
     }
 
+
+    private void doInjectByName(Object targetObject, Field field, String name) throws ReflectiveOperationException {
+        Object fieldInjectedObject = beansMap.get(name);
+        setFieldValue(field, targetObject, fieldInjectedObject);
+    }
+
     /**
      * JFinal 原生 service 注入
      *
@@ -150,7 +164,6 @@ public class JbootAopFactory extends AopFactory {
         Object fieldInjectedObject = doGet(fieldInjectedClass);
 
         setFieldValue(field, targetObject, fieldInjectedObject);
-
     }
 
     /**
@@ -192,7 +205,6 @@ public class JbootAopFactory extends AopFactory {
 
         if (StrUtil.isNotBlank(value)) {
             Object fieldInjectedObject = JbootConfigManager.me().convert(fieldInjectedClass, value);
-
             setFieldValue(field, targetObject, fieldInjectedObject);
             return;
         }
@@ -260,18 +272,42 @@ public class JbootAopFactory extends AopFactory {
     private void initBeanMapping() {
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class implClass : classes) {
+            Bean bean = (Bean) implClass.getAnnotation(Bean.class);
+            if (StrUtil.isNotBlank(bean.name())) {
+                beansMap.put(bean.name(), get(implClass));
+            }
 
             Class<?>[] interfaceClasses = implClass.getInterfaces();
-
             if (interfaceClasses == null || interfaceClasses.length == 0) {
                 continue;
             }
 
             Class[] excludes = buildExcludeClasses(implClass);
-
             for (Class interfaceClass : interfaceClasses) {
                 if (inExcludes(interfaceClass, excludes) == false) {
                     this.addMapping(interfaceClass, implClass);
+                }
+            }
+        }
+
+
+        List<Class> configurationClasses = ClassScanner.scanClassByAnnotation(Configuration.class, true);
+        for (Class configurationClass : configurationClasses) {
+            Object configurationObj = ClassUtil.newInstance(configurationClass);
+            if (configurationObj == null) {
+                throw new NullPointerException("can not newInstance for class : " + configurationClass);
+            }
+            Method[] methods = configurationClass.getDeclaredMethods();
+            for (Method method : methods) {
+                Bean bean = method.getAnnotation(Bean.class);
+                if (bean != null) {
+                    String beanName = StrUtil.isBlank(bean.name()) ? method.getName() : bean.name();
+                    try {
+                        Object methodObj = method.invoke(configurationObj);
+                        beansMap.put(beanName, methodObj);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
