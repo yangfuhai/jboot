@@ -1,3 +1,9 @@
+jboot v3.0.5:
+修复：SqlBuilder 在某些极端情况下生成 SQL 的一些问题
+优化：移除 Jboot 的一些过时的方法
+
+
+
 jboot v3.0.4:
 新增：Jboot MQ 新增 Local 类型
 新增：sqlPart 支持参数设置
