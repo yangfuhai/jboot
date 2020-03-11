@@ -16,6 +16,8 @@
 package io.jboot;
 
 import com.codahale.metrics.MetricRegistry;
+import com.jfinal.aop.Aop;
+import io.jboot.aop.JbootAopFactory;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.components.cache.JbootCache;
 import io.jboot.components.cache.JbootCacheManager;
@@ -67,7 +69,7 @@ public class Jboot {
     /**
      * 获取 MetricRegistry
      *
-     * @return //
+     * @return
      */
     public static MetricRegistry getMetric() {
         return JbootMetricManager.me().metric();
@@ -183,6 +185,27 @@ public class Jboot {
      */
     public static void sendEvent(String action, Object data) {
         sendEvent(new JbootEvent(action, data));
+    }
+
+
+    /**
+     * 根据类名获取 Aop 下的 Bean
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> T getBean(Class<T> clazz) {
+        return Aop.get(clazz);
+    }
+
+    /**
+     * 根据名称获取 Aop 下的 Bean
+     * @param name
+     * @param <T>
+     * @return
+     */
+    public static <T> T getBean(String name) {
+        return JbootAopFactory.me().getBean(name);
     }
 
 }

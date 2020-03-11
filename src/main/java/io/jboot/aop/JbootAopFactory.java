@@ -90,6 +90,7 @@ public class JbootAopFactory extends AopFactory {
         return Proxy.get(targetClass);
     }
 
+
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
         targetClass = getUsefulClass(targetClass);
@@ -102,8 +103,9 @@ public class JbootAopFactory extends AopFactory {
                 Inject inject = field.getAnnotation(Inject.class);
                 if (inject != null) {
                     Bean bean = field.getAnnotation(Bean.class);
-                    if (bean != null && StrUtil.isNotBlank(bean.name())) {
-                        doInjectByName(targetObject, field, inject, bean.name());
+                    String beanName = bean != null ? AnnotationUtil.get(bean.name()) : null;
+                    if (StrUtil.isNotBlank(beanName)) {
+                        doInjectByName(targetObject, field, inject, beanName);
                     } else {
                         doInjectJFinalOrginal(targetObject, field, inject);
                     }
@@ -147,7 +149,7 @@ public class JbootAopFactory extends AopFactory {
         if (fieldInjectedObject != null) {
             setFieldValue(field, targetObject, fieldInjectedObject);
         } else {
-            LOG.warn("can not inject by name [" + name + "] in " + targetObject.getClass()+"."+field.getName()+", use default.");
+            LOG.warn("can not inject by name [" + name + "] in " + targetObject.getClass() + "." + field.getName() + ", use default.");
             doInjectJFinalOrginal(targetObject, field, inject);
         }
     }
@@ -278,8 +280,9 @@ public class JbootAopFactory extends AopFactory {
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class implClass : classes) {
             Bean bean = (Bean) implClass.getAnnotation(Bean.class);
-            if (StrUtil.isNotBlank(bean.name())) {
-                beansMap.put(bean.name(), get(implClass));
+            String beanName = AnnotationUtil.get(bean.name());
+            if (StrUtil.isNotBlank(beanName)) {
+                beansMap.put(beanName, get(implClass));
             }
 
             Class<?>[] interfaceClasses = implClass.getInterfaces();
@@ -306,7 +309,7 @@ public class JbootAopFactory extends AopFactory {
             for (Method method : methods) {
                 Bean bean = method.getAnnotation(Bean.class);
                 if (bean != null) {
-                    String beanName = StrUtil.isBlank(bean.name()) ? method.getName() : bean.name();
+                    String beanName = StrUtil.obtainDefaultIfBlank(AnnotationUtil.get(bean.name()), method.getName());
                     try {
                         Object methodObj = method.invoke(configurationObj);
                         beansMap.put(beanName, methodObj);
@@ -327,6 +330,7 @@ public class JbootAopFactory extends AopFactory {
                 : ArrayUtil.concat(DEFAULT_EXCLUDES_MAPPING_CLASSES, beanExclude.value());
     }
 
+
     private boolean inExcludes(Class interfaceClass, Class[] excludes) {
         for (Class ex : excludes) {
             if (ex.isAssignableFrom(interfaceClass)) {
@@ -334,5 +338,10 @@ public class JbootAopFactory extends AopFactory {
             }
         }
         return false;
+    }
+
+
+    public <T> T getBean(String name) {
+        return (T) beansMap.get(name);
     }
 }
