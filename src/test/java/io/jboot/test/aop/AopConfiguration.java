@@ -33,4 +33,11 @@ public class AopConfiguration {
         System.out.println("myCommentService:" + commentService);
         return commentService;
     }
+
+    @Bean()
+    public CommentService myCommentService1(){
+        CommentService commentService = new CommentServiceImpl();
+        System.out.println("myCommentService:" + commentService);
+        return commentService;
+    }
 }
