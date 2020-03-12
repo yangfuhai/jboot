@@ -17,41 +17,24 @@ package io.jboot.aop;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.components.cache.interceptor.JbootCacheEvictInterceptor;
-import io.jboot.components.cache.interceptor.JbootCacheInterceptor;
-import io.jboot.components.cache.interceptor.JbootCachePutInterceptor;
-import io.jboot.components.cache.interceptor.JbootCachesEvictInterceptor;
-import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.exception.JbootException;
-import io.jboot.support.metric.JbootMetricInterceptor;
-import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
-import io.jboot.support.sentinel.SentinelInterceptor;
 
 import java.lang.reflect.Method;
 
 
 public class JbootAopInvocation extends Invocation {
 
-    private static final Interceptor[] ALL_INTERS = {
-            new SentinelInterceptor(),
-            new JbootMetricInterceptor(),
-            new JbootCacheEvictInterceptor(),
-            new JbootCachesEvictInterceptor(),
-            new JbootCachePutInterceptor(),
-            new JbootCacheInterceptor(),
-            new LimiterInterceptor(),
-            new SeataGlobalTransactionalInterceptor()
-    };
 
-
-    private Interceptor[] inters = ALL_INTERS;
+    private Interceptor[] inters;
     private Invocation originInvocation;
+
 
     private int index = 0;
 
 
-    public JbootAopInvocation(Invocation originInvocation) {
+    public JbootAopInvocation(Invocation originInvocation, Interceptor[] inters) {
         this.originInvocation = originInvocation;
+        this.inters = inters;
     }
 
 
