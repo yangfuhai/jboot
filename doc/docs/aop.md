@@ -94,6 +94,68 @@ public class UserServiceImpl implements UserService{
 }
 ```
 
+当一个接口有多个实现类，或者当在系统中存在多个实例对象，比如有两份 Cache 对象，一份可能是 Redis Server1，一份可能是 Redis Server2，或者有两份数据源 DataSource 等，在这种情况下，我们注入的时候就需要确定注入那个实例。
+
+这时候，我们就需要用到 `@Bean(name= "myName")` 去给不同的子类去添加注释。
+
+例如：
+
+
+```java
+@RequestMapping("/helloworld")
+public class MyController extends Controller{
+
+    @Inject
+    @Bean(name="userServieImpl1") //注入名称为 userServieImpl1 的实例
+    private UserService userService1;
+
+    @Inject
+    @Bean(name="userServieImpl2") //注入名称为 userServieImpl2 的实例
+    private UserService userService2;
+
+    public void index(){
+        renderJson(userService.findAll());
+    }
+}
+```
+
+UserService：
+
+```java
+public interface UserService{
+    public List<User> findAll();
+}
+```
+
+
+UserServiceImpl1：
+
+```java
+@Bean(name="userServiceImpl1")
+public class UserServiceImpl1 implements UserService{
+    public List<User> findAll(){
+        //do sth
+    }
+}
+```
+
+
+UserServiceImpl2：
+
+```java
+@Bean(name="userServiceImpl2")
+public class UserServiceImpl2 implements UserService{
+    public List<User> findAll(){
+        //do sth
+    }
+}
+```
+
+这种情况，只是针对一个接口有多个实现类的情况，那么，如果是一个接口只有一个实现类，但是有多个实例，如何进行注入呢？
+
+参考 @Configuration 。
+
+
 ## @BeanExclude
 
 当我们使用 `@Bean` 给某个类添加上注解之后，这个类会做好其实现的所有接口，但是，很多时候我们往往不需要这样做，比如：
@@ -122,3 +184,59 @@ OtherInterface1,OtherInterface2...{
         //do sth
     }
 }
+
+```
+
+## @Configuration
+
+
+在 Jboot 中的 `@Configuration` 和 Spring 体系的 `@Configuration` 功能类似。
+
+
+我们可以在一个普通类中添加注解 `@Configuration` , 然后在其方法通过 `@Bean` 去对方法进行添加注解。
+
+例如：
+
+```java
+@Configuration
+public class AppConfiguration {
+
+    @Bean(name = "myCommentServiceFromConfiguration")
+    public CommentService myCommentService1(){
+        CommentService commentService = new CommentServiceImpl();
+        return commentService;
+    }
+
+    @Bean
+    public CommentService myCommentService2(){
+        CommentService commentService = new CommentServiceImpl();
+        return commentService;
+    }
+}
+
+```
+
+这样，在一个 Jboot 应用中，就会存在两份 `CommentService` 他们的名称分别为：myCommentServiceFromConfiguration 和 myCommentService2（当只用了注解 @Bean 但是为添加 name 参数时，名称为方法名）
+
+这样，我们就可以在 Controller 里，通过 `@Inject` 配合 `@Bean(name = ... )` 进行注入，例如：
+
+
+```java
+@RequestMapping("/aopcache")
+public class AopCacheController extends JbootController {
+
+    @Inject
+    @Bean(name="myCommentService2")
+    private CommentService commentService;
+
+    @Inject
+    @Bean(name = "myCommentServiceFromConfiguration")
+    private CommentService myCommentService;
+
+
+    public void index() {
+        System.out.println("commentService:"+commentService);
+        System.out.println("myCommentService:"+myCommentService);
+    }
+}
+```
