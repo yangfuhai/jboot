@@ -216,17 +216,6 @@ public class JbootAopFactory extends AopFactory {
             setFieldValue(field, targetObject, fieldInjectedObject);
             return;
         }
-
-        if (configValue.requireNullOrBlank()) {
-            field.setAccessible(true);
-            if (fieldInjectedClass == int.class) {
-                field.set(targetObject, 0);
-            } else if (fieldInjectedClass == boolean.class) {
-                field.set(targetObject, false);
-            } else {
-                field.set(targetObject, null);
-            }
-        }
     }
 
 

@@ -23,7 +23,7 @@ public class AopController extends JbootController {
     @ConfigValue("undertow.port")
     private int port;
 
-    @ConfigValue(value = "undertow.xxx",requireNullOrBlank = true)
+    @ConfigValue(value = "undertow.xxx")
     private int xxx;
 
 
