@@ -240,3 +240,91 @@ public class AopCacheController extends JbootController {
     }
 }
 ```
+
+
+## @ConfigValue
+
+在 AOP 注入中，可能很多时候我们需要注入的只是一个配置内容，而非一个对象实例，此时，我们就可以使用注解 `@ConfigValue`，例如：
+
+```java
+@RequestMapping("/aop")
+public class AopController extends JbootController {
+
+    @ConfigValue("undertow.host")
+    private String host;
+
+    @ConfigValue("undertow.port")
+    private int port;
+
+    @ConfigValue(value = "undertow.xxx")
+    private int xxx;
+}   
+```
+
+此时，配置文件 jboot.properties (包括分布式配置中心) 里配置的 undertow.host 的值自动赋值给 host 属性。其他属性同理。
+
+
+## @StaticConstruct
+
+静态的构造方法。
+
+在某些类中，这个类的创建方式并不是通过 new 的方式进行创建的，或者可能构造函数是私有的，或者这个类可能是一个单例示例的类，比如：
+
+```java
+public class JbootManager {
+
+    private static JbootManager me = new JbootManager();
+
+    public static JbootManager me() {
+        return me;
+    }
+
+    private JbootManager(){
+        //do sth
+    }
+}
+```
+
+我们在其他类注入 JbootManager 的时候，并不希望通过 new JbootManager() 的方式进行创建注入，还是希望通过其方法 `me()` 进行获取。
+
+此时，我们就可以给 JbootManager 类添加 `@StaticConstruct` 注解，例如：
+
+```java
+@StaticConstruct
+public class JbootManager {
+
+    private static JbootManager me = new JbootManager();
+
+    public static JbootManager me() {
+        return me;
+    }
+
+    private JbootManager(){
+        //do sth
+    }
+}
+```
+
+但如果 JbootManager 有多个返回自己对象的静态方法，我们就可以使用  `@StaticConstruct` 的 value 参数来指定。
+
+例如：
+
+```java
+@StaticConstruct("me")
+public class JbootManager {
+
+    private static JbootManager me = new JbootManager();
+
+    public static JbootManager me() {
+        return me;
+    }
+
+    public static JbootManager create(){
+        return new JbootManager()
+    }
+
+    private JbootManager(){
+        //do sth
+    }
+}
+```

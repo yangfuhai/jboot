@@ -40,6 +40,7 @@ public class HelloworldController extends JbootController {
 - [JFinalConfig](./doc/docs/jfinalConfig.md)
 - [WebSocket](./doc/docs/websocket.md)
 - [MVC](./doc/docs/mvc.md)
+- [AOP](./doc/docs/aop.md)
 - [数据库](./doc/docs/db.md)
 - [缓存](./doc/docs/cache.md)
 - [RPC远程调用](./doc/docs/rpc.md)
