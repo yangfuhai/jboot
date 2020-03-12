@@ -169,6 +169,7 @@ OtherInterface1,OtherInterface2...{
         //do sth
     }
 }
+```
 
 在某些场景下，我们可能只希望 UserServiceImpl 和 UserService 做好映射关系，此时，`@BeanExclude` 就派上用场了。
 
@@ -184,7 +185,6 @@ OtherInterface1,OtherInterface2...{
         //do sth
     }
 }
-
 ```
 
 ## @Configuration
