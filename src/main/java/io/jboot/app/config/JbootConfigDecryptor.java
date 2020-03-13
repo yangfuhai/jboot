@@ -16,9 +16,11 @@
 package io.jboot.app.config;
 
 /**
- * Jboot Config 的内容解密器，加密方式由可客户自己编写的加密算法来加密
+ * Jboot Config 的内容解密器
+ *
+ * value 值的加密方式，由用户自己编写的加密算法来加密
  * <p>
- * 此时，只需要给 JbootConfigManager 配置上 Decryptor 进行解密即可
+ * 此时，要正确读取 value 的内容，需要给 JbootConfigManager 配置上 Decryptor 进行解密
  */
 public interface JbootConfigDecryptor {
 

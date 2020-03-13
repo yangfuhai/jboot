@@ -35,8 +35,7 @@ public class NacosConfigIniter {
 
     public void initListener(ConfigService configService, NacosServerConfig config) {
         try {
-            configService.addListener(config.getDataId()
-                    , config.getGroup()
+            configService.addListener(config.getDataId(), config.getGroup()
                     , new Listener() {
                         @Override
                         public Executor getExecutor() {

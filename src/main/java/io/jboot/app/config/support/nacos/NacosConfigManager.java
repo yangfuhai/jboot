@@ -43,6 +43,9 @@ public class NacosConfigManager {
 
     private Properties contentProperties;
 
+    /**
+     * 初始化 nacos 配置监听
+     */
     public void init() {
 
         NacosServerConfig nacosServerConfig = Jboot.config(NacosServerConfig.class);
@@ -73,7 +76,10 @@ public class NacosConfigManager {
     }
 
 
-
+    /**
+     * 接收的 nacos 服务器消息
+     * @param configInfo
+     */
     public void doReceiveConfigInfo(String configInfo) {
         Properties properties = str2Properties(configInfo);
         Set<String> changedKeys = new HashSet<>();

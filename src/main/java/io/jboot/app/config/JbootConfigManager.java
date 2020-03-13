@@ -253,7 +253,7 @@ public class JbootConfigManager {
 
 
     /**
-     * 获取值的优先顺序：1、启动配置  2、环境变量   3、properties配置文件
+     * 获取值的优先顺序：1、远程配置  2、启动配置   3、环境变量  4、系统属性  5、properties配置文件
      *
      * @param key
      * @return
