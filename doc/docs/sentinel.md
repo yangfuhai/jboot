@@ -38,12 +38,60 @@ https://github.com/alibaba/Sentinel/wiki/%E4%BB%8B%E7%BB%8D
 java -jar sentinel-dashboard-1.7.1.jar
 ```
 
-**第二步：配置项目的 sentinel.properties**
+ jar 的下载地址：https://github.com/alibaba/Sentinel/releases
+
+启动时，默认端口号为：8080，可以通过 -Dserver.port=8888 用于指定 Sentinel 控制台端口为 8888。
+
+例如：
+
+```
+java -Dserver.port=8888 -jar sentinel-dashboard-1.7.1.jar
+```
+
+从 Sentinel 1.6.0 起，Sentinel 控制台引入基本的登录功能，默认用户名和密码都是 sentinel。
+
+可以通过如下配置来修改掉默认的账号和密码：
+- -Dsentinel.dashboard.auth.username=sentinel 用于指定控制台的登录用户名为 sentinel；
+- -Dsentinel.dashboard.auth.password=123456 用于指定控制台的登录密码为 123456；
+
+关于控制台的更多配置，请参考：
+https://github.com/alibaba/Sentinel/wiki/%E6%8E%A7%E5%88%B6%E5%8F%B0#%E6%8E%A7%E5%88%B6%E5%8F%B0%E9%85%8D%E7%BD%AE%E9%A1%B9
+
+**第二步：配置项目的 sentinel.properties 和 Maven 依赖**
   
   在项目的 resource 目录下创建 sentinel.properties 文本，并配置相关信息如下：
 
   ```
 csp.sentinel.dashboard.server=localhost:8080
+  ```
+关于更多 sentinel.properties 的配置请参考：
+
+https://github.com/alibaba/Sentinel/wiki/%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E9%A1%B9#%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE%E9%A1%B9
+
+
+  添加 maven 依赖：
+
+  ```xml
+<dependency>
+    <groupId>com.alibaba.csp</groupId>
+    <artifactId>sentinel-core</artifactId>
+    <version>${sentinel.version}</version>
+    <scope>provided</scope>
+</dependency>
+
+<dependency>
+    <groupId>com.alibaba.csp</groupId>
+    <artifactId>sentinel-cluster-client-default</artifactId>
+    <version>${sentinel.version}</version>
+    <scope>provided</scope>
+</dependency>
+
+<dependency>
+    <groupId>com.alibaba.csp</groupId>
+    <artifactId>sentinel-transport-simple-http</artifactId>
+    <version>${sentinel.version}</version>
+    <scope>provided</scope>
+</dependency>
   ```
 
 **第三步：配置限流资源**
