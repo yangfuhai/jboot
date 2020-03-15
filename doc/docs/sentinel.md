@@ -81,4 +81,6 @@ public class UserService{
 
 然后通过浏览器进入 sentinel dashboard 中心，对 `SentinelController.index()` 和  `UserService.getUserById()` 的资源进行具体的限流参数配置。
 
-更多的配置内容请参考：https://github.com/alibaba/Sentinel/wiki/%E6%8E%A7%E5%88%B6%E5%8F%B0
+关注注解 `@SentinelResource` 更多的配置，请参考文档： https://github.com/alibaba/Sentinel/wiki/%E6%B3%A8%E8%A7%A3%E6%94%AF%E6%8C%81#sentinelresource-%E6%B3%A8%E8%A7%A3
+
+更多的 sentinel dashboard 配置内容请参考：https://github.com/alibaba/Sentinel/wiki/%E6%8E%A7%E5%88%B6%E5%8F%B0
