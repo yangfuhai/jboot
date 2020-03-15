@@ -103,6 +103,8 @@ public class DbController extends JbootController {
         columns.in("user.`id`",1,2,3,4);
         columns.likeAppendPercent("login_name","c");
 
+
+//        List<User> users = dao.leftJoin("article","a","user.id=a.user_id").findListByColumns(columns);
         List<User> users = dao.leftJoin("article").as("a").on("user.id=a.user_id").findListByColumns(columns);
         renderJson(users);
     }

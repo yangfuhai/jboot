@@ -58,6 +58,7 @@ public class HelloworldController extends JbootController {
 - [1.x 升级到 2.x 教程](./doc/docs/upgrade.md)
 - [交流社区、QQ群和微信群](./doc/docs/communication.md)
 - 第三方组件的支持
+  - [sentinel 限流降级](./doc/docs/sentinel.md) 
   - [redis](./doc/docs/redis.md)
   - [shiro](./doc/docs/shiro.md)
   - [jwt](./doc/docs/jwt.md)
