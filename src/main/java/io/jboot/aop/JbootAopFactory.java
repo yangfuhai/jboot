@@ -146,7 +146,7 @@ public class JbootAopFactory extends AopFactory {
 
 
     private void doInjectByName(Object targetObject, Field field, Inject inject, String name) throws ReflectiveOperationException {
-        Object fieldInjectedObject = beansMap.get(name);
+        Object fieldInjectedObject = getBean(name);
         if (fieldInjectedObject != null) {
             setFieldValue(field, targetObject, fieldInjectedObject);
         } else {
@@ -273,7 +273,7 @@ public class JbootAopFactory extends AopFactory {
             String beanName = AnnotationUtil.get(bean.name());
             if (StrUtil.isNotBlank(beanName)) {
                 if (beansMap.containsKey(beanName)) {
-                    throw new JbootException("application has contains beanName \"" + beanName + "\" for " + beansMap.get(beanName)
+                    throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
                             + ", can not add for class " + implClass);
                 }
                 beansMap.put(beanName, get(implClass));
@@ -305,7 +305,7 @@ public class JbootAopFactory extends AopFactory {
                 if (bean != null) {
                     String beanName = StrUtil.obtainDefaultIfBlank(AnnotationUtil.get(bean.name()), method.getName());
                     if (beansMap.containsKey(beanName)) {
-                        throw new JbootException("application has contains beanName \"" + beanName + "\" for " + beansMap.get(beanName)
+                        throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
                                 + ", can not add again by method:" + ClassUtil.buildMethodString(method));
                     }
 
