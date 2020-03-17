@@ -124,24 +124,26 @@ public class JbootHttpImpl implements JbootHttp {
 
     private void uploadData(JbootHttpRequest request, HttpURLConnection connection) throws IOException {
         String endFlag = "\r\n";
-        String boundary = "---------" + StrUtil.uuid();
-        connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+        String startFlag = "--";
+        String boundary = "------" + StrUtil.uuid();
+        connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
         DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
         for (Map.Entry entry : request.getParams().entrySet()) {
             if (entry.getValue() instanceof File) {
                 File file = (File) entry.getValue();
                 checkFileNormal(file);
-                dos.writeBytes(boundary + endFlag);
-                dos.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\"; filename=\"%s\"", entry.getKey(), file.getName()) + endFlag);
+                dos.writeBytes(startFlag + boundary + endFlag);
+                dos.writeBytes("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"; filename=\"" + file.getName() + "\"");
+                dos.writeBytes(endFlag);
                 dos.writeBytes(endFlag);
                 FileInputStream fStream = new FileInputStream(file);
                 byte[] buffer = new byte[2028];
                 for (int len = 0; (len = fStream.read(buffer)) > 0; ) {
                     dos.write(buffer, 0, len);
                 }
-
                 dos.writeBytes(endFlag);
             } else {
+                dos.writeBytes(startFlag + boundary + endFlag);
                 dos.writeBytes("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"");
                 dos.writeBytes(endFlag);
                 dos.writeBytes(endFlag);
@@ -150,7 +152,8 @@ public class JbootHttpImpl implements JbootHttp {
             }
         }
 
-        dos.writeBytes("--" + boundary + "--" + endFlag);
+        dos.writeBytes(startFlag + boundary + startFlag + endFlag);
+        dos.flush();
     }
 
     private static void checkFileNormal(File file) {
