@@ -59,15 +59,7 @@ public class JbootHttpImpl implements JbootHttp {
             configConnection(connection, request);
 
 
-            if (request.isPostRequest() == false) {
-
-                connection.setInstanceFollowRedirects(true);
-                connection.connect();
-            }
-            /**
-             * 处理 post请求
-             */
-            else if (request.isPostRequest()) {
+            if (request.isPostRequest()) {
 
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
@@ -89,6 +81,9 @@ public class JbootHttpImpl implements JbootHttp {
                     }
 
                 }
+            }else {
+                connection.setInstanceFollowRedirects(true);
+                connection.connect();
             }
 
 
@@ -132,28 +127,30 @@ public class JbootHttpImpl implements JbootHttp {
             if (entry.getValue() instanceof File) {
                 File file = (File) entry.getValue();
                 checkFileNormal(file);
-                dos.writeBytes(startFlag + boundary + endFlag);
-                dos.writeBytes("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"; filename=\"" + file.getName() + "\"");
-                dos.writeBytes(endFlag);
-                dos.writeBytes(endFlag);
+                writeString(dos, request, startFlag + boundary + endFlag);
+                writeString(dos, request, "Content-Disposition: form-data; name=\"" + entry.getKey() + "\"; filename=\"" + file.getName() + "\"");
+                writeString(dos, request, endFlag + endFlag);
                 FileInputStream fStream = new FileInputStream(file);
                 byte[] buffer = new byte[2028];
                 for (int len = 0; (len = fStream.read(buffer)) > 0; ) {
                     dos.write(buffer, 0, len);
                 }
-                dos.writeBytes(endFlag);
+                writeString(dos, request, endFlag);
             } else {
-                dos.writeBytes(startFlag + boundary + endFlag);
-                dos.writeBytes("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"");
-                dos.writeBytes(endFlag);
-                dos.writeBytes(endFlag);
-                dos.writeBytes(String.valueOf(entry.getValue()));
-                dos.writeBytes(endFlag);
+                writeString(dos, request, startFlag + boundary + endFlag);
+                writeString(dos, request, "Content-Disposition: form-data; name=\"" + entry.getKey() + "\"");
+                writeString(dos, request, endFlag + endFlag);
+                writeString(dos, request, String.valueOf(entry.getValue()));
+                writeString(dos, request, endFlag);
             }
         }
 
-        dos.writeBytes(startFlag + boundary + startFlag + endFlag);
+        writeString(dos, request, startFlag + boundary + startFlag + endFlag);
         dos.flush();
+    }
+
+    private void writeString(DataOutputStream dos, JbootHttpRequest request, String s) throws IOException {
+        dos.write(s.getBytes(request.getCharset()));
     }
 
     private static void checkFileNormal(File file) {
