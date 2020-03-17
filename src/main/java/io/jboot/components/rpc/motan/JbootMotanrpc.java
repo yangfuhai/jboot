@@ -102,10 +102,12 @@ public class JbootMotanrpc extends JbootrpcBase {
          * 直连模式
          */
         else if (getConfig().isDirectCallMode()) {
-            if (StrUtil.isBlank(getConfig().getDirectUrl())) {
+            String url = getConfig().getDirectUrl(serviceConfig.getGroup());
+            url = StrUtil.isBlank(url) ? getConfig().getDirectUrl() : url;
+            if (StrUtil.isBlank(url)) {
                 throw new JbootIllegalConfigException("directUrl must not be blank if you use direct call mode，please config jboot.rpc.directUrl value");
             }
-            refererConfig.setDirectUrl(getConfig().getDirectUrl());
+            refererConfig.setDirectUrl(url);
         }
 
 

@@ -20,6 +20,7 @@ import io.jboot.utils.StrUtil;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Map;
 
 
 @ConfigModel(prefix = "jboot.rpc")
@@ -70,6 +71,12 @@ public class JbootrpcConfig {
      * 直连模式的时候，配置的url
      */
     private String directUrl;
+
+    /**
+     * 直连模式下，一个 APP 可能需要链接到多个服务
+     * 每个服务有自己的 group 以及对应的 url
+     */
+    private Map<String, String> directUrlsMap;
 
 
     /**
@@ -159,7 +166,6 @@ public class JbootrpcConfig {
                 }
             }
         }
-
         return defaultPort;
     }
 
@@ -219,11 +225,25 @@ public class JbootrpcConfig {
         return directUrl;
     }
 
+    public String getDirectUrl(String group) {
+        return directUrlsMap == null ? null : directUrlsMap.get(group);
+    }
+
+
     public void setDirectUrl(String directUrl) {
-        if (directUrl != null && directUrl.contains(":")) {
-            this.defaultPort = Integer.valueOf(directUrl.split(":")[1]);
+        if (StrUtil.isNotBlank(directUrl) && directUrl.contains(";")) {
+            String[] directUrls = directUrl.split(";");
+            for (String url : directUrls) {
+                if (StrUtil.isNotBlank(url)) {
+                    int indexOf = url.indexOf(":");
+                    String group = url.substring(0, indexOf);
+                    String urlStr = url.substring(indexOf + 1);
+                    directUrlsMap.put(group, urlStr);
+                }
+            }
+        } else {
+            this.directUrl = directUrl;
         }
-        this.directUrl = directUrl;
     }
 
     public boolean isDirectCallMode() {
