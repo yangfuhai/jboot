@@ -16,11 +16,10 @@
 package io.jboot.db.datasource;
 
 import com.google.common.collect.Maps;
-import io.jboot.Jboot;
-import io.jboot.app.config.JbootConfigManager;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.utils.StrUtil;
 
-import java.util.*;
+import java.util.Map;
 
 public class DataSourceConfigManager {
 
@@ -37,37 +36,19 @@ public class DataSourceConfigManager {
 
     private DataSourceConfigManager() {
 
-        DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
+        Map<String,DataSourceConfig> configMap = JbootConfigUtil.getConfigModels(DataSourceConfig.class,"jboot.datasource");
 
-        //若未配置数据源的名称，设置为默认
-        if (StrUtil.isBlank(datasourceConfig.getName())) {
-            datasourceConfig.setName(DataSourceConfig.NAME_DEFAULT);
-        }
+        for (Map.Entry<String,DataSourceConfig> entry : configMap.entrySet()){
+            DataSourceConfig config = entry.getValue();
 
-        addConfig(datasourceConfig);
-
-        Properties prop = JbootConfigManager.me().getProperties();
-        Set<String> datasourceNames = new HashSet<>();
-        for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-            if (entry.getKey() == null) {
-                continue;
+            //默认数据源
+            if (entry.getKey().equals("default") && StrUtil.isBlank(config.getName())){
+                config.setName(DataSourceConfig.NAME_DEFAULT);
+            }else if (StrUtil.isBlank(config.getName())){
+                config.setName(entry.getKey());
             }
-            String key = entry.getKey().toString().toLowerCase().replace('_','.');
-            if (key.startsWith(DATASOURCE_PREFIX) && entry.getValue() != null) {
-                String[] keySplits = key.split("\\.");
-                if (keySplits.length == 4) {
-                    datasourceNames.add(keySplits[2]);
-                }
-            }
-        }
 
-
-        for (String name : datasourceNames) {
-            DataSourceConfig dsc = Jboot.config(DataSourceConfig.class, DATASOURCE_PREFIX + name);
-            if (StrUtil.isBlank(dsc.getName())) {
-                dsc.setName(name);
-            }
-            addConfig(dsc);
+            addConfig(config);
         }
     }
 
