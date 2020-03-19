@@ -22,7 +22,7 @@ public interface Jbootrpc {
 
     public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig);
 
-    public void onInitBefore();
+    public void onInit();
 
     public void onInited();
 }

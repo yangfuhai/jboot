@@ -27,7 +27,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
     }
 
     @Override
-    public void onInitBefore() {
+    public void onInit() {
 
     }
 
