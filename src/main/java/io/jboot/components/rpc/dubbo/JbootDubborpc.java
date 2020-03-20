@@ -21,7 +21,6 @@ import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 import org.apache.dubbo.config.*;
-import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,23 +87,7 @@ public class JbootDubborpc extends JbootrpcBase {
 
     @Override
     public void onInit() {
-
-
-        DubboBootstrap dubboBootstrap = DubboBootstrap.getInstance();
-        dubboBootstrap.application(DubboUtil.getApplicationConfig())
-                .consumer(DubboUtil.getConsumerConfig())
-//                .protocols()
-//                .registries()
-//                .configCenters()
-//                .consumers()
-//                .metrics()
-//                .module()
-//                .monitor()
-//                .ssl()
-//                .cache()
-                .start();
-
-
+        DubboUtil.initDubbo();
     }
 
 
