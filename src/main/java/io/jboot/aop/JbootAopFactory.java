@@ -212,9 +212,10 @@ public class JbootAopFactory extends AopFactory {
         String value = getConfigValue(key, targetObject, field);
 
         if (StrUtil.isNotBlank(value)) {
-            Object fieldInjectedObject = JbootConfigManager.me().convert(fieldInjectedClass, value);
-            setFieldValue(field, targetObject, fieldInjectedObject);
-            return;
+            Object fieldInjectedObject = JbootConfigManager.me().convert(fieldInjectedClass, value, field.getGenericType());
+            if (fieldInjectedObject != null) {
+                setFieldValue(field, targetObject, fieldInjectedObject);
+            }
         }
     }
 

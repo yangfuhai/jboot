@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 class Utils {
 
@@ -52,8 +54,8 @@ class Utils {
         for (Method method : methods) {
             if (method.getName().startsWith("set")
                     && method.getName().length() > 3
-                    && method.getParameterCount() == 1) {
-
+                    && method.getParameterCount() == 1
+                    && Character.isUpperCase(method.getName().charAt(3))) {
                 setMethods.add(method);
             }
         }
@@ -109,21 +111,21 @@ class Utils {
     public static void doNothing(Throwable ex) {
     }
 
-    public static final Object convert(Class<?> type, String s) {
+    public static final Object convert(Class<?> convertClass, String s, Type genericType) {
 
-        if (type == String.class) {
+        if (convertClass == String.class || s == null) {
             return s;
         }
 
-        if (type == Integer.class || type == int.class) {
+        if (convertClass == Integer.class || convertClass == int.class) {
             return Integer.parseInt(s);
-        } else if (type == Long.class || type == long.class) {
+        } else if (convertClass == Long.class || convertClass == long.class) {
             return Long.parseLong(s);
-        } else if (type == Double.class || type == double.class) {
+        } else if (convertClass == Double.class || convertClass == double.class) {
             return Double.parseDouble(s);
-        } else if (type == Float.class || type == float.class) {
+        } else if (convertClass == Float.class || convertClass == float.class) {
             return Float.parseFloat(s);
-        } else if (type == Boolean.class || type == boolean.class) {
+        } else if (convertClass == Boolean.class || convertClass == boolean.class) {
             String value = s.toLowerCase();
             if ("1".equals(value) || "true".equals(value)) {
                 return Boolean.TRUE;
@@ -132,16 +134,79 @@ class Utils {
             } else {
                 throw new RuntimeException("Can not parse to boolean type of value: " + s);
             }
-        } else if (type == java.math.BigDecimal.class) {
+        } else if (convertClass == java.math.BigDecimal.class) {
             return new java.math.BigDecimal(s);
-        } else if (type == java.math.BigInteger.class) {
+        } else if (convertClass == java.math.BigInteger.class) {
             return new java.math.BigInteger(s);
-        } else if (type == byte[].class) {
+        } else if (convertClass == byte[].class) {
             return s.getBytes();
+        } else if (Map.class.isAssignableFrom(convertClass)) {
+            if (!s.contains(":") || !genericClassCheck(genericType)) {
+                return null;
+            } else {
+                Map map = convertClass == ConcurrentHashMap.class ? new ConcurrentHashMap() : new HashMap();
+                String[] strings = s.split(";");
+                for (String kv : strings) {
+                    String[] keyValue = kv.split(":");
+                    if (keyValue.length == 2) {
+                        map.put(keyValue[0], keyValue[1]);
+                    }
+                }
+                return map;
+            }
+        } else if (List.class.isAssignableFrom(convertClass)) {
+            if (genericClassCheck(genericType)) {
+                List list = LinkedList.class == convertClass ? new LinkedList() : new ArrayList();
+                String[] strings = s.split(";");
+                for (String s1 : strings) {
+                    if (s != null && s1.trim().length() > 0) {
+                        list.add(s1.trim());
+                    }
+                }
+                return list;
+            } else {
+                return null;
+            }
+        } else if (Set.class.isAssignableFrom(convertClass)) {
+            if (genericClassCheck(genericType)) {
+                Set set = LinkedHashSet.class == convertClass ? new LinkedHashSet() : new HashSet();
+                String[] strings = s.split(";");
+                for (String s1 : strings) {
+                    if (s != null && s1.trim().length() > 0) {
+                        set.add(s1.trim());
+                    }
+                }
+                return set;
+            } else {
+                return null;
+            }
+        } else if (Class.class == convertClass) {
+            try {
+                return Class.forName(s, false, Thread.currentThread().getContextClassLoader());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
-        throw new RuntimeException(type.getName() + " can not be converted, please use other type in your config class!");
+        throw new RuntimeException(convertClass.getName() + " can not be converted, please use other type in your config class!");
 
+    }
+
+    /**
+     * 对泛型类型进行检测，只支持 String 类型的泛型，或者不是泛型才会支持
+     *
+     * @param type
+     * @return
+     */
+    private static boolean genericClassCheck(Type type) {
+        if (type instanceof ParameterizedType) {
+            for (Type at : ((ParameterizedType) type).getActualTypeArguments()) {
+                if (String.class != at) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }

@@ -242,9 +242,33 @@ public class ClassUtil {
 
 
     public static Class getGenericClass(Class<?> clazz) {
-        Type type = getUsefulClass(clazz).getGenericSuperclass();
-        return (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
+        return getGenericClass(getUsefulClass(clazz).getGenericSuperclass());
     }
+
+
+    public static Class[] getGenericClass(Method method) {
+        Type[] type = method.getGenericParameterTypes();
+        Class[] classes = new Class[type.length];
+        for (int i = 0; i < type.length; i++) {
+            classes[i] = getGenericClass(type[i]);
+        }
+        return classes;
+    }
+
+
+    public static Class getGenericClass(Field field) {
+        return getGenericClass(field.getType());
+    }
+
+
+    public static Class getGenericClass(Type type) {
+        if (type instanceof ParameterizedType) {
+            return (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
+        } else {
+            return null;
+        }
+    }
+
 
 
     public static String buildMethodString(Method method) {

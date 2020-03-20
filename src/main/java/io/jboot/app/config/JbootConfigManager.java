@@ -20,6 +20,7 @@ import io.jboot.app.config.annotation.ConfigModel;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -215,8 +216,10 @@ public class JbootConfigManager {
 
                 try {
                     if (Utils.isNotBlank(value)) {
-                        Object val = convert(method.getParameterTypes()[0], value);
-                        method.invoke(configObject, val);
+                        Object val = convert(method.getParameterTypes()[0], value, method.getGenericParameterTypes()[0]);
+                        if (val != null) {
+                            method.invoke(configObject, val);
+                        }
                     }
                 } catch (Throwable ex) {
                     ex.printStackTrace();
@@ -228,8 +231,8 @@ public class JbootConfigManager {
     }
 
 
-    public Object convert(Class<?> type, String s) {
-        return Utils.convert(type, s);
+    public Object convert(Class<?> clazz, String s, Type genericType) {
+        return Utils.convert(clazz, s, genericType);
     }
 
     private String buildKey(String prefix, Method method) {

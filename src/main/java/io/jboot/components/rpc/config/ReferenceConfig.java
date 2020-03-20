@@ -55,6 +55,7 @@ public class ReferenceConfig implements Serializable {
     private String layer;
     private Boolean init;
     private String protocol;
+    private String consumer;
 
     public String getId() {
         return id;
@@ -278,5 +279,13 @@ public class ReferenceConfig implements Serializable {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

@@ -21,6 +21,7 @@ import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 import org.apache.dubbo.config.*;
+import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +36,9 @@ public class JbootDubborpc extends JbootrpcBase {
 
     private JbootDubborpcConfig dubboConfig;
     private RegistryConfig registryConfig;
+
+
+
 
     public JbootDubborpc() {
         dubboConfig = Jboot.config(JbootDubborpcConfig.class);
@@ -77,6 +81,30 @@ public class JbootDubborpc extends JbootrpcBase {
         }
 
         return applicationConfig;
+    }
+
+
+
+
+    @Override
+    public void onInit() {
+
+
+        DubboBootstrap dubboBootstrap = DubboBootstrap.getInstance();
+        dubboBootstrap.application(DubboUtil.getApplicationConfig())
+                .consumer(DubboUtil.getConsumerConfig())
+//                .protocols()
+//                .registries()
+//                .configCenters()
+//                .consumers()
+//                .metrics()
+//                .module()
+//                .monitor()
+//                .ssl()
+//                .cache()
+                .start();
+
+
     }
 
 
@@ -152,6 +180,7 @@ public class JbootDubborpc extends JbootrpcBase {
         service.setApplication(createApplicationConfig(serviceConfig.getGroup()));
         service.setRegistry(registryConfig); // 多个注册中心可以用setRegistries()
         service.setProtocol(protocolConfig); // 多个协议可以用setProtocols()
+//        service.setProtocolIds();
         service.setInterface(interfaceClass);
         service.setRef((T) object);
 
