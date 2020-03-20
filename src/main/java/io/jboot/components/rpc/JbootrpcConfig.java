@@ -231,8 +231,8 @@ public class JbootrpcConfig {
 
 
     public void setDirectUrl(String directUrl) {
-        if (StrUtil.isNotBlank(directUrl) && directUrl.contains(";")) {
-            String[] directUrls = directUrl.split(";");
+        if (StrUtil.isNotBlank(directUrl) && directUrl.contains(",")) {
+            String[] directUrls = directUrl.split(",");
             for (String url : directUrls) {
                 if (StrUtil.isNotBlank(url)) {
                     int indexOf = url.indexOf(":");

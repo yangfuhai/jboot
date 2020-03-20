@@ -18,10 +18,14 @@ package io.jboot.components.rpc.dubbo;
 
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.components.rpc.JbootrpcReferenceConfig;
+import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.utils.StrUtil;
 import org.apache.dubbo.config.*;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +151,40 @@ class DubboUtil {
     public static List<ConsumerConfig> getConsumerConfigs(String names) {
         return filterMap(StrUtil.splitToSetByComma(names), consumerConfigMap);
     }
+
+
+    public static ReferenceConfig toReferenceConfig(JbootrpcReferenceConfig rc){
+        ReferenceConfig referenceConfig = new ReferenceConfig();
+        Field[] fields = rc.getClass().getDeclaredFields();
+        for (Field field : fields){
+            try {
+                Method method = ReferenceConfig.class.getDeclaredMethod("set"+StrUtil.firstCharToUpperCase(field.getName()),field.getType());
+                field.setAccessible(true);
+                method.invoke(referenceConfig,field.get(rc));
+            } catch (Exception e) {
+               // ignore
+            }
+        }
+        return referenceConfig;
+    }
+
+
+    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc){
+        ServiceConfig serviceConfig = new ServiceConfig();
+        Field[] fields = sc.getClass().getDeclaredFields();
+        for (Field field : fields){
+            try {
+                Method method = ServiceConfig.class.getDeclaredMethod("set"+StrUtil.firstCharToUpperCase(field.getName()),field.getType());
+                field.setAccessible(true);
+                method.invoke(serviceConfig,field.get(sc));
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return serviceConfig;
+    }
+
+
 
     private static <T> List<T> filterMap(Set<String> keys, Map<String, T> map) {
         if (keys == null || keys.isEmpty() || map == null || map.isEmpty()) {

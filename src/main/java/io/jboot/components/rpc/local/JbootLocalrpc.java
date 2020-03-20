@@ -18,6 +18,7 @@ package io.jboot.components.rpc.local;
 import com.jfinal.aop.Aop;
 import com.jfinal.aop.AopManager;
 import io.jboot.components.rpc.JbootrpcBase;
+import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.utils.ClassUtil;
 
@@ -25,7 +26,7 @@ import io.jboot.utils.ClassUtil;
 public class JbootLocalrpc extends JbootrpcBase {
 
     @Override
-    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
+    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcReferenceConfig referenceConfig) {
         return Aop.get(serviceClass);
     }
 

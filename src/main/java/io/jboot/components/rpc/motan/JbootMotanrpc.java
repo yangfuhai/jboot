@@ -16,11 +16,14 @@
 package io.jboot.components.rpc.motan;
 
 import com.weibo.api.motan.common.MotanConstants;
-import com.weibo.api.motan.config.*;
+import com.weibo.api.motan.config.ProtocolConfig;
+import com.weibo.api.motan.config.RefererConfig;
+import com.weibo.api.motan.config.RegistryConfig;
+import com.weibo.api.motan.config.ServiceConfig;
 import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.components.rpc.JbootrpcBase;
+import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
-import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 
 import java.util.Map;
@@ -73,79 +76,38 @@ public class JbootMotanrpc extends JbootrpcBase {
 
 
     @Override
-    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcServiceConfig serviceConfig) {
+    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcReferenceConfig config) {
 
-        String key = String.format("%s:%s:%s", serviceClass.getName(), serviceConfig.getGroup(), serviceConfig.getVersion());
+        String key = buildCacheKey(serviceClass,config);
 
         T object = (T) singletons.get(key);
-        if (object != null) {
-            return object;
-        }
-
-        RefererConfig<T> refererConfig = new RefererConfig<T>();
-
-        // 设置接口及实现类
-        refererConfig.setProtocol(protocolConfig);
-        refererConfig.setInterface(serviceClass);
-        refererConfig.setCheck(String.valueOf(getConfig().isConsumerCheck()));
-
-        initInterface(refererConfig, serviceConfig);
-
-        /**
-         * 注册中心模式
-         */
-        if (getConfig().isRegistryCallMode()) {
-            refererConfig.setRegistry(registryConfig);
-        }
-
-        /**
-         * 直连模式
-         */
-        else if (getConfig().isDirectCallMode()) {
-            String url = getConfig().getDirectUrl(serviceConfig.getGroup());
-            url = StrUtil.isBlank(url) ? getConfig().getDirectUrl() : url;
-            if (StrUtil.isBlank(url)) {
-                throw new JbootIllegalConfigException("directUrl must not be blank if you use direct call mode，please config jboot.rpc.directUrl value");
+        if (object == null) {
+            synchronized (this){
+                if (singletons.get(key) == null) {
+                    RefererConfig<T> reference = MotanUtil.toRefererConfig(config);
+                    object = reference.getRef();
+                    if (object != null){
+                        singletons.put(key,object);
+                    }
+                }
             }
-            refererConfig.setDirectUrl(url);
-        }
-
-
-        object = refererConfig.getRef();
-
-        if (object != null) {
-            singletons.put(key, object);
         }
         return object;
     }
 
 
     @Override
-    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig serviceConfig) {
+    public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig config) {
 
         synchronized (this) {
 
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, false);
 
-            ServiceConfig<T> motanServiceConfig = new ServiceConfig<T>();
-            motanServiceConfig.setRegistry(registryConfig);
-            motanServiceConfig.setProtocol(protocolConfig);
+            ServiceConfig<T> motanServiceConfig = MotanUtil.toServiceConfig(config);
 
             // 设置接口及实现类
             motanServiceConfig.setInterface(interfaceClass);
             motanServiceConfig.setRef((T) object);
-
-            if (StrUtil.isNotBlank(getConfig().getHost())) {
-                motanServiceConfig.setHost(getConfig().getHost());
-            }
-
-
-            motanServiceConfig.setShareChannel(true);
-            motanServiceConfig.setExport(String.format("motan:%s", serviceConfig.getPort()));
-            motanServiceConfig.setCheck(String.valueOf(getConfig().isProviderCheck()));
-
-            initInterface(motanServiceConfig, serviceConfig);
-
 
             motanServiceConfig.export();
 
@@ -156,37 +118,6 @@ public class JbootMotanrpc extends JbootrpcBase {
     }
 
 
-    private static void initInterface(AbstractInterfaceConfig interfaceConfig, JbootrpcServiceConfig config) {
-
-        interfaceConfig.setGroup(config.getGroup());
-        interfaceConfig.setVersion(config.getVersion());
-        interfaceConfig.setRequestTimeout(config.getTimeout());
-
-
-        if (config.getActives() != null) {
-            interfaceConfig.setActives(config.getActives());
-        }
-
-        if (config.getAsync() != null) {
-            interfaceConfig.setAsync(config.getAsync());
-        }
-
-        if (config.getRetries() != null) {
-            interfaceConfig.setRetries(config.getRetries());
-        }
-
-        if (config.getCheck() != null) {
-            interfaceConfig.setCheck(config.getCheck().toString());
-        }
-
-        if (StrUtil.isNotBlank(config.getProxy())) {
-            interfaceConfig.setProxy(config.getProxy());
-        }
-
-        if (StrUtil.isNotBlank(config.getFilter())) {
-            interfaceConfig.setFilter(config.getFilter());
-        }
-    }
 
 
 }

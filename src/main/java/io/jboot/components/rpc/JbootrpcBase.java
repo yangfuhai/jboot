@@ -35,4 +35,11 @@ public abstract class JbootrpcBase implements Jbootrpc {
     public void onInited() {
 
     }
+
+    protected String buildCacheKey(Class serviceClass, JbootrpcReferenceConfig config){
+        StringBuilder sb = new StringBuilder(serviceClass.getName());
+        return sb.append(":").append(config.getGroup())
+                .append(":").append(config.getVersion())
+                .toString();
+    }
 }

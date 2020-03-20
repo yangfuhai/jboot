@@ -15,148 +15,117 @@
  */
 package io.jboot.components.rpc;
 
-import io.jboot.Jboot;
 import io.jboot.components.rpc.annotation.RPCBean;
-import io.jboot.components.rpc.annotation.RPCInject;
-import io.jboot.utils.AnnotationUtil;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.core.rpc
+ * @Package io.jboot.components.rpc
  */
 public class JbootrpcServiceConfig implements Serializable {
 
+    /**
+     * Service version, default value is empty string
+     */
+    String version;
 
-    private int port = 0;
-    private String group;
-    private String version;
-    private Integer timeout;
-    private Integer retries;
-    private Integer actives;
-    private String loadbalance;
-    private Boolean async;
-    private Boolean check;
+    /**
+     * Service group, default value is empty string
+     */
+    String group;
+
+    /**
+     * Service path, default value is empty string
+     */
+    String path;
+
+    /**
+     * Whether to export service, default value is true
+     */
+    boolean export;
+
+    /**
+     * Service token, default value is false
+     */
+    String token;
+
+    /**
+     * Whether the service is deprecated, default value is false
+     */
+    boolean deprecated;
 
 
-    private String proxy;
-    private String filter;
+    /**
+     * Whether to register the service to register center, default value is true
+     */
+    boolean register;
 
-    // 用于扩展，用户通过SPI扩展获取自定义的 Service的时候，
-    // 若以字段不满足，此时通过 params 自行扩展
-    private Map<Object, Object> params;
+    /**
+     * Service weight value, default value is 0
+     */
+    int weight;
 
-    private static JbootrpcConfig defaultConfig = Jboot.config(JbootrpcConfig.class);
+    /**
+     * Service doc, default value is ""
+     */
+    String document;
+
+
+    /**
+     * Service invocation retry times
+     */
+    int retries;
+
+    /**
+     * Load balance strategy, legal values include: random, roundrobin, leastactive
+     */
+    String loadbalance;
+
+
+    /**
+     * Application spring bean name
+     */
+    String application;
+
+    /**
+     * Module spring bean name
+     */
+    String module;
+
+    /**
+     * Provider spring bean name
+     */
+    String provider;
+
+    /**
+     * Protocol spring bean names
+     */
+    String protocol;
+
+    /**
+     * Monitor spring bean name
+     */
+    String monitor;
+
+    /**
+     * Registry spring bean name
+     */
+    String registry;
+
+    /**
+     * Service tag name
+     */
+    String tag;
+
 
 
     public JbootrpcServiceConfig() {
-        this.port = defaultConfig.getDefaultPort();
-        this.group = defaultConfig.getDefaultGroup();
-        this.version = defaultConfig.getDefaultVersion();
-        this.timeout = defaultConfig.getRequestTimeOut();
-        this.retries = defaultConfig.getRetries();
-        this.proxy = defaultConfig.getProxy();
-        this.filter = defaultConfig.getFilter();
-    }
-
-    public JbootrpcServiceConfig(RPCInject inject) {
-        this();
-
-        int port = AnnotationUtil.getInt(inject.port(), -1);
-        int timeout = AnnotationUtil.getInt(inject.timeout(), -1);
-        int retries = AnnotationUtil.getInt(inject.retries(), -1);
-        int actives = AnnotationUtil.getInt(inject.actives(), -1);
-
-        String group = AnnotationUtil.get(inject.group());
-        String version = AnnotationUtil.get(inject.version());
-        String loadbalance = AnnotationUtil.get(inject.loadbalance());
-
-        Boolean async = AnnotationUtil.getBool(inject.async());
-        Boolean check = AnnotationUtil.getBool(inject.check());
-
-
-        if (port >= 0) {
-            this.port = port;
-        }
-
-        if (retries >= 0) {
-            this.retries = retries;
-        }
-
-        if (actives >= 0) {
-            this.actives = actives;
-        }
-
-        if (timeout >= 0) {
-            this.timeout = timeout;
-        }
-
-
-        if (group != null) {
-            this.group = group;
-        }
-
-        if (version != null) {
-            this.version = version;
-        }
-
-        if (loadbalance != null) {
-            this.loadbalance = loadbalance;
-        }
-
-        if (async != null) {
-            this.async = async;
-        }
-
-        if (check != null) {
-            this.check = check;
-        }
-
     }
 
     public JbootrpcServiceConfig(RPCBean bean) {
-        this();
-
-        int port = AnnotationUtil.getInt(bean.port(), -1);
-        int timeout = AnnotationUtil.getInt(bean.timeout(), -1);
-        int actives = AnnotationUtil.getInt(bean.actives(), -1);
-
-        String group = AnnotationUtil.get(bean.group());
-        String version = AnnotationUtil.get(bean.version());
-
-        if (port >= 0) {
-            this.port = port;
-        }
-
-        if (actives >= 0) {
-            this.actives = actives;
-        }
-
-        if (timeout >= 0) {
-            this.timeout = timeout;
-        }
-
-        if (group != null) {
-            this.group = group;
-        }
-
-        if (version != null) {
-            this.version = version;
-        }
-
-    }
-
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
+        Utils.appendAnnotation(RPCBean.class,bean,this);
     }
 
     public String getVersion() {
@@ -167,36 +136,76 @@ public class JbootrpcServiceConfig implements Serializable {
         this.version = version;
     }
 
-    public int getPort() {
-        return port;
+    public String getGroup() {
+        return group;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setGroup(String group) {
+        this.group = group;
     }
 
-    public Integer getTimeout() {
-        return timeout;
+    public String getPath() {
+        return path;
     }
 
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout;
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    public Integer getRetries() {
+    public boolean isExport() {
+        return export;
+    }
+
+    public void setExport(boolean export) {
+        this.export = export;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
+    }
+
+    public boolean isRegister() {
+        return register;
+    }
+
+    public void setRegister(boolean register) {
+        this.register = register;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
+    }
+
+    public int getRetries() {
         return retries;
     }
 
-    public void setRetries(Integer retries) {
+    public void setRetries(int retries) {
         this.retries = retries;
-    }
-
-    public Integer getActives() {
-        return actives;
-    }
-
-    public void setActives(Integer actives) {
-        this.actives = actives;
     }
 
     public String getLoadbalance() {
@@ -207,51 +216,59 @@ public class JbootrpcServiceConfig implements Serializable {
         this.loadbalance = loadbalance;
     }
 
-    public Boolean getAsync() {
-        return async;
+    public String getApplication() {
+        return application;
     }
 
-    public void setAsync(Boolean async) {
-        this.async = async;
+    public void setApplication(String application) {
+        this.application = application;
     }
 
-    public Boolean getCheck() {
-        return check;
+    public String getModule() {
+        return module;
     }
 
-    public void setCheck(Boolean check) {
-        this.check = check;
+    public void setModule(String module) {
+        this.module = module;
     }
 
-    public Map<Object, Object> getParams() {
-        return params;
+    public String getProvider() {
+        return provider;
     }
 
-    public void setParams(Map<Object, Object> params) {
-        this.params = params;
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
-    public void addParam(Object key, Object value) {
-        if (params == null) {
-            params = new HashMap();
-        }
-
-        params.put(key, value);
+    public String getProtocol() {
+        return protocol;
     }
 
-    public String getProxy() {
-        return proxy;
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
-    public void setProxy(String proxy) {
-        this.proxy = proxy;
+    public String getMonitor() {
+        return monitor;
     }
 
-    public String getFilter() {
-        return filter;
+    public void setMonitor(String monitor) {
+        this.monitor = monitor;
     }
 
-    public void setFilter(String filter) {
-        this.filter = filter;
+    public String getRegistry() {
+        return registry;
+    }
+
+    public void setRegistry(String registry) {
+        this.registry = registry;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

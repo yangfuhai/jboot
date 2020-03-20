@@ -22,15 +22,101 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface RPCBean {
 
-    String port() default "";
+    /**
+     * Service version, default value is empty string
+     */
+    String version() default "";
 
-    String timeout() default "";
-
-    String actives() default "";
-
+    /**
+     * Service group, default value is empty string
+     */
     String group() default "";
 
-    String version() default "";
+    /**
+     * Service path, default value is empty string
+     */
+    String path() default "";
+
+    /**
+     * Whether to export service, default value is true
+     */
+    boolean export() default true;
+
+    /**
+     * Service token, default value is false
+     */
+    String token() default "";
+
+    /**
+     * Whether the service is deprecated, default value is false
+     */
+    boolean deprecated() default false;
+
+
+    /**
+     * Whether to register the service to register center, default value is true
+     */
+    boolean register() default true;
+
+    /**
+     * Service weight value, default value is 0
+     */
+    int weight() default 0;
+
+    /**
+     * Service doc, default value is ""
+     */
+    String document() default "";
+
+
+    /**
+     * Service invocation retry times
+     *
+     */
+    int retries() default 2;
+
+    /**
+     * Load balance strategy, legal values include: random, roundrobin, leastactive
+     *
+     */
+    String loadbalance() default "random";
+
+
+    /**
+     * Application spring bean name
+     */
+    String application() default "";
+
+    /**
+     * Module spring bean name
+     */
+    String module() default "";
+
+    /**
+     * Provider spring bean name
+     */
+    String provider() default "";
+
+    /**
+     * Protocol spring bean names
+     */
+    String[] protocol() default {};
+
+    /**
+     * Monitor spring bean name
+     */
+    String monitor() default "";
+
+    /**
+     * Registry spring bean name
+     */
+    String[] registry() default {};
+
+    /**
+     * Service tag name
+     */
+    String tag() default "";
+
 
     //当一个Service类实现对个接口的时候，可以通过这个排除不暴露某个实现接口
     Class[] exclude() default Void.class;

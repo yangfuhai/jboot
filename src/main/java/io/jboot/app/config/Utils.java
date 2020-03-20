@@ -18,10 +18,7 @@ package io.jboot.app.config;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,9 +50,12 @@ class Utils {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (method.getName().startsWith("set")
+                    && Character.isUpperCase(method.getName().charAt(3))
                     && method.getName().length() > 3
                     && method.getParameterCount() == 1
-                    && Character.isUpperCase(method.getName().charAt(3))) {
+                    && Modifier.isPublic(method.getModifiers())
+                    && !Modifier.isStatic(method.getModifiers())) {
+
                 setMethods.add(method);
             }
         }
@@ -145,7 +145,7 @@ class Utils {
                 return null;
             } else {
                 Map map = convertClass == ConcurrentHashMap.class ? new ConcurrentHashMap() : new HashMap();
-                String[] strings = s.split(";");
+                String[] strings = s.split(",");
                 for (String kv : strings) {
                     String[] keyValue = kv.split(":");
                     if (keyValue.length == 2) {
@@ -157,7 +157,7 @@ class Utils {
         } else if (List.class.isAssignableFrom(convertClass)) {
             if (genericClassCheck(genericType)) {
                 List list = LinkedList.class == convertClass ? new LinkedList() : new ArrayList();
-                String[] strings = s.split(";");
+                String[] strings = s.split(",");
                 for (String s1 : strings) {
                     if (s != null && s1.trim().length() > 0) {
                         list.add(s1.trim());
@@ -170,7 +170,7 @@ class Utils {
         } else if (Set.class.isAssignableFrom(convertClass)) {
             if (genericClassCheck(genericType)) {
                 Set set = LinkedHashSet.class == convertClass ? new LinkedHashSet() : new HashSet();
-                String[] strings = s.split(";");
+                String[] strings = s.split(",");
                 for (String s1 : strings) {
                     if (s != null && s1.trim().length() > 0) {
                         set.add(s1.trim());

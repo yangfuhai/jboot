@@ -54,12 +54,12 @@ public abstract class FileScanner {
     public abstract void onChange(String action, String file);
 
     protected void working() {
-        if (!rootDir.contains(";")) {
-            scan(new File(rootDir));
+        if (!rootDir.contains(",")) {
+            scan(new File(rootDir.trim()));
         } else {
-            String[] paths = rootDir.split(";");
+            String[] paths = rootDir.split(",");
             for (String path : paths) {
-                scan(new File(path));
+                scan(new File(path.trim()));
             }
         }
 

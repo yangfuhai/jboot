@@ -90,7 +90,7 @@ public class JbootMetricManager {
         }
         List<JbootMetricReporter> reporters = new ArrayList<>();
 
-        String[] repoterStrings = repoterString.split(";");
+        String[] repoterStrings = repoterString.split(",");
         for (String repoterName : repoterStrings) {
             JbootMetricReporter reporter = getReporterByName(repoterName);
             if (reporter != null) {
