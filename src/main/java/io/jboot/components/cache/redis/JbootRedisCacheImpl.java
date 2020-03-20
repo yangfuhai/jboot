@@ -31,6 +31,8 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
 
     private JbootRedis redis;
+    private static final String redisCacheNamesKey = "jboot_cache_names";
+
 
     public JbootRedisCacheImpl() {
         JbootRedisCacheConfig redisConfig = Jboot.config(JbootRedisCacheConfig.class);
@@ -58,6 +60,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             return;
         }
         redis.set(buildKey(cacheName, key), value);
+        redis.sadd(redisCacheNamesKey, cacheName);
     }
 
     @Override
@@ -72,19 +75,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         }
 
         redis.setex(buildKey(cacheName, key), liveSeconds, value);
-    }
-
-    @Override
-    public List getKeys(String cacheName) {
-        Set<String> keyset = redis.keys(cacheName + ":*");
-        if (keyset == null || keyset.size() == 0) {
-            return null;
-        }
-        List<String> keys = new ArrayList<>(keyset);
-        for (int i = 0; i < keys.size(); i++) {
-            keys.set(i, keys.get(i).substring(cacheName.length() + 3));
-        }
-        return keys;
+        redis.sadd(redisCacheNamesKey, cacheName);
     }
 
 
@@ -116,9 +107,9 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
 
     private String buildKey(String cacheName, Object key) {
-        if (key instanceof Number)
+        if (key instanceof Number) {
             return String.format("%s:I:%s", cacheName, key);
-        else {
+        } else {
             Class keyClass = key.getClass();
             if (String.class.equals(keyClass) ||
                     StringBuffer.class.equals(keyClass) ||
@@ -150,9 +141,31 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         return ttl != null ? ttl.intValue() : null;
     }
 
+
     @Override
     public void setTtl(String cacheName, Object key, int seconds) {
         redis.expire(buildKey(cacheName, key), seconds);
+    }
+
+
+    @Override
+    public List getNames() {
+        Set set = redis.smembers(redisCacheNamesKey);
+        return set == null ? null : new ArrayList(set);
+    }
+
+
+    @Override
+    public List getKeys(String cacheName) {
+        Set<String> keyset = redis.keys(cacheName + ":*");
+        if (keyset == null || keyset.size() == 0) {
+            return null;
+        }
+        List<String> keys = new ArrayList<>(keyset);
+        for (int i = 0; i < keys.size(); i++) {
+            keys.set(i, keys.get(i).substring(cacheName.length() + 3));
+        }
+        return keys;
     }
 
     public JbootRedis getRedis() {

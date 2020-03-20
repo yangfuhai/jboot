@@ -26,6 +26,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.event.CacheEventListener;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -69,7 +70,6 @@ public class JbootEhcacheImpl extends JbootCacheBase {
             synchronized (locker) {
                 cache = cacheManager.getCache(cacheName);
                 if (cache == null) {
-                    log.warn("Could not find cache config [" + cacheName + "], using default.");
                     cacheManager.addCacheIfAbsent(cacheName);
                     cache = cacheManager.getCache(cacheName);
                     if (cacheEventListener != null) {
@@ -81,10 +81,6 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         return cache;
     }
 
-    @Override
-    public List getKeys(String cacheName) {
-        return getOrAddCache(cacheName).getKeys();
-    }
 
     @Override
     public <T> T get(String cacheName, Object key) {
@@ -157,6 +153,16 @@ public class JbootEhcacheImpl extends JbootCacheBase {
 
         element.setTimeToLive(seconds);
         getOrAddCache(cacheName).put(element);
+    }
+
+    @Override
+    public List getNames() {
+        return Arrays.asList(cacheManager.getCacheNames());
+    }
+
+    @Override
+    public List getKeys(String cacheName) {
+        return getOrAddCache(cacheName).getKeys();
     }
 
 

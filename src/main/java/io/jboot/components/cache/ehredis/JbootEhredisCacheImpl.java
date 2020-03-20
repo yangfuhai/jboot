@@ -76,19 +76,6 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
 
 
     @Override
-    public List getKeys(String cacheName) {
-        List list = keysCache.getIfPresent(cacheName);
-        if (list == null) {
-            list = redisCacheImpl.getKeys(cacheName);
-            if (list == null) {
-                list = new ArrayList();
-            }
-            keysCache.put(cacheName, list);
-        }
-        return list;
-    }
-
-    @Override
     public <T> T get(String cacheName, Object key) {
         T value = ehcacheImpl.get(cacheName, key);
         if (value == null) {
@@ -223,6 +210,24 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     @Override
     public void refresh(String cacheName) {
         publishMessage(JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null);
+    }
+
+    @Override
+    public List getNames() {
+        return redisCacheImpl.getNames();
+    }
+
+    @Override
+    public List getKeys(String cacheName) {
+        List list = keysCache.getIfPresent(cacheName);
+        if (list == null) {
+            list = redisCacheImpl.getKeys(cacheName);
+            if (list == null) {
+                list = new ArrayList();
+            }
+            keysCache.put(cacheName, list);
+        }
+        return list;
     }
 
 

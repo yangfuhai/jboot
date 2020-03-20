@@ -76,22 +76,22 @@ public class CaffeineCacheImpl extends JbootCacheBase {
         putData(getCache(cacheName), key, new CaffeineCacheObject(value, liveSeconds));
     }
 
-    @Override
-    public List getKeys(String cacheName) {
-        Cache cache = getCacheOnly(cacheName);
-        return cache == null ? null : new ArrayList(cache.asMap().keySet());
-    }
+
 
     @Override
     public void remove(String cacheName, Object key) {
         Cache cache = getCacheOnly(cacheName);
-        if (cache != null) cache.invalidate(key);
+        if (cache != null) {
+            cache.invalidate(key);
+        }
     }
 
     @Override
     public void removeAll(String cacheName) {
         Cache cache = getCacheOnly(cacheName);
-        if (cache != null) cache.invalidateAll();
+        if (cache != null) {
+            cache.invalidateAll();
+        }
     }
 
     @Override
@@ -129,10 +129,14 @@ public class CaffeineCacheImpl extends JbootCacheBase {
     @Override
     public Integer getTtl(String cacheName, Object key) {
         Cache cache = getCacheOnly(cacheName);
-        if (cache == null) return null;
+        if (cache == null) {
+            return null;
+        }
 
         CaffeineCacheObject data = (CaffeineCacheObject) cache.getIfPresent(key);
-        if (data == null) return null;
+        if (data == null) {
+            return null;
+        }
 
         return data.getTtl();
     }
@@ -140,13 +144,29 @@ public class CaffeineCacheImpl extends JbootCacheBase {
     @Override
     public void setTtl(String cacheName, Object key, int seconds) {
         Cache cache = getCacheOnly(cacheName);
-        if (cache == null) return;
+        if (cache == null) {
+            return;
+        }
 
         CaffeineCacheObject data = (CaffeineCacheObject) cache.getIfPresent(key);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
         data.setLiveSeconds(seconds);
         putData(cache, key, data);
+    }
+
+
+    @Override
+    public List getNames() {
+        return new ArrayList(cacheMap.keySet());
+    }
+
+    @Override
+    public List getKeys(String cacheName) {
+        Cache cache = getCacheOnly(cacheName);
+        return cache == null ? null : new ArrayList(cache.asMap().keySet());
     }
 
 

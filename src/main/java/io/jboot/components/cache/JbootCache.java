@@ -22,6 +22,7 @@ import java.util.List;
 
 public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache {
 
+
     @Override
     public <T> T get(String cacheName, Object key);
 
@@ -30,7 +31,6 @@ public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache 
 
     public void put(String cacheName, Object key, Object value, int liveSeconds);
 
-    public List getKeys(String cacheName);
 
     @Override
     public void remove(String cacheName, Object key);
@@ -49,5 +49,10 @@ public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache 
     public void refresh(String cacheName, Object key);
 
     public void refresh(String cacheName);
+
+
+    public List getNames();
+
+    public List getKeys(String cacheName);
 
 }

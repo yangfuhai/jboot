@@ -70,23 +70,6 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
 
 
     @Override
-    public List getKeys(String cacheName) {
-        List list = keysCache.getIfPresent(cacheName);
-        if (list == null) {
-            list = redisCacheImpl.getKeys(cacheName);
-            if (list == null) {
-                synchronized (cacheName.intern()) {
-                    if (list == null) {
-                        list = new ArrayList();
-                    }
-                }
-            }
-            keysCache.put(cacheName, list);
-        }
-        return list;
-    }
-
-    @Override
     public <T> T get(String cacheName, Object key) {
         T value = caffeineCacheImpl.get(cacheName, key);
         if (value == null) {
@@ -210,6 +193,30 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     @Override
     public void refresh(String cacheName) {
         publishMessage(JbootCaredisMessage.ACTION_REMOVE_ALL, cacheName, null);
+    }
+
+
+    @Override
+    public List getNames() {
+        return redisCacheImpl.getNames();
+    }
+
+
+    @Override
+    public List getKeys(String cacheName) {
+        List list = keysCache.getIfPresent(cacheName);
+        if (list == null) {
+            list = redisCacheImpl.getKeys(cacheName);
+            if (list == null) {
+                synchronized (cacheName.intern()) {
+                    if (list == null) {
+                        list = new ArrayList();
+                    }
+                }
+            }
+            keysCache.put(cacheName, list);
+        }
+        return list;
     }
 
 
