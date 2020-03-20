@@ -112,7 +112,6 @@ public class JbootrpcReferenceConfig implements Serializable {
     String registry;
 
     /**
-     * The communication protocol of Dubbo Service
      *
      * @return the default value is ""
      */

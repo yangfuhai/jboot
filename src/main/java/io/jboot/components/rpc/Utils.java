@@ -16,8 +16,10 @@
 package io.jboot.components.rpc;
 
 import io.jboot.utils.CollectionUtil;
+import io.jboot.utils.StrUtil;
 import org.apache.dubbo.common.utils.StringUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -28,7 +30,7 @@ import java.util.Map;
  */
 public class Utils {
 
-    public static void appendAnnotation(Class<?> annotationClass, Object annotation,Object appendTo) {
+    public static void appendAnnotation(Class<?> annotationClass, Object annotation, Object appendTo) {
         Method[] methods = annotationClass.getMethods();
         for (Method method : methods) {
             if (method.getDeclaringClass() != Object.class
@@ -62,6 +64,24 @@ public class Utils {
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+
+    /**
+     * copy object field value to other
+     * @param copyFrom
+     * @param copyTo
+     */
+    public static void copyFields(Object copyFrom, Object copyTo) {
+        Field[] fields = copyFrom.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                Method method = copyTo.getClass().getDeclaredMethod("set" + StrUtil.firstCharToUpperCase(field.getName()), field.getType());
+                method.invoke(copyTo, field.get(copyFrom));
+            } catch (Exception e) {
+                // ignore
             }
         }
     }

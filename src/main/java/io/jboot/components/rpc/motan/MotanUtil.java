@@ -16,14 +16,11 @@
 package io.jboot.components.rpc.motan;
 
 import com.weibo.api.motan.config.*;
-import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
-import io.jboot.utils.StrUtil;
+import io.jboot.components.rpc.Utils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -76,41 +73,17 @@ public class MotanUtil {
     }
 
 
-    public static RefererConfig toRefererConfig(JbootrpcReferenceConfig rc){
+    public static RefererConfig toRefererConfig(JbootrpcReferenceConfig rc) {
         RefererConfig referenceConfig = new RefererConfig();
-        Field[] fields = rc.getClass().getDeclaredFields();
-        for (Field field : fields){
-            try {
-                Method method = RefererConfig.class.getDeclaredMethod("set"+ StrUtil.firstCharToUpperCase(field.getName()),field.getType());
-                field.setAccessible(true);
-                method.invoke(referenceConfig,field.get(rc));
-            } catch (Exception e) {
-                // ignore
-            }
-        }
+        Utils.copyFields(rc, referenceConfig);
         return referenceConfig;
     }
 
 
-
-    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc){
+    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc) {
         ServiceConfig serviceConfig = new ServiceConfig();
-        Field[] fields = sc.getClass().getDeclaredFields();
-        for (Field field : fields){
-            try {
-                Method method = ServiceConfig.class.getDeclaredMethod("set"+StrUtil.firstCharToUpperCase(field.getName()),field.getType());
-                field.setAccessible(true);
-                method.invoke(serviceConfig,field.get(sc));
-            } catch (Exception e) {
-                // ignore
-            }
-        }
+        Utils.copyFields(sc, serviceConfig);
         return serviceConfig;
-    }
-
-
-    private static <T> T config(Class<T> clazz, String prefix) {
-        return JbootConfigManager.me().get(clazz, prefix, null);
     }
 
 
