@@ -41,9 +41,6 @@ class DubboUtil {
     private static Map<String, ProviderConfig> providerConfigMap = new ConcurrentHashMap<>();
     private static Map<String, ConsumerConfig> consumerConfigMap = new ConcurrentHashMap<>();
 
-    private static Map<String, MethodConfig> methodConfigMap = new ConcurrentHashMap<>();
-    private static Map<String, ArgumentConfig> argumentConfigMap = new ConcurrentHashMap<>();
-
 
     public static void initDubbo() {
         DubboBootstrap dubboBootstrap = DubboBootstrap.getInstance();
@@ -72,8 +69,18 @@ class DubboUtil {
         ModuleConfig moduleConfig = config(ModuleConfig.class, "jboot.rpc.dubbo.module");
         dubboBootstrap.module(moduleConfig);
 
+        //元数据 配置
+        Map<String, MetadataReportConfig> metadataReportConfigs = configs(MetadataReportConfig.class, "jboot.rpc.dubbo.metadataReport");
+        if (metadataReportConfigs != null && !metadataReportConfigs.isEmpty()) {
+            if (metadataReportConfigs.size() == 1) {
+                dubboBootstrap.metadataReport(getDefault(metadataReportConfigs));
+            } else {
+                dubboBootstrap.metadataReports((List<MetadataReportConfig>) toList(metadataReportConfigs));
+            }
+        }
 
-        //protocol 配置
+
+        //协议 配置
         Map<String, ProtocolConfig> protocolConfigs = configs(ProtocolConfig.class, "jboot.rpc.dubbo.protocol");
         if (protocolConfigs != null && !protocolConfigs.isEmpty()) {
             protocolConfigMap.putAll(protocolConfigs);
@@ -84,7 +91,7 @@ class DubboUtil {
             }
         }
 
-        //registry 配置
+        //服务注册中心 配置
         Map<String, RegistryConfig> registryConfigs = configs(RegistryConfig.class, "jboot.rpc.dubbo.registry");
         if (registryConfigs != null && !registryConfigs.isEmpty()) {
             registryConfigMap.putAll(registryConfigs);
@@ -96,20 +103,22 @@ class DubboUtil {
         }
 
 
-        //provider 配置
-        Map<String, ProviderConfig> providerConfigs = configs(ProviderConfig.class, "jboot.rpc.dubbo.provider");
-        if (providerConfigs != null && !providerConfigs.isEmpty()) {
-            providerConfigMap.putAll(providerConfigs);
-            if (providerConfigs.size() == 1) {
-                dubboBootstrap.provider(getDefault(providerConfigs));
-            } else {
-                dubboBootstrap.providers((List<ProviderConfig>) toList(providerConfigs));
-            }
-        }
+        //方法参数配置 配置
+        Map<String, ArgumentConfig> argumentConfigs = configs(ArgumentConfig.class, "jboot.rpc.dubbo.argument");
 
 
-        //consumer 配置
+        //方法配置 配置
+        Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.dubbo.method");
+        Utils.appendChildConfig(methodConfigs,argumentConfigs,"jboot.rpc.dubbo.method","argument");
+
+
+        //消费者 配置
         Map<String, ConsumerConfig> consumerConfigs = configs(ConsumerConfig.class, "jboot.rpc.dubbo.consumer");
+        Utils.appendChildConfig(consumerConfigs,methodConfigs,"jboot.rpc.dubbo.consumer","method");
+        Utils.appendChildConfig(consumerConfigs,protocolConfigs,"jboot.rpc.dubbo.consumer","protocol");
+        Utils.appendChildConfig(consumerConfigs,registryConfigs,"jboot.rpc.dubbo.consumer","registry");
+
+
         if (consumerConfigs != null && !consumerConfigs.isEmpty()) {
             consumerConfigMap.putAll(consumerConfigs);
             if (consumerConfigs.size() == 1) {
@@ -119,24 +128,26 @@ class DubboUtil {
             }
         }
 
-        //methodConfig 配置
-        Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.dubbo.method");
-        if (methodConfigs != null && !methodConfigs.isEmpty()) {
-            methodConfigMap.putAll(methodConfigs);
-        }
+        //服务提供者 配置
+        Map<String, ProviderConfig> providerConfigs = configs(ProviderConfig.class, "jboot.rpc.dubbo.provider");
+        Utils.appendChildConfig(providerConfigs,methodConfigs,"jboot.rpc.dubbo.provider","method");
+        Utils.appendChildConfig(providerConfigs,protocolConfigs,"jboot.rpc.dubbo.provider","protocol");
+        Utils.appendChildConfig(providerConfigs,registryConfigs,"jboot.rpc.dubbo.provider","registry");
 
-
-        //argumentConfig 配置
-        Map<String, ArgumentConfig> argumentConfigs = configs(ArgumentConfig.class, "jboot.rpc.dubbo.argument");
-        if (argumentConfigs != null && !argumentConfigs.isEmpty()) {
-            argumentConfigMap.putAll(argumentConfigs);
+        if (providerConfigs != null && !providerConfigs.isEmpty()) {
+            providerConfigMap.putAll(providerConfigs);
+            if (providerConfigs.size() == 1) {
+                dubboBootstrap.provider(getDefault(providerConfigs));
+            } else {
+                dubboBootstrap.providers((List<ProviderConfig>) toList(providerConfigs));
+            }
         }
     }
 
 
-    public static ReferenceConfig toReferenceConfig(JbootrpcReferenceConfig rc){
+    public static ReferenceConfig toReferenceConfig(JbootrpcReferenceConfig rc) {
         ReferenceConfig referenceConfig = new ReferenceConfig();
-        Utils.copyFields(rc,referenceConfig);
+        Utils.copyFields(rc, referenceConfig);
 
         //reference coonsumer
         if (rc.getConsumer() != null) {
@@ -153,9 +164,9 @@ class DubboUtil {
     }
 
 
-    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc){
+    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc) {
         ServiceConfig serviceConfig = new ServiceConfig();
-        Utils.copyFields(sc,serviceConfig);
+        Utils.copyFields(sc, serviceConfig);
 
         //service provider
         if (StrUtil.isNotBlank(sc.getProtocol())) {
@@ -174,7 +185,6 @@ class DubboUtil {
 
         return serviceConfig;
     }
-
 
 
     private static <T> T config(Class<T> clazz, String prefix) {

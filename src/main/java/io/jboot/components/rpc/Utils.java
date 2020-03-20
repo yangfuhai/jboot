@@ -15,6 +15,7 @@
  */
 package io.jboot.components.rpc;
 
+import io.jboot.Jboot;
 import io.jboot.utils.CollectionUtil;
 import io.jboot.utils.StrUtil;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -22,7 +23,10 @@ import org.apache.dubbo.common.utils.StringUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -71,6 +75,7 @@ public class Utils {
 
     /**
      * copy object field value to other
+     *
      * @param copyFrom
      * @param copyTo
      */
@@ -82,6 +87,42 @@ public class Utils {
                 method.invoke(copyTo, field.get(copyFrom));
             } catch (Exception e) {
                 // ignore
+            }
+        }
+    }
+
+
+    public static <T, F> void appendChildConfig(Map<String, T> appendTo, Map<String, F> dataFrom, String prefix, String arrName) {
+        if (appendTo != null && !appendTo.isEmpty()) {
+            for (Map.Entry<String, T> entry : appendTo.entrySet()) {
+                String configKey = "default".equals(entry.getKey())
+                        ? prefix + "." + arrName //"jboot.rpc.dubbo.method.argument"
+                        : prefix + "." + entry.getKey() + "." + arrName;//"jboot.rpc.dubbo.method."+entry.getKey()+".argument";
+
+                String configValue = Jboot.configValue(configKey);
+                if (StrUtil.isNotBlank(configValue)) {
+                    List<F> argCfgList = new ArrayList<>();
+                    Set<String> arguments = StrUtil.splitToSetByComma(configValue);
+                    for (String arg : arguments) {
+                        F fillObj = dataFrom.get(arg);
+                        if (fillObj != null) {
+                            argCfgList.add(fillObj);
+                        }
+                    }
+                    if (!argCfgList.isEmpty()) {
+                        try {
+                            //setArguments/setMethods/setRegistries
+                            String setterMethodName = arrName.endsWith("registry")
+                                    ? "setRegistries"
+                                    : "set" + StrUtil.firstCharToUpperCase(arrName) + "s";
+
+                            Method method = entry.getValue().getClass().getDeclaredMethod(setterMethodName, List.class);
+                            method.invoke(entry.getValue(), argCfgList);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }
     }

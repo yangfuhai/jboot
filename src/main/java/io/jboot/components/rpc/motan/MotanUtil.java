@@ -20,8 +20,12 @@ import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.rpc.Utils;
+import io.jboot.utils.StrUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -34,7 +38,7 @@ public class MotanUtil {
     private static Map<String, RegistryConfig> registryConfigMap = new ConcurrentHashMap<>();
     private static Map<String, RefererConfig> baseRefererConfigMap = new ConcurrentHashMap<>();
     private static Map<String, ServiceConfig> baseServiceConfigMap = new ConcurrentHashMap<>();
-    private static Map<String, MethodConfig> methodConfigMap = new ConcurrentHashMap<>();
+//    private static Map<String, MethodConfig> methodConfigMap = new ConcurrentHashMap<>();
 
 
     public static void initMotan() {
@@ -51,22 +55,29 @@ public class MotanUtil {
             registryConfigMap.putAll(registryConfigs);
         }
 
-        //baseReferer 配置
-        Map<String, RefererConfig> refererConfigs = configs(RefererConfig.class, "jboot.rpc.motan.referer");
-        if (refererConfigs != null && !refererConfigs.isEmpty()) {
-            baseRefererConfigMap.putAll(refererConfigs);
-        }
+        //methodConfig 配置
+        Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.motan.method");
+
 
         //baseService 配置
         Map<String, ServiceConfig> serviceConfigs = configs(ServiceConfig.class, "jboot.rpc.motan.service");
+        Utils.appendChildConfig(serviceConfigs,methodConfigs,"jboot.rpc.motan.service","method");
+        Utils.appendChildConfig(serviceConfigs,protocolConfigs,"jboot.rpc.motan.service","protocol");
+        Utils.appendChildConfig(serviceConfigs,registryConfigs,"jboot.rpc.motan.service","registry");
+
+
         if (serviceConfigs != null && !serviceConfigs.isEmpty()) {
             baseServiceConfigMap.putAll(serviceConfigs);
         }
 
-        //methodConfig 配置
-        Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.motan.method");
-        if (methodConfigs != null && !methodConfigs.isEmpty()) {
-            methodConfigMap.putAll(methodConfigs);
+        //baseReferer 配置
+        Map<String, RefererConfig> refererConfigs = configs(RefererConfig.class, "jboot.rpc.motan.referer");
+        Utils.appendChildConfig(refererConfigs,methodConfigs,"jboot.rpc.motan.referer","method");
+        Utils.appendChildConfig(refererConfigs,protocolConfigs,"jboot.rpc.motan.referer","protocol");
+        Utils.appendChildConfig(refererConfigs,registryConfigs,"jboot.rpc.motan.referer","registry");
+
+        if (refererConfigs != null && !refererConfigs.isEmpty()) {
+            baseRefererConfigMap.putAll(refererConfigs);
         }
 
 
@@ -74,15 +85,86 @@ public class MotanUtil {
 
 
     public static RefererConfig toRefererConfig(JbootrpcReferenceConfig rc) {
-        RefererConfig referenceConfig = new RefererConfig();
-        Utils.copyFields(rc, referenceConfig);
-        return referenceConfig;
+        RefererConfig refererConfig = new RefererConfig();
+        Utils.copyFields(rc, refererConfig);
+
+
+        //referer protocol
+        if (StrUtil.isNotBlank(rc.getProtocol())) {
+            List<ProtocolConfig> protocolConfigs = new ArrayList<>();
+            Set<String> protocolNames = StrUtil.splitToSetByComma(rc.getRegistry());
+            for (String protocalName : protocolNames){
+                ProtocolConfig registryConfig = protocolConfigMap.get(protocalName);
+                if (registryConfig != null){
+                    protocolConfigs.add(registryConfig);
+                }
+            }
+            if (!protocolConfigs.isEmpty()){
+                refererConfig.setProtocols(protocolConfigs);
+            }
+        }
+
+
+
+        //referer registry
+        if (StrUtil.isNotBlank(rc.getRegistry())) {
+            List<RegistryConfig> registryConfigs = new ArrayList<>();
+            Set<String> registryNames = StrUtil.splitToSetByComma(rc.getRegistry());
+            for (String registryName : registryNames){
+                RegistryConfig registryConfig = registryConfigMap.get(registryName);
+                if (registryConfig != null){
+                    registryConfigs.add(registryConfig);
+                }
+            }
+            if (!registryConfigs.isEmpty()){
+                refererConfig.setRegistries(registryConfigs);
+            }
+        }
+
+
+        return refererConfig;
     }
 
 
     public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc) {
         ServiceConfig serviceConfig = new ServiceConfig();
         Utils.copyFields(sc, serviceConfig);
+
+
+
+        //service protocol
+        if (StrUtil.isNotBlank(sc.getProtocol())) {
+            List<ProtocolConfig> protocolConfigs = new ArrayList<>();
+            Set<String> protocolNames = StrUtil.splitToSetByComma(sc.getRegistry());
+            for (String protocalName : protocolNames){
+                ProtocolConfig registryConfig = protocolConfigMap.get(protocalName);
+                if (registryConfig != null){
+                    protocolConfigs.add(registryConfig);
+                }
+            }
+            if (!protocolConfigs.isEmpty()){
+                serviceConfig.setProtocols(protocolConfigs);
+            }
+        }
+
+
+
+        //service registry
+        if (StrUtil.isNotBlank(sc.getRegistry())) {
+            List<RegistryConfig> registryConfigs = new ArrayList<>();
+            Set<String> registryNames = StrUtil.splitToSetByComma(sc.getRegistry());
+            for (String registryName : registryNames){
+                RegistryConfig registryConfig = registryConfigMap.get(registryName);
+                if (registryConfig != null){
+                    registryConfigs.add(registryConfig);
+                }
+            }
+            if (!registryConfigs.isEmpty()){
+                serviceConfig.setRegistries(registryConfigs);
+            }
+        }
+
+
         return serviceConfig;
     }
 
