@@ -180,7 +180,18 @@ class Utils {
             } else {
                 return null;
             }
-        } else if (Class.class == convertClass) {
+        } else if (convertClass.isArray() && convertClass.getComponentType() == String.class){
+            List<String> list = new LinkedList();
+            String[] strings = s.split(",");
+            if (strings != null && strings.length > 0){
+                for (String s1 : strings){
+                    if (s1 != null && s1.trim().length() != 0) {
+                        list.add(s1.trim());
+                    }
+                }
+            }
+            return list.toArray(new String[0]);
+        }else if (Class.class == convertClass) {
             try {
                 return Class.forName(s, false, Thread.currentThread().getContextClassLoader());
             } catch (ClassNotFoundException e) {
