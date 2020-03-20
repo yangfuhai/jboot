@@ -16,83 +16,21 @@
 package io.jboot.components.rpc.motan;
 
 import com.weibo.api.motan.common.MotanConstants;
-import com.weibo.api.motan.config.ProtocolConfig;
 import com.weibo.api.motan.config.RefererConfig;
-import com.weibo.api.motan.config.RegistryConfig;
 import com.weibo.api.motan.config.ServiceConfig;
 import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
-import io.jboot.utils.StrUtil;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public class JbootMotanrpc extends JbootrpcBase {
 
 
-    private RegistryConfig registryConfig;
-    private ProtocolConfig protocolConfig;
-
-    private static final Map<String, Object> singletons = new ConcurrentHashMap<>();
-
-    public JbootMotanrpc() {
-        registryConfig = new RegistryConfig();
-        registryConfig.setCheck(String.valueOf(getConfig().isRegistryCheck()));
-
-        /**
-         * 注册中心的调用模式
-         */
-        if (getConfig().isRegistryCallMode()) {
-
-            registryConfig.setRegProtocol(getConfig().getRegistryType());
-            registryConfig.setAddress(getConfig().getRegistryAddress());
-            registryConfig.setName(getConfig().getRegistryName());
-        }
-
-        /**
-         * 直连模式
-         */
-        else if (getConfig().isDirectCallMode()) {
-            registryConfig.setRegProtocol("local");
-        }
-
-
-        protocolConfig = new ProtocolConfig();
-        protocolConfig.setId("motan");
-        protocolConfig.setName("motan");
-
-        if (StrUtil.isNotBlank(getConfig().getProxy())) {
-            protocolConfig.setFilter(getConfig().getProxy());
-        }
-
-        if (StrUtil.isNotBlank(getConfig().getSerialization())) {
-            protocolConfig.setSerialization(getConfig().getSerialization());
-        }
-
-    }
-
-
     @Override
-    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcReferenceConfig config) {
-
-        String key = buildCacheKey(serviceClass,config);
-
-        T object = (T) singletons.get(key);
-        if (object == null) {
-            synchronized (this){
-                if (singletons.get(key) == null) {
-                    RefererConfig<T> reference = MotanUtil.toRefererConfig(config);
-                    object = reference.getRef();
-                    if (object != null){
-                        singletons.put(key,object);
-                    }
-                }
-            }
-        }
-        return object;
+    public <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config) {
+        RefererConfig<T> reference = MotanUtil.toRefererConfig(config);
+        return reference.getRef();
     }
 
 
@@ -104,11 +42,8 @@ public class JbootMotanrpc extends JbootrpcBase {
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, false);
 
             ServiceConfig<T> motanServiceConfig = MotanUtil.toServiceConfig(config);
-
-            // 设置接口及实现类
             motanServiceConfig.setInterface(interfaceClass);
             motanServiceConfig.setRef((T) object);
-
             motanServiceConfig.export();
 
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, true);

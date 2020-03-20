@@ -21,12 +21,7 @@ import io.jboot.components.rpc.JbootrpcServiceConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.ServiceConfig;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class JbootDubborpc extends JbootrpcBase {
-
-    private static final Map<String, Object> singletons = new ConcurrentHashMap<>();
 
     @Override
     public void onInit() {
@@ -35,35 +30,18 @@ public class JbootDubborpc extends JbootrpcBase {
 
 
     @Override
-    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcReferenceConfig config) {
-
-        String key = buildCacheKey(serviceClass,config);
-
-        T object = (T) singletons.get(key);
-        if (object == null) {
-            synchronized (this){
-                if (singletons.get(key) == null) {
-                    ReferenceConfig<T> reference = DubboUtil.toReferenceConfig(config);
-                    object = reference.get();
-                    if (object != null){
-                        singletons.put(key,object);
-                    }
-                }
-            }
-        }
-        return object;
+    public <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config) {
+        ReferenceConfig<T> reference = DubboUtil.toReferenceConfig(config);
+        return reference.get();
     }
-
 
 
     @Override
     public <T> boolean serviceExport(Class<T> interfaceClass, Object object, JbootrpcServiceConfig config) {
-
         ServiceConfig<T> service = DubboUtil.toServiceConfig(config);
         service.setInterface(interfaceClass);
         service.setRef((T) object);
         service.export();
-
         return true;
     }
 

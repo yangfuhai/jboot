@@ -16,15 +16,32 @@
 package io.jboot.components.rpc;
 
 
-import io.jboot.app.config.JbootConfigManager;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class JbootrpcBase implements Jbootrpc {
 
-    private final JbootrpcConfig config = JbootConfigManager.me().get(JbootrpcConfig.class);
+    protected static final Map<String, Object> objectCache = new ConcurrentHashMap<>();
 
-    public JbootrpcConfig getConfig() {
-        return config;
+
+    @Override
+    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcReferenceConfig config) {
+        String key = buildCacheKey(serviceClass,config);
+        T object = (T) objectCache.get(key);
+        if (object == null) {
+            synchronized (this){
+                if (objectCache.get(key) == null) {
+                    object = onServiceCreate(serviceClass,config);
+                    if (object != null){
+                        objectCache.put(key,object);
+                    }
+                }
+            }
+        }
+        return object;
     }
+
+    public abstract  <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config);
 
     @Override
     public void onInit() {
