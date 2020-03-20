@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -50,11 +51,6 @@ public class J2cacheImpl extends JbootCacheBase {
         J2Cache.getChannel().set(cacheName, key.toString(), value, liveSeconds);
     }
 
-    @Override
-    public List getKeys(String cacheName) {
-        Collection keys = J2Cache.getChannel().keys(cacheName);
-        return keys != null ? new ArrayList(keys) : null;
-    }
 
     @Override
     public void remove(String cacheName, Object key) {
@@ -127,6 +123,21 @@ public class J2cacheImpl extends JbootCacheBase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List getNames() {
+        Collection<CacheChannel.Region> regions = J2Cache.getChannel().getL1Provider().regions();
+        return regions != null && !regions.isEmpty()
+                ? regions.stream().map(CacheChannel.Region::getName).collect(Collectors.toList())
+                : null;
+    }
+
+
+    @Override
+    public List getKeys(String cacheName) {
+        Collection keys = J2Cache.getChannel().keys(cacheName);
+        return keys != null ? new ArrayList(keys) : null;
     }
 
 

@@ -41,11 +41,6 @@ public class NoneCacheImpl implements JbootCache {
     }
 
     @Override
-    public List getKeys(String cacheName) {
-        return null;
-    }
-
-    @Override
     public void remove(String cacheName, Object key) {
         //do nothing
     }
@@ -83,5 +78,15 @@ public class NoneCacheImpl implements JbootCache {
     @Override
     public void refresh(String cacheName) {
 
+    }
+
+    @Override
+    public List getNames() {
+        return null;
+    }
+
+    @Override
+    public List getKeys(String cacheName) {
+        return null;
     }
 }

@@ -26,7 +26,7 @@ import io.jboot.components.event.JbootEventManager;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqManager;
 import io.jboot.components.rpc.JbootrpcManager;
-import io.jboot.components.rpc.JbootrpcServiceConfig;
+import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.serializer.JbootSerializer;
 import io.jboot.components.serializer.JbootSerializerManager;
 import io.jboot.support.metric.JbootMetricManager;
@@ -153,7 +153,7 @@ public class Jboot {
      * @return
      */
     public static <T> T service(Class<T> clazz) {
-        return service(clazz, new JbootrpcServiceConfig());
+        return service(clazz, new JbootrpcReferenceConfig());
     }
 
     /**
@@ -164,7 +164,7 @@ public class Jboot {
      * @param <T>
      * @return
      */
-    public static <T> T service(Class<T> clazz, JbootrpcServiceConfig config) {
+    public static <T> T service(Class<T> clazz, JbootrpcReferenceConfig config) {
         return JbootrpcManager.me().getJbootrpc().serviceObtain(clazz, config);
     }
 

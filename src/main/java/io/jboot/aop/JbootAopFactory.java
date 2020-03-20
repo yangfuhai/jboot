@@ -31,7 +31,7 @@ import io.jboot.components.event.JbootEventListener;
 import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.components.rpc.Jbootrpc;
 import io.jboot.components.rpc.JbootrpcManager;
-import io.jboot.components.rpc.JbootrpcServiceConfig;
+import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
@@ -184,7 +184,7 @@ public class JbootAopFactory extends AopFactory {
     private void doInjectRPC(Object targetObject, Field field, RPCInject rpcInject) {
 
         try {
-            JbootrpcServiceConfig serviceConfig = new JbootrpcServiceConfig(rpcInject);
+            JbootrpcReferenceConfig serviceConfig = new JbootrpcReferenceConfig(rpcInject);
             Class<?> fieldInjectedClass = field.getType();
 
             Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
