@@ -26,6 +26,10 @@ import io.jboot.components.rpc.JbootrpcServiceConfig;
 
 public class JbootMotanrpc extends JbootrpcBase {
 
+    @Override
+    public void onInit() {
+        MotanUtil.initMotan();
+    }
 
     @Override
     public <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config) {

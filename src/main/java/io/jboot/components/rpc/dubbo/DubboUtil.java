@@ -29,7 +29,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,6 +41,9 @@ class DubboUtil {
     private static Map<String, RegistryConfig> registryConfigMap = new ConcurrentHashMap<>();
     private static Map<String, ProviderConfig> providerConfigMap = new ConcurrentHashMap<>();
     private static Map<String, ConsumerConfig> consumerConfigMap = new ConcurrentHashMap<>();
+
+    private static Map<String, MethodConfig> methodConfigMap = new ConcurrentHashMap<>();
+    private static Map<String, ArgumentConfig> argumentConfigMap = new ConcurrentHashMap<>();
 
 
     public static void initDubbo() {
@@ -117,39 +119,19 @@ class DubboUtil {
                 dubboBootstrap.consumers((List<ConsumerConfig>) toList(consumerConfigs));
             }
         }
-    }
+
+        //methodConfig 配置
+        Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.dubbo.method");
+        if (methodConfigs != null && !methodConfigs.isEmpty()) {
+            methodConfigMap.putAll(methodConfigs);
+        }
 
 
-    public static ProtocolConfig getProtocolConfig(String name) {
-        return protocolConfigMap.get(name);
-    }
-
-    public static List<ProtocolConfig> getProtocolConfigs(String names) {
-        return filterMap(StrUtil.splitToSetByComma(names), protocolConfigMap);
-    }
-
-    public static RegistryConfig getRegistryConfig(String name) {
-        return registryConfigMap.get(name);
-    }
-
-    public static List<RegistryConfig> getRegistryConfigs(String names) {
-        return filterMap(StrUtil.splitToSetByComma(names), registryConfigMap);
-    }
-
-    public static ProviderConfig getProviderConfig(String name) {
-        return providerConfigMap.get(name);
-    }
-
-    public static List<ProviderConfig> getProviderConfigs(String names) {
-        return filterMap(StrUtil.splitToSetByComma(names), providerConfigMap);
-    }
-
-    public static ConsumerConfig getConsumerConfig(String name) {
-        return consumerConfigMap.get(name);
-    }
-
-    public static List<ConsumerConfig> getConsumerConfigs(String names) {
-        return filterMap(StrUtil.splitToSetByComma(names), consumerConfigMap);
+        //argumentConfig 配置
+        Map<String, ArgumentConfig> argumentConfigs = configs(ArgumentConfig.class, "jboot.rpc.dubbo.argument");
+        if (argumentConfigs != null && !argumentConfigs.isEmpty()) {
+            argumentConfigMap.putAll(argumentConfigs);
+        }
     }
 
 
@@ -184,21 +166,6 @@ class DubboUtil {
         return serviceConfig;
     }
 
-
-
-    private static <T> List<T> filterMap(Set<String> keys, Map<String, T> map) {
-        if (keys == null || keys.isEmpty() || map == null || map.isEmpty()) {
-            return null;
-        }
-        List<T> list = new ArrayList<>();
-        for (String key : keys) {
-            T t = map.get(key);
-            if (t != null) {
-                list.add(t);
-            }
-        }
-        return list.isEmpty() ? null : list;
-    }
 
 
     private static <T> T config(Class<T> clazz, String prefix) {

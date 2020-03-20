@@ -15,20 +15,65 @@
  */
 package io.jboot.components.rpc.motan;
 
-import com.weibo.api.motan.config.RefererConfig;
-import com.weibo.api.motan.config.ServiceConfig;
+import com.weibo.api.motan.config.*;
+import io.jboot.app.config.JbootConfigManager;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/20
  */
 public class MotanUtil {
+
+    private static Map<String, ProtocolConfig> protocolConfigMap = new ConcurrentHashMap<>();
+    private static Map<String, RegistryConfig> registryConfigMap = new ConcurrentHashMap<>();
+    private static Map<String, RefererConfig> baseRefererConfigMap = new ConcurrentHashMap<>();
+    private static Map<String, ServiceConfig> baseServiceConfigMap = new ConcurrentHashMap<>();
+    private static Map<String, MethodConfig> methodConfigMap = new ConcurrentHashMap<>();
+
+
+    public static void initMotan() {
+
+        //protocol 配置
+        Map<String, ProtocolConfig> protocolConfigs = configs(ProtocolConfig.class, "jboot.rpc.motan.protocol");
+        if (protocolConfigs != null && !protocolConfigs.isEmpty()) {
+            protocolConfigMap.putAll(protocolConfigs);
+        }
+
+        //registry 配置
+        Map<String, RegistryConfig> registryConfigs = configs(RegistryConfig.class, "jboot.rpc.motan.registry");
+        if (registryConfigs != null && !registryConfigs.isEmpty()) {
+            registryConfigMap.putAll(registryConfigs);
+        }
+
+        //baseReferer 配置
+        Map<String, RefererConfig> refererConfigs = configs(RefererConfig.class, "jboot.rpc.motan.referer");
+        if (refererConfigs != null && !refererConfigs.isEmpty()) {
+            baseRefererConfigMap.putAll(refererConfigs);
+        }
+
+        //baseService 配置
+        Map<String, ServiceConfig> serviceConfigs = configs(ServiceConfig.class, "jboot.rpc.motan.service");
+        if (serviceConfigs != null && !serviceConfigs.isEmpty()) {
+            baseServiceConfigMap.putAll(serviceConfigs);
+        }
+
+        //methodConfig 配置
+        Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.motan.method");
+        if (methodConfigs != null && !methodConfigs.isEmpty()) {
+            methodConfigMap.putAll(methodConfigs);
+        }
+
+
+    }
 
 
     public static RefererConfig toRefererConfig(JbootrpcReferenceConfig rc){
@@ -61,5 +106,15 @@ public class MotanUtil {
             }
         }
         return serviceConfig;
+    }
+
+
+    private static <T> T config(Class<T> clazz, String prefix) {
+        return JbootConfigManager.me().get(clazz, prefix, null);
+    }
+
+
+    private static <T> Map<String, T> configs(Class<T> clazz, String prefix) {
+        return JbootConfigUtil.getConfigModels(clazz, prefix);
     }
 }
