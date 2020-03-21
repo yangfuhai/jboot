@@ -6,9 +6,58 @@
 
 ## 目录
 
+- 添加依赖
 - 配置
 - 开始使用
 - 高级功能
+
+## 添加依赖
+
+Jboot 支持 dubbo 和 motan，假设我们需要使用 dubbo 作为底层的 RPC 框架，需要添加如下依赖：
+
+```
+<dependency>
+    <groupId>org.apache.dubbo</groupId>
+    <artifactId>dubbo</artifactId>
+    <version>${dubbo.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.dubbo</groupId>
+    <artifactId>dubbo-dependencies-zookeeper</artifactId>
+    <version>${dubbo.version}</version>
+    <type>pom</type>
+</dependency>
+```
+
+如果使用 motan，需要添加如下依赖：
+
+```
+<dependency>
+    <groupId>com.weibo</groupId>
+    <artifactId>motan-core</artifactId>
+    <version>${motan.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>com.weibo</groupId>
+    <artifactId>motan-transport-netty4</artifactId>
+    <version>${motan.version}</version>
+</dependency>
+
+<!-- 以下的 consul 和 zookeeper 只需要一个即可，使用哪个注册中心就导入哪个依赖  -->
+<dependency>
+    <groupId>com.weibo</groupId>
+    <artifactId>motan-registry-consul</artifactId>
+    <version>${motan.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>com.weibo</groupId>
+    <artifactId>motan-registry-zookeeper</artifactId>
+    <version>${motan.version}</version>
+</dependency>
+```
 
 ## 配置
 在 Jboot 中，默认实现了对 Dubbo、motan 的 RPC 调用支持。在使用 RPC 远程调用之前，需要做一些基本的配置。
