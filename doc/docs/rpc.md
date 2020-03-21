@@ -17,12 +17,16 @@
 例如 ：
 ```
 jboot.rpc.type = dubbo
-jboot.rpc.urls = com.yourdomain.AAAService:127.0.0.1:8080,com.yourdomain.XXXService:127.0.0.1:8080,
+jboot.rpc.urls = com.yourdomain.AAAService:127.0.0.1:8080,com.yourdomain.XXXService:127.0.0.1:8080
+jboot.rpc.providers = com.yourdomain.AAAService:providerName,com.yourdomain.XXXService:providerName
+jboot.rpc.consumers = com.yourdomain.AAAService:consumerName,com.yourdomain.XXXService:consumerName
 jboot.rpc.autoExportEnable = true
 ```
 
 - jboot.rpc.type ： RPC 的类型，目前只支持 dubbo 和 motan
 - jboot.rpc.urls ： 一般不用配置，只有直连模式下才会去配置，此处是配置 Service接口和URL地址的映射关系。
+- jboot.rpc.providers ： 配置 Service 和 Provider 的映射关系（ Motan下配置的是 Service 和 BasicService 的映射关系）。
+- jboot.rpc.consumers ： 配置 Reference 和 consumer 的映射关系（ Motan下配置的是 Referer 和 BaseReferer 的映射关系）。
 - jboot.rpc.autoExportEnable ： 当 Jboot 启动的时候，是否自动暴露 @RPCBean 注解的接口。
 
 > 更多的配置请查看 [config.md](./config.md)
