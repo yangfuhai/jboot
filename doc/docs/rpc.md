@@ -1,5 +1,9 @@
 # RPC 远程调用
 
+## 说明
+
+此文档只适用于 jboot v3.1.0 以上，之前的版本请参考 [这里](./rpc2.x.md) 。
+
 ## 目录
 
 - 配置
@@ -13,15 +17,13 @@
 例如 ：
 ```
 jboot.rpc.type = dubbo
-jboot.rpc.callMode = direct
-jboot.rpc.directUrl = 127.0.0.1:8000
+jboot.rpc.urls = com.yourdomain.AAAService:127.0.0.1:8080,com.yourdomain.XXXService:127.0.0.1:8080,
+jboot.rpc.autoExportEnable = true
 ```
 
-- jboot.rpc.type ： RPC 的类型，不配置默认为 Dubbo
-- jboot.rpc.callMode ： RPC 的调用方式
-  - direct ： 直联模式
-  - registry ： 注册中心模式（服务注册和服务发现）
-- jboot.rpc.directUrl ： 当 callMode 为 direct 直联模式时，需要配置直联模式的服务器 IP 地址和端口号。
+- jboot.rpc.type ： RPC 的类型，目前只支持 dubbo 和 motan
+- jboot.rpc.urls ： 一般不用配置，只有直连模式下才会去配置，此处是配置 Service接口和URL地址的映射关系。
+- jboot.rpc.autoExportEnable ： 当 Jboot 启动的时候，是否自动暴露 @RPCBean 注解的接口。
 
 > 更多的配置请查看 [config.md](./config.md)
 
@@ -31,7 +33,7 @@ jboot.rpc.directUrl = 127.0.0.1:8000
 
 - 1、定义接口
 - 2、编写实现类
-- 3、启动 Server 暴露服务
+- 3、启动 Server（Provider） 暴露服务
 - 4、启动客户端、通过 RPC 调用 Server 提供的服务
 
 
@@ -73,6 +75,25 @@ public class BlogServiceProvider implements BlogService {
 public class DubboServer {
 
     public static void main(String[] args)  {
+        
+        JbootApplication.setBootArg("undertow.port", "9998");
+
+        JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
+
+        // 开启 @RPCBean 自动暴露功能，默认情况下是开启的，无需配置，
+        // 但是此测试代码的 jboot.properties 文件关闭了，这里需要开启下
+        JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
+
+        //dubbo 的通信协议配置
+        JbootApplication.setBootArg("jboot.rpc.dubbo.protocol.name", "dubbo");
+        JbootApplication.setBootArg("jboot.rpc.dubbo.protocol.port", "28080");
+
+
+        // dubbo 注册中心的配置，
+        // 当不配置注册中心的时候，默认此服务只提供了直联模式的请求
+        // JbootApplication.setBootArg("jboot.rpc.dubbo.registry.protocol", "zookeeper");
+        // JbootApplication.setBootArg("jboot.rpc.dubbo.registry.address", "127.0.0.1:2181");
+
 
         JbootApplication.run(args);
         System.out.println("DubboServer started...");
@@ -80,6 +101,8 @@ public class DubboServer {
     }
 }
 ```
+
+备注：以上的 JbootApplication.setBootArg() 里设置的内容，都可以配置到 jboot.properties 里。
 
 
 **启动客户端、通过 RPC 调用 Server 提供的服务**
@@ -90,8 +113,14 @@ public class DubboClient extends JbootController{
 
     public static void main(String[] args)  {
 
-        //Undertow端口号配置
-        JbootApplication.setBootArg("undertow.port", "8888");
+       //Undertow端口号配置
+       JbootApplication.setBootArg("undertow.port", "9999");
+
+       //RPC配置
+       JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
+
+       //设置直连模式，方便调试，默认为注册中心
+       JbootApplication.setBootArg("jboot.rpc.urls", "io.jboot.test.rpc.commons.BlogService:127.0.0.1:28080");
 
         JbootApplication.run(args);
     }
@@ -104,53 +133,135 @@ public class DubboClient extends JbootController{
         System.out.println(blogService);
         renderText("blogId : " + blogService.findById());
     }
-
 }
 ```
 
 
 ## 高级功能
 
-在以上的示例中，使用到了两个注解：
-- @RPCBean，标示当前服务于RPC服务
-- @RPCInject，RPC注入赋值
+### 更多的 dubbo 配置
 
-虽然以上示例中，`@RPCBean` 和 `@RPCInject` 没有添加任何的参数，但实际是他们提供了非常丰富的配置。
+目前，jboot 不支持通过 jboot.properties 对 service 和 reference 配置，但是可以对 provider 和 consumer 的配置，
+在通过 @RPCInject 来再次复制给 service  或者 reference，结果也等同于对 service 和 reference 配置进行配置了。
 
-以下分别是 `@RPCBean` 和 `@RPCInject` 的定义：
 
-RPCBean ：
-```java
+#### application
 
-public @interface RPCBean {
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-application.html
 
-    int port() default 0;
-    int timeout() default -1;
-    int actives() default -1; 
-    String group() default "";
-    String version() default "";
+对应的 jboot 的配置前缀为： `jboot.rpc.application.service`
 
-    //当一个Service类实现对个接口的时候，
-    //可以通过这个排除不暴露某个实现接口
-    Class[] exclude() default Void.class;
-}
+例如文档里提到的 version，在 jboot.properties 对应的配置为
+
+```
+jboot.rpc.dubbo.application.version = xx.xx.xx
 ```
 
+其他同理。
 
-RPCInject ：
+#### registry
 
-```java
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-registry.html
 
-public @interface RPCInject {
 
-    int port() default 0;
-    int timeout() default -1;
-    int retries() default -1;
-    int actives() default -1;
-    String group() default "";
-    String version() default "";
-    String loadbalance() default "";
-    String async() default "";
-    String check() default "";
-}
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.registry`
+
+例如文档里提到的 address，在 jboot.properties 对应的配置为
+
 ```
+jboot.rpc.dubbo.registry.address = xx.xx.xx
+```
+
+其他同理。
+
+
+多 registry （多注册中心）
+
+默认的注册中心配置内容如下：
+
+```
+jboot.rpc.dubbo.registry.address = xx.xx.xx
+jboot.rpc.dubbo.registry.port = xx.xx.xx
+jboot.rpc.dubbo.registry.username = xx.xx.xx
+jboot.rpc.dubbo.registry.password = xx.xx.xx
+```
+
+多注册中心可以配置如下（多 protocol 、多 consumer、多provider 都是同理）：
+
+
+```
+jboot.rpc.dubbo.registry.address = xx.xx.xx
+jboot.rpc.dubbo.registry.port = xx.xx.xx
+jboot.rpc.dubbo.registry.username = xx.xx.xx
+jboot.rpc.dubbo.registry.password = xx.xx.xx
+
+
+jboot.rpc.dubbo.registry.other1.address = xx.xx.xx
+jboot.rpc.dubbo.registry.other1.port = xx.xx.xx
+jboot.rpc.dubbo.registry.other1.username = xx.xx.xx
+jboot.rpc.dubbo.registry.other1.password = xx.xx.xx
+
+
+jboot.rpc.dubbo.registry.other2.address = xx.xx.xx
+jboot.rpc.dubbo.registry.other2.port = xx.xx.xx
+jboot.rpc.dubbo.registry.other2.username = xx.xx.xx
+jboot.rpc.dubbo.registry.other2.password = xx.xx.xx
+```
+
+这样，在系统中就存在了多个注册中心，名称（name 或者 id）分别为 default（没有name的时候，默认为default）、other1、other2，这样，当一个服务（或者接口）需要在
+多个注册中心暴露的时候，只需要在其 registry 配置相应的 id 即可。
+
+例如：
+
+```
+jboot.rpc.dubbo.provider.address = default,other1
+```
+
+若当服务没有指定注册中心，那么该服务会在这三个注册中心同时暴露。
+
+
+#### protocol
+
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-protocol.html
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.protocol`
+
+例如文档里提到的 host，在 jboot.properties 对应的配置为
+
+```
+jboot.rpc.dubbo.protocol.host = 127.0.0.1
+```
+
+其他同理。
+
+
+#### provider
+
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-provider.html
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.provider`
+
+例如文档里提到的 host，在 jboot.properties 对应的配置为
+
+```
+jboot.rpc.dubbo.provider.host = 127.0.0.1
+```
+
+其他同理。
+
+#### consumer
+
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-consumer.html
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.consumer`
+
+例如文档里提到的 timeout，在 jboot.properties 对应的配置为
+
+```
+jboot.rpc.dubbo.consumer.timeout = 127.0.0.1
+```
+
+其他同理。
