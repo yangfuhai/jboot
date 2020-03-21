@@ -203,17 +203,23 @@ public class ClassScanner {
     }
 
     static {
-        String scanJarPrefx = JbootConfigManager.me().getConfigValue("jboot.app.scanner.scanJarPrefix");
-        if (scanJarPrefx != null) {
-            for (String prefix : scanJarPrefx.split(",")) {
-                addScanJarPrefix(prefix.trim());
+        String scanJarPrefix = JbootConfigManager.me().getConfigValue("jboot.app.scanner.scanJarPrefix");
+        if (scanJarPrefix != null) {
+            String[] prefixes = scanJarPrefix.split(",");
+            for (String prefix : prefixes) {
+                if (prefix != null && prefix.trim().length() > 0) {
+                    addScanJarPrefix(prefix.trim());
+                }
             }
         }
 
         String unScanJarPrefix = JbootConfigManager.me().getConfigValue("jboot.app.scanner.unScanJarPrefix");
         if (unScanJarPrefix != null) {
-            for (String prefix : unScanJarPrefix.split(",")) {
-                addUnscanJarPrefix(prefix.trim());
+            String[] prefixes = unScanJarPrefix.split(",");
+            for (String prefix : prefixes) {
+                if (prefix != null && prefix.trim().length() > 0) {
+                    addUnscanJarPrefix(prefix.trim());
+                }
             }
         }
     }
