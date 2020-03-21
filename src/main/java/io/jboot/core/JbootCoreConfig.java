@@ -21,6 +21,8 @@ import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.LogKit;
+import com.jfinal.kit.PathKit;
+import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.template.Engine;
 import com.jfinal.weixin.sdk.api.ApiConfig;
@@ -61,11 +63,13 @@ import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.wechat.JbootAccessTokenCache;
 import io.jboot.wechat.JbootWechatConfig;
 
+import java.io.File;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 
 public class JbootCoreConfig extends JFinalConfig {
@@ -93,11 +97,31 @@ public class JbootCoreConfig extends JFinalConfig {
      */
     private void initSystemProperties() {
 
+        File spf = new File(PathKit.getRootClassPath(), "jboot-system.properties");
+        if (spf.exists() && spf.isFile()) {
+            Properties properties = PropKit.use(spf).getProperties();
+            if (properties != null && !properties.isEmpty()) {
+                for (Object key : properties.keySet()) {
+                    if (StrUtil.isNotBlank(key)) {
+                        String newKey = key.toString().trim();
+                        String systemValue = System.getProperty(newKey);
+                        if (StrUtil.isNotBlank(systemValue)) {
+                            continue;
+                        }
+                        String newValue = properties.getProperty(newKey);
+                        if (StrUtil.isNotBlank(newValue)) {
+                            System.setProperty(newKey, newValue.trim());
+                        }
+                    }
+                }
+            }
+        }
+
         //apollo 配置
         ApolloServerConfig apolloConfig = Jboot.config(ApolloServerConfig.class);
-        if (apolloConfig.isEnable() && apolloConfig.isConfigOk()){
-            System.setProperty("app.id",apolloConfig.getAppId());
-            System.setProperty("apollo.meta",apolloConfig.getMeta());
+        if (apolloConfig.isEnable() && apolloConfig.isConfigOk()) {
+            System.setProperty("app.id", apolloConfig.getAppId());
+            System.setProperty("apollo.meta", apolloConfig.getMeta());
         }
 
     }
