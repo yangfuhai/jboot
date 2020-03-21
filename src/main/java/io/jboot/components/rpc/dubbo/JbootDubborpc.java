@@ -38,10 +38,17 @@ public class JbootDubborpc extends JbootrpcBase {
     public <T> T onServiceCreate(Class<T> interfaceClass, JbootrpcReferenceConfig config) {
         ReferenceConfig<T> reference = DubboUtil.toReferenceConfig(config);
         reference.setInterface(interfaceClass);
+
         String directUrl = rpcConfig.getUrl(interfaceClass.getName());
         if (StrUtil.isNotBlank(directUrl)){
             reference.setUrl(directUrl);
         }
+
+        String consumer = rpcConfig.getConsumer(interfaceClass.getName());
+        if (consumer != null){
+            reference.setConsumer(DubboUtil.getConsumer(consumer));
+        }
+
         return reference.get();
     }
 
@@ -51,6 +58,12 @@ public class JbootDubborpc extends JbootrpcBase {
         ServiceConfig<T> service = DubboUtil.toServiceConfig(config);
         service.setInterface(interfaceClass);
         service.setRef((T) object);
+
+        String provider = rpcConfig.getProvider(interfaceClass.getName());
+        if (provider != null){
+            service.setProvider(DubboUtil.getProvider(provider));
+        }
+
         service.export();
         return true;
     }

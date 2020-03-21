@@ -36,10 +36,17 @@ public class JbootMotanrpc extends JbootrpcBase {
     public <T> T onServiceCreate(Class<T> interfaceClass, JbootrpcReferenceConfig config) {
         RefererConfig<T> referer = MotanUtil.toRefererConfig(config);
         referer.setInterface(interfaceClass);
+
         String directUrl = rpcConfig.getUrl(interfaceClass.getName());
         if (StrUtil.isNotBlank(directUrl)){
             referer.setDirectUrl(directUrl);
         }
+
+        String consumer = rpcConfig.getConsumer(interfaceClass.getName());
+        if (consumer != null){
+            referer.setBasicReferer(MotanUtil.getBaseReferer(consumer));
+        }
+
         return referer.getRef();
     }
 
@@ -51,11 +58,16 @@ public class JbootMotanrpc extends JbootrpcBase {
 
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, false);
 
-            ServiceConfig<T> motanServiceConfig = MotanUtil.toServiceConfig(config);
-            motanServiceConfig.setInterface(interfaceClass);
-            motanServiceConfig.setRef((T) object);
-            motanServiceConfig.export();
+            ServiceConfig<T> serviceConfig = MotanUtil.toServiceConfig(config);
+            serviceConfig.setInterface(interfaceClass);
+            serviceConfig.setRef((T) object);
 
+            String provider = rpcConfig.getProvider(interfaceClass.getName());
+            if (provider != null){
+                serviceConfig.setBasicService(MotanUtil.getBaseService(provider));
+            }
+
+            serviceConfig.export();
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, true);
         }
 

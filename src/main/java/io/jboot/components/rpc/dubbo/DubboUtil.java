@@ -198,6 +198,15 @@ class DubboUtil {
         return serviceConfig;
     }
 
+    public static ConsumerConfig getConsumer(String name){
+        return consumerConfigMap.get(name);
+    }
+
+
+    public static ProviderConfig getProvider(String name){
+        return providerConfigMap.get(name);
+    }
+
 
     private static <T> T config(Class<T> clazz, String prefix) {
         return JbootConfigManager.me().get(clazz, prefix, null);

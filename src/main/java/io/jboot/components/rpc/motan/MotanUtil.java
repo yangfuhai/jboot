@@ -36,9 +36,8 @@ public class MotanUtil {
 
     private static Map<String, ProtocolConfig> protocolConfigMap = new ConcurrentHashMap<>();
     private static Map<String, RegistryConfig> registryConfigMap = new ConcurrentHashMap<>();
-    private static Map<String, RefererConfig> baseRefererConfigMap = new ConcurrentHashMap<>();
-    private static Map<String, ServiceConfig> baseServiceConfigMap = new ConcurrentHashMap<>();
-//    private static Map<String, MethodConfig> methodConfigMap = new ConcurrentHashMap<>();
+    private static Map<String, BasicRefererInterfaceConfig> baseRefererConfigMap = new ConcurrentHashMap<>();
+    private static Map<String, BasicServiceInterfaceConfig> baseServiceConfigMap = new ConcurrentHashMap<>();
 
 
     public static void initMotan() {
@@ -60,7 +59,7 @@ public class MotanUtil {
 
 
         //baseService 配置
-        Map<String, ServiceConfig> serviceConfigs = configs(ServiceConfig.class, "jboot.rpc.motan.service");
+        Map<String, BasicServiceInterfaceConfig> serviceConfigs = configs(BasicServiceInterfaceConfig.class, "jboot.rpc.motan.service");
         Utils.setChildConfig(serviceConfigs,methodConfigs,"jboot.rpc.motan.service","method");
         Utils.setChildConfig(serviceConfigs,protocolConfigs,"jboot.rpc.motan.service","protocol");
         Utils.setChildConfig(serviceConfigs,registryConfigs,"jboot.rpc.motan.service","registry");
@@ -71,7 +70,7 @@ public class MotanUtil {
         }
 
         //baseReferer 配置
-        Map<String, RefererConfig> refererConfigs = configs(RefererConfig.class, "jboot.rpc.motan.referer");
+        Map<String, BasicRefererInterfaceConfig> refererConfigs = configs(BasicRefererInterfaceConfig.class, "jboot.rpc.motan.referer");
         Utils.setChildConfig(refererConfigs,methodConfigs,"jboot.rpc.motan.referer","method");
         Utils.setChildConfig(refererConfigs,protocolConfigs,"jboot.rpc.motan.referer","protocol");
         Utils.setChildConfig(refererConfigs,registryConfigs,"jboot.rpc.motan.referer","registry");
@@ -168,6 +167,15 @@ public class MotanUtil {
         return serviceConfig;
     }
 
+
+    public static BasicRefererInterfaceConfig getBaseReferer(String name){
+        return baseRefererConfigMap.get(name);
+    }
+
+
+    public static BasicServiceInterfaceConfig getBaseService(String name){
+        return baseServiceConfigMap.get(name);
+    }
 
     private static <T> Map<String, T> configs(Class<T> clazz, String prefix) {
         return JbootConfigUtil.getConfigModels(clazz, prefix);
