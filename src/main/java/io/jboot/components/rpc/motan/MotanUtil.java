@@ -61,9 +61,9 @@ public class MotanUtil {
 
         //baseService 配置
         Map<String, ServiceConfig> serviceConfigs = configs(ServiceConfig.class, "jboot.rpc.motan.service");
-        Utils.appendChildConfig(serviceConfigs,methodConfigs,"jboot.rpc.motan.service","method");
-        Utils.appendChildConfig(serviceConfigs,protocolConfigs,"jboot.rpc.motan.service","protocol");
-        Utils.appendChildConfig(serviceConfigs,registryConfigs,"jboot.rpc.motan.service","registry");
+        Utils.setChildConfig(serviceConfigs,methodConfigs,"jboot.rpc.motan.service","method");
+        Utils.setChildConfig(serviceConfigs,protocolConfigs,"jboot.rpc.motan.service","protocol");
+        Utils.setChildConfig(serviceConfigs,registryConfigs,"jboot.rpc.motan.service","registry");
 
 
         if (serviceConfigs != null && !serviceConfigs.isEmpty()) {
@@ -72,9 +72,9 @@ public class MotanUtil {
 
         //baseReferer 配置
         Map<String, RefererConfig> refererConfigs = configs(RefererConfig.class, "jboot.rpc.motan.referer");
-        Utils.appendChildConfig(refererConfigs,methodConfigs,"jboot.rpc.motan.referer","method");
-        Utils.appendChildConfig(refererConfigs,protocolConfigs,"jboot.rpc.motan.referer","protocol");
-        Utils.appendChildConfig(refererConfigs,registryConfigs,"jboot.rpc.motan.referer","registry");
+        Utils.setChildConfig(refererConfigs,methodConfigs,"jboot.rpc.motan.referer","method");
+        Utils.setChildConfig(refererConfigs,protocolConfigs,"jboot.rpc.motan.referer","protocol");
+        Utils.setChildConfig(refererConfigs,registryConfigs,"jboot.rpc.motan.referer","registry");
 
         if (refererConfigs != null && !refererConfigs.isEmpty()) {
             baseRefererConfigMap.putAll(refererConfigs);

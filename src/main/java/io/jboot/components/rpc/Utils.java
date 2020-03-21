@@ -34,6 +34,13 @@ import java.util.Set;
  */
 public class Utils {
 
+    /**
+     * 根据注解来设置对象内容，参考 dubbo 下的 AbstractConfig
+     * @see org.apache.dubbo.config.AbstractConfig#appendAnnotation
+     * @param annotationClass
+     * @param annotation
+     * @param appendTo
+     */
     public static void appendAnnotation(Class<?> annotationClass, Object annotation, Object appendTo) {
         Method[] methods = annotationClass.getMethods();
         for (Method method : methods) {
@@ -92,9 +99,19 @@ public class Utils {
     }
 
 
-    public static <T, F> void appendChildConfig(Map<String, T> appendTo, Map<String, F> dataFrom, String prefix, String arrName) {
+    /**
+     * 设置子节点配置，比如 ProviderConfig 下的 MethodsConfig ，或者 MethodConfig 下的 ArgumentConfig 等
+     * @param appendTo 要设置的对象
+     * @param dataSource 设置子节点的数据源
+     * @param prefix 要设置对象的配置前缀（jboot.properties 下的配置）
+     * @param arrName 要设置对象的属性名
+     * @param <T>
+     * @param <F>
+     */
+    public static <T, F> void setChildConfig(Map<String, T> appendTo, Map<String, F> dataSource, String prefix, String arrName) {
         if (appendTo != null && !appendTo.isEmpty()) {
             for (Map.Entry<String, T> entry : appendTo.entrySet()) {
+
                 String configKey = "default".equals(entry.getKey())
                         ? prefix + "." + arrName //"jboot.rpc.dubbo.method.argument"
                         : prefix + "." + entry.getKey() + "." + arrName;//"jboot.rpc.dubbo.method."+entry.getKey()+".argument";
@@ -104,7 +121,7 @@ public class Utils {
                     List<F> argCfgList = new ArrayList<>();
                     Set<String> arguments = StrUtil.splitToSetByComma(configValue);
                     for (String arg : arguments) {
-                        F fillObj = dataFrom.get(arg);
+                        F fillObj = dataSource.get(arg);
                         if (fillObj != null) {
                             argCfgList.add(fillObj);
                         }
@@ -112,12 +129,13 @@ public class Utils {
                     if (!argCfgList.isEmpty()) {
                         try {
                             //setArguments/setMethods/setRegistries
-                            String setterMethodName = arrName.endsWith("registry")
+                            String setterMethodName = arrName.equals("registry")
                                     ? "setRegistries"
                                     : "set" + StrUtil.firstCharToUpperCase(arrName) + "s";
 
                             Method method = entry.getValue().getClass().getDeclaredMethod(setterMethodName, List.class);
                             method.invoke(entry.getValue(), argCfgList);
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

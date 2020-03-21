@@ -121,14 +121,14 @@ class DubboUtil {
 
         //方法配置 配置
         Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.dubbo.method");
-        Utils.appendChildConfig(methodConfigs,argumentConfigs,"jboot.rpc.dubbo.method","argument");
+        Utils.setChildConfig(methodConfigs,argumentConfigs,"jboot.rpc.dubbo.method","argument");
 
 
         //消费者 配置
         Map<String, ConsumerConfig> consumerConfigs = configs(ConsumerConfig.class, "jboot.rpc.dubbo.consumer");
-        Utils.appendChildConfig(consumerConfigs,methodConfigs,"jboot.rpc.dubbo.consumer","method");
-        Utils.appendChildConfig(consumerConfigs,protocolConfigs,"jboot.rpc.dubbo.consumer","protocol");
-        Utils.appendChildConfig(consumerConfigs,registryConfigs,"jboot.rpc.dubbo.consumer","registry");
+        Utils.setChildConfig(consumerConfigs,methodConfigs,"jboot.rpc.dubbo.consumer","method");
+        Utils.setChildConfig(consumerConfigs,protocolConfigs,"jboot.rpc.dubbo.consumer","protocol");
+        Utils.setChildConfig(consumerConfigs,registryConfigs,"jboot.rpc.dubbo.consumer","registry");
 
 
         if (consumerConfigs != null && !consumerConfigs.isEmpty()) {
@@ -142,9 +142,9 @@ class DubboUtil {
 
         //服务提供者 配置
         Map<String, ProviderConfig> providerConfigs = configs(ProviderConfig.class, "jboot.rpc.dubbo.provider");
-        Utils.appendChildConfig(providerConfigs,methodConfigs,"jboot.rpc.dubbo.provider","method");
-        Utils.appendChildConfig(providerConfigs,protocolConfigs,"jboot.rpc.dubbo.provider","protocol");
-        Utils.appendChildConfig(providerConfigs,registryConfigs,"jboot.rpc.dubbo.provider","registry");
+        Utils.setChildConfig(providerConfigs,methodConfigs,"jboot.rpc.dubbo.provider","method");
+        Utils.setChildConfig(providerConfigs,protocolConfigs,"jboot.rpc.dubbo.provider","protocol");
+        Utils.setChildConfig(providerConfigs,registryConfigs,"jboot.rpc.dubbo.provider","registry");
 
         if (providerConfigs != null && !providerConfigs.isEmpty()) {
             providerConfigMap.putAll(providerConfigs);
