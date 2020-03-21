@@ -34,6 +34,14 @@ public class JbootrpcConfig {
     //com.service.AAAService:127.0.0.1:8080,com.service.XXXService:127.0.0.1:8080
     private Map<String,String> urls;
 
+    //服务的provider指定，可以通过注解 @RPCBean 指定，也可以通过此处指定，此处的配置优先于注解
+    //com.service.AAAService:providerName,com.service.XXXService:providerName
+    private Map<String,String> providers;
+
+    //服务的consumer指定，可以通过注解 @RPCInject 指定，也可以通过此处指定，此处的配置优先于注解
+    //com.service.AAAService:providerName,com.service.XXXService:providerName
+    private Map<String,String> consumers;
+
     //本地自动暴露 @RPCBean 的 service
     private boolean autoExportEnable = true;
 
@@ -56,6 +64,30 @@ public class JbootrpcConfig {
 
     public String getUrl(String serviceClass){
         return urls == null ? null : urls.get(serviceClass);
+    }
+
+    public Map<String, String> getProviders() {
+        return providers;
+    }
+
+    public void setProviders(Map<String, String> providers) {
+        this.providers = providers;
+    }
+
+    public String getProvider(String serviceClass){
+        return providers == null ? null : providers.get(serviceClass);
+    }
+
+    public Map<String, String> getConsumers() {
+        return consumers;
+    }
+
+    public void setConsumers(Map<String, String> consumers) {
+        this.consumers = consumers;
+    }
+
+    public String getConsumer(String serviceClass){
+        return consumers == null ? null : consumers.get(serviceClass);
     }
 
     public boolean isAutoExportEnable() {
