@@ -16,12 +16,15 @@
 package io.jboot.components.rpc;
 
 
+import io.jboot.Jboot;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class JbootrpcBase implements Jbootrpc {
 
     protected static final Map<String, Object> objectCache = new ConcurrentHashMap<>();
+    protected static JbootrpcConfig rpcConfig = Jboot.config(JbootrpcConfig.class);
 
 
     @Override

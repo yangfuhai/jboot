@@ -54,6 +54,10 @@ public class JbootrpcConfig {
         this.urls = urls;
     }
 
+    public String getUrl(String serviceClass){
+        return urls == null ? null : urls.get(serviceClass);
+    }
+
     public boolean isAutoExportEnable() {
         return autoExportEnable;
     }

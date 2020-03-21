@@ -18,6 +18,7 @@ package io.jboot.components.rpc.dubbo;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
+import io.jboot.utils.StrUtil;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.ServiceConfig;
 
@@ -32,6 +33,10 @@ public class JbootDubborpc extends JbootrpcBase {
     @Override
     public <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config) {
         ReferenceConfig<T> reference = DubboUtil.toReferenceConfig(config);
+        String directUrl = rpcConfig.getUrl(serviceClass.getName());
+        if (StrUtil.isNotBlank(directUrl)){
+            reference.setUrl(directUrl);
+        }
         return reference.get();
     }
 

@@ -22,6 +22,7 @@ import com.weibo.api.motan.util.MotanSwitcherUtil;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
+import io.jboot.utils.StrUtil;
 
 
 public class JbootMotanrpc extends JbootrpcBase {
@@ -33,8 +34,12 @@ public class JbootMotanrpc extends JbootrpcBase {
 
     @Override
     public <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config) {
-        RefererConfig<T> reference = MotanUtil.toRefererConfig(config);
-        return reference.getRef();
+        RefererConfig<T> referer = MotanUtil.toRefererConfig(config);
+        String directUrl = rpcConfig.getUrl(serviceClass.getName());
+        if (StrUtil.isNotBlank(directUrl)){
+            referer.setDirectUrl(directUrl);
+        }
+        return referer.getRef();
     }
 
 
