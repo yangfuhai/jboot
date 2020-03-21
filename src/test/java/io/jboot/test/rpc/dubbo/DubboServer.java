@@ -15,7 +15,7 @@ public class DubboServer {
         // 但是此测试代码的 jboot.properties 文件关闭了，这里需要开启下
         JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
 
-        //dubbo 的协议配置
+        //dubbo 的通信协议配置
         JbootApplication.setBootArg("jboot.rpc.dubbo.protocol.name", "dubbo");
         JbootApplication.setBootArg("jboot.rpc.dubbo.protocol.port", "28080");
 
