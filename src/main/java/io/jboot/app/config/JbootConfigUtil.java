@@ -30,8 +30,8 @@ public class JbootConfigUtil {
     public static <T> Map<String, T> getConfigModels(Class<T> tClass, String prefix) {
         Map<String, T> objMap = new HashMap<>();
 
-        T defaultObj = Jboot.config(tClass, prefix);
-        objMap.put("default", defaultObj);
+
+        boolean initDefault = false;
 
 
         Set<String> objNames = new HashSet<>();
@@ -46,7 +46,22 @@ public class JbootConfigUtil {
             if (entry.getKey() == null || StrUtil.isBlank(entry.getKey().toString())) {
                 continue;
             }
-            String key = entry.getKey().toString().toLowerCase().replace('_', '.');
+
+            String key = entry.getKey().toString().trim();
+
+            //配置来源于 Docker 的环境变量配置
+            if (key.contains("_") && Character.isUpperCase(key.charAt(0))){
+                key = key.toLowerCase().replace('_','.');
+            }
+
+            //初始化默认的配置
+            if (!initDefault && key.startsWith(prefix) && StringUtils.countMatches(key, '.') == pointCount + 1) {
+                initDefault = true;
+                T defaultObj = Jboot.config(tClass, prefix);
+                objMap.put("default", defaultObj);
+
+            }
+
             if (key.startsWith(objPrefix) && entry.getValue() != null) {
                 String[] keySplits = key.split("\\.");
                 if (keySplits.length == pointCount + 3) {
