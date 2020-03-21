@@ -147,9 +147,9 @@ class Utils {
                 Map map = convertClass == ConcurrentHashMap.class ? new ConcurrentHashMap() : new HashMap();
                 String[] strings = s.split(",");
                 for (String kv : strings) {
-                    String[] keyValue = kv.split(":");
-                    if (keyValue.length == 2) {
-                        map.put(keyValue[0], keyValue[1]);
+                    int indexOf = kv.indexOf(":");
+                    if (indexOf > 0 && indexOf < kv.trim().length() - 1) {
+                        map.put(kv.substring(0, indexOf).trim(), kv.substring(indexOf + 1).trim());
                     }
                 }
                 return map;
@@ -180,18 +180,18 @@ class Utils {
             } else {
                 return null;
             }
-        } else if (convertClass.isArray() && convertClass.getComponentType() == String.class){
+        } else if (convertClass.isArray() && convertClass.getComponentType() == String.class) {
             List<String> list = new LinkedList();
             String[] strings = s.split(",");
-            if (strings != null && strings.length > 0){
-                for (String s1 : strings){
+            if (strings != null && strings.length > 0) {
+                for (String s1 : strings) {
                     if (s1 != null && s1.trim().length() != 0) {
                         list.add(s1.trim());
                     }
                 }
             }
             return list.toArray(new String[0]);
-        }else if (Class.class == convertClass) {
+        } else if (Class.class == convertClass) {
             try {
                 return Class.forName(s, false, Thread.currentThread().getContextClassLoader());
             } catch (ClassNotFoundException e) {
