@@ -306,6 +306,7 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootAppListenerManager.me().onStop();
         JbootScheduleManager.me().stop();
         JbootSeataManager.me().stop();
+        JbootrpcManager.me().stop();
     }
 
 

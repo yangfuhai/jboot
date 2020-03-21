@@ -42,6 +42,9 @@ class DubboUtil {
     private static Map<String, ConsumerConfig> consumerConfigMap = new ConcurrentHashMap<>();
 
 
+    public static void stopDubbo() {
+        DubboBootstrap.getInstance().stop();
+    }
     public static void initDubbo() {
         DubboBootstrap dubboBootstrap = DubboBootstrap.getInstance();
 

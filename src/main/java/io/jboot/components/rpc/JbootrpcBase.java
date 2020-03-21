@@ -56,10 +56,17 @@ public abstract class JbootrpcBase implements Jbootrpc {
 
     }
 
+    @Override
+    public void onStop() {
+
+    }
+
     protected String buildCacheKey(Class interfaceClass, JbootrpcReferenceConfig config){
         StringBuilder sb = new StringBuilder(interfaceClass.getName());
         return sb.append(":").append(config.getGroup())
                 .append(":").append(config.getVersion())
                 .toString();
     }
+
+
 }

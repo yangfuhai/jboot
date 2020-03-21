@@ -29,6 +29,10 @@ public class JbootDubborpc extends JbootrpcBase {
         DubboUtil.initDubbo();
     }
 
+    @Override
+    public void onStop() {
+        DubboUtil.stopDubbo();
+    }
 
     @Override
     public <T> T onServiceCreate(Class<T> interfaceClass, JbootrpcReferenceConfig config) {

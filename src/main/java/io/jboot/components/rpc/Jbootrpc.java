@@ -25,4 +25,6 @@ public interface Jbootrpc {
     public void onInit();
 
     public void onInited();
+
+    public void onStop();
 }

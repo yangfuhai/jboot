@@ -78,6 +78,10 @@ public class JbootrpcManager {
         jbootrpc.onInited();
     }
 
+    public void stop(){
+        getJbootrpc().onStop();
+    }
+
 
     public void exportRPCBean(Jbootrpc jbootrpc) {
         List<Class> classes = ClassScanner.scanClassByAnnotation(RPCBean.class, true);
