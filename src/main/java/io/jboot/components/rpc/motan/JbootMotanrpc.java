@@ -33,9 +33,10 @@ public class JbootMotanrpc extends JbootrpcBase {
     }
 
     @Override
-    public <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config) {
+    public <T> T onServiceCreate(Class<T> interfaceClass, JbootrpcReferenceConfig config) {
         RefererConfig<T> referer = MotanUtil.toRefererConfig(config);
-        String directUrl = rpcConfig.getUrl(serviceClass.getName());
+        referer.setInterface(interfaceClass);
+        String directUrl = rpcConfig.getUrl(interfaceClass.getName());
         if (StrUtil.isNotBlank(directUrl)){
             referer.setDirectUrl(directUrl);
         }

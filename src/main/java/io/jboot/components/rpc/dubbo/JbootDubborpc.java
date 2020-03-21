@@ -31,9 +31,10 @@ public class JbootDubborpc extends JbootrpcBase {
 
 
     @Override
-    public <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config) {
+    public <T> T onServiceCreate(Class<T> interfaceClass, JbootrpcReferenceConfig config) {
         ReferenceConfig<T> reference = DubboUtil.toReferenceConfig(config);
-        String directUrl = rpcConfig.getUrl(serviceClass.getName());
+        reference.setInterface(interfaceClass);
+        String directUrl = rpcConfig.getUrl(interfaceClass.getName());
         if (StrUtil.isNotBlank(directUrl)){
             reference.setUrl(directUrl);
         }

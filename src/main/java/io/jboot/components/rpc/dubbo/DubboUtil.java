@@ -47,6 +47,9 @@ class DubboUtil {
 
         //application 配置
         ApplicationConfig applicationConfig = config(ApplicationConfig.class, "jboot.rpc.dubbo.application");
+        if (StrUtil.isBlank(applicationConfig.getName())){
+            applicationConfig.setName("jboot");
+        }
         dubboBootstrap.application(applicationConfig);
 
 
@@ -100,6 +103,12 @@ class DubboUtil {
             } else {
                 dubboBootstrap.registries((List<RegistryConfig>) toList(registryConfigs));
             }
+        }
+        //没有配置注册中心，一般只用于希望此服务网提供直连的方式给客户端使用
+        else {
+            RegistryConfig config = new RegistryConfig();
+            config.setAddress(RegistryConfig.NO_AVAILABLE);
+            dubboBootstrap.registry(config);
         }
 
 

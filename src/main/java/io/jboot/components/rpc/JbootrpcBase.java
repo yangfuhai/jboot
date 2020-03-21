@@ -28,13 +28,13 @@ public abstract class JbootrpcBase implements Jbootrpc {
 
 
     @Override
-    public <T> T serviceObtain(Class<T> serviceClass, JbootrpcReferenceConfig config) {
-        String key = buildCacheKey(serviceClass,config);
+    public <T> T serviceObtain(Class<T> interfaceClass, JbootrpcReferenceConfig config) {
+        String key = buildCacheKey(interfaceClass,config);
         T object = (T) objectCache.get(key);
         if (object == null) {
             synchronized (this){
                 if (objectCache.get(key) == null) {
-                    object = onServiceCreate(serviceClass,config);
+                    object = onServiceCreate(interfaceClass,config);
                     if (object != null){
                         objectCache.put(key,object);
                     }
@@ -56,8 +56,8 @@ public abstract class JbootrpcBase implements Jbootrpc {
 
     }
 
-    protected String buildCacheKey(Class serviceClass, JbootrpcReferenceConfig config){
-        StringBuilder sb = new StringBuilder(serviceClass.getName());
+    protected String buildCacheKey(Class interfaceClass, JbootrpcReferenceConfig config){
+        StringBuilder sb = new StringBuilder(interfaceClass.getName());
         return sb.append(":").append(config.getGroup())
                 .append(":").append(config.getVersion())
                 .toString();
