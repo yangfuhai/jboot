@@ -14,12 +14,14 @@ public class DubboClient extends JbootController {
 
 
         //Undertow端口号配置
-        JbootApplication.setBootArg("undertow.port", "8888");
+        JbootApplication.setBootArg("undertow.port", "9999");
 
         //RPC配置
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
-        JbootApplication.setBootArg("jboot.rpc.callMode", "direct");//直连模式，默认为注册中心
-        JbootApplication.setBootArg("jboot.rpc.directUrl", "127.0.0.1:8000");//直连模式的server url地址
+
+        //设置直连模式，方便调试，默认为注册中心
+        JbootApplication.setBootArg("jboot.rpc.urls", "io.jboot.test.rpc.commons.BlogService:127.0.0.1:28080");
+
 
         JbootApplication.run(args);
     }
