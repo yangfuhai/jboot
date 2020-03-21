@@ -78,7 +78,6 @@ jboot.rpc.autoExportEnable = true
 - jboot.rpc.consumers ： 配置 Reference 和 consumer 的映射关系（ Motan下配置的是 Referer 和 BaseReferer 的映射关系）。
 - jboot.rpc.autoExportEnable ： 当 Jboot 启动的时候，是否自动暴露 @RPCBean 注解的接口。
 
-> 更多的配置请查看 [config.md](./config.md)
 
 ## 开始使用
 
@@ -155,7 +154,7 @@ public class DubboServer {
 }
 ```
 
-备注：以上的 JbootApplication.setBootArg() 里设置的内容，都可以配置到 jboot.properties 里。
+>备注：以上的 JbootApplication.setBootArg() 里设置的内容，都可以配置到 jboot.properties 里。
 
 
 **启动客户端、通过 RPC 调用 Server 提供的服务**
@@ -194,7 +193,7 @@ public class DubboClient extends JbootController{
 
 ### 更多的 dubbo 配置
 
-目前，jboot 不支持通过 jboot.properties 对 service 和 reference 配置，但是可以对 provider 和 consumer 的配置，
+目前，jboot 不支持通过 jboot.properties 直接对 service 和 reference 配置，但是可以对 provider 和 consumer 的配置，
 在通过 @RPCInject 来再次复制给 service  或者 reference，结果也等同于对 service 和 reference 配置进行配置了。
 
 
@@ -202,15 +201,15 @@ public class DubboClient extends JbootController{
 
 http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-application.html
 
-对应的 jboot 的配置前缀为： `jboot.rpc.application.service`
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.application`
 
-例如文档里提到的 version，在 jboot.properties 对应的配置为
+例如：
 
 ```
+jboot.rpc.dubbo.application.name = xx.xx.xx
 jboot.rpc.dubbo.application.version = xx.xx.xx
 ```
 
-其他同理。
 
 #### registry
 
@@ -219,16 +218,15 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-registry.html
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.registry`
 
-例如文档里提到的 address，在 jboot.properties 对应的配置为
+例如：
 
 ```
 jboot.rpc.dubbo.registry.address = xx.xx.xx
 ```
 
-其他同理。
 
 
-多 registry （多注册中心）
+**多 registry （多注册中心）**
 
 默认的注册中心配置内容如下：
 
@@ -280,13 +278,13 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-protocol.html
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.protocol`
 
-例如文档里提到的 host，在 jboot.properties 对应的配置为
+例如：
 
 ```
 jboot.rpc.dubbo.protocol.host = 127.0.0.1
+jboot.rpc.dubbo.protocol.port = 28080
 ```
 
-其他同理。
 
 
 #### provider
@@ -296,13 +294,13 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-provider.html
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.provider`
 
-例如文档里提到的 host，在 jboot.properties 对应的配置为
+例如：
 
 ```
 jboot.rpc.dubbo.provider.host = 127.0.0.1
 ```
 
-其他同理。
+
 
 #### consumer
 
@@ -311,10 +309,9 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-consumer.html
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.consumer`
 
-例如文档里提到的 timeout，在 jboot.properties 对应的配置为
+例如：
 
 ```
 jboot.rpc.dubbo.consumer.timeout = 127.0.0.1
 ```
 
-其他同理。
