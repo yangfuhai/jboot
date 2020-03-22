@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/22
  */
-public class JbootGatawayHandler extends Handler {
+public class JbootGatewayHandler extends Handler {
 
 
     @Override

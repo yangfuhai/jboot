@@ -37,7 +37,7 @@ public class JbootGatewayManager {
 
 
     public void init(){
-       Map<String,JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class,"jboot.app.gateway");
+       Map<String,JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class,"jboot.gateway");
        if (configMap != null && !configMap.isEmpty()){
            configs = new HashSet<>();
            for (Map.Entry<String,JbootGatewayConfig> e:configMap.entrySet()){

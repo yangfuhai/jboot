@@ -17,15 +17,12 @@ package io.jboot.components.gateway;
 
 import com.jfinal.log.Log;
 import io.jboot.exception.JbootException;
-import org.apache.commons.io.IOUtils;
+import io.jboot.utils.StrUtil;
 
 import javax.net.ssl.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -34,6 +31,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 
 public class GatewayUtil {
@@ -45,36 +43,93 @@ public class GatewayUtil {
 
 
     public static void sendRequest(String url, HttpServletRequest request, HttpServletResponse response) {
+
         HttpURLConnection connection = null;
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
+
         try {
             connection = getConnection(url);
 
+            /**
+             * 设置 http 请求头
+             */
             configConnection(connection, request);
 
             connection.connect();
 
-            inputStream = getInutStream(connection);
-            outputStream = connection.getOutputStream();
+            /**
+             * 复制 post 请求内容到目标服务器
+             */
+            copyRequestStreamToConnection(request, connection);
 
-            IOUtils.copy(inputStream, outputStream);
 
-            configResponse(response,connection);
+            /**
+             * 配置响应的 HTTP 头
+             */
+            configResponse(response, connection);
+
+            /**
+             * 复制目标流到 Response
+             */
+            copyStreamToResponse(connection, response);
+
+
         } catch (Exception ex) {
             LOG.warn(ex.toString(), ex);
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
-            quetlyClose(inputStream,outputStream);
+        }
+    }
+
+    private static void copyRequestStreamToConnection(HttpServletRequest request, HttpURLConnection connection) throws IOException {
+        OutputStream outStream = null;
+        InputStream inStream = null;
+        try {
+
+            // 如果不是 post 请求，不需要复制
+            if ("get".equalsIgnoreCase(request.getMethod())) {
+                return;
+            }
+
+            connection.setDoOutput(true);
+            outStream = connection.getOutputStream();
+            inStream = request.getInputStream();
+            int n;
+            byte[] buffer = new byte[1024];
+            while (-1 != (n = inStream.read(buffer))) {
+                outStream.write(buffer, 0, n);
+            }
+
+        } finally {
+            quetlyClose(outStream, inStream);
         }
     }
 
 
-    private static void quetlyClose(Closeable ... closeables){
-        for (Closeable closeable : closeables){
-            if (closeable != null){
+    private static void copyStreamToResponse(HttpURLConnection connection, HttpServletResponse response) throws IOException {
+        InputStream inStream = null;
+        try {
+            if (!response.isCommitted()) {
+                PrintWriter writer = response.getWriter();
+                inStream = getInutStream(connection);
+                int len;
+                char[] buffer = new char[1024];
+                InputStreamReader r = new InputStreamReader(inStream);
+                while ((len = r.read(buffer)) != -1) {
+                    writer.write(buffer, 0, len);
+                }
+            }
+        } finally {
+            quetlyClose(inStream);
+        }
+
+    }
+
+
+    private static void quetlyClose(Closeable... closeables) {
+        for (Closeable closeable : closeables) {
+            if (closeable != null) {
                 try {
                     closeable.close();
                 } catch (IOException e) {
@@ -83,25 +138,36 @@ public class GatewayUtil {
         }
     }
 
+
     private static void configResponse(HttpServletResponse response, HttpURLConnection connection) throws IOException {
         response.setContentType(connection.getContentType());
         response.setStatus(connection.getResponseCode());
 
         Map<String, List<String>> headerFields = connection.getHeaderFields();
-        if (headerFields != null && !headerFields.isEmpty()){
+        if (headerFields != null && !headerFields.isEmpty()) {
             Set<String> headerNames = headerFields.keySet();
-            for (String headerName : headerNames){
-                response.setHeader(headerName,connection.getHeaderField(headerName));
+            for (String headerName : headerNames) {
+                //需要排除 Content-Encoding，因为 Server 可能已经使用 gzip 压缩，但是此代理已经对 gzip 内容进行解压了
+                if (StrUtil.isNotBlank(headerName) && !"Content-Encoding".equalsIgnoreCase(headerName)) {
+                    response.setHeader(headerName, connection.getHeaderField(headerName));
+                }
             }
         }
     }
 
     private static InputStream getInutStream(HttpURLConnection connection) throws IOException {
-        return connection.getResponseCode() >= 400
+
+        InputStream stream = connection.getResponseCode() >= 400
                 ? connection.getErrorStream()
                 : connection.getInputStream();
-    }
 
+        if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
+            return new GZIPInputStream(stream);
+        } else {
+            return stream;
+        }
+
+    }
 
 
     private static void configConnection(HttpURLConnection connection, HttpServletRequest request) throws ProtocolException {
@@ -112,9 +178,11 @@ public class GatewayUtil {
 
         connection.setRequestMethod(request.getMethod());
         Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()){
+        while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
-            connection.setRequestProperty(headerName,request.getHeader(headerName));
+            if (StrUtil.isNotBlank(headerName)) {
+                connection.setRequestProperty(headerName, request.getHeader(headerName));
+            }
         }
     }
 
