@@ -45,6 +45,7 @@ public class HelloworldController extends JbootController {
 - [缓存](./doc/docs/cache.md)
 - [RPC远程调用](./doc/docs/rpc.md)
 - [MQ消息队列](./doc/docs/mq.md)
+- [Gateway 网关](./doc/docs/gateway.md)
 - [任务调度](./doc/docs/schedule.md)
 - [限流](./doc/docs/limit.md)
 - [监控](./doc/docs/metrics.md)
