@@ -1,3 +1,22 @@
+jboot v3.1.0:
+新增：新增网关的支持
+新增：新增对 Dubbo 多协议、多注册中心等的支持
+新增：新增对注解 @Configuration 的支持，可以通过其构建 name 实例
+新增：JbootAopInterceptor 可以动态的添加或者移除拦截器
+新增：配置文件可以配置 Map、Set、List 和 数组的支持
+新增：JbootCache 新增可以获取素有 Names 的功能，方便对缓存进行运维
+新增：JbootCache 新增可以对分布式缓存进行刷新，方便对缓存进行运维
+新增：jboot-system.properties 的支持，用于可以在里面对 System.properties 进行配置，很多第三方组件依赖于 System.porperties 的配置
+修复：修复 JbootHttpImpl 无法上传文件的bug
+修复：修复 JbootHttpImpl 无法正确获取 gzip 压缩内容的问题
+优化：重构 RPC 的模块，使之更加简单清晰
+文档：完善 AOP 的相关文档
+文档：完善 Sentinel 限流的文档
+文档：完善 RPC 的相关文档
+文档：新增 网关配置使用的相关文档
+
+
+
 jboot v3.0.5:
 修复：SqlBuilder 在某些极端情况下生成 SQL 的一些问题
 优化：移除 Jboot 的一些过时的方法
