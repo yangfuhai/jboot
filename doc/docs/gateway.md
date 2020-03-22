@@ -20,6 +20,9 @@ jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
 
+jboot.gateway.sentinelEnable = false
+jboot.gateway.sentinelBlockPage = /block
+
 jboot.gateway.pathEquals = /path
 jboot.gateway.pathContains = /path
 jboot.gateway.pathStartsWith = /path
@@ -33,6 +36,12 @@ jboot.gateway.hostEndswith = xxx.com
 jboot.gateway.queryEquals = aa:bb,cc:dd
 jboot.gateway.queryContains = aa,bb
 ```
+
+- name 设置路由的名称
+- uri 网路路由目标网址
+- enable 是否启用该路由
+- sentinelEnable 是否启用 sentinel 限流功能
+- sentinelBlockPage 若该路由被限流后，网页自动跳转到哪个网址
 
 ## Path 路由
 
