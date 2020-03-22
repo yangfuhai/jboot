@@ -32,7 +32,10 @@ public class JbootGatewayConfig implements Serializable {
     private String name;
     private String uri;
     private boolean enable = false;
+
+    // 是否启用 sentinel 限流
     private boolean sentinelEnable = false;
+    // sentinel 被限流后跳转地址
     private String sentinelBlockPage;
 
     private String[] pathEquals;

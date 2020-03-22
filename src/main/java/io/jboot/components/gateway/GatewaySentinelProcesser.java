@@ -18,6 +18,7 @@ package io.jboot.components.gateway;
 import com.alibaba.csp.sentinel.*;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.util.StringUtil;
+import com.jfinal.kit.LogKit;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public class GatewaySentinelProcesser {
             entry = SphU.entry(resourceName, ResourceTypeConstants.COMMON_WEB, EntryType.IN);
             runnable.run();
         } catch (BlockException ex) {
-            processBlocked(config, req, resp, entry);
+            processBlocked(config, req, resp);
         } catch (Exception ex) {
             Tracer.traceEntry(ex, entry);
             throw ex;
@@ -50,7 +51,7 @@ public class GatewaySentinelProcesser {
         }
     }
 
-    private static void processBlocked(JbootGatewayConfig config, HttpServletRequest req, HttpServletResponse resp, Entry entry) {
+    private static void processBlocked(JbootGatewayConfig config, HttpServletRequest req, HttpServletResponse resp) {
         StringBuffer url = req.getRequestURL();
 
         if ("GET".equals(req.getMethod()) && StrUtil.isNotBlank(req.getQueryString())) {
@@ -65,15 +66,15 @@ public class GatewaySentinelProcesser {
                 resp.sendRedirect(redirectUrl);
             }
         } catch (IOException ex) {
-            Tracer.traceEntry(ex, entry);
+            LogKit.error(ex.toString(), ex);
         }
 
     }
 
 
-    private static void writeDefaultBlockedPage(HttpServletResponse response) throws IOException {
-        response.setStatus(200);
-        PrintWriter out = response.getWriter();
+    private static void writeDefaultBlockedPage(HttpServletResponse resp) throws IOException {
+        resp.setStatus(200);
+        PrintWriter out = resp.getWriter();
         out.print("Blocked by Sentinel (flow limiting) in Jboot");
     }
 

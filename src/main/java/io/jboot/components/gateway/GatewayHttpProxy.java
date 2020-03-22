@@ -42,59 +42,59 @@ public class GatewayHttpProxy {
     private static int CONNECT_TIMEOUT = 5000;
 
 
-    public static void sendRequest(String url, HttpServletRequest request, HttpServletResponse response) {
+    public static void sendRequest(String url, HttpServletRequest req, HttpServletResponse resp) {
 
-        HttpURLConnection connection = null;
+        HttpURLConnection conn = null;
 
         try {
-            connection = getConnection(url);
+            conn = getConnection(url);
 
             /**
              * 设置 http 请求头
              */
-            configConnection(connection, request);
+            configConnection(conn, req);
 
-            connection.connect();
+            conn.connect();
 
             /**
              * 复制 post 请求内容到目标服务器
              */
-            copyRequestStreamToConnection(request, connection);
+            copyRequestStreamToConnection(req, conn);
 
 
             /**
              * 配置响应的 HTTP 头
              */
-            configResponse(response, connection);
+            configResponse(resp, conn);
 
             /**
              * 复制目标流到 Response
              */
-            copyStreamToResponse(connection, response);
+            copyStreamToResponse(conn, resp);
 
 
         } catch (Exception ex) {
             LOG.warn(ex.toString(), ex);
         } finally {
-            if (connection != null) {
-                connection.disconnect();
+            if (conn != null) {
+                conn.disconnect();
             }
         }
     }
 
-    private static void copyRequestStreamToConnection(HttpServletRequest request, HttpURLConnection connection) throws IOException {
+    private static void copyRequestStreamToConnection(HttpServletRequest req, HttpURLConnection conn) throws IOException {
         OutputStream outStream = null;
         InputStream inStream = null;
         try {
 
             // 如果不是 post 请求，不需要复制
-            if ("get".equalsIgnoreCase(request.getMethod())) {
+            if ("get".equalsIgnoreCase(req.getMethod())) {
                 return;
             }
 
-            connection.setDoOutput(true);
-            outStream = connection.getOutputStream();
-            inStream = request.getInputStream();
+            conn.setDoOutput(true);
+            outStream = conn.getOutputStream();
+            inStream = req.getInputStream();
             int n;
             byte[] buffer = new byte[1024];
             while (-1 != (n = inStream.read(buffer))) {
@@ -107,13 +107,13 @@ public class GatewayHttpProxy {
     }
 
 
-    private static void copyStreamToResponse(HttpURLConnection connection, HttpServletResponse response) throws IOException {
+    private static void copyStreamToResponse(HttpURLConnection conn, HttpServletResponse resp) throws IOException {
         InputStream inStream = null;
         InputStreamReader reader = null;
         try {
-            if (!response.isCommitted()) {
-                PrintWriter writer = response.getWriter();
-                inStream = getInputStream(connection);
+            if (!resp.isCommitted()) {
+                PrintWriter writer = resp.getWriter();
+                inStream = getInputStream(conn);
                 reader = new InputStreamReader(inStream);
                 int len;
                 char[] buffer = new char[1024];
@@ -140,29 +140,29 @@ public class GatewayHttpProxy {
     }
 
 
-    private static void configResponse(HttpServletResponse response, HttpURLConnection connection) throws IOException {
-        response.setContentType(connection.getContentType());
-        response.setStatus(connection.getResponseCode());
+    private static void configResponse(HttpServletResponse resp, HttpURLConnection conn) throws IOException {
+        resp.setContentType(conn.getContentType());
+        resp.setStatus(conn.getResponseCode());
 
-        Map<String, List<String>> headerFields = connection.getHeaderFields();
+        Map<String, List<String>> headerFields = conn.getHeaderFields();
         if (headerFields != null && !headerFields.isEmpty()) {
             Set<String> headerNames = headerFields.keySet();
             for (String headerName : headerNames) {
                 //需要排除 Content-Encoding，因为 Server 可能已经使用 gzip 压缩，但是此代理已经对 gzip 内容进行解压了
                 if (StrUtil.isNotBlank(headerName) && !"Content-Encoding".equalsIgnoreCase(headerName)) {
-                    response.setHeader(headerName, connection.getHeaderField(headerName));
+                    resp.setHeader(headerName, conn.getHeaderField(headerName));
                 }
             }
         }
     }
 
-    private static InputStream getInputStream(HttpURLConnection connection) throws IOException {
+    private static InputStream getInputStream(HttpURLConnection conn) throws IOException {
 
-        InputStream stream = connection.getResponseCode() >= 400
-                ? connection.getErrorStream()
-                : connection.getInputStream();
+        InputStream stream = conn.getResponseCode() >= 400
+                ? conn.getErrorStream()
+                : conn.getInputStream();
 
-        if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
+        if ("gzip".equalsIgnoreCase(conn.getContentEncoding())) {
             return new GZIPInputStream(stream);
         } else {
             return stream;
@@ -171,18 +171,18 @@ public class GatewayHttpProxy {
     }
 
 
-    private static void configConnection(HttpURLConnection connection, HttpServletRequest request) throws ProtocolException {
+    private static void configConnection(HttpURLConnection conn, HttpServletRequest req) throws ProtocolException {
 
-        connection.setReadTimeout(READ_TIMEOUT);
-        connection.setConnectTimeout(CONNECT_TIMEOUT);
-        connection.setInstanceFollowRedirects(true);
+        conn.setReadTimeout(READ_TIMEOUT);
+        conn.setConnectTimeout(CONNECT_TIMEOUT);
+        conn.setInstanceFollowRedirects(true);
 
-        connection.setRequestMethod(request.getMethod());
-        Enumeration<String> headerNames = request.getHeaderNames();
+        conn.setRequestMethod(req.getMethod());
+        Enumeration<String> headerNames = req.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             if (StrUtil.isNotBlank(headerName)) {
-                connection.setRequestProperty(headerName, request.getHeader(headerName));
+                conn.setRequestProperty(headerName, req.getHeader(headerName));
             }
         }
     }
@@ -199,8 +199,8 @@ public class GatewayHttpProxy {
         }
     }
 
-    private static HttpURLConnection getHttpConnection(String urlStr) throws Exception {
-        URL url = new URL(urlStr);
+    private static HttpURLConnection getHttpConnection(String urlString) throws Exception {
+        URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         return conn;
     }
