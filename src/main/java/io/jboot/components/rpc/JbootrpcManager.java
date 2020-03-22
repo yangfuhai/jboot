@@ -79,7 +79,9 @@ public class JbootrpcManager {
     }
 
     public void stop(){
-        getJbootrpc().onStop();
+        if (defaultConfig.isConfigOk()) {
+            getJbootrpc().onStop();
+        }
     }
 
 
