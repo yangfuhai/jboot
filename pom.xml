@@ -52,7 +52,7 @@
         <undertow.version>2.0.29.Final</undertow.version>
         <slf4j.version>1.7.30</slf4j.version>
         <fst.version>2.57</fst.version>
-        <fastjson.version>1.2.66</fastjson.version>
+        <fastjson.version>1.2.67</fastjson.version>
         <guava.version>28.2-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>2.10.2</jedis.version>
@@ -64,9 +64,10 @@
         <commons-codec.version>1.14</commons-codec.version>
         <httpclient.version>4.5.12</httpclient.version>
         <httpcore.version>4.4.13</httpcore.version>
-        <netty.version>4.1.47.Final</netty.version>
+        <netty.version>4.1.48.Final</netty.version>
         <sentinel.version>1.7.1</sentinel.version>
         <dubbo.version>2.7.5</dubbo.version>
+        <resteasy.version>3.11.0.Final</resteasy.version>
         <seata.version>1.1.0</seata.version>
         <motan.version>1.1.7</motan.version>
         <metrics.version>4.1.5</metrics.version>
@@ -265,7 +266,7 @@
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>
             <artifactId>apollo-client</artifactId>
-            <version>1.5.1</version>
+            <version>1.6.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -452,35 +453,35 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jdk-http</artifactId>
-            <version>3.9.0.Final</version>
+            <version>${resteasy.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
-            <version>3.9.0.Final</version>
+            <version>${resteasy.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>3.9.0.Final</version>
+            <version>${resteasy.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-netty4</artifactId>
-            <version>3.9.0.Final</version>
+            <version>${resteasy.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jackson-provider</artifactId>
-            <version>3.9.0.Final</version>
+            <version>${resteasy.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- 用于支持 dubbo 的 restful 注解 end -->
