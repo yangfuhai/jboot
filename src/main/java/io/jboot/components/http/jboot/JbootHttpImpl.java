@@ -32,6 +32,7 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 
 public class JbootHttpImpl implements JbootHttp {
@@ -65,13 +66,13 @@ public class JbootHttpImpl implements JbootHttp {
                 connection.setDoOutput(true);
 
                 //处理文件上传的post提交
-                if (request.isMultipartFormData()){
+                if (request.isMultipartFormData()) {
                     if (ArrayUtil.isNotEmpty(request.getParams())) {
                         uploadData(request, connection);
                     }
                 }
                 //处理正常的post提交
-                else  {
+                else {
                     String postContent = request.getPostContent();
                     if (StrUtil.isNotEmpty(postContent)) {
                         DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
@@ -81,7 +82,7 @@ public class JbootHttpImpl implements JbootHttp {
                     }
 
                 }
-            }else {
+            } else {
                 connection.setInstanceFollowRedirects(true);
                 connection.connect();
             }
@@ -114,7 +115,17 @@ public class JbootHttpImpl implements JbootHttp {
     }
 
     private InputStream getInutStream(HttpURLConnection connection) throws IOException {
-        return connection.getResponseCode() >= 400 ? connection.getErrorStream() : connection.getInputStream();
+
+        InputStream stream = connection.getResponseCode() >= 400
+                ? connection.getErrorStream()
+                : connection.getInputStream();
+
+        if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
+            return new GZIPInputStream(stream);
+        } else {
+            return stream;
+        }
+
     }
 
     private void uploadData(JbootHttpRequest request, HttpURLConnection connection) throws IOException {
