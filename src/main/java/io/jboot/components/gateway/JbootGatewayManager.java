@@ -19,7 +19,10 @@ import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -29,39 +32,41 @@ public class JbootGatewayManager {
 
     private static JbootGatewayManager me = new JbootGatewayManager();
 
-    public static JbootGatewayManager me(){
+    public static JbootGatewayManager me() {
         return me;
     }
 
     private Set<JbootGatewayConfig> configs;
 
-
-    public void init(){
-       Map<String,JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class,"jboot.gateway");
-       if (configMap != null && !configMap.isEmpty()){
-           configs = new HashSet<>();
-           for (Map.Entry<String,JbootGatewayConfig> e:configMap.entrySet()){
-               JbootGatewayConfig config =  e.getValue();
-               if(config.isConfigOk() && config.isEnable()){
-                   if (StrUtil.isNotBlank(config.getName())){
-                       config.setName(e.getKey());
-                   }
-                   configs.add(config);
-               }
-           }
-       }
+    public void init() {
+        Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
+        if (configMap != null && !configMap.isEmpty()) {
+            configs = new HashSet<>();
+            for (Map.Entry<String, JbootGatewayConfig> e : configMap.entrySet()) {
+                JbootGatewayConfig config = e.getValue();
+                if (config.isConfigOk() && config.isEnable()) {
+                    if (StrUtil.isNotBlank(config.getName())) {
+                        config.setName(e.getKey());
+                    }
+                    configs.add(config);
+                }
+            }
+        }
     }
 
-    public String matchingURI(HttpServletRequest req){
-        if (configs != null && !configs.isEmpty()){
+
+    public String matchingURI(HttpServletRequest req) {
+        if (configs != null && !configs.isEmpty()) {
             Iterator<JbootGatewayConfig> iterator = configs.iterator();
-            while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 JbootGatewayConfig config = iterator.next();
-                if (config.matches(req)){
+                if (config.matches(req)) {
                     return config.getUri();
                 }
             }
         }
         return null;
     }
+
+
 }
