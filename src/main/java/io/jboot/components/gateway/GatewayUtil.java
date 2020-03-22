@@ -109,19 +109,20 @@ public class GatewayUtil {
 
     private static void copyStreamToResponse(HttpURLConnection connection, HttpServletResponse response) throws IOException {
         InputStream inStream = null;
+        InputStreamReader reader = null;
         try {
             if (!response.isCommitted()) {
                 PrintWriter writer = response.getWriter();
                 inStream = getInputStream(connection);
+                reader = new InputStreamReader(inStream);
                 int len;
                 char[] buffer = new char[1024];
-                InputStreamReader r = new InputStreamReader(inStream);
-                while ((len = r.read(buffer)) != -1) {
+                while ((len = reader.read(buffer)) != -1) {
                     writer.write(buffer, 0, len);
                 }
             }
         } finally {
-            quetlyClose(inStream);
+            quetlyClose(inStream, reader);
         }
 
     }
