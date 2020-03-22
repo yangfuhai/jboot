@@ -15,6 +15,12 @@
  */
 package io.jboot.components.gateway;
 
+import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.StrUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/21
@@ -25,5 +31,37 @@ public class JbootGatewayManager {
 
     public static JbootGatewayManager me(){
         return me;
+    }
+
+    private Set<JbootGatewayConfig> configs;
+
+
+    public void init(){
+       Map<String,JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class,"jboot.app.gateway");
+       if (configMap != null && !configMap.isEmpty()){
+           configs = new HashSet<>();
+           for (Map.Entry<String,JbootGatewayConfig> e:configMap.entrySet()){
+               JbootGatewayConfig config =  e.getValue();
+               if(config.isConfigOk() && config.isEnable()){
+                   if (StrUtil.isNotBlank(config.getName())){
+                       config.setName(e.getKey());
+                   }
+                   configs.add(config);
+               }
+           }
+       }
+    }
+
+    public String matchingURI(HttpServletRequest req){
+        if (configs != null && !configs.isEmpty()){
+            Iterator<JbootGatewayConfig> iterator = configs.iterator();
+            while (iterator.hasNext()){
+                JbootGatewayConfig config = iterator.next();
+                if (config.matches(req)){
+                    return config.getUri();
+                }
+            }
+        }
+        return null;
     }
 }
