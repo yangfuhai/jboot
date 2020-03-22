@@ -55,13 +55,13 @@ public class JbootGatewayManager {
     }
 
 
-    public String matchingURI(HttpServletRequest req) {
+    public JbootGatewayConfig matchingConfig(HttpServletRequest req) {
         if (configs != null && !configs.isEmpty()) {
             Iterator<JbootGatewayConfig> iterator = configs.iterator();
             while (iterator.hasNext()) {
                 JbootGatewayConfig config = iterator.next();
                 if (config.matches(req)) {
-                    return config.getUri();
+                    return config;
                 }
             }
         }

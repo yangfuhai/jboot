@@ -30,24 +30,32 @@ public class JbootGatewayHandler extends Handler {
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        String uri = JbootGatewayManager.me().matchingURI(request);
-        if (StrUtil.isNotBlank(uri)) {
-            doProcessGateway(uri, request, response);
+        JbootGatewayConfig config = JbootGatewayManager.me().matchingConfig(request);
+        if (config != null) {
+            doProcessGateway(config, request, response);
             isHandled[0] = true;
         } else {
             next.handle(target, request, response, isHandled);
         }
     }
 
-    private void doProcessGateway(String uri, HttpServletRequest request, HttpServletResponse response) {
-        StringBuilder url = new StringBuilder(uri);
-        if (StrUtil.isNotBlank(request.getRequestURI())){
-            url.append(request.getRequestURI());
-        }
-        if (StrUtil.isNotBlank(request.getQueryString())){
-            url.append("?").append(request.getQueryString());
-        }
+    private void doProcessGateway(JbootGatewayConfig config, HttpServletRequest request, HttpServletResponse response) {
+        Runnable runnable = () -> {
+            StringBuilder url = new StringBuilder(config.getUri());
+            if (StrUtil.isNotBlank(request.getRequestURI())) {
+                url.append(request.getRequestURI());
+            }
+            if (StrUtil.isNotBlank(request.getQueryString())) {
+                url.append("?").append(request.getQueryString());
+            }
 
-        GatewayUtil.sendRequest(url.toString(),request,response);
+            GatewayHttpProxy.sendRequest(url.toString(), request, response);
+        };
+
+        if (config.isSentinelEnable()) {
+            new GatewaySentinelProcesser().process(runnable, config, request, response);
+        } else {
+            runnable.run();
+        }
     }
 }

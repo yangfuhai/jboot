@@ -15,231 +15,144 @@
  */
 package io.jboot.components.gateway;
 
-import com.jfinal.log.Log;
-import io.jboot.exception.JbootException;
-import io.jboot.utils.StrUtil;
+import com.alibaba.csp.sentinel.util.StringUtil;
 
-import javax.net.ssl.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.security.cert.X509Certificate;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
 
-
+/**
+ * @author michael yang (fuhai999@gmail.com)
+ * @Date: 2020/3/22
+ */
 public class GatewayUtil {
 
-    private static final Log LOG = Log.getLog(GatewayUtil.class);
-
-    private static int READ_TIMEOUT = 10000;
-    private static int CONNECT_TIMEOUT = 5000;
+    private static final String PATH_SPLIT = "/";
 
 
-    public static void sendRequest(String url, HttpServletRequest request, HttpServletResponse response) {
-
-        HttpURLConnection connection = null;
-
-        try {
-            connection = getConnection(url);
-
-            /**
-             * 设置 http 请求头
-             */
-            configConnection(connection, request);
-
-            connection.connect();
-
-            /**
-             * 复制 post 请求内容到目标服务器
-             */
-            copyRequestStreamToConnection(request, connection);
-
-
-            /**
-             * 配置响应的 HTTP 头
-             */
-            configResponse(response, connection);
-
-            /**
-             * 复制目标流到 Response
-             */
-            copyStreamToResponse(connection, response);
-
-
-        } catch (Exception ex) {
-            LOG.warn(ex.toString(), ex);
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
-    }
-
-    private static void copyRequestStreamToConnection(HttpServletRequest request, HttpURLConnection connection) throws IOException {
-        OutputStream outStream = null;
-        InputStream inStream = null;
-        try {
-
-            // 如果不是 post 请求，不需要复制
-            if ("get".equalsIgnoreCase(request.getMethod())) {
-                return;
-            }
-
-            connection.setDoOutput(true);
-            outStream = connection.getOutputStream();
-            inStream = request.getInputStream();
-            int n;
-            byte[] buffer = new byte[1024];
-            while (-1 != (n = inStream.read(buffer))) {
-                outStream.write(buffer, 0, n);
-            }
-
-        } finally {
-            quetlyClose(outStream, inStream);
-        }
-    }
-
-
-    private static void copyStreamToResponse(HttpURLConnection connection, HttpServletResponse response) throws IOException {
-        InputStream inStream = null;
-        InputStreamReader reader = null;
-        try {
-            if (!response.isCommitted()) {
-                PrintWriter writer = response.getWriter();
-                inStream = getInputStream(connection);
-                reader = new InputStreamReader(inStream);
-                int len;
-                char[] buffer = new char[1024];
-                while ((len = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, len);
-                }
-            }
-        } finally {
-            quetlyClose(inStream, reader);
+    public static String buildResource(HttpServletRequest request) {
+        String pathInfo = getResourcePath(request);
+        if (!pathInfo.startsWith(PATH_SPLIT)) {
+            pathInfo = PATH_SPLIT + pathInfo;
         }
 
-    }
-
-
-    private static void quetlyClose(Closeable... closeables) {
-        for (Closeable closeable : closeables) {
-            if (closeable != null) {
-                try {
-                    closeable.close();
-                } catch (IOException e) {
-                }
-            }
+        if (PATH_SPLIT.equals(pathInfo)) {
+            return pathInfo;
         }
-    }
 
+        // Note: pathInfo should be converted to camelCase style.
+        int lastSlashIndex = pathInfo.lastIndexOf("/");
 
-    private static void configResponse(HttpServletResponse response, HttpURLConnection connection) throws IOException {
-        response.setContentType(connection.getContentType());
-        response.setStatus(connection.getResponseCode());
-
-        Map<String, List<String>> headerFields = connection.getHeaderFields();
-        if (headerFields != null && !headerFields.isEmpty()) {
-            Set<String> headerNames = headerFields.keySet();
-            for (String headerName : headerNames) {
-                //需要排除 Content-Encoding，因为 Server 可能已经使用 gzip 压缩，但是此代理已经对 gzip 内容进行解压了
-                if (StrUtil.isNotBlank(headerName) && !"Content-Encoding".equalsIgnoreCase(headerName)) {
-                    response.setHeader(headerName, connection.getHeaderField(headerName));
-                }
-            }
-        }
-    }
-
-    private static InputStream getInputStream(HttpURLConnection connection) throws IOException {
-
-        InputStream stream = connection.getResponseCode() >= 400
-                ? connection.getErrorStream()
-                : connection.getInputStream();
-
-        if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
-            return new GZIPInputStream(stream);
+        if (lastSlashIndex >= 0) {
+            pathInfo = pathInfo.substring(0, lastSlashIndex) + "/"
+                    + StringUtil.trim(pathInfo.substring(lastSlashIndex + 1));
         } else {
-            return stream;
+            pathInfo = PATH_SPLIT + StringUtil.trim(pathInfo);
         }
 
+        return pathInfo;
     }
 
 
-    private static void configConnection(HttpURLConnection connection, HttpServletRequest request) throws ProtocolException {
 
-        connection.setReadTimeout(READ_TIMEOUT);
-        connection.setConnectTimeout(CONNECT_TIMEOUT);
-        connection.setInstanceFollowRedirects(true);
+    private static String getResourcePath(HttpServletRequest request) {
+        String pathInfo = normalizeAbsolutePath(request.getPathInfo(), false);
+        String servletPath = normalizeAbsolutePath(request.getServletPath(), pathInfo.length() != 0);
 
-        connection.setRequestMethod(request.getMethod());
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            if (StrUtil.isNotBlank(headerName)) {
-                connection.setRequestProperty(headerName, request.getHeader(headerName));
+        return servletPath + pathInfo;
+    }
+
+    private static String normalizeAbsolutePath(String path, boolean removeTrailingSlash) throws IllegalStateException {
+        return normalizePath(path, true, false, removeTrailingSlash);
+    }
+
+    private static String normalizePath(String path, boolean forceAbsolute, boolean forceRelative,
+                                        boolean removeTrailingSlash) throws IllegalStateException {
+        char[] pathChars = StringUtil.trimToEmpty(path).toCharArray();
+        int length = pathChars.length;
+
+        // Check path and slash.
+        boolean startsWithSlash = false;
+        boolean endsWithSlash = false;
+
+        if (length > 0) {
+            char firstChar = pathChars[0];
+            char lastChar = pathChars[length - 1];
+
+            startsWithSlash = firstChar == PATH_SPLIT.charAt(0) || firstChar == '\\';
+            endsWithSlash = lastChar == PATH_SPLIT.charAt(0) || lastChar == '\\';
+        }
+
+        StringBuilder buf = new StringBuilder(length);
+        boolean isAbsolutePath = forceAbsolute || !forceRelative && startsWithSlash;
+        int index = startsWithSlash ? 0 : -1;
+        int level = 0;
+
+        if (isAbsolutePath) {
+            buf.append(PATH_SPLIT);
+        }
+
+        while (index < length) {
+            index = indexOfSlash(pathChars, index + 1, false);
+
+            if (index == length) {
+                break;
+            }
+
+            int nextSlashIndex = indexOfSlash(pathChars, index, true);
+
+            String element = new String(pathChars, index, nextSlashIndex - index);
+            index = nextSlashIndex;
+
+            // Ignore "."
+            if (".".equals(element)) {
+                continue;
+            }
+
+            // Backtrack ".."
+            if ("..".equals(element)) {
+                if (level == 0) {
+                    if (isAbsolutePath) {
+                        throw new IllegalStateException(path);
+                    } else {
+                        buf.append("..").append(PATH_SPLIT);
+                    }
+                } else {
+                    buf.setLength(pathChars[--level]);
+                }
+
+                continue;
+            }
+
+            pathChars[level++] = (char)buf.length();
+            buf.append(element).append(PATH_SPLIT);
+        }
+
+        // remove the last "/"
+        if (buf.length() > 0) {
+            if (!endsWithSlash || removeTrailingSlash) {
+                buf.setLength(buf.length() - 1);
             }
         }
+
+        return buf.toString();
     }
 
-    private static HttpURLConnection getConnection(String urlString) {
-        try {
-            if (urlString.toLowerCase().startsWith("https")) {
-                return getHttpsConnection(urlString);
+    private static int indexOfSlash(char[] chars, int beginIndex, boolean slash) {
+        int i = beginIndex;
+
+        for (; i < chars.length; i++) {
+            char ch = chars[i];
+
+            if (slash) {
+                if (ch == PATH_SPLIT.charAt(0) || ch == '\\') {
+                    break; // if a slash
+                }
             } else {
-                return getHttpConnection(urlString);
+                if (ch != PATH_SPLIT.charAt(0) && ch != '\\') {
+                    break; // if not a slash
+                }
             }
-        } catch (Throwable ex) {
-            throw new JbootException(ex);
         }
+
+        return i;
     }
-
-    private static HttpURLConnection getHttpConnection(String urlStr) throws Exception {
-        URL url = new URL(urlStr);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        return conn;
-    }
-
-    private static HttpsURLConnection getHttpsConnection(String urlString) throws Exception {
-        URL url = new URL(urlString);
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-        conn.setHostnameVerifier(hnv);
-        SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
-        if (sslContext != null) {
-            TrustManager[] tm = {trustAnyTrustManager};
-            sslContext.init(null, tm, null);
-            SSLSocketFactory ssf = sslContext.getSocketFactory();
-            conn.setSSLSocketFactory(ssf);
-        }
-        return conn;
-    }
-
-    private static X509TrustManager trustAnyTrustManager = new X509TrustManager() {
-        @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType) {
-        }
-
-        @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType) {
-        }
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return null;
-        }
-    };
-
-    private static HostnameVerifier hnv = new HostnameVerifier() {
-        @Override
-        public boolean verify(String hostname, SSLSession session) {
-            return true;
-        }
-    };
-
-
 }
