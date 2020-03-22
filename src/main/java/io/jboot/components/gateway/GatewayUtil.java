@@ -112,7 +112,7 @@ public class GatewayUtil {
         try {
             if (!response.isCommitted()) {
                 PrintWriter writer = response.getWriter();
-                inStream = getInutStream(connection);
+                inStream = getInputStream(connection);
                 int len;
                 char[] buffer = new char[1024];
                 InputStreamReader r = new InputStreamReader(inStream);
@@ -155,7 +155,7 @@ public class GatewayUtil {
         }
     }
 
-    private static InputStream getInutStream(HttpURLConnection connection) throws IOException {
+    private static InputStream getInputStream(HttpURLConnection connection) throws IOException {
 
         InputStream stream = connection.getResponseCode() >= 400
                 ? connection.getErrorStream()

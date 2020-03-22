@@ -88,7 +88,7 @@ public class JbootHttpImpl implements JbootHttp {
             }
 
 
-            stream = getInutStream(connection);
+            stream = getInputStream(connection);
 
             response.setContentType(connection.getContentType());
             response.setResponseCode(connection.getResponseCode());
@@ -114,7 +114,7 @@ public class JbootHttpImpl implements JbootHttp {
         }
     }
 
-    private InputStream getInutStream(HttpURLConnection connection) throws IOException {
+    private InputStream getInputStream(HttpURLConnection connection) throws IOException {
 
         InputStream stream = connection.getResponseCode() >= 400
                 ? connection.getErrorStream()
