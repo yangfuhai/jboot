@@ -193,7 +193,7 @@ class DubboUtil {
         Utils.copyFields(sc, serviceConfig);
 
         //service provider
-        if (StrUtil.isNotBlank(sc.getProtocol())) {
+        if (StrUtil.isNotBlank(sc.getProvider())) {
             serviceConfig.setProviderIds(sc.getProvider());
         }
 
