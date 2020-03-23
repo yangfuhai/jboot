@@ -10,6 +10,7 @@ jboot v3.1.0:
 修复：修复 JbootHttpImpl 无法上传文件的bug
 修复：修复 JbootHttpImpl 无法正确获取 gzip 压缩内容的问题
 优化：重构 RPC 的模块，使之更加简单清晰
+优化：升级 fastsjon 等相关依赖到最新版本，修改某些错误单词拼写的方法名等
 文档：完善 AOP 的相关文档
 文档：完善 Sentinel 限流的文档
 文档：完善 RPC 的相关文档
