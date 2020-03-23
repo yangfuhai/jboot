@@ -91,14 +91,14 @@ jboot.gateway.pathStartsWith = /user
 
 当 path 中，只要以 `/user` 开头就会匹配到该路由，比如 `www.xxx.com/user/other` ，但是 `www.xxx.com/other/user/xxx` 不会匹配到，因为它是以 `/other` 开头的。
 
-**4、pathEndswith**
+**4、pathEndsWith**
 
 ```
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
 
-jboot.gateway.pathEndswith = /user
+jboot.gateway.pathEndsWith = /user
 ```
 
 当 path 中，只要以 `/user` 结束就会匹配到该路由，比如 `www.xxx.com/other/user` ，但是 `www.xxx.com/user/other` 不会匹配到，因为它是以 `/other` 结束的。
@@ -145,14 +145,14 @@ jboot.gateway.hostStartsWith = xxx
 
 在 Host 中，只要以 `xxx` 开头就会匹配到该路由，比如 `xxx.xxx.com/user/other` ，但是 `www.xxx.com/other/user/xxx` 不会匹配到，因为它的域名（host）是以 `xxx` 开头的。
 
-**4、hostEndswith**
+**4、hostEndsWith**
 
 ```
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
 
-jboot.gateway.hostEndswith = com
+jboot.gateway.hostEndsWith = com
 ```
 
 在 Host 中，只要以 `com` 结束就会匹配到该路由，比如 `www.xxx.com/other/user` ，但是 `www.xxx.org/user/other` 不会匹配到，因为它的域名是以 `org` 结束的。

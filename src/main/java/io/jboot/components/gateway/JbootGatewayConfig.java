@@ -48,13 +48,13 @@ public class JbootGatewayConfig implements Serializable {
     private String[] pathEquals;
     private String[] pathContains;
     private String[] pathStartsWith;
-    private String[] pathEndswith;
+    private String[] pathEndsWith;
 
 
     private String[] hostEquals;
     private String[] hostContains;
     private String[] hostStartsWith;
-    private String[] hostEndswith;
+    private String[] hostEndsWith;
 
 
     private Map<String, String> queryEquals;
@@ -153,12 +153,12 @@ public class JbootGatewayConfig implements Serializable {
         this.pathStartsWith = pathStartsWith;
     }
 
-    public String[] getPathEndswith() {
-        return pathEndswith;
+    public String[] getPathEndsWith() {
+        return pathEndsWith;
     }
 
-    public void setPathEndswith(String[] pathEndswith) {
-        this.pathEndswith = pathEndswith;
+    public void setPathEndsWith(String[] pathEndsWith) {
+        this.pathEndsWith = pathEndsWith;
     }
 
     public String[] getHostEquals() {
@@ -185,12 +185,12 @@ public class JbootGatewayConfig implements Serializable {
         this.hostStartsWith = hostStartsWith;
     }
 
-    public String[] getHostEndswith() {
-        return hostEndswith;
+    public String[] getHostEndsWith() {
+        return hostEndsWith;
     }
 
-    public void setHostEndswith(String[] hostEndswith) {
-        this.hostEndswith = hostEndswith;
+    public void setHostEndsWith(String[] hostEndsWith) {
+        this.hostEndsWith = hostEndsWith;
     }
 
     public Map<String, String> getQueryEquals() {
@@ -244,8 +244,8 @@ public class JbootGatewayConfig implements Serializable {
             }
         }
 
-        if (pathEndswith != null) {
-            for (String p : pathEndswith) {
+        if (pathEndsWith != null) {
+            for (String p : pathEndsWith) {
                 if (path.endsWith(p)) {
                     return true;
                 }
@@ -277,8 +277,8 @@ public class JbootGatewayConfig implements Serializable {
             }
         }
 
-        if (hostEndswith != null) {
-            for (String h : hostStartsWith) {
+        if (hostEndsWith != null) {
+            for (String h : hostEndsWith) {
                 if (host.endsWith(h)) {
                     return true;
                 }
