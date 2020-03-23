@@ -18,7 +18,8 @@ public class DubboServerMultiDemo {
 
 
 
-        //两个注册中心，id 分别为 default、zk，默认情况下，如果 service 没指定注册中心，service 会向所有的注册中心发布自己的服务
+        // 3个注册中心，id 分别为 default、zk、zk2
+        // 默认情况下，如果 service 没指定注册中心，service 会向所有的注册中心发布自己的服务
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.protocol", "nacos");
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.address", "127.0.0.1:8848");
 
@@ -27,6 +28,23 @@ public class DubboServerMultiDemo {
 
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.zk2.protocol", "zookeeper");
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.zk2.address", "127.0.0.1:2181");
+
+
+        //定义一个名称为 pro3 的 provider，只注册到名称为 default 的注册中心
+//        JbootApplication.setBootArg("jboot.rpc.dubbo.provider.pro3.registry", "default");
+
+        //定义一个名称为 pro3 的 provider，只注册到名称为 zk 的注册中心
+        JbootApplication.setBootArg("jboot.rpc.dubbo.provider.pro3.registry", "zk");
+
+
+
+        // 让服务 BlogService 使用名称为 pro3 的 provider
+        // 当然，此项配置也可以在 @RPCInject 里进行配置
+        JbootApplication.setBootArg("jboot.rpc.providers", "io.jboot.test.rpc.commons.BlogService:pro3");
+
+
+
+
 
 
 
