@@ -23,6 +23,10 @@ jboot.gateway.enable = true
 jboot.gateway.sentinelEnable = false
 jboot.gateway.sentinelBlockPage = /block
 
+jboot.gateway.proxyReadTimeout = 10000
+jboot.gateway.proxyConnectTimeout = 5000
+jboot.gateway.proxyContentType = text/html;charset=utf-8
+
 jboot.gateway.pathEquals = /path
 jboot.gateway.pathContains = /path
 jboot.gateway.pathStartsWith = /path
@@ -42,6 +46,9 @@ jboot.gateway.queryContains = aa,bb
 - enable 是否启用该路由
 - sentinelEnable 是否启用 sentinel 限流功能
 - sentinelBlockPage 若该路由被限流后，网页自动跳转到哪个网址
+- proxyReadTimeout 发生路由后，默认的请求超时时间，默认为 10 秒
+- proxyConnectTimeout 发生路由后，默认的链接超时时间，默认为 5 秒
+- proxyContentType 发生路由后，返回给浏览器的 http-content-type，默认为：text/html;charset=utf-8
 
 ## Path 路由
 
