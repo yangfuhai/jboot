@@ -1,4 +1,4 @@
-package io.jboot.test.rpc.dubbonacos;
+package io.jboot.test.rpc.multiregistry;
 
 import io.jboot.app.JbootApplication;
 import io.jboot.components.rpc.annotation.RPCInject;
@@ -6,13 +6,13 @@ import io.jboot.test.rpc.commons.BlogService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
-@RequestMapping("/dubbonacos")
+@RequestMapping("/dubbo/nacos")
 public class DubboClientNacosDemo extends JbootController {
 
     public static void main(String[] args) {
 
         //jboot端口号配置
-        JbootApplication.setBootArg("undertow.port", "9999");
+        JbootApplication.setBootArg("undertow.port", "9004");
 
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
 
@@ -21,6 +21,7 @@ public class DubboClientNacosDemo extends JbootController {
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.protocol", "nacos");
         //注册中心地址，即 nacos 的地址
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.address", "127.0.0.1:8848");
+
 
 
         JbootApplication.run(args);
