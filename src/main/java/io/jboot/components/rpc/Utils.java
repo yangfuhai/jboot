@@ -133,7 +133,7 @@ public class Utils {
                                     ? "setRegistries"
                                     : "set" + StrUtil.firstCharToUpperCase(arrName) + "s";
 
-                            Method method = entry.getValue().getClass().getDeclaredMethod(setterMethodName, List.class);
+                            Method method = entry.getValue().getClass().getMethod(setterMethodName, List.class);
                             method.invoke(entry.getValue(), argCfgList);
 
                         } catch (Exception e) {
