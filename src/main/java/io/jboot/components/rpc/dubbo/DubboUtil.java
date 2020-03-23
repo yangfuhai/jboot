@@ -83,7 +83,7 @@ class DubboUtil {
             if (metadataReportConfigs.size() == 1) {
                 dubboBootstrap.metadataReport(getDefault(metadataReportConfigs));
             } else {
-                dubboBootstrap.metadataReports((List<MetadataReportConfig>) toList(metadataReportConfigs));
+                dubboBootstrap.metadataReports(toList(metadataReportConfigs));
             }
         }
 
@@ -93,7 +93,7 @@ class DubboUtil {
             if (configCenterConfigs.size() == 1) {
                 dubboBootstrap.configCenter(getDefault(configCenterConfigs));
             } else {
-                dubboBootstrap.configCenters((List<ConfigCenterConfig>) toList(configCenterConfigs));
+                dubboBootstrap.configCenters(toList(configCenterConfigs));
             }
         }
 
@@ -105,7 +105,7 @@ class DubboUtil {
             if (protocolConfigs.size() == 1) {
                 dubboBootstrap.protocol(getDefault(protocolConfigs));
             } else {
-                dubboBootstrap.protocols((List<ProtocolConfig>) toList(protocolConfigs));
+                dubboBootstrap.protocols(toList(protocolConfigs));
             }
         }
 
@@ -116,7 +116,7 @@ class DubboUtil {
             if (registryConfigs.size() == 1) {
                 dubboBootstrap.registry(getDefault(registryConfigs));
             } else {
-                dubboBootstrap.registries((List<RegistryConfig>) toList(registryConfigs));
+                dubboBootstrap.registries(toList(registryConfigs));
             }
         }
         //没有配置注册中心，一般只用于希望此服务网提供直连的方式给客户端使用
@@ -148,7 +148,7 @@ class DubboUtil {
             if (consumerConfigs.size() == 1) {
                 dubboBootstrap.consumer(getDefault(consumerConfigs));
             } else {
-                dubboBootstrap.consumers((List<ConsumerConfig>) toList(consumerConfigs));
+                dubboBootstrap.consumers(toList(consumerConfigs));
             }
         }
 
@@ -163,7 +163,7 @@ class DubboUtil {
             if (providerConfigs.size() == 1) {
                 dubboBootstrap.provider(getDefault(providerConfigs));
             } else {
-                dubboBootstrap.providers((List<ProviderConfig>) toList(providerConfigs));
+                dubboBootstrap.providers(toList(providerConfigs));
             }
         }
     }
@@ -229,18 +229,20 @@ class DubboUtil {
         return JbootConfigUtil.getConfigModels(clazz, prefix);
     }
 
-    private static <T> T getDefault(Map<String, T> map) {
-        return map.get("default");
+    private static <T> T getDefault(Map<String,T> map) {
+        AbstractConfig config = (AbstractConfig) map.values().iterator().next();
+        if (config != null){
+            config.setId(map.keySet().iterator().next());
+        }
+        return (T) config;
     }
 
-    private static List toList(Map<String, ? extends AbstractConfig> map) {
-        List list = new ArrayList<>(map.size());
-        for (Map.Entry<String, ? extends AbstractConfig> entry : map.entrySet()) {
-            AbstractConfig config = entry.getValue();
-            if (StrUtil.isBlank(config.getId())) {
-                config.setId(entry.getKey());
-            }
-            list.add(config);
+    private static <T> List<T> toList(Map<String, T> map) {
+        List<T> list = new ArrayList<>(map.size());
+        for (Map.Entry<String, T> entry : map.entrySet()) {
+            AbstractConfig config = (AbstractConfig) entry.getValue();
+            config.setId(entry.getKey());
+            list.add((T) config);
         }
         return list;
     }
