@@ -11,7 +11,7 @@
 
 ## 概述
 
-Jboot 已经内置基础了网关，网关功能目前暂时只能通过在 jboot.properties 文件进行配置。
+Jboot 已经内置基础的网关，网关功能目前暂时只能通过在 jboot.properties 文件进行配置。
 
 如下是一个正常的 gateway 配置。
 
@@ -42,12 +42,12 @@ jboot.gateway.queryContains = aa,bb
 ```
 
 - name 设置路由的名称
-- uri 网路路由目标网址
+- uri 设置路由目标网址
 - enable 是否启用该路由
 - sentinelEnable 是否启用 sentinel 限流功能
 - sentinelBlockPage 若该路由被限流后，网页自动跳转到哪个网址
 - proxyReadTimeout 发生路由后，默认的请求超时时间，默认为 10 秒
-- proxyConnectTimeout 发生路由后，默认的链接超时时间，默认为 5 秒
+- proxyConnectTimeout 发生路由后，默认的连接超时时间，默认为 5 秒
 - proxyContentType 发生路由后，返回给浏览器的 http-content-type，默认为：text/html;charset=utf-8
 
 ## Path 路由
@@ -98,7 +98,7 @@ jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
 
-jboot.gateway.pathStartsWith = /user
+jboot.gateway.pathEndswith = /user
 ```
 
 当 path 中，只要以 `/user` 结束就会匹配到该路由，比如 `www.xxx.com/other/user` ，但是 `www.xxx.com/user/other` 不会匹配到，因为它是以 `/other` 结束的。
