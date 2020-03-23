@@ -29,6 +29,8 @@ import java.util.Objects;
  */
 public class JbootGatewayConfig implements Serializable {
 
+    public static final String DEFAULT_PROXY_CONTENT_TYPE = "text/html;charset=utf-8";
+
     private String name;
     private String uri;
     private boolean enable = false;
@@ -37,6 +39,11 @@ public class JbootGatewayConfig implements Serializable {
     private boolean sentinelEnable = false;
     // sentinel 被限流后跳转地址
     private String sentinelBlockPage;
+
+    // 设置 http 代理的参数
+    private int proxyReadTimeout = 10000; //10s
+    private int proxyConnectTimeout = 5000; //5s
+    private String proxyContentType = DEFAULT_PROXY_CONTENT_TYPE;
 
     private String[] pathEquals;
     private String[] pathContains;
@@ -96,6 +103,30 @@ public class JbootGatewayConfig implements Serializable {
 
     public void setSentinelBlockPage(String sentinelBlockPage) {
         this.sentinelBlockPage = sentinelBlockPage;
+    }
+
+    public int getProxyReadTimeout() {
+        return proxyReadTimeout;
+    }
+
+    public void setProxyReadTimeout(int proxyReadTimeout) {
+        this.proxyReadTimeout = proxyReadTimeout;
+    }
+
+    public int getProxyConnectTimeout() {
+        return proxyConnectTimeout;
+    }
+
+    public void setProxyConnectTimeout(int proxyConnectTimeout) {
+        this.proxyConnectTimeout = proxyConnectTimeout;
+    }
+
+    public String getProxyContentType() {
+        return proxyContentType;
+    }
+
+    public void setProxyContentType(String proxyContentType) {
+        this.proxyContentType = proxyContentType;
     }
 
     public String[] getPathEquals() {
@@ -178,85 +209,85 @@ public class JbootGatewayConfig implements Serializable {
         this.queryContains = queryContains;
     }
 
-    public boolean isConfigOk(){
+    public boolean isConfigOk() {
         return StrUtil.isNotBlank(uri);
     }
 
 
-    public boolean matches(HttpServletRequest request){
-        if (request == null){
+    public boolean matches(HttpServletRequest request) {
+        if (request == null) {
             return false;
         }
 
         String path = request.getServletPath();
-        if (pathEquals != null){
-            for (String p : pathEquals){
-                if (path.equals(p)){
+        if (pathEquals != null) {
+            for (String p : pathEquals) {
+                if (path.equals(p)) {
                     return true;
                 }
             }
         }
 
-        if (pathContains != null){
-            for (String p : pathContains){
-                if (path.contains(p)){
+        if (pathContains != null) {
+            for (String p : pathContains) {
+                if (path.contains(p)) {
                     return true;
                 }
             }
         }
 
-        if (pathStartsWith != null){
-            for (String p : pathStartsWith){
-                if (path.startsWith(p)){
+        if (pathStartsWith != null) {
+            for (String p : pathStartsWith) {
+                if (path.startsWith(p)) {
                     return true;
                 }
             }
         }
 
-        if (pathEndswith != null){
-            for (String p : pathEndswith){
-                if (path.endsWith(p)){
+        if (pathEndswith != null) {
+            for (String p : pathEndswith) {
+                if (path.endsWith(p)) {
                     return true;
                 }
             }
         }
 
         String host = request.getServerName();
-        if (hostEquals != null){
-            for (String h : hostEquals){
-                if (host.equals(h)){
+        if (hostEquals != null) {
+            for (String h : hostEquals) {
+                if (host.equals(h)) {
                     return true;
                 }
             }
         }
 
-        if (hostContains != null){
-            for (String h : hostContains){
-                if (host.contains(h)){
+        if (hostContains != null) {
+            for (String h : hostContains) {
+                if (host.contains(h)) {
                     return true;
                 }
             }
         }
 
-        if (hostStartsWith != null){
-            for (String h : hostStartsWith){
-                if (host.startsWith(h)){
+        if (hostStartsWith != null) {
+            for (String h : hostStartsWith) {
+                if (host.startsWith(h)) {
                     return true;
                 }
             }
         }
 
-        if (hostEndswith != null){
-            for (String h : hostStartsWith){
-                if (host.endsWith(h)){
+        if (hostEndswith != null) {
+            for (String h : hostStartsWith) {
+                if (host.endsWith(h)) {
                     return true;
                 }
             }
         }
 
-        if (queryContains != null || queryEquals != null){
-            Map<String,String> queryMap = queryStringToMap(request.getQueryString());
-            if (queryMap != null && !queryMap.isEmpty()){
+        if (queryContains != null || queryEquals != null) {
+            Map<String, String> queryMap = queryStringToMap(request.getQueryString());
+            if (queryMap != null && !queryMap.isEmpty()) {
 
                 if (queryContains != null) {
                     for (String q : queryContains) {
@@ -266,10 +297,10 @@ public class JbootGatewayConfig implements Serializable {
                     }
                 }
 
-                if (queryEquals != null){
-                    for (Map.Entry<String,String> e : queryEquals.entrySet()){
+                if (queryEquals != null) {
+                    for (Map.Entry<String, String> e : queryEquals.entrySet()) {
                         String queryValue = queryMap.get(e.getKey());
-                        if (Objects.equals(queryValue,e.getValue())){
+                        if (Objects.equals(queryValue, e.getValue())) {
                             return true;
                         }
                     }
@@ -278,14 +309,12 @@ public class JbootGatewayConfig implements Serializable {
         }
 
 
-
         return false;
     }
 
 
-
     private static Map<String, String> queryStringToMap(String queryString) {
-        if (StrUtil.isBlank(queryString)){
+        if (StrUtil.isBlank(queryString)) {
             return null;
         }
         String[] params = queryString.split("&");

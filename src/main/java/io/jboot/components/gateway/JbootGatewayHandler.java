@@ -49,7 +49,7 @@ public class JbootGatewayHandler extends Handler {
                 url.append("?").append(request.getQueryString());
             }
 
-            GatewayHttpProxy.sendRequest(url.toString(), request, response);
+            new GatewayHttpProxy(config).sendRequest(url.toString(), request, response);
         };
 
         if (config.isSentinelEnable()) {

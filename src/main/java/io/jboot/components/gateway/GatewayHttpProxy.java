@@ -38,11 +38,17 @@ public class GatewayHttpProxy {
 
     private static final Log LOG = Log.getLog(GatewayHttpProxy.class);
 
-    private static int READ_TIMEOUT = 10000;
-    private static int CONNECT_TIMEOUT = 5000;
+    private int readTimeOut;
+    private int connectTimeOut;
+    private String contentType;
 
+    public GatewayHttpProxy(JbootGatewayConfig config) {
+        this.readTimeOut = config.getProxyReadTimeout();
+        this.connectTimeOut = config.getProxyConnectTimeout();
+        this.contentType = config.getProxyContentType();
+    }
 
-    public static void sendRequest(String url, HttpServletRequest req, HttpServletResponse resp) {
+    public void sendRequest(String url, HttpServletRequest req, HttpServletResponse resp) {
 
         HttpURLConnection conn = null;
 
@@ -82,7 +88,7 @@ public class GatewayHttpProxy {
         }
     }
 
-    private static void copyRequestStreamToConnection(HttpServletRequest req, HttpURLConnection conn) throws IOException {
+    private void copyRequestStreamToConnection(HttpServletRequest req, HttpURLConnection conn) throws IOException {
         OutputStream outStream = null;
         InputStream inStream = null;
         try {
@@ -107,7 +113,7 @@ public class GatewayHttpProxy {
     }
 
 
-    private static void copyStreamToResponse(HttpURLConnection conn, HttpServletResponse resp) throws IOException {
+    private void copyStreamToResponse(HttpURLConnection conn, HttpServletResponse resp) throws IOException {
         InputStream inStream = null;
         InputStreamReader reader = null;
         try {
@@ -140,8 +146,8 @@ public class GatewayHttpProxy {
     }
 
 
-    private static void configResponse(HttpServletResponse resp, HttpURLConnection conn) throws IOException {
-        resp.setContentType(conn.getContentType());
+    private void configResponse(HttpServletResponse resp, HttpURLConnection conn) throws IOException {
+        resp.setContentType(contentType);
         resp.setStatus(conn.getResponseCode());
 
         Map<String, List<String>> headerFields = conn.getHeaderFields();
@@ -171,11 +177,13 @@ public class GatewayHttpProxy {
     }
 
 
-    private static void configConnection(HttpURLConnection conn, HttpServletRequest req) throws ProtocolException {
+    private void configConnection(HttpURLConnection conn, HttpServletRequest req) throws ProtocolException {
 
-        conn.setReadTimeout(READ_TIMEOUT);
-        conn.setConnectTimeout(CONNECT_TIMEOUT);
+        conn.setReadTimeout(readTimeOut);
+        conn.setConnectTimeout(connectTimeOut);
         conn.setInstanceFollowRedirects(true);
+        conn.setUseCaches(false);
+//        conn.setDefaultUseCaches();
 
         conn.setRequestMethod(req.getMethod());
         Enumeration<String> headerNames = req.getHeaderNames();
