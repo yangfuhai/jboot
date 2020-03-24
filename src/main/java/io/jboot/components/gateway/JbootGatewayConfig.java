@@ -229,7 +229,7 @@ public class JbootGatewayConfig implements Serializable {
         }
         if (inters == null) {
             synchronized (this) {
-                if (inters != null) {
+                if (inters == null) {
                     inters = new GatewayInterceptor[interceptors.length];
                     for (int i = 0; i < interceptors.length; i++) {
                         GatewayInterceptor interceptor = ClassUtil.newInstance(interceptors[i]);
