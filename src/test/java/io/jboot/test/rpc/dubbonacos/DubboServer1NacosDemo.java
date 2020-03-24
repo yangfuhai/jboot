@@ -17,8 +17,6 @@ public class DubboServer1NacosDemo {
 
 
 
-
-
         // dubbo 的注册中心的协议，支持的类型有 dubbo, multicast, zookeeper, redis, consul(2.7.1), sofa(2.7.2), etcd(2.7.2), nacos(2.7.2)
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.protocol", "nacos");
         //注册中心地址，即zookeeper的地址
