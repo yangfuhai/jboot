@@ -59,8 +59,6 @@ public class JbootScheduleManager {
         cron4jPlugin = cron4jProperties.exists()
                 ? new JbootCron4jPlugin(new Prop(config.getCron4jFile()))
                 : new JbootCron4jPlugin();
-        LOG.info("Init JbootScheduleManager");
-
     }
 
 
