@@ -40,18 +40,38 @@ public class GatewayHttpProxy {
 
     private int readTimeOut;
     private int connectTimeOut;
+    private int retries;
     private String contentType;
 
     public GatewayHttpProxy(JbootGatewayConfig config) {
         this.readTimeOut = config.getProxyReadTimeout();
         this.connectTimeOut = config.getProxyConnectTimeout();
+        this.retries = config.getProxyRetries();
         this.contentType = config.getProxyContentType();
+
     }
 
     public void sendRequest(String url, HttpServletRequest req, HttpServletResponse resp) {
+        int triesCount = retries < 0 ? 0 : retries;
+        Exception exception = null;
+        do {
+            try {
+                exception = null;
+                doSendRequest(url, req, resp);
+            } catch (Exception ex) {
+                exception = ex;
+            }
+        } while (exception != null && triesCount-- > 0);
+
+        if (exception != null) {
+            LOG.error(exception.toString(), exception);
+        }
+    }
+
+
+    public void doSendRequest(String url, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         HttpURLConnection conn = null;
-
         try {
             conn = getConnection(url);
 
@@ -78,15 +98,13 @@ public class GatewayHttpProxy {
              */
             copyStreamToResponse(conn, resp);
 
-
-        } catch (Exception ex) {
-            LOG.warn(ex.toString(), ex);
         } finally {
             if (conn != null) {
                 conn.disconnect();
             }
         }
     }
+
 
     private void copyRequestStreamToConnection(HttpServletRequest req, HttpURLConnection conn) throws IOException {
         OutputStream outStream = null;

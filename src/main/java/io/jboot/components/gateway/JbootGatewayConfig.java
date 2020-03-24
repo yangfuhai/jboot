@@ -44,7 +44,9 @@ public class JbootGatewayConfig implements Serializable {
     // 设置 http 代理的参数
     private int proxyReadTimeout = 10000; //10s
     private int proxyConnectTimeout = 5000; //5s
+    private int proxyRetries = 2; //2 times
     private String proxyContentType = DEFAULT_PROXY_CONTENT_TYPE;
+
 
     private String[] pathEquals;
     private String[] pathContains;
@@ -123,6 +125,14 @@ public class JbootGatewayConfig implements Serializable {
 
     public void setProxyConnectTimeout(int proxyConnectTimeout) {
         this.proxyConnectTimeout = proxyConnectTimeout;
+    }
+
+    public int getProxyRetries() {
+        return proxyRetries;
+    }
+
+    public void setProxyRetries(int proxyRetries) {
+        this.proxyRetries = proxyRetries;
     }
 
     public String getProxyContentType() {
