@@ -16,6 +16,8 @@
 package io.jboot.app.config;
 
 
+import io.jboot.utils.StrUtil;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.*;
@@ -42,6 +44,33 @@ class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static List<ConfigPart> parseParts(String string){
+        if (StrUtil.isBlank(string)){
+            return null;
+        }
+        List<ConfigPart> configParts = new LinkedList<>();
+        char[] chars = string.toCharArray();
+        ConfigPart part = null;
+        int index = 0;
+        for (char c : chars){
+            if (c == '{' && chars[index-1] == '$' &&  part == null){
+                part = new ConfigPart();
+                part.setStart(index);
+            }else if ( c == '}' && part != null){
+                part.setEnd(index);
+                configParts.add(part);
+                part = null;
+            }else if (part != null){
+                part.append(c);
+                if (c ==':' && part.getKeyValueIndexOf() == 0){
+                    part.setKeyValueIndexOf(index - part.getStart());
+                }
+            }
+            index ++;
+        }
+        return configParts;
     }
 
 

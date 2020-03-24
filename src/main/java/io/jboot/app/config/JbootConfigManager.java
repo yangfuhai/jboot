@@ -17,6 +17,7 @@ package io.jboot.app.config;
 
 import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.utils.StrUtil;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -250,8 +251,23 @@ public class JbootConfigManager {
 
 
     public String getConfigValue(Properties properties, String key) {
+        if (StrUtil.isBlank(key)){
+            return "";
+        }
         String originalValue = getOriginalConfigValue(properties, key);
-        return decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
+        String stringValue =  decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
+
+        List<ConfigPart> configParts = Utils.parseParts(stringValue);
+        if (configParts == null || configParts.isEmpty()){
+            return stringValue;
+        }
+
+        for (ConfigPart cp : configParts){
+            String value = getConfigValue(properties,cp.getKey());
+            value = StrUtil.isNotBlank(value) ? value : cp.getDefaultValue();
+            stringValue = stringValue.replace(cp.getPartString(),value);
+        }
+        return stringValue;
     }
 
 
