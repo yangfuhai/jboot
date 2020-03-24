@@ -54,6 +54,7 @@ public class GatewayHttpProxy {
     public void sendRequest(String url, HttpServletRequest req, HttpServletResponse resp) {
         int triesCount = retries < 0 ? 0 : retries;
         Exception exception = null;
+
         do {
             try {
                 exception = null;
