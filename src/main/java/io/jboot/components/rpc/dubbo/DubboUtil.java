@@ -54,6 +54,11 @@ class DubboUtil {
         if (StrUtil.isBlank(applicationConfig.getName())) {
             applicationConfig.setName("jboot");
         }
+        //默认关闭 qos
+        if (applicationConfig.getQosEnable() == null){
+            applicationConfig.setQosEnable(false);
+        }
+
         dubboBootstrap.application(applicationConfig);
 
 

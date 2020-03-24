@@ -17,6 +17,7 @@ package io.jboot.test.rpc.dubbo;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.test.rpc.commons.BlogService;
 
 /**
@@ -25,7 +26,7 @@ import io.jboot.test.rpc.commons.BlogService;
  */
 public class DubboInterceptor implements Interceptor {
 
-//    @RPCInject(check = false)
+    @RPCInject(check = false)
     private BlogService blogService;
 
     @Override
