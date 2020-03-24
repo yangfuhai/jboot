@@ -25,8 +25,9 @@ import org.apache.dubbo.config.ServiceConfig;
 public class JbootDubborpc extends JbootrpcBase {
 
     @Override
-    public void onInit() {
+    public void onStart() {
         DubboUtil.initDubbo();
+        setStarted(true);
     }
 
     @Override

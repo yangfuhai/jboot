@@ -69,13 +69,11 @@ public class JbootrpcManager {
         }
 
         Jbootrpc jbootrpc = getJbootrpc();
-        jbootrpc.onInit();
+        jbootrpc.onStart();
 
         if (defaultConfig.isAutoExportEnable()) {
             exportRPCBean(jbootrpc);
         }
-
-        jbootrpc.onInited();
     }
 
     public void stop(){

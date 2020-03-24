@@ -25,18 +25,21 @@ public abstract class JbootrpcBase implements Jbootrpc {
 
     protected static final Map<String, Object> objectCache = new ConcurrentHashMap<>();
     protected static JbootrpcConfig rpcConfig = Jboot.config(JbootrpcConfig.class);
+    private boolean started = false;
 
 
     @Override
     public <T> T serviceObtain(Class<T> interfaceClass, JbootrpcReferenceConfig config) {
-        String key = buildCacheKey(interfaceClass,config);
+
+        String key = buildCacheKey(interfaceClass, config);
         T object = (T) objectCache.get(key);
         if (object == null) {
-            synchronized (this){
+            synchronized (this) {
                 if (objectCache.get(key) == null) {
-                    object = onServiceCreate(interfaceClass,config);
-                    if (object != null){
-                        objectCache.put(key,object);
+                    startIfNecessary();
+                    object = onServiceCreate(interfaceClass, config);
+                    if (object != null) {
+                        objectCache.put(key, object);
                     }
                 }
             }
@@ -44,29 +47,41 @@ public abstract class JbootrpcBase implements Jbootrpc {
         return object;
     }
 
-    public abstract  <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config);
-
-    @Override
-    public void onInit() {
-
+    protected void startIfNecessary() {
+        if (!started) {
+            synchronized (this) {
+                if (!started) {
+                    onStart();
+                }
+            }
+        }
     }
 
-    @Override
-    public void onInited() {
+    public abstract <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config);
 
+    @Override
+    public void onStart() {
+        setStarted(true);
     }
+
 
     @Override
     public void onStop() {
 
     }
 
-    protected String buildCacheKey(Class interfaceClass, JbootrpcReferenceConfig config){
+    protected String buildCacheKey(Class interfaceClass, JbootrpcReferenceConfig config) {
         StringBuilder sb = new StringBuilder(interfaceClass.getName());
         return sb.append(":").append(config.getGroup())
                 .append(":").append(config.getVersion())
                 .toString();
     }
 
+    public boolean isStarted() {
+        return started;
+    }
 
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
 }

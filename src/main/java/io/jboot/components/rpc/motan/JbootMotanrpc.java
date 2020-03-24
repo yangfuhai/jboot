@@ -28,8 +28,9 @@ import io.jboot.utils.StrUtil;
 public class JbootMotanrpc extends JbootrpcBase {
 
     @Override
-    public void onInit() {
+    public void onStart() {
         MotanUtil.initMotan();
+        setStarted(true);
     }
 
     @Override
