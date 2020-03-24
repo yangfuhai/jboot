@@ -16,6 +16,7 @@
 package io.jboot.components.gateway;
 
 import com.alibaba.csp.sentinel.util.StringUtil;
+import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +27,17 @@ import javax.servlet.http.HttpServletRequest;
 public class GatewayUtil {
 
     private static final String PATH_SPLIT = "/";
+
+    public static String buildProxyUrl(JbootGatewayConfig config,HttpServletRequest request){
+        StringBuilder url = new StringBuilder(config.getUri());
+        if (StrUtil.isNotBlank(request.getRequestURI())) {
+            url.append(request.getRequestURI());
+        }
+        if (StrUtil.isNotBlank(request.getQueryString())) {
+            url.append("?").append(request.getQueryString());
+        }
+        return url.toString();
+    }
 
 
     public static String buildResource(HttpServletRequest request) {

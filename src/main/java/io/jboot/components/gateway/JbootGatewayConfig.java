@@ -15,6 +15,7 @@
  */
 package io.jboot.components.gateway;
 
+import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +60,9 @@ public class JbootGatewayConfig implements Serializable {
 
     private Map<String, String> queryEquals;
     private String[] queryContains;
+
+    //拦截器配置，一般可以用于对请求进行 鉴权 等处理
+    private String[] interceptors;
 
 //    暂时不支持 cookie
 //    private Map<String, String> cookieEquals;
@@ -208,6 +212,38 @@ public class JbootGatewayConfig implements Serializable {
     public void setQueryContains(String[] queryContains) {
         this.queryContains = queryContains;
     }
+
+    public String[] getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(String[] interceptors) {
+        this.interceptors = interceptors;
+    }
+
+
+    private GatewayInterceptor[] inters;
+    public GatewayInterceptor[] getInters() {
+        if (interceptors == null || interceptors.length == 0) {
+            return null;
+        }
+        if (inters == null) {
+            synchronized (this) {
+                if (inters != null) {
+                    inters = new GatewayInterceptor[interceptors.length];
+                    for (int i = 0; i < interceptors.length; i++) {
+                        GatewayInterceptor interceptor = ClassUtil.newInstance(interceptors[i]);
+                        if (interceptor == null) {
+                            throw new NullPointerException("can not new instance by class:" + interceptors[i]);
+                        }
+                        inters[i] = interceptor;
+                    }
+                }
+            }
+        }
+        return inters;
+    }
+
 
     public boolean isConfigOk() {
         return StrUtil.isNotBlank(uri);

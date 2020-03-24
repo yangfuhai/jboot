@@ -15,26 +15,10 @@
  */
 package io.jboot.components.gateway;
 
-import com.jfinal.handler.Handler;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
- * @author michael yang (fuhai999@gmail.com)
- * @Date: 2020/3/22
+ * GatewayInterceptor.
  */
-public class JbootGatewayHandler extends Handler {
-
-
-    @Override
-    public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        JbootGatewayConfig config = JbootGatewayManager.me().matchingConfig(request);
-        if (config != null) {
-            new GatewayInvocation(config,request,response).invoke();
-            isHandled[0] = true;
-        } else {
-            next.handle(target, request, response, isHandled);
-        }
-    }
+public interface GatewayInterceptor {
+	void intercept(GatewayInvocation inv);
 }
+
