@@ -2,13 +2,11 @@ package io.jboot.test.rpc.dubbonacos;
 
 
 import io.jboot.app.JbootApplication;
+import io.jboot.app.JbootRpcApplication;
 
 public class DubboServer1NacosDemo {
 
     public static void main(String[] args) {
-
-        //jboot端口号配置
-        JbootApplication.setBootArg("undertow.port", "9997");
 
         // 开启 @RPCBean 自动暴露功能，默认情况下是开启的，无需配置，
         // 但是此测试代码的 jboot.properties 文件关闭了，这里需要开启下
@@ -30,7 +28,7 @@ public class DubboServer1NacosDemo {
 
 
 
-        JbootApplication.run(args);
+        JbootRpcApplication.run(args);
 
 
         System.out.println("DubboServer1NacosDemo started...");

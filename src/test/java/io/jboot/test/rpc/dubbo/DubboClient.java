@@ -34,6 +34,7 @@ public class DubboClient extends JbootController {
 
         //RPC配置
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
+        JbootApplication.setBootArg("jboot.rpc.autoExportEnable", false);
 
         //设置直连模式，方便调试，默认为注册中心
         JbootApplication.setBootArg("jboot.rpc.urls", "io.jboot.test.rpc.commons.BlogService:127.0.0.1:28080");

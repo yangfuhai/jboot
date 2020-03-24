@@ -2,21 +2,16 @@ package io.jboot.test.rpc.dubbozookeeper;
 
 
 import io.jboot.app.JbootApplication;
+import io.jboot.app.JbootRpcApplication;
 
 public class DubboServer1ZookeeperDemo {
 
     public static void main(String[] args) {
 
-        //jboot端口号配置
-        JbootApplication.setBootArg("undertow.port", "9997");
-
         // 开启 @RPCBean 自动暴露功能，默认情况下是开启的，无需配置，
         // 但是此测试代码的 jboot.properties 文件关闭了，这里需要开启下
         JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
-
-
-
 
 
         // dubbo 的注册中心的协议，支持的类型有 dubbo, multicast, zookeeper, redis, consul(2.7.1), sofa(2.7.2), etcd(2.7.2), nacos(2.7.2)
@@ -32,7 +27,7 @@ public class DubboServer1ZookeeperDemo {
 
 
 
-        JbootApplication.run(args);
+        JbootRpcApplication.run(args);
 
 
         System.out.println("DubboServer1ZookeeperDemo started...");
