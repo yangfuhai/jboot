@@ -1,6 +1,7 @@
 package io.jboot.test.rpc.dubbo;
 
 
+import com.jfinal.aop.Before;
 import io.jboot.app.JbootApplication;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.test.rpc.commons.BlogService;
@@ -30,6 +31,7 @@ public class DubboClient extends JbootController {
     @RPCInject
     private BlogService blogService;
 
+    @Before(DubboInterceptor.class)
     public void index() {
 
         System.out.println("blogService:" + blogService);

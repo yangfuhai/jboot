@@ -2,12 +2,12 @@ package io.jboot.test.rpc.dubbo;
 
 
 import io.jboot.app.JbootApplication;
+import io.jboot.app.JbootRpcApplication;
 
 public class DubboServer {
 
     public static void main(String[] args) throws InterruptedException {
 
-        JbootApplication.setBootArg("undertow.port", "9998");
 
         JbootApplication.setBootArg("jboot.rpc.type", "dubbo");
 
@@ -20,8 +20,7 @@ public class DubboServer {
         JbootApplication.setBootArg("jboot.rpc.dubbo.protocol.port", "28080");
 
 
-
-        JbootApplication.run(args);
+        JbootRpcApplication.run(args);
 
         System.out.println("DubboServer started...");
 
