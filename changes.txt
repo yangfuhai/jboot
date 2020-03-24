@@ -1,3 +1,16 @@
+jboot v3.1.1:
+新增：Gateway 网关自定义拦截器的支持，方便通过网关进行鉴权等操作
+新增：Gateway 网关新增错误重试次数的配置，方便网关重试配置
+新增：jboot.properties 配置里的 value 值添加 ${para} 参数的支持
+新增：undertow 端口配置，添加 -1 的支持，通过 -1 配置可用的随机端口
+新增：JbootRpcApplication，方便用于只启动 RPC Service 服务，用于给消费者提供服务
+修复：修复 @RPCInject 在拦截器使用的时候出错的问题
+修复：RPC 工具类 Utils.appendAnnotation 无法正确给 int 、boolean 参数赋值的问题
+优化：当不对 Dubbo 的 qos 配置的时候，设置为默认关闭，方便单机情况下进行开发调试
+文档：更新 Gateway 网关的相关文档
+
+
+
 jboot v3.1.0:
 新增：新增网关的支持，路由规则支持 host、path、query等 三种模式，同时支持基于 Sentinel 的限流配置
 新增：新增对 Dubbo 多协议、多注册中心等的支持
