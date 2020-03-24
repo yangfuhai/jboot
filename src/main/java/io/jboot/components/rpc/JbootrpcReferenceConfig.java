@@ -29,29 +29,29 @@ public class JbootrpcReferenceConfig implements Serializable {
     /**
      * Service version, default value is empty string
      */
-    String version;
+    private String version;
 
     /**
      * Service group, default value is empty string
      */
-    String group;
+    private String group;
 
     /**
      * Service target URL for direct invocation, if this is specified, then registry center takes no effect.
      */
-    String url;
+    private String url;
 
 
     /**
      * Whether to enable generic invocation, default value is false
      */
-    boolean generic;
+    private boolean generic = false;
 
 
     /**
      * Check if service provider is available during boot up, default value is true
      */
-    boolean check;
+    private boolean check = true;
 
 
     /**
@@ -59,7 +59,7 @@ public class JbootrpcReferenceConfig implements Serializable {
      * <p>
      * see Constants#DEFAULT_RETRIES
      */
-    int retries;
+    private int retries = 2;
 
 
     /**
@@ -67,67 +67,66 @@ public class JbootrpcReferenceConfig implements Serializable {
      * <p>
      * see Constants#DEFAULT_LOADBALANCE
      */
-    String loadbalance;
+    private String loadbalance = "random";
 
     /**
      * Whether to enable async invocation, default value is false
      */
-    boolean async;
+    private boolean async = false;
 
     /**
      * Maximum active requests allowed, default value is 0
      */
-    int actives;
+    private int actives = 0;
 
 
     /**
      * Timeout value for service invocation, default value is 0
      */
-    int timeout;
+    private int timeout = 0;
 
     /**
      * Application associated name
      */
-    String application;
+    private String application;
 
     /**
      * Module associated name
      */
-    String module;
+    private String module;
 
 
     /**
      * Consumer associated name
      */
-    String consumer;
+    private String consumer;
 
     /**
      * Monitor associated name
      */
-    String monitor;
+    private String monitor;
 
     /**
      * Registry associated name
      */
-    String registry;
+    private String registry;
 
     /**
-     *
      * @return the default value is ""
      */
-    String protocol;
+    private String protocol = "";
 
     /**
      * Service tag name
      */
-    String tag;
+    private String tag;
 
     /**
      * The id
      *
      * @return default value is empty
      */
-    String id;
+    private String id;
 
 
     public JbootrpcReferenceConfig() {

@@ -29,103 +29,102 @@ public class JbootrpcServiceConfig implements Serializable {
     /**
      * Service version, default value is empty string
      */
-    String version;
+    private String version;
 
     /**
      * Service group, default value is empty string
      */
-    String group;
+    private String group;
 
     /**
      * Service path, default value is empty string
      */
-    String path;
+    private String path;
 
     /**
      * Whether to export service, default value is true
      */
-    boolean export;
+    private boolean export = true;
 
     /**
      * Service token, default value is false
      */
-    String token;
+    private String token;
 
     /**
      * Whether the service is deprecated, default value is false
      */
-    boolean deprecated;
+    private boolean deprecated = false;
 
 
     /**
      * Whether to register the service to register center, default value is true
      */
-    boolean register;
+    private boolean register = true;
 
     /**
      * Service weight value, default value is 0
      */
-    int weight;
+    private int weight = 0;
 
     /**
      * Service doc, default value is ""
      */
-    String document;
+    private String document = "";
 
 
     /**
      * Service invocation retry times
      */
-    int retries;
+    private int retries = 2;
 
     /**
      * Load balance strategy, legal values include: random, roundrobin, leastactive
      */
-    String loadbalance;
+    private String loadbalance = "random";
 
 
     /**
      * Application spring bean name
      */
-    String application;
+    private String application;
 
     /**
      * Module spring bean name
      */
-    String module;
+    private String module;
 
     /**
      * Provider spring bean name
      */
-    String provider;
+    private String provider;
 
     /**
      * Protocol spring bean names
      */
-    String protocol;
+    private String protocol;
 
     /**
      * Monitor spring bean name
      */
-    String monitor;
+    private String monitor;
 
     /**
      * Registry spring bean name
      */
-    String registry;
+    private String registry;
 
     /**
      * Service tag name
      */
-    String tag;
-
+    private String tag;
 
 
     public JbootrpcServiceConfig() {
     }
 
     public JbootrpcServiceConfig(RPCBean bean) {
-        Utils.appendAnnotation(RPCBean.class,bean,this);
+        Utils.appendAnnotation(RPCBean.class, bean, this);
     }
 
     public String getVersion() {
