@@ -26,7 +26,7 @@ import io.jboot.test.rpc.commons.BlogService;
  */
 public class DubboInterceptor implements Interceptor {
 
-    @RPCInject
+    @RPCInject(check = false)
     private BlogService blogService;
 
     @Override

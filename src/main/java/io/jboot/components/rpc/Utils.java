@@ -36,10 +36,11 @@ public class Utils {
 
     /**
      * 根据注解来设置对象内容，参考 dubbo 下的 AbstractConfig
-     * @see org.apache.dubbo.config.AbstractConfig#appendAnnotation
+     *
      * @param annotationClass
      * @param annotation
      * @param appendTo
+     * @see org.apache.dubbo.config.AbstractConfig#appendAnnotation
      */
     public static void appendAnnotation(Class<?> annotationClass, Object annotation, Object appendTo) {
         Method[] methods = annotationClass.getMethods();
@@ -90,7 +91,8 @@ public class Utils {
         Field[] fields = copyFrom.getClass().getDeclaredFields();
         for (Field field : fields) {
             try {
-                Method method = copyTo.getClass().getDeclaredMethod("set" + StrUtil.firstCharToUpperCase(field.getName()), field.getType());
+                String setterName = "set" + StrUtil.firstCharToUpperCase(field.getName());
+                Method method = copyTo.getClass().getMethod(setterName, getBoxedClass(field.getType()));
                 method.invoke(copyTo, field.get(copyFrom));
             } catch (Exception e) {
                 // ignore
@@ -101,10 +103,11 @@ public class Utils {
 
     /**
      * 设置子节点配置，比如 ProviderConfig 下的 MethodsConfig ，或者 MethodConfig 下的 ArgumentConfig 等
-     * @param appendTo 要设置的对象
+     *
+     * @param appendTo   要设置的对象
      * @param dataSource 设置子节点的数据源
-     * @param prefix 要设置对象的配置前缀（jboot.properties 下的配置）
-     * @param arrName 要设置对象的属性名
+     * @param prefix     要设置对象的配置前缀（jboot.properties 下的配置）
+     * @param arrName    要设置对象的属性名
      * @param <T>
      * @param <F>
      */
