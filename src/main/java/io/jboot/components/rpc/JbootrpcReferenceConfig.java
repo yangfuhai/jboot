@@ -112,7 +112,7 @@ public class JbootrpcReferenceConfig implements Serializable {
     private String registry;
 
     /**
-     * @return the default value is ""
+     * the default value is ""
      */
     private String protocol = "";
 
@@ -124,7 +124,7 @@ public class JbootrpcReferenceConfig implements Serializable {
     /**
      * The id
      *
-     * @return default value is empty
+     * default value is empty
      */
     private String id;
 
