@@ -20,7 +20,12 @@ import io.jboot.app.config.JbootConfigManager;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -320,14 +325,15 @@ public class ClassScanner {
         Set<String> jarPaths = new HashSet<>();
         Set<String> classPaths = new HashSet<>();
 
-        findClassPathsAndJars(jarPaths, classPaths);
+        findClassPathsAndJars(jarPaths, classPaths, ClassScanner.class.getClassLoader());
 
         String tomcatClassPath = null;
 
         for (String classPath : classPaths) {
             //过滤tomcat自身的lib 以及 bin 下的jar
             File tomcatApiJarFile = new File(classPath, "tomcat-api.jar");
-            if (tomcatApiJarFile.exists()) {
+            File tomcatJuliJarFile = new File(classPath, "tomcat-juli.jar");
+            if (tomcatApiJarFile.exists() || tomcatJuliJarFile.exists()) {
                 tomcatClassPath = tomcatApiJarFile
                         .getParentFile()
                         .getParentFile().getAbsolutePath();
@@ -413,24 +419,52 @@ public class ClassScanner {
     }
 
 
-    private static void findClassPathsAndJars(Set<String> jarPaths, Set<String> classPaths) {
+    private static void findClassPathsAndJars(Set<String> jarPaths, Set<String> classPaths, ClassLoader classLoader) {
         try {
 
-            String[] classPathArray = System.getProperty("java.class.path").split(File.pathSeparator);
-            for (String path : classPathArray) {
-                if (path.startsWith("/") && path.indexOf(":") == 2) {
-                    path = path.substring(1);
+            URL[] urls = null;
+            if (classLoader instanceof URLClassLoader) {
+                URLClassLoader ucl = (URLClassLoader) classLoader;
+                urls = ucl.getURLs();
+            } else {
+                Field ucpf = classLoader.getClass().getDeclaredField("ucp");
+                if (ucpf != null) {
+                    ucpf.setAccessible(true);
+                    Object obj = ucpf.get(classLoader);
+                    Method method = obj.getClass().getMethod("getURLs");
+                    if (method != null) {
+                        urls = (URL[]) method.invoke(obj);
+                    }
                 }
-
-                if (!path.toLowerCase().endsWith(".jar")) {
-                    classPaths.add(new File(path).getCanonicalPath());
-                    continue;
-                }
-
-                jarPaths.add(path);
             }
+
+            if (urls != null) {
+                for (URL url : urls) {
+                    String path = url.getPath();
+                    path = URLDecoder.decode(path, "UTF-8");
+
+                    // path : /d:/xxx
+                    if (path.startsWith("/") && path.indexOf(":") == 2) {
+                        path = path.substring(1);
+                    }
+
+                    if (!path.toLowerCase().endsWith(".jar")) {
+                        classPaths.add(new File(path).getCanonicalPath());
+                        continue;
+                    }
+
+                    jarPaths.add(path);
+                }
+            }
+        } catch (NoSuchFieldException | NoSuchMethodException e) {
+            // ignore
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+
+        ClassLoader parent = classLoader.getParent();
+        if (parent != null) {
+            findClassPathsAndJars(jarPaths, classPaths, parent);
         }
     }
 
