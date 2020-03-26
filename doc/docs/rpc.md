@@ -20,6 +20,16 @@ Jboot 支持 dubbo 和 motan，假设我们需要使用 dubbo 作为底层的 RP
     <groupId>org.apache.dubbo</groupId>
     <artifactId>dubbo</artifactId>
     <version>${dubbo.version}</version>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>com.alibaba.spring</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </exclusion>
+    </exclusions>
 </dependency>
 
 <dependency>
