@@ -806,9 +806,6 @@
                             <additionalparam>-Xdoclint:none</additionalparam>
                             <detectJavaApiLink>true</detectJavaApiLink>
                             <source>8</source>
-                            <links>
-                                <link>http://jboot.io</link>
-                            </links>
                         </configuration>
                         <executions>
                             <execution>
