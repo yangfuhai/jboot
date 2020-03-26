@@ -21,9 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -31,7 +28,8 @@ import java.util.stream.Collectors;
 
 public class ClassScanner {
 
-    private static final Set<Class> applicationClassCache = new HashSet<>();
+    private static final Set<Class> appClassesCache = new HashSet<>();
+
     public static final Set<String> includeJars = new HashSet<>();
     public static final Set<String> excludeJars = new HashSet<>();
 
@@ -199,7 +197,17 @@ public class ClassScanner {
         excludeJars.add("servo-");
         excludeJars.add("compactmap-");
         excludeJars.add("dexx-");
+        excludeJars.add("spotbugs-");
         excludeJars.add("xmlpull-");
+        excludeJars.add("shardingsphere-");
+        excludeJars.add("sentinel-");
+        excludeJars.add("spring-");
+        excludeJars.add("simpleclient-");
+        excludeJars.add("breeze-");
+        excludeJars.add("config-");
+        excludeJars.add("encrypt-core-");
+        excludeJars.add("jakarta.");
+
     }
 
     static {
@@ -245,17 +253,17 @@ public class ClassScanner {
         initIfNecessary();
 
         if (!isInstantiable) {
-            return new ArrayList<>(applicationClassCache);
+            return new ArrayList<>(appClassesCache);
         }
 
-        return applicationClassCache.stream()
+        return appClassesCache.stream()
                 .filter(ClassScanner::isInstantiable)
                 .collect(Collectors.toList());
 
     }
 
-    public static void clearClassCache() {
-        applicationClassCache.clear();
+    public static void clearAppClassesCache() {
+        appClassesCache.clear();
     }
 
 
@@ -268,7 +276,7 @@ public class ClassScanner {
         initIfNecessary();
 
         List<Class> list = new ArrayList<>();
-        for (Class clazz : applicationClassCache) {
+        for (Class clazz : appClassesCache) {
             Annotation annotation = clazz.getAnnotation(annotationClass);
             if (annotation == null) {
                 continue;
@@ -285,14 +293,14 @@ public class ClassScanner {
     }
 
     private static void initIfNecessary() {
-        if (applicationClassCache.isEmpty()) {
+        if (appClassesCache.isEmpty()) {
             initAppClasses();
         }
     }
 
 
     private static <T> void findChildClasses(List<Class<T>> classes, Class<T> parent, boolean isInstantiable) {
-        for (Class clazz : applicationClassCache) {
+        for (Class clazz : appClassesCache) {
 
             if (!parent.isAssignableFrom(clazz)) {
                 continue;
@@ -312,7 +320,7 @@ public class ClassScanner {
         Set<String> jarPaths = new HashSet<>();
         Set<String> classPaths = new HashSet<>();
 
-        findClassPathsAndJars(jarPaths, classPaths, ClassScanner.class.getClassLoader());
+        findClassPathsAndJars(jarPaths, classPaths);
 
         String tomcatClassPath = null;
 
@@ -400,36 +408,26 @@ public class ClassScanner {
 
     private static void addClass(Class clazz) {
         if (clazz != null) {
-            applicationClassCache.add(clazz);
+            appClassesCache.add(clazz);
         }
     }
 
 
-    private static void findClassPathsAndJars(Set<String> jarPaths, Set<String> classPaths, ClassLoader classLoader) {
+    private static void findClassPathsAndJars(Set<String> jarPaths, Set<String> classPaths) {
         try {
-            if (classLoader instanceof URLClassLoader) {
-                URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
-                URL[] urLs = urlClassLoader.getURLs();
-                for (URL url : urLs) {
-                    String path = url.getPath();
-                    path = URLDecoder.decode(path, "UTF-8");
 
-                    // path : /d:/xxx
-                    if (path.startsWith("/") && path.indexOf(":") == 2) {
-                        path = path.substring(1);
-                    }
-
-                    if (!path.toLowerCase().endsWith(".jar")) {
-                        classPaths.add(new File(path).getCanonicalPath());
-                        continue;
-                    }
-
-                    jarPaths.add(path);
+            String[] classPathArray = System.getProperty("java.class.path").split(File.pathSeparator);
+            for (String path : classPathArray) {
+                if (path.startsWith("/") && path.indexOf(":") == 2) {
+                    path = path.substring(1);
                 }
-            }
-            ClassLoader parent = classLoader.getParent();
-            if (parent != null) {
-                findClassPathsAndJars(jarPaths, classPaths, parent);
+
+                if (!path.toLowerCase().endsWith(".jar")) {
+                    classPaths.add(new File(path).getCanonicalPath());
+                    continue;
+                }
+
+                jarPaths.add(path);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -450,12 +448,6 @@ public class ClassScanner {
             if (jarName.startsWith(exclude)) {
                 return false;
             }
-        }
-
-        //from maven repository
-        if (path.contains("/.m2/repository")
-                || path.contains("\\.m2\\repository")) {
-            return false;
         }
 
         //from jre lib
