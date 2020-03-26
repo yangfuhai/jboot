@@ -806,7 +806,7 @@
                             <additionalparam>-Xdoclint:none</additionalparam>
                             <detectJavaApiLink>true</detectJavaApiLink>
                             <links>
-                                <link>https://jboot.io</link>
+                                <link>http://jboot.io</link>
                             </links>
                         </configuration>
                         <executions>
