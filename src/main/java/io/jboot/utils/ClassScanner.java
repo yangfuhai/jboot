@@ -20,8 +20,6 @@ import io.jboot.app.config.JbootConfigManager;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -325,7 +323,15 @@ public class ClassScanner {
         Set<String> jarPaths = new HashSet<>();
         Set<String> classPaths = new HashSet<>();
 
-        findClassPathsAndJars(jarPaths, classPaths, ClassScanner.class.getClassLoader());
+        // jdk8 及以下、
+        // tomcat 容器、
+        // jfinal-undertow、
+        // 以上三种加载模式通过 classloader 获取
+        findClassPathsAndJarsByClassloader(jarPaths, classPaths, ClassScanner.class.getClassLoader());
+
+        //jdk9+ 等其他方式通过 classpath 获取
+        findClassPathsAndJarsByClassPath(jarPaths, classPaths);
+
 
         String tomcatClassPath = null;
 
@@ -419,25 +425,13 @@ public class ClassScanner {
     }
 
 
-    private static void findClassPathsAndJars(Set<String> jarPaths, Set<String> classPaths, ClassLoader classLoader) {
+    private static void findClassPathsAndJarsByClassloader(Set<String> jarPaths, Set<String> classPaths, ClassLoader classLoader) {
         try {
-
             URL[] urls = null;
             if (classLoader instanceof URLClassLoader) {
                 URLClassLoader ucl = (URLClassLoader) classLoader;
                 urls = ucl.getURLs();
-            } else {
-                Field ucpf = classLoader.getClass().getDeclaredField("ucp");
-                if (ucpf != null) {
-                    ucpf.setAccessible(true);
-                    Object obj = ucpf.get(classLoader);
-                    Method method = obj.getClass().getMethod("getURLs");
-                    if (method != null) {
-                        urls = (URL[]) method.invoke(obj);
-                    }
-                }
             }
-
             if (urls != null) {
                 for (URL url : urls) {
                     String path = url.getPath();
@@ -452,21 +446,43 @@ public class ClassScanner {
                         classPaths.add(new File(path).getCanonicalPath());
                         continue;
                     }
-
                     jarPaths.add(path);
                 }
             }
-        } catch (NoSuchFieldException | NoSuchMethodException e) {
-            // ignore
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         ClassLoader parent = classLoader.getParent();
         if (parent != null) {
-            findClassPathsAndJars(jarPaths, classPaths, parent);
+            findClassPathsAndJarsByClassloader(jarPaths, classPaths, parent);
         }
     }
+
+    private static void findClassPathsAndJarsByClassPath(Set<String> jarPaths, Set<String> classPaths) {
+        String[] classPathArray = System.getProperty("java.class.path").split(File.pathSeparator);
+        for (String path : classPathArray) {
+            path = path.trim();
+
+            if (path.startsWith("./")) {
+                path = path.substring(2);
+            }
+
+            if (path.startsWith("/") && path.indexOf(":") == 2) {
+                path = path.substring(1);
+            }
+
+            if (!path.toLowerCase().endsWith(".jar") && !jarPaths.contains(path)) {
+                try {
+                    classPaths.add(new File(path).getCanonicalPath());
+                } catch (IOException e) {
+                }
+            } else {
+                jarPaths.add(path);
+            }
+        }
+    }
+
 
     private static boolean isIncludeJar(String path) {
 
