@@ -202,8 +202,11 @@ public class JbootCoreConfig extends JFinalConfig {
     @Override
     public void configEngine(Engine engine) {
 
-        if (inFatJar()) {
+        if (runInFatjar()){
             engine.setToClassPathSourceFactory();
+            engine.setBaseTemplatePath(null);
+        }else {
+            engine.setBaseTemplatePath(PathKit.getRootClassPath());
         }
 
         List<Class> directiveClasses = ClassScanner.scanClass();
@@ -233,8 +236,8 @@ public class JbootCoreConfig extends JFinalConfig {
     }
 
 
-    private boolean inFatJar(){
-        return JbootCoreConfig.class.getResource("") == null;
+    private boolean runInFatjar() {
+        return Thread.currentThread().getContextClassLoader().getResource("") == null;
     }
 
 
