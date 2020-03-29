@@ -20,7 +20,6 @@ import java.util.Properties;
 
 
 class Prop {
-
     protected Properties properties = null;
     private static final String DEFAULT_ENCODING = "UTF-8";
 
@@ -29,16 +28,17 @@ class Prop {
     }
 
     public Prop(String fileName, String encoding) {
+        properties = new Properties();
         InputStream inputStream = null;
         try {
             inputStream = Utils.getClassLoader().getResourceAsStream(fileName);
-            if (inputStream == null) {
-                throw new IllegalArgumentException("properties file not found in classpath,  fileName : " + fileName);
+            if (inputStream != null) {
+                properties.load(new InputStreamReader(inputStream, encoding));
+            } else {
+                System.err.println("warning: can not load properties file in classpath, file name :" + fileName);
             }
-            properties = new Properties();
-            properties.load(new InputStreamReader(inputStream, encoding));
-        } catch (IOException e) {
-            throw new RuntimeException("error loading properties file.", e);
+        } catch (Exception e) {
+            System.err.println("warning: can not load properties file in classpath, file name :" + fileName);
         } finally {
             if (inputStream != null) {
                 try {

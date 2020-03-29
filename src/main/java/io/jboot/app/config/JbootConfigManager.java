@@ -19,7 +19,6 @@ import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.utils.StrUtil;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -65,20 +64,13 @@ public class JbootConfigManager {
 
     private void init() {
 
-        File jbootPropertiesFile = new File(Utils.getRootClassPath(), "jboot.properties");
-        if (!jbootPropertiesFile.exists()) {
-            mainProperties = new Properties();
-        } else {
-            mainProperties = new Prop("jboot.properties").getProperties();
-        }
+        mainProperties = new Prop("jboot.properties").getProperties();
 
         String mode = getConfigValue("jboot.app.mode");
 
         if (Utils.isNotBlank(mode)) {
             String p = String.format("jboot-%s.properties", mode);
-            if (new File(Utils.getRootClassPath(), p).exists()) {
-                mainProperties.putAll(new Prop(p).getProperties());
-            }
+            mainProperties.putAll(new Prop(p).getProperties());
         }
     }
 
@@ -167,21 +159,14 @@ public class JbootConfigManager {
 
     private void refreshMainProperties() {
 
-        Properties jbootProperties = new Prop("jboot.properties").getProperties();
-        if (jbootProperties == null) {
-            return;
-        }
+        Properties properties = new Prop("jboot.properties").getProperties();
+        mainProperties.putAll(properties);
 
-        mainProperties.putAll(jbootProperties);
-
-        String mode = getConfigValue(jbootProperties, "jboot.app.mode");
+        String mode = getConfigValue(properties, "jboot.app.mode");
         if (Utils.isNotBlank(mode)) {
             String p = String.format("jboot-%s.properties", mode);
-            if (new File(Utils.getRootClassPath(), p).exists()) {
-                mainProperties.putAll(new Prop(p).getProperties());
-            }
+            mainProperties.putAll(new Prop(p).getProperties());
         }
-
 
     }
 
@@ -195,7 +180,7 @@ public class JbootConfigManager {
      * @param <T>
      * @return
      */
-    public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
+    public <T> T createConfigObject(Class<T> clazz, String prefix, String file){
         Object configObject = Utils.newInstance(clazz);
         List<Method> setMethods = Utils.getClassSetMethods(clazz);
         if (setMethods != null) {
@@ -204,26 +189,23 @@ public class JbootConfigManager {
                 String key = buildKey(prefix, method);
                 String value = getConfigValue(key);
 
-                if (Utils.isNotBlank(file) && getClass().getClassLoader().getResource(file) != null) {
-                    try {
-                        Prop prop = new Prop(file);
-                        String filePropValue = getConfigValue(prop.getProperties(), key);
-                        if (Utils.isNotBlank(filePropValue)) {
-                            value = filePropValue;
-                        }
-                    } catch (Throwable ex) {
+                if (Utils.isNotBlank(file)) {
+                    Prop prop = new Prop(file);
+                    String filePropValue = getConfigValue(prop.getProperties(), key);
+                    if (Utils.isNotBlank(filePropValue)) {
+                        value = filePropValue;
                     }
                 }
 
-                try {
-                    if (Utils.isNotBlank(value)) {
-                        Object val = convert(method.getParameterTypes()[0], value, method.getGenericParameterTypes()[0]);
-                        if (val != null) {
+                if (Utils.isNotBlank(value)) {
+                    Object val = convert(method.getParameterTypes()[0], value, method.getGenericParameterTypes()[0]);
+                    if (val != null) {
+                        try {
                             method.invoke(configObject, val);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                } catch (Throwable ex) {
-                    ex.printStackTrace();
                 }
             }
         }
@@ -251,21 +233,21 @@ public class JbootConfigManager {
 
 
     public String getConfigValue(Properties properties, String key) {
-        if (StrUtil.isBlank(key)){
+        if (StrUtil.isBlank(key)) {
             return "";
         }
         String originalValue = getOriginalConfigValue(properties, key);
-        String stringValue =  decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
+        String stringValue = decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
 
         List<ConfigPart> configParts = Utils.parseParts(stringValue);
-        if (configParts == null || configParts.isEmpty()){
+        if (configParts == null || configParts.isEmpty()) {
             return stringValue;
         }
 
-        for (ConfigPart cp : configParts){
-            String value = getConfigValue(properties,cp.getKey());
+        for (ConfigPart cp : configParts) {
+            String value = getConfigValue(properties, cp.getKey());
             value = StrUtil.isNotBlank(value) ? value : cp.getDefaultValue();
-            stringValue = stringValue.replace(cp.getPartString(),value);
+            stringValue = stringValue.replace(cp.getPartString(), value);
         }
         return stringValue;
     }

@@ -117,7 +117,7 @@ class Utils {
                         path = path.substring(0, path.length() - 1);
                     }
                     /**
-                     * Fix path带有文件名
+                     * Fix path 带有文件名
                      */
                     if (path.endsWith(".jar")) {
                         path = path.substring(0, path.lastIndexOf("/") + 1);
