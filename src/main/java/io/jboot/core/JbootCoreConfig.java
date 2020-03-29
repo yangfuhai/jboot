@@ -202,11 +202,10 @@ public class JbootCoreConfig extends JFinalConfig {
     @Override
     public void configEngine(Engine engine) {
 
-        if (runInFatjar()){
+        //通过 java -jar xxx.jar 在单独的jar里运行
+        if (runInFatjar()) {
             engine.setToClassPathSourceFactory();
             engine.setBaseTemplatePath(null);
-        }else {
-            engine.setBaseTemplatePath(PathKit.getRootClassPath());
         }
 
         List<Class> directiveClasses = ClassScanner.scanClass();
@@ -235,11 +234,9 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootAppListenerManager.me().onEngineConfig(engine);
     }
 
-
     private boolean runInFatjar() {
         return Thread.currentThread().getContextClassLoader().getResource("") == null;
     }
-
 
     @Override
     public void configPlugin(Plugins plugins) {
