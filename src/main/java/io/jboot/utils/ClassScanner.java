@@ -35,6 +35,7 @@ public class ClassScanner {
 
     public static final Set<String> includeJars = new HashSet<>();
     public static final Set<String> excludeJars = new HashSet<>();
+    public static final Set<String> excludeClasses = new HashSet<>();
 
     public static void addScanJarPrefix(String prefix) {
         includeJars.add(prefix.trim());
@@ -210,7 +211,67 @@ public class ClassScanner {
         excludeJars.add("config-");
         excludeJars.add("encrypt-core-");
         excludeJars.add("jakarta.");
+    }
 
+
+    public static void addUnscanClass(String prefix) {
+        excludeClasses.add(prefix.trim());
+    }
+
+    static {
+        addUnscanClass("com.jfinal.");
+        addUnscanClass("org.aopalliance.");
+        addUnscanClass("org.apache.");
+        addUnscanClass("org.nustaq.");
+        addUnscanClass("net.sf.");
+        addUnscanClass("org.slf4j.");
+        addUnscanClass("org.antlr.");
+        addUnscanClass("org.jboss.");
+        addUnscanClass("org.javassist.");
+        addUnscanClass("org.hamcrest.");
+        addUnscanClass("org.jsoup.");
+        addUnscanClass("org.objenesis.");
+        addUnscanClass("org.ow2.");
+        addUnscanClass("org.reactivest.");
+        addUnscanClass("org.yaml.");
+        addUnscanClass("org.checker");
+        addUnscanClass("org.codehaus");
+        addUnscanClass("ch.qos.");
+        addUnscanClass("com.alibaba.csp.");
+        addUnscanClass("com.alibaba.nacos.");
+        addUnscanClass("com.alibaba.druid.");
+        addUnscanClass("com.alibaba.fastjson.");
+        addUnscanClass("com.aliyun.open");
+        addUnscanClass("com.caucho");
+        addUnscanClass("com.codahale");
+        addUnscanClass("com.ctrip.framework.apollo");
+        addUnscanClass("com.ecwid.");
+        addUnscanClass("com.esotericsoftware.");
+        addUnscanClass("com.fasterxml.");
+        addUnscanClass("com.github.");
+        addUnscanClass("com.google.");
+        addUnscanClass("com.rabbitmq.");
+        addUnscanClass("com.squareup.");
+        addUnscanClass("com.typesafe.");
+        addUnscanClass("com.weibo.");
+        addUnscanClass("com.zaxxer.");
+        addUnscanClass("com.mysql.");
+        addUnscanClass("org.gjt.");
+        addUnscanClass("io.dropwizard");
+        addUnscanClass("io.jsonwebtoken");
+        addUnscanClass("io.lettuce");
+        addUnscanClass("reactor.adapter");
+        addUnscanClass("io.prometheus");
+        addUnscanClass("io.seata.");
+        addUnscanClass("io.swagger.");
+        addUnscanClass("io.undertow.");
+        addUnscanClass("it.sauronsoftware");
+        addUnscanClass("javax.");
+        addUnscanClass("java.");
+        addUnscanClass("junit.");
+        addUnscanClass("jline.");
+        addUnscanClass("redis.");
+        addUnscanClass("net.oschina.j2cache");
     }
 
     static {
@@ -419,9 +480,19 @@ public class ClassScanner {
     }
 
     private static void addClass(Class clazz) {
-        if (clazz != null) {
+        if (clazz != null && isNotExcludeClass(clazz.getName())) {
             appClassesCache.add(clazz);
         }
+    }
+
+    //用于在进行 fatjar 打包时，提高性能
+    private static boolean isNotExcludeClass(String clazzName) {
+        for (String Prefix : excludeClasses) {
+            if (clazzName.startsWith(Prefix)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

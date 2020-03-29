@@ -151,6 +151,7 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setJsonFactory(() -> new JbootJson());
         constants.setInjectDependency(true);
 
+
         JbootAppListenerManager.me().onConstantConfig(constants);
 
     }
@@ -201,6 +202,10 @@ public class JbootCoreConfig extends JFinalConfig {
     @Override
     public void configEngine(Engine engine) {
 
+        if (inFatJar()) {
+            engine.setToClassPathSourceFactory();
+        }
+
         List<Class> directiveClasses = ClassScanner.scanClass();
         for (Class clazz : directiveClasses) {
             JFinalDirective directive = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
@@ -225,6 +230,11 @@ public class JbootCoreConfig extends JFinalConfig {
         }
 
         JbootAppListenerManager.me().onEngineConfig(engine);
+    }
+
+
+    private boolean inFatJar(){
+        return JbootCoreConfig.class.getResource("") == null;
     }
 
 
