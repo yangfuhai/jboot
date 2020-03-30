@@ -25,8 +25,6 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.template.Engine;
-import com.jfinal.weixin.sdk.api.ApiConfig;
-import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.JbootAopInterceptor;
@@ -62,8 +60,6 @@ import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootFilterHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.render.JbootRenderFactory;
-import io.jboot.wechat.JbootAccessTokenCache;
-import io.jboot.wechat.JbootWechatConfig;
 
 import java.io.File;
 import java.sql.Driver;
@@ -135,13 +131,13 @@ public class JbootCoreConfig extends JFinalConfig {
 
         constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.isDevMode());
-        ApiConfigKit.setDevMode(Jboot.isDevMode());
-
-        JbootWechatConfig config = Jboot.config(JbootWechatConfig.class);
-        ApiConfig apiConfig = config.getApiConfig();
-        if (apiConfig != null) {
-            ApiConfigKit.putApiConfig(apiConfig);
-        }
+//        ApiConfigKit.setDevMode(Jboot.isDevMode());
+//
+//        JbootWechatConfig config = Jboot.config(JbootWechatConfig.class);
+//        ApiConfig apiConfig = config.getApiConfig();
+//        if (apiConfig != null) {
+//            ApiConfigKit.putApiConfig(apiConfig);
+//        }
 
         constants.setLogFactory(new Slf4jLogFactory());
         constants.setMaxPostSize(1024 * 1024 * 2000);
@@ -283,10 +279,6 @@ public class JbootCoreConfig extends JFinalConfig {
 
         JbootAppListenerManager.me().onStartBefore();
 
-        /**
-         * 配置微信accessToken的缓存
-         */
-        ApiConfigKit.setAccessTokenCache(new JbootAccessTokenCache());
         JsonManager.me().setDefaultDatePattern("yyyy-MM-dd HH:mm:ss");
 
         /**
