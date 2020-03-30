@@ -210,6 +210,8 @@ public class ClassScanner {
         excludeJars.add("breeze-");
         excludeJars.add("config-");
         excludeJars.add("encrypt-core-");
+        excludeJars.add("lombok-");
+        excludeJars.add("hutool-");
         excludeJars.add("jakarta.");
     }
 
@@ -271,7 +273,9 @@ public class ClassScanner {
         addUnscanClass("junit.");
         addUnscanClass("jline.");
         addUnscanClass("redis.");
+        addUnscanClass("lombok.");
         addUnscanClass("net.oschina.j2cache");
+        addUnscanClass("cn.hutool.");
     }
 
     static {
@@ -514,10 +518,11 @@ public class ClassScanner {
                     }
 
                     if (!path.toLowerCase().endsWith(".jar")) {
-                        classPaths.add(new File(path).getCanonicalPath());
+                        classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                         continue;
                     }
-                    jarPaths.add(path);
+
+                    jarPaths.add(path.replace('\\', '/'));
                 }
             }
         } catch (Exception ex) {
@@ -531,7 +536,14 @@ public class ClassScanner {
     }
 
     private static void findClassPathsAndJarsByClassPath(Set<String> jarPaths, Set<String> classPaths) {
-        String[] classPathArray = System.getProperty("java.class.path").split(File.pathSeparator);
+        String classPath = System.getProperty("java.class.path");
+        if (classPath == null || classPath.trim().length() == 0) {
+            return;
+        }
+        String[] classPathArray = classPath.split(File.pathSeparator);
+        if (classPathArray == null || classPathArray.length == 0) {
+            return;
+        }
         for (String path : classPathArray) {
             path = path.trim();
 
@@ -545,11 +557,11 @@ public class ClassScanner {
 
             if (!path.toLowerCase().endsWith(".jar") && !jarPaths.contains(path)) {
                 try {
-                    classPaths.add(new File(path).getCanonicalPath());
+                    classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                 } catch (IOException e) {
                 }
             } else {
-                jarPaths.add(path);
+                jarPaths.add(path.replace('\\', '/'));
             }
         }
     }
