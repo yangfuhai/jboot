@@ -83,32 +83,32 @@ public @interface RPCBean {
 
 
     /**
-     * Application spring bean name
+     * Application bean name
      */
     String application() default "";
 
     /**
-     * Module spring bean name
+     * Module bean name
      */
     String module() default "";
 
     /**
-     * Provider spring bean name
+     * Provider bean name
      */
     String provider() default "";
 
     /**
-     * Protocol spring bean names
+     * Protocol bean names
      */
     String[] protocol() default {};
 
     /**
-     * Monitor spring bean name
+     * Monitor bean name
      */
     String monitor() default "";
 
     /**
-     * Registry spring bean name
+     * Registry bean name
      */
     String[] registry() default {};
 

@@ -85,32 +85,32 @@ public class JbootrpcServiceConfig implements Serializable {
 
 
     /**
-     * Application spring bean name
+     * Application bean name
      */
     private String application;
 
     /**
-     * Module spring bean name
+     * Module bean name
      */
     private String module;
 
     /**
-     * Provider spring bean name
+     * Provider bean name
      */
     private String provider;
 
     /**
-     * Protocol spring bean names
+     * Protocol bean names
      */
     private String protocol;
 
     /**
-     * Monitor spring bean name
+     * Monitor bean name
      */
     private String monitor;
 
     /**
-     * Registry spring bean name
+     * Registry bean name
      */
     private String registry;
 
