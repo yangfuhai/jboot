@@ -30,24 +30,15 @@ public class MotanServer {
         // 但是此测试代码的 jboot.properties 文件关闭了，这里需要开启下
         JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
 
-//        JbootApplication.setBootArg("jboot.rpc.motan.registry.regProtocol", "local");
-//
-//        //motan 的通信协议配置
-//        JbootApplication.setBootArg("jboot.rpc.motan.protocol.name", "motan");
-//        JbootApplication.setBootArg("jboot.rpc.motan.protocol.port", "28080");
-//        JbootApplication.setBootArg("jboot.rpc.motan.service.export", "motan:28080");
+        // motan 与 dubbo 不一样，motan 需要配置 export，
+        // export 配置内容为 协议ID:端口号，默认的协议 id 为 default
         JbootApplication.setBootArg("jboot.rpc.motan.defaultExport", "default:28080");
-//        JbootApplication.setBootArg("jboot.rpc.motan.default.host", "127.0.0.1");
-
-
-
-
 
 
 
         JbootRpcApplication.run(args);
 
-        System.out.println("DubboServer started...");
+        System.out.println("MotanServer started...");
 
     }
 }
