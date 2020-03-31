@@ -16,6 +16,7 @@
 package io.jboot.components.rpc.motan;
 
 import com.weibo.api.motan.config.*;
+import com.weibo.api.motan.util.MotanFrameworkUtil;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
@@ -46,12 +47,16 @@ public class MotanUtil {
         Map<String, ProtocolConfig> protocolConfigs = configs(ProtocolConfig.class, "jboot.rpc.motan.protocol");
         if (protocolConfigs != null && !protocolConfigs.isEmpty()) {
             protocolConfigMap.putAll(protocolConfigs);
+        } else {
+            protocolConfigMap.put("default", MotanFrameworkUtil.getDefaultProtocolConfig());
         }
 
         //registry 配置
         Map<String, RegistryConfig> registryConfigs = configs(RegistryConfig.class, "jboot.rpc.motan.registry");
         if (registryConfigs != null && !registryConfigs.isEmpty()) {
             registryConfigMap.putAll(registryConfigs);
+        } else {
+            registryConfigMap.put("default", MotanFrameworkUtil.getDefaultRegistryConfig());
         }
 
         //methodConfig 配置
@@ -60,9 +65,9 @@ public class MotanUtil {
 
         //baseService 配置
         Map<String, BasicServiceInterfaceConfig> serviceConfigs = configs(BasicServiceInterfaceConfig.class, "jboot.rpc.motan.service");
-        Utils.setChildConfig(serviceConfigs,methodConfigs,"jboot.rpc.motan.service","method");
-        Utils.setChildConfig(serviceConfigs,protocolConfigs,"jboot.rpc.motan.service","protocol");
-        Utils.setChildConfig(serviceConfigs,registryConfigs,"jboot.rpc.motan.service","registry");
+        Utils.setChildConfig(serviceConfigs, methodConfigs, "jboot.rpc.motan.service", "method");
+        Utils.setChildConfig(serviceConfigs, protocolConfigs, "jboot.rpc.motan.service", "protocol");
+        Utils.setChildConfig(serviceConfigs, registryConfigs, "jboot.rpc.motan.service", "registry");
 
 
         if (serviceConfigs != null && !serviceConfigs.isEmpty()) {
@@ -71,9 +76,9 @@ public class MotanUtil {
 
         //baseReferer 配置
         Map<String, BasicRefererInterfaceConfig> refererConfigs = configs(BasicRefererInterfaceConfig.class, "jboot.rpc.motan.referer");
-        Utils.setChildConfig(refererConfigs,methodConfigs,"jboot.rpc.motan.referer","method");
-        Utils.setChildConfig(refererConfigs,protocolConfigs,"jboot.rpc.motan.referer","protocol");
-        Utils.setChildConfig(refererConfigs,registryConfigs,"jboot.rpc.motan.referer","registry");
+        Utils.setChildConfig(refererConfigs, methodConfigs, "jboot.rpc.motan.referer", "method");
+        Utils.setChildConfig(refererConfigs, protocolConfigs, "jboot.rpc.motan.referer", "protocol");
+        Utils.setChildConfig(refererConfigs, registryConfigs, "jboot.rpc.motan.referer", "registry");
 
         if (refererConfigs != null && !refererConfigs.isEmpty()) {
             baseRefererConfigMap.putAll(refererConfigs);
@@ -92,32 +97,35 @@ public class MotanUtil {
         if (StrUtil.isNotBlank(rc.getProtocol())) {
             List<ProtocolConfig> protocolConfigs = new ArrayList<>();
             Set<String> protocolNames = StrUtil.splitToSetByComma(rc.getRegistry());
-            for (String protocalName : protocolNames){
+            for (String protocalName : protocolNames) {
                 ProtocolConfig registryConfig = protocolConfigMap.get(protocalName);
-                if (registryConfig != null){
+                if (registryConfig != null) {
                     protocolConfigs.add(registryConfig);
                 }
             }
-            if (!protocolConfigs.isEmpty()){
+            if (!protocolConfigs.isEmpty()) {
                 refererConfig.setProtocols(protocolConfigs);
             }
+        } else {
+            refererConfig.setProtocols(toList(protocolConfigMap));
         }
-
 
 
         //referer registry
         if (StrUtil.isNotBlank(rc.getRegistry())) {
             List<RegistryConfig> registryConfigs = new ArrayList<>();
             Set<String> registryNames = StrUtil.splitToSetByComma(rc.getRegistry());
-            for (String registryName : registryNames){
+            for (String registryName : registryNames) {
                 RegistryConfig registryConfig = registryConfigMap.get(registryName);
-                if (registryConfig != null){
+                if (registryConfig != null) {
                     registryConfigs.add(registryConfig);
                 }
             }
-            if (!registryConfigs.isEmpty()){
+            if (!registryConfigs.isEmpty()) {
                 refererConfig.setRegistries(registryConfigs);
             }
+        } else {
+            refererConfig.setRegistries(toList(registryConfigMap));
         }
 
 
@@ -130,37 +138,39 @@ public class MotanUtil {
         Utils.copyFields(sc, serviceConfig);
 
 
-
         //service protocol
         if (StrUtil.isNotBlank(sc.getProtocol())) {
             List<ProtocolConfig> protocolConfigs = new ArrayList<>();
             Set<String> protocolNames = StrUtil.splitToSetByComma(sc.getRegistry());
-            for (String protocalName : protocolNames){
+            for (String protocalName : protocolNames) {
                 ProtocolConfig registryConfig = protocolConfigMap.get(protocalName);
-                if (registryConfig != null){
+                if (registryConfig != null) {
                     protocolConfigs.add(registryConfig);
                 }
             }
-            if (!protocolConfigs.isEmpty()){
+            if (!protocolConfigs.isEmpty()) {
                 serviceConfig.setProtocols(protocolConfigs);
             }
+        } else {
+            serviceConfig.setProtocols(toList(protocolConfigMap));
         }
-
 
 
         //service registry
         if (StrUtil.isNotBlank(sc.getRegistry())) {
             List<RegistryConfig> registryConfigs = new ArrayList<>();
             Set<String> registryNames = StrUtil.splitToSetByComma(sc.getRegistry());
-            for (String registryName : registryNames){
+            for (String registryName : registryNames) {
                 RegistryConfig registryConfig = registryConfigMap.get(registryName);
-                if (registryConfig != null){
+                if (registryConfig != null) {
                     registryConfigs.add(registryConfig);
                 }
             }
-            if (!registryConfigs.isEmpty()){
+            if (!registryConfigs.isEmpty()) {
                 serviceConfig.setRegistries(registryConfigs);
             }
+        } else {
+            serviceConfig.setRegistries(toList(registryConfigMap));
         }
 
 
@@ -168,16 +178,26 @@ public class MotanUtil {
     }
 
 
-    public static BasicRefererInterfaceConfig getBaseReferer(String name){
+    public static BasicRefererInterfaceConfig getBaseReferer(String name) {
         return baseRefererConfigMap.get(name);
     }
 
 
-    public static BasicServiceInterfaceConfig getBaseService(String name){
+    public static BasicServiceInterfaceConfig getBaseService(String name) {
         return baseServiceConfigMap.get(name);
     }
 
     private static <T> Map<String, T> configs(Class<T> clazz, String prefix) {
         return JbootConfigUtil.getConfigModels(clazz, prefix);
+    }
+
+    private static <T> List<T> toList(Map<String, T> map) {
+        List<T> list = new ArrayList<>(map.size());
+        for (Map.Entry<String, T> entry : map.entrySet()) {
+            AbstractConfig config = (AbstractConfig) entry.getValue();
+            config.setId(entry.getKey());
+            list.add((T) config);
+        }
+        return list;
     }
 }

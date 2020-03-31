@@ -19,6 +19,7 @@ import com.weibo.api.motan.common.MotanConstants;
 import com.weibo.api.motan.config.RefererConfig;
 import com.weibo.api.motan.config.ServiceConfig;
 import com.weibo.api.motan.util.MotanSwitcherUtil;
+import io.jboot.Jboot;
 import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
@@ -26,6 +27,8 @@ import io.jboot.utils.StrUtil;
 
 
 public class JbootMotanrpc extends JbootrpcBase {
+
+    private MotanrpcConfig defaultConfig = Jboot.config(MotanrpcConfig.class);
 
     @Override
     public void onStart() {
@@ -39,12 +42,12 @@ public class JbootMotanrpc extends JbootrpcBase {
         referer.setInterface(interfaceClass);
 
         String directUrl = rpcConfig.getUrl(interfaceClass.getName());
-        if (StrUtil.isNotBlank(directUrl)){
+        if (StrUtil.isNotBlank(directUrl)) {
             referer.setDirectUrl(directUrl);
         }
 
         String consumer = rpcConfig.getConsumer(interfaceClass.getName());
-        if (consumer != null){
+        if (consumer != null) {
             referer.setBasicReferer(MotanUtil.getBaseReferer(consumer));
         }
 
@@ -62,9 +65,12 @@ public class JbootMotanrpc extends JbootrpcBase {
             ServiceConfig<T> serviceConfig = MotanUtil.toServiceConfig(config);
             serviceConfig.setInterface(interfaceClass);
             serviceConfig.setRef((T) object);
+            serviceConfig.setShareChannel(true);
+            serviceConfig.setExport(defaultConfig.getDefaultExport());
+            serviceConfig.setHost(defaultConfig.getDefaultHost());
 
             String provider = rpcConfig.getProvider(interfaceClass.getName());
-            if (provider != null){
+            if (provider != null) {
                 serviceConfig.setBasicService(MotanUtil.getBaseService(provider));
             }
 
@@ -74,8 +80,6 @@ public class JbootMotanrpc extends JbootrpcBase {
 
         return true;
     }
-
-
 
 
 }
