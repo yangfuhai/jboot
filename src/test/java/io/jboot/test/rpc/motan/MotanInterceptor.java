@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.test.rpc.dubbo;
+package io.jboot.test.rpc.motan;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.test.rpc.commons.BlogService;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/24
  */
-public class DubboInterceptor implements Interceptor {
+public class MotanInterceptor implements Interceptor {
 
-//    @RPCInject(check = false)
+    @RPCInject(check = false)
     private BlogService blogService;
 
     @Override
