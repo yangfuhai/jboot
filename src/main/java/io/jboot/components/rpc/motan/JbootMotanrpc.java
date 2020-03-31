@@ -66,8 +66,8 @@ public class JbootMotanrpc extends JbootrpcBase {
             serviceConfig.setInterface(interfaceClass);
             serviceConfig.setRef((T) object);
             serviceConfig.setShareChannel(true);
-            serviceConfig.setExport(defaultConfig.getDefaultExport());
-            serviceConfig.setHost(defaultConfig.getDefaultHost());
+            serviceConfig.setExport(defaultConfig.getExport(interfaceClass.getName()));
+            serviceConfig.setHost(defaultConfig.getHost(interfaceClass.getName()));
 
             String provider = rpcConfig.getProvider(interfaceClass.getName());
             if (provider != null) {
