@@ -407,7 +407,7 @@ public class ClassScanner {
             if (tomcatApiJarFile.exists() || tomcatJuliJarFile.exists()) {
                 tomcatClassPath = tomcatApiJarFile
                         .getParentFile()
-                        .getParentFile().getAbsolutePath();
+                        .getParentFile().getAbsolutePath().replace('\\', '/');
                 continue;
             }
 
@@ -519,10 +519,9 @@ public class ClassScanner {
 
                     if (!path.toLowerCase().endsWith(".jar")) {
                         classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
-                        continue;
+                    } else {
+                        jarPaths.add(path.replace('\\', '/'));
                     }
-
-                    jarPaths.add(path.replace('\\', '/'));
                 }
             }
         } catch (Exception ex) {
@@ -584,8 +583,7 @@ public class ClassScanner {
         }
 
         //from jre lib
-        if (path.contains("/jre/lib")
-                || path.contains("\\jre\\lib")) {
+        if (path.contains("/jre/lib")) {
             return false;
         }
 
@@ -631,8 +629,11 @@ public class ClassScanner {
     private static String getJavaHome() {
         if (javaHome == null) {
             try {
-                javaHome = new File(System.getProperty("java.home"), "..").getCanonicalPath();
-            } catch (IOException e) {
+                String javaHomeString = System.getProperty("java.home");
+                if (javaHomeString != null && javaHomeString.trim().length() > 0) {
+                    javaHome = new File(javaHomeString, "..").getCanonicalPath().replace('\\', '/');
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
