@@ -30,7 +30,7 @@ public class JbootWebConfig {
 
     private String cookieEncryptKey = DEFAULT_COOKIE_ENCRYPT_KEY;
     private String webSocketEndpoint;
-    private Boolean camelCaseJsonStyleEnable = false;
+    private boolean camelCaseJsonStyleEnable = false;
 
     public String getCookieEncryptKey() {
         return cookieEncryptKey;
@@ -48,11 +48,11 @@ public class JbootWebConfig {
         this.webSocketEndpoint = webSocketEndpoint;
     }
 
-    public Boolean getCamelCaseJsonStyleEnable() {
+    public boolean getCamelCaseJsonStyleEnable() {
         return camelCaseJsonStyleEnable;
     }
 
-    public void setCamelCaseJsonStyleEnable(Boolean camelCaseJsonStyleEnable) {
+    public void setCamelCaseJsonStyleEnable(boolean camelCaseJsonStyleEnable) {
         this.camelCaseJsonStyleEnable = camelCaseJsonStyleEnable;
     }
 }
