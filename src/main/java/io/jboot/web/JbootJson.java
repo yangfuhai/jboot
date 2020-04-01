@@ -26,12 +26,20 @@ import java.util.Map;
 
 public class JbootJson extends JFinalJson {
 
+    private static JbootWebConfig config;
+
+    public static JbootWebConfig getConfig() {
+        if (config == null) {
+            config = Jboot.config(JbootWebConfig.class);
+        }
+        return config;
+    }
 
     @Override
     protected String mapToJson(Map map, int depth) {
         optimizeMapAttrs(map);
 
-        if(Jboot.config(JbootWebConfig.class).getCamelCaseJsonStyleEnable()){
+        if(getConfig().getCamelCaseJsonStyleEnable()){
             return toCamelCase(map, depth);
         }
         return map == null || map.isEmpty() ? "null" : super.mapToJson(map, depth);
