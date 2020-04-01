@@ -48,7 +48,7 @@ public class JbootWebConfig {
         this.webSocketEndpoint = webSocketEndpoint;
     }
 
-    public boolean getCamelCaseJsonStyleEnable() {
+    public boolean isCamelCaseJsonStyleEnable() {
         return camelCaseJsonStyleEnable;
     }
 

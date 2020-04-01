@@ -39,7 +39,7 @@ public class JbootJson extends JFinalJson {
     protected String mapToJson(Map map, int depth) {
         optimizeMapAttrs(map);
 
-        if(getConfig().getCamelCaseJsonStyleEnable()){
+        if(getConfig().isCamelCaseJsonStyleEnable()){
             return toCamelCase(map, depth);
         }
         return map == null || map.isEmpty() ? "null" : super.mapToJson(map, depth);
