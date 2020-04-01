@@ -18,6 +18,7 @@ package io.jboot.web;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.json.JFinalJson;
 import com.jfinal.kit.StrKit;
+import io.jboot.Jboot;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -30,6 +31,13 @@ public class JbootJson extends JFinalJson {
     protected String mapToJson(Map map, int depth) {
         optimizeMapAttrs(map);
 
+        if(Jboot.config(JbootWebConfig.class).getCamelCaseJsonStyleEnable()){
+            return toCamelCase(map, depth);
+        }
+        return map == null || map.isEmpty() ? "null" : super.mapToJson(map, depth);
+    }
+
+    private String toCamelCase(Map map, int depth){
         StringBuilder sb = new StringBuilder();
         boolean first = true;
         Iterator iter = map.entrySet().iterator();
@@ -42,7 +50,7 @@ public class JbootJson extends JFinalJson {
                 sb.append(',');
 
             Map.Entry entry = (Map.Entry)iter.next();
-            toKeyValue(StrKit.toCamelCase(String.valueOf(entry.getKey())), entry.getValue(), sb, depth);
+            toKeyValue(StrKit.toCamelCase(String.valueOf(entry.getKey())),entry.getValue(), sb, depth);
         }
         sb.append('}');
         return sb.toString();
