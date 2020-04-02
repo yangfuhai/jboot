@@ -51,7 +51,7 @@ public class ClassScanner {
 
     static {
         excludeJars.add("jfinal-");
-        excludeJars.add("cos-20");
+        excludeJars.add("cos-");
         excludeJars.add("cglib-");
         excludeJars.add("undertow-");
         excludeJars.add("xnio-");
