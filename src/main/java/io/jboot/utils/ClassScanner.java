@@ -213,6 +213,7 @@ public class ClassScanner {
         excludeJars.add("lombok-");
         excludeJars.add("hutool-");
         excludeJars.add("jakarta.");
+        excludeJars.add("protostuff-");
     }
 
 
@@ -276,6 +277,8 @@ public class ClassScanner {
         addUnscanClass("lombok.");
         addUnscanClass("net.oschina.j2cache");
         addUnscanClass("cn.hutool.");
+        addUnscanClass("com.dyuproject.");
+        addUnscanClass("io.protostuff.");
     }
 
     static {
