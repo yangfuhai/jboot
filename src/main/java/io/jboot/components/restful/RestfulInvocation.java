@@ -12,8 +12,9 @@ public class RestfulInvocation extends FixedInvocation {
 
     @Override
     public Controller getController() {
-        if (getTarget() == null)
+        if (getTarget() == null) {
             throw new RuntimeException("This method can only be used for action interception");
+        }
         return (Controller)getTarget();
     }
 }

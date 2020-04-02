@@ -44,9 +44,16 @@ public class JbootActionHandler extends ActionHandler {
      * @param urlPara
      * @return
      */
-    @Override
-    public Action getAction(String target, String[] urlPara) {
+    public Action getAction(String target, String[] urlPara, HttpServletRequest request) {
         return actionMapping.getAction(target, urlPara);
+    }
+
+
+    public Invocation getInvocation(Action action, Controller controller) {
+        return new Invocation(action, controller);
+    }
+
+    public void setResponse(HttpServletResponse response, Action action) {
     }
 
 
@@ -64,7 +71,7 @@ public class JbootActionHandler extends ActionHandler {
 
         isHandled[0] = true;
         String[] urlPara = {null};
-        Action action = getAction(target, urlPara);
+        Action action = getAction(target, urlPara, request);
 
         if (action == null) {
             if (log.isWarnEnabled()) {
@@ -86,7 +93,8 @@ public class JbootActionHandler extends ActionHandler {
 //            controller.init(request, response, urlPara[0]);
             CPI._init_(controller, action, request, response, urlPara[0]);
 
-            Invocation invocation = new Invocation(action, controller);
+//            Invocation invocation = new Invocation(action, controller);
+            Invocation invocation = getInvocation(action, controller);
             if (devMode) {
                 if (ActionReporter.isReportAfterInvocation(request)) {
                     invokeInvocation(invocation);
@@ -114,7 +122,11 @@ public class JbootActionHandler extends ActionHandler {
                 render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
             }
 
+            //设置 response 的一些信息，比如 headers 等
+            setResponse(response, action);
+
             render.setContext(request, response, action.getViewPath()).render();
+
         } catch (RenderException e) {
             if (log.isErrorEnabled()) {
                 String qs = request.getQueryString();
@@ -135,6 +147,8 @@ public class JbootActionHandler extends ActionHandler {
             controllerFactory.recycle(controller);
         }
     }
+
+
 
 
     private void handleActionException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ActionException e) {
@@ -168,7 +182,6 @@ public class JbootActionHandler extends ActionHandler {
 
         e.getErrorRender().setContext(request, response, action.getViewPath()).render();
     }
-
 
 
     private void invokeInvocation(Invocation inv) {

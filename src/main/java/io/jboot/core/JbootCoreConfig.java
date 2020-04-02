@@ -76,6 +76,7 @@ import java.util.Properties;
 public class JbootCoreConfig extends JFinalConfig {
 
     private List<Routes.Route> routeList = new ArrayList<>();
+    private List<Routes.Route> restfulRoutes = new ArrayList<>();
 
     private JbootRestfulManager.Config restfulConfig = new JbootRestfulManager.Config();
 
@@ -164,7 +165,6 @@ public class JbootCoreConfig extends JFinalConfig {
 
         routes.setMappingSuperClass(true);
 
-        List<Routes.Route> restfulRoutes = new ArrayList<>();
 
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
@@ -181,7 +181,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
                 //检查是否是restful类型的controller，如果是则加入restful专门指定的routes
                 RestController restController = clazz.getAnnotation(RestController.class);
-                if(restController != null){
+                if (restController != null) {
                     restfulRoutes.add(new Routes.Route(value, clazz, value));
                     continue;
                 }
@@ -207,7 +207,7 @@ public class JbootCoreConfig extends JFinalConfig {
             JbootControllerManager.me().setMapping(route.getControllerKey(), route.getControllerClass());
         }
 
-        if( !restfulRoutes.isEmpty() ){
+        if (!restfulRoutes.isEmpty()) {
             //处理restful专属的routes
             restfulConfig.setRoutes(restfulRoutes)
                     .setBaseViewPath(routes.getBaseViewPath())
@@ -293,11 +293,15 @@ public class JbootCoreConfig extends JFinalConfig {
         handlers.add(new JbootGatewayHandler());
         handlers.add(new JbootFilterHandler());
         handlers.add(new JbootHandler());
-        handlers.setActionHandler(new RestfulHandler());
+//        handlers.setActionHandler(new RestfulHandler());
 
         //若用户自己没配置 ActionHandler，默认使用 JbootActionHandler
         if (handlers.getActionHandler() == null) {
-            handlers.setActionHandler(new JbootActionHandler());
+            if (restfulRoutes.isEmpty()) {
+                handlers.setActionHandler(new RestfulHandler());
+            } else {
+                handlers.setActionHandler(new JbootActionHandler());
+            }
         }
 
     }

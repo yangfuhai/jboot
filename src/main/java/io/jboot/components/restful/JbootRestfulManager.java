@@ -3,7 +3,6 @@ package io.jboot.components.restful;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
 import com.jfinal.config.Routes;
-import com.jfinal.core.Action;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import io.jboot.components.restful.annotation.DeleteMapping;
@@ -116,12 +115,14 @@ public class JbootRestfulManager {
             Method[] methods = (declaredMethods ? controllerClass.getDeclaredMethods() : controllerClass.getMethods());
             for (Method method : methods) {
                 if (declaredMethods) {
-                    if (!Modifier.isPublic(method.getModifiers()))
+                    if (!Modifier.isPublic(method.getModifiers())) {
                         continue;
+                    }
                 } else {
                     dc = method.getDeclaringClass();
-                    if (dc == Controller.class || dc == Object.class)
+                    if (dc == Controller.class || dc == Object.class) {
                         continue;
+                    }
                 }
                 //去除mapping
                 if (method.getAnnotation(NotAction.class) != null) {
@@ -175,12 +176,12 @@ public class JbootRestfulManager {
                         actionKey = actionKey.substring(0, actionKey.length() - 1);
                     }
                 }
-                Action action = new Action(baseRequestMapping, actionKey, controllerClass,
+                RestfulAction action = new RestfulAction(baseRequestMapping, actionKey, controllerClass,
                         method, method.getName(), actionInters, route.getFinalViewPath(config.getBaseViewPath()));
                 String key = requestMethod + ":" + actionKey;
 
-                RestfulAction restfulAction = new RestfulAction(action, actionKey, requestMethod);
-                if (restfulActions.put(key, restfulAction) != null) {
+//                RestfulAction restfulAction = new RestfulAction(action, actionKey, requestMethod);
+                if (restfulActions.put(key, action) != null) {
                     //已经存在指定的key
                     throw new RuntimeException(buildMsg(actionKey, controllerClass, method));
                 }

@@ -23,7 +23,7 @@ public class RestfulCallback implements Callback {
 
     @Override
     public Object call(Object[] args) throws Throwable {
-        return restfulAction.getAction().getMethod().invoke(target, args);
+        return restfulAction.getMethod().invoke(target, args);
     }
 
 }
