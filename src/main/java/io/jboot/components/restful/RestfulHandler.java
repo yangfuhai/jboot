@@ -36,9 +36,7 @@ public class RestfulHandler extends JbootActionHandler {
         if (action instanceof RestfulAction) {
             Object[] args = RestfulUtils.parseActionMethodParameters(action.getActionKey(), action.getActionKey(),
                     action.getMethod(), controller.getRequest(), controller.getRawData());
-            RestfulCallback restfulCallback = new RestfulCallback((RestfulAction) action, controller);
-            return new Invocation(controller, action.getMethod(), action.getInterceptors(),
-                    restfulCallback, args);
+            return new RestfulInvocation(action, controller, args);
         } else {
             return super.getInvocation(action, controller);
         }
