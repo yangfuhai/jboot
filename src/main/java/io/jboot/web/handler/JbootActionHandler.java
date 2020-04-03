@@ -23,6 +23,7 @@ import com.jfinal.render.RenderException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.fixedinterceptor.FixedInvocation;
+import io.jboot.web.render.JbootRenderFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -118,6 +119,13 @@ public class JbootActionHandler extends ActionHandler {
                 return;
             }
 
+            if (render == null
+                    && invocation.getReturnValue() != null
+                    && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
+                JbootRenderFactory jrf = (JbootRenderFactory) renderManager.getRenderFactory();
+                render = jrf.getReturnValueRender(action, invocation.getReturnValue());
+            }
+
             if (render == null) {
                 render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
             }
@@ -147,8 +155,6 @@ public class JbootActionHandler extends ActionHandler {
             controllerFactory.recycle(controller);
         }
     }
-
-
 
 
     private void handleActionException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ActionException e) {
