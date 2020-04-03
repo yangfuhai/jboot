@@ -17,13 +17,18 @@ package io.jboot.web.render;
 
 import com.jfinal.core.Action;
 import com.jfinal.kit.JsonKit;
+import com.jfinal.render.FileRender;
+import com.jfinal.render.JsonRender;
 import com.jfinal.render.Render;
-import com.jfinal.render.RenderException;
+import com.jfinal.render.TextRender;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -34,58 +39,58 @@ public class JbootReturnValueRender extends Render {
 
     private Action action;
     private Object value;
+    private Render render;
 
     public JbootReturnValueRender(Action action, Object returnValue) {
         this.action = action;
-        this.value = returnValue;
+        if (isBaseType(returnValue)) {
+            this.value = String.valueOf(returnValue);
+        } else {
+            this.value = returnValue;
+        }
+
+        if (this.value instanceof File) {
+            this.render = new FileRender((File) value);
+        } else if (this.value instanceof String) {
+            this.render = new TextRender((String) value);
+        } else if (this.value instanceof Date) {
+            this.render = new TextRender(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) value));
+        } else {
+            this.render = new JsonRender(JsonKit.toJson(value));
+        }
+    }
+
+
+    @Override
+    public Render setContext(HttpServletRequest request, HttpServletResponse response) {
+        render.setContext(request, response);
+        return this;
+    }
+
+    @Override
+    public Render setContext(HttpServletRequest request, HttpServletResponse response, String viewPath) {
+        render.setContext(request, response, viewPath);
+        return this;
     }
 
     @Override
     public void render() {
-        if (isBaseType()) {
-            renderText();
-        } else {
-            renderJson();
-        }
+        this.render.render();
     }
 
 
-    private void renderText() {
-        PrintWriter writer = null;
-        try {
-            response.setContentType("text/plain");
-            writer = response.getWriter();
-            writer.write(String.valueOf(value));
-            // writer.flush();
-        } catch (IOException e) {
-            throw new RenderException(e);
-        }
-    }
-
-
-    private void renderJson() {
-        PrintWriter writer = null;
-        try {
-            response.setContentType("application/json; charset=utf-8");
-            writer = response.getWriter();
-            writer.write(JsonKit.toJson(value));
-            // writer.flush();
-        } catch (IOException e) {
-            throw new RenderException(e);
-        }
-    }
-
-    private boolean isBaseType() {
+    private boolean isBaseType(Object value) {
         if (value == null) {
             return true;
         }
         Class c = value.getClass();
-        return c == String.class
+        return c == String.class || c == char.class
                 || c == Integer.class || c == int.class
                 || c == Long.class || c == long.class
                 || c == Double.class || c == double.class
                 || c == Float.class || c == float.class
                 || c == Boolean.class || c == boolean.class
+                || c == Short.class || c == short.class
                 || c == BigDecimal.class || c == BigInteger.class;
     }
 }
