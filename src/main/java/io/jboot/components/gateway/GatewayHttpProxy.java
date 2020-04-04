@@ -81,7 +81,6 @@ public class GatewayHttpProxy {
              */
             configConnection(conn, req);
 
-            conn.setRequestMethod(req.getMethod());
 
             // get 请求
             if ("get".equalsIgnoreCase(req.getMethod())) {
@@ -200,6 +199,7 @@ public class GatewayHttpProxy {
         conn.setUseCaches(false);
 
         conn.setRequestMethod(req.getMethod());
+
         Enumeration<String> headerNames = req.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
