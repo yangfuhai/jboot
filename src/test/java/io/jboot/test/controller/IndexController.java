@@ -1,6 +1,7 @@
 package io.jboot.test.controller;
 
 import com.jfinal.kit.PathKit;
+import io.jboot.test.db.model.User;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -17,5 +18,15 @@ public class IndexController extends JbootController {
 
     public void error500(){
 
+    }
+
+    public String rhello(){
+        return "hello world";
+    }
+
+    public User ruser(){
+        User user = new User();
+        user.put("aa","bbb");
+        return user;
     }
 }
