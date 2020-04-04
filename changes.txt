@@ -8,6 +8,7 @@ jboot v3.1.5:
 修复：门户网关 GatewayHttpProxy 在 POST 时的某些情况下会出现无法正确代理的问题
 文档：完善 RPC 配置的相关文档
 文档：完善 Gateway 配置的相关文档
+文档：添加 fatjar 打包的相关文档
 
 
 

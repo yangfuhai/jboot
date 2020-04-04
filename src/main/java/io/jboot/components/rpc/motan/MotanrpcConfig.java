@@ -77,7 +77,7 @@ public class MotanrpcConfig {
     }
 
     public String getExport(String className) {
-        String export = exports == null ? null : exports.get(className);
+        String export = exports == null || exports.isEmpty() ? null : exports.get(className);
         return StrUtil.isNotBlank(export) ? export : defaultExport;
     }
 
@@ -90,7 +90,7 @@ public class MotanrpcConfig {
     }
 
     public String getHost(String className) {
-        String host = hosts == null ? null : hosts.get(className);
+        String host = hosts == null || hosts.isEmpty() ? null : hosts.get(className);
         return StrUtil.isNotBlank(host) ? host : defaultHost;
     }
 }

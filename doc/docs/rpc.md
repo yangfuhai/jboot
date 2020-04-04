@@ -80,9 +80,9 @@ jboot.rpc.urls = com.yourdomain.AAAService:127.0.0.1:8080,com.yourdomain.XXXServ
 jboot.rpc.providers = com.yourdomain.AAAService:providerName,com.yourdomain.XXXService:providerName
 jboot.rpc.consumers = com.yourdomain.AAAService:consumerName,com.yourdomain.XXXService:consumerName
 jboot.rpc.defaultVersion = 1.0.0
-jboot.rpc.versions = com.yourdomain.AAAService:version1,com.yourdomain.XXXService:version2
+jboot.rpc.versions = com.yourdomain.AAAService:1.0.0,com.yourdomain.XXXService:1.0.1
 jboot.rpc.defaultGroup = 
-jboot.rpc.groups = com.yourdomain.AAAService:version1,com.yourdomain.XXXService:version2
+jboot.rpc.groups = com.yourdomain.AAAService:group1,com.yourdomain.XXXService:group2
 jboot.rpc.autoExportEnable = true
 ```
 

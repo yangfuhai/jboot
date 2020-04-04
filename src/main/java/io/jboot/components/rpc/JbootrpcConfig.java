@@ -49,7 +49,7 @@ public class JbootrpcConfig {
     private Map<String, String> versions;
 
     //当不指定的时候，默认分组
-    private String defaultGroup = "jboot";
+    private String defaultGroup;
 
     //指定的服务的分组
     private Map<String, String> groups;
@@ -119,7 +119,7 @@ public class JbootrpcConfig {
     }
 
     public String getVersion(String className) {
-        String version = versions == null ? null : versions.get(className);
+        String version = versions == null || versions.isEmpty() ? null : versions.get(className);
         return version == null ? defaultVersion : version;
     }
 
@@ -140,7 +140,7 @@ public class JbootrpcConfig {
     }
 
     public String getGroup(String className) {
-        String group = groups == null ? null : groups.get(className);
+        String group = groups == null || groups.isEmpty() ? null : groups.get(className);
         return group == null ? defaultGroup : group;
     }
 
