@@ -37,7 +37,7 @@ public class GatewaySentinelProcesser {
         Entry entry = null;
         String resourceName = GatewayUtil.buildResource(req);
         try {
-            entry = SphU.entry(resourceName, ResourceTypeConstants.COMMON_WEB, EntryType.IN);
+            entry = SphU.entry(resourceName, ResourceTypeConstants.COMMON_API_GATEWAY, EntryType.IN);
             runnable.run();
         } catch (BlockException ex) {
             processBlocked(config, req, resp);
