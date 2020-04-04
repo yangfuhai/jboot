@@ -1,11 +1,12 @@
-# 项目构建
+# 项目打包
 
 ## 目录
 
-- 单模块 maven 项目构建
-- 多模块 maven 项目构建
+- 单模块 maven 项目打包
+- 多模块 maven 项目打包
+- fatjar 打包（全部打包到一个jar里）
 
-## 单模块 maven 项目构建
+## 单模块 maven 项目打包
 
 在单一模块的maven项目开发中，我们通常在 `src/main/resources` 编写我们的配置文件，因此，在 maven 构建的时候，我们需要添加如下配置：
 
@@ -175,7 +176,7 @@ fi
 复制该文件夹到服务器，然后执行里面的 `jboot.sh start` 命令即可上线。
 
 
-## 多模块 maven 项目构建
+## 多模块 maven 项目打包
 
 多模块项目在以上配置的基础上，添加 `maven-resources-plugin` maven 插件，用于拷贝其他maven模块的资源文件和html等内容到此运行模块。
 
@@ -211,3 +212,101 @@ maven 配置如下：
 ```
 
 这部分可以参考 jpress 项目，网址：https://gitee.com/fuhai/jpress/blob/v2.0/starter/pom.xml
+
+## fatjar 打包（全部打包到一个jar里）
+
+fatjar 打包指的是，把所有资源（html、css、js）以及项目依赖全部打包到一个 jar 包里，这样我们可以通过
+命令 `java -jar xxx.jar` 启动，更加方便部署，特别是方便在微服务下的多模块部署。
+
+fatjar 打包第一步，在 pom.xml 添加如下配置
+
+```xml
+<build>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <filtering>false</filtering>
+        </resource>
+
+        <resource>
+            <directory>src/main/webapp</directory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <filtering>false</filtering>
+        </resource>
+    </resources>
+
+    <plugins>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+                <encoding>UTF-8</encoding>
+                <compilerArgument>-parameters</compilerArgument>
+            </configuration>
+        </plugin>
+
+
+        <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>copy-resources</id>
+                    <phase>validate</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${basedir}/target/classes/webapp</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>${basedir}/src/main/webapp</directory>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+                <execution>
+                    <id>make-assembly</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>io.jboot.app.JbootApplication</mainClass>
+<!--                                如果该服务只提供 RPC 服务，不提供 WEB 服务，使用下方的配置启动速度更快，占用资源更少-->
+<!--                                <mainClass>io.jboot.app.JbootRpcApplication</mainClass>-->
+                            </manifest>
+                        </archive>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+第二步：通过 Maven 打包
+
+执行命令 `mvn clean package` 进行打包，在 pom.xml 对应的模块下会生成一个 xxx-with-dependencies.jar 的 jar 包，复制该 jar
+到服务器上，执行 `java -jar xxx-with-dependencies.jar` 即可启动项目。
