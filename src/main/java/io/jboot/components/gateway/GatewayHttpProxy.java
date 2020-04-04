@@ -81,6 +81,10 @@ public class GatewayHttpProxy {
              */
             configConnection(conn, req);
 
+
+            /**
+             * 发送 http 请求
+             */
             conn.connect();
 
             /**
@@ -108,16 +112,15 @@ public class GatewayHttpProxy {
 
 
     private void copyRequestStreamToConnection(HttpServletRequest req, HttpURLConnection conn) throws IOException {
+
+        // 如果不是 post 请求，不需要复制
+        if ("get".equalsIgnoreCase(req.getMethod())) {
+            return;
+        }
+
         OutputStream outStream = null;
         InputStream inStream = null;
         try {
-
-            // 如果不是 post 请求，不需要复制
-            if ("get".equalsIgnoreCase(req.getMethod())) {
-                return;
-            }
-
-            conn.setDoOutput(true);
             outStream = conn.getOutputStream();
             inStream = req.getInputStream();
             int n;
@@ -202,7 +205,11 @@ public class GatewayHttpProxy {
         conn.setConnectTimeout(connectTimeOut);
         conn.setInstanceFollowRedirects(true);
         conn.setUseCaches(false);
-//        conn.setDefaultUseCaches();
+
+        //不是 get 请求
+        if (!"get".equalsIgnoreCase(req.getMethod())) {
+            conn.setDoOutput(true);
+        }
 
         conn.setRequestMethod(req.getMethod());
         Enumeration<String> headerNames = req.getHeaderNames();
