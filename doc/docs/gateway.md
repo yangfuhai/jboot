@@ -6,6 +6,7 @@
 - path路由
 - host路由
 - query路由
+- 多个 Gateway 配置
 - 其他
 
 
@@ -186,6 +187,74 @@ jboot.gateway.queryContains = aaa
 ```
 
 以上配置中，如果用户访问 `www.xxx.com/controller?aaa=bbb` 会自动路由到 `http://youdomain:8080/controller?aaa=bbb` ，或者用户访问  `www.xxx.com/controller?aaa=ccc` 也会路由到 `http://youdomain:8080/controller?aaa=ccc`，因为 query 都包含了 `aaa=**` 的请求，但是如果用户访问 `www.xxx.com/controller?other=aaa`不会路由。
+
+
+
+## 多个 Gateway 配置
+
+```
+jboot.gateway.aaa.name = name
+jboot.gateway.aaa.uri = http://youdomain:8080
+jboot.gateway.aaa.enable = true
+jboot.gateway.aaa.sentinelEnable = false
+jboot.gateway.aaa.sentinelBlockPage = /block
+jboot.gateway.aaa.proxyReadTimeout = 10000
+jboot.gateway.aaa.proxyConnectTimeout = 5000
+jboot.gateway.aaa.proxyContentType = text/html;charset=utf-8
+jboot.gateway.aaa.interceptors = com.xxx.Interceptor1,com.xxx.Interceptor2
+jboot.gateway.aaa.pathEquals = /path
+jboot.gateway.aaa.pathContains = /path
+jboot.gateway.aaa.pathStartsWith = /path
+jboot.gateway.aaa.pathEndswith = /path
+jboot.gateway.aaa.hostEquals = xxx.com
+jboot.gateway.aaa.hostContains = xxx.com
+jboot.gateway.aaa.hostStartsWith = xxx.com
+jboot.gateway.aaa.hostEndswith = xxx.com
+jboot.gateway.aaa.queryEquals = aa:bb,cc:dd
+jboot.gateway.aaa.queryContains = aa,bb
+
+
+jboot.gateway.bbb.name = name
+jboot.gateway.bbb.uri = http://youdomain:8080
+jboot.gateway.bbb.enable = true
+jboot.gateway.bbb.sentinelEnable = false
+jboot.gateway.bbb.sentinelBlockPage = /block
+jboot.gateway.bbb.proxyReadTimeout = 10000
+jboot.gateway.bbb.proxyConnectTimeout = 5000
+jboot.gateway.bbb.proxyContentType = text/html;charset=utf-8
+jboot.gateway.bbb.interceptors = com.xxx.Interceptor1,com.xxx.Interceptor2
+jboot.gateway.bbb.pathEquals = /path
+jboot.gateway.bbb.pathContains = /path
+jboot.gateway.bbb.pathStartsWith = /path
+jboot.gateway.bbb.pathEndswith = /path
+jboot.gateway.bbb.hostEquals = xxx.com
+jboot.gateway.bbb.hostContains = xxx.com
+jboot.gateway.bbb.hostStartsWith = xxx.com
+jboot.gateway.bbb.hostEndswith = xxx.com
+jboot.gateway.bbb.queryEquals = aa:bb,cc:dd
+jboot.gateway.bbb.queryContains = aa,bb
+
+
+jboot.gateway.xxx.name = name
+jboot.gateway.xxx.uri = http://youdomain:8080
+jboot.gateway.xxx.enable = true
+jboot.gateway.xxx.sentinelEnable = false
+jboot.gateway.xxx.sentinelBlockPage = /block
+jboot.gateway.xxx.proxyReadTimeout = 10000
+jboot.gateway.xxx.proxyConnectTimeout = 5000
+jboot.gateway.xxx.proxyContentType = text/html;charset=utf-8
+jboot.gateway.xxx.interceptors = com.xxx.Interceptor1,com.xxx.Interceptor2
+jboot.gateway.xxx.pathEquals = /path
+jboot.gateway.xxx.pathContains = /path
+jboot.gateway.xxx.pathStartsWith = /path
+jboot.gateway.xxx.pathEndswith = /path
+jboot.gateway.xxx.hostEquals = xxx.com
+jboot.gateway.xxx.hostContains = xxx.com
+jboot.gateway.xxx.hostStartsWith = xxx.com
+jboot.gateway.xxx.hostEndswith = xxx.com
+jboot.gateway.xxx.queryEquals = aa:bb,cc:dd
+jboot.gateway.xxx.queryContains = aa,bb
+```
 
 ## 其他
 当配置中，如果一个内容存在多个值的时候，需要用英文逗号（,）隔开。
