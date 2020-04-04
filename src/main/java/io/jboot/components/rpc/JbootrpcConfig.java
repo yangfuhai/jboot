@@ -49,7 +49,7 @@ public class JbootrpcConfig {
     private Map<String, String> versions;
 
     //当不指定的时候，默认分组
-    private String defaultGroup;
+    private String defaultGroup = "jboot";
 
     //指定的服务的分组
     private Map<String, String> groups;
