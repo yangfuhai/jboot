@@ -171,8 +171,16 @@ public class GatewayHttpProxy {
             Set<String> headerNames = headerFields.keySet();
             for (String headerName : headerNames) {
                 //需要排除 Content-Encoding，因为 Server 可能已经使用 gzip 压缩，但是此代理已经对 gzip 内容进行解压了
-                if (StrUtil.isNotBlank(headerName) && !"Content-Encoding".equalsIgnoreCase(headerName)) {
-                    resp.setHeader(headerName, conn.getHeaderField(headerName));
+                //需要排除 Content-Type，因为会可能会进行多次设置
+                if (StrUtil.isBlank(headerName)
+                        || "Content-Encoding".equalsIgnoreCase(headerName)
+                        || "Content-Type".equalsIgnoreCase(headerName)) {
+                    continue;
+                } else {
+                    String headerFieldValue = conn.getHeaderField(headerName);
+                    if (StrUtil.isNotBlank(headerFieldValue)) {
+                        resp.setHeader(headerName, headerFieldValue);
+                    }
                 }
             }
         }
@@ -204,7 +212,10 @@ public class GatewayHttpProxy {
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             if (StrUtil.isNotBlank(headerName)) {
-                conn.setRequestProperty(headerName, req.getHeader(headerName));
+                String headerFieldValue = req.getHeader(headerName);
+                if (StrUtil.isNotBlank(headerFieldValue)) {
+                    conn.setRequestProperty(headerName, headerFieldValue);
+                }
             }
         }
     }
