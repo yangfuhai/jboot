@@ -81,16 +81,18 @@ public class GatewayHttpProxy {
              */
             configConnection(conn, req);
 
+            conn.setRequestMethod(req.getMethod());
 
-            /**
-             * 发送 http 请求
-             */
-            conn.connect();
-
-            /**
-             * 复制 post 请求内容到目标服务器
-             */
-            copyRequestStreamToConnection(req, conn);
+            // get 请求
+            if ("get".equalsIgnoreCase(req.getMethod())) {
+                conn.connect();
+            }
+            // post 请求
+            else {
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                copyRequestStreamToConnection(req, conn);
+            }
 
 
             /**
@@ -99,7 +101,7 @@ public class GatewayHttpProxy {
             configResponse(resp, conn);
 
             /**
-             * 复制目标流到 Response
+             * 复制目标相应流到 Response
              */
             copyStreamToResponse(conn, resp);
 
@@ -112,21 +114,15 @@ public class GatewayHttpProxy {
 
 
     private void copyRequestStreamToConnection(HttpServletRequest req, HttpURLConnection conn) throws IOException {
-
-        // 如果不是 post 请求，不需要复制
-        if ("get".equalsIgnoreCase(req.getMethod())) {
-            return;
-        }
-
         OutputStream outStream = null;
         InputStream inStream = null;
         try {
             outStream = conn.getOutputStream();
             inStream = req.getInputStream();
-            int n;
+            int len;
             byte[] buffer = new byte[1024];
-            while (-1 != (n = inStream.read(buffer))) {
-                outStream.write(buffer, 0, n);
+            while ((len = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, len);
             }
 
         } finally {
@@ -152,7 +148,6 @@ public class GatewayHttpProxy {
         } finally {
             quetlyClose(inStream, reader);
         }
-
     }
 
 
@@ -185,7 +180,6 @@ public class GatewayHttpProxy {
     }
 
     private static InputStream getInputStream(HttpURLConnection conn) throws IOException {
-
         InputStream stream = conn.getResponseCode() >= 400
                 ? conn.getErrorStream()
                 : conn.getInputStream();
@@ -195,7 +189,6 @@ public class GatewayHttpProxy {
         } else {
             return stream;
         }
-
     }
 
 
@@ -203,13 +196,8 @@ public class GatewayHttpProxy {
 
         conn.setReadTimeout(readTimeOut);
         conn.setConnectTimeout(connectTimeOut);
-        conn.setInstanceFollowRedirects(true);
+        conn.setInstanceFollowRedirects(false);
         conn.setUseCaches(false);
-
-        //不是 get 请求
-        if (!"get".equalsIgnoreCase(req.getMethod())) {
-            conn.setDoOutput(true);
-        }
 
         conn.setRequestMethod(req.getMethod());
         Enumeration<String> headerNames = req.getHeaderNames();
