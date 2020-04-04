@@ -51,6 +51,14 @@ public class JbootMotanrpc extends JbootrpcBase {
             referer.setBasicReferer(MotanUtil.getBaseReferer(consumer));
         }
 
+        if (referer.getGroup() == null) {
+            referer.setGroup(rpcConfig.getGroup(interfaceClass.getName()));
+        }
+
+        if (referer.getVersion() == null) {
+            referer.setVersion(rpcConfig.getVersion(interfaceClass.getName()));
+        }
+
         return referer.getRef();
     }
 
@@ -62,19 +70,27 @@ public class JbootMotanrpc extends JbootrpcBase {
 
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, false);
 
-            ServiceConfig<T> serviceConfig = MotanUtil.toServiceConfig(config);
-            serviceConfig.setInterface(interfaceClass);
-            serviceConfig.setRef((T) object);
-            serviceConfig.setShareChannel(true);
-            serviceConfig.setExport(defaultConfig.getExport(interfaceClass.getName()));
-            serviceConfig.setHost(defaultConfig.getHost(interfaceClass.getName()));
+            ServiceConfig<T> service = MotanUtil.toServiceConfig(config);
+            service.setInterface(interfaceClass);
+            service.setRef((T) object);
+            service.setShareChannel(true);
+            service.setExport(defaultConfig.getExport(interfaceClass.getName()));
+            service.setHost(defaultConfig.getHost(interfaceClass.getName()));
 
             String provider = rpcConfig.getProvider(interfaceClass.getName());
             if (provider != null) {
-                serviceConfig.setBasicService(MotanUtil.getBaseService(provider));
+                service.setBasicService(MotanUtil.getBaseService(provider));
             }
 
-            serviceConfig.export();
+            if (service.getGroup() == null) {
+                service.setGroup(rpcConfig.getGroup(interfaceClass.getName()));
+            }
+
+            if (service.getVersion() == null) {
+                service.setVersion(rpcConfig.getVersion(interfaceClass.getName()));
+            }
+
+            service.export();
             MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, true);
         }
 

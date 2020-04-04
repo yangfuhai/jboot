@@ -41,13 +41,21 @@ public class JbootDubborpc extends JbootrpcBase {
         reference.setInterface(interfaceClass);
 
         String directUrl = rpcConfig.getUrl(interfaceClass.getName());
-        if (StrUtil.isNotBlank(directUrl)){
+        if (StrUtil.isNotBlank(directUrl)) {
             reference.setUrl(directUrl);
         }
 
         String consumer = rpcConfig.getConsumer(interfaceClass.getName());
-        if (consumer != null){
+        if (consumer != null) {
             reference.setConsumer(DubboUtil.getConsumer(consumer));
+        }
+
+        if (reference.getGroup() == null) {
+            reference.setGroup(rpcConfig.getGroup(interfaceClass.getName()));
+        }
+
+        if (reference.getVersion() == null) {
+            reference.setVersion(rpcConfig.getVersion(interfaceClass.getName()));
         }
 
         return reference.get();
@@ -61,8 +69,16 @@ public class JbootDubborpc extends JbootrpcBase {
         service.setRef((T) object);
 
         String provider = rpcConfig.getProvider(interfaceClass.getName());
-        if (provider != null){
+        if (provider != null) {
             service.setProvider(DubboUtil.getProvider(provider));
+        }
+
+        if (service.getGroup() == null) {
+            service.setGroup(rpcConfig.getGroup(interfaceClass.getName()));
+        }
+
+        if (service.getVersion() == null) {
+            service.setVersion(rpcConfig.getVersion(interfaceClass.getName()));
         }
 
         service.export();

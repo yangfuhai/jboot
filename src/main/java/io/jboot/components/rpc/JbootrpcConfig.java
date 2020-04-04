@@ -32,15 +32,27 @@ public class JbootrpcConfig {
 
     //用于直连时的配置，直连一般只用于测试环境
     //com.service.AAAService:127.0.0.1:8080,com.service.XXXService:127.0.0.1:8080
-    private Map<String,String> urls;
+    private Map<String, String> urls;
 
     //服务的provider指定，可以通过注解 @RPCBean 指定，也可以通过此处指定，此处的配置优先于注解
     //com.service.AAAService:providerName,com.service.XXXService:providerName
-    private Map<String,String> providers;
+    private Map<String, String> providers;
 
     //服务的consumer指定，可以通过注解 @RPCInject 指定，也可以通过此处指定，此处的配置优先于注解
     //com.service.AAAService:providerName,com.service.XXXService:providerName
-    private Map<String,String> consumers;
+    private Map<String, String> consumers;
+
+    //当不配置的时候，默认版本号
+    private String defaultVersion = "1.0.0";
+
+    //指定的服务的版本号
+    private Map<String, String> versions;
+
+    //当不指定的时候，默认分组
+    private String defaultGroup;
+
+    //指定的服务的分组
+    private Map<String, String> groups;
 
     //本地自动暴露 @RPCBean 的 service
     private boolean autoExportEnable = true;
@@ -62,7 +74,7 @@ public class JbootrpcConfig {
         this.urls = urls;
     }
 
-    public String getUrl(String serviceClass){
+    public String getUrl(String serviceClass) {
         return urls == null ? null : urls.get(serviceClass);
     }
 
@@ -74,7 +86,7 @@ public class JbootrpcConfig {
         this.providers = providers;
     }
 
-    public String getProvider(String serviceClass){
+    public String getProvider(String serviceClass) {
         return providers == null ? null : providers.get(serviceClass);
     }
 
@@ -86,8 +98,50 @@ public class JbootrpcConfig {
         this.consumers = consumers;
     }
 
-    public String getConsumer(String serviceClass){
+    public String getConsumer(String serviceClass) {
         return consumers == null ? null : consumers.get(serviceClass);
+    }
+
+    public String getDefaultVersion() {
+        return defaultVersion;
+    }
+
+    public void setDefaultVersion(String defaultVersion) {
+        this.defaultVersion = defaultVersion;
+    }
+
+    public Map<String, String> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(Map<String, String> versions) {
+        this.versions = versions;
+    }
+
+    public String getVersion(String className) {
+        String version = versions == null ? null : versions.get(className);
+        return version == null ? defaultVersion : version;
+    }
+
+    public String getDefaultGroup() {
+        return defaultGroup;
+    }
+
+    public void setDefaultGroup(String defaultGroup) {
+        this.defaultGroup = defaultGroup;
+    }
+
+    public Map<String, String> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Map<String, String> groups) {
+        this.groups = groups;
+    }
+
+    public String getGroup(String className) {
+        String group = groups == null ? null : groups.get(className);
+        return group == null ? defaultGroup : group;
     }
 
     public boolean isAutoExportEnable() {
