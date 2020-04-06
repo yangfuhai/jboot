@@ -18,6 +18,7 @@ package io.jboot.web.render;
 import com.jfinal.core.Action;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.render.*;
+import io.jboot.web.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,12 +53,16 @@ public class JbootReturnValueRender extends Render {
 
         if (this.value == null) {
             this.render = new NullRender();
-        } else if (this.value instanceof File) {
-            this.render = new FileRender((File) value);
+        } else if (this.value instanceof ResponseEntity) {
+            //render ResponseEntity
         } else if (this.value instanceof String) {
             this.render = new TextRender((String) value);
         } else if (this.value instanceof Date) {
             this.render = new TextRender(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) value));
+        } else if (this.value instanceof File) {
+            this.render = new FileRender((File) value);
+        } else if (this.value instanceof Render) {
+            this.render = (Render) value;
         } else {
             this.render = new JsonRender(JsonKit.toJson(value));
         }
