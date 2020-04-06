@@ -15,6 +15,7 @@
  */
 package io.jboot.components.gateway;
 
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -233,6 +234,7 @@ public class JbootGatewayConfig implements Serializable {
 
 
     private GatewayInterceptor[] inters;
+
     public GatewayInterceptor[] getInters() {
         if (interceptors == null || interceptors.length == 0) {
             return null;
@@ -255,8 +257,28 @@ public class JbootGatewayConfig implements Serializable {
     }
 
 
+    private Boolean configOk = null;
+
     public boolean isConfigOk() {
-        return StrUtil.isNotBlank(uri);
+        if (configOk != null) {
+            return configOk;
+        }
+        synchronized (this) {
+            if (configOk == null) {
+                configOk = StrUtil.isNotBlank(uri);
+                if (configOk) {
+                    ensureUriPatterCorrect();
+                }
+            }
+        }
+        return configOk;
+    }
+
+    private void ensureUriPatterCorrect() {
+        if (!uri.toLowerCase().startsWith("http://")
+                && !uri.toLowerCase().startsWith("https://")) {
+            throw new JbootIllegalConfigException("gateway uri must start with http:// or https://");
+        }
     }
 
 
