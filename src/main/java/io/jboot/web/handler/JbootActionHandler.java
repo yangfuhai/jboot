@@ -120,7 +120,7 @@ public class JbootActionHandler extends ActionHandler {
             }
 
             if (render == null
-                    && invocation.getReturnValue() != null
+                    && void.class != action.getMethod().getReturnType()
                     && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
                 JbootRenderFactory jrf = (JbootRenderFactory) renderManager.getRenderFactory();
                 render = jrf.getReturnValueRender(action, invocation.getReturnValue());
