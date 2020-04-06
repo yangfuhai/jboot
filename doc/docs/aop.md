@@ -216,7 +216,7 @@ public class AppConfiguration {
 
 ```
 
-这样，在一个 Jboot 应用中，就会存在两份 `CommentService` 他们的名称分别为：myCommentServiceFromConfiguration 和 myCommentService2（当只用了注解 @Bean 但是为添加 name 参数时，名称为方法名）
+这样，在一个 Jboot 应用中，就会存在两份 `CommentService` 他们的名称分别为：myCommentServiceFromConfiguration 和 myCommentService2（当只用了注解 @Bean 但是未添加 name 参数时，name 的值为方法的名称）
 
 这样，我们就可以在 Controller 里，通过 `@Inject` 配合 `@Bean(name = ... )` 进行注入，例如：
 
