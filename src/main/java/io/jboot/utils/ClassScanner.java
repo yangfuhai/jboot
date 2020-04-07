@@ -83,6 +83,7 @@ public class ClassScanner {
         excludeJars.add("commons-cli");
         excludeJars.add("commons-math");
         excludeJars.add("commons-jxpath");
+        excludeJars.add("commons-compress");
         excludeJars.add("audience-");
         excludeJars.add("hessian-");
         excludeJars.add("metrics-");
@@ -214,6 +215,10 @@ public class ClassScanner {
         excludeJars.add("hutool-");
         excludeJars.add("jakarta.");
         excludeJars.add("protostuff-");
+        excludeJars.add("poi-");
+        excludeJars.add("easypoi-");
+        excludeJars.add("ognl-");
+        excludeJars.add("xmlbeans-");
     }
 
 
@@ -256,7 +261,7 @@ public class ClassScanner {
         addUnscanClass("com.rabbitmq.");
         addUnscanClass("com.squareup.");
         addUnscanClass("com.typesafe.");
-        addUnscanClass("com.weibo.");
+        addUnscanClass("com.weibo.api.motan.");
         addUnscanClass("com.zaxxer.");
         addUnscanClass("com.mysql.");
         addUnscanClass("org.gjt.");
