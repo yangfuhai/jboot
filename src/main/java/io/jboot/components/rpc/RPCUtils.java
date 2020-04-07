@@ -34,6 +34,7 @@ public class RPCUtils {
     /**
      * 根据注解来设置对象内容，参考 dubbo 下的 AbstractConfig
      * 参考 org.apache.dubbo.config.AbstractConfig#appendAnnotation
+     *
      * @param annotationClass
      * @param annotation
      * @param appendTo
@@ -69,8 +70,8 @@ public class RPCUtils {
                             // ignore
                         }
                     }
-                } catch (Throwable e) {
-                    e.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         }
@@ -94,8 +95,10 @@ public class RPCUtils {
                 Object data = field.get(copyFrom);
 
                 method.invoke(copyTo, data);
-            } catch (Exception e) {
+            } catch (NoSuchMethodException ex) {
                 // ignore
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -138,7 +141,6 @@ public class RPCUtils {
 
                             Method method = entry.getValue().getClass().getMethod(setterMethodName, List.class);
                             method.invoke(entry.getValue(), argCfgList);
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
