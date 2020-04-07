@@ -124,7 +124,7 @@ public class JbootrpcServiceConfig implements Serializable {
     }
 
     public JbootrpcServiceConfig(RPCBean bean) {
-        Utils.appendAnnotation(RPCBean.class, bean, this);
+        RPCUtils.appendAnnotation(RPCBean.class, bean, this);
     }
 
     public String getVersion() {

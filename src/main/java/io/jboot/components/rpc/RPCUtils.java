@@ -23,24 +23,20 @@ import org.apache.dubbo.common.utils.StringUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/20
  */
-public class Utils {
+public class RPCUtils {
 
     /**
      * 根据注解来设置对象内容，参考 dubbo 下的 AbstractConfig
-     *
+     * 参考 org.apache.dubbo.config.AbstractConfig#appendAnnotation
      * @param annotationClass
      * @param annotation
      * @param appendTo
-     * @see org.apache.dubbo.config.AbstractConfig#appendAnnotation
      */
     public static void appendAnnotation(Class<?> annotationClass, Object annotation, Object appendTo) {
         Method[] methods = annotationClass.getMethods();
@@ -93,7 +89,11 @@ public class Utils {
             try {
                 String setterName = "set" + StrUtil.firstCharToUpperCase(field.getName());
                 Method method = copyTo.getClass().getMethod(setterName, getBoxedClass(field.getType()));
-                method.invoke(copyTo, field.get(copyFrom));
+
+                field.setAccessible(true);
+                Object data = field.get(copyFrom);
+
+                method.invoke(copyTo, data);
             } catch (Exception e) {
                 // ignore
             }
