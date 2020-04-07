@@ -54,7 +54,7 @@ public class JbootReturnValueRender extends Render {
         if (this.value == null) {
             this.render = new NullRender();
         } else if (this.value instanceof ResponseEntity) {
-            //render ResponseEntity
+            this.render = new JbootResponseEntityRender((ResponseEntity) value);
         } else if (this.value instanceof String) {
             this.render = new TextRender((String) value);
         } else if (this.value instanceof Date) {
