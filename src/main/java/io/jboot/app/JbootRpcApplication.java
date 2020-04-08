@@ -15,9 +15,13 @@
  */
 package io.jboot.app;
 
+import com.jfinal.config.Interceptors;
+import com.jfinal.config.Plugins;
+import com.jfinal.plugin.IPlugin;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.core.JbootCoreConfig;
 
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -45,18 +49,47 @@ public class JbootRpcApplication {
     }
 
 
-
     static class RPCServer extends Thread {
 
         private JbootCoreConfig coreConfig;
+
+        private final Plugins plugins = new Plugins();
+        private final Interceptors interceptors = new Interceptors();
 
         public RPCServer(JbootCoreConfig coreConfig) {
             this.coreConfig = coreConfig;
             doInit();
         }
 
-        private void doInit(){
-            this.coreConfig.onStart();
+        private void doInit() {
+            //aop interceptors
+            coreConfig.configInterceptor(interceptors);
+
+            //plugins
+            coreConfig.configPlugin(plugins);
+            startPlugins();
+
+            //on start
+            coreConfig.onStart();
+        }
+
+        private void startPlugins() {
+            List<IPlugin> pluginList = plugins.getPluginList();
+            if (pluginList == null) {
+                return;
+            }
+
+            for (IPlugin plugin : pluginList) {
+                try {
+                    if (plugin.start() == false) {
+                        String message = "Plugin start error: " + plugin.getClass().getName();
+                        throw new RuntimeException(message);
+                    }
+                } catch (Exception e) {
+                    String message = "Plugin start error: " + plugin.getClass().getName() + ". \n" + e.getMessage();
+                    throw new RuntimeException(message, e);
+                }
+            }
         }
 
         @Override
@@ -65,7 +98,7 @@ public class JbootRpcApplication {
             await();
         }
 
-        private  void await() {
+        private void await() {
             try {
                 LOCK.lock();
                 STOP.await();
