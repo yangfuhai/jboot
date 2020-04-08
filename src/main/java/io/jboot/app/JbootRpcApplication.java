@@ -51,8 +51,7 @@ public class JbootRpcApplication {
 
     static class RPCServer extends Thread {
 
-        private JbootCoreConfig coreConfig;
-
+        private final JbootCoreConfig coreConfig;
         private final Plugins plugins = new Plugins();
         private final Interceptors interceptors = new Interceptors();
 
@@ -94,7 +93,7 @@ public class JbootRpcApplication {
 
         @Override
         public void run() {
-            addHook(coreConfig);
+            initShutdownHook();
             await();
         }
 
@@ -109,10 +108,10 @@ public class JbootRpcApplication {
             }
         }
 
-        private void addHook(JbootCoreConfig config) {
+        private void initShutdownHook() {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
-                    config.onStop();
+                    coreConfig.onStop();
                 } catch (Exception e) {
                     System.err.println("jboot rpc stop exception : " + e.toString());
                 }
