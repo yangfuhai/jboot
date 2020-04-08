@@ -222,68 +222,68 @@ public class ClassScanner {
     }
 
 
-    public static void addUnscanClass(String prefix) {
+    public static void addUnscanClassPrefix(String prefix) {
         excludeClasses.add(prefix.trim());
     }
 
     static {
-        addUnscanClass("com.jfinal.");
-        addUnscanClass("org.aopalliance.");
-        addUnscanClass("org.apache.");
-        addUnscanClass("org.nustaq.");
-        addUnscanClass("net.sf.");
-        addUnscanClass("org.slf4j.");
-        addUnscanClass("org.antlr.");
-        addUnscanClass("org.jboss.");
-        addUnscanClass("org.javassist.");
-        addUnscanClass("org.hamcrest.");
-        addUnscanClass("org.jsoup.");
-        addUnscanClass("org.objenesis.");
-        addUnscanClass("org.ow2.");
-        addUnscanClass("org.reactivest.");
-        addUnscanClass("org.yaml.");
-        addUnscanClass("org.checker");
-        addUnscanClass("org.codehaus");
-        addUnscanClass("ch.qos.");
-        addUnscanClass("com.alibaba.csp.");
-        addUnscanClass("com.alibaba.nacos.");
-        addUnscanClass("com.alibaba.druid.");
-        addUnscanClass("com.alibaba.fastjson.");
-        addUnscanClass("com.aliyun.open");
-        addUnscanClass("com.caucho");
-        addUnscanClass("com.codahale");
-        addUnscanClass("com.ctrip.framework.apollo");
-        addUnscanClass("com.ecwid.");
-        addUnscanClass("com.esotericsoftware.");
-        addUnscanClass("com.fasterxml.");
-        addUnscanClass("com.github.");
-        addUnscanClass("com.google.");
-        addUnscanClass("com.rabbitmq.");
-        addUnscanClass("com.squareup.");
-        addUnscanClass("com.typesafe.");
-        addUnscanClass("com.weibo.api.motan.");
-        addUnscanClass("com.zaxxer.");
-        addUnscanClass("com.mysql.");
-        addUnscanClass("org.gjt.");
-        addUnscanClass("io.dropwizard");
-        addUnscanClass("io.jsonwebtoken");
-        addUnscanClass("io.lettuce");
-        addUnscanClass("reactor.adapter");
-        addUnscanClass("io.prometheus");
-        addUnscanClass("io.seata.");
-        addUnscanClass("io.swagger.");
-        addUnscanClass("io.undertow.");
-        addUnscanClass("it.sauronsoftware");
-        addUnscanClass("javax.");
-        addUnscanClass("java.");
-        addUnscanClass("junit.");
-        addUnscanClass("jline.");
-        addUnscanClass("redis.");
-        addUnscanClass("lombok.");
-        addUnscanClass("net.oschina.j2cache");
-        addUnscanClass("cn.hutool.");
-        addUnscanClass("com.dyuproject.");
-        addUnscanClass("io.protostuff.");
+        excludeClasses.add("com.jfinal.");
+        excludeClasses.add("org.aopalliance.");
+        excludeClasses.add("org.apache.");
+        excludeClasses.add("org.nustaq.");
+        excludeClasses.add("net.sf.");
+        excludeClasses.add("org.slf4j.");
+        excludeClasses.add("org.antlr.");
+        excludeClasses.add("org.jboss.");
+        excludeClasses.add("org.javassist.");
+        excludeClasses.add("org.hamcrest.");
+        excludeClasses.add("org.jsoup.");
+        excludeClasses.add("org.objenesis.");
+        excludeClasses.add("org.ow2.");
+        excludeClasses.add("org.reactivest.");
+        excludeClasses.add("org.yaml.");
+        excludeClasses.add("org.checker");
+        excludeClasses.add("org.codehaus");
+        excludeClasses.add("ch.qos.");
+        excludeClasses.add("com.alibaba.csp.");
+        excludeClasses.add("com.alibaba.nacos.");
+        excludeClasses.add("com.alibaba.druid.");
+        excludeClasses.add("com.alibaba.fastjson.");
+        excludeClasses.add("com.aliyun.open");
+        excludeClasses.add("com.caucho");
+        excludeClasses.add("com.codahale");
+        excludeClasses.add("com.ctrip.framework.apollo");
+        excludeClasses.add("com.ecwid.");
+        excludeClasses.add("com.esotericsoftware.");
+        excludeClasses.add("com.fasterxml.");
+        excludeClasses.add("com.github.");
+        excludeClasses.add("com.google.");
+        excludeClasses.add("com.rabbitmq.");
+        excludeClasses.add("com.squareup.");
+        excludeClasses.add("com.typesafe.");
+        excludeClasses.add("com.weibo.api.motan.");
+        excludeClasses.add("com.zaxxer.");
+        excludeClasses.add("com.mysql.");
+        excludeClasses.add("org.gjt.");
+        excludeClasses.add("io.dropwizard");
+        excludeClasses.add("io.jsonwebtoken");
+        excludeClasses.add("io.lettuce");
+        excludeClasses.add("reactor.adapter");
+        excludeClasses.add("io.prometheus");
+        excludeClasses.add("io.seata.");
+        excludeClasses.add("io.swagger.");
+        excludeClasses.add("io.undertow.");
+        excludeClasses.add("it.sauronsoftware");
+        excludeClasses.add("javax.");
+        excludeClasses.add("java.");
+        excludeClasses.add("junit.");
+        excludeClasses.add("jline.");
+        excludeClasses.add("redis.");
+        excludeClasses.add("lombok.");
+        excludeClasses.add("net.oschina.j2cache");
+        excludeClasses.add("cn.hutool.");
+        excludeClasses.add("com.dyuproject.");
+        excludeClasses.add("io.protostuff.");
     }
 
     static {
@@ -303,6 +303,16 @@ public class ClassScanner {
             for (String prefix : prefixes) {
                 if (prefix != null && prefix.trim().length() > 0) {
                     addUnscanJarPrefix(prefix.trim());
+                }
+            }
+        }
+
+        String unScanClassPrefix = JbootConfigManager.me().getConfigValue("jboot.app.scanner.unScanClassPrefix");
+        if (unScanClassPrefix != null) {
+            String[] prefixes = unScanClassPrefix.split(",");
+            for (String prefix : prefixes) {
+                if (prefix != null && prefix.trim().length() > 0) {
+                    addUnscanClassPrefix(prefix.trim());
                 }
             }
         }
