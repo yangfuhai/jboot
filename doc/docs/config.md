@@ -169,11 +169,30 @@ Component1Config config = Jboot.config(Component1Config.class);
 
 ## 开启 Nacos 分布式配置中心
 
-**第一步，启动 nacos**
-相关文档在 https://nacos.io/zh-cn/
+**第一步，添加 nacos 客户端的 Maven 依赖**
+
+```xml
+<dependency>
+    <groupId>com.alibaba.nacos</groupId>
+    <artifactId>nacos-client</artifactId>
+    <version>1.2.1</version>
+</dependency>
+```
 
 
-**第二步，在 jboot.properties 添加如下配置**
+
+**第二步：启动 nacos**
+
+如何启动 nacos 的相关文档在 
+
+https://nacos.io/zh-cn/docs/quick-start.html 
+
+或者
+
+https://nacos.io/zh-cn/docs/quick-start-docker.html
+
+
+**第三步，在 jboot.properties 添加如下配置**
 
 ```java
 jboot.config.nacos.enable = true
@@ -182,12 +201,47 @@ jboot.config.nacos.dataId = jboot
 jboot.config.nacos.group = jboot
 ```
 
+支持如下更多配置，但是最简单的只需要以上配置就可以正常运行
+    
+
+```
+jboot.config.nacos.isUseCloudNamespaceParsing = xxx
+jboot.config.nacos.isUseEndpointParsingRule = xxx
+jboot.config.nacos.endpoint = xxx
+jboot.config.nacos.endpointPort = xxx
+jboot.config.nacos.namespace = xxx
+jboot.config.nacos.username = xxx
+jboot.config.nacos.password = xxx
+jboot.config.nacos.accessKey = xxx
+jboot.config.nacos.secretKey = xxx
+jboot.config.nacos.ramRoleName = xxx
+jboot.config.nacos.serverAddr = xxx
+jboot.config.nacos.contextPath = xxx
+jboot.config.nacos.clusterName = xxx
+jboot.config.nacos.encode = xxx
+jboot.config.nacos.configLongPollTimeout = xxx
+jboot.config.nacos.configRetryTime = xxx
+jboot.config.nacos.maxRetry = xxx
+jboot.config.nacos.enableRemoteSyncConfig = xxx
+```
+
 ## 开启 Apollo 分布式配置中心
 
-**第一步，启动 Apollo**
+**第一步：添加 Apollo 客户端的 Maven 依赖**
+
+```xml
+<dependency>
+    <groupId>com.ctrip.framework.apollo</groupId>
+    <artifactId>apollo-client</artifactId>
+    <version>1.6.0</version>
+</dependency>
+```
+
+**第二步，启动 Apollo**
+
 相关文档在 https://github.com/ctripcorp/apollo/wiki/Quick-Start
 
-**第二步，在 jboot.properties 添加如下配置**
+**第三步，在 jboot.properties 添加如下配置**
 
 ```
 jboot.config.apollo.enable = true
@@ -252,7 +306,7 @@ public MyConfigDecriptor implements JbootConfigDecryptor {
 修改为大写，符号点（.）修改为下划线（_）。
 
 
-## Jboot 所有配置参考
+## Jboot 其他配置参考
 
 ```
 undertow.devMode=true # 设置undertow为开发模式
