@@ -54,10 +54,8 @@ public class NacosConfigManager {
         }
 
         try {
-            Properties properties = new Properties();
-            properties.put("serverAddr", nacosServerConfig.getServerAddr());
-            ConfigService configService = NacosFactory.createConfigService(properties);
 
+            ConfigService configService = NacosFactory.createConfigService(nacosServerConfig.toProperties());
             String content = configService.getConfig(nacosServerConfig.getDataId()
                     , nacosServerConfig.getGroup(), 3000);
 
@@ -68,7 +66,7 @@ public class NacosConfigManager {
                 }
             }
 
-            new NacosConfigIniter(this).initListener(configService,nacosServerConfig);
+            new NacosConfigIniter(this).initListener(configService, nacosServerConfig);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,6 +76,7 @@ public class NacosConfigManager {
 
     /**
      * 接收的 nacos 服务器消息
+     *
      * @param configInfo
      */
     public void doReceiveConfigInfo(String configInfo) {
@@ -109,8 +108,6 @@ public class NacosConfigManager {
             JbootConfigManager.me().notifyChangeListeners(changedKeys);
         }
     }
-
-
 
 
     private Properties str2Properties(String content) {
