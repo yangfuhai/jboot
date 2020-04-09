@@ -94,7 +94,9 @@ public class RPCUtils {
                 field.setAccessible(true);
                 Object data = field.get(copyFrom);
 
-                method.invoke(copyTo, data);
+                if (data != null) {
+                    method.invoke(copyTo, data);
+                }
             } catch (NoSuchMethodException ex) {
                 // ignore
             } catch (Exception ex) {
