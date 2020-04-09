@@ -1,3 +1,17 @@
+jboot v3.1.6:
+新增：JbootReturnValueRender，用于可以在 Action 里进行返回值渲染
+新增：ResponseEntity，可以直接在 Action 返回其进行渲染
+优化：对 JbootGatewayConfig 网关配置进行优化，用户配置了错误的 uri 时会给出提示
+优化：升级 Dubbo、Motan、Sentinel、Nacos 等到最新版本
+优化：ClassScanner 添加一些常用的排除 jar 和 class
+优化：更多关于 Nacos 分布式配置中心的配置支持
+修复：RPCUtils.copyFields()  无法正确复制配置内容的问题
+修复：JbootRpcApplication 无法正确启动插件和拦截器的问题
+文档：修改 AOP 文档的内容错误问题
+文档：完善分布式配置中心对 Nacos 以及 Apollo 支持的相关文档
+
+
+
 jboot v3.1.5:
 新增：新增 Motan RPC 的 export 和 host 的相关配置以及test代码
 新增：JbootJson 支持驼峰式 JsonKey 输出，感谢Gitee的 @herowjun
