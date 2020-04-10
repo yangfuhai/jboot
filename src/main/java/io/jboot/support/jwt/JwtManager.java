@@ -64,6 +64,10 @@ public class JwtManager {
         return getConfig().getHttpHeaderName();
     }
 
+    public String getHttpParameterKey() {
+        return getConfig().getHttpParameterKey();
+    }
+
     public Map parseJwtToken(String token) {
         SecretKey secretKey = generalKey();
         try {

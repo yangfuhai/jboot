@@ -44,7 +44,9 @@ public class JwtInterceptor implements FixedInterceptor {
         HttpServletRequest request = inv.getController().getRequest();
         String token = request.getHeader(JwtManager.me().getHttpHeaderName());
 
-        if(StrUtil.isBlank(token)) token = request.getParameter("token");
+        if (StrUtil.isBlank(token) && StrUtil.isNotBlank(JwtManager.me().getHttpParameterKey())) {
+            token = request.getParameter(JwtManager.me().getHttpParameterKey());
+        }
 
         if (StrUtil.isBlank(token)) {
             processInvoke(inv, null);

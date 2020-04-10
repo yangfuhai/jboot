@@ -27,6 +27,8 @@ import io.jboot.utils.StrUtil;
 public class JwtConfig {
 
     private String httpHeaderName = "Jwt";
+    private String httpParameterKey;
+
     private String secret;
 
     /**
@@ -41,6 +43,14 @@ public class JwtConfig {
 
     public void setHttpHeaderName(String httpHeaderName) {
         this.httpHeaderName = httpHeaderName;
+    }
+
+    public String getHttpParameterKey() {
+        return httpParameterKey;
+    }
+
+    public void setHttpParameterKey(String httpParameterKey) {
+        this.httpParameterKey = httpParameterKey;
     }
 
     public String getSecret() {
