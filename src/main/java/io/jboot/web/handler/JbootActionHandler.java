@@ -39,20 +39,38 @@ public class JbootActionHandler extends ActionHandler {
     private static final Log log = Log.getLog(JbootActionHandler.class);
 
     /**
-     * 方便子类复写、从而可以实现 自定义Action的功能
-     *
+     * 方便子类复写、从而可以实现 自定义 Action 的功能
+     * @param target
+     * @param urlPara
+     * @param request
+     * @return
+     */
+    public Action getAction(String target, String[] urlPara, HttpServletRequest request) {
+        return this.getAction(target, urlPara);
+    }
+
+
+    /**
+     * 方便子类复写、从而可以实现 自定义 Action 的功能
      * @param target
      * @param urlPara
      * @return
      */
-    public Action getAction(String target, String[] urlPara, HttpServletRequest request) {
-        return actionMapping.getAction(target, urlPara);
+    @Override
+    protected Action getAction(String target, String[] urlPara) {
+        return super.getAction(target, urlPara);
     }
 
-
+    /**
+     * 方便子类复写、从而可以实现 自定义 Invocation 的功能
+     * @param action
+     * @param controller
+     * @return
+     */
     public Invocation getInvocation(Action action, Controller controller) {
         return new Invocation(action, controller);
     }
+
 
     public void setResponse(HttpServletResponse response, Action action) {
     }
