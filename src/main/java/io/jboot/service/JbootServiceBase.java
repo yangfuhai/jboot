@@ -36,7 +36,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
     protected static final int ACTION_DEL = 2;
     protected static final int ACTION_UPDATE = 3;
 
-    protected M DAO = null;
+    protected JbootModel<M> DAO = null;
 
     public JbootServiceBase() {
         DAO = initDao();
@@ -59,7 +59,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
     }
 
 
-    public M getDao() {
+    public JbootModel getDao() {
         return DAO;
     }
 
