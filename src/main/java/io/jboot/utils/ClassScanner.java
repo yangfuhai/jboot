@@ -42,7 +42,7 @@ public class ClassScanner {
     }
 
     static {
-        addScanJarPrefix("jboot");
+//        addScanJarPrefix("jboot");
     }
 
     public static void addUnscanJarPrefix(String prefix) {
