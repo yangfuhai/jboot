@@ -47,7 +47,7 @@ public class JbootrpcManager {
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {
             if (!defaultConfig.isConfigOk()) {
-                throw new JbootRpcException("jboot rpc config is error, please config jboot.rpc.type = xxx in jboot.properties");
+                throw new JbootRpcException("jboot rpc config is error, please set up jboot.rpc.type config value");
             }
             jbootrpc = createJbootrpc(defaultConfig.getType());
         }
@@ -76,7 +76,7 @@ public class JbootrpcManager {
         }
     }
 
-    public void stop(){
+    public void stop() {
         if (defaultConfig.isConfigOk()) {
             getJbootrpc().onStop();
         }
@@ -111,9 +111,9 @@ public class JbootrpcManager {
                     continue;
                 }
 
-                if (jbootrpc.serviceExport(inter, Aop.get(clazz), new JbootrpcServiceConfig(rpcBean))){
-                    if (Jboot.isDevMode()){
-                        System.err.println("rpc service[" + inter+"] has exported ok!");
+                if (jbootrpc.serviceExport(inter, Aop.get(clazz), new JbootrpcServiceConfig(rpcBean))) {
+                    if (Jboot.isDevMode()) {
+                        System.out.println("rpc service[" + inter + "] has exported ok!");
                     }
                 }
             }

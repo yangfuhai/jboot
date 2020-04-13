@@ -36,7 +36,12 @@ public abstract class JbootrpcBase implements Jbootrpc {
         if (object == null) {
             synchronized (this) {
                 if (objectCache.get(key) == null) {
-                    startIfNecessary();
+
+                    // onStart 方法是在 app 启动完成后，Jboot 主动去调用的
+                    // 但是，在某些场景可能存在没有等 app 启动完成就去获取 Service 的情况
+                    // 此时，需要主动先调用下 onStart 方法
+                    callStartMethodIfNecessary();
+
                     object = onServiceCreate(interfaceClass, config);
                     if (object != null) {
                         objectCache.put(key, object);
@@ -47,7 +52,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
         return object;
     }
 
-    protected void startIfNecessary() {
+    protected void callStartMethodIfNecessary() {
         if (!started) {
             synchronized (this) {
                 if (!started) {
