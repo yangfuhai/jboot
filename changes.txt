@@ -1,6 +1,7 @@
 jboot v3.1.7:
 新增：JWT 可以通过 request para 传入数据的支持
 修复：复写 ActionHandler.getAction 可能无效的问题
+优化：排除 Jboot 内部不必要的 Class 扫描
 
 
 

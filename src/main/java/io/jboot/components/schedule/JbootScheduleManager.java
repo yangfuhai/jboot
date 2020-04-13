@@ -79,8 +79,11 @@ public class JbootScheduleManager {
 
     private void initSchedules() {
         List<Class<Runnable>> runnableClass = ClassScanner.scanSubClass(Runnable.class, true);
-        if (runnableClass != null)
-            for (Class<Runnable> rc : runnableClass) addSchedule(rc);
+        if (runnableClass != null) {
+            for (Class<Runnable> rc : runnableClass) {
+                addSchedule(rc);
+            }
+        }
     }
 
     public void addSchedule(Class<? extends Runnable> runnableClass) {

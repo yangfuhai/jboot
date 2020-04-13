@@ -284,6 +284,20 @@ public class ClassScanner {
         excludeClasses.add("cn.hutool.");
         excludeClasses.add("com.dyuproject.");
         excludeClasses.add("io.protostuff.");
+        excludeClasses.add("io.jboot.core.");
+        excludeClasses.add("io.jboot.web.");
+        excludeClasses.add("io.jboot.objects.");
+        excludeClasses.add("io.jboot.utils.");
+        excludeClasses.add("io.jboot.codegen.");
+        excludeClasses.add("io.jboot.wechat.");
+        excludeClasses.add("io.jboot.components.");
+        excludeClasses.add("io.jboot.support.");
+        excludeClasses.add("io.jboot.exception.");
+        excludeClasses.add("io.jboot.db.");
+        excludeClasses.add("io.jboot.aop.");
+        excludeClasses.add("io.jboot.app.");
+        excludeClasses.add("io.jboot.service.");
+        excludeClasses.add("io.jboot.Jboot");
     }
 
     static {
