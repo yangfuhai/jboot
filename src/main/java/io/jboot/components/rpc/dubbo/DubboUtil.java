@@ -20,7 +20,7 @@ import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
-import io.jboot.components.rpc.RPCUtils;
+import io.jboot.components.rpc.RPCUtil;
 import io.jboot.utils.StrUtil;
 import org.apache.dubbo.config.*;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
@@ -138,14 +138,14 @@ class DubboUtil {
 
         //方法配置 配置
         Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.dubbo.method");
-        RPCUtils.setChildConfig(methodConfigs, argumentConfigs, "jboot.rpc.dubbo.method", "argument");
+        RPCUtil.setChildConfig(methodConfigs, argumentConfigs, "jboot.rpc.dubbo.method", "argument");
 
 
         //消费者 配置
         Map<String, ConsumerConfig> consumerConfigs = configs(ConsumerConfig.class, "jboot.rpc.dubbo.consumer");
-        RPCUtils.setChildConfig(consumerConfigs, methodConfigs, "jboot.rpc.dubbo.consumer", "method");
-        RPCUtils.setChildConfig(consumerConfigs, protocolConfigs, "jboot.rpc.dubbo.consumer", "protocol");
-        RPCUtils.setChildConfig(consumerConfigs, registryConfigs, "jboot.rpc.dubbo.consumer", "registry");
+        RPCUtil.setChildConfig(consumerConfigs, methodConfigs, "jboot.rpc.dubbo.consumer", "method");
+        RPCUtil.setChildConfig(consumerConfigs, protocolConfigs, "jboot.rpc.dubbo.consumer", "protocol");
+        RPCUtil.setChildConfig(consumerConfigs, registryConfigs, "jboot.rpc.dubbo.consumer", "registry");
 
 
         if (consumerConfigs != null && !consumerConfigs.isEmpty()) {
@@ -159,9 +159,9 @@ class DubboUtil {
 
         //服务提供者 配置
         Map<String, ProviderConfig> providerConfigs = configs(ProviderConfig.class, "jboot.rpc.dubbo.provider");
-        RPCUtils.setChildConfig(providerConfigs, methodConfigs, "jboot.rpc.dubbo.provider", "method");
-        RPCUtils.setChildConfig(providerConfigs, protocolConfigs, "jboot.rpc.dubbo.provider", "protocol");
-        RPCUtils.setChildConfig(providerConfigs, registryConfigs, "jboot.rpc.dubbo.provider", "registry");
+        RPCUtil.setChildConfig(providerConfigs, methodConfigs, "jboot.rpc.dubbo.provider", "method");
+        RPCUtil.setChildConfig(providerConfigs, protocolConfigs, "jboot.rpc.dubbo.provider", "protocol");
+        RPCUtil.setChildConfig(providerConfigs, registryConfigs, "jboot.rpc.dubbo.provider", "registry");
 
         if (providerConfigs != null && !providerConfigs.isEmpty()) {
             providerConfigMap.putAll(providerConfigs);
@@ -176,7 +176,7 @@ class DubboUtil {
 
     public static ReferenceConfig toReferenceConfig(JbootrpcReferenceConfig rc) {
         ReferenceConfig referenceConfig = new ReferenceConfig();
-        RPCUtils.copyFields(rc, referenceConfig);
+        RPCUtil.copyFields(rc, referenceConfig);
 
         //reference coonsumer
         if (rc.getConsumer() != null) {
@@ -195,7 +195,7 @@ class DubboUtil {
 
     public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc) {
         ServiceConfig serviceConfig = new ServiceConfig();
-        RPCUtils.copyFields(sc, serviceConfig);
+        RPCUtil.copyFields(sc, serviceConfig);
 
         //service provider
         if (StrUtil.isNotBlank(sc.getProvider())) {

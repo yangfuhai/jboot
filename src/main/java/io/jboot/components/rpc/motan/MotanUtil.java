@@ -20,7 +20,7 @@ import com.weibo.api.motan.util.MotanFrameworkUtil;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
-import io.jboot.components.rpc.RPCUtils;
+import io.jboot.components.rpc.RPCUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.ArrayList;
@@ -65,9 +65,9 @@ public class MotanUtil {
 
         //baseService 配置
         Map<String, BasicServiceInterfaceConfig> serviceConfigs = configs(BasicServiceInterfaceConfig.class, "jboot.rpc.motan.service");
-        RPCUtils.setChildConfig(serviceConfigs, methodConfigs, "jboot.rpc.motan.service", "method");
-        RPCUtils.setChildConfig(serviceConfigs, protocolConfigs, "jboot.rpc.motan.service", "protocol");
-        RPCUtils.setChildConfig(serviceConfigs, registryConfigs, "jboot.rpc.motan.service", "registry");
+        RPCUtil.setChildConfig(serviceConfigs, methodConfigs, "jboot.rpc.motan.service", "method");
+        RPCUtil.setChildConfig(serviceConfigs, protocolConfigs, "jboot.rpc.motan.service", "protocol");
+        RPCUtil.setChildConfig(serviceConfigs, registryConfigs, "jboot.rpc.motan.service", "registry");
 
 
         if (serviceConfigs != null && !serviceConfigs.isEmpty()) {
@@ -76,9 +76,9 @@ public class MotanUtil {
 
         //baseReferer 配置
         Map<String, BasicRefererInterfaceConfig> refererConfigs = configs(BasicRefererInterfaceConfig.class, "jboot.rpc.motan.referer");
-        RPCUtils.setChildConfig(refererConfigs, methodConfigs, "jboot.rpc.motan.referer", "method");
-        RPCUtils.setChildConfig(refererConfigs, protocolConfigs, "jboot.rpc.motan.referer", "protocol");
-        RPCUtils.setChildConfig(refererConfigs, registryConfigs, "jboot.rpc.motan.referer", "registry");
+        RPCUtil.setChildConfig(refererConfigs, methodConfigs, "jboot.rpc.motan.referer", "method");
+        RPCUtil.setChildConfig(refererConfigs, protocolConfigs, "jboot.rpc.motan.referer", "protocol");
+        RPCUtil.setChildConfig(refererConfigs, registryConfigs, "jboot.rpc.motan.referer", "registry");
 
         if (refererConfigs != null && !refererConfigs.isEmpty()) {
             baseRefererConfigMap.putAll(refererConfigs);
@@ -90,7 +90,7 @@ public class MotanUtil {
 
     public static RefererConfig toRefererConfig(JbootrpcReferenceConfig rc) {
         RefererConfig refererConfig = new RefererConfig();
-        RPCUtils.copyFields(rc, refererConfig);
+        RPCUtil.copyFields(rc, refererConfig);
 
 
         //referer protocol
@@ -135,7 +135,7 @@ public class MotanUtil {
 
     public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc) {
         ServiceConfig serviceConfig = new ServiceConfig();
-        RPCUtils.copyFields(sc, serviceConfig);
+        RPCUtil.copyFields(sc, serviceConfig);
 
 
         //service protocol

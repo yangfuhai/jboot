@@ -133,7 +133,7 @@ public class JbootrpcReferenceConfig implements Serializable {
     }
 
     public JbootrpcReferenceConfig(RPCInject inject) {
-        RPCUtils.appendAnnotation(RPCInject.class, inject, this);
+        RPCUtil.appendAnnotation(RPCInject.class, inject, this);
     }
 
     public String getVersion() {

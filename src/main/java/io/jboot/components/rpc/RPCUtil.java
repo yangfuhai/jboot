@@ -29,7 +29,7 @@ import java.util.*;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/20
  */
-public class RPCUtils {
+public class RPCUtil {
 
     /**
      * 根据注解来设置对象内容，参考 dubbo 下的 AbstractConfig
