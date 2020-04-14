@@ -33,7 +33,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-
+/**
+ * @author michael yang (fuhai999@gmail.com)
+ * @Date: 2020/3/24
+ */
 public class GatewayHttpProxy {
 
     private static final Log LOG = Log.getLog(GatewayHttpProxy.class);
@@ -77,7 +80,7 @@ public class GatewayHttpProxy {
             conn = getConnection(url);
 
             /**
-             * 设置 http 请求头
+             * 配置 HttpURLConnection 的 http 请求头
              */
             configConnection(conn, req);
 
@@ -95,14 +98,14 @@ public class GatewayHttpProxy {
 
 
             /**
-             * 配置响应的 HTTP 头
+             * 配置 HttpServletResponse 的 http 响应头
              */
             configResponse(resp, conn);
 
             /**
-             * 复制目标相应流到 Response
+             * 复制链接的 inputStream 流到 Response
              */
-            copyStreamToResponse(conn, resp);
+            copyConnStreamToResponse(conn, resp);
 
         } finally {
             if (conn != null) {
@@ -123,14 +126,13 @@ public class GatewayHttpProxy {
             while ((len = inStream.read(buffer)) != -1) {
                 outStream.write(buffer, 0, len);
             }
-
         } finally {
             quetlyClose(outStream, inStream);
         }
     }
 
 
-    private void copyStreamToResponse(HttpURLConnection conn, HttpServletResponse resp) throws IOException {
+    private void copyConnStreamToResponse(HttpURLConnection conn, HttpServletResponse resp) throws IOException {
         InputStream inStream = null;
         InputStreamReader reader = null;
         try {
