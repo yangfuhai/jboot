@@ -19,10 +19,9 @@ import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -36,28 +35,45 @@ public class JbootGatewayManager {
         return me;
     }
 
-    private Set<JbootGatewayConfig> configs;
+    private Map<String, JbootGatewayConfig> configMap;
 
     public void init() {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
         if (configMap != null && !configMap.isEmpty()) {
-            configs = new HashSet<>();
+
             for (Map.Entry<String, JbootGatewayConfig> e : configMap.entrySet()) {
                 JbootGatewayConfig config = e.getValue();
                 if (config.isConfigOk() && config.isEnable()) {
                     if (StrUtil.isNotBlank(config.getName())) {
                         config.setName(e.getKey());
                     }
-                    configs.add(config);
+                    registerConfig(config);
                 }
             }
         }
     }
 
 
+    public synchronized void registerConfig(JbootGatewayConfig config) {
+        if (configMap == null) {
+            configMap = new ConcurrentHashMap<>();
+        }
+        configMap.put(config.getName(), config);
+    }
+
+
+    public JbootGatewayConfig getConfig(String name) {
+        return configMap == null ? null : configMap.get(name);
+    }
+
+
+    public Map<String, JbootGatewayConfig> getConfigMap() {
+        return configMap;
+    }
+
     public JbootGatewayConfig matchingConfig(HttpServletRequest req) {
-        if (configs != null && !configs.isEmpty()) {
-            Iterator<JbootGatewayConfig> iterator = configs.iterator();
+        if (configMap != null && !configMap.isEmpty()) {
+            Iterator<JbootGatewayConfig> iterator = configMap.values().iterator();
             while (iterator.hasNext()) {
                 JbootGatewayConfig config = iterator.next();
                 if (config.matches(req)) {

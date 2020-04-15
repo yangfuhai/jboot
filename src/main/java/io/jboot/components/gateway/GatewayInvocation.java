@@ -36,7 +36,7 @@ public class GatewayInvocation {
         this.config = config;
         this.request = request;
         this.response = response;
-        this.inters = config.getInters();
+        this.inters = config.buildInterceptors();
     }
 
     public void invoke() {

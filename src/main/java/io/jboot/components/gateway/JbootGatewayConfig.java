@@ -235,7 +235,7 @@ public class JbootGatewayConfig implements Serializable {
 
     private GatewayInterceptor[] inters;
 
-    public GatewayInterceptor[] getInters() {
+    public GatewayInterceptor[] buildInterceptors() {
         if (interceptors == null || interceptors.length == 0) {
             return null;
         }
@@ -267,14 +267,14 @@ public class JbootGatewayConfig implements Serializable {
             if (configOk == null) {
                 configOk = StrUtil.isNotBlank(uri);
                 if (configOk) {
-                    ensureUriPatterCorrect();
+                    ensureUriConfigCorrect();
                 }
             }
         }
         return configOk;
     }
 
-    private void ensureUriPatterCorrect() {
+    private void ensureUriConfigCorrect() {
         if (!uri.toLowerCase().startsWith("http://")
                 && !uri.toLowerCase().startsWith("https://")) {
             throw new JbootIllegalConfigException("gateway uri must start with http:// or https://");
