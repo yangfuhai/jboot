@@ -33,17 +33,20 @@ public class ClassScanner {
 
     private static final Set<Class> appClassesCache = new HashSet<>();
 
-    public static final Set<String> includeJars = new HashSet<>();
+    public static final Set<String> scanJars = new HashSet<>();
     public static final Set<String> excludeJars = new HashSet<>();
+
+    public static final Set<String> scanClasses = new HashSet<>();
     public static final Set<String> excludeClasses = new HashSet<>();
 
     public static void addScanJarPrefix(String prefix) {
-        includeJars.add(prefix.trim());
+        scanJars.add(prefix.trim());
     }
 
     static {
-//        addScanJarPrefix("jboot");
+        scanJars.add("jboot");
     }
+
 
     public static void addUnscanJarPrefix(String prefix) {
         excludeJars.add(prefix.trim());
@@ -300,6 +303,15 @@ public class ClassScanner {
         excludeClasses.add("io.jboot.Jboot");
     }
 
+
+    public static void addScanClassPrefix(String prefix) {
+        scanClasses.add(prefix.trim());
+    }
+
+    static {
+        scanClasses.add("io.jboot.support.shiro.directives");
+    }
+
     static {
         String scanJarPrefix = JbootConfigManager.me().getConfigValue("jboot.app.scanner.scanJarPrefix");
         if (scanJarPrefix != null) {
@@ -330,6 +342,17 @@ public class ClassScanner {
                 }
             }
         }
+
+        String scanClassPrefix = JbootConfigManager.me().getConfigValue("jboot.app.scanner.scanClassPrefix");
+        if (scanClassPrefix != null) {
+            String[] prefixes = scanClassPrefix.split(",");
+            for (String prefix : prefixes) {
+                if (prefix != null && prefix.trim().length() > 0) {
+                    addScanClassPrefix(prefix.trim());
+                }
+            }
+        }
+
     }
 
     public static <T> List<Class<T>> scanSubClass(Class<T> pclazz) {
@@ -523,8 +546,13 @@ public class ClassScanner {
 
     //用于在进行 fatjar 打包时，提高性能
     private static boolean isNotExcludeClass(String clazzName) {
-        for (String Prefix : excludeClasses) {
-            if (clazzName.startsWith(Prefix)) {
+        for (String prefix : scanClasses) {
+            if (clazzName.startsWith(prefix)) {
+                return true;
+            }
+        }
+        for (String prefix : excludeClasses) {
+            if (clazzName.startsWith(prefix)) {
                 return false;
             }
         }
@@ -602,7 +630,7 @@ public class ClassScanner {
 
         String jarName = new File(path).getName().toLowerCase();
 
-        for (String include : includeJars) {
+        for (String include : scanJars) {
             if (jarName.startsWith(include)) {
                 return true;
             }
