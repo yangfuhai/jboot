@@ -2,7 +2,7 @@ package io.jboot.test.rpc.motanzookeeper;
 
 
 import io.jboot.app.JbootApplication;
-import io.jboot.app.JbootRpcApplication;
+import io.jboot.app.JbootSimpleApplication;
 
 public class MotanServer2ZookeeperDemo {
 
@@ -25,7 +25,7 @@ public class MotanServer2ZookeeperDemo {
         //export
         JbootApplication.setBootArg("jboot.rpc.motan.defaultExport", "default:28081");
 
-        JbootRpcApplication.run(args);
+        JbootSimpleApplication.run(args);
 
 
 

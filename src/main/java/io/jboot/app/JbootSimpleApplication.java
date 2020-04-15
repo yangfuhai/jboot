@@ -29,7 +29,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/24
  */
-public class JbootRpcApplication {
+public class JbootSimpleApplication {
 
     private static final ReentrantLock LOCK = new ReentrantLock();
     private static final Condition STOP = LOCK.newCondition();
@@ -43,7 +43,12 @@ public class JbootRpcApplication {
     }
 
     public static void run(String[] args) {
-        JbootConfigManager.me().parseArgs(args);
+
+        JbootApplicationConfig appConfig = ApplicationUtil.getAppConfig(args);
+        ApplicationUtil.printBannerInfo(appConfig);
+        ApplicationUtil.printApplicationInfo(appConfig);
+        ApplicationUtil.printClassPath();
+
         JbootCoreConfig coreConfig = new JbootCoreConfig();
         new RPCServer(coreConfig).start();
     }

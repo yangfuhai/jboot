@@ -75,7 +75,7 @@ public class JbootApplicationConfig {
                 " name='" + name + '\'' +
                 ", mode='" + mode + '\'' +
                 ", version='" + version + '\'' +
-                ", jfinalConfig='" + jfinalConfig + '\'' +
+                ", config='" + jfinalConfig + '\'' +
                 " }";
     }
 }

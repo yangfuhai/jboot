@@ -292,7 +292,7 @@ fatjar 打包第一步，在 pom.xml 添加如下配置
                             <manifest>
                                 <mainClass>io.jboot.app.JbootApplication</mainClass>
 <!--                                如果该服务只提供 RPC 服务，不提供 WEB 服务，使用下方的配置启动速度更快，占用资源更少-->
-<!--                                <mainClass>io.jboot.app.JbootRpcApplication</mainClass>-->
+<!--                                <mainClass>io.jboot.app.JbootSimpleApplication</mainClass>-->
                             </manifest>
                         </archive>
                         <descriptorRefs>

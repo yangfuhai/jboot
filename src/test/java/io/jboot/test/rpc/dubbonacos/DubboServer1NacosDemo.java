@@ -2,7 +2,7 @@ package io.jboot.test.rpc.dubbonacos;
 
 
 import io.jboot.app.JbootApplication;
-import io.jboot.app.JbootRpcApplication;
+import io.jboot.app.JbootSimpleApplication;
 
 public class DubboServer1NacosDemo {
 
@@ -28,7 +28,7 @@ public class DubboServer1NacosDemo {
 
 
 
-        JbootRpcApplication.run(args);
+        JbootSimpleApplication.run(args);
 
 
         System.out.println("DubboServer1NacosDemo started...");

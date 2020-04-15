@@ -2,7 +2,7 @@ package io.jboot.test.rpc.motanzookeeper;
 
 
 import io.jboot.app.JbootApplication;
-import io.jboot.app.JbootRpcApplication;
+import io.jboot.app.JbootSimpleApplication;
 
 public class MotanServer1ZookeeperDemo {
 
@@ -25,7 +25,7 @@ public class MotanServer1ZookeeperDemo {
 
 
 
-        JbootRpcApplication.run(args);
+        JbootSimpleApplication.run(args);
 
 
         System.out.println("MotanServer1ZookeeperDemo started...");

@@ -2,7 +2,7 @@ package io.jboot.test.rpc.dubbozookeeper;
 
 
 import io.jboot.app.JbootApplication;
-import io.jboot.app.JbootRpcApplication;
+import io.jboot.app.JbootSimpleApplication;
 
 public class DubboServer1ZookeeperDemo {
 
@@ -27,7 +27,7 @@ public class DubboServer1ZookeeperDemo {
 
 
 
-        JbootRpcApplication.run(args);
+        JbootSimpleApplication.run(args);
 
 
         System.out.println("DubboServer1ZookeeperDemo started...");

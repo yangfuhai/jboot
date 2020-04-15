@@ -17,7 +17,7 @@ package io.jboot.test.rpc.dubbo;
 
 
 import io.jboot.app.JbootApplication;
-import io.jboot.app.JbootRpcApplication;
+import io.jboot.app.JbootSimpleApplication;
 
 public class DubboServer {
 
@@ -35,7 +35,7 @@ public class DubboServer {
         JbootApplication.setBootArg("jboot.rpc.dubbo.protocol.port", "28080");
 
 
-        JbootRpcApplication.run(args);
+        JbootSimpleApplication.run(args);
 
         System.out.println("DubboServer started...");
 

@@ -17,7 +17,7 @@ package io.jboot.test.rpc.motan;
 
 
 import io.jboot.app.JbootApplication;
-import io.jboot.app.JbootRpcApplication;
+import io.jboot.app.JbootSimpleApplication;
 
 public class MotanServer {
 
@@ -36,7 +36,7 @@ public class MotanServer {
 
 
 
-        JbootRpcApplication.run(args);
+        JbootSimpleApplication.run(args);
 
         System.out.println("MotanServer started...");
 

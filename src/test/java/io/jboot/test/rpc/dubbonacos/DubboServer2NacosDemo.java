@@ -2,7 +2,7 @@ package io.jboot.test.rpc.dubbonacos;
 
 
 import io.jboot.app.JbootApplication;
-import io.jboot.app.JbootRpcApplication;
+import io.jboot.app.JbootSimpleApplication;
 
 public class DubboServer2NacosDemo {
 
@@ -26,7 +26,7 @@ public class DubboServer2NacosDemo {
         //dubbo 的通信协议配置，如果port配置为-1，则会分配一个没有被占用的端口。
         JbootApplication.setBootArg("jboot.rpc.dubbo.protocol.port", "28081");
 
-        JbootRpcApplication.run(args);
+        JbootSimpleApplication.run(args);
 
 
 
