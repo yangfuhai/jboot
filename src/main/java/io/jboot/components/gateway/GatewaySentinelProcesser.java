@@ -18,6 +18,7 @@ package io.jboot.components.gateway;
 import com.alibaba.csp.sentinel.*;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.util.StringUtil;
+import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.LogKit;
 import io.jboot.utils.StrUtil;
 
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -59,16 +61,27 @@ public class GatewaySentinelProcesser {
         }
 
         try {
-            if (StringUtil.isBlank(config.getSentinelBlockPage())) {
-                writeDefaultBlockedPage(resp);
-            } else {
+            if (StringUtil.isNotBlank(config.getSentinelBlockPage())) {
                 String redirectUrl = config.getSentinelBlockPage() + "?http_referer=" + url.toString();
                 resp.sendRedirect(redirectUrl);
+            } else if (config.getSentinelBlockJsonMap() != null && !config.getSentinelBlockJsonMap().isEmpty()) {
+                writeDefaultBlockedJson(resp, config.getSentinelBlockJsonMap());
+            } else {
+                writeDefaultBlockedPage(resp);
             }
         } catch (IOException ex) {
             LogKit.error(ex.toString(), ex);
         }
 
+    }
+
+    protected static final String contentType = "application/json; charset=utf-8";
+
+    private static void writeDefaultBlockedJson(HttpServletResponse resp, Map map) throws IOException {
+        resp.setStatus(200);
+        resp.setContentType(contentType);
+        PrintWriter out = resp.getWriter();
+        out.print(JsonKit.toJson(map));
     }
 
 

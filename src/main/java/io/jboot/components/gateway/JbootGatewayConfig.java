@@ -41,6 +41,8 @@ public class JbootGatewayConfig implements Serializable {
     private boolean sentinelEnable = false;
     // sentinel 被限流后跳转地址
     private String sentinelBlockPage;
+    // sentinel 被渲染的json内容，如果配置 sentinelBlockPage，则 sentinelBlockJsonMap 配置无效
+    private Map<String,String> sentinelBlockJsonMap;
 
     // 设置 http 代理的参数
     private int proxyReadTimeout = 10000; //10s
@@ -110,6 +112,14 @@ public class JbootGatewayConfig implements Serializable {
 
     public void setSentinelBlockPage(String sentinelBlockPage) {
         this.sentinelBlockPage = sentinelBlockPage;
+    }
+
+    public Map<String, String> getSentinelBlockJsonMap() {
+        return sentinelBlockJsonMap;
+    }
+
+    public void setSentinelBlockJsonMap(Map<String, String> sentinelBlockJsonMap) {
+        this.sentinelBlockJsonMap = sentinelBlockJsonMap;
     }
 
     public int getProxyReadTimeout() {
