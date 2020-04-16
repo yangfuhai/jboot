@@ -46,7 +46,7 @@ jboot.gateway.queryContains = aa,bb
 ```
 
 - name 设置路由的名称
-- uri 设置路由目标网址
+- uri 设置路由目标网址，可以配置多个 uri，多个 uri 用英文逗号（,） 隔开，当有多个 uri 的时候，系统会随机使用其中一个去访问
 - enable 是否启用该路由
 - sentinelEnable 是否启用 sentinel 限流功能
 - sentinelBlockPage 若该路由被限流后，网页自动跳转到哪个网址
