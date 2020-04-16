@@ -85,21 +85,13 @@ class DubboUtil {
         //元数据 配置
         Map<String, MetadataReportConfig> metadataReportConfigs = configs(MetadataReportConfig.class, "jboot.rpc.dubbo.metadata-report");
         if (metadataReportConfigs != null && !metadataReportConfigs.isEmpty()) {
-            if (metadataReportConfigs.size() == 1) {
-                dubboBootstrap.metadataReport(getDefault(metadataReportConfigs));
-            } else {
-                dubboBootstrap.metadataReports(toList(metadataReportConfigs));
-            }
+            dubboBootstrap.metadataReports(toList(metadataReportConfigs));
         }
 
         //配置中心配置
         Map<String, ConfigCenterConfig> configCenterConfigs = configs(ConfigCenterConfig.class, "jboot.rpc.dubbo.config-center");
         if (configCenterConfigs != null && !configCenterConfigs.isEmpty()) {
-            if (configCenterConfigs.size() == 1) {
-                dubboBootstrap.configCenter(getDefault(configCenterConfigs));
-            } else {
-                dubboBootstrap.configCenters(toList(configCenterConfigs));
-            }
+            dubboBootstrap.configCenters(toList(configCenterConfigs));
         }
 
 
@@ -107,22 +99,14 @@ class DubboUtil {
         Map<String, ProtocolConfig> protocolConfigs = configs(ProtocolConfig.class, "jboot.rpc.dubbo.protocol");
         if (protocolConfigs != null && !protocolConfigs.isEmpty()) {
             protocolConfigMap.putAll(protocolConfigs);
-            if (protocolConfigs.size() == 1) {
-                dubboBootstrap.protocol(getDefault(protocolConfigs));
-            } else {
-                dubboBootstrap.protocols(toList(protocolConfigs));
-            }
+            dubboBootstrap.protocols(toList(protocolConfigs));
         }
 
         //服务注册中心 配置
         Map<String, RegistryConfig> registryConfigs = configs(RegistryConfig.class, "jboot.rpc.dubbo.registry");
         if (registryConfigs != null && !registryConfigs.isEmpty()) {
             registryConfigMap.putAll(registryConfigs);
-            if (registryConfigs.size() == 1) {
-                dubboBootstrap.registry(getDefault(registryConfigs));
-            } else {
-                dubboBootstrap.registries(toList(registryConfigs));
-            }
+            dubboBootstrap.registries(toList(registryConfigs));
         }
         //没有配置注册中心，一般只用于希望此服务网提供直连的方式给客户端使用
         else {
@@ -150,11 +134,7 @@ class DubboUtil {
 
         if (consumerConfigs != null && !consumerConfigs.isEmpty()) {
             consumerConfigMap.putAll(consumerConfigs);
-            if (consumerConfigs.size() == 1) {
-                dubboBootstrap.consumer(getDefault(consumerConfigs));
-            } else {
-                dubboBootstrap.consumers(toList(consumerConfigs));
-            }
+            dubboBootstrap.consumers(toList(consumerConfigs));
         }
 
         //服务提供者 配置
@@ -165,11 +145,7 @@ class DubboUtil {
 
         if (providerConfigs != null && !providerConfigs.isEmpty()) {
             providerConfigMap.putAll(providerConfigs);
-            if (providerConfigs.size() == 1) {
-                dubboBootstrap.provider(getDefault(providerConfigs));
-            } else {
-                dubboBootstrap.providers(toList(providerConfigs));
-            }
+            dubboBootstrap.providers(toList(providerConfigs));
         }
     }
 
@@ -234,13 +210,6 @@ class DubboUtil {
         return JbootConfigUtil.getConfigModels(clazz, prefix);
     }
 
-    private static <T> T getDefault(Map<String,T> map) {
-        AbstractConfig config = (AbstractConfig) map.values().iterator().next();
-        if (config != null){
-            config.setId(map.keySet().iterator().next());
-        }
-        return (T) config;
-    }
 
     private static <T> List<T> toList(Map<String, T> map) {
         List<T> list = new ArrayList<>(map.size());
