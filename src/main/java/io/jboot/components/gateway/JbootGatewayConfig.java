@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -34,7 +35,7 @@ public class JbootGatewayConfig implements Serializable {
     public static final String DEFAULT_PROXY_CONTENT_TYPE = "text/html;charset=utf-8";
 
     private String name;
-    private String uri;
+    private String[] uri;
     private boolean enable = false;
 
     // 是否启用 sentinel 限流
@@ -42,7 +43,7 @@ public class JbootGatewayConfig implements Serializable {
     // sentinel 被限流后跳转地址
     private String sentinelBlockPage;
     // sentinel 被渲染的json内容，如果配置 sentinelBlockPage，则 sentinelBlockJsonMap 配置无效
-    private Map<String,String> sentinelBlockJsonMap;
+    private Map<String, String> sentinelBlockJsonMap;
 
     // 设置 http 代理的参数
     private int proxyReadTimeout = 10000; //10s
@@ -82,12 +83,23 @@ public class JbootGatewayConfig implements Serializable {
         this.name = name;
     }
 
-    public String getUri() {
+
+    public String[] getUri() {
         return uri;
     }
 
-    public void setUri(String uri) {
+    public void setUri(String[] uri) {
         this.uri = uri;
+    }
+
+    public String getRandomUri() {
+        if (uri == null || uri.length == 0) {
+            return null;
+        } else if (uri.length == 1) {
+            return uri[0];
+        } else {
+            return uri[ThreadLocalRandom.current().nextInt(uri.length)];
+        }
     }
 
     public boolean isEnable() {
@@ -275,7 +287,7 @@ public class JbootGatewayConfig implements Serializable {
         }
         synchronized (this) {
             if (configOk == null) {
-                configOk = StrUtil.isNotBlank(uri);
+                configOk = uri != null && uri.length > 0;
                 if (configOk) {
                     ensureUriConfigCorrect();
                 }
@@ -285,9 +297,11 @@ public class JbootGatewayConfig implements Serializable {
     }
 
     private void ensureUriConfigCorrect() {
-        if (!uri.toLowerCase().startsWith("http://")
-                && !uri.toLowerCase().startsWith("https://")) {
-            throw new JbootIllegalConfigException("gateway uri must start with http:// or https://");
+        for (String u : uri) {
+            if (!u.toLowerCase().startsWith("http://")
+                    && !u.toLowerCase().startsWith("https://")) {
+                throw new JbootIllegalConfigException("gateway uri must start with http:// or https://");
+            }
         }
     }
 

@@ -29,7 +29,7 @@ public class GatewayUtil {
     private static final String PATH_SPLIT = "/";
 
     public static String buildProxyUrl(JbootGatewayConfig config,HttpServletRequest request){
-        StringBuilder url = new StringBuilder(config.getUri());
+        StringBuilder url = new StringBuilder(config.getRandomUri());
         if (StrUtil.isNotBlank(request.getRequestURI())) {
             url.append(request.getRequestURI());
         }
