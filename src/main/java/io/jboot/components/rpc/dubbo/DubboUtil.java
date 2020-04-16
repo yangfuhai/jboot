@@ -181,9 +181,17 @@ class DubboUtil {
         ServiceConfig serviceConfig = new ServiceConfig();
         RPCUtil.copyFields(sc, serviceConfig);
 
-        //service provider
+        // service provider
         if (StrUtil.isNotBlank(sc.getProvider())) {
             serviceConfig.setProviderIds(sc.getProvider());
+        }
+        // set default provider
+        else {
+            for (ProviderConfig providerConfig : providerConfigMap.values()) {
+                if (providerConfig.isDefault() != null && providerConfig.isDefault()) {
+                    serviceConfig.setProvider(providerConfig);
+                }
+            }
         }
 
         //service protocol
