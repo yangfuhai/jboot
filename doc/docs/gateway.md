@@ -23,6 +23,7 @@ jboot.gateway.enable = true
 
 jboot.gateway.sentinelEnable = false
 jboot.gateway.sentinelBlockPage = /block
+jboot.gateway.sentinelBlockJsonMap = message:xxxx;code:200
 
 jboot.gateway.proxyReadTimeout = 10000
 jboot.gateway.proxyConnectTimeout = 5000
@@ -49,6 +50,7 @@ jboot.gateway.queryContains = aa,bb
 - enable 是否启用该路由
 - sentinelEnable 是否启用 sentinel 限流功能
 - sentinelBlockPage 若该路由被限流后，网页自动跳转到哪个网址
+- sentinelBlockJsonMap 若该路由被限流后，自动渲染的 jsonMap，若 sentinelBlockPage 已经配置，则 sentinelBlockJsonMap 配置无效
 - proxyReadTimeout 发生路由后，默认的请求超时时间，默认为 10 秒
 - proxyConnectTimeout 发生路由后，默认的连接超时时间，默认为 5 秒
 - proxyContentType 发生路由后，返回给浏览器的 http-content-type，默认为：text/html;charset=utf-8

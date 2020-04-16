@@ -306,6 +306,10 @@ public MyConfigDecriptor implements JbootConfigDecryptor {
 修改为大写，符号点（.）修改为下划线（_）。
 
 
+## RPC 配置
+
+参考 [这里](./rpc.md) 
+
 ## Jboot 其他配置参考
 
 ```
@@ -384,66 +388,6 @@ jboot.datasource.activeRecordPluginClass
 jboot.datasource.needAddMapping = true //是否需要添加到映射，当不添加映射的时候，只能通过 model.use("xxx").save()这种方式去调用该数据源
 
 
-jboot.rpc.type
-jboot.rpc.callMode
-jboot.rpc.requestTimeOut
-jboot.rpc.registryType
-jboot.rpc.registryAddress
-jboot.rpc.registryName
-jboot.rpc.registryUserName
-jboot.rpc.registryPassword
-jboot.rpc.registryFile
-jboot.rpc.registryCheck
-jboot.rpc.consumerCheck
-jboot.rpc.providerCheck
-jboot.rpc.directUrl
-jboot.rpc.host
-jboot.rpc.defaultPort
-jboot.rpc.defaultGroup
-jboot.rpc.defaultVersion
-jboot.rpc.proxy
-jboot.rpc.filter
-jboot.rpc.serialization
-jboot.rpc.retries
-jboot.rpc.autoExportEnable
-
-jboot.rpc.dubbo.protocolName
-jboot.rpc.dubbo.protocolServer
-jboot.rpc.dubbo.protocolContextPath
-jboot.rpc.dubbo.protocolTransporter
-jboot.rpc.dubbo.protocolThreads
-jboot.rpc.dubbo.protocolHost
-jboot.rpc.dubbo.protocolPort
-jboot.rpc.dubbo.protocolContextpath
-jboot.rpc.dubbo.protocolThreadpool
-jboot.rpc.dubbo.protocolIothreads
-jboot.rpc.dubbo.protocolQueues
-jboot.rpc.dubbo.protocolAccepts
-jboot.rpc.dubbo.protocolCodec
-jboot.rpc.dubbo.protocolSerialization
-jboot.rpc.dubbo.protocolCharset
-jboot.rpc.dubbo.protocolPayload
-jboot.rpc.dubbo.protocolBuffer
-jboot.rpc.dubbo.protocolHeartbeat
-jboot.rpc.dubbo.protocolAccesslog
-jboot.rpc.dubbo.protocolExchanger
-jboot.rpc.dubbo.protocolDispatcher
-jboot.rpc.dubbo.protocolNetworker
-jboot.rpc.dubbo.protocolClient
-jboot.rpc.dubbo.protocolTelnet
-jboot.rpc.dubbo.protocolPrompt
-jboot.rpc.dubbo.protocolStatus
-jboot.rpc.dubbo.protocolRegister
-jboot.rpc.dubbo.protocolKeepAlive
-jboot.rpc.dubbo.protocolOptimizer
-jboot.rpc.dubbo.protocolExtension
-jboot.rpc.dubbo.protocolIsDefault
-jboot.rpc.dubbo.qosEnable
-jboot.rpc.dubbo.qosPort
-jboot.rpc.dubbo.qosAcceptForeignIp
-
-jboot.rpc.zbus.serviceName
-jboot.rpc.zbus.serviceToken
 
 jboot.mq.type
 jboot.mq.channel

@@ -333,3 +333,118 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-consumer.html
 jboot.rpc.dubbo.consumer.timeout = 127.0.0.1
 ```
 
+#### SSL
+
+对应的配置类： org.apache.dubbo.config.SslConfig
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.ssl`
+
+例如：
+
+```
+jboot.rpc.dubbo.ssl.serverKeyCertChainPath = xxx
+```
+
+
+#### monitor
+
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-monitor.html
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.monitor`
+
+例如：
+
+```
+jboot.rpc.dubbo.monitor.protocol = xxx
+```
+
+
+#### metrics
+
+
+对应的配置类： org.apache.dubbo.config.MetricsConfig
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.metrics`
+
+例如：
+
+```
+jboot.rpc.dubbo.metrics.protocol = xxx
+```
+
+
+#### module
+
+
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-module.html
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.module`
+
+例如：
+
+```
+jboot.rpc.dubbo.module.name = xxx
+```
+
+
+#### MetadataReport
+
+
+对应的配置类： org.apache.dubbo.config.MetadataReportConfig
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.metadata-report`
+
+例如：
+
+```
+jboot.rpc.dubbo.metadata-report.group = xxx
+```
+
+
+#### ConfigCenter
+
+
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-config-center.html
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.config-center`
+
+例如：
+
+```
+jboot.rpc.dubbo.config-center.group = xxx
+```
+
+#### method
+
+
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-method.html
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.method`
+
+例如：
+
+```
+jboot.rpc.dubbo.method.name = xxx
+```
+
+#### argument
+
+
+http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-argument.html
+
+
+对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.argument`
+
+例如：
+
+```
+jboot.rpc.dubbo.argument.name = xxx
+```
+
