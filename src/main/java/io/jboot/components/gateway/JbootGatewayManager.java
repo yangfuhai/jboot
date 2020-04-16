@@ -44,7 +44,7 @@ public class JbootGatewayManager {
             for (Map.Entry<String, JbootGatewayConfig> e : configMap.entrySet()) {
                 JbootGatewayConfig config = e.getValue();
                 if (config.isConfigOk() && config.isEnable()) {
-                    if (StrUtil.isNotBlank(config.getName())) {
+                    if (StrUtil.isBlank(config.getName())) {
                         config.setName(e.getKey());
                     }
                     registerConfig(config);
