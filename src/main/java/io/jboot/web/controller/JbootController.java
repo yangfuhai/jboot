@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
+import com.jfinal.kit.JsonKit;
 import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
@@ -194,7 +195,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public <T> T getRawObject(Class<T> tClass) {
-        return StrUtil.isBlank(getRawData()) ? null : JSON.parseObject(getRawData(), tClass);
+        return StrUtil.isBlank(getRawData()) ? null : JsonKit.parse(getRawData(), tClass);
     }
 
 
