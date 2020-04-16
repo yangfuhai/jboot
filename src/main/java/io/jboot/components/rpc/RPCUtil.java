@@ -44,6 +44,9 @@ public class RPCUtil {
         for (Method method : methods) {
             if (method.getDeclaringClass() != Object.class
                     && method.getReturnType() != void.class
+                    && !"toString".equals(method.getName())
+                    && !"hashCode".equals(method.getName())
+                    && !"annotationType".equals(method.getName())
                     && method.getParameterTypes().length == 0
                     && Modifier.isPublic(method.getModifiers())
                     && !Modifier.isStatic(method.getModifiers())) {
@@ -56,18 +59,29 @@ public class RPCUtil {
                     Object value = method.invoke(annotation);
                     if (value != null && !value.equals(method.getDefaultValue())) {
                         Class<?> parameterType = getBoxedClass(method.getReturnType());
-                        if ("filter".equals(property) || "listener".equals(property)) {
+                        if ("filter".equals(property) || "listener".equals(property) || "registry".equals(property)) {
                             parameterType = String.class;
                             value = StringUtils.join((String[]) value, ",");
                         } else if ("parameters".equals(property)) {
                             parameterType = Map.class;
                             value = CollectionUtil.string2Map((String) value);
                         }
+
+                        Method setterMethod = null;
                         try {
-                            Method setterMethod = appendTo.getClass().getMethod(setter, parameterType);
-                            setterMethod.invoke(appendTo, value);
+                            setterMethod = appendTo.getClass().getMethod(setter, parameterType);
                         } catch (NoSuchMethodException e) {
-                            // ignore
+                        }
+
+                        if (setterMethod == null) {
+                            try {
+                                setterMethod = appendTo.getClass().getMethod(setter, method.getReturnType());
+                            } catch (NoSuchMethodException ex) {
+                            }
+                        }
+
+                        if (setterMethod != null) {
+                            setterMethod.invoke(appendTo, value);
                         }
                     }
                 } catch (Exception ex) {
