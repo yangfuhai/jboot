@@ -55,7 +55,7 @@ class DubboUtil {
             applicationConfig.setName("jboot");
         }
         //默认关闭 qos
-        if (applicationConfig.getQosEnable() == null){
+        if (applicationConfig.getQosEnable() == null) {
             applicationConfig.setQosEnable(false);
         }
 
@@ -154,9 +154,17 @@ class DubboUtil {
         ReferenceConfig referenceConfig = new ReferenceConfig();
         RPCUtil.copyFields(rc, referenceConfig);
 
-        //reference coonsumer
+        // reference consumer
         if (rc.getConsumer() != null) {
             referenceConfig.setConsumer(consumerConfigMap.get(rc.getConsumer()));
+        }
+        // set default consumer
+        else {
+            for (ConsumerConfig consumerConfig : consumerConfigMap.values()) {
+                if (consumerConfig.getDefault() != null && consumerConfig.getDefault()) {
+                    referenceConfig.setConsumer(consumerConfig);
+                }
+            }
         }
 
 
