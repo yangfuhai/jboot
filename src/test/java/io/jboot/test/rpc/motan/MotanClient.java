@@ -16,7 +16,6 @@
 package io.jboot.test.rpc.motan;
 
 
-import com.jfinal.aop.Before;
 import io.jboot.app.JbootApplication;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.test.rpc.commons.BlogService;
@@ -47,7 +46,7 @@ public class MotanClient extends JbootController {
     @RPCInject
     private BlogService blogService;
 
-    @Before(MotanInterceptor.class)
+//    @Before(MotanInterceptor.class)
     public void index() {
 
         System.out.println("blogService:" + blogService);

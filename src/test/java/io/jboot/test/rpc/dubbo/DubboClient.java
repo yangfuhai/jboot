@@ -44,7 +44,7 @@ public class DubboClient extends JbootController {
     }
 
 
-    @RPCInject
+    @RPCInject(timeout = 3300)
     private BlogService blogService;
 
     @Before(DubboInterceptor.class)
