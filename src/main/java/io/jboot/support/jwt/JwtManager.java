@@ -15,7 +15,7 @@
  */
 package io.jboot.support.jwt;
 
-import com.alibaba.fastjson.JSON;
+import com.jfinal.kit.JsonKit;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
@@ -80,8 +80,7 @@ public class JwtManager {
             if (StrUtil.isBlank(jsonString)) {
                 return null;
             }
-
-            return JSON.parseObject(jsonString, HashMap.class);
+            return JsonKit.parse(jsonString, HashMap.class);
 
         } catch (SignatureException | MalformedJwtException e) {
             // don't trust the JWT!
@@ -108,7 +107,7 @@ public class JwtManager {
         Date now = new Date(nowMillis);
 
         map.put(JwtInterceptor.ISUUED_AT, nowMillis);
-        String subject = JSON.toJSONString(map);
+        String subject = JsonKit.toJson(map);
 
         JwtBuilder builder = Jwts.builder()
                 .setIssuedAt(now)
