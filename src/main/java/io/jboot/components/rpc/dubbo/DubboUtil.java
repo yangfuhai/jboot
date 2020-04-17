@@ -150,18 +150,18 @@ class DubboUtil {
     }
 
 
-    public static ReferenceConfig toReferenceConfig(JbootrpcReferenceConfig rc) {
+    public static ReferenceConfig toReferenceConfig(JbootrpcReferenceConfig jbootReferenceConfig) {
         ReferenceConfig referenceConfig = new ReferenceConfig();
-        RPCUtil.copyFields(rc, referenceConfig);
+        RPCUtil.copyFields(jbootReferenceConfig, referenceConfig);
 
         // reference consumer
-        if (rc.getConsumer() != null) {
-            referenceConfig.setConsumer(consumerConfigMap.get(rc.getConsumer()));
+        if (jbootReferenceConfig.getConsumer() != null) {
+            referenceConfig.setConsumer(consumerConfigMap.get(jbootReferenceConfig.getConsumer()));
         }
         // set default consumer
         else {
             for (ConsumerConfig consumerConfig : consumerConfigMap.values()) {
-                if (consumerConfig.getDefault() != null && consumerConfig.getDefault()) {
+                if (consumerConfig.isDefault() != null && consumerConfig.isDefault()) {
                     referenceConfig.setConsumer(consumerConfig);
                 }
             }
@@ -169,21 +169,29 @@ class DubboUtil {
 
 
         //service registry
-        if (StrUtil.isNotBlank(rc.getRegistry())) {
-            referenceConfig.setRegistryIds(rc.getRegistry());
+        if (StrUtil.isNotBlank(jbootReferenceConfig.getRegistry())) {
+            referenceConfig.setRegistryIds(jbootReferenceConfig.getRegistry());
+        }
+        // set default registry
+        else {
+            for (RegistryConfig registryConfig : registryConfigMap.values()) {
+                if (registryConfig.isDefault() != null && registryConfig.isDefault()) {
+                    referenceConfig.setRegistry(registryConfig);
+                }
+            }
         }
 
         return referenceConfig;
     }
 
 
-    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc) {
+    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig jbootServiceConfig) {
         ServiceConfig serviceConfig = new ServiceConfig();
-        RPCUtil.copyFields(sc, serviceConfig);
+        RPCUtil.copyFields(jbootServiceConfig, serviceConfig);
 
         // service provider
-        if (StrUtil.isNotBlank(sc.getProvider())) {
-            serviceConfig.setProviderIds(sc.getProvider());
+        if (StrUtil.isNotBlank(jbootServiceConfig.getProvider())) {
+            serviceConfig.setProviderIds(jbootServiceConfig.getProvider());
         }
         // set default provider
         else {
@@ -194,14 +202,30 @@ class DubboUtil {
             }
         }
 
-        //service protocol
-        if (StrUtil.isNotBlank(sc.getProtocol())) {
-            serviceConfig.setProtocolIds(sc.getProtocol());
+        // service protocol
+        if (StrUtil.isNotBlank(jbootServiceConfig.getProtocol())) {
+            serviceConfig.setProtocolIds(jbootServiceConfig.getProtocol());
+        }
+        // set default protocol
+        else {
+            for (ProtocolConfig protocolConfig : protocolConfigMap.values()) {
+                if (protocolConfig.isDefault() != null && protocolConfig.isDefault()) {
+                    serviceConfig.setProtocol(protocolConfig);
+                }
+            }
         }
 
-        //service registry
-        if (StrUtil.isNotBlank(sc.getRegistry())) {
-            serviceConfig.setRegistryIds(sc.getRegistry());
+        // service registry
+        if (StrUtil.isNotBlank(jbootServiceConfig.getRegistry())) {
+            serviceConfig.setRegistryIds(jbootServiceConfig.getRegistry());
+        }
+        // set default registry
+        else {
+            for (RegistryConfig registryConfig : registryConfigMap.values()) {
+                if (registryConfig.isDefault() != null && registryConfig.isDefault()) {
+                    serviceConfig.setRegistry(registryConfig);
+                }
+            }
         }
 
         return serviceConfig;
