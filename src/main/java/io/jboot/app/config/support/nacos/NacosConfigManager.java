@@ -21,8 +21,8 @@ import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.utils.StrUtil;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Properties;
@@ -113,7 +113,7 @@ public class NacosConfigManager {
     private Properties str2Properties(String content) {
         try {
             Properties properties = new Properties();
-            properties.load(new ByteArrayInputStream(content.getBytes()));
+            properties.load(new StringReader(content));
             return properties;
         } catch (IOException e) {
             e.printStackTrace();
