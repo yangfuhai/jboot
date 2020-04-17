@@ -18,12 +18,14 @@ package io.jboot.components.rpc;
 import io.jboot.Jboot;
 import io.jboot.utils.CollectionUtil;
 import io.jboot.utils.StrUtil;
-import org.apache.dubbo.common.utils.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -61,7 +63,7 @@ public class RPCUtil {
                         Class<?> parameterType = getBoxedClass(method.getReturnType());
                         if ("filter".equals(property) || "listener".equals(property) || "registry".equals(property)) {
                             parameterType = String.class;
-                            value = StringUtils.join((String[]) value, ",");
+                            value = StrUtil.join((String[]) value, ",");
                         } else if ("parameters".equals(property)) {
                             parameterType = Map.class;
                             value = CollectionUtil.string2Map((String) value);

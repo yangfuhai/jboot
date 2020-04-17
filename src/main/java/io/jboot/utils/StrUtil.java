@@ -25,10 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -306,5 +303,37 @@ public class StrUtil extends StrKit {
         return map;
     }
 
+
+    public static String join(String[] array, String split) {
+        if (array == null || array.length == 0) {
+            return EMPTY;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < array.length; i++) {
+            if (i > 0) {
+                sb.append(split);
+            }
+            sb.append(array[i]);
+        }
+        return sb.toString();
+    }
+
+    public static String join(Collection<String> coll, String split) {
+        if (coll == null || coll.isEmpty()) {
+            return EMPTY;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+        for (String s : coll) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                sb.append(split);
+            }
+            sb.append(s);
+        }
+        return sb.toString();
+    }
 
 }
