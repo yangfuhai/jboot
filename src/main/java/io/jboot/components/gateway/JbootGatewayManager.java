@@ -62,6 +62,11 @@ public class JbootGatewayManager {
     }
 
 
+    public JbootGatewayConfig removeConfig(String name) {
+        return configMap == null ? null : configMap.remove(name);
+    }
+
+
     public JbootGatewayConfig getConfig(String name) {
         return configMap == null ? null : configMap.get(name);
     }
