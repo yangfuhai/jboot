@@ -1,3 +1,26 @@
+jboot v3.1.8:
+新增：Gateway 新增动态注册路 和 移除由配置的功能
+新增：Gateway 被 Sentinel 拦截后自定义返回 Json 的功能
+新增：Gateway 新增对多个 host 的支持，默认走随机匹配的负载均衡机制
+新增：新增 Dubbo 下的对 consumer/provider/register/protocol 的默认配置的支持
+优化：修改 JbootServiceBase 的 DAO 属性类型为 JbootModel<M>
+优化：优化 JbootrpcBase 和 Prop 的一些输出日志
+优化：重命名 PRCUtils 为 PRCUtil，保持 Jboot 工具类统一
+优化：重命名 JbootRpcApplication 为 JbootSimpleApplication
+优化：重构 DubboUtil 代码，使之更加简洁
+优化：使用JsonKit来替换 FastJson 的直接使用，解决开发场景中使用其它json库的情况下，不会出错，感谢 @ yangyao
+修复：修复 ClassScanner 扫描不到 Shiro 指令的问题
+修复：JbootGatewayManager 默认名字配置错误的问题
+修复：PRCUtil 无法添加某些注解注解属性导致@RPCInject某些参数无效的问题
+修复：启用分布式配置 Nacos 时，在 Nacos 配置的中文会出现乱码的问题
+修复：使用 Motan RPC 框架时，出现引用错误的问题
+修复：Dubbo 下的一些 consumer 配置失效的问题
+文档：优化 gateway 的相关文档
+文档：优化 config配置 的相关文档
+文档：优化 rpc 的相关文档
+
+
+
 jboot v3.1.7:
 新增：JWT 可以通过 request para 传入数据的支持
 修复：复写 ActionHandler.getAction 可能无效的问题
