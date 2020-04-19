@@ -304,6 +304,7 @@ public class StrUtil extends StrKit {
     }
 
 
+
     public static String join(String[] array, String split) {
         if (array == null || array.length == 0) {
             return EMPTY;
@@ -317,6 +318,8 @@ public class StrUtil extends StrKit {
         }
         return sb.toString();
     }
+
+
 
     public static String join(Collection<String> coll, String split) {
         if (coll == null || coll.isEmpty()) {
