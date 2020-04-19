@@ -203,7 +203,7 @@ public class JbootCoreConfig extends JFinalConfig {
         //通过 java -jar xxx.jar 在单独的jar里运行
         if (runInFatjar()) {
             engine.setToClassPathSourceFactory();
-            engine.setBaseTemplatePath(null);
+            engine.setBaseTemplatePath("webapp");
         }
 
         List<Class> directiveClasses = ClassScanner.scanClass();
