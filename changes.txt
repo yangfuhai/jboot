@@ -9,6 +9,7 @@ jboot v3.1.8:
 优化：重命名 JbootRpcApplication 为 JbootSimpleApplication
 优化：重构 DubboUtil 代码，使之更加简洁
 优化：使用JsonKit来替换 FastJson 的直接使用，解决开发场景中使用其它json库的情况下，不会出错，感谢 @ yangyao
+优化：升级 Guava 等相关的 Maven 依赖到最新版本
 修复：修复 ClassScanner 扫描不到 Shiro 指令的问题
 修复：JbootGatewayManager 默认名字配置错误的问题
 修复：PRCUtil 无法添加某些注解注解属性导致@RPCInject某些参数无效的问题
