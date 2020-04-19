@@ -44,7 +44,7 @@ public class JbootrpcServiceConfig implements Serializable {
     /**
      * Whether to export service, default value is true
      */
-    private boolean export = true;
+    private Boolean export;
 
     /**
      * Service token, default value is false
@@ -54,34 +54,34 @@ public class JbootrpcServiceConfig implements Serializable {
     /**
      * Whether the service is deprecated, default value is false
      */
-    private boolean deprecated = false;
+    private Boolean deprecated;
 
 
     /**
      * Whether to register the service to register center, default value is true
      */
-    private boolean register = true;
+    private Boolean register;
 
     /**
      * Service weight value, default value is 0
      */
-    private int weight = 0;
+    private Integer weight;
 
     /**
      * Service doc, default value is ""
      */
-    private String document = "";
+    private String document;
 
 
     /**
      * Service invocation retry times
      */
-    private int retries = 2;
+    private int retries;
 
     /**
      * Load balance strategy, legal values include: random, roundrobin, leastactive
      */
-    private String loadbalance = "random";
+    private String loadbalance;
 
 
     /**

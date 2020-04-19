@@ -45,13 +45,13 @@ public class JbootrpcReferenceConfig implements Serializable {
     /**
      * Whether to enable generic invocation, default value is false
      */
-    private boolean generic = false;
+    private Boolean generic;
 
 
     /**
      * Check if service provider is available during boot up, default value is true
      */
-    private boolean check = true;
+    private Boolean check;
 
 
     /**
@@ -59,7 +59,7 @@ public class JbootrpcReferenceConfig implements Serializable {
      * <p>
      * see Constants#DEFAULT_RETRIES
      */
-    private int retries = 2;
+    private Integer retries;
 
 
     /**
@@ -67,23 +67,23 @@ public class JbootrpcReferenceConfig implements Serializable {
      * <p>
      * see Constants#DEFAULT_LOADBALANCE
      */
-    private String loadbalance = "random";
+    private String loadbalance;
 
     /**
      * Whether to enable async invocation, default value is false
      */
-    private boolean async = false;
+    private Boolean async;
 
     /**
      * Maximum active requests allowed, default value is 0
      */
-    private int actives = 0;
+    private Integer actives;
 
 
     /**
      * Timeout value for service invocation, default value is 0
      */
-    private int timeout = 0;
+    private Integer timeout;
 
     /**
      * Application associated name
@@ -114,7 +114,7 @@ public class JbootrpcReferenceConfig implements Serializable {
     /**
      * the default value is ""
      */
-    private String protocol = "";
+    private String protocol;
 
     /**
      * Service tag name
@@ -123,7 +123,7 @@ public class JbootrpcReferenceConfig implements Serializable {
 
     /**
      * The id
-     *
+     * <p>
      * default value is empty
      */
     private String id;

@@ -60,28 +60,16 @@ public class RPCUtil {
                     String setter = "set" + property.substring(0, 1).toUpperCase() + property.substring(1);
                     Object value = method.invoke(annotation);
                     if (value != null && !value.equals(method.getDefaultValue())) {
-                        Class<?> parameterType = getBoxedClass(method.getReturnType());
-                        if ("filter".equals(property) || "listener".equals(property) || "registry".equals(property)) {
-                            parameterType = String.class;
-                            value = StrUtil.join((String[]) value, ",");
-                        } else if ("parameters".equals(property)) {
-                            parameterType = Map.class;
-                            value = CollectionUtil.string2Map((String) value);
-                        }
-
                         Method setterMethod = null;
-                        try {
-                            setterMethod = appendTo.getClass().getMethod(setter, parameterType);
-                        } catch (NoSuchMethodException e) {
+                        if ("filter".equals(property) || "listener".equals(property) || "registry".equals(property)) {
+                            value = StrUtil.join((String[]) value, ",");
+                            setterMethod = getMethod(appendTo.getClass(), setter, String.class);
+                        } else if ("parameters".equals(property)) {
+                            value = CollectionUtil.string2Map((String) value);
+                            setterMethod = getMethod(appendTo.getClass(), setter, Map.class);
+                        } else {
+                            setterMethod = getMethod(appendTo.getClass(), setter, method.getReturnType());
                         }
-
-                        if (setterMethod == null) {
-                            try {
-                                setterMethod = appendTo.getClass().getMethod(setter, method.getReturnType());
-                            } catch (NoSuchMethodException ex) {
-                            }
-                        }
-
                         if (setterMethod != null) {
                             setterMethod.invoke(appendTo, value);
                         }
@@ -105,20 +93,33 @@ public class RPCUtil {
         for (Field field : fields) {
             try {
                 String setterName = "set" + StrUtil.firstCharToUpperCase(field.getName());
-                Method method = copyTo.getClass().getMethod(setterName, getBoxedClass(field.getType()));
+                Method method = getMethod(copyTo.getClass(), setterName, field.getType());
 
-                field.setAccessible(true);
-                Object data = field.get(copyFrom);
-
-                if (data != null) {
-                    method.invoke(copyTo, data);
+                if (method != null) {
+                    field.setAccessible(true);
+                    Object value = field.get(copyFrom);
+                    if (value != null && !value.equals("0") && !value.equals("")) {
+                        method.invoke(copyTo, value);
+                    }
                 }
-            } catch (NoSuchMethodException ex) {
-                // ignore
             } catch (Exception ex) {
-                ex.printStackTrace();
+                // ignore
             }
         }
+    }
+
+
+    private static Method getMethod(Class clazz, String methodName, Class type) {
+        try {
+            return clazz.getMethod(methodName, getBoxedClass(type));
+        } catch (NoSuchMethodException e) {
+            try {
+                return clazz.getMethod(methodName, type);
+            } catch (NoSuchMethodException ex) {
+            }
+        }
+
+        return null;
     }
 
 
