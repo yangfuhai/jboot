@@ -16,6 +16,7 @@ jboot v3.1.8:
 修复：启用分布式配置 Nacos 时，在 Nacos 配置的中文会出现乱码的问题
 修复：使用 Motan RPC 框架时，出现引用错误的问题
 修复：Dubbo 下的一些 consumer 配置失效的问题
+修复：修复 fatjar 打包的时候，需要单独配置 BaseTemplatePath，否则出错的问题
 文档：优化 gateway 的相关文档
 文档：优化 config配置 的相关文档
 文档：优化 rpc 的相关文档
