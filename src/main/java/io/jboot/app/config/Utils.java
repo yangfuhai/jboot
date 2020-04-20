@@ -55,17 +55,20 @@ class Utils {
         ConfigPart part = null;
         int index = 0;
         for (char c : chars){
-            if (c == '{' && chars[index-1] == '$' &&  part == null){
-                part = new ConfigPart();
-                part.setStart(index);
-            }else if ( c == '}' && part != null){
-                part.setEnd(index);
-                configParts.add(part);
-                part = null;
-            }else if (part != null){
-                part.append(c);
-                if (c ==':' && part.getKeyValueIndexOf() == 0){
-                    part.setKeyValueIndexOf(index - part.getStart());
+            //第一个字符是 '{' 会出现 ArrayIndexOutOfBoundsException 错误
+            if (index > 0) {
+                if (c == '{' && chars[index - 1] == '$' && part == null) {
+                    part = new ConfigPart();
+                    part.setStart(index);
+                } else if (c == '}' && part != null) {
+                    part.setEnd(index);
+                    configParts.add(part);
+                    part = null;
+                } else if (part != null) {
+                    part.append(c);
+                    if (c == ':' && part.getKeyValueIndexOf() == 0) {
+                        part.setKeyValueIndexOf(index - part.getStart());
+                    }
                 }
             }
             index ++;
