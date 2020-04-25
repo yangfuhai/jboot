@@ -18,14 +18,12 @@ public class AnnotationUtil {
 
 
         List<ConfigPart> configParts = ConfigUtil.parseParts(value);
-        if (configParts == null || configParts.isEmpty()) {
-            return value;
-        }
-
-        for (ConfigPart cp : configParts) {
-            String configValue = JbootConfigManager.me().getConfigValue(cp.getKey());
-            configValue = StrUtil.isNotBlank(configValue) ? value : cp.getDefaultValue();
-            value = value.replace(cp.getPartString(), configValue);
+        if (configParts != null) {
+            for (ConfigPart cp : configParts) {
+                String configValue = JbootConfigManager.me().getConfigValue(cp.getKey());
+                configValue = StrUtil.isNotBlank(configValue) ? configValue : cp.getDefaultValue();
+                value = value.replace(cp.getPartString(), configValue);
+            }
         }
 
         return value;
