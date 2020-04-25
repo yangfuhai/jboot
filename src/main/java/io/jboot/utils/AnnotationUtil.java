@@ -1,13 +1,13 @@
 package io.jboot.utils;
 
 
+import io.jboot.app.config.ConfigPart;
+import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.JbootConfigManager;
 
+import java.util.List;
+
 public class AnnotationUtil {
-
-    private static final String EXPR_PREFIX = "${";
-    private static final String EXPR_SUFFIX = "}";
-
 
     public static String get(String value) {
         if (StrUtil.isBlank(value)) {
@@ -16,25 +16,19 @@ public class AnnotationUtil {
             value = value.trim();
         }
 
-        if (value.startsWith(EXPR_PREFIX) && value.endsWith(EXPR_SUFFIX)) {
-            String key = value.substring(2, value.length() - 1);
-            return getConfigValueByKeyString(key);
+
+        List<ConfigPart> configParts = ConfigUtil.parseParts(value);
+        if (configParts == null || configParts.isEmpty()) {
+            return value;
+        }
+
+        for (ConfigPart cp : configParts) {
+            String configValue = JbootConfigManager.me().getConfigValue(cp.getKey());
+            configValue = StrUtil.isNotBlank(configValue) ? value : cp.getDefaultValue();
+            value = value.replace(cp.getPartString(), configValue);
         }
 
         return value;
-    }
-
-
-    public static String getConfigValueByKeyString(String key) {
-        int indexOf = key.indexOf(":");
-        String defaultValue = null;
-        if (indexOf != -1) {
-            defaultValue = key.substring(indexOf + 1);
-            key = key.substring(0, indexOf);
-        }
-        String configValue = JbootConfigManager.me().getConfigValue(key.trim());
-        String returnValue = StrUtil.obtainDefaultIfBlank(configValue, defaultValue);
-        return StrUtil.isBlank(returnValue) ? null : returnValue.trim();
     }
 
 

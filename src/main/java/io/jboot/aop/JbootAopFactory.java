@@ -24,6 +24,7 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.proxy.Proxy;
 import com.jfinal.proxy.ProxyManager;
+import io.jboot.Jboot;
 import io.jboot.aop.annotation.*;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
@@ -221,7 +222,7 @@ public class JbootAopFactory extends AopFactory {
 
 
     private String getConfigValue(String key, Object targetObject, Field field) {
-        return AnnotationUtil.getConfigValueByKeyString(key);
+        return Jboot.configValue(key);
     }
 
 
