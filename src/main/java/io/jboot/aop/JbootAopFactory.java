@@ -26,6 +26,7 @@ import com.jfinal.proxy.Proxy;
 import com.jfinal.proxy.ProxyManager;
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.*;
+import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
@@ -213,7 +214,7 @@ public class JbootAopFactory extends AopFactory {
         String value = getConfigValue(key, targetObject, field);
 
         if (StrUtil.isNotBlank(value)) {
-            Object fieldInjectedObject = JbootConfigManager.me().convert(fieldInjectedClass, value, field.getGenericType());
+            Object fieldInjectedObject = ConfigUtil.convert(fieldInjectedClass, value, field.getGenericType());
             if (fieldInjectedObject != null) {
                 setFieldValue(field, targetObject, fieldInjectedObject);
             }

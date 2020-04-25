@@ -32,6 +32,7 @@ import io.jboot.components.serializer.JbootSerializerManager;
 import io.jboot.support.metric.JbootMetricManager;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
+import io.jboot.utils.StrUtil;
 
 
 public class Jboot {
@@ -146,6 +147,19 @@ public class Jboot {
 
 
     /**
+     * 读取某个配置信息
+     *
+     * @param key
+     * @param defaultValue 当获取不到的时候发挥此默认值
+     * @return
+     */
+    public static String configValue(String key, String defaultValue) {
+        String value = configValue(key);
+        return StrUtil.isNotBlank(value) ? value : defaultValue;
+    }
+
+
+    /**
      * 获取 RPC 服务
      *
      * @param clazz
@@ -190,6 +204,7 @@ public class Jboot {
 
     /**
      * 根据类名获取 Aop 下的 Bean
+     *
      * @param clazz
      * @param <T>
      * @return
@@ -200,6 +215,7 @@ public class Jboot {
 
     /**
      * 根据名称获取 Aop 下的 Bean
+     *
      * @param name
      * @param <T>
      * @return
