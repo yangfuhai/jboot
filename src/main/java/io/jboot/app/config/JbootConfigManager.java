@@ -68,7 +68,7 @@ public class JbootConfigManager {
 
         String mode = getConfigValue("jboot.app.mode");
 
-        if (Utils.isNotBlank(mode)) {
+        if (ConfigUtil.isNotBlank(mode)) {
             String p = String.format("jboot-%s.properties", mode);
             mainProperties.putAll(new Prop(p).getProperties());
         }
@@ -163,7 +163,7 @@ public class JbootConfigManager {
         mainProperties.putAll(properties);
 
         String mode = getConfigValue(properties, "jboot.app.mode");
-        if (Utils.isNotBlank(mode)) {
+        if (ConfigUtil.isNotBlank(mode)) {
             String p = String.format("jboot-%s.properties", mode);
             mainProperties.putAll(new Prop(p).getProperties());
         }
@@ -181,23 +181,23 @@ public class JbootConfigManager {
      * @return
      */
     public <T> T createConfigObject(Class<T> clazz, String prefix, String file){
-        Object configObject = Utils.newInstance(clazz);
-        List<Method> setMethods = Utils.getClassSetMethods(clazz);
+        Object configObject = ConfigUtil.newInstance(clazz);
+        List<Method> setMethods = ConfigUtil.getClassSetMethods(clazz);
         if (setMethods != null) {
             for (Method method : setMethods) {
 
                 String key = buildKey(prefix, method);
                 String value = getConfigValue(key);
 
-                if (Utils.isNotBlank(file)) {
+                if (ConfigUtil.isNotBlank(file)) {
                     Prop prop = new Prop(file);
                     String filePropValue = getConfigValue(prop.getProperties(), key);
-                    if (Utils.isNotBlank(filePropValue)) {
+                    if (ConfigUtil.isNotBlank(filePropValue)) {
                         value = filePropValue;
                     }
                 }
 
-                if (Utils.isNotBlank(value)) {
+                if (ConfigUtil.isNotBlank(value)) {
                     Object val = convert(method.getParameterTypes()[0], value, method.getGenericParameterTypes()[0]);
                     if (val != null) {
                         try {
@@ -215,12 +215,12 @@ public class JbootConfigManager {
 
 
     public Object convert(Class<?> clazz, String s, Type genericType) {
-        return Utils.convert(clazz, s, genericType);
+        return ConfigUtil.convert(clazz, s, genericType);
     }
 
     private String buildKey(String prefix, Method method) {
-        String key = Utils.firstCharToLowerCase(method.getName().substring(3));
-        if (Utils.isNotBlank(prefix)) {
+        String key = ConfigUtil.firstCharToLowerCase(method.getName().substring(3));
+        if (ConfigUtil.isNotBlank(prefix)) {
             key = prefix.trim() + "." + key;
         }
         return key;
@@ -239,7 +239,7 @@ public class JbootConfigManager {
         String originalValue = getOriginalConfigValue(properties, key);
         String stringValue = decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
 
-        List<ConfigPart> configParts = Utils.parseParts(stringValue);
+        List<ConfigPart> configParts = ConfigUtil.parseParts(stringValue);
         if (configParts == null || configParts.isEmpty()) {
             return stringValue;
         }
@@ -266,20 +266,20 @@ public class JbootConfigManager {
         //优先读取分布式配置内容
         if (remoteProperties != null) {
             value = (String) remoteProperties.get(key);
-            if (Utils.isNotBlank(value)) {
+            if (ConfigUtil.isNotBlank(value)) {
                 return value.trim();
             }
         }
 
         //boot arg
         value = getBootArg(key);
-        if (Utils.isNotBlank(value)) {
+        if (ConfigUtil.isNotBlank(value)) {
             return value.trim();
         }
 
         //env
         value = System.getenv(key);
-        if (Utils.isNotBlank(value)) {
+        if (ConfigUtil.isNotBlank(value)) {
             return value.trim();
         }
 
@@ -288,19 +288,19 @@ public class JbootConfigManager {
         // 例如：jboot.datasource.url 转换为 JBOOT_DATASOURCE_URL
         String tempKey = key.toUpperCase().replace('.', '_');
         value = System.getenv(tempKey);
-        if (Utils.isNotBlank(value)) {
+        if (ConfigUtil.isNotBlank(value)) {
             return value.trim();
         }
 
         //system property
         value = System.getProperty(key);
-        if (Utils.isNotBlank(value)) {
+        if (ConfigUtil.isNotBlank(value)) {
             return value.trim();
         }
 
         //user properties
         value = (String) properties.get(key);
-        if (Utils.isNotBlank(value)) {
+        if (ConfigUtil.isNotBlank(value)) {
             return value.trim();
         }
 
@@ -378,7 +378,7 @@ public class JbootConfigManager {
         listenerClassMapping.put(listener, forClass);
 
         String prefix = configModel.prefix();
-        List<Method> setMethods = Utils.getClassSetMethods(forClass);
+        List<Method> setMethods = ConfigUtil.getClassSetMethods(forClass);
         if (setMethods != null) {
             for (Method method : setMethods) {
                 String key = buildKey(prefix, method);

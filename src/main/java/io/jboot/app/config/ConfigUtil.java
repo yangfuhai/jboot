@@ -24,7 +24,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-class Utils {
+public class ConfigUtil {
 
 
     public static boolean isBlank(String string) {
@@ -112,7 +112,7 @@ class Utils {
                 rootClassPath = new File(path).getAbsolutePath();
             } catch (Exception e) {
                 try {
-                    String path = Utils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                    String path = ConfigUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath();
                     path = java.net.URLDecoder.decode(path, "UTF-8");
                     if (path.endsWith(File.separator)) {
                         path = path.substring(0, path.length() - 1);
@@ -135,7 +135,7 @@ class Utils {
 
     public static ClassLoader getClassLoader() {
         ClassLoader ret = Thread.currentThread().getContextClassLoader();
-        return ret != null ? ret : Utils.class.getClassLoader();
+        return ret != null ? ret : ConfigUtil.class.getClassLoader();
     }
 
     public static void doNothing(Throwable ex) {

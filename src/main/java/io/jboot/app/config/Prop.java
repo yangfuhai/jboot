@@ -31,7 +31,7 @@ class Prop {
         properties = new Properties();
         InputStream inputStream = null;
         try {
-            inputStream = Utils.getClassLoader().getResourceAsStream(fileName);
+            inputStream = ConfigUtil.getClassLoader().getResourceAsStream(fileName);
             if (inputStream != null) {
                 properties.load(new InputStreamReader(inputStream, encoding));
             }
