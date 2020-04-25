@@ -92,7 +92,7 @@ public class JbootCron4jPlugin implements IPlugin {
                 throw new IllegalArgumentException("Task 必须是 Runnable、ITask、ProcessTask 或者 Task 类型");
             }
 
-            boolean taskDaemon = configProp.getBoolean(taskName + ".daemon", true);
+            boolean taskDaemon = configProp.getBoolean(taskName + ".daemon", false);
             boolean taskEnable = configProp.getBoolean(taskName + ".enable", true);
             taskInfoList.add(new JbootCron4jPlugin.TaskInfo(taskCron, taskObj, taskDaemon, taskEnable));
         }
@@ -108,7 +108,7 @@ public class JbootCron4jPlugin implements IPlugin {
     }
 
     public JbootCron4jPlugin addTask(String cron, Runnable task) {
-        return addTask(cron, task, true, true);
+        return addTask(cron, task, false, true);
     }
 
     public JbootCron4jPlugin addTask(String cron, ProcessTask processTask, boolean daemon, boolean enable) {
@@ -121,7 +121,7 @@ public class JbootCron4jPlugin implements IPlugin {
     }
 
     public JbootCron4jPlugin addTask(String cron, ProcessTask processTask) {
-        return addTask(cron, processTask, true, true);
+        return addTask(cron, processTask, false, true);
     }
 
     public JbootCron4jPlugin addTask(String cron, Task task, boolean daemon, boolean enable) {
@@ -134,7 +134,7 @@ public class JbootCron4jPlugin implements IPlugin {
     }
 
     public JbootCron4jPlugin addTask(String cron, Task task) {
-        return addTask(cron, task, true, true);
+        return addTask(cron, task, false, true);
     }
 
     @Override
