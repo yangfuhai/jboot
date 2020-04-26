@@ -175,6 +175,17 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
     @Override
+    public void onStartFinish() {
+        for (JbootAppListener listener : listeners) {
+            try {
+                listener.onStartFinish();
+            } catch (Throwable ex) {
+                log.error(ex.toString(), ex);
+            }
+        }
+    }
+
+    @Override
     public void onStop() {
         for (JbootAppListener listener : listeners) {
             try {

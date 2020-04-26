@@ -296,6 +296,9 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootGatewayManager.me().init();
 
         JbootAppListenerManager.me().onStart();
+
+        //使用场景：需要等所有组件 onStart() 完成之后，再去执行某些工作的时候
+        JbootAppListenerManager.me().onStartFinish();
     }
 
     @Override

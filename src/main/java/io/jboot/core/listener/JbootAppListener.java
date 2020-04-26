@@ -46,6 +46,8 @@ public interface JbootAppListener {
 
     public void onStart();
 
+    public void onStartFinish();
+
     public void onStop();
 
 }
