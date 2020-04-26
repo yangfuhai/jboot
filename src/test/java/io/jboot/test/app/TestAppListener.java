@@ -61,6 +61,11 @@ public class TestAppListener implements JbootAppListener {
     }
 
     @Override
+    public void onStartFinish() {
+        System.out.println("TestAppListener.onStartFinish");
+    }
+
+    @Override
     public void onStop() {
         System.out.println("TestAppListener.onStop");
     }
