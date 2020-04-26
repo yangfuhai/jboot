@@ -1,3 +1,15 @@
+jboot v3.1.9:
+新增：Jboot.configValue(key,default) 方法
+新增：JbootAppListener.onStartFinish()方法，用于不同的 Module 在 onStart 进行操作。
+修复：当在配置文件中配置的内容为 '{' 字符开头的时候会出现 ArrayIndexOutOfBoundsException 异常的问题
+优化：升级 Seata 到 v1.2.0 最新版本
+优化：移除 rpc 服务暴露成功后的日志输出
+优化：统一 JbootCron4jPlugin.addTask() 中的 deamon 参数默认为 false
+优化：重命名 app/config/Utils 为 ConfigUtil
+优化：重构 Restructure AnnotationUtil.get()，以便支持更加灵活的参数配置
+
+
+
 jboot v3.1.8:
 新增：Gateway 新增动态注册路 和 移除由配置的功能
 新增：Gateway 被 Sentinel 拦截后自定义返回 Json 的功能
