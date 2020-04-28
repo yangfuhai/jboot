@@ -7,6 +7,7 @@
 - 描述
 - 读取配置
 - 注入配置
+- 动态配置
 - 注解配置
 - 配置实体类
 - 开启 Nacos 分布式配置中心
@@ -61,6 +62,39 @@ public class AopController extends JbootController {
 }
 ```
 
+## 动态配置
+在 Jboot 的所有配置中，我们可以通过 ${key} 来指定替换为 value。
+
+示例1：
+
+```xml
+key1 = value1
+key2 = ${key1}/abc
+```
+
+那么读取到的 key2 的值为 `value1/abc`。
+
+示例2：
+
+```xml
+key1 = value1
+key2 = ${key1}/abc
+key3 = abc/${key2}/xyz
+```
+那么，key2 的值为 `value1/abc` ，key3 的值为 `abc/value1/abc/xyz`
+
+
+示例2：
+
+```xml
+key1 = value1
+key2 = ${otherkey}/abc
+```
+那么，因为系统中找不到 otherkey 的值，key2 的值为 `/abc`，如果我们在系统中，通过 `java -jar xxx.jar --otherkey=othervalue`，
+那么， key2 的值为 `othervalue/abc`
+
+
+
 ## 注解配置
 
 在应用开发中，我们通常会使用注解，Jboot 内置了多个注解。
@@ -95,7 +129,7 @@ public class UserServiceProvider extends UserService{
 例如：
 
 ```java
-@RequestMapping("${user.mapping}")
+@RequestMapping("${user.mapping}/abc")
 public class UserController extends Controller{
     //....
 }
@@ -110,7 +144,7 @@ user.mapping = /user
 其作用是等效于：
 
 ```java
-@RequestMapping("/user")
+@RequestMapping("/use/abcr")
 public class UserController extends Controller{
     //....
 }
