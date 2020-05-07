@@ -19,6 +19,8 @@ package io.jboot.components.gateway;
  * GatewayInterceptor.
  */
 public interface GatewayInterceptor {
-	void intercept(GatewayInvocation inv);
+
+    void intercept(GatewayInvocation inv);
+
 }
 

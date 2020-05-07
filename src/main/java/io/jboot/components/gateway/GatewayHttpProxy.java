@@ -45,6 +45,7 @@ public class GatewayHttpProxy {
     private int connectTimeOut;
     private int retries;
     private String contentType;
+    private Exception exception;
 
     public GatewayHttpProxy(JbootGatewayConfig config) {
         this.readTimeOut = config.getProxyReadTimeout();
@@ -68,6 +69,7 @@ public class GatewayHttpProxy {
         } while (exception != null && triesCount-- > 0);
 
         if (exception != null) {
+            this.exception = exception;
             LOG.error(exception.toString(), exception);
         }
     }
@@ -277,4 +279,11 @@ public class GatewayHttpProxy {
     };
 
 
+    public Exception getException() {
+        return exception;
+    }
+
+    public boolean hasException() {
+        return exception != null;
+    }
 }

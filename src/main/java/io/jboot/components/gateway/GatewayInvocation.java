@@ -28,6 +28,7 @@ public class GatewayInvocation {
     private GatewayInterceptor[] inters;
     private HttpServletRequest request;
     private HttpServletResponse response;
+    private GatewayHttpProxy proxy;
 
     private int index = 0;
 
@@ -36,6 +37,7 @@ public class GatewayInvocation {
         this.config = config;
         this.request = request;
         this.response = response;
+        this.proxy = new GatewayHttpProxy(config);
         this.inters = config.buildInterceptors();
     }
 
@@ -47,18 +49,13 @@ public class GatewayInvocation {
         if (index < inters.length) {
             inters[index++].intercept(this);
         } else if (index++ >= inters.length) {
-            try {
-                doInvoke();
-            } catch (Exception e) {
-                throw e;
-            }
+            doInvoke();
         }
     }
 
-    protected void doInvoke() {
+    protected void doInvoke(){
         Runnable runnable = () -> {
-            new GatewayHttpProxy(config)
-                    .sendRequest(GatewayUtil.buildProxyUrl(config, request), request, response);
+            proxy.sendRequest(GatewayUtil.buildProxyUrl(config, request), request, response);
         };
         if (config.isSentinelEnable()) {
             new GatewaySentinelProcesser().process(runnable, config, request, response);
@@ -106,5 +103,9 @@ public class GatewayInvocation {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public GatewayHttpProxy getProxy() {
+        return proxy;
     }
 }
