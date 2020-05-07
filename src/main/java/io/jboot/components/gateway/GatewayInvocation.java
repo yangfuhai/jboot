@@ -108,4 +108,8 @@ public class GatewayInvocation {
     public GatewayHttpProxy getProxy() {
         return proxy;
     }
+
+    public boolean hasException() {
+        return proxy.getException() != null;
+    }
 }

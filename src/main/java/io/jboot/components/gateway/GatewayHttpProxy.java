@@ -283,7 +283,4 @@ public class GatewayHttpProxy {
         return exception;
     }
 
-    public boolean hasException() {
-        return exception != null;
-    }
 }
