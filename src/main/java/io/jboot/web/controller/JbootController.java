@@ -17,13 +17,18 @@ package io.jboot.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.core.ActionException;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.StrKit;
+import com.jfinal.render.RenderManager;
 import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -182,7 +187,7 @@ public class JbootController extends Controller {
 
 
     @NotAction
-    public String getCurrentUrl(){
+    public String getCurrentUrl() {
         return RequestUtil.getCurrentUrl(getRequest());
     }
 
@@ -266,6 +271,120 @@ public class JbootController extends Controller {
             return defaultValue;
         }
         return StrUtil.escapeHtml(value);
+    }
+
+
+    private BigInteger toBigInteger(String value, BigInteger defaultValue) {
+        try {
+            if (StrKit.isBlank(value)) {
+                return defaultValue;
+            }
+            value = value.trim();
+            if (value.startsWith("N") || value.startsWith("n")) {
+                return BigInteger.ZERO.subtract(new BigInteger(value));
+            }
+            return new BigInteger(value);
+        } catch (Exception e) {
+            throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), "Can not parse the parameter \"" + value + "\" to BigInteger value.");
+        }
+    }
+
+    /**
+     * Returns the value of a request parameter and convert to BigInteger.
+     *
+     * @param name a String specifying the name of the parameter
+     * @return a Integer representing the single value of the parameter
+     */
+    public BigInteger getParaToBigInteger(String name) {
+        return toBigInteger(getTrimPara(name), null);
+    }
+
+    /**
+     * Returns the value of a request parameter and convert to BigInteger with a default value if it is null.
+     *
+     * @param name a String specifying the name of the parameter
+     * @return a Integer representing the single value of the parameter
+     */
+    public BigInteger getParaToBigInteger(String name, BigInteger defaultValue) {
+        return toBigInteger(getTrimPara(name), defaultValue);
+    }
+
+
+    /**
+     * Returns the value of a request parameter and convert to BigInteger.
+     *
+     * @param name a String specifying the name of the parameter
+     * @return a Integer representing the single value of the parameter
+     */
+    public BigInteger getBigInteger(String name) {
+        return toBigInteger(getTrimPara(name), null);
+    }
+
+    /**
+     * Returns the value of a request parameter and convert to BigInteger with a default value if it is null.
+     *
+     * @param name a String specifying the name of the parameter
+     * @return a Integer representing the single value of the parameter
+     */
+    public BigInteger getBigInteger(String name, BigInteger defaultValue) {
+        return toBigInteger(getTrimPara(name), defaultValue);
+    }
+
+
+    private BigDecimal toBigDecimal(String value, BigDecimal defaultValue) {
+        try {
+            if (StrKit.isBlank(value)) {
+                return defaultValue;
+            }
+            value = value.trim();
+            if (value.startsWith("N") || value.startsWith("n")) {
+                return BigDecimal.ZERO.subtract(new BigDecimal(value));
+            }
+            return new BigDecimal(value);
+        } catch (Exception e) {
+            throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), "Can not parse the parameter \"" + value + "\" to BigDecimal value.");
+        }
+    }
+
+    /**
+     * Returns the value of a request parameter and convert to BigDecimal.
+     *
+     * @param name a String specifying the name of the parameter
+     * @return a Integer representing the single value of the parameter
+     */
+    public BigDecimal getParaToBigDecimal(String name) {
+        return toBigDecimal(getTrimPara(name), null);
+    }
+
+    /**
+     * Returns the value of a request parameter and convert to BigDecimal with a default value if it is null.
+     *
+     * @param name a String specifying the name of the parameter
+     * @return a Integer representing the single value of the parameter
+     */
+    public BigDecimal getParaToBigDecimal(String name, BigDecimal defaultValue) {
+        return toBigDecimal(getTrimPara(name), defaultValue);
+    }
+
+
+    /**
+     * Returns the value of a request parameter and convert to BigDecimal.
+     *
+     * @param name a String specifying the name of the parameter
+     * @return a Integer representing the single value of the parameter
+     */
+    public BigDecimal getBigDecimal(String name) {
+        return toBigDecimal(getTrimPara(name), null);
+    }
+
+    /**
+     * Returns the value of a request parameter and convert to BigDecimal with a default value if it is null.
+     *
+     * @param name a String specifying the name of the parameter
+     * @return a Integer representing the single value of the parameter
+     */
+    public BigDecimal getBigDecimal(String name, BigDecimal defaultValue) {
+        return toBigDecimal(getTrimPara(name), defaultValue);
     }
 
 }
