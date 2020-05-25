@@ -295,6 +295,7 @@ public class JbootController extends Controller {
      * @param name a String specifying the name of the parameter
      * @return a Integer representing the single value of the parameter
      */
+    @NotAction
     public BigInteger getParaToBigInteger(String name) {
         return toBigInteger(getTrimPara(name), null);
     }
@@ -305,6 +306,7 @@ public class JbootController extends Controller {
      * @param name a String specifying the name of the parameter
      * @return a Integer representing the single value of the parameter
      */
+    @NotAction
     public BigInteger getParaToBigInteger(String name, BigInteger defaultValue) {
         return toBigInteger(getTrimPara(name), defaultValue);
     }
@@ -316,6 +318,7 @@ public class JbootController extends Controller {
      * @param name a String specifying the name of the parameter
      * @return a Integer representing the single value of the parameter
      */
+    @NotAction
     public BigInteger getBigInteger(String name) {
         return toBigInteger(getTrimPara(name), null);
     }
@@ -326,6 +329,7 @@ public class JbootController extends Controller {
      * @param name a String specifying the name of the parameter
      * @return a Integer representing the single value of the parameter
      */
+    @NotAction
     public BigInteger getBigInteger(String name, BigInteger defaultValue) {
         return toBigInteger(getTrimPara(name), defaultValue);
     }
@@ -352,6 +356,7 @@ public class JbootController extends Controller {
      * @param name a String specifying the name of the parameter
      * @return a Integer representing the single value of the parameter
      */
+    @NotAction
     public BigDecimal getParaToBigDecimal(String name) {
         return toBigDecimal(getTrimPara(name), null);
     }
@@ -362,6 +367,7 @@ public class JbootController extends Controller {
      * @param name a String specifying the name of the parameter
      * @return a Integer representing the single value of the parameter
      */
+    @NotAction
     public BigDecimal getParaToBigDecimal(String name, BigDecimal defaultValue) {
         return toBigDecimal(getTrimPara(name), defaultValue);
     }
@@ -373,6 +379,7 @@ public class JbootController extends Controller {
      * @param name a String specifying the name of the parameter
      * @return a Integer representing the single value of the parameter
      */
+    @NotAction
     public BigDecimal getBigDecimal(String name) {
         return toBigDecimal(getTrimPara(name), null);
     }
@@ -383,6 +390,7 @@ public class JbootController extends Controller {
      * @param name a String specifying the name of the parameter
      * @return a Integer representing the single value of the parameter
      */
+    @NotAction
     public BigDecimal getBigDecimal(String name, BigDecimal defaultValue) {
         return toBigDecimal(getTrimPara(name), defaultValue);
     }
