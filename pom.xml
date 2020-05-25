@@ -9,7 +9,6 @@
     <version>3.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-
     <name>jboot</name>
     <url>http://jboot.io</url>
     <description>Jboot is a similar SpringCloud project base on JFinal, Dubbo and Undertow.</description>
