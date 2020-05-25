@@ -49,28 +49,28 @@
         <HikariCP.version>3.4.5</HikariCP.version>
         <jackson.version>2.11.0</jackson.version>
         <mysql.version>5.1.48</mysql.version>
-        <undertow.version>2.0.29.Final</undertow.version>
+        <undertow.version>2.1.1.Final</undertow.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <fst.version>2.57</fst.version>
+        <fst.version>3.0.1</fst.version>
         <fastjson.version>1.2.68</fastjson.version>
         <guava.version>29.0-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>2.10.2</jedis.version>
         <jsoup.version>1.13.1</jsoup.version>
         <ehcache.version>2.10.6</ehcache.version>
-        <caffeine.version>2.8.2</caffeine.version>
+        <caffeine.version>2.8.4</caffeine.version>
         <commons-lang3.version>3.10</commons-lang3.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-codec.version>1.14</commons-codec.version>
         <httpclient.version>4.5.12</httpclient.version>
         <httpcore.version>4.4.13</httpcore.version>
-        <netty.version>4.1.49.Final</netty.version>
+        <netty.version>4.1.50.Final</netty.version>
         <sentinel.version>1.7.2</sentinel.version>
         <dubbo.version>2.7.7</dubbo.version>
         <resteasy.version>3.11.0.Final</resteasy.version>
         <seata.version>1.2.0</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.1.7</metrics.version>
+        <metrics.version>4.1.9</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -352,7 +352,7 @@
         <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
-            <version>5.2.2.RELEASE</version>
+            <version>5.3.0.RELEASE</version>
             <scope>provided</scope>
         </dependency>
 
@@ -373,7 +373,7 @@
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
-            <version>5.7.3</version>
+            <version>5.9.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -381,7 +381,7 @@
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
-            <version>4.0.1</version>
+            <version>4.1.0</version>
             <scope>provided</scope>
         </dependency>
 
