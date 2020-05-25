@@ -13,6 +13,7 @@ Jboot 数据库功能基于 JFinal 的 ActiveRecordPlugin 插件和 Apache shard
 - 分页查询
 - 批量插入
 - 事务操作
+- 多数据源
 - 读写分离
 - 分库分表
 - 分布式事务
@@ -167,6 +168,108 @@ public List<User> findListBy(int userAge,String articleTitle){
       .findByColumns(Columns.create().ge("user.age",userAge).like("article.title",articleTitle))
 }
 ```
+
+
+## 多数据源
+
+默认单数据源的情况下，我们需要在 `jboot.properties` 添加如下配置：
+
+```
+jboot.datasource.type=mysql
+jboot.datasource.url=jdbc:mysql://127.0.0.1:3306/jbootdemo
+jboot.datasource.user=root
+jboot.datasource.password=your_password
+```
+
+如果是多个数据源，我们可以在 `jboot.datasource.` 后面添加数据源的名称，例如：
+
+```
+jboot.datasource.a1.type=mysql
+jboot.datasource.a1.turl=jdbc:mysql://127.0.0.1:3306/jboot1
+jboot.datasource.a1.tuser=root
+jboot.datasource.a1.tpassword=your_password
+
+jboot.datasource.a2.type=mysql
+jboot.datasource.a2.turl=jdbc:mysql://127.0.0.1:3306/jboot2
+jboot.datasource.a2.tuser=root
+jboot.datasource.a2.tpassword=your_password
+```
+
+这表示，我们又增加了数据源 `a1` 和数据源 `a2`，在使用的时候，我们只需要做一下使用：
+
+```java
+Company company = new Company();
+company.setCid("1");
+company.setName("name");
+
+company.use("a1").save();
+```
+
+`company.use("a1").save();` 表示使用数据源 `a1` 进行保存。
+
+
+**需要注意的是：**
+
+在多数据源应用中，很多时候，我们的一个 Model 只有对应一个数据源，而不是一个 Model 对应多个数据源。假设 `Company` 只有在 `a1` 数据源中存在，在其他数据源并不存在，我们需要把 `a1` 数据源的配置修改如下：
+
+```
+jboot.datasource.a1.type=mysql
+jboot.datasource.a1.url=jdbc:mysql://127.0.0.1:3306/jboot1
+jboot.datasource.a1.user=root
+jboot.datasource.a1.password=your_password
+jboot.datasource.a1.table=company
+
+jboot.datasource.a2.type=mysql
+jboot.datasource.a2.url=jdbc:mysql://127.0.0.1:3306/jboot2
+jboot.datasource.a2.user=root
+jboot.datasource.a2.password=your_password
+jboot.datasource.a1.table=user,xxx(其他非company表)
+```
+
+这样，`company` 在 `a1` 数据源中存在，Jboot在初始化的时候，并不会去检查 `company` 在其他数据源中是否存在，同时，代码操作 `company` 的时候，不再需要 `use()` ，代码如下：
+```java
+Company company = new Company();
+company.setCid("1");
+company.setName("name");
+
+//company.use("a1").save();
+company.save();
+```
+
+代码中不再需要 `use("a1")` 指定数据源，因为 `company` 只有一个数据源。
+
+更多关于 datasource 的配置如下：
+
+```
+jboot.datasource.name  //数据源名称
+jboot.datasource.type  //数据源类型
+jboot.datasource.url   //数据源URL地址
+jboot.datasource.user  
+jboot.datasource.password
+jboot.datasource.driverClassName = "com.mysql.jdbc.Driver"
+jboot.datasource.connectionInitSql
+jboot.datasource.poolName
+jboot.datasource.cachePrepStmts = true
+jboot.datasource.prepStmtCacheSize = 500
+jboot.datasource.prepStmtCacheSqlLimit = 2048
+jboot.datasource.maximumPoolSize = 10
+jboot.datasource.maxLifetime
+jboot.datasource.idleTimeout
+jboot.datasource.minimumIdle = 0
+jboot.datasource.sqlTemplatePath // sql 模板存放路径，用到 jfinal sql独立文件的时候
+jboot.datasource.sqlTemplate 
+jboot.datasource.factory
+jboot.datasource.shardingConfigYaml //分库分表的配置文件
+jboot.datasource.dbProFactory
+jboot.datasource.containerFactory
+jboot.datasource.transactionLevel
+jboot.datasource.table //此数据源包含哪些表
+jboot.datasource.exTable //该数据源排除哪些表
+jboot.datasource.dialectClass
+jboot.datasource.activeRecordPluginClass
+jboot.datasource.needAddMapping = true //是否需要添加到映射，当不添加映射的时候，只能通过 model.use("xxx").save()这种方式去调用该数据源
+```
+
 
 ## 读写分离
 
