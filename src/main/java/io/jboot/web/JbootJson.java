@@ -15,72 +15,24 @@
  */
 package io.jboot.web;
 
+import com.alibaba.fastjson.JSON;
 import com.jfinal.json.JFinalJson;
-import com.jfinal.kit.JsonKit;
-import com.jfinal.kit.StrKit;
 import io.jboot.Jboot;
-
-import java.util.Iterator;
-import java.util.Map;
 
 
 public class JbootJson extends JFinalJson {
 
     private static boolean isCamelCaseJsonStyleEnable = Jboot.config(JbootWebConfig.class).isCamelCaseJsonStyleEnable();
 
-    @Override
-    protected String mapToJson(Map map, int depth) {
-        optimizeMapAttrs(map);
-
+    public JbootJson() {
+        setSkipNullValueField(true);
         if (isCamelCaseJsonStyleEnable) {
-            return toCamelCase(map, depth);
-        }
-        return map == null || map.isEmpty() ? "null" : super.mapToJson(map, depth);
-    }
-
-    private String toCamelCase(Map map, int depth) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        Iterator iter = map.entrySet().iterator();
-
-        sb.append('{');
-        while (iter.hasNext()) {
-            if (first) {
-                first = false;
-            } else {
-                sb.append(',');
-            }
-
-            Map.Entry entry = (Map.Entry) iter.next();
-            toKeyValue(StrKit.toCamelCase(String.valueOf(entry.getKey())), entry.getValue(), sb, depth);
-        }
-        sb.append('}');
-        return sb.toString();
-    }
-
-
-    /**
-     * 优化 map 的属性
-     *
-     * @param map
-     */
-    private void optimizeMapAttrs(Map map) {
-        if (map == null || map.isEmpty()) {
-            return;
-        }
-        Iterator iter = map.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            //移除 null 值的属性
-            if (entry.getValue() == null) {
-                iter.remove();
-            }
+            setModelAndRecordFieldNameToCamelCase();
         }
     }
-
 
     @Override
     public <T> T parse(String jsonString, Class<T> type) {
-        return JsonKit.parse(jsonString, type);
+        return JSON.parseObject(jsonString, type);
     }
 }
