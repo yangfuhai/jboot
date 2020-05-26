@@ -15,6 +15,7 @@
  */
 package io.jboot.db.datasource;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.jfinal.plugin.activerecord.DbKit;
 import io.jboot.utils.StrUtil;
 
@@ -45,6 +46,20 @@ public class DataSourceConfig {
     private Long maxLifetime;
     private Long idleTimeout;
     private Integer minimumIdle = 0;
+
+    // 配置获取连接等待超时的时间
+    private long maxWait = DruidDataSource.DEFAULT_MAX_WAIT;
+
+    // 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    private long timeBetweenEvictionRunsMillis = DruidDataSource.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS;
+    // 配置连接在池中最小生存的时间
+    private long minEvictableIdleTimeMillis = DruidDataSource.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS;
+    // 配置发生错误时多久重连
+    private long timeBetweenConnectErrorMillis = DruidDataSource.DEFAULT_TIME_BETWEEN_CONNECT_ERROR_MILLIS;
+    private String validationQuery = "select 1";
+    private boolean testWhileIdle = true;
+    private boolean testOnBorrow = false;
+    private boolean testOnReturn = false;
 
     private String sqlTemplatePath;
     private String sqlTemplate;
@@ -309,5 +324,78 @@ public class DataSourceConfig {
 
     public void setActiveRecordPluginClass(String activeRecordPluginClass) {
         this.activeRecordPluginClass = activeRecordPluginClass;
+    }
+
+    public long getMaxWait() {
+        return maxWait;
+    }
+
+    public void setMaxWait(long maxWait) {
+        this.maxWait = maxWait;
+    }
+
+    public long getTimeBetweenEvictionRunsMillis() {
+        return timeBetweenEvictionRunsMillis;
+    }
+
+    public void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
+        this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+    }
+
+    public long getMinEvictableIdleTimeMillis() {
+        return minEvictableIdleTimeMillis;
+    }
+
+    public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
+        this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+    }
+
+    public long getTimeBetweenConnectErrorMillis() {
+        return timeBetweenConnectErrorMillis;
+    }
+
+    public void setTimeBetweenConnectErrorMillis(long timeBetweenConnectErrorMillis) {
+        this.timeBetweenConnectErrorMillis = timeBetweenConnectErrorMillis;
+    }
+
+    public String getValidationQuery() {
+        if(this.url.startsWith("jdbc:oracle")){
+            return "select 1 from dual";
+        }else if(this.url.startsWith("jdbc:db2")){
+            return "select 1 from sysibm.sysdummy1";
+        }else if(this.url.startsWith("jdbc:hsqldb")){
+            return "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS";
+        }else if(this.url.startsWith("jdbc:derby")){
+            return "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS";
+        }
+        return "select 1";
+    }
+
+    public void setValidationQuery(String validationQuery) {
+        this.validationQuery = validationQuery;
+    }
+
+    public boolean isTestWhileIdle() {
+        return testWhileIdle;
+    }
+
+    public void setTestWhileIdle(boolean testWhileIdle) {
+        this.testWhileIdle = testWhileIdle;
+    }
+
+    public boolean isTestOnBorrow() {
+        return testOnBorrow;
+    }
+
+    public void setTestOnBorrow(boolean testOnBorrow) {
+        this.testOnBorrow = testOnBorrow;
+    }
+
+    public boolean isTestOnReturn() {
+        return testOnReturn;
+    }
+
+    public void setTestOnReturn(boolean testOnReturn) {
+        this.testOnReturn = testOnReturn;
     }
 }

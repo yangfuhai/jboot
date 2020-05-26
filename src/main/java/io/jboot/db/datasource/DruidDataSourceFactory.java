@@ -40,7 +40,14 @@ public class DruidDataSourceFactory implements DataSourceFactory {
         druidDataSource.setPassword(config.getPassword());
         druidDataSource.setDriverClassName(config.getDriverClassName());
         druidDataSource.setMaxActive(config.getMaximumPoolSize());
-
+        druidDataSource.setMaxWait(config.getMaxWait());
+        druidDataSource.setTimeBetweenEvictionRunsMillis(config.getTimeBetweenEvictionRunsMillis());
+        druidDataSource.setMinEvictableIdleTimeMillis(config.getMinEvictableIdleTimeMillis());
+        druidDataSource.setTimeBetweenConnectErrorMillis(config.getTimeBetweenConnectErrorMillis());
+        druidDataSource.setValidationQuery(config.getValidationQuery());
+        druidDataSource.setTestWhileIdle(config.isTestWhileIdle());
+        druidDataSource.setTestOnBorrow(config.isTestOnBorrow());
+        druidDataSource.setTestOnReturn(config.isTestOnReturn());
         if (config.getMinimumIdle() != null) {
             druidDataSource.setMinIdle(config.getMinimumIdle());
         }
