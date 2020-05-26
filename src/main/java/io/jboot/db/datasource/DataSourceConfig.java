@@ -15,7 +15,6 @@
  */
 package io.jboot.db.datasource;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.jfinal.plugin.activerecord.DbKit;
 import io.jboot.utils.StrUtil;
 
@@ -48,14 +47,14 @@ public class DataSourceConfig {
     private Integer minimumIdle = 0;
 
     // 配置获取连接等待超时的时间
-    private long maxWait = DruidDataSource.DEFAULT_MAX_WAIT;
+    private long maxWait = -1;
 
     // 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-    private long timeBetweenEvictionRunsMillis = DruidDataSource.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS;
+    private long timeBetweenEvictionRunsMillis = 60 * 1000L;
     // 配置连接在池中最小生存的时间
-    private long minEvictableIdleTimeMillis = DruidDataSource.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS;
+    private long minEvictableIdleTimeMillis = 1000L * 60L * 30L;
     // 配置发生错误时多久重连
-    private long timeBetweenConnectErrorMillis = DruidDataSource.DEFAULT_TIME_BETWEEN_CONNECT_ERROR_MILLIS;
+    private long timeBetweenConnectErrorMillis = 500;
     private String validationQuery = "select 1";
     private boolean testWhileIdle = true;
     private boolean testOnBorrow = false;
