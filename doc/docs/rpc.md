@@ -9,6 +9,7 @@
 - 添加依赖
 - 配置
 - 开始使用
+- restful 暴露
 - 高级功能
 
 ## 添加依赖
@@ -205,6 +206,90 @@ public class DubboClient extends JbootController{
     }
 }
 ```
+
+
+## restful 暴露
+
+在某些情况下，我们希望 rpc service 通过 restful 协议暴露给其他客户端（或者其他编程语言）去使用，我们需要添加如下的依赖。
+
+PS：目前只有 dubbo 支持了 restful 协议，其他 rpc 框架暂时不支持。
+
+
+```xml
+<!-- 用于支持 dubbo 的 restful 注解 start -->
+<dependency>
+    <groupId>org.jboss.resteasy</groupId>
+    <artifactId>resteasy-jdk-http</artifactId>
+    <version>${resteasy.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>org.jboss.resteasy</groupId>
+    <artifactId>resteasy-jaxrs</artifactId>
+    <version>${resteasy.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>org.jboss.resteasy</groupId>
+    <artifactId>resteasy-client</artifactId>
+    <version>${resteasy.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>org.jboss.resteasy</groupId>
+    <artifactId>resteasy-netty4</artifactId>
+    <version>${resteasy.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>org.jboss.resteasy</groupId>
+    <artifactId>resteasy-jackson-provider</artifactId>
+    <version>${resteasy.version}</version>
+</dependency>
+<!-- 用于支持 dubbo 的 restful 注解 end -->
+```
+
+第二步需要在 接口添加 相关注解
+
+```java
+@Path("users") // #1
+@Consumes({MediaType.APPLICATION_JSON, MediaType.TEXT_XML}) // #2
+@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
+public interface UserService {
+    @GET // #3
+    @Path("{id: \\d+}")
+    User getUser(@PathParam("id") Long id);
+
+    @POST // #4
+    @Path("register")
+    Long registerUser(User user);
+}
+```
+
+具体参考：http://dubbo.apache.org/zh-cn/blog/dubbo-rest.html
+
+
+第三步，在 jboot.properties 添加 restful 协议：
+
+```
+jboot.rpc.dubbo.protocol.name = dubbo
+jboot.rpc.dubbo.protocol.host = 127.0.0.1
+jboot.rpc.dubbo.protocol.port = 28080
+```
+
+jboot.rpc.dubbo.protocol.rest.name = rest
+jboot.rpc.dubbo.protocol.rest.host = 127.0.0.1
+jboot.rpc.dubbo.protocol.rest.port = 8080
+jboot.rpc.dubbo.protocol.rest.server = netty
+```
+
+第四步：给 Service 配置暴露协议
+
+```
+jboot.rpc.dubbo.provider.protocal = default,rest //使用 dubbo 和 rest 两种协议同时暴露
+jboot.rpc.dubbo.provider.default = true // 给应用配置默认的 provider
+```
+
 
 
 ## 高级功能
