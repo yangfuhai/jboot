@@ -39,11 +39,6 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
         Method method = inv.getMethod();
 
-        UrlParaValidate urlParaValidate = method.getAnnotation(UrlParaValidate.class);
-        if (urlParaValidate != null && !validateUrlPara(inv, urlParaValidate)) {
-            return;
-        }
-
 
         EmptyValidate emptyParaValidate = method.getAnnotation(EmptyValidate.class);
         if (emptyParaValidate != null && !validateEmpty(inv, emptyParaValidate)) {
@@ -56,27 +51,6 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         }
 
         inv.invoke();
-
-    }
-
-    private boolean validateUrlPara(Invocation inv, UrlParaValidate urlParaValidate) {
-        Controller controller = inv.getController();
-        if (controller.getPara() != null) {
-            return true;
-        }
-
-
-        renderError(inv.getController()
-                , AnnotationUtil.get(urlParaValidate.renderType())
-                , null
-                , AnnotationUtil.get(urlParaValidate.message())
-                , AnnotationUtil.get(urlParaValidate.redirectUrl())
-                , AnnotationUtil.get(urlParaValidate.htmlPath())
-                , urlParaValidate.errorCode()
-        );
-
-
-        return false;
     }
 
 
