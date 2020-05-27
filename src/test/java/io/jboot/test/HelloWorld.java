@@ -30,6 +30,10 @@ public class HelloWorld extends JbootController {
         renderText("hello world");
     }
 
+    public void ex(){
+        throw new NullPointerException("log test");
+    }
+
     public static void main(String[] args){
         JbootApplication.run(args);
     }
