@@ -218,35 +218,54 @@ PS：目前只有 dubbo 支持了 restful 协议，其他 rpc 框架暂时不支
 ```xml
 <!-- 用于支持 dubbo 的 restful 注解 start -->
 <dependency>
-    <groupId>org.jboss.resteasy</groupId>
-    <artifactId>resteasy-jdk-http</artifactId>
-    <version>${resteasy.version}</version>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-all</artifactId>
+    <version>${io.netty.version}</version>
 </dependency>
 
 <dependency>
     <groupId>org.jboss.resteasy</groupId>
     <artifactId>resteasy-jaxrs</artifactId>
-    <version>${resteasy.version}</version>
+    <version>${org.jboss.resteasy.version}</version>
 </dependency>
 
 <dependency>
     <groupId>org.jboss.resteasy</groupId>
     <artifactId>resteasy-client</artifactId>
-    <version>${resteasy.version}</version>
+    <version>${org.jboss.resteasy.version}</version>
 </dependency>
 
 <dependency>
     <groupId>org.jboss.resteasy</groupId>
     <artifactId>resteasy-netty4</artifactId>
-    <version>${resteasy.version}</version>
+    <version>${org.jboss.resteasy.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>1.1.0.Final</version>
 </dependency>
 
 <dependency>
     <groupId>org.jboss.resteasy</groupId>
     <artifactId>resteasy-jackson-provider</artifactId>
-    <version>${resteasy.version}</version>
+    <version>${org.jboss.resteasy.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>org.jboss.resteasy</groupId>
+    <artifactId>resteasy-jaxb-provider</artifactId>
+    <version>${org.jboss.resteasy.version}</version>
 </dependency>
 <!-- 用于支持 dubbo 的 restful 注解 end -->
+```
+
+其中版本号对应为
+
+```xml
+<io.netty.version>4.1.9.Final</io.netty.version>
+<org.jboss.resteasy.version>3.9.0.Final</org.jboss.resteasy.version>
 ```
 
 第二步需要在 接口添加 相关注解
@@ -266,7 +285,7 @@ public interface UserService {
 }
 ```
 
-具体参考：http://dubbo.apache.org/zh-cn/blog/dubbo-rest.html
+这部分的内容，可以添加在接口里，也可以添加在实现类里，具体参考：http://dubbo.apache.org/zh-cn/blog/dubbo-rest.html
 
 
 第三步，在 jboot.properties 添加 restful 协议：
