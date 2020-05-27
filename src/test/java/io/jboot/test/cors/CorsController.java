@@ -1,9 +1,9 @@
 package io.jboot.test.cors;
 
+import com.jfinal.ext.cors.EnableCORS;
 import com.jfinal.kit.Ret;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
-import io.jboot.web.cors.EnableCORS;
 
 @RequestMapping("/cors")
 public class CorsController extends JbootController {

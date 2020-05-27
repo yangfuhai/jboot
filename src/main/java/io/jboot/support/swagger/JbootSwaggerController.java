@@ -18,9 +18,9 @@ package io.jboot.support.swagger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.google.common.collect.Maps;
+import com.jfinal.ext.cors.EnableCORS;
 import io.jboot.Jboot;
 import io.jboot.web.controller.JbootController;
-import io.jboot.web.cors.EnableCORS;
 import io.swagger.models.Swagger;
 import io.swagger.models.properties.RefProperty;
 

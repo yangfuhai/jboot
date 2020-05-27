@@ -16,6 +16,7 @@
 package io.jboot.web.cors;
 
 import com.jfinal.aop.Invocation;
+import com.jfinal.ext.cors.EnableCORS;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
@@ -35,18 +36,16 @@ public class CORSInterceptor implements FixedInterceptor {
     @Override
     public void intercept(Invocation inv) {
 
-        EnableCORS enableCORS = inv.getMethod().getAnnotation(EnableCORS.class);
-
-        if (enableCORS == null) {
-            enableCORS = inv.getController().getClass().getAnnotation(EnableCORS.class);
-        }
+        EnableCORS enableCORS = getAnnotation(inv);
 
         if (enableCORS == null) {
             inv.invoke();
             return;
         }
 
+
         doConfigCORS(inv, enableCORS);
+
 
         String method = inv.getController().getRequest().getMethod();
         if (METHOD_OPTIONS.equals(method)) {
@@ -54,6 +53,12 @@ public class CORSInterceptor implements FixedInterceptor {
         } else {
             inv.invoke();
         }
+    }
+
+
+    private EnableCORS getAnnotation(Invocation inv) {
+        EnableCORS enableCORS = inv.getController().getClass().getAnnotation(EnableCORS.class);
+        return enableCORS != null ? enableCORS : inv.getMethod().getAnnotation(EnableCORS.class);
     }
 
     private void doConfigCORS(Invocation inv, EnableCORS enableCORS) {
