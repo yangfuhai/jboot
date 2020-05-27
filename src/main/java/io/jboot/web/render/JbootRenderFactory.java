@@ -105,6 +105,26 @@ public class JbootRenderFactory extends RenderFactory {
     }
 
 
+    @Override
+    public Render getRedirectRender(String url) {
+        return new JbootRedirectRender(url);
+    }
+
+    @Override
+    public Render getRedirectRender(String url, boolean withQueryString) {
+        return new JbootRedirectRender(url, withQueryString);
+    }
+
+    @Override
+    public Render getRedirect301Render(String url) {
+        return new JbootRedirect301Render(url);
+    }
+
+    @Override
+    public Render getRedirect301Render(String url, boolean withQueryString) {
+        return new JbootRedirect301Render(url, withQueryString);
+    }
+
     public Render getReturnValueRender(Action action, Object returnValue) {
         return new JbootReturnValueRender(action, returnValue);
     }
