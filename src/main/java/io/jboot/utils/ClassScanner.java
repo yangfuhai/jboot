@@ -222,6 +222,8 @@ public class ClassScanner {
         excludeJars.add("easypoi-");
         excludeJars.add("ognl-");
         excludeJars.add("xmlbeans-");
+        excludeJars.add("master-slave-core-");
+        excludeJars.add("shadow-core-rewrite-");
     }
 
 
