@@ -602,10 +602,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private transient Table table;
 
-    public Table _getTable(boolean validateNull) {
+    public Table _getTable(boolean validateMapping) {
         if (table == null) {
             table = super._getTable();
-            if (table == null && validateNull) {
+            if (table == null && validateMapping) {
                 throw new JbootException(
                         String.format("class %s can not mapping to database table,maybe application cannot connect to database. "
                                 , _getUsefulClass().getName()));
