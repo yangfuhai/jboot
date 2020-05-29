@@ -38,6 +38,7 @@ public class JbootSessionConfig {
     private String cacheName = DEFAULT_SESSION_CACHE_NAME;
     private String cacheType = Jboot.config(JbootCacheConfig.class).getType();
 
+
     public String getCookieName() {
         return cookieName;
     }
