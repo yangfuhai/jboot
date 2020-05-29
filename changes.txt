@@ -1,3 +1,16 @@
+jboot v3.2.1:
+优化：升级 JFinal-Undertow、JFinal-Weixin 到最新版本
+优化：完善支持更多关于 druid 的数据源配置
+优化：当未配置任何第三方日志组件的时候，自动使用 JDK 日志进行输出
+优化：添加 JbootRedirectRender，防止 nginx -> jboot 跳转时的错误问题
+优化：移除 @ValidatePara 注解 和 UrlParaValidate 验证拦截器
+优化：移除  Jboot 的 @EnableCORS 注解，使用 JFinal 自带的来替代
+优化：修改某些变量命名不直观的问题
+优化：默认情况下完全禁用 Fastjson 的 autoType 功能
+文档：添加 dubbo rpc 下的 restful 配置文档
+
+
+
 jboot v3.2.0:
 新增：JbootController 新增 getParaToBigInteger()、getParaToBigDecimal() 等方法
 新增：门户网关新增 hasException() 方法，用于判断目标地址是否可以正常访问
