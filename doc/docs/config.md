@@ -398,7 +398,7 @@ jboot.datasource.type
 jboot.datasource.url
 jboot.datasource.user
 jboot.datasource.password
-jboot.datasource.driverClassName = "com.mysql.jdbc.Driver"
+jboot.datasource.driverClassName = com.mysql.jdbc.Driver
 jboot.datasource.connectionInitSql
 jboot.datasource.poolName
 jboot.datasource.cachePrepStmts = true

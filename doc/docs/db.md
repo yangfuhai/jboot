@@ -185,14 +185,14 @@ jboot.datasource.password=your_password
 
 ```
 jboot.datasource.a1.type=mysql
-jboot.datasource.a1.turl=jdbc:mysql://127.0.0.1:3306/jboot1
-jboot.datasource.a1.tuser=root
-jboot.datasource.a1.tpassword=your_password
+jboot.datasource.a1.url=jdbc:mysql://127.0.0.1:3306/jboot1
+jboot.datasource.a1.user=root
+jboot.datasource.a1.password=your_password
 
 jboot.datasource.a2.type=mysql
-jboot.datasource.a2.turl=jdbc:mysql://127.0.0.1:3306/jboot2
-jboot.datasource.a2.tuser=root
-jboot.datasource.a2.tpassword=your_password
+jboot.datasource.a2.url=jdbc:mysql://127.0.0.1:3306/jboot2
+jboot.datasource.a2.user=root
+jboot.datasource.a2.password=your_password
 ```
 
 这表示，我们又增加了数据源 `a1` 和数据源 `a2`，在使用的时候，我们只需要做一下使用：
@@ -210,7 +210,7 @@ company.use("a1").save();
 
 **需要注意的是：**
 
-在多数据源应用中，很多时候，我们的一个 Model 只有对应一个数据源，而不是一个 Model 对应多个数据源。假设 `Company` 只有在 `a1` 数据源中存在，在其他数据源并不存在，我们需要把 `a1` 数据源的配置修改如下：
+在多数据源应用中，很多时候，我们的一个 Model 只有对应一个数据源，而不是一个 Model 对应多个数据源。假设 `company` 只有在 `a1` 数据源中存在，在其他数据源并不存在，我们需要把 `a1` 数据源的配置修改如下：
 
 ```
 jboot.datasource.a1.type=mysql
@@ -223,10 +223,12 @@ jboot.datasource.a2.type=mysql
 jboot.datasource.a2.url=jdbc:mysql://127.0.0.1:3306/jboot2
 jboot.datasource.a2.user=root
 jboot.datasource.a2.password=your_password
-jboot.datasource.a1.table=user,xxx(其他非company表)
+jboot.datasource.a2.table=user,xxx (其他非company表)
 ```
 
 这样，`company` 在 `a1` 数据源中存在，Jboot在初始化的时候，并不会去检查 `company` 在其他数据源中是否存在，同时，代码操作 `company` 的时候，不再需要 `use()` ，代码如下：
+
+
 ```java
 Company company = new Company();
 company.setCid("1");
@@ -236,7 +238,7 @@ company.setName("name");
 company.save();
 ```
 
-代码中不再需要 `use("a1")` 指定数据源，因为 `company` 只有一个数据源。
+代码中不再需要 `use("a1")` 指定数据源，因为 `company` 表只有一个数据源。
 
 更多关于 datasource 的配置如下：
 
@@ -246,7 +248,7 @@ jboot.datasource.type  //数据源类型
 jboot.datasource.url   //数据源URL地址
 jboot.datasource.user  
 jboot.datasource.password
-jboot.datasource.driverClassName = "com.mysql.jdbc.Driver"
+jboot.datasource.driverClassName = com.mysql.jdbc.Driver
 jboot.datasource.connectionInitSql
 jboot.datasource.poolName
 jboot.datasource.cachePrepStmts = true
