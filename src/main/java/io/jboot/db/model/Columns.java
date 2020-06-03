@@ -296,7 +296,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns group(Columns columns) {
-        if (columns == this){
+        if (columns == this) {
             throw new IllegalArgumentException("Columns.group(...) need a new Columns");
         }
         if (!columns.isEmpty()) {
@@ -312,7 +312,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns groupIf(Columns columns, boolean conditon) {
-        if (columns == this){
+        if (columns == this) {
             throw new IllegalArgumentException("Columns.group(...) need a new Columns");
         }
         if (conditon && !columns.isEmpty()) {
@@ -435,7 +435,6 @@ public class Columns implements Serializable {
     }
 
 
-
     public Columns or() {
         this.add(new Or());
         return this;
@@ -458,6 +457,36 @@ public class Columns implements Serializable {
 
     public Columns orEqs(String name, Object... values) {
         return ors(name, Column.LOGIC_EQUALS, values);
+    }
+
+
+    /**
+     * 追加 新的 columns
+     *
+     * @param columns
+     * @return
+     */
+    public Columns append(Columns columns) {
+        if (columns != null && !columns.isEmpty()) {
+            for (Column column : columns.getList()) {
+                add(column);
+            }
+        }
+        return this;
+    }
+
+
+    /**
+     * 追加 新的 columns
+     *
+     * @param columns
+     * @return
+     */
+    public Columns appendIf(Columns columns, boolean condition) {
+        if (condition) {
+            append(columns);
+        }
+        return this;
     }
 
 
@@ -497,7 +526,7 @@ public class Columns implements Serializable {
 
             if (column instanceof Or) {
                 Column before = i > 0 ? columns.get(i - 1) : null;
-                if (before != null && !(before instanceof Or) ) {
+                if (before != null && !(before instanceof Or)) {
                     s.append("or").append(SQL_CACHE_SEPARATOR);
                 }
             } else if (column instanceof Group) {
@@ -598,11 +627,11 @@ public class Columns implements Serializable {
 
     public static void main(String[] args) {
 
-        Columns columns = Columns.create().or().or().or().eq("aa","bb").or().or().or().notIn("aaa",123,456,789).like("titile","a");
+        Columns columns = Columns.create().or().or().or().eq("aa", "bb").or().or().or().notIn("aaa", 123, 456, 789).like("titile", "a");
         columns.group(Columns.create().or().or().sqlPart("aa=bb"));
-        columns.group(Columns.create("aa","bb").eq("cc","dd")
-                .group(Columns.create("aa","bb").eq("cc","dd"))
-                .group(Columns.create("aa","bb").eq("cc","dd").group(Columns.create("aa","bb").eq("cc","dd"))));
+        columns.group(Columns.create("aa", "bb").eq("cc", "dd")
+                .group(Columns.create("aa", "bb").eq("cc", "dd"))
+                .group(Columns.create("aa", "bb").eq("cc", "dd").group(Columns.create("aa", "bb").eq("cc", "dd"))));
 
         columns.ge("age", 10);
         columns.or();
@@ -616,7 +645,7 @@ public class Columns implements Serializable {
         columns.or();
         columns.or();
         columns.group(Columns.create().likeAppendPercent("name", "null").or().or().or()
-                .eq("age", "18").eq("ddd","ddd"));
+                .eq("age", "18").eq("ddd", "ddd"));
 
         columns.or();
         columns.or();
