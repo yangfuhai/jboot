@@ -30,7 +30,7 @@ public class JbootWebConfig {
 
     private String cookieEncryptKey = DEFAULT_COOKIE_ENCRYPT_KEY;
     private String webSocketEndpoint;
-    private boolean camelCaseJsonStyleEnable = false;
+    private boolean camelCaseJsonStyleEnable = true;
 
     public String getCookieEncryptKey() {
         return cookieEncryptKey;
