@@ -16,19 +16,15 @@
 package io.jboot.web;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.ParserConfig;
 import com.jfinal.json.JFinalJson;
 import io.jboot.Jboot;
 
 
 public class JbootJson extends JFinalJson {
 
-    private static boolean isCamelCaseJsonStyleEnable = Jboot.config(JbootWebConfig.class).isCamelCaseJsonStyleEnable();
+    private boolean isCamelCaseJsonStyleEnable = Jboot.config(JbootWebConfig.class).isCamelCaseJsonStyleEnable();
 
     public JbootJson() {
-
-        //完全禁用 autoType，提升安全性
-        ParserConfig.getGlobalInstance().setSafeMode(true);
 
         //跳过 null 值输出到浏览器，提高传输性能
         setSkipNullValueField(true);
@@ -37,8 +33,6 @@ public class JbootJson extends JFinalJson {
         if (isCamelCaseJsonStyleEnable) {
             setModelAndRecordFieldNameToCamelCase();
         }
-
-
     }
 
     @Override
