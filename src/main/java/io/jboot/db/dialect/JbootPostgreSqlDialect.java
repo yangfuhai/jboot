@@ -51,13 +51,13 @@ public class JbootPostgreSqlDialect extends PostgreSqlDialect implements JbootDi
     }
 
     @Override
-    public String forFindCountByColumns(String table, List<Column> columns) {
-        return SqlBuilder.forFindCountByColumns(table, columns, '"');
+    public String forFindCountByColumns(List<Join> joins, String table, List<Column> columns) {
+        return SqlBuilder.forFindCountByColumns(joins, table, columns, '"');
     }
 
     @Override
-    public String forDeleteByColumns(String table, List<Column> columns) {
-        return SqlBuilder.forDeleteByColumns(table,columns,'"');
+    public String forDeleteByColumns(List<Join> joins, String table, List<Column> columns) {
+        return SqlBuilder.forDeleteByColumns(joins, table,columns,'"');
     }
 
 

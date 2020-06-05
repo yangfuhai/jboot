@@ -34,10 +34,13 @@ public class SqlBuilder {
         buildWhereSql(sqlBuilder, columns, '`');
     }
 
-    public static String forDeleteByColumns(String table, List<Column> columns, char separator) {
+    public static String forDeleteByColumns(List<Join> joins, String table, List<Column> columns, char separator) {
         StringBuilder sql = new StringBuilder(45);
         sql.append("DELETE FROM ").append(separator).append(table).append(separator);
-        SqlBuilder.buildWhereSql(sql, columns, ' ');
+
+        buildJoinSql(sql, joins, ' ');
+        buildWhereSql(sql, columns, ' ');
+
         return sql.toString();
     }
 
@@ -238,12 +241,13 @@ public class SqlBuilder {
     }
 
 
-    public static String forFindCountByColumns(String table, List<Column> columns, char separator) {
+    public static String forFindCountByColumns(List<Join> joins, String table, List<Column> columns, char separator) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT count(*) FROM ")
                 .append(separator)
                 .append(table)
                 .append(separator);
 
+        buildJoinSql(sqlBuilder, joins, separator);
         buildWhereSql(sqlBuilder, columns, separator);
 
         return sqlBuilder.toString();

@@ -114,14 +114,14 @@ public class JbootDbPro extends DbPro {
 
     public List<Record> find(String tableName, Columns columns, String orderBy, Object limit) {
         JbootDialect dialect = (JbootDialect) getConfig().getDialect();
-        String sql = dialect.forFindByColumns(null,tableName, "*", columns.getList(), orderBy, limit);
+        String sql = dialect.forFindByColumns(null, tableName, "*", columns.getList(), orderBy, limit);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 
 
     public int delete(String tableName, Columns columns) {
         JbootDialect dialect = (JbootDialect) getConfig().getDialect();
-        String sql = dialect.forDeleteByColumns(tableName, columns.getList());
+        String sql = dialect.forDeleteByColumns(null, tableName, columns.getList());
         return columns.isEmpty() ? delete(sql) : delete(sql, columns.getValueArray());
     }
 
