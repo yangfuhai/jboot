@@ -249,6 +249,21 @@ public class Columns implements Serializable {
         return this;
     }
 
+
+    /**
+     * in list
+     *
+     * @param name
+     * @param list
+     * @return
+     */
+    public Columns in(String name, List list) {
+        if (list != null && !list.isEmpty()) {
+            in(name, list.toArray());
+        }
+        return this;
+    }
+
     /**
      * not int arrays
      *
@@ -258,6 +273,21 @@ public class Columns implements Serializable {
      */
     public Columns notIn(String name, Object... arrays) {
         this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
+        return this;
+    }
+
+
+    /**
+     * not in list
+     *
+     * @param name
+     * @param list
+     * @return
+     */
+    public Columns notIn(String name, List list) {
+        if (list != null && !list.isEmpty()) {
+            notIn(name, list.toArray());
+        }
         return this;
     }
 
