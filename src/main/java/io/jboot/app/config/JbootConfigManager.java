@@ -17,6 +17,8 @@ package io.jboot.app.config;
 
 import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.app.config.support.apollo.ApolloConfigManager;
+import io.jboot.app.config.support.nacos.NacosConfigManager;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
@@ -71,6 +73,10 @@ public class JbootConfigManager {
             String p = String.format("jboot-%s.properties", mode);
             mainProperties.putAll(new Prop(p).getProperties());
         }
+
+
+        NacosConfigManager.me().init(this);
+        ApolloConfigManager.me().init(this);
     }
 
     public JbootConfigDecryptor getDecryptor() {

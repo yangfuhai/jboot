@@ -17,6 +17,7 @@ package io.jboot.app.config.support.nacos;
 
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
+import io.jboot.app.config.JbootConfigManager;
 
 import java.util.concurrent.Executor;
 
@@ -27,10 +28,12 @@ import java.util.concurrent.Executor;
 public class NacosConfigIniter {
 
     private NacosConfigManager manager;
+    private JbootConfigManager configManager;
 
 
-    public NacosConfigIniter(NacosConfigManager manager) {
+    public NacosConfigIniter(NacosConfigManager manager, JbootConfigManager configManager) {
         this.manager = manager;
+        this.configManager = configManager;
     }
 
     public void initListener(ConfigService configService, NacosServerConfig config) {
@@ -44,7 +47,7 @@ public class NacosConfigIniter {
 
                         @Override
                         public void receiveConfigInfo(String configInfo) {
-                            manager.doReceiveConfigInfo(configInfo);
+                            manager.doReceiveConfigInfo(configManager, configInfo);
                         }
                     });
         } catch (Exception e) {

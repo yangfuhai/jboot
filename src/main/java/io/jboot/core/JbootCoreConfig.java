@@ -30,9 +30,7 @@ import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.JbootAopInterceptor;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.app.config.support.apollo.ApolloConfigManager;
 import io.jboot.app.config.support.apollo.ApolloServerConfig;
-import io.jboot.app.config.support.nacos.NacosConfigManager;
 import io.jboot.components.gateway.JbootGatewayHandler;
 import io.jboot.components.gateway.JbootGatewayManager;
 import io.jboot.components.limiter.LimiterManager;
@@ -78,9 +76,6 @@ public class JbootCoreConfig extends JFinalConfig {
     public JbootCoreConfig() {
 
         initSystemProperties();
-
-        ApolloConfigManager.me().init();
-        NacosConfigManager.me().init();
 
         AopManager.me().setInjectDependency(true);
         AopManager.me().setAopFactory(JbootAopFactory.me());

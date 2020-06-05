@@ -36,9 +36,9 @@ public class ApolloConfigManager {
         return ME;
     }
 
-    public void init() {
+    public void init(JbootConfigManager configManager) {
 
-        ApolloServerConfig apolloServerConfig = Jboot.config(ApolloServerConfig.class);
+        ApolloServerConfig apolloServerConfig = configManager.get(ApolloServerConfig.class);
         if (!apolloServerConfig.isEnable() || !apolloServerConfig.isConfigOk()){
             return;
         }
@@ -49,17 +49,17 @@ public class ApolloConfigManager {
         if (propNames != null && !propNames.isEmpty()) {
             for (String name : propNames) {
                 String value = config.getProperty(name, null);
-                JbootConfigManager.me().setRemoteProperty(name, value);
+                configManager.setRemoteProperty(name, value);
             }
         }
 
         config.addChangeListener(changeEvent -> {
             for (String key : changeEvent.changedKeys()) {
                 ConfigChange change = changeEvent.getChange(key);
-                JbootConfigManager.me().setRemoteProperty(change.getPropertyName(), change.getNewValue());
+                configManager.setRemoteProperty(change.getPropertyName(), change.getNewValue());
             }
 
-            JbootConfigManager.me().notifyChangeListeners(changeEvent.changedKeys());
+            configManager.notifyChangeListeners(changeEvent.changedKeys());
         });
 
     }
