@@ -18,6 +18,7 @@ package io.jboot.app.undertow;
 import com.jfinal.server.undertow.PropExt;
 import com.jfinal.server.undertow.UndertowConfig;
 import com.jfinal.server.undertow.hotswap.HotSwapResolver;
+import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigManager;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.net.ServerSocket;
 
 public class JbootUndertowConfig extends UndertowConfig {
 
+    protected static final String DEV_MODE = "undertow.devMode";
     protected static final String UNDERTOW_PORT = "undertow.port";
     protected static final String UNDERTOW_HOST = "undertow.host";
     protected static final String UNDERTOW_RESOURCEPATH = "undertow.resourcePath";
@@ -61,7 +63,9 @@ public class JbootUndertowConfig extends UndertowConfig {
             propExt.getProperties().put(UNDERTOW_PORT, availablePort.toString());
             JbootConfigManager.me().setBootArg(UNDERTOW_PORT, availablePort.toString());
         }
-
+        if (Jboot.isDevMode()){
+            propExt.getProperties().put(DEV_MODE, true);
+        }
         String host = propExt.get(UNDERTOW_HOST);
         if (host == null || host.trim().length() == 0) {
             propExt.getProperties().put(UNDERTOW_HOST, "0.0.0.0");
