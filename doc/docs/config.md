@@ -209,7 +209,7 @@ Component1Config config = Jboot.config(Component1Config.class);
 <dependency>
     <groupId>com.alibaba.nacos</groupId>
     <artifactId>nacos-client</artifactId>
-    <version>1.2.1</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
