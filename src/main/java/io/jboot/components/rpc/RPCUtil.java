@@ -16,6 +16,7 @@
 package io.jboot.components.rpc;
 
 import io.jboot.Jboot;
+import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.CollectionUtil;
 import io.jboot.utils.StrUtil;
 
@@ -70,6 +71,12 @@ public class RPCUtil {
                         } else {
                             setterMethod = getMethod(appendTo.getClass(), setter, method.getReturnType());
                         }
+
+                        //fixed : 值内容有 ${} 不生效的问题
+                        if (value instanceof String) {
+                            value = AnnotationUtil.get((String) value);
+                        }
+
                         if (setterMethod != null) {
                             setterMethod.invoke(appendTo, value);
                         }
