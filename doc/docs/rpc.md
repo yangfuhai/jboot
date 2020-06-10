@@ -111,7 +111,6 @@ jboot.rpc.autoExportEnable = true
 **定义接口**
 
 ```java
-
 public interface BlogService {
 
     public String findById();
@@ -121,9 +120,8 @@ public interface BlogService {
 
 **编写实现类**
 
+
 ```java
-
-
 @RPCBean
 public class BlogServiceProvider implements BlogService {
 
@@ -141,8 +139,8 @@ public class BlogServiceProvider implements BlogService {
 
 **启动 Server 暴露服务**
 
-```java
 
+```java
 public class DubboServer {
 
     public static void main(String[] args)  {
@@ -173,7 +171,9 @@ public class DubboServer {
 }
 ```
 
->备注：以上的 JbootApplication.setBootArg() 里设置的内容，都可以配置到 jboot.properties 里。
+>备注：以上的 JbootApplication.setBootArg() 里设置的内容，都可以配置到 jboot.properties 里。例如： `JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);` 在 jboot.properties
+>里对应的配置是 `jboot.rpc.autoExportEnable = true` 。
+
 
 
 **启动客户端、通过 RPC 调用 Server 提供的服务**
@@ -294,7 +294,6 @@ public interface UserService {
 jboot.rpc.dubbo.protocol.name = dubbo
 jboot.rpc.dubbo.protocol.host = 127.0.0.1
 jboot.rpc.dubbo.protocol.port = 28080
-```
 
 jboot.rpc.dubbo.protocol.rest.name = rest
 jboot.rpc.dubbo.protocol.rest.host = 127.0.0.1
@@ -303,6 +302,7 @@ jboot.rpc.dubbo.protocol.rest.server = netty
 ```
 
 第四步：给 Service 配置暴露协议
+
 
 ```
 jboot.rpc.dubbo.provider.protocal = default,rest //使用 dubbo 和 rest 两种协议同时暴露
