@@ -1,3 +1,16 @@
+jboot v3.2.2:
+优化：当项目启动的时候，优先初始化中央配置，以防止 undertow 端口等无法在中央仓库配置的问题
+优化：新增 Columns.in(list) 和  Columns.notIn(list) 方法
+优化：新增 Columns.append() 方法用于追加一个新的 columns
+优化：Json输出默认使用驼峰的字段风格
+优化：升级 Nacos、Fastjson 等到最新版本
+修复：通过 Columns 查询 count，当有 left join 时会出现数量不正确的问题
+修复：当 RPC 注解有 ${} 时，无法读取配置内容的问题
+文档：修改配置文件里的示例带有双引号的错误配置
+文档：优化 PRC 的相关文档
+
+
+
 jboot v3.2.1:
 优化：升级 JFinal-Undertow、JFinal-Weixin 到最新版本
 优化：完善支持更多关于 druid 的数据源配置

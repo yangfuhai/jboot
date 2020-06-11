@@ -36,7 +36,7 @@ public class RPCUtil {
 
     /**
      * 根据注解来设置对象内容，参考 dubbo 下的 AbstractConfig
-     * 参考 org.apache.dubbo.config.AbstractConfig#appendAnnotation
+     * 参考 {{@org.apache.dubbo.config.AbstractConfig#appendAnnotation }}
      *
      * @param annotationClass
      * @param annotation
