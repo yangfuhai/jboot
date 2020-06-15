@@ -1,3 +1,9 @@
+jboot v3.2.3:
+优化：升级 fastsjon 到最新版本 1.2.71
+修复：Model 的 getter 方法无法输出 json 的问题
+
+
+
 jboot v3.2.2:
 优化：当项目启动的时候，优先初始化中央配置，以防止 undertow 端口等无法在中央仓库配置的问题
 优化：新增 Columns.in(list) 和  Columns.notIn(list) 方法

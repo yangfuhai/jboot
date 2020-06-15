@@ -49,7 +49,7 @@ public class JbootJson extends JFinalJson {
 
         setToJsonFactory(o -> {
             if (o instanceof Model) {
-                return jbootModelJson;
+                return jbootModelToJson;
             } else {
                 return null;
             }
@@ -57,15 +57,18 @@ public class JbootJson extends JFinalJson {
     }
 
 
-    protected JFinalJsonKit.ToJson<Model> jbootModelJson = (value, depth, ret) -> {
+    protected JFinalJsonKit.ToJson<Model> jbootModelToJson = (model, depth, ret) -> {
         if (JFinalJsonKit.checkDepth(depth--, ret)) {
             return;
         }
 
         Map<String, Object> map = new HashMap<>();
 
-        fillMapToMap(CPI.getAttrs(value), map);
-        fillBeanGetterValueToMap(value, map);
+        fillMapToMap(CPI.getAttrs(model), map);
+        fillBeanGetterValueToMap(model, map);
+
+
+        optimizeMapAttrs(model, map);
 
         JFinalJsonKit.mapToJson(map, depth, ret);
     };
@@ -110,6 +113,10 @@ public class JbootJson extends JFinalJson {
                 }
             }
         }
+    }
+
+
+    protected void optimizeMapAttrs(Model model, Map<String, Object> map) {
     }
 
 
