@@ -33,7 +33,8 @@ import java.util.Map;
 
 public class JbootJson extends JFinalJson {
 
-    private boolean isCamelCaseJsonStyleEnable = Jboot.config(JbootWebConfig.class).isCamelCaseJsonStyleEnable();
+    protected boolean isCamelCaseJsonStyleEnable = Jboot.config(JbootWebConfig.class).isCamelCaseJsonStyleEnable();
+    protected Map<Class, MethodsAndFieldsWrapper> methodAndFieldsCache = new HashMap<>();
 
     public JbootJson() {
 
@@ -84,38 +85,23 @@ public class JbootJson extends JFinalJson {
 
 
     protected void fillBeanAttrs(Object bean, Map attrs) {
-        List<String> fields = new ArrayList<>();
-        List<Method> methods = new ArrayList<>();
 
-        Method[] methodArray = bean.getClass().getMethods();
-        for (Method m : methodArray) {
-            if (m.getParameterCount() != 0 || m.getReturnType() == void.class) {
-                continue;
-            }
-
-            String methodName = m.getName();
-            int indexOfGet = methodName.indexOf("get");
-            if (indexOfGet == 0 && methodName.length() > 3) {    // Only getter
-                String attrName = methodName.substring(3);
-                if (!attrName.equals("Class")) {                // Ignore Object.getClass()
-                    fields.add(StrKit.firstCharToLowerCase(attrName));
-                    methods.add(m);
-                }
-            } else {
-                int indexOfIs = methodName.indexOf("is");
-                if (indexOfIs == 0 && methodName.length() > 2) {
-                    String attrName = methodName.substring(2);
-                    fields.add(StrKit.firstCharToLowerCase(attrName));
-                    methods.add(m);
+        MethodsAndFieldsWrapper wrapper = methodAndFieldsCache.get(bean.getClass());
+        if (wrapper == null) {
+            synchronized (this) {
+                if (wrapper == null) {
+                    wrapper = new MethodsAndFieldsWrapper(bean.getClass());
+                } else {
+                    wrapper = methodAndFieldsCache.get(bean.getClass());
                 }
             }
         }
 
-        if (fields.size() > 0) {
+        if (wrapper.fields.size() > 0) {
             int index = 0;
-            for (String field : fields) {
+            for (String field : wrapper.fields) {
                 try {
-                    Object value = methods.get(index++).invoke(bean);
+                    Object value = wrapper.methods.get(index++).invoke(bean);
                     attrs.put(field, value);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -123,6 +109,55 @@ public class JbootJson extends JFinalJson {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+
+    public static class MethodsAndFieldsWrapper {
+
+        private Class reflectiveClass;
+
+        private List<String> fields = new ArrayList<>();
+        private List<Method> methods = new ArrayList<>();
+
+        public MethodsAndFieldsWrapper(Class reflectiveClass) {
+            this.reflectiveClass = reflectiveClass;
+
+            Method[] methodArray = reflectiveClass.getMethods();
+            for (Method m : methodArray) {
+                if (m.getParameterCount() != 0 || m.getReturnType() == void.class) {
+                    continue;
+                }
+
+                String methodName = m.getName();
+                int indexOfGet = methodName.indexOf("get");
+                if (indexOfGet == 0 && methodName.length() > 3) {    // Only getter
+                    String attrName = methodName.substring(3);
+                    if (!attrName.equals("Class")) {                // Ignore Object.getClass()
+                        fields.add(StrKit.firstCharToLowerCase(attrName));
+                        methods.add(m);
+                    }
+                } else {
+                    int indexOfIs = methodName.indexOf("is");
+                    if (indexOfIs == 0 && methodName.length() > 2) {
+                        String attrName = methodName.substring(2);
+                        fields.add(StrKit.firstCharToLowerCase(attrName));
+                        methods.add(m);
+                    }
+                }
+            }
+        }
+
+        public Class getReflectiveClass() {
+            return reflectiveClass;
+        }
+
+        public List<String> getFields() {
+            return fields;
+        }
+
+        public List<Method> getMethods() {
+            return methods;
         }
     }
 
