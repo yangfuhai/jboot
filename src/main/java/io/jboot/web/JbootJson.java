@@ -62,29 +62,29 @@ public class JbootJson extends JFinalJson {
             return;
         }
 
-        Map<String, Object> attrs = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
-        fillMapToAttr(CPI.getAttrs(value), attrs);
-        fillBeanAttrs(value, attrs);
+        fillMapToMap(CPI.getAttrs(value), map);
+        fillBeanGetterValueToMap(value, map);
 
-        JFinalJsonKit.mapToJson(attrs, depth, ret);
+        JFinalJsonKit.mapToJson(map, depth, ret);
     };
 
 
-    protected void fillMapToAttr(Map<String, Object> fillMap, Map<String, Object> toAttr) {
+    protected void fillMapToMap(Map<String, Object> fillMap, Map<String, Object> toMap) {
         if (fillMap != null && !fillMap.isEmpty()) {
             for (Map.Entry<String, Object> entry : fillMap.entrySet()) {
                 String fieldName = entry.getKey();
                 if (isCamelCaseJsonStyleEnable) {
                     fieldName = StrKit.toCamelCase(fieldName, true);
                 }
-                toAttr.put(fieldName, entry.getValue());
+                toMap.put(fieldName, entry.getValue());
             }
         }
     }
 
 
-    protected void fillBeanAttrs(Object bean, Map attrs) {
+    protected void fillBeanGetterValueToMap(Object bean, Map toMap) {
 
         MethodsAndFieldsWrapper wrapper = methodAndFieldsCache.get(bean.getClass());
         if (wrapper == null) {
@@ -102,7 +102,7 @@ public class JbootJson extends JFinalJson {
             for (String field : wrapper.fields) {
                 try {
                     Object value = wrapper.methods.get(index++).invoke(bean);
-                    attrs.put(field, value);
+                    toMap.put(field, value);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
@@ -115,13 +115,10 @@ public class JbootJson extends JFinalJson {
 
     public static class MethodsAndFieldsWrapper {
 
-        private Class reflectiveClass;
-
         private List<String> fields = new ArrayList<>();
         private List<Method> methods = new ArrayList<>();
 
         public MethodsAndFieldsWrapper(Class reflectiveClass) {
-            this.reflectiveClass = reflectiveClass;
 
             Method[] methodArray = reflectiveClass.getMethods();
             for (Method m : methodArray) {
@@ -148,9 +145,6 @@ public class JbootJson extends JFinalJson {
             }
         }
 
-        public Class getReflectiveClass() {
-            return reflectiveClass;
-        }
 
         public List<String> getFields() {
             return fields;
