@@ -13,6 +13,8 @@ public class JsonTester {
         user.put("id",100);
         user.put("tenant_id","xxx");
 
+        user.put("other_user",new User());
+
         System.out.println(new JbootJson().toJson(user));
     }
 }
