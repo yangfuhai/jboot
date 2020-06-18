@@ -224,6 +224,8 @@ public class ClassScanner {
         excludeJars.add("xmlbeans-");
         excludeJars.add("master-slave-core-");
         excludeJars.add("shadow-core-rewrite-");
+        excludeJars.add("apiguardian-api-");
+        excludeJars.add("opentest4j-");
     }
 
 
