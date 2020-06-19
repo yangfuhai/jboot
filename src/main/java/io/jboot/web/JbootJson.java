@@ -25,6 +25,7 @@ import io.jboot.Jboot;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,7 +130,9 @@ public class JbootJson extends JFinalJson {
 
             Method[] methodArray = reflectiveClass.getMethods();
             for (Method m : methodArray) {
-                if (m.getParameterCount() != 0 || m.getReturnType() == void.class) {
+                if (m.getParameterCount() != 0
+                        || m.getReturnType() == void.class
+                        || !Modifier.isPublic(m.getModifiers())) {
                     continue;
                 }
 
