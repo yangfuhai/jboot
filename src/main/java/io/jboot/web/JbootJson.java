@@ -35,6 +35,7 @@ import java.util.Map;
 public class JbootJson extends JFinalJson {
 
     protected boolean isCamelCaseJsonStyleEnable = Jboot.config(JbootWebConfig.class).isCamelCaseJsonStyleEnable();
+    protected boolean camelCaseToLowerCaseAnyway = Jboot.config(JbootWebConfig.class).isCamelCaseToLowerCaseAnyway();
     protected Map<Class, MethodsAndFieldsWrapper> methodAndFieldsCache = new HashMap<>();
 
     public JbootJson() {
@@ -44,7 +45,7 @@ public class JbootJson extends JFinalJson {
 
         //默认设置为 CamelCase 的属性模式
         if (isCamelCaseJsonStyleEnable) {
-            setModelAndRecordFieldNameToCamelCase();
+            setModelAndRecordFieldNameConverter((fieldName) -> StrKit.toCamelCase(fieldName, camelCaseToLowerCaseAnyway));
         }
 
 
@@ -80,7 +81,7 @@ public class JbootJson extends JFinalJson {
             for (Map.Entry<String, Object> entry : fillMap.entrySet()) {
                 String fieldName = entry.getKey();
                 if (isCamelCaseJsonStyleEnable) {
-                    fieldName = StrKit.toCamelCase(fieldName, true);
+                    fieldName = StrKit.toCamelCase(fieldName, camelCaseToLowerCaseAnyway);
                 }
                 toMap.put(fieldName, entry.getValue());
             }
