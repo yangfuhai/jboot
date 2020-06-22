@@ -14,6 +14,7 @@ public class JsonTester {
         user.put("tenant_id","xxx");
 
         user.put("other_user",new User());
+        user.put("myAbcDef",new User());
 
         System.out.println(new JbootJson().toJson(user));
     }
