@@ -118,4 +118,15 @@ class Util {
             b.append("-");
         }
     }
+
+
+    static void checkNullParas(Columns columns, Object... paras) {
+        if (columns.isUseSafeMode()) {
+            for (Object obj : paras) {
+                if (obj == null) {
+                    columns.setHasNullOrEmptyValue(true);
+                }
+            }
+        }
+    }
 }

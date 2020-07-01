@@ -132,4 +132,16 @@ public class DbController extends JbootController {
         renderJson(Ret.ok());
     }
 
+
+    public void safeMode(){
+        User dao = new User();
+
+        Columns columns = Columns.safeMode();
+        columns.in("user.`id`",1,2,3,4);
+        columns.likeAppendPercent("login_name",null);
+
+
+        List<User> users = dao.leftJoin("article").as("a").on("user.id=a.user_id").findListByColumns(columns);
+        renderJson(users);
+    }
 }

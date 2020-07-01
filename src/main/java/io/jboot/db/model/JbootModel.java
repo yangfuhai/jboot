@@ -426,6 +426,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public M findFirstByColumns(Columns columns, String orderby, String loadColumns) {
+        if (columns.isUseSafeMode() && columns.hasNullOrEmptyValue()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("columns has null or empty value in safeMode，return null in findFirstByColumns()");
+            }
+            return null;
+        }
         String sql = _getDialect().forFindByColumns(joins, _getTableName(), loadColumns, columns.getList(), orderby, 1);
         return columns.isEmpty() ? findFirst(sql) : findFirst(sql, columns.getValueArray());
     }
@@ -505,6 +511,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count, String loadColumns) {
+        if (columns.isUseSafeMode() && columns.hasNullOrEmptyValue()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("columns has null or empty value in safeMode，return null in findListByColumns()");
+            }
+            return null;
+        }
         String sql = _getDialect().forFindByColumns(joins, _getTableName(), loadColumns, columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
@@ -550,6 +562,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy, String loadColumns) {
+        if (columns.isUseSafeMode() && columns.hasNullOrEmptyValue()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("columns has null or empty value in safeMode，return null in paginateByColumns()");
+            }
+            return null;
+        }
+
         String selectPartSql = _getDialect().forPaginateSelect(loadColumns);
         String fromPartSql = _getDialect().forPaginateFrom(joins, _getTableName(), columns.getList(), orderBy);
 
@@ -565,12 +584,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public long findCountByColumns(Columns columns) {
-        return findCountByColumns(columns.getList());
-    }
+        if (columns.isUseSafeMode() && columns.hasNullOrEmptyValue()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("columns has null or empty value in safeMode，return 0 in findCountByColumns()");
+            }
+            return 0;
+        }
 
-    public long findCountByColumns(List<Column> columns) {
-        String sql = _getDialect().forFindCountByColumns(joins, _getTableName(), columns);
-        Long value = Db.use(_getConfig().getName()).queryLong(sql, Util.getValueArray(columns));
+        String sql = _getDialect().forFindCountByColumns(joins, _getTableName(), columns.getList());
+        Long value = Db.use(_getConfig().getName()).queryLong(sql, Util.getValueArray(columns.getList()));
         return value == null ? 0 : value;
     }
 
