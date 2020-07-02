@@ -36,26 +36,26 @@ public class Columns implements Serializable {
 
     /**
      * 在很多场景下，只会根据字段来查询，如果字段值为 null 的情况，Columns 会直接忽略 null 值，此时会造成结果不准确的情况
-     *
+     * <p>
      * 比如 ：
      * ```
-     *   public ShopInfo findFirstByAccountId(BigInteger accountId) {
-     *         return findFirstByColumns(Columns.create("account_id", accountId));
-     *     }
+     * public ShopInfo findFirstByAccountId(BigInteger accountId) {
+     * return findFirstByColumns(Columns.create("account_id", accountId));
+     * }
      * ```
      * 根据账户 id 来查询账户的 门店，此时 如果传入 null 值，则返回了 第一个门店，和我们想要的结果集是不同的。
-     *
+     * <p>
      * 准确的结果，应该是当用户传入 null 值的时候，应该直接 返回 null 。
-     *
+     * <p>
      * 此时，我们可以使用如下代码进行查询。
-     *
-     *  ```
-     *    public ShopInfo findFirstByAccountId(BigInteger accountId) {
-     *        return findFirstByColumns(Columns.safeMode().eq("account_id", accountId));
-     *     }
-     *  ```
-     *
-     *  使用 safeMode 的时候，默认传入的值必须全部不为空，才能返回结果，否则直接返回 null 。
+     * <p>
+     * ```
+     * public ShopInfo findFirstByAccountId(BigInteger accountId) {
+     * return findFirstByColumns(Columns.safeMode().eq("account_id", accountId));
+     * }
+     * ```
+     * <p>
+     * 使用 safeMode 的时候，默认传入的值必须全部不为空，才能返回结果，否则直接返回 null 。
      */
     private boolean useSafeMode = false;
     private boolean hasNullOrEmptyValue = false;
@@ -283,7 +283,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns in(String name, Object... arrays) {
-        Util.checkNullParas(this,arrays);
+        Util.checkNullParas(this, arrays);
         this.add(Column.create(name, arrays, Column.LOGIC_IN));
         return this;
     }
@@ -311,7 +311,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns notIn(String name, Object... arrays) {
-        Util.checkNullParas(this,arrays);
+        Util.checkNullParas(this, arrays);
         this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
         return this;
     }
@@ -341,7 +341,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns between(String name, Object start, Object end) {
-        Util.checkNullParas(this,start,end);
+        Util.checkNullParas(this, start, end);
         this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
         return this;
     }
@@ -355,7 +355,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns notBetween(String name, Object start, Object end) {
-        Util.checkNullParas(this,start,end);
+        Util.checkNullParas(this, start, end);
         this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
         return this;
     }
@@ -415,7 +415,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns sqlPart(String sql, Object... paras) {
-        Util.checkNullParas(this,paras);
+        Util.checkNullParas(this, paras);
         if (StrUtil.isNotBlank(sql)) {
             this.add(new SqlPart(sql, paras));
         }
@@ -445,7 +445,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns sqlPartIf(String sql, boolean condition, Object... paras) {
-        Util.checkNullParas(this,paras);
+        Util.checkNullParas(this, paras);
         if (condition && StrUtil.isNotBlank(sql)) {
             this.add(new SqlPart(sql, paras));
         }
@@ -473,7 +473,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns sqlPartWithoutLink(String sql, Object... paras) {
-        Util.checkNullParas(this,paras);
+        Util.checkNullParas(this, paras);
         if (StrUtil.isNotBlank(sql)) {
             this.add(new SqlPart(sql, paras, true));
         }
@@ -503,7 +503,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns sqlPartWithoutLinkIf(String sql, boolean condition, Object... paras) {
-        Util.checkNullParas(this,paras);
+        Util.checkNullParas(this, paras);
         if (condition && StrUtil.isNotBlank(sql)) {
             this.add(new SqlPart(sql, paras, true));
         }
@@ -518,8 +518,7 @@ public class Columns implements Serializable {
 
 
     public Columns ors(String name, String logic, Object... values) {
-        Util.checkNullParas(this,values);
-
+        Util.checkNullParas(this, values);
         for (int i = 0; i < values.length; i++) {
             Object value = values[i];
             if (value != null) {

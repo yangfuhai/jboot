@@ -125,6 +125,7 @@ class Util {
             for (Object obj : paras) {
                 if (obj == null) {
                     columns.setHasNullOrEmptyValue(true);
+                    break;
                 }
             }
         }
