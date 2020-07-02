@@ -1,3 +1,9 @@
+jboot v3.2.5:
+新增：Columns 查询添加 safeMode ，使用 safeMode 当传入的查询值 null 值的 sql 参数时，不对齐忽略直接返回空数据。
+修复：JbootAppListener 无法进行正确注入的问题
+
+
+
 jboot v3.2.4:
 优化：ClassScanner 和  JbootJson
 新增：为 JbootJson 新增 camelCaseToLowerCaseAnyway 配置，默认为 false

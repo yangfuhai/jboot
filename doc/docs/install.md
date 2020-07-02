@@ -9,7 +9,7 @@
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.2.4</version>
+    <version>3.2.5</version>
 </dependency>
 ```
 
