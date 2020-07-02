@@ -124,7 +124,7 @@ class Util {
         if (columns.isUseSafeMode()) {
             for (Object obj : paras) {
                 if (obj == null) {
-                    columns.setHasNullOrEmptyValue(true);
+                    columns.setHitUnsafeInSafeMode(true);
                     break;
                 }
             }

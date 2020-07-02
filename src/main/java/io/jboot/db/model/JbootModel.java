@@ -426,7 +426,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public M findFirstByColumns(Columns columns, String orderby, String loadColumns) {
-        if (columns.isUseSafeMode() && columns.hasNullOrEmptyValue()) {
+        if (columns.isHitUnsafeInSafeMode()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("columns has null or empty value in safeMode，return null in findFirstByColumns()");
             }
@@ -511,7 +511,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count, String loadColumns) {
-        if (columns.isUseSafeMode() && columns.hasNullOrEmptyValue()) {
+        if (columns.isHitUnsafeInSafeMode()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("columns has null or empty value in safeMode，return null in findListByColumns()");
             }
@@ -562,7 +562,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy, String loadColumns) {
-        if (columns.isUseSafeMode() && columns.hasNullOrEmptyValue()) {
+        if (columns.isHitUnsafeInSafeMode()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("columns has null or empty value in safeMode，return null in paginateByColumns()");
             }
@@ -584,7 +584,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public long findCountByColumns(Columns columns) {
-        if (columns.isUseSafeMode() && columns.hasNullOrEmptyValue()) {
+        if (columns.isHitUnsafeInSafeMode()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("columns has null or empty value in safeMode，return 0 in findCountByColumns()");
             }

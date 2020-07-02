@@ -58,7 +58,11 @@ public class Columns implements Serializable {
      * 使用 safeMode 的时候，默认传入的值必须全部不为空，才能返回结果，否则直接返回 null 。
      */
     private boolean useSafeMode = false;
-    private boolean hasNullOrEmptyValue = false;
+
+    /**
+     * columns 里是否存在 安全模式下（ useSafeMode = true ）存在 null 值
+     */
+    private boolean hitUnsafeInSafeMode = false;
 
 
     public static Columns create() {
@@ -99,7 +103,7 @@ public class Columns implements Serializable {
         //do not add null value column
         if (column.hasPara() && column.getValue() == null) {
             if (useSafeMode) {
-                hasNullOrEmptyValue = true;
+                hitUnsafeInSafeMode = true;
             } else {
                 return;
             }
@@ -165,7 +169,7 @@ public class Columns implements Serializable {
     public Columns likeAppendPercent(String name, Object value) {
         if (value == null || StrUtil.isBlank(value.toString())) {
             if (useSafeMode) {
-                hasNullOrEmptyValue = true;
+                hitUnsafeInSafeMode = true;
             }
             //do nothing
             return this;
@@ -580,12 +584,12 @@ public class Columns implements Serializable {
         return this;
     }
 
-    public boolean hasNullOrEmptyValue() {
-        return hasNullOrEmptyValue;
+    public boolean isHitUnsafeInSafeMode() {
+        return hitUnsafeInSafeMode;
     }
 
-    public void setHasNullOrEmptyValue(boolean hasNullOrEmptyValue) {
-        this.hasNullOrEmptyValue = hasNullOrEmptyValue;
+    public void setHitUnsafeInSafeMode(boolean hitUnsafeInSafeMode) {
+        this.hitUnsafeInSafeMode = hitUnsafeInSafeMode;
     }
 
     public boolean isEmpty() {

@@ -39,9 +39,9 @@ public class Group extends Column {
 
     @Override
     public Object getValue() {
-        if (columns == null || columns.isEmpty() || (columns.isUseSafeMode() && columns.hasNullOrEmptyValue())){
+        if (columns == null || columns.isEmpty() || columns.isHitUnsafeInSafeMode()) {
             return null;
-        }else {
+        } else {
             return Util.getValueArray(columns.getList());
         }
     }
