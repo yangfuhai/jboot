@@ -1,3 +1,8 @@
+jboot v3.2.6:
+修复：Columns 调用 unUseSafeMode 后可能存在问题的 bug
+
+
+
 jboot v3.2.5:
 新增：Columns 查询添加 safeMode ，使用 safeMode 当传入的查询值 null 值的 sql 参数时，不对齐忽略直接返回空数据。
 优化：升级 fastjson、jackson Json 等到最新版本
