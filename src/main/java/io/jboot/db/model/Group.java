@@ -39,7 +39,7 @@ public class Group extends Column {
 
     @Override
     public Object getValue() {
-        if (columns == null || columns.isEmpty() || columns.isHitUnsafeInSafeMode()) {
+        if (columns == null || columns.isEmpty()) {
             return null;
         } else {
             return Util.getValueArray(columns.getList());

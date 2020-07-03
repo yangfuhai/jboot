@@ -59,11 +59,6 @@ public class Columns implements Serializable {
      */
     private boolean useSafeMode = false;
 
-    /**
-     * columns 里是否存在 安全模式下（ useSafeMode = true ）存在 null 值
-     */
-    private boolean hitUnsafeInSafeMode = false;
-
 
     public static Columns create() {
         return new Columns();
@@ -102,11 +97,7 @@ public class Columns implements Serializable {
 
         //do not add null value column
         if (column.hasPara() && column.getValue() == null) {
-            if (useSafeMode) {
-                hitUnsafeInSafeMode = true;
-            } else {
-                return;
-            }
+            return;
         }
 
         if (this.cols == null) {
@@ -114,11 +105,6 @@ public class Columns implements Serializable {
         }
 
         this.cols.add(column);
-    }
-
-
-    public Columns add(String name, Object value) {
-        return eq(name, value);
     }
 
 
@@ -130,6 +116,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns eq(String name, Object value) {
+        Util.checkNullParas(this, name, value);
         this.add(Column.create(name, value));
         return this;
     }
@@ -142,6 +129,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns ne(String name, Object value) {
+        Util.checkNullParas(this, name, value);
         this.add(Column.create(name, value, Column.LOGIC_NOT_EQUALS));
         return this;
     }
@@ -155,6 +143,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns like(String name, Object value) {
+        Util.checkNullParas(this, name, value);
         this.add(Column.create(name, value, Column.LOGIC_LIKE));
         return this;
     }
@@ -167,13 +156,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns likeAppendPercent(String name, Object value) {
-        if (value == null || StrUtil.isBlank(value.toString())) {
-            if (useSafeMode) {
-                hitUnsafeInSafeMode = true;
-            }
-            //do nothing
-            return this;
-        }
+        Util.checkNullParas(this, name, value);
         this.add(Column.create(name, "%" + value + "%", Column.LOGIC_LIKE));
         return this;
     }
@@ -186,6 +169,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns gt(String name, Object value) {
+        Util.checkNullParas(this, name, value);
         this.add(Column.create(name, value, Column.LOGIC_GT));
         return this;
     }
@@ -198,6 +182,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns ge(String name, Object value) {
+        Util.checkNullParas(this, name, value);
         this.add(Column.create(name, value, Column.LOGIC_GE));
         return this;
     }
@@ -210,6 +195,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns lt(String name, Object value) {
+        Util.checkNullParas(this, name, value);
         this.add(Column.create(name, value, Column.LOGIC_LT));
         return this;
     }
@@ -222,6 +208,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns le(String name, Object value) {
+        Util.checkNullParas(this, name, value);
         this.add(Column.create(name, value, Column.LOGIC_LE));
         return this;
     }
@@ -287,7 +274,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns in(String name, Object... arrays) {
-        Util.checkNullParas(this, arrays);
+        Util.checkNullParas(this, name, arrays);
         this.add(Column.create(name, arrays, Column.LOGIC_IN));
         return this;
     }
@@ -315,7 +302,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns notIn(String name, Object... arrays) {
-        Util.checkNullParas(this, arrays);
+        Util.checkNullParas(this, name, arrays);
         this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
         return this;
     }
@@ -345,7 +332,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns between(String name, Object start, Object end) {
-        Util.checkNullParas(this, start, end);
+        Util.checkNullParas(this, name, start, end);
         this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
         return this;
     }
@@ -359,7 +346,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns notBetween(String name, Object start, Object end) {
-        Util.checkNullParas(this, start, end);
+        Util.checkNullParas(this, name, start, end);
         this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
         return this;
     }
@@ -522,7 +509,7 @@ public class Columns implements Serializable {
 
 
     public Columns ors(String name, String logic, Object... values) {
-        Util.checkNullParas(this, values);
+        Util.checkNullParas(this, name, values);
         for (int i = 0; i < values.length; i++) {
             Object value = values[i];
             if (value != null) {
@@ -582,14 +569,6 @@ public class Columns implements Serializable {
     public Columns unUseSafeMode() {
         this.useSafeMode = false;
         return this;
-    }
-
-    public boolean isHitUnsafeInSafeMode() {
-        return hitUnsafeInSafeMode;
-    }
-
-    public void setHitUnsafeInSafeMode(boolean hitUnsafeInSafeMode) {
-        this.hitUnsafeInSafeMode = hitUnsafeInSafeMode;
     }
 
     public boolean isEmpty() {

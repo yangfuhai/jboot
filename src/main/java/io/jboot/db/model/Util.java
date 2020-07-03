@@ -120,12 +120,21 @@ class Util {
     }
 
 
+    static void checkNullParas(Columns columns, String name, Object... paras) {
+        if (columns.isUseSafeMode()) {
+            for (Object obj : paras) {
+                if (obj == null) {
+                    throw new NullPointerException("column \"" + name + "\" para is null, must has not null para value in columns for safeMode.");
+                }
+            }
+        }
+    }
+
     static void checkNullParas(Columns columns, Object... paras) {
         if (columns.isUseSafeMode()) {
             for (Object obj : paras) {
                 if (obj == null) {
-                    columns.setHitUnsafeInSafeMode(true);
-                    break;
+                    throw new NullPointerException("must has not null para value in columns for safeMode.");
                 }
             }
         }
