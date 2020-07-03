@@ -1,3 +1,9 @@
+jboot v3.2.7:
+优化：修改 JbootModel.buildIdCacheKey 为 protected 修饰，方便在某些情况下进行重写。
+优化：Columns 在 safeMode 模式下，当传入 null 值时，直接抛出空指针异常，更加方便开发调试。
+
+
+
 jboot v3.2.6:
 修复：Columns 调用 unUseSafeMode 后可能存在问题的 bug
 
