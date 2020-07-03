@@ -124,7 +124,7 @@ class Util {
         if (columns.isUseSafeMode()) {
             for (Object obj : paras) {
                 if (obj == null) {
-                    throw new NullPointerException("column \"" + name + "\" para is null, must has not null para value in columns for safeMode.");
+                    throw new NullPointerException("column \"" + name + "\" para is null, Columns must has not null para value in safeMode.");
                 }
             }
         }
@@ -134,7 +134,7 @@ class Util {
         if (columns.isUseSafeMode()) {
             for (Object obj : paras) {
                 if (obj == null) {
-                    throw new NullPointerException("must has not null para value in columns for safeMode.");
+                    throw new NullPointerException("Columns must has not null para value in safeMode.");
                 }
             }
         }
