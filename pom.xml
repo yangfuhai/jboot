@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.2.7</version>
+    <version>3.2.8-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -48,7 +48,7 @@
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>3.4.5</HikariCP.version>
         <jackson.version>2.11.1</jackson.version>
-        <mysql.version>5.1.48</mysql.version>
+        <mysql.version>5.1.49</mysql.version>
         <undertow.version>2.1.2.Final</undertow.version>
         <slf4j.version>1.7.30</slf4j.version>
         <fst.version>2.57</fst.version>
