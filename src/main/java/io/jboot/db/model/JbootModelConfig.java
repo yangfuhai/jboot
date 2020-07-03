@@ -38,12 +38,6 @@ public class JbootModelConfig {
     private String columnModified = "modified";
 
     /**
-     * 是否启用 id 缓存，如果启用，当根据 id 查询的时候，会自动存入缓存
-     * 下次再通过 id 查询的时候，直接从缓存中获取 Model
-     */
-    private boolean idCacheEnable = true;
-
-    /**
      * id 缓存的时间，默认为 1 个小时，单位：秒
      */
     private int idCacheTime = 60 * 60 * 1;
@@ -58,6 +52,13 @@ public class JbootModelConfig {
      * 主键的值的生成器，可以通过配置这个来自定义主键的生成策略
      */
     private String primarykeyValueGeneratorClass;
+
+
+    /**
+     * 是否启用 id 缓存，如果启用，当根据 id 查询的时候，会自动存入缓存
+     * 下次再通过 id 查询的时候，直接从缓存中获取 Model
+     */
+    private boolean idCacheEnable = true;
 
 
     private String idCacheType = Jboot.config(JbootCacheConfig.class).getType();
@@ -103,6 +104,22 @@ public class JbootModelConfig {
         this.idCacheTime = idCacheTime;
     }
 
+    public String getFilterClass() {
+        return filterClass;
+    }
+
+    public void setFilterClass(String filterClass) {
+        this.filterClass = filterClass;
+    }
+
+    public String getPrimarykeyValueGeneratorClass() {
+        return primarykeyValueGeneratorClass;
+    }
+
+    public void setPrimarykeyValueGeneratorClass(String primarykeyValueGeneratorClass) {
+        this.primarykeyValueGeneratorClass = primarykeyValueGeneratorClass;
+    }
+
     public boolean isIdCacheEnable() {
         return idCacheEnable;
     }
@@ -119,21 +136,6 @@ public class JbootModelConfig {
         this.idCacheType = idCacheType;
     }
 
-    public String getFilterClass() {
-        return filterClass;
-    }
-
-    public void setFilterClass(String filterClass) {
-        this.filterClass = filterClass;
-    }
-
-    public String getPrimarykeyValueGeneratorClass() {
-        return primarykeyValueGeneratorClass;
-    }
-
-    public void setPrimarykeyValueGeneratorClass(String primarykeyValueGeneratorClass) {
-        this.primarykeyValueGeneratorClass = primarykeyValueGeneratorClass;
-    }
 
     private JbootModelFilter filter;
     public JbootModelFilter getFilter() {
