@@ -308,6 +308,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public boolean deleteByColumns(Columns columns) {
+        if (columns.isHitUnsafeInSafeMode()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("columns has null or empty value in safeMode，return false in deleteByColumns()");
+            }
+            return false;
+        }
+
         return deleteByColumns(columns.getList());
     }
 
