@@ -16,6 +16,7 @@
 package io.jboot.support.jwt;
 
 import com.jfinal.kit.JsonKit;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
@@ -36,6 +37,7 @@ import java.util.Map;
 public class JwtManager {
 
     private static final JwtManager me = new JwtManager();
+    private static final Log LOG = Log.getLog(JwtManager.class);
 
     public static JwtManager me() {
         return me;
@@ -76,19 +78,19 @@ public class JwtManager {
                     .parseClaimsJws(token).getBody();
 
             String jsonString = claims.getSubject();
-
-            if (StrUtil.isBlank(jsonString)) {
-                return null;
+            if (StrUtil.isNotBlank(jsonString)) {
+                return JsonKit.parse(jsonString, HashMap.class);
             }
-            return JsonKit.parse(jsonString, HashMap.class);
-
         } catch (SignatureException | MalformedJwtException e) {
             // don't trust the JWT!
             // jwt 签名错误或解析错误，可能是伪造的，不能相信
+            LOG.error("do not trast the jwt!",e);
         } catch (ExpiredJwtException e) {
             // jwt 已经过期
+            LOG.error("jwt is expired!",e);
         } catch (Throwable ex) {
             //其他错误
+            LOG.error("jwt parseJwtToken error, return null.");
         }
 
         return null;
