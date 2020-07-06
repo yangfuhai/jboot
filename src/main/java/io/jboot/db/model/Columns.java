@@ -157,7 +157,7 @@ public class Columns implements Serializable {
      */
     public Columns likeAppendPercent(String name, Object value) {
         Util.checkNullParas(this, name, value);
-        if (value == null || (value instanceof String && StrUtil.isBlank((String) value))){
+        if (value == null || (value instanceof String && StrUtil.isBlank((String) value))) {
             return this;
         }
         this.add(Column.create(name, "%" + value + "%", Column.LOGIC_LIKE));
@@ -688,6 +688,29 @@ public class Columns implements Serializable {
         }
     }
 
+
+    /**
+     * 输出 where 后面的 sql 部分，风格是 mysql 的风格SQL
+     * @return
+     */
+    public String toWherePartSql() {
+        return toWherePartSql('`', false);
+    }
+
+
+    /**
+     * 输出 where 部分的 sql
+     * @param separator 字段分隔符
+     * @param withWhereKeyword 是否带上 "where 关键字"
+     * @return
+     */
+    public String toWherePartSql(char separator, boolean withWhereKeyword) {
+        StringBuilder sb = new StringBuilder();
+        SqlBuilder.buildWhereSql(sb, getList(), separator, withWhereKeyword);
+        return sb.toString();
+    }
+
+
     /**
      * 这个只是用于调试
      *
@@ -698,6 +721,11 @@ public class Columns implements Serializable {
         return dialect.forFindByColumns(null, "table", "*", getList(), null, null);
     }
 
+
+    /**
+     * 这个只是用于调试
+     * @return
+     */
     public String toSqlServerSql() {
         JbootSqlServerDialect dialect = new JbootSqlServerDialect();
         return dialect.forFindByColumns(null, "table", "*", getList(), null, null);
@@ -751,6 +779,8 @@ public class Columns implements Serializable {
         System.out.println(columns.getCacheKey());
         System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());
+        System.out.println("-----------");
+        System.out.println(columns.toWherePartSql('"',true));
 
     }
 

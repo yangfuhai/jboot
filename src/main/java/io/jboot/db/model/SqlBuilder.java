@@ -38,15 +38,19 @@ public class SqlBuilder {
         StringBuilder sql = new StringBuilder(45);
         sql.append("DELETE FROM ").append(separator).append(table).append(separator);
 
-        buildJoinSql(sql, joins, ' ');
-        buildWhereSql(sql, columns, ' ');
+        buildJoinSql(sql, joins, separator);
+        buildWhereSql(sql, columns, separator);
 
         return sql.toString();
     }
 
 
     public static void buildWhereSql(StringBuilder sqlBuilder, List<Column> columns, char separator) {
+        buildWhereSql(sqlBuilder, columns, separator, true);
+    }
 
+
+    public static void buildWhereSql(StringBuilder sqlBuilder, List<Column> columns, char separator, boolean withWhereKeyword) {
         if (ArrayUtil.isNullOrEmpty(columns)) {
             return;
         }
@@ -57,7 +61,7 @@ public class SqlBuilder {
         String whereSql = whereSqlBuilder.toString();
 
         if (StrUtil.isNotBlank(whereSql)) {
-            sqlBuilder.append(" WHERE ").append(whereSql);
+            sqlBuilder.append(withWhereKeyword ? " WHERE " : "").append(whereSql);
         }
 
     }
