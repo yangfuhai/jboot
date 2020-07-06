@@ -157,6 +157,9 @@ public class Columns implements Serializable {
      */
     public Columns likeAppendPercent(String name, Object value) {
         Util.checkNullParas(this, name, value);
+        if (value == null || (value instanceof String && StrUtil.isBlank((String) value))){
+            return this;
+        }
         this.add(Column.create(name, "%" + value + "%", Column.LOGIC_LIKE));
         return this;
     }
