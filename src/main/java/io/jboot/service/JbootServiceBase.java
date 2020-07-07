@@ -299,13 +299,14 @@ public class JbootServiceBase<M extends JbootModel<M>>
     /**
      * 复写 JbootServiceJoinerImpl 的方法
      *
-     * @param id
+     * @param columnValue
      * @return
      */
     @Override
-    protected JbootModel joinById(Object id) {
-        return findById(id);
+    protected JbootModel joinByColumnValue(Object columnValue,Model sourceModel) {
+        return findById(columnValue);
     }
+
 
     /**
      * 用于给子类复写，用于刷新缓存

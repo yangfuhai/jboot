@@ -28,37 +28,37 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
 
     @Override
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField) {
-        join(page.getList(), joinOnField);
+    public <M extends Model> Page<M> join(Page<M> page, String columnName) {
+        join(page.getList(), columnName);
         return page;
     }
 
     @Override
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String[] attrs) {
-        join(page.getList(), joinOnField, attrs);
-        return page;
-    }
-
-
-    @Override
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String joinName) {
-        join(page.getList(), joinOnField, joinName);
+    public <M extends Model> Page<M> join(Page<M> page, String columnName, String[] attrs) {
+        join(page.getList(), columnName, attrs);
         return page;
     }
 
 
     @Override
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String joinName, String[] attrs) {
-        join(page.getList(), joinOnField, joinName, attrs);
+    public <M extends Model> Page<M> join(Page<M> page, String columnName, String joinName) {
+        join(page.getList(), columnName, joinName);
         return page;
     }
 
 
     @Override
-    public <M extends Model> List<M> join(List<M> models, String joinOnField) {
+    public <M extends Model> Page<M> join(Page<M> page, String columnName, String joinName, String[] attrs) {
+        join(page.getList(), columnName, joinName, attrs);
+        return page;
+    }
+
+
+    @Override
+    public <M extends Model> List<M> join(List<M> models, String columnName) {
         if (ArrayUtil.isNotEmpty(models)) {
             for (Model m : models) {
-                join(m, joinOnField);
+                join(m, columnName);
             }
         }
         return models;
@@ -66,10 +66,10 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
 
     @Override
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String[] attrs) {
+    public <M extends Model> List<M> join(List<M> models, String columnName, String[] attrs) {
         if (ArrayUtil.isNotEmpty(models)) {
             for (Model m : models) {
-                join(m, joinOnField, attrs);
+                join(m, columnName, attrs);
             }
         }
         return models;
@@ -77,10 +77,10 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
 
     @Override
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName) {
+    public <M extends Model> List<M> join(List<M> models, String columnName, String joinName) {
         if (ArrayUtil.isNotEmpty(models)) {
             for (Model m : models) {
-                join(m, joinOnField, joinName);
+                join(m, columnName, joinName);
             }
         }
         return models;
@@ -88,10 +88,10 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
 
     @Override
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName, String[] attrs) {
+    public <M extends Model> List<M> join(List<M> models, String columnName, String joinName, String[] attrs) {
         if (ArrayUtil.isNotEmpty(models)) {
             for (Model m : models) {
-                join(m, joinOnField, joinName, attrs);
+                join(m, columnName, joinName, attrs);
             }
         }
         return models;
@@ -101,18 +101,19 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
     /**
      * 添加关联数据到某个model中去，避免关联查询，提高性能。
      *
-     * @param model       要添加到的model
-     * @param joinOnField model对于的关联字段
+     * @param model      要添加到的model
+     * @param columnName model对于的关联字段
      */
     @Override
-    public <M extends Model> M join(M model, String joinOnField) {
-        if (model == null)
-            return model;
-        Object id = model.get(joinOnField);
-        if (id == null) {
+    public <M extends Model> M join(M model, String columnName) {
+        if (model == null) {
+            return null;
+        }
+        Object columnValue = model.get(columnName);
+        if (columnValue == null) {
             return model;
         }
-        Model m = joinById(id);
+        Model m = joinByColumnValue(columnValue, model);
         if (m != null) {
             model.put(StrKit.firstCharToLowerCase(m.getClass().getSimpleName()), m);
         }
@@ -123,18 +124,19 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
      * 添加关联数据到某个model中去，避免关联查询，提高性能。
      *
      * @param model
-     * @param joinOnField
+     * @param columnName
      * @param attrs
      */
     @Override
-    public <M extends Model> M join(M model, String joinOnField, String[] attrs) {
-        if (model == null)
-            return model;
-        Object id = model.get(joinOnField);
-        if (id == null) {
+    public <M extends Model> M join(M model, String columnName, String[] attrs) {
+        if (model == null) {
+            return null;
+        }
+        Object columnValue = model.get(columnName);
+        if (columnValue == null) {
             return model;
         }
-        JbootModel m = joinById(id);
+        JbootModel m = joinByColumnValue(columnValue, model);
         if (m != null) {
             m = m.copy();
             m.keep(attrs);
@@ -148,18 +150,19 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
      * 添加关联数据到某个model中去，避免关联查询，提高性能。
      *
      * @param model
-     * @param joinOnField
+     * @param columnName
      * @param joinName
      */
     @Override
-    public <M extends Model> M join(M model, String joinOnField, String joinName) {
-        if (model == null)
-            return model;
-        Object id = model.get(joinOnField);
-        if (id == null) {
+    public <M extends Model> M join(M model, String columnName, String joinName) {
+        if (model == null) {
+            return null;
+        }
+        Object columnValue = model.get(columnName);
+        if (columnValue == null) {
             return model;
         }
-        Model m = joinById(id);
+        Model m = joinByColumnValue(columnValue, model);
         if (m != null) {
             model.put(joinName, m);
         }
@@ -171,19 +174,20 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
      * 添加关联数据到某个model中去，避免关联查询，提高性能。
      *
      * @param model
-     * @param joinOnField
+     * @param columnName
      * @param joinName
      * @param attrs
      */
     @Override
-    public <M extends Model> M join(M model, String joinOnField, String joinName, String[] attrs) {
-        if (model == null)
-            return model;
-        Object id = model.get(joinOnField);
-        if (id == null) {
+    public <M extends Model> M join(M model, String columnName, String joinName, String[] attrs) {
+        if (model == null) {
+            return null;
+        }
+        Object columnValue = model.get(columnName);
+        if (columnValue == null) {
             return model;
         }
-        JbootModel m = joinById(id);
+        JbootModel m = joinByColumnValue(columnValue, model);
         if (m != null) {
             m = m.copy();
             m.keep(attrs);
@@ -196,10 +200,10 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
     /**
      * 可以让子类去复写joinById ，比如默认只 join 部分字段等
      *
-     * @param id
+     * @param columnValue
      * @return
      */
-    protected abstract JbootModel joinById(Object id);
+    protected abstract JbootModel joinByColumnValue(Object columnValue, Model sourceModel);
 
 
 }

@@ -26,31 +26,31 @@ import java.util.List;
 public interface JbootServiceJoiner {
 
 
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField);
+    public <M extends Model> Page<M> join(Page<M> page, String columnName);
 
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String[] attrs);
+    public <M extends Model> Page<M> join(Page<M> page, String columnName, String[] attrs);
 
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String joinName);
+    public <M extends Model> Page<M> join(Page<M> page, String columnName, String joinName);
 
-    public <M extends Model> Page<M> join(Page<M> page, String joinOnField, String joinName, String[] attrs);
-
-
-    public <M extends Model> List<M> join(List<M> models, String joinOnField);
-
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String[] attrs);
-
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName);
-
-    public <M extends Model> List<M> join(List<M> models, String joinOnField, String joinName, String[] attrs);
+    public <M extends Model> Page<M> join(Page<M> page, String columnName, String joinName, String[] attrs);
 
 
-    public <M extends Model> M join(M model, String joinOnField);
+    public <M extends Model> List<M> join(List<M> models, String columnName);
 
-    public <M extends Model> M join(M model, String joinOnField, String[] attrs);
+    public <M extends Model> List<M> join(List<M> models, String columnName, String[] attrs);
 
-    public <M extends Model> M join(M model, String joinOnField, String joinName);
+    public <M extends Model> List<M> join(List<M> models, String columnName, String joinName);
 
-    public <M extends Model> M join(M model, String joinOnField, String joinName, String[] attrs);
+    public <M extends Model> List<M> join(List<M> models, String columnName, String joinName, String[] attrs);
+
+
+    public <M extends Model> M join(M model, String columnName);
+
+    public <M extends Model> M join(M model, String columnName, String[] attrs);
+
+    public <M extends Model> M join(M model, String columnName, String joinName);
+
+    public <M extends Model> M join(M model, String columnName, String joinName, String[] attrs);
 
 
 }
