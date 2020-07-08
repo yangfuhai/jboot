@@ -396,7 +396,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
     }
 
 
-    protected abstract <M extends JbootModel> List<M> joinManyByColumnValue(String targetColumnName, Object columnValue, M model);
+    protected abstract <M extends JbootModel> List<M> joinManyByColumnValue(String targetColumnName, Object columnValue, M sourceModel);
 
 
     @Override
