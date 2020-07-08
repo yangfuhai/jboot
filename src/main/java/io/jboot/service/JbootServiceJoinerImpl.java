@@ -372,7 +372,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
         List<M> list = joinManyByValue(targetColumnName, value, model);
         if (list != null && !list.isEmpty()) {
-            joinName = StrUtil.isNotBlank(joinName) ? joinName : list.get(0).getClass().getSimpleName() + "List";
+            joinName = StrUtil.isNotBlank(joinName) ? joinName : StrKit.firstCharToLowerCase(list.get(0).getClass().getSimpleName()) + "List";
             model.put(joinName, ArrayUtil.isNotEmpty(attrs) ? keepModelListAttrs(list, attrs) : list);
         }
 
@@ -600,7 +600,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
         }
 
         if (!list.isEmpty()) {
-            joinName = StrUtil.isNotBlank(joinName) ? joinName : list.get(0).getClass().getSimpleName() + "List";
+            joinName = StrUtil.isNotBlank(joinName) ? joinName : StrKit.firstCharToLowerCase(list.get(0).getClass().getSimpleName()) + "List";
             model.put(joinName, ArrayUtil.isNotEmpty(attrs) ? keepModelListAttrs(list, attrs) : list);
         }
 
