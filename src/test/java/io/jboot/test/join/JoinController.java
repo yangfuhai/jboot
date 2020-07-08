@@ -3,7 +3,9 @@ package io.jboot.test.join;
 import com.jfinal.aop.Aop;
 import io.jboot.app.JbootApplication;
 import io.jboot.test.join.model.Article;
+import io.jboot.test.join.model.Author;
 import io.jboot.test.join.service.ArticleService;
+import io.jboot.test.join.service.AuthorService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -33,6 +35,12 @@ public class JoinController extends JbootController {
     public void findListWithAuthorAndCategorys() {
         List<Article> articles = Aop.get(ArticleService.class).findListWithAuthorAndCategorys();
         renderJson(articles);
+    }
+
+
+    public void findListWithArticle() {
+        List<Author> authors = Aop.get(AuthorService.class).findListWithArticle();
+        renderJson(authors);
     }
 
 }
