@@ -303,7 +303,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     @Override
-    protected JbootModel joinByColumnValue(Object columnValue,JbootModel sourceModel) {
+    protected JbootModel joinByValue(Object columnValue, JbootModel sourceModel) {
         return findById(columnValue);
     }
 
@@ -320,7 +320,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
 
 
     @Override
-    protected <M extends JbootModel> List<M> joinManyByColumnValue(String targetColumnName, Object columnValue, M sourceModel) {
-        return (List<M>) findListByColumns(Columns.safeMode().eq(targetColumnName,columnValue));
+    protected <M extends JbootModel> List<M> joinManyByValue(String columnName, Object value, M sourceModel){
+        return (List<M>) findListByColumns(Columns.create(columnName,value));
     }
 }

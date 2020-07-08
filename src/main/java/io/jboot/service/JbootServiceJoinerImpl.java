@@ -153,11 +153,11 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
         if (model == null) {
             return null;
         }
-        Object columnValue = model.get(columnName);
-        if (columnValue == null) {
+        Object value = model.get(columnName);
+        if (value == null) {
             return model;
         }
-        JbootModel m = joinByColumnValue(columnValue, model);
+        JbootModel m = joinByValue(value, model);
         if (m != null) {
             joinName = StrUtil.isNotBlank(joinName) ? joinName : StrKit.firstCharToLowerCase(m.getClass().getSimpleName());
             model.put(joinName, ArrayUtil.isNotEmpty(attrs) ? m.copy().keep(attrs) : m);
@@ -168,11 +168,12 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
     /**
      * 可以让子类去复写 joinByColumnValue ，比如默认只 join 部分字段等，或者不是根据主键进行查询等
+     * 一般情况下，传入的 columnValue 是主键的值，但是也有可能不是，要看场景，如果不是的情况下可以通过 sourceModel 来进行判断
      *
      * @param columnValue
      * @return
      */
-    protected abstract JbootModel joinByColumnValue(Object columnValue, JbootModel sourceModel);
+    protected abstract JbootModel joinByValue(Object columnValue, JbootModel sourceModel);
 
 
 /////////////////joinMany start/////////////////////////////
@@ -364,12 +365,12 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
         if (model == null) {
             return null;
         }
-        Object columnValue = modelValueGetter != null ? modelValueGetter.get(model) : model._getIdValue();
-        if (columnValue == null) {
+        Object value = modelValueGetter != null ? modelValueGetter.get(model) : model._getIdValue();
+        if (value == null) {
             return model;
         }
 
-        List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
+        List<M> list = joinManyByValue(targetColumnName, value, model);
         if (list != null && !list.isEmpty()) {
             joinName = StrUtil.isNotBlank(joinName) ? joinName : list.get(0).getClass().getSimpleName() + "List";
             model.put(joinName, ArrayUtil.isNotEmpty(attrs) ? keepModelListAttrs(list, attrs) : list);
@@ -391,7 +392,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
     }
 
 
-    protected abstract <M extends JbootModel> List<M> joinManyByColumnValue(String targetColumnName, Object columnValue, M sourceModel);
+    protected abstract <M extends JbootModel> List<M> joinManyByValue(String columnName, Object value, M sourceModel);
 
 
 /////////////////joinMany end/////////////////////////////
@@ -589,16 +590,16 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
         List<JbootModel> list = new ArrayList();
         for (Record record : middleTableRecords) {
-            Object targetTableIdValue = record.get(targetColumnName);
-            if (targetTableIdValue != null) {
-                JbootModel data = joinByColumnValue(targetTableIdValue, model);
+            Object targetTableValue = record.get(targetColumnName);
+            if (targetTableValue != null) {
+                JbootModel data = joinByValue(targetTableValue, model);
                 if (data != null) {
                     list.add(data);
                 }
             }
         }
 
-        if (list != null && !list.isEmpty()) {
+        if (!list.isEmpty()) {
             joinName = StrUtil.isNotBlank(joinName) ? joinName : list.get(0).getClass().getSimpleName() + "List";
             model.put(joinName, ArrayUtil.isNotEmpty(attrs) ? keepModelListAttrs(list, attrs) : list);
         }
