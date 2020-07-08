@@ -8,10 +8,10 @@ Jboot 数据库功能基于 JFinal 的 ActiveRecordPlugin 插件和 Apache shard
 - 基本增删改查
     - Db + Record 模式
     - Model 映射方式
-    - Column 查询方式
+    - Columns 查询方式
 - 关联查询
 - 分页查询
-- 批量插入
+- 一对一、一对多、多对一、多对对
 - 事务操作
 - 多数据源
 - 读写分离
@@ -168,6 +168,118 @@ public List<User> findListBy(int userAge,String articleTitle){
       .findByColumns(Columns.create().ge("user.age",userAge).like("article.title",articleTitle))
 }
 ```
+
+
+
+## 一对一、一对多、多对一、多对对
+
+在 Jboot 中，提供了 Join 系列方法，我们在 Service 层可以直接使用 Join 进行 一对一、一对多、多对一、多对对 的查询操作。
+
+
+
+假设存在这样的关系：一篇文章只有一个作者，一个作者可以写多篇文章，一篇文章可以归属多个文章分类、一个文章分类有可以包含多篇文章。
+
+
+
+那么，表结构设计如下：
+
+
+
+文章表 article :
+
+```sql
+CREATE TABLE `article` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `title` varchar(128) DEFAULT NULL COMMENT '文章标题',
+  `author_id` int(11) unsigned NOT NULL COMMENT '文章作者ID',
+  `content` varchar(128) DEFAULT NULL COMMENT '文章内容',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章信息表';
+```
+
+
+
+文章作者表 author ：
+
+```sql
+CREATE TABLE `author` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `username` varchar(128) DEFAULT NULL COMMENT '作者名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章作者表';
+```
+
+
+
+文章分类表 category ：
+
+```sql
+CREATE TABLE `category` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `title` varchar(128) DEFAULT NULL COMMENT '文章分类名称',
+  `description` varchar(128) DEFAULT NULL COMMENT '文章分类描述',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章分类表';
+```
+
+
+
+文章分类和分类的 多对对关系表： article_category_mapping ：
+
+```sql
+CREATE TABLE `article_category` (
+  `article_id` int(11) unsigned NOT NULL COMMENT '主键ID',
+  `category_id` int(11) unsigned NOT NULL COMMENT '文章分类名称',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章分类和分类的 多对对关系表';
+```
+
+
+
+这样，在我们的代码里应该存在 3 个Service，分别是：
+
+- ArticleService 用于查询文章相关的服务
+- CategoryService 用于查询文章分类相关的服务
+- AuthorService 用于查询作者的服务
+
+
+
+当在一个网页中显示文字列表，文章列表里，及包含了作者信息，也包含了多个分类，如下图所示：
+
+![](./imgs/db001.jpg)
+
+
+
+那么，查询代码如下（伪代码）：
+
+
+
+```java
+//分页查询所有的文章
+Page<Article> articlePage = articleService.paginate(...);
+
+//查询文章的作者
+authorService.join(articlePage,"author_id");
+
+//查询文章的分类
+categoryService.joinManyByTable(articlePage,"article_category","category_id","article_id")
+
+```
+
+
+
+如果，在某些场景下，我们要查询作者，以及作者下的文章列表，代码如下：
+
+```java
+//分页查询出作者信息
+Page<Author> authorPage = arthorService.paginate(...);
+
+articleService.joinMany(authorPage,"author_id");
+```
+
+
+
+
+
 
 
 ## 多数据源
