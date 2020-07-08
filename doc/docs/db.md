@@ -278,7 +278,7 @@ articleService.joinMany(authorPage,"author_id");
 
 
 
-具体代码参考：[这里](../../../src/test/java/io/jboot/test/join)
+具体代码参考：[这里](../../src/test/java/io/jboot/test/join)
 
 
 
