@@ -32,13 +32,13 @@ public class JoinController extends JbootController {
     }
 
 
-    public void findListWithAuthorAndCategorys() {
+    public void articles() {
         List<Article> articles = Aop.get(ArticleService.class).findListWithAuthorAndCategorys();
         renderJson(articles);
     }
 
 
-    public void findListWithArticle() {
+    public void authors() {
         List<Author> authors = Aop.get(AuthorService.class).findListWithArticle();
         renderJson(authors);
     }

@@ -261,7 +261,7 @@ Page<Article> articlePage = articleService.paginate(...);
 authorService.join(articlePage,"author_id");
 
 //查询文章的分类
-categoryService.joinManyByTable(articlePage,"article_category","category_id","article_id")
+categoryService.joinManyByTable(articlePage,"article_category","article_id","category_id")
 
 ```
 
@@ -277,6 +277,8 @@ articleService.joinMany(authorPage,"author_id");
 ```
 
 
+
+具体代码参考：[这里](../../../src/test/java/io/jboot/test/join)
 
 
 
