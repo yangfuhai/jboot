@@ -81,7 +81,6 @@ public interface JbootServiceJoiner {
     public <M extends JbootModel> M joinMany(M model, String targetColumnName, String joinName, String[] attrs);
 
 
-
     public <M extends JbootModel> Page<M> joinMany(Page<M> page, ObjectFunc<M> modelValueGetter, String targetColumnName);
 
     public <M extends JbootModel> Page<M> joinMany(Page<M> page, ObjectFunc<M> modelValueGetter, String targetColumnName, String[] attrs);
@@ -109,37 +108,58 @@ public interface JbootServiceJoiner {
     public <M extends JbootModel> M joinMany(M model, ObjectFunc<M> modelValueGetter, String targetColumnName, String joinName, String[] attrs);
 
 
-//
-//
-//
-//
-//
-//
-//    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName,);
-//
-//    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String targetColumnName, String[] attrs);
-//
-//    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String targetColumnName, String joinName);
-//
-//    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String targetColumnName, String joinName, String[] attrs);
-//
-//
-//    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String targetColumnName);
-//
-//    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String targetColumnName, String[] attrs);
-//
-//    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String targetColumnName, String joinName);
-//
-//    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String targetColumnName, String joinName, String[] attrs);
-//
-//
-//    public <M extends JbootModel> M joinManyByTable(M model, String targetColumnName);
-//
-//    public <M extends JbootModel> M joinManyByTable(M model, String targetColumnName, String[] attrs);
-//
-//    public <M extends JbootModel> M joinManyByTable(M model, String targetColumnName, String joinName);
-//
-//    public <M extends JbootModel> M joinManyByTable(M model, String targetColumnName, String joinName, String[] attrs);
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName, String targetColumnName, String columnName);
+
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName, String targetColumnName, String columnName, String[] attrs);
+
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName, String targetColumnName, String columnName, String joinName);
+
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs);
+
+
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String tableName, String targetColumnName, String columnName);
+
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String tableName, String targetColumnName, String columnName, String[] attrs);
+
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String tableName, String targetColumnName, String columnName, String joinName);
+
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs);
+
+
+    public <M extends JbootModel> M joinManyByTable(M model, String tableName, String targetColumnName, String columnName);
+
+    public <M extends JbootModel> M joinManyByTable(M model, String tableName, String targetColumnName, String columnName, String[] attrs);
+
+    public <M extends JbootModel> M joinManyByTable(M model, String tableName, String targetColumnName, String columnName, String joinName);
+
+    public <M extends JbootModel> M joinManyByTable(M model, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs);
+
+
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName);
+
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String[] attrs);
+
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName);
+
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs);
+
+
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName);
+
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String[] attrs);
+
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName);
+
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs);
+
+
+    public <M extends JbootModel> M joinManyByTable(M model, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName);
+
+    public <M extends JbootModel> M joinManyByTable(M model, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String[] attrs);
+
+    public <M extends JbootModel> M joinManyByTable(M model, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName);
+
+    public <M extends JbootModel> M joinManyByTable(M model, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs);
 
 
 }

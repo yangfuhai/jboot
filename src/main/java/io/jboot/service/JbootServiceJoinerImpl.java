@@ -17,9 +17,13 @@ package io.jboot.service;
 
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import io.jboot.db.JbootDb;
+import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ObjectFunc;
+import io.jboot.utils.StrUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,18 +111,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
      */
     @Override
     public <M extends JbootModel> M join(M model, String columnName) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = model.get(columnName);
-        if (columnValue == null) {
-            return model;
-        }
-        JbootModel m = joinByColumnValue(columnValue, model);
-        if (m != null) {
-            model.put(StrKit.firstCharToLowerCase(m.getClass().getSimpleName()), m);
-        }
-        return model;
+        return join(model, columnName, null, null);
     }
 
     /**
@@ -130,20 +123,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
      */
     @Override
     public <M extends JbootModel> M join(M model, String columnName, String[] attrs) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = model.get(columnName);
-        if (columnValue == null) {
-            return model;
-        }
-        JbootModel m = joinByColumnValue(columnValue, model);
-        if (m != null) {
-            m = m.copy();
-            m.keep(attrs);
-            model.put(StrKit.firstCharToLowerCase(m.getClass().getSimpleName()), m);
-        }
-        return model;
+        return join(model, columnName, null, attrs);
     }
 
 
@@ -156,18 +136,7 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
      */
     @Override
     public <M extends JbootModel> M join(M model, String columnName, String joinName) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = model.get(columnName);
-        if (columnValue == null) {
-            return model;
-        }
-        JbootModel m = joinByColumnValue(columnValue, model);
-        if (m != null) {
-            model.put(joinName, m);
-        }
-        return model;
+        return join(model, columnName, joinName, null);
     }
 
 
@@ -190,9 +159,8 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
         }
         JbootModel m = joinByColumnValue(columnValue, model);
         if (m != null) {
-            m = m.copy();
-            m.keep(attrs);
-            model.put(joinName, m);
+            joinName = StrUtil.isNotBlank(joinName) ? joinName : StrKit.firstCharToLowerCase(m.getClass().getSimpleName());
+            model.put(joinName, ArrayUtil.isNotEmpty(attrs) ? m.copy().keep(attrs) : m);
         }
         return model;
     }
@@ -281,122 +249,26 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
     }
 
 
-    /**
-     * 添加关联数据到某个model中去，避免关联查询，提高性能。
-     *
-     * @param model            要添加到的model
-     * @param targetColumnName model对于的关联字段
-     */
     @Override
     public <M extends JbootModel> M joinMany(M model, String targetColumnName) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = model._getIdValue();
-        if (columnValue == null) {
-            return model;
-        }
-        List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
-        if (list != null && !list.isEmpty()) {
-            JbootModel joinModel = list.get(0);
-            model.put(StrKit.firstCharToLowerCase(joinModel.getClass().getSimpleName() + "List"), list);
-        }
-        return model;
+        return joinMany(model, null, targetColumnName, null, null);
     }
 
-    /**
-     * 添加关联数据到某个model中去，避免关联查询，提高性能。
-     *
-     * @param model
-     * @param targetColumnName
-     * @param attrs
-     */
     @Override
     public <M extends JbootModel> M joinMany(M model, String targetColumnName, String[] attrs) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = model._getIdValue();
-        if (columnValue == null) {
-            return model;
-        }
-
-        List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
-        if (list != null && !list.isEmpty()) {
-            JbootModel joinModel = list.get(0);
-            model.put(StrKit.firstCharToLowerCase(joinModel.getClass().getSimpleName() + "List"), keepModelListAttrs(list, attrs));
-        }
-
-        return model;
+        return joinMany(model, null, targetColumnName, null, attrs);
     }
 
-
-    /**
-     * 添加关联数据到某个model中去，避免关联查询，提高性能。
-     *
-     * @param model
-     * @param targetColumnName
-     * @param joinName
-     */
     @Override
     public <M extends JbootModel> M joinMany(M model, String targetColumnName, String joinName) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = model._getIdValue();
-        if (columnValue == null) {
-            return model;
-        }
-
-        List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
-        if (list != null && !list.isEmpty()) {
-            model.put(joinName, list);
-        }
-
-        return model;
+        return joinMany(model, null, targetColumnName, joinName, null);
     }
 
 
-    /**
-     * 添加关联数据到某个model中去，避免关联查询，提高性能。
-     *
-     * @param model
-     * @param targetColumnName
-     * @param joinName
-     * @param attrs
-     */
     @Override
     public <M extends JbootModel> M joinMany(M model, String targetColumnName, String joinName, String[] attrs) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = model._getIdValue();
-        if (columnValue == null) {
-            return model;
-        }
-
-        List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
-        if (list != null && !list.isEmpty()) {
-            model.put(joinName, keepModelListAttrs(list, attrs));
-        }
-
-        return model;
+        return joinMany(model, null, targetColumnName, joinName, attrs);
     }
-
-
-    protected <M extends JbootModel> List<M> keepModelListAttrs(List<M> list, String[] attrs) {
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
-        List<M> retList = new ArrayList<>(list.size());
-        for (M model : list) {
-            retList.add((M) model.copy().keep(attrs));
-        }
-        return retList;
-    }
-
-
-    protected abstract <M extends JbootModel> List<M> joinManyByColumnValue(String targetColumnName, Object columnValue, M sourceModel);
 
 
     @Override
@@ -472,57 +344,18 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
 
     @Override
     public <M extends JbootModel> M joinMany(M model, ObjectFunc<M> modelValueGetter, String targetColumnName) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = modelValueGetter.get(model);
-        if (columnValue == null) {
-            return model;
-        }
-        List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
-        if (list != null && !list.isEmpty()) {
-            JbootModel joinModel = list.get(0);
-            model.put(StrKit.firstCharToLowerCase(joinModel.getClass().getSimpleName() + "List"), list);
-        }
-        return model;
+        return joinMany(model, modelValueGetter, targetColumnName, null, null);
     }
 
     @Override
     public <M extends JbootModel> M joinMany(M model, ObjectFunc<M> modelValueGetter, String targetColumnName, String[] attrs) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = modelValueGetter.get(model);
-        if (columnValue == null) {
-            return model;
-        }
-
-        List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
-        if (list != null && !list.isEmpty()) {
-            JbootModel joinModel = list.get(0);
-            model.put(StrKit.firstCharToLowerCase(joinModel.getClass().getSimpleName() + "List"), keepModelListAttrs(list, attrs));
-        }
-
-        return model;
+        return joinMany(model, modelValueGetter, targetColumnName, null, attrs);
     }
 
 
     @Override
     public <M extends JbootModel> M joinMany(M model, ObjectFunc<M> modelValueGetter, String targetColumnName, String joinName) {
-        if (model == null) {
-            return null;
-        }
-        Object columnValue = modelValueGetter.get(model);
-        if (columnValue == null) {
-            return model;
-        }
-
-        List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
-        if (list != null && !list.isEmpty()) {
-            model.put(joinName, list);
-        }
-
-        return model;
+        return joinMany(model, modelValueGetter, targetColumnName, joinName, null);
     }
 
 
@@ -531,20 +364,249 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
         if (model == null) {
             return null;
         }
-        Object columnValue = modelValueGetter.get(model);
+        Object columnValue = modelValueGetter != null ? modelValueGetter.get(model) : model._getIdValue();
         if (columnValue == null) {
             return model;
         }
 
         List<M> list = joinManyByColumnValue(targetColumnName, columnValue, model);
         if (list != null && !list.isEmpty()) {
-            model.put(joinName, keepModelListAttrs(list, attrs));
+            joinName = StrUtil.isNotBlank(joinName) ? joinName : list.get(0).getClass().getSimpleName() + "List";
+            model.put(joinName, ArrayUtil.isNotEmpty(attrs) ? keepModelListAttrs(list, attrs) : list);
         }
 
         return model;
     }
 
 
+    protected <M extends JbootModel> List<M> keepModelListAttrs(List<M> list, String[] attrs) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        List<M> retList = new ArrayList<>(list.size());
+        for (M model : list) {
+            retList.add((M) model.copy().keep(attrs));
+        }
+        return retList;
+    }
+
+
+    protected abstract <M extends JbootModel> List<M> joinManyByColumnValue(String targetColumnName, Object columnValue, M sourceModel);
+
+
 /////////////////joinMany end/////////////////////////////
+
+
+/////////////////joinManyByTable start/////////////////////////////
+
+    @Override
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName, String targetColumnName, String columnName) {
+        joinManyByTable(page.getList(), tableName, targetColumnName, columnName);
+        return page;
+    }
+
+    @Override
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName, String targetColumnName, String columnName, String[] attrs) {
+        joinManyByTable(page.getList(), tableName, targetColumnName, columnName, attrs);
+        return page;
+    }
+
+    @Override
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName, String targetColumnName, String columnName, String joinName) {
+        joinManyByTable(page.getList(), tableName, targetColumnName, columnName, joinName);
+        return page;
+    }
+
+
+    @Override
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs) {
+        joinManyByTable(page.getList(), tableName, targetColumnName, columnName, joinName, attrs);
+        return page;
+    }
+
+
+    @Override
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String tableName, String targetColumnName, String columnName) {
+        if (ArrayUtil.isNotEmpty(models)) {
+            for (M m : models) {
+                joinManyByTable(m, tableName, targetColumnName, columnName);
+            }
+        }
+        return models;
+    }
+
+    @Override
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String tableName, String targetColumnName, String columnName, String[] attrs) {
+        if (ArrayUtil.isNotEmpty(models)) {
+            for (M m : models) {
+                joinManyByTable(m, tableName, targetColumnName, columnName, attrs);
+            }
+        }
+        return models;
+    }
+
+    @Override
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String tableName, String targetColumnName, String columnName, String joinName) {
+        if (ArrayUtil.isNotEmpty(models)) {
+            for (M m : models) {
+                joinManyByTable(m, tableName, targetColumnName, columnName, joinName);
+            }
+        }
+        return models;
+    }
+
+
+    @Override
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs) {
+        if (ArrayUtil.isNotEmpty(models)) {
+            for (M m : models) {
+                joinManyByTable(m, tableName, targetColumnName, columnName, joinName, attrs);
+            }
+        }
+        return models;
+    }
+
+
+    @Override
+    public <M extends JbootModel> M joinManyByTable(M model, String tableName, String targetColumnName, String columnName) {
+        return joinManyByTable(model, tableName, targetColumnName, columnName, null, null);
+    }
+
+    @Override
+    public <M extends JbootModel> M joinManyByTable(M model, String tableName, String targetColumnName, String columnName, String[] attrs) {
+        return joinManyByTable(model, tableName, targetColumnName, columnName, null, attrs);
+    }
+
+    @Override
+    public <M extends JbootModel> M joinManyByTable(M model, String tableName, String targetColumnName, String columnName, String joinName) {
+        return joinManyByTable(model, tableName, targetColumnName, columnName, joinName, null);
+    }
+
+    @Override
+    public <M extends JbootModel> M joinManyByTable(M model, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs) {
+        return joinManyByTable(model, null, tableName, targetColumnName, columnName, joinName, attrs);
+    }
+
+
+    @Override
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName) {
+        joinManyByTable(page.getList(), modelValueGetter, tableName, targetColumnName, columnName);
+        return page;
+    }
+
+    @Override
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String[] attrs) {
+        joinManyByTable(page.getList(), modelValueGetter, tableName, targetColumnName, columnName, attrs);
+        return page;
+    }
+
+    @Override
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName) {
+        joinManyByTable(page.getList(), modelValueGetter, tableName, targetColumnName, columnName, joinName);
+        return page;
+    }
+
+
+    @Override
+    public <M extends JbootModel> Page<M> joinManyByTable(Page<M> page, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs) {
+        joinManyByTable(page.getList(), modelValueGetter, tableName, targetColumnName, columnName, joinName, attrs);
+        return page;
+    }
+
+
+    @Override
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName) {
+        if (ArrayUtil.isNotEmpty(models)) {
+            for (M m : models) {
+                joinManyByTable(m, modelValueGetter, tableName, targetColumnName, columnName);
+            }
+        }
+        return models;
+    }
+
+    @Override
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String[] attrs) {
+        if (ArrayUtil.isNotEmpty(models)) {
+            for (M m : models) {
+                joinManyByTable(m, modelValueGetter, tableName, targetColumnName, columnName, attrs);
+            }
+        }
+        return models;
+    }
+
+    @Override
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName) {
+        if (ArrayUtil.isNotEmpty(models)) {
+            for (M m : models) {
+                joinManyByTable(m, modelValueGetter, tableName, targetColumnName, columnName, joinName);
+            }
+        }
+        return models;
+    }
+
+
+    @Override
+    public <M extends JbootModel> List<M> joinManyByTable(List<M> models, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs) {
+        if (ArrayUtil.isNotEmpty(models)) {
+            for (M m : models) {
+                joinManyByTable(m, modelValueGetter, tableName, targetColumnName, columnName, joinName, attrs);
+            }
+        }
+        return models;
+    }
+
+
+    @Override
+    public <M extends JbootModel> M joinManyByTable(M model, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName) {
+        return joinManyByTable(model, modelValueGetter, tableName, targetColumnName, columnName, null, null);
+    }
+
+    @Override
+    public <M extends JbootModel> M joinManyByTable(M model, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String[] attrs) {
+        return joinManyByTable(model, modelValueGetter, tableName, targetColumnName, columnName, null, attrs);
+    }
+
+    @Override
+    public <M extends JbootModel> M joinManyByTable(M model, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName) {
+        return joinManyByTable(model, modelValueGetter, tableName, targetColumnName, columnName, joinName, null);
+    }
+
+    @Override
+    public <M extends JbootModel> M joinManyByTable(M model, ObjectFunc<M> modelValueGetter, String tableName, String targetColumnName, String columnName, String joinName, String[] attrs) {
+        if (model == null) {
+            return null;
+        }
+
+        Object columnValue = modelValueGetter != null ? modelValueGetter.get(model) : model._getIdValue();
+        if (columnValue == null) {
+            return model;
+        }
+
+        List<Record> middleTableRecords = JbootDb.find(tableName, Columns.create(columnName, columnValue));
+        if (middleTableRecords == null || middleTableRecords.isEmpty()) {
+            return model;
+        }
+
+        List<JbootModel> list = new ArrayList();
+        for (Record record : middleTableRecords) {
+            Object targetTableIdValue = record.get(targetColumnName);
+            if (targetTableIdValue != null) {
+                JbootModel data = joinByColumnValue(targetTableIdValue, model);
+                if (data != null) {
+                    list.add(data);
+                }
+            }
+        }
+
+        if (list != null && !list.isEmpty()) {
+            joinName = StrUtil.isNotBlank(joinName) ? joinName : list.get(0).getClass().getSimpleName() + "List";
+            model.put(joinName, ArrayUtil.isNotEmpty(attrs) ? keepModelListAttrs(list, attrs) : list);
+        }
+
+        return model;
+    }
+
+
+/////////////////joinManyByTable end/////////////////////////////
 
 }
