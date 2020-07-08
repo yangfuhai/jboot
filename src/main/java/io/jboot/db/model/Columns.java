@@ -698,6 +698,18 @@ public class Columns implements Serializable {
     }
 
 
+
+    /**
+     * 输出 where 后面的 sql 部分，风格是 mysql 的风格SQL
+     * @param withWhereKeyword 是否带上 where 关键字
+     * @return
+     */
+    public String toWherePartSql(boolean withWhereKeyword) {
+        return toWherePartSql('`', withWhereKeyword);
+    }
+
+
+
     /**
      * 输出 where 部分的 sql
      * @param separator 字段分隔符
@@ -709,6 +721,7 @@ public class Columns implements Serializable {
         SqlBuilder.buildWhereSql(sb, getList(), separator, withWhereKeyword);
         return sb.toString();
     }
+
 
 
     /**
