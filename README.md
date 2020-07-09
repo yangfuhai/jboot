@@ -8,7 +8,7 @@
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.2.7</version>
+    <version>3.2.8</version>
 </dependency>
 ```
 
