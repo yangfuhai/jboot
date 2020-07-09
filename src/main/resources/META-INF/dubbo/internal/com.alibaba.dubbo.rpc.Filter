@@ -1,2 +1,0 @@
-seata=io.jboot.support.seata.filter.TransactionPropagationFilter
-
