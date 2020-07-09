@@ -140,7 +140,7 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setReportAfterInvocation(false);
 
         constants.setControllerFactory(JbootControllerManager.me());
-        constants.setJsonFactory(() -> new JbootJson());
+        constants.setJsonFactory(JbootJson::new);
         constants.setInjectDependency(true);
 
 
