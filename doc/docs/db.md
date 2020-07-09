@@ -189,12 +189,12 @@ public List<User> findListBy(int userAge,String articleTitle){
 
 ```sql
 CREATE TABLE `article` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `author_id` int(11) unsigned DEFAULT NULL,
-  `title` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `content` text COLLATE utf8mb4_unicode_ci,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `author_id` int(11) unsigned DEFAULT NULL COMMENT '文章作者ID',
+  `title` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '文章标题',
+  `content` text COLLATE utf8mb4_unicode_ci COMMENT '文章内容',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 
@@ -203,11 +203,11 @@ CREATE TABLE `article` (
 
 ```sql
 CREATE TABLE `author` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `nickname` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `nickname` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '作者昵称',
+  `email` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '作者邮件',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 
@@ -216,11 +216,11 @@ CREATE TABLE `author` (
 
 ```sql
 CREATE TABLE `category` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `title` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '分类标题',
+  `description` text COLLATE utf8mb4_unicode_ci COMMENT '分类描述',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 
@@ -229,8 +229,8 @@ CREATE TABLE `category` (
 
 ```sql
 CREATE TABLE `article_category` (
-  `article_id` int(11) unsigned NOT NULL,
-  `category_id` int(11) unsigned DEFAULT NULL
+  `article_id` int(11) unsigned NOT NULL COMMENT '文章ID',
+  `category_id` int(11) unsigned DEFAULT NULL COMMENT '分类ID'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
@@ -247,17 +247,28 @@ VALUES
 	(2,1,'文章2','内容2222'),
 	(3,2,'文章3','内容333'),
 	(4,2,'文章4','内容444');
+```
+有 4 篇文章。
 
+
+```sql
 INSERT INTO `author` (`id`, `nickname`, `email`)
 VALUES
 	(1,'孙悟空','swk@gmail.com'),
 	(2,'猪八戒','zbj@gmail.com');
+```
+有 2 个作者。
 
+```sql
 INSERT INTO `category` (`id`, `title`, `description`)
 VALUES
 	(1,'文章分类1','文章分类描述111'),
 	(2,'文章分类2','文章分类描述222');
-	
+```	
+有 2 个文章分类。
+
+
+```sql
 INSERT INTO `article_category` (`article_id`, `category_id`)
 VALUES
 	(1,1),
@@ -267,8 +278,7 @@ VALUES
 	(3,2),
 	(4,1);
 ```
-
-
+文章 1 有两个分类；文章 2 有一个分类； 文章 3 有两个分类； 文章 4 有一个分类。
 
 
 
@@ -280,9 +290,7 @@ VALUES
 
 
 
-代码如下：
-
-
+ArticleService 代码如下：
 
 ```java
 public class ArticleService extends JbootServiceBase<Article> {
@@ -399,7 +407,7 @@ ArticleService 输出的 Json 内容如下：
 
 
 
-
+AuthorService 代码如下：
 ```java
 public class AuthorService extends JbootServiceBase<Author> {
 
@@ -466,7 +474,7 @@ AuthorService 输出的 Json 内容如下：
 
 
 
-
+CategoryService 代码如下：
 ```java
 public class CategoryService extends JbootServiceBase<Category> {
 
