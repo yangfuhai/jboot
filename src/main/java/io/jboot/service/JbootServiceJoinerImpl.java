@@ -583,16 +583,16 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
             return model;
         }
 
-        List<Record> middleTableRecords = JbootDb.find(tableName, Columns.create(columnName, columnValue));
+        List<Record> middleTableRecords = findMiddleTableRecords(tableName, columnName, columnValue);
         if (middleTableRecords == null || middleTableRecords.isEmpty()) {
             return model;
         }
 
-        List<JbootModel> list = new ArrayList();
+        List<M> list = new ArrayList();
         for (Record record : middleTableRecords) {
             Object targetTableValue = record.get(targetColumnName);
             if (targetTableValue != null) {
-                JbootModel data = joinByValue(targetTableValue, model);
+                M data = (M) joinByValue(targetTableValue, model);
                 if (data != null) {
                     list.add(data);
                 }
@@ -605,6 +605,18 @@ public abstract class JbootServiceJoinerImpl implements JbootServiceJoiner {
         }
 
         return model;
+    }
+
+
+    /**
+     * 查询中间表数据，方便子类复写，比如：通过缓存获取等
+     * @param tableName
+     * @param columnName
+     * @param columnValue
+     * @return
+     */
+    protected List<Record> findMiddleTableRecords(String tableName, String columnName, Object columnValue) {
+        return JbootDb.find(tableName, Columns.create(columnName, columnValue));
     }
 
 

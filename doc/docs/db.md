@@ -189,12 +189,12 @@ public List<User> findListBy(int userAge,String articleTitle){
 
 ```sql
 CREATE TABLE `article` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `title` varchar(128) DEFAULT NULL COMMENT '文章标题',
-  `author_id` int(11) unsigned NOT NULL COMMENT '文章作者ID',
-  `content` varchar(128) DEFAULT NULL COMMENT '文章内容',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `author_id` int(11) unsigned DEFAULT NULL,
+  `title` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 
@@ -203,10 +203,11 @@ CREATE TABLE `article` (
 
 ```sql
 CREATE TABLE `author` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `username` varchar(128) DEFAULT NULL COMMENT '作者名称',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `nickname` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章作者表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 
@@ -215,23 +216,59 @@ CREATE TABLE `author` (
 
 ```sql
 CREATE TABLE `category` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `title` varchar(128) DEFAULT NULL COMMENT '文章分类名称',
-  `description` varchar(128) DEFAULT NULL COMMENT '文章分类描述',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章分类表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 
 
-文章分类和分类的 多对对关系表： article_category_mapping ：
+文章分类和分类的 多对对关系表： article_category：
 
 ```sql
 CREATE TABLE `article_category` (
-  `article_id` int(11) unsigned NOT NULL COMMENT '主键ID',
-  `category_id` int(11) unsigned NOT NULL COMMENT '文章分类名称',
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章分类和分类的 多对对关系表';
+  `article_id` int(11) unsigned NOT NULL,
+  `category_id` int(11) unsigned DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
+
+
+
+数据内容如下：
+
+
+
+```sql
+INSERT INTO `article` (`id`, `author_id`, `title`, `content`)
+VALUES
+	(1,1,'文章1','内容111'),
+	(2,1,'文章2','内容2222'),
+	(3,2,'文章3','内容333'),
+	(4,2,'文章4','内容444');
+
+INSERT INTO `author` (`id`, `nickname`, `email`)
+VALUES
+	(1,'孙悟空','swk@gmail.com'),
+	(2,'猪八戒','zbj@gmail.com');
+
+INSERT INTO `category` (`id`, `title`, `description`)
+VALUES
+	(1,'文章分类1','文章分类描述111'),
+	(2,'文章分类2','文章分类描述222');
+	
+INSERT INTO `article_category` (`article_id`, `category_id`)
+VALUES
+	(1,1),
+	(1,2),
+	(2,2),
+	(3,1),
+	(3,2),
+	(4,1);
+```
+
+
 
 
 
@@ -243,37 +280,265 @@ CREATE TABLE `article_category` (
 
 
 
-当在一个网页中显示文字列表，文章列表里，及包含了作者信息，也包含了多个分类，如下图所示：
-
-![](./imgs/db001.jpg)
-
-
-
-那么，查询代码如下（伪代码）：
+代码如下：
 
 
 
 ```java
-//分页查询所有的文章
-Page<Article> articlePage = articleService.paginate(...);
+public class ArticleService extends JbootServiceBase<Article> {
 
-//查询文章的作者
-authorService.join(articlePage,"author_id");
+    @Inject
+    private AuthorService authorService;
+  
+    @Inject
+    private CategoryService categoryService;
 
-//查询文章的分类
-categoryService.joinManyByTable(articlePage,"article_category","article_id","category_id")
+    public List<Article> findListWithAuthorAndCategories(){
+        List<Article> articles = DAO.findAll();
+      
+       // 查询出每篇文章的作者
+        authorService.join(articles,"author_id"); 
+      
+      // 查询文章的所属分类
+        categoryService.joinManyByTable(articles,"article_category","article_id","category_id");
+      
+        return articles;
+    }
+}
+```
 
+ArticleService 输出的 Json 内容如下：
+
+```json
+[
+    {
+        "author":{
+            "nickname":"孙悟空",
+            "id":1,
+            "email":"swk@gmail.com"
+        },
+        "categoryList":[
+            {
+                "description":"文章分类描述111",
+                "id":1,
+                "title":"文章分类1"
+            },
+            {
+                "description":"文章分类描述222",
+                "id":2,
+                "title":"文章分类2"
+            }
+        ],
+        "id":1,
+        "authorId":1,
+        "title":"文章1",
+        "content":"内容111"
+    },
+    {
+        "author":{
+            "nickname":"孙悟空",
+            "id":1,
+            "email":"swk@gmail.com"
+        },
+        "categoryList":[
+            {
+                "description":"文章分类描述222",
+                "id":2,
+                "title":"文章分类2"
+            }
+        ],
+        "id":2,
+        "authorId":1,
+        "title":"文章2",
+        "content":"内容2222"
+    },
+    {
+        "author":{
+            "nickname":"猪八戒",
+            "id":2,
+            "email":"zbj@gmail.com"
+        },
+        "categoryList":[
+            {
+                "description":"文章分类描述111",
+                "id":1,
+                "title":"文章分类1"
+            },
+            {
+                "description":"文章分类描述222",
+                "id":2,
+                "title":"文章分类2"
+            }
+        ],
+        "id":3,
+        "authorId":2,
+        "title":"文章3",
+        "content":"内容333"
+    },
+    {
+        "author":{
+            "nickname":"猪八戒",
+            "id":2,
+            "email":"zbj@gmail.com"
+        },
+        "categoryList":[
+            {
+                "description":"文章分类描述111",
+                "id":1,
+                "title":"文章分类1"
+            }
+        ],
+        "id":4,
+        "authorId":2,
+        "title":"文章4",
+        "content":"内容444"
+    }
+]
 ```
 
 
 
-如果，在某些场景下，我们要查询作者，以及作者下的文章列表，代码如下：
+
 
 ```java
-//分页查询出作者信息
-Page<Author> authorPage = arthorService.paginate(...);
+public class AuthorService extends JbootServiceBase<Author> {
 
-articleService.joinMany(authorPage,"author_id");
+    @Inject
+    private ArticleService articleService;
+
+    public List<Author> findListWithArticles(){
+        List<Author> authors = DAO.findAll();
+      
+      //查询每个作者的所有文章
+        articleService.joinMany(authors,"author_id");
+      
+        return authors;
+    }
+}
+
+```
+
+AuthorService 输出的 Json 内容如下：
+
+```json
+[
+    {
+        "articleList":[
+            {
+                "id":1,
+                "authorId":1,
+                "title":"文章1",
+                "content":"内容111"
+            },
+            {
+                "id":2,
+                "authorId":1,
+                "title":"文章2",
+                "content":"内容2222"
+            }
+        ],
+        "nickname":"孙悟空",
+        "id":1,
+        "email":"swk@gmail.com"
+    },
+    {
+        "articleList":[
+            {
+                "id":3,
+                "authorId":2,
+                "title":"文章3",
+                "content":"内容333"
+            },
+            {
+                "id":4,
+                "authorId":2,
+                "title":"文章4",
+                "content":"内容444"
+            }
+        ],
+        "nickname":"猪八戒",
+        "id":2,
+        "email":"zbj@gmail.com"
+    }
+]
+```
+
+
+
+
+
+```java
+public class CategoryService extends JbootServiceBase<Category> {
+
+    @Inject
+    private ArticleService articleService;
+
+    public List<Category> findListWithArticles(){
+        List<Category> categories = DAO.findAll();
+      
+      //查询每个分类的所有文章
+        articleService.joinManyByTable(categories,"article_category","category_id","article_id");
+      
+        return categories;
+    }
+}
+```
+
+CategoryService 输出的 json 内容如下：
+
+```json
+[
+    {
+        "articleList":[
+            {
+                "id":1,
+                "authorId":1,
+                "title":"文章1",
+                "content":"内容111"
+            },
+            {
+                "id":3,
+                "authorId":2,
+                "title":"文章3",
+                "content":"内容333"
+            },
+            {
+                "id":4,
+                "authorId":2,
+                "title":"文章4",
+                "content":"内容444"
+            }
+        ],
+        "description":"文章分类描述111",
+        "id":1,
+        "title":"文章分类1"
+    },
+    {
+        "articleList":[
+            {
+                "id":1,
+                "authorId":1,
+                "title":"文章1",
+                "content":"内容111"
+            },
+            {
+                "id":2,
+                "authorId":1,
+                "title":"文章2",
+                "content":"内容2222"
+            },
+            {
+                "id":3,
+                "authorId":2,
+                "title":"文章3",
+                "content":"内容333"
+            }
+        ],
+        "description":"文章分类描述222",
+        "id":2,
+        "title":"文章分类2"
+    }
+]
 ```
 
 
