@@ -16,7 +16,7 @@
 package io.jboot.test.other;
 
 import io.jboot.test.db.model.User;
-import io.jboot.utils.ModelCopier;
+import io.jboot.utils.ModelUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,20 +25,20 @@ import java.util.List;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/2/9
  */
-public class ModelCopierTest {
+public class ModelUtilTest {
 
     public static void main(String[] args) {
         List<User> users = new ArrayList<>();
         users.add(new User());
 
-        List<User> newUsers = ModelCopier.copy(users);
+        List<User> newUsers = ModelUtil.copy(users);
 
         System.out.println("users == newUsers ---> " + (users == newUsers));
         System.out.println("users.get(0) == newUsers.get(0) ---> " + (users.get(0) == newUsers.get(0)));
 
 
         User[] userArray = new User[]{ new User()};
-        User[] newUserArray = ModelCopier.copy(userArray);
+        User[] newUserArray = ModelUtil.copy(userArray);
 
 
         System.out.println("userArray == newUserArray ---> " + (userArray == newUserArray));

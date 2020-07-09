@@ -25,7 +25,7 @@ import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
-import io.jboot.utils.ModelCopier;
+import io.jboot.utils.ModelUtil;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -91,16 +91,16 @@ public class JbootCacheInterceptor implements Interceptor {
 
     private <M extends JbootModel> Object getCopyObject(Invocation inv, Object data) {
         if (data instanceof List) {
-            return ModelCopier.copy((List<? extends JbootModel>) data);
+            return ModelUtil.copy((List<? extends JbootModel>) data);
         } else if (data instanceof Set) {
-            return ModelCopier.copy((Set<? extends JbootModel>) data);
+            return ModelUtil.copy((Set<? extends JbootModel>) data);
         } else if (data instanceof Page) {
-            return ModelCopier.copy((Page<? extends JbootModel>) data);
+            return ModelUtil.copy((Page<? extends JbootModel>) data);
         } else if (data instanceof JbootModel) {
-            return ModelCopier.copy((JbootModel) data);
+            return ModelUtil.copy((JbootModel) data);
         } else if (data.getClass().isArray()
                 && JbootModel.class.isAssignableFrom(data.getClass().getComponentType())) {
-            return ModelCopier.copy((M[]) data);
+            return ModelUtil.copy((M[]) data);
         } else {
             throw newException(null, inv, data);
         }

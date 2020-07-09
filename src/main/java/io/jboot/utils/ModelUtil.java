@@ -29,7 +29,7 @@ import java.util.Set;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2019/11/21
  */
-public class ModelCopier {
+public class ModelUtil {
 
     /**
      * copy model list
