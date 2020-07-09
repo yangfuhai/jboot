@@ -4,8 +4,10 @@ import com.jfinal.aop.Aop;
 import io.jboot.app.JbootApplication;
 import io.jboot.test.join.model.Article;
 import io.jboot.test.join.model.Author;
+import io.jboot.test.join.model.Category;
 import io.jboot.test.join.service.ArticleService;
 import io.jboot.test.join.service.AuthorService;
+import io.jboot.test.join.service.CategoryService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -33,14 +35,21 @@ public class JoinController extends JbootController {
 
 
     public void articles() {
-        List<Article> articles = Aop.get(ArticleService.class).findListWithAuthorAndCategorys();
+        List<Article> articles = Aop.get(ArticleService.class).findListWithAuthorAndCategories();
         renderJson(articles);
     }
 
 
     public void authors() {
-        List<Author> authors = Aop.get(AuthorService.class).findListWithArticle();
+        List<Author> authors = Aop.get(AuthorService.class).findListWithArticles();
         renderJson(authors);
+    }
+
+
+
+    public void categories() {
+        List<Category> categories = Aop.get(CategoryService.class).findListWithArticles();
+        renderJson(categories);
     }
 
 }

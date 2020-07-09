@@ -18,10 +18,10 @@ public class ArticleService extends JbootServiceBase<Article> {
     private CategoryService categoryService;
 
 
-    public List<Article> findListWithAuthorAndCategorys(){
+    public List<Article> findListWithAuthorAndCategories(){
         List<Article> articles = DAO.findAll();
         authorService.join(articles,"author_id");
-        categoryService.joinManyByTable(articles, "article_category","article_id","category_id");
+        categoryService.joinManyByTable(articles,"article_category","article_id","category_id");
         return articles;
     }
 }
