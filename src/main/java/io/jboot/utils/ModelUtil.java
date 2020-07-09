@@ -15,15 +15,13 @@
  */
 package io.jboot.utils;
 
+import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -133,12 +131,77 @@ public class ModelUtil {
     }
 
 
+
     private static <T> T newInstance(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (Exception e) {
             throw new JbootException("can not newInstance class:" + clazz + "\n" + e.toString(), e);
         }
+    }
+
+
+
+
+    /**
+     * 判断 某个 Model list 里是否包含了某个 Model
+     *
+     * @param models  model list
+     * @param compareModel   是否被包 list 含的对比 model
+     * @param compareByAttrs 需要对比的字段
+     * @param <T>
+     * @return true 包含，false 不包含
+     */
+    public static <T extends Model> boolean isContainsModel(List<T> models, T compareModel, ObjectFunc<T>... compareByAttrs) {
+        if (models == null || models.isEmpty() || compareModel == null) {
+            return false;
+        }
+
+        for (T item : models) {
+            boolean equals = true;
+            for (ObjectFunc getter : compareByAttrs) {
+                if (!Objects.equals(getter.get(item), getter.get(compareModel))) {
+                    equals = false;
+                    break;
+                }
+            }
+            if (equals) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * 获取 某个 Model list 里包含的 Model
+     *
+     * @param models  model list
+     * @param compareModel   是否被包 list 含的对比 model
+     * @param compareByAttrs 对比字段
+     * @param <T>
+     * @return 返回 model list 中对比成功的 model
+     */
+    public static <T extends Model> T getContainsModel(List<T> models, T compareModel, ObjectFunc<T>... compareByAttrs) {
+        if (models == null || models.isEmpty() || compareModel == null) {
+            return null;
+        }
+
+        for (T item : models) {
+            boolean equals = true;
+            for (ObjectFunc getter : compareByAttrs) {
+                if (!Objects.equals(getter.get(item), getter.get(compareModel))) {
+                    equals = false;
+                    break;
+                }
+            }
+            if (equals) {
+                return item;
+            }
+        }
+
+        return null;
     }
 
 }

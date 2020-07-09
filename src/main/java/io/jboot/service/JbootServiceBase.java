@@ -15,12 +15,15 @@
  */
 package io.jboot.service;
 
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.ModelUtil;
+import io.jboot.utils.ObjectFunc;
 
 import java.util.List;
 
@@ -297,6 +300,48 @@ public class JbootServiceBase<M extends JbootModel<M>>
 
 
     /**
+     * 同步 model 数据到数据库
+     *
+     * @param columns
+     * @param syncModels
+     * @param compareByAttrs
+     */
+    public void syncModels(Columns columns, List<M> syncModels, ObjectFunc<M>... compareByAttrs) {
+        if (columns == null) {
+            throw new NullPointerException("columns must not be null");
+        }
+
+        if (syncModels == null || syncModels.isEmpty()) {
+            DAO.deleteByColumns(columns);
+            return;
+        }
+
+        List<M> existModels = findListByColumns(columns);
+        if (existModels == null || existModels.isEmpty()) {
+            Db.batchSave(syncModels, syncModels.size());
+            return;
+        }
+
+
+        for (M existModel : existModels) {
+            if (!ModelUtil.isContainsModel(syncModels, existModel, compareByAttrs)) {
+                existModel.delete();
+            }
+        }
+
+
+        for (M syncModel : syncModels) {
+            M existModel = ModelUtil.getContainsModel(existModels, syncModel, compareByAttrs);
+            if (existModel == null) {
+                syncModel.save();
+            } else {
+                existModel._setAttrs(syncModel).update();
+            }
+        }
+    }
+
+
+    /**
      * 复写 JbootServiceJoinerImpl 的方法
      *
      * @param columnValue
@@ -320,7 +365,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
 
 
     @Override
-    protected <M extends JbootModel> List<M> joinManyByValue(String columnName, Object value, M sourceModel){
-        return (List<M>) findListByColumns(Columns.create(columnName,value));
+    protected <M extends JbootModel> List<M> joinManyByValue(String columnName, Object value, M sourceModel) {
+        return (List<M>) findListByColumns(Columns.create(columnName, value));
     }
 }

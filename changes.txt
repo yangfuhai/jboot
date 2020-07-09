@@ -1,3 +1,17 @@
+jboot v3.2.8:
+新增：Columns.toWherePartSql() 方便构建 sql
+新增：ObjectFunc.java 方便通过 Java8 lambda 调用
+新增：JbootServiceJoiner.joinMany 方法，方便进行一对多的查询
+新增：JbootServiceJoiner.joinManyByTable  方法，方便通过第三映射表进行多对多查询
+新增：JbootServiceJoiner.syncModels 方法，用过同步数据到数据库
+修复：Columns.likeAppendPrecent 传入空数据时结果出错的问题
+修复：Seata 对 dubbo 的 SPI 过滤器文件名错误的问题
+优化：当 jwt 解析出错时，输出错误的日志信息
+优化：重命名 joinById() 为 joinByValue()，因为传入的值不一定只是 id
+文档：新增 一多一、一对多、多对对查询的相关文档
+
+
+
 jboot v3.2.7:
 优化：修改 JbootModel.buildIdCacheKey 为 protected 修饰，方便在某些情况下进行重写。
 优化：Columns 在 safeMode 模式下，当传入 null 值时，直接抛出空指针异常，更加方便开发调试。
