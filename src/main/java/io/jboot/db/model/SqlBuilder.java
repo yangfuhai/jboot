@@ -169,11 +169,13 @@ public class SqlBuilder {
 
         //in 里的参数数量
         int paraCount = 0;
-        for (Object v : values){
+        for (Object v : values) {
             if (v.getClass() == int[].class) {
-                paraCount += ((int[])v).length;
+                paraCount += ((int[]) v).length;
             } else if (v.getClass() == long[].class) {
-                paraCount += ((long[])v).length;
+                paraCount += ((long[]) v).length;
+            } else if (v.getClass() == short[].class) {
+                paraCount += ((short[]) v).length;
             } else {
                 paraCount++;
             }

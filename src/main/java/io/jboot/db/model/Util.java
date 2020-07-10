@@ -44,11 +44,13 @@ class Util {
                     Object[] values = (Object[]) value;
 //                    Collections.addAll(paras, values);
 
-                    for (Object v : values){
+                    for (Object v : values) {
                         if (v.getClass() == int[].class) {
-                            Collections.addAll(paras, Arrays.stream((int[]) v).boxed().toArray());
+                            addAll(paras, (int[]) v);
                         } else if (v.getClass() == long[].class) {
-                            Collections.addAll(paras, Arrays.stream((long[]) v).boxed().toArray());
+                            addAll(paras, (long[]) v);
+                        } else if (v.getClass() == short[].class) {
+                            addAll(paras, (short[]) v);
                         } else {
                             paras.add(v);
                         }
@@ -60,6 +62,26 @@ class Util {
         }
 
         return paras.isEmpty() ? NULL_PARA_ARRAY : paras.toArray();
+    }
+
+
+    private static void addAll(List<Object> paras, int[] intArray) {
+        for (int i : intArray) {
+            paras.add(i);
+        }
+    }
+
+    private static void addAll(List paras, long[] intArray) {
+        for (long i : intArray) {
+            paras.add(i);
+        }
+    }
+
+
+    private static void addAll(List paras, short[] intArray) {
+        for (short i : intArray) {
+            paras.add(i);
+        }
     }
 
 
