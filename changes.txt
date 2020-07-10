@@ -1,3 +1,8 @@
+jboot v3.2.9:
+修复：Columns.in() 对传入 int[] long[]  short[] 不能正确支持的问题
+
+
+
 jboot v3.2.8:
 新增：Columns.toWherePartSql() 方便构建 sql
 新增：ObjectFunc.java 方便通过 Java8 lambda 调用
