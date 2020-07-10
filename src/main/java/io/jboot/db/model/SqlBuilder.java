@@ -164,10 +164,24 @@ public class SqlBuilder {
         appendColumnName(sqlBuilder, column, separator);
 
         sqlBuilder.append('(');
+
         Object[] values = (Object[]) column.getValue();
-        for (int i = 0; i < values.length; i++) {
+
+        //in 里的参数数量
+        int paraCount = 0;
+        for (Object v : values){
+            if (v.getClass() == int[].class) {
+                paraCount += ((int[])v).length;
+            } else if (v.getClass() == long[].class) {
+                paraCount += ((long[])v).length;
+            } else {
+                paraCount++;
+            }
+        }
+
+        for (int i = 0; i < paraCount; i++) {
             sqlBuilder.append('?');
-            if (i != values.length - 1) {
+            if (i != paraCount - 1) {
                 sqlBuilder.append(',');
             }
         }
