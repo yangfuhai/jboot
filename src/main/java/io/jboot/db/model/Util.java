@@ -19,10 +19,7 @@ package io.jboot.db.model;
 import com.jfinal.ext.kit.DateKit;
 import io.jboot.utils.StrUtil;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 
 class Util {
@@ -45,7 +42,17 @@ class Util {
             if (value != null) {
                 if (value.getClass().isArray()) {
                     Object[] values = (Object[]) value;
-                    Collections.addAll(paras, values);
+//                    Collections.addAll(paras, values);
+
+                    for (Object v : values){
+                        if (v.getClass() == int[].class) {
+                            Collections.addAll(paras, Arrays.stream((int[]) v).boxed().toArray());
+                        } else if (v.getClass() == long[].class) {
+                            Collections.addAll(paras, Arrays.stream((long[]) v).boxed().toArray());
+                        } else {
+                            paras.add(v);
+                        }
+                    }
                 } else {
                     paras.add(value);
                 }
