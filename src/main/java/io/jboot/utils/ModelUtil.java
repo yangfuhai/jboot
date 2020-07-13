@@ -158,6 +158,11 @@ public class ModelUtil {
         for (T item : models) {
             boolean equals = true;
             for (ObjectFunc getter : compareByAttrs) {
+
+                if (getter == null) {
+                    throw new IllegalArgumentException("compareByAttrs must not be null");
+                }
+
                 if (!Objects.equals(getter.get(item), getter.get(compareModel))) {
                     equals = false;
                     break;
@@ -189,6 +194,12 @@ public class ModelUtil {
         for (T item : models) {
             boolean equals = true;
             for (ObjectFunc getter : compareByAttrs) {
+
+                if (getter == null) {
+                    throw new IllegalArgumentException("compareByAttrs must not be null");
+                }
+
+
                 if (!Objects.equals(getter.get(item), getter.get(compareModel))) {
                     equals = false;
                     break;
@@ -205,25 +216,33 @@ public class ModelUtil {
 
     /**
      * 判断两个 Model 是否是同一个 Model，根据传入的 attrs 来进行对比
+     *
      * @param model1
      * @param model2
      * @param compareByAttrs
      * @param <T>
      * @return
      */
-    public static <T extends Model> boolean isSameModel(T model1, T model2, ObjectFunc<T>... compareByAttrs) {
+    public static <T extends Model> boolean isSameModel(T model1, T model2, ObjectFunc<T> compareByAttr, ObjectFunc<T>... compareByAttrs) {
         if (model1 == null || model2 == null) {
             return false;
         }
 
-        if (compareByAttrs == null || compareByAttrs.length == 0){
-            throw new IllegalArgumentException("compareByAttrs must not be null or empty");
+        if (!Objects.equals(compareByAttr.get(model1), compareByAttr.get(model2))) {
+            return false;
         }
 
+        if (compareByAttrs != null && compareByAttrs.length > 0) {
+            for (ObjectFunc getter : compareByAttrs) {
 
-        for (ObjectFunc getter : compareByAttrs) {
-            if (!Objects.equals(getter.get(model1), getter.get(model2))) {
-                return false;
+                if (getter == null) {
+                    throw new IllegalArgumentException("compareByAttrs must not be null");
+                }
+
+
+                if (!Objects.equals(getter.get(model1), getter.get(model2))) {
+                    return false;
+                }
             }
         }
 
