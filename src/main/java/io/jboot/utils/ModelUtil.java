@@ -79,6 +79,7 @@ public class ModelUtil {
 
     /**
      * copy model array
+     *
      * @param models
      * @param <M>
      * @return
@@ -131,7 +132,6 @@ public class ModelUtil {
     }
 
 
-
     private static <T> T newInstance(Class<T> clazz) {
         try {
             return clazz.newInstance();
@@ -141,12 +141,10 @@ public class ModelUtil {
     }
 
 
-
-
     /**
      * 判断 某个 Model list 里是否包含了某个 Model
      *
-     * @param models  model list
+     * @param models         model list
      * @param compareModel   是否被包 list 含的对比 model
      * @param compareByAttrs 需要对比的字段
      * @param <T>
@@ -177,7 +175,7 @@ public class ModelUtil {
     /**
      * 获取 某个 Model list 里包含的 Model
      *
-     * @param models  model list
+     * @param models         model list
      * @param compareModel   是否被包 list 含的对比 model
      * @param compareByAttrs 对比字段
      * @param <T>
@@ -203,5 +201,34 @@ public class ModelUtil {
 
         return null;
     }
+
+
+    /**
+     * 判断两个 Model 是否是同一个 Model，根据传入的 attrs 来进行对比
+     * @param model1
+     * @param model2
+     * @param compareByAttrs
+     * @param <T>
+     * @return
+     */
+    public static <T extends Model> boolean isSameModel(T model1, T model2, ObjectFunc<T>... compareByAttrs) {
+        if (model1 == null || model2 == null) {
+            return false;
+        }
+
+        if (compareByAttrs == null || compareByAttrs.length == 0){
+            throw new IllegalArgumentException("compareByAttrs must not be null or empty");
+        }
+
+
+        for (ObjectFunc getter : compareByAttrs) {
+            if (!Objects.equals(getter.get(model1), getter.get(model2))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
 }
