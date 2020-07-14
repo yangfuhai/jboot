@@ -22,8 +22,8 @@ import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassUtil;
-import io.jboot.utils.ModelUtil;
 import io.jboot.utils.ObjectFunc;
+import io.jboot.utils.ObjectUtil;
 
 import java.util.List;
 
@@ -304,9 +304,9 @@ public class JbootServiceBase<M extends JbootModel<M>>
      *
      * @param columns
      * @param syncModels
-     * @param compareByAttrs
+     * @param compareAttrGetters
      */
-    public void syncModels(Columns columns, List<M> syncModels, ObjectFunc<M>... compareByAttrs) {
+    public void syncModels(Columns columns, List<M> syncModels, ObjectFunc<M>... compareAttrGetters) {
         if (columns == null) {
             throw new NullPointerException("columns must not be null");
         }
@@ -324,14 +324,14 @@ public class JbootServiceBase<M extends JbootModel<M>>
 
 
         for (M existModel : existModels) {
-            if (!ModelUtil.isContainsModel(syncModels, existModel, compareByAttrs)) {
+            if (!ObjectUtil.isContainsObject(syncModels, existModel, compareAttrGetters)) {
                 existModel.delete();
             }
         }
 
 
         for (M syncModel : syncModels) {
-            M existModel = ModelUtil.getContainsModel(existModels, syncModel, compareByAttrs);
+            M existModel = ObjectUtil.getContainsObject(existModels, syncModel, compareAttrGetters);
             if (existModel == null) {
                 syncModel.save();
             } else {

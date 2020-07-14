@@ -15,13 +15,15 @@
  */
 package io.jboot.utils;
 
-import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -140,114 +142,6 @@ public class ModelUtil {
         }
     }
 
-
-    /**
-     * 判断 某个 Model list 里是否包含了某个 Model
-     *
-     * @param models         model list
-     * @param compareModel   是否被包 list 含的对比 model
-     * @param compareByAttrs 需要对比的字段
-     * @param <T>
-     * @return true 包含，false 不包含
-     */
-    public static <T extends Model> boolean isContainsModel(List<T> models, T compareModel, ObjectFunc<T>... compareByAttrs) {
-        if (models == null || models.isEmpty() || compareModel == null) {
-            return false;
-        }
-
-        for (T item : models) {
-            boolean equals = true;
-            for (ObjectFunc getter : compareByAttrs) {
-
-                if (getter == null) {
-                    throw new IllegalArgumentException("compareByAttrs must not be null");
-                }
-
-                if (!Objects.equals(getter.get(item), getter.get(compareModel))) {
-                    equals = false;
-                    break;
-                }
-            }
-            if (equals) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    /**
-     * 获取 某个 Model list 里包含的 Model
-     *
-     * @param models         model list
-     * @param compareModel   是否被包 list 含的对比 model
-     * @param compareByAttrs 对比字段
-     * @param <T>
-     * @return 返回 model list 中对比成功的 model
-     */
-    public static <T extends Model> T getContainsModel(List<T> models, T compareModel, ObjectFunc<T>... compareByAttrs) {
-        if (models == null || models.isEmpty() || compareModel == null) {
-            return null;
-        }
-
-        for (T item : models) {
-            boolean equals = true;
-            for (ObjectFunc getter : compareByAttrs) {
-
-                if (getter == null) {
-                    throw new IllegalArgumentException("compareByAttrs must not be null");
-                }
-
-
-                if (!Objects.equals(getter.get(item), getter.get(compareModel))) {
-                    equals = false;
-                    break;
-                }
-            }
-            if (equals) {
-                return item;
-            }
-        }
-
-        return null;
-    }
-
-
-    /**
-     * 判断两个 Model 是否是同一个 Model，根据传入的 attrs 来进行对比
-     *
-     * @param model1
-     * @param model2
-     * @param compareByAttrs
-     * @param <T>
-     * @return
-     */
-    public static <T extends Model> boolean isSameModel(T model1, T model2, ObjectFunc<T> compareByAttr, ObjectFunc<T>... compareByAttrs) {
-        if (model1 == null || model2 == null) {
-            return model1 == model2;
-        }
-
-        if (!Objects.equals(compareByAttr.get(model1), compareByAttr.get(model2))) {
-            return false;
-        }
-
-        if (compareByAttrs != null && compareByAttrs.length > 0) {
-            for (ObjectFunc getter : compareByAttrs) {
-
-                if (getter == null) {
-                    throw new IllegalArgumentException("compareByAttrs must not be null");
-                }
-
-
-                if (!Objects.equals(getter.get(model1), getter.get(model2))) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
 
 
 }
