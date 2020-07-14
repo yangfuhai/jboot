@@ -225,7 +225,7 @@ public class ModelUtil {
      */
     public static <T extends Model> boolean isSameModel(T model1, T model2, ObjectFunc<T> compareByAttr, ObjectFunc<T>... compareByAttrs) {
         if (model1 == null || model2 == null) {
-            return false;
+            return model1 == model2;
         }
 
         if (!Objects.equals(compareByAttr.get(model1), compareByAttr.get(model2))) {
