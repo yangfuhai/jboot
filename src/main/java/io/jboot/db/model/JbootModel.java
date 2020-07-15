@@ -21,6 +21,7 @@ import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
 import io.jboot.db.dialect.JbootDialect;
 import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Array;
@@ -45,7 +46,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private static boolean idCacheEnable = config.isIdCacheEnable();
 
     protected List<Join> joins = null;
-    String currentConfigName = null;
+    String datasourceName = null;
 
     public Joiner<M> leftJoin(String table) {
         return joining(Join.TYPE_LEFT, table, true);
@@ -81,7 +82,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     protected Joiner<M> joining(String type, String table, boolean condition) {
-        M model = joins == null ? copy().superUse(currentConfigName) : (M) this;
+        M model = joins == null ? copy().superUse(datasourceName) : (M) this;
         if (model.joins == null) {
             model.joins = new LinkedList<>();
         }
@@ -139,25 +140,55 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     @Override
     public M use(String configName) {
-        M m = this.get(DATASOURCE_CACHE_PREFIX + configName);
-        if (m == null) {
-            synchronized (configName.intern()) {
-                m = this.get(DATASOURCE_CACHE_PREFIX + configName);
-                if (m == null) {
-                    m = this.copy().superUse(configName);
-                    m.currentConfigName = configName;
-                    this.put(DATASOURCE_CACHE_PREFIX + configName, m);
-                }
-            }
-        }
-        return m;
+        return use(configName, true);
     }
 
 
     public M useFirst(String configName) {
-        M m = use(configName);
-        return m._getConfig() == null ? (M) this : m;
+        M m = use(configName, false);
+        return m != null ? m : (M) this;
     }
+
+
+    public M useFirst(String configName, String... configNames) {
+        M newDao = use(configName, false);
+        if (newDao != null) {
+            return newDao;
+        }
+
+        for (String name : configNames) {
+            newDao = use(name, false);
+            if (newDao != null) {
+                return newDao;
+            }
+        }
+        return (M) this;
+    }
+
+
+    private M use(String configName, boolean validateExist) {
+        M newDao = this.get(DATASOURCE_CACHE_PREFIX + configName);
+        if (newDao == null) {
+            synchronized (configName.intern()) {
+                newDao = this.get(DATASOURCE_CACHE_PREFIX + configName);
+                if (newDao == null) {
+                    newDao = this.copy().superUse(configName);
+                    if (newDao._getConfig() == null) {
+                        if (validateExist) {
+                            throw new JbootIllegalConfigException("the datasource \"" + configName + "\" not config well, please config it.");
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        newDao.datasourceName = configName;
+                        this.put(DATASOURCE_CACHE_PREFIX + configName, newDao);
+                    }
+                }
+            }
+        }
+        return newDao;
+    }
+
 
     M superUse(String configName) {
         return super.use(configName);

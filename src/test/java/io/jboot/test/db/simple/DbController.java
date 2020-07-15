@@ -152,7 +152,8 @@ public class DbController extends JbootController {
         Columns columns = Columns.create();
         columns.in("user.`id`",1,2,3,4);
 
-        User newDao = (User) dao.useFirst("aaa");
+        User newDao = (User) dao.use("aaa");
+//        User newDao = (User) dao.useFirst("aaa");
 
 
 //        List<User> users = newDao.findListByColumns(columns);
