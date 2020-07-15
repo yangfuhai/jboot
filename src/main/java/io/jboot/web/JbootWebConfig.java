@@ -32,6 +32,7 @@ public class JbootWebConfig {
     private String webSocketEndpoint;
     private boolean camelCaseJsonStyleEnable = true;
     private boolean camelCaseToLowerCaseAnyway = false;
+    private String jsonTimestampPattern;
 
     public String getCookieEncryptKey() {
         return cookieEncryptKey;
@@ -63,5 +64,13 @@ public class JbootWebConfig {
 
     public void setCamelCaseToLowerCaseAnyway(boolean camelCaseToLowerCaseAnyway) {
         this.camelCaseToLowerCaseAnyway = camelCaseToLowerCaseAnyway;
+    }
+
+    public String getJsonTimestampPattern() {
+        return jsonTimestampPattern;
+    }
+
+    public void setJsonTimestampPattern(String jsonTimestampPattern) {
+        this.jsonTimestampPattern = jsonTimestampPattern;
     }
 }

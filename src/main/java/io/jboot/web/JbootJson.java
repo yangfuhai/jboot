@@ -22,6 +22,7 @@ import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.CPI;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.Jboot;
+import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,6 +37,8 @@ public class JbootJson extends JFinalJson {
 
     protected boolean isCamelCaseJsonStyleEnable = Jboot.config(JbootWebConfig.class).isCamelCaseJsonStyleEnable();
     protected boolean camelCaseToLowerCaseAnyway = Jboot.config(JbootWebConfig.class).isCamelCaseToLowerCaseAnyway();
+    protected String jsonTimestampPattern = Jboot.config(JbootWebConfig.class).getJsonTimestampPattern();
+
     protected Map<Class, MethodsAndFieldsWrapper> methodAndFieldsCache = new HashMap<>();
 
     public JbootJson() {
@@ -56,6 +59,10 @@ public class JbootJson extends JFinalJson {
                 return null;
             }
         });
+
+        if (StrUtil.isNotBlank(jsonTimestampPattern)) {
+            setTimestampPattern(jsonTimestampPattern);
+        }
     }
 
 
@@ -70,7 +77,7 @@ public class JbootJson extends JFinalJson {
         fillBeanGetterValueToMap(model, map);
 
 
-        optimizeMapAttrs(model, map);
+        optimizeMapAttrs(map);
 
         JFinalJsonKit.mapToJson(map, depth, ret);
     };
@@ -118,8 +125,16 @@ public class JbootJson extends JFinalJson {
     }
 
 
-    protected void optimizeMapAttrs(Model model, Map<String, Object> map) {
+    protected void optimizeMapAttrs(Map<String, Object> map) {
     }
+
+
+    @Override
+    public <T> T parse(String jsonString, Class<T> type) {
+        return JSON.parseObject(jsonString, type);
+    }
+
+
 
 
     public static class MethodsAndFieldsWrapper {
@@ -155,20 +170,5 @@ public class JbootJson extends JFinalJson {
                 }
             }
         }
-
-
-        public List<String> getFields() {
-            return fields;
-        }
-
-        public List<Method> getMethods() {
-            return methods;
-        }
-    }
-
-
-    @Override
-    public <T> T parse(String jsonString, Class<T> type) {
-        return JSON.parseObject(jsonString, type);
     }
 }
