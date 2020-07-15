@@ -45,6 +45,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private static boolean idCacheEnable = config.isIdCacheEnable();
 
     protected List<Join> joins = null;
+    String currentConfigName = null;
 
     public Joiner<M> leftJoin(String table) {
         return joining(Join.TYPE_LEFT, table, true);
@@ -80,7 +81,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     protected Joiner<M> joining(String type, String table, boolean condition) {
-        M model = joins == null ? copy() : (M) this;
+        M model = joins == null ? copy().superUse(currentConfigName) : (M) this;
         if (model.joins == null) {
             model.joins = new LinkedList<>();
         }
@@ -144,6 +145,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                 m = this.get(DATASOURCE_CACHE_PREFIX + configName);
                 if (m == null) {
                     m = this.copy().superUse(configName);
+                    m.currentConfigName = configName;
                     this.put(DATASOURCE_CACHE_PREFIX + configName, m);
                 }
             }
@@ -151,6 +153,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return m;
     }
 
+
+    public M useFirst(String configName) {
+        M m = use(configName);
+        return m._getConfig() == null ? (M) this : m;
+    }
 
     M superUse(String configName) {
         return super.use(configName);

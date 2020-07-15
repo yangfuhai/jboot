@@ -144,4 +144,19 @@ public class DbController extends JbootController {
         List<User> users = dao.leftJoin("article").as("a").on("user.id=a.user_id").findListByColumns(columns);
         renderJson(users);
     }
+
+
+    public void use(){
+        User dao = new User();
+
+        Columns columns = Columns.create();
+        columns.in("user.`id`",1,2,3,4);
+
+        User newDao = (User) dao.useFirst("aaa");
+
+
+//        List<User> users = newDao.findListByColumns(columns);
+        List<User> users = newDao.leftJoin("article").as("a").on("user.id=a.user_id").findListByColumns(columns);
+        renderJson(users);
+    }
 }
