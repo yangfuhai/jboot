@@ -144,20 +144,13 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    public M useFirst(String configName) {
-        M m = use(configName, false);
-        return m != null ? m : (M) this;
-    }
-
-
-    public M useFirst(String configName, String... configNames) {
-        M newDao = use(configName, false);
-        if (newDao != null) {
-            return newDao;
+    public M useFirst(String... configNames) {
+        if (configNames == null || configNames.length == 0) {
+            throw new IllegalArgumentException("configNames must not empty.");
         }
 
         for (String name : configNames) {
-            newDao = use(name, false);
+            M newDao = use(name, false);
             if (newDao != null) {
                 return newDao;
             }
@@ -209,11 +202,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             set(column_created, new Date());
         }
 
-//        boolean needInitPrimaryKey = (String.class == _getPrimaryType() && null == get(_getPrimaryKey()));
-//
-//        if (needInitPrimaryKey) {
-//            set(_getPrimaryKey(), generatePrimaryValue());
-//        }
 
         // 生成主键，只对单一主键的表生成，如果是多主键，不生成。
         String[] pkeys = _getPrimaryKeys();
