@@ -407,15 +407,7 @@ public class JbootConfigManager {
 
 
     public void removeConfigChangeListener(JbootConfigChangeListener listener) {
-        for (String key : listenersMultimap.keySet()) {
-            Iterator<JbootConfigChangeListener> iterator = listenersMultimap.get(key).iterator();
-            while (iterator.hasNext()) {
-                JbootConfigChangeListener entry = iterator.next();
-                if (listener == entry) {
-                    iterator.remove();
-                }
-            }
-        }
+        listenersMultimap.entries().removeIf(entry -> entry.getValue() == listener);
     }
 
 
