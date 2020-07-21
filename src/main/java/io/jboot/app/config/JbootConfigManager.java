@@ -15,6 +15,8 @@
  */
 package io.jboot.app.config;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.app.config.support.apollo.ApolloConfigManager;
@@ -42,8 +44,10 @@ public class JbootConfigManager {
 
     private Map<String, Object> configCache = new ConcurrentHashMap<>();
 
-    private Map<String, JbootConfigChangeListener> changeListenerMap = new ConcurrentHashMap<>();
-    private Map<JbootConfigChangeListener, Class> listenerClassMapping = new ConcurrentHashMap<>();
+//    private Map<String, JbootConfigChangeListener> changeListenerMap = new ConcurrentHashMap<>();
+//    private Map<JbootConfigChangeListener, Class> listenerClassMapping = new ConcurrentHashMap<>();
+
+    private Multimap<String, JbootConfigChangeListener> changeListenerMap = ArrayListMultimap.create();
 
     //配置内容解密工具
     private JbootConfigDecryptor decryptor;
@@ -370,64 +374,68 @@ public class JbootConfigManager {
         remoteProperties.putAll(map);
     }
 
-    public <T> void addConfigChangeListener(JbootConfigChangeListener<T> listener, Class<T> forClass) {
-        ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
+
+    public void addConfigChangeListener(JbootConfigChangeListener listener, Class forClass) {
+        ConfigModel configModel = (ConfigModel) forClass.getAnnotation(ConfigModel.class);
         if (configModel == null) {
             throw new IllegalArgumentException("forClass:" + forClass + " has no @ConfigModel annotation");
         }
 
-        listenerClassMapping.put(listener, forClass);
-
         String prefix = configModel.prefix();
-        List<Method> setMethods = ConfigUtil.getClassSetMethods(forClass);
-        if (setMethods != null) {
-            for (Method method : setMethods) {
-                String key = buildKey(prefix, method);
+        List<Method> setterMethods = ConfigUtil.getClassSetMethods(forClass);
+        if (setterMethods != null) {
+            for (Method setterMethod : setterMethods) {
+                String key = buildKey(prefix, setterMethod);
                 changeListenerMap.put(key, listener);
             }
         }
     }
 
 
+    public void addConfigChangeListener(JbootConfigChangeListener listener, String... forKeys) {
+        if (listener == null) {
+            throw new NullPointerException("listener must not null.");
+        }
+
+
+        if (forKeys == null || forKeys.length == 0) {
+            throw new NullPointerException("forKeys must not null or empty.");
+        }
+
+        for (String forKey : forKeys) {
+            changeListenerMap.put(forKey, listener);
+        }
+    }
+
+
     public void removeConfigChangeListener(JbootConfigChangeListener listener) {
-        listenerClassMapping.remove(listener);
-        for (Iterator<Map.Entry<String, JbootConfigChangeListener>> it = changeListenerMap.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<String, JbootConfigChangeListener> item = it.next();
-            if (item.getValue().equals(listener)) {
-                it.remove();
+        for (String key : changeListenerMap.keySet()) {
+            Iterator<JbootConfigChangeListener> iterator = changeListenerMap.get(key).iterator();
+            while (iterator.hasNext()) {
+                JbootConfigChangeListener entry = iterator.next();
+                if (listener == entry) {
+                    iterator.remove();
+                }
             }
         }
     }
 
 
-    public void notifyChangeListeners(Set<String> changedKeys) {
-        if (changedKeys == null || changedKeys.isEmpty()) {
+    public void notifyChangeListeners(String key, String newValue, String oldValue) {
+        if (key == null) {
             return;
         }
 
-        List<JbootConfigChangeListener> listeners = new ArrayList<>();
-
-        for (String key : changedKeys) {
-            JbootConfigChangeListener listener = changeListenerMap.get(key);
-            if (listener != null && !listeners.contains(listener)) {
-                listeners.add(listener);
-            }
+        Collection<JbootConfigChangeListener> listeners = changeListenerMap.get(key);
+        if (listeners == null || listeners.isEmpty()) {
+            return;
         }
 
         for (JbootConfigChangeListener listener : listeners) {
-
-            Class<?> forClass = listenerClassMapping.get(listener);
-            ConfigModel configModel = forClass.getAnnotation(ConfigModel.class);
-
-            Object oldObj = configCache.get(forClass.getName() + configModel.prefix());
-            Object newObj = createConfigObject(forClass, configModel.prefix(), null);
-
             try {
-                listener.onChange(newObj, oldObj);
+                listener.onChange(key, newValue, oldValue);
             } catch (Throwable ex) {
                 LogKit.error(ex.toString(), ex);
-            } finally {
-                configCache.put(forClass.getName() + configModel.prefix(), newObj);
             }
         }
     }

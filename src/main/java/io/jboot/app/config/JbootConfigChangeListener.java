@@ -19,8 +19,8 @@ package io.jboot.app.config;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/2/8
  */
-public interface JbootConfigChangeListener<T> {
+public interface JbootConfigChangeListener {
 
-    public void onChange(T newObj,T oldObj);
+    public void onChange(String changeKey, String newValue, String oldValue);
 
 }

@@ -47,7 +47,7 @@ public class NacosConfigIniter {
 
                         @Override
                         public void receiveConfigInfo(String configInfo) {
-                            manager.doReceiveConfigInfo(configManager, configInfo);
+                            manager.onReceiveConfigInfo(configManager, configInfo);
                         }
                     });
         } catch (Exception e) {

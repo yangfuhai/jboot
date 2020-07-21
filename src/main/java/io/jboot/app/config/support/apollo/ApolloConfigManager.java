@@ -39,7 +39,7 @@ public class ApolloConfigManager {
     public void init(JbootConfigManager configManager) {
 
         ApolloServerConfig apolloServerConfig = configManager.get(ApolloServerConfig.class);
-        if (!apolloServerConfig.isEnable() || !apolloServerConfig.isConfigOk()){
+        if (!apolloServerConfig.isEnable() || !apolloServerConfig.isConfigOk()) {
             return;
         }
 
@@ -57,9 +57,9 @@ public class ApolloConfigManager {
             for (String key : changeEvent.changedKeys()) {
                 ConfigChange change = changeEvent.getChange(key);
                 configManager.setRemoteProperty(change.getPropertyName(), change.getNewValue());
-            }
 
-            configManager.notifyChangeListeners(changeEvent.changedKeys());
+                configManager.notifyChangeListeners(change.getPropertyName(), change.getNewValue(), change.getOldValue());
+            }
         });
 
     }

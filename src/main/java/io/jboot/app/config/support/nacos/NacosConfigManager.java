@@ -22,10 +22,8 @@ import io.jboot.utils.StrUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -74,37 +72,28 @@ public class NacosConfigManager {
 
 
     /**
-     * 接收的 nacos 服务器消息
-     *
+     * 接收到 nacos 服务器消息
+     * @param configManager
      * @param configInfo
      */
-    public void doReceiveConfigInfo(JbootConfigManager configManager, String configInfo) {
+    public void onReceiveConfigInfo(JbootConfigManager configManager, String configInfo) {
         Properties properties = str2Properties(configInfo);
-        Set<String> changedKeys = new HashSet<>();
         if (contentProperties == null) {
             contentProperties = properties;
 
-            for (Object key : properties.keySet()) {
-                changedKeys.add(key.toString());
-            }
-
             configManager.setRemoteProperties(properties);
-            configManager.notifyChangeListeners(changedKeys);
-
         } else {
-
             for (Object key : properties.keySet()) {
                 String newValue = properties.getProperty(key.toString());
                 String oldValue = contentProperties.getProperty(key.toString());
 
                 if (!Objects.equals(newValue, oldValue)) {
-                    changedKeys.add(key.toString());
                     contentProperties.put(key, newValue);
                     configManager.setRemoteProperty(key.toString(), newValue);
+
+                    configManager.notifyChangeListeners(key.toString(),newValue,oldValue);
                 }
             }
-
-            configManager.notifyChangeListeners(changedKeys);
         }
     }
 
