@@ -65,21 +65,21 @@ class Util {
     }
 
 
-    private static void addAll(List<Object> paras, int[] intArray) {
-        for (int i : intArray) {
+    private static void addAll(List<Object> paras, int[] ints) {
+        for (int i : ints) {
             paras.add(i);
         }
     }
 
-    private static void addAll(List paras, long[] intArray) {
-        for (long i : intArray) {
+    private static void addAll(List<Object> paras, long[] longs) {
+        for (long i : longs) {
             paras.add(i);
         }
     }
 
 
-    private static void addAll(List paras, short[] intArray) {
-        for (short i : intArray) {
+    private static void addAll(List<Object> paras, short[] shorts) {
+        for (short i : shorts) {
             paras.add(i);
         }
     }
