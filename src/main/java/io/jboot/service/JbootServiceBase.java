@@ -25,6 +25,7 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ObjectFunc;
 import io.jboot.utils.ObjectUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -154,6 +155,58 @@ public class JbootServiceBase<M extends JbootModel<M>>
      */
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
         return DAO.findListByColumns(columns, orderBy, count);
+    }
+
+
+    public List<M> findListByIds(Object... ids) {
+        if (ids == null || ids.length == 0) {
+            return null;
+        }
+
+        List<M> list = new ArrayList<>();
+        for (Object id : ids) {
+            if (id.getClass() == int[].class) {
+                findListByIds(list, (int[]) id);
+            } else if (id.getClass() == long[].class) {
+                findListByIds(list, (long[]) id);
+            } else if (id.getClass() == short[].class) {
+                findListByIds(list, (short[]) id);
+            } else {
+                M model = findById(id);
+                if (model != null) {
+                    list.add(model);
+                }
+            }
+        }
+        return list;
+    }
+
+    private void findListByIds(List<M> list, int[] ids) {
+        for (int id : ids) {
+            M model = findById(id);
+            if (model != null) {
+                list.add(model);
+            }
+        }
+    }
+
+    private void findListByIds(List<M> list, long[] ids) {
+        for (long id : ids) {
+            M model = findById(id);
+            if (model != null) {
+                list.add(model);
+            }
+        }
+    }
+
+
+    private void findListByIds(List<M> list, short[] ids) {
+        for (short id : ids) {
+            M model = findById(id);
+            if (model != null) {
+                list.add(model);
+            }
+        }
     }
 
 
