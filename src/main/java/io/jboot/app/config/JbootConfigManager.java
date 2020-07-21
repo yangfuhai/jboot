@@ -185,13 +185,13 @@ public class JbootConfigManager {
      * @param <T>
      * @return
      */
-    public <T> T createConfigObject(Class<T> clazz, String prefix, String file){
+    public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
         Object configObject = ConfigUtil.newInstance(clazz);
-        List<Method> setMethods = ConfigUtil.getClassSetMethods(clazz);
-        if (setMethods != null) {
-            for (Method method : setMethods) {
+        List<Method> setterMethods = ConfigUtil.getClassSetMethods(clazz);
+        if (setterMethods != null) {
+            for (Method setterMethod : setterMethods) {
 
-                String key = buildKey(prefix, method);
+                String key = buildKey(prefix, setterMethod);
                 String value = getConfigValue(key);
 
                 if (ConfigUtil.isNotBlank(file)) {
@@ -203,10 +203,10 @@ public class JbootConfigManager {
                 }
 
                 if (ConfigUtil.isNotBlank(value)) {
-                    Object val = ConfigUtil.convert(method.getParameterTypes()[0], value, method.getGenericParameterTypes()[0]);
+                    Object val = ConfigUtil.convert(setterMethod.getParameterTypes()[0], value, setterMethod.getGenericParameterTypes()[0]);
                     if (val != null) {
                         try {
-                            method.invoke(configObject, val);
+                            setterMethod.invoke(configObject, val);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -485,7 +485,7 @@ public class JbootConfigManager {
             synchronized (this) {
                 if (devMode == null) {
                     String appMode = getConfigValue("jboot.app.mode");
-                    devMode = (null == appMode || "".equals(appMode.trim()) || "dev".equals(appMode));
+                    devMode = (null == appMode || "".equals(appMode.trim()) || "dev".equalsIgnoreCase(appMode.trim()));
                 }
             }
         }
