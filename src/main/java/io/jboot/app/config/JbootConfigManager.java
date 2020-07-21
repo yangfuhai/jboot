@@ -40,14 +40,12 @@ public class JbootConfigManager {
 
     //分布式配置
     private Map remoteProperties;
-//    private List<RemoteConfigReader> readers;
 
+    //ConfigObje 缓存 class + prefix : object
     private Map<String, Object> configCache = new ConcurrentHashMap<>();
 
-//    private Map<String, JbootConfigChangeListener> changeListenerMap = new ConcurrentHashMap<>();
-//    private Map<JbootConfigChangeListener, Class> listenerClassMapping = new ConcurrentHashMap<>();
-
-    private Multimap<String, JbootConfigChangeListener> changeListenerMap = ArrayListMultimap.create();
+    //监听器
+    private Multimap<String, JbootConfigChangeListener> listenersMultimap = ArrayListMultimap.create();
 
     //配置内容解密工具
     private JbootConfigDecryptor decryptor;
@@ -386,7 +384,7 @@ public class JbootConfigManager {
         if (setterMethods != null) {
             for (Method setterMethod : setterMethods) {
                 String key = buildKey(prefix, setterMethod);
-                changeListenerMap.put(key, listener);
+                listenersMultimap.put(key, listener);
             }
         }
     }
@@ -403,14 +401,14 @@ public class JbootConfigManager {
         }
 
         for (String forKey : forKeys) {
-            changeListenerMap.put(forKey, listener);
+            listenersMultimap.put(forKey, listener);
         }
     }
 
 
     public void removeConfigChangeListener(JbootConfigChangeListener listener) {
-        for (String key : changeListenerMap.keySet()) {
-            Iterator<JbootConfigChangeListener> iterator = changeListenerMap.get(key).iterator();
+        for (String key : listenersMultimap.keySet()) {
+            Iterator<JbootConfigChangeListener> iterator = listenersMultimap.get(key).iterator();
             while (iterator.hasNext()) {
                 JbootConfigChangeListener entry = iterator.next();
                 if (listener == entry) {
@@ -426,7 +424,7 @@ public class JbootConfigManager {
             return;
         }
 
-        Collection<JbootConfigChangeListener> listeners = changeListenerMap.get(key);
+        Collection<JbootConfigChangeListener> listeners = listenersMultimap.get(key);
         if (listeners == null || listeners.isEmpty()) {
             return;
         }
