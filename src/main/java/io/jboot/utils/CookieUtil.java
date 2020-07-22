@@ -168,16 +168,19 @@ public class CookieUtil {
             return null;
         }
 
-        long stime = Long.parseLong(saveTime);
-        long maxtime = Long.parseLong(maxAgeInSeconds) * 1000;
+        long maxTimeMillis = Long.parseLong(maxAgeInSeconds) * 1000;
 
-        // 查看是否过时
-        if ((stime + maxtime) - System.currentTimeMillis() > 0) {
+        //可能设置的时间为 0 或者 -1
+        if (maxTimeMillis <= 0) {
             return value;
         }
-        /**
-         * 已经超时了
-         */
+
+        long saveTimeMillis = Long.parseLong(saveTime);
+        // 查看是否过时
+        if ((saveTimeMillis + maxTimeMillis) - System.currentTimeMillis() > 0) {
+            return value;
+        }
+        //已经超时了
         else {
             return null;
         }
