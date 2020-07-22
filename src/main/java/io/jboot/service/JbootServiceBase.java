@@ -25,6 +25,8 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ObjectFunc;
 import io.jboot.utils.ObjectUtil;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -317,7 +319,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @param syncModels
      * @param compareAttrGetters
      */
-    public void syncModels(Columns columns, List<M> syncModels, ObjectFunc<M>... compareAttrGetters) {
+    public void syncModels(Columns columns, Collection<M> syncModels, ObjectFunc<M>... compareAttrGetters) {
         if (columns == null) {
             throw new NullPointerException("columns must not be null");
         }
@@ -329,7 +331,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
 
         List<M> existModels = findListByColumns(columns);
         if (existModels == null || existModels.isEmpty()) {
-            Db.batchSave(syncModels, syncModels.size());
+            Db.batchSave(new ArrayList<>(syncModels), syncModels.size());
             return;
         }
 
