@@ -209,7 +209,7 @@ Component1Config config = Jboot.config(Component1Config.class);
 <dependency>
     <groupId>com.alibaba.nacos</groupId>
     <artifactId>nacos-client</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
 </dependency>
 ```
 
@@ -267,7 +267,7 @@ jboot.config.nacos.enableRemoteSyncConfig = xxx
 <dependency>
     <groupId>com.ctrip.framework.apollo</groupId>
     <artifactId>apollo-client</artifactId>
-    <version>1.6.0</version>
+    <version>1.6.2</version>
 </dependency>
 ```
 
