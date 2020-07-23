@@ -111,11 +111,7 @@ public class JbootrpcManager {
                     continue;
                 }
 
-                if (jbootrpc.serviceExport(inter, Aop.get(clazz), new JbootrpcServiceConfig(rpcBean))) {
-                    if (Jboot.isDevMode()) {
-//                        System.out.println("rpc service[" + inter + "] has exported ok!");
-                    }
-                }
+                jbootrpc.serviceExport(inter, Aop.get(clazz), new JbootrpcServiceConfig(rpcBean));
             }
         }
     }

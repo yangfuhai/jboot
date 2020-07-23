@@ -65,9 +65,6 @@ public class Columns implements Serializable {
     }
 
 
-    public static Columns safeMode() {
-        return new Columns().useSafeMode();
-    }
 
     public static Columns create(Column column) {
         Columns that = new Columns();
@@ -86,6 +83,17 @@ public class Columns implements Serializable {
     public static Columns create(String name, Object value) {
         return create().eq(name, value);
     }
+
+
+    public static Columns safeMode() {
+        return new Columns().useSafeMode();
+    }
+
+
+    public static Columns safeCreate(String name, Object value) {
+        return safeMode().eq(name,value);
+    }
+
 
 
     /**
