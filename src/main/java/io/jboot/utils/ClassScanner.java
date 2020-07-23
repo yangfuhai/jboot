@@ -226,6 +226,7 @@ public class ClassScanner {
         excludeJars.add("shadow-core-rewrite-");
         excludeJars.add("apiguardian-api-");
         excludeJars.add("opentest4j-");
+        excludeJars.add("freemarker-");
     }
 
 
@@ -305,6 +306,7 @@ public class ClassScanner {
         excludeClasses.add("io.jboot.app.");
         excludeClasses.add("io.jboot.service.");
         excludeClasses.add("io.jboot.Jboot");
+        excludeClasses.add("freemarker.");
     }
 
 
