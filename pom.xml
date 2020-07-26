@@ -527,7 +527,7 @@
 
 
         <!-- seata start -->
-        <dependency>
+       <!-- <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-tm</artifactId>
             <version>${seata.version}</version>
@@ -563,6 +563,20 @@
 
         <dependency>
             <groupId>io.seata</groupId>
+            <artifactId>seata-tcc</artifactId>
+            <version>${seata.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-sqlparser</artifactId>
+            <version>${seata.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.seata</groupId>
             <artifactId>seata-core</artifactId>
             <version>${seata.version}</version>
             <scope>provided</scope>
@@ -573,6 +587,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
 
 
         <dependency>
@@ -586,8 +601,13 @@
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
 
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-all</artifactId>
+            <version>${seata.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>net.oschina.j2cache</groupId>
