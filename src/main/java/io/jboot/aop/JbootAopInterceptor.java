@@ -24,9 +24,8 @@ import io.jboot.components.cache.interceptor.JbootCachesEvictInterceptor;
 import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
-import io.jboot.support.seata.interceptor.TccActionInterceptor;
+import io.jboot.support.seata.tcc.TccActionInterceptor;
 import io.jboot.support.sentinel.SentinelInterceptor;
-import io.jboot.web.fixedinterceptor.FixedInterceptorWapper;
 
 import java.util.LinkedList;
 import java.util.List;

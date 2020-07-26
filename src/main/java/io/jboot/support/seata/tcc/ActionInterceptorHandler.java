@@ -1,7 +1,23 @@
-package io.jboot.support.seata.interceptor;
+/**
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.jboot.support.seata.tcc;
 
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Invocation;
+import com.jfinal.log.Log;
 import io.seata.common.Constants;
 import io.seata.common.exception.FrameworkException;
 import io.seata.common.util.NetUtil;
@@ -11,8 +27,6 @@ import io.seata.rm.DefaultResourceManager;
 import io.seata.rm.tcc.TCCResource;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import io.seata.rm.tcc.api.TwoPhaseBusinessAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -21,12 +35,13 @@ import java.util.Map;
 
 /**
  * Handler the TCC Participant Aspect : Setting Context, Creating Branch Record
+ * 参考：https://github.com/seata/seata/blob/master/tcc/src/main/java/io/seata/rm/tcc/interceptor/ActionInterceptorHandler.java
  *
- * @author zhangsen
+ * @author zhangsen/菜农 commit: https://gitee.com/fuhai/jboot/commit/55564bfd9e6eebfc39263291d89592cd16f77498
  */
 public class ActionInterceptorHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ActionInterceptorHandler.class);
+    private static final Log LOGGER = Log.getLog(TccActionInterceptor.class);
 
     /**
      * Handler the TCC Aspect

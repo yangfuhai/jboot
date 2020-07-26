@@ -20,7 +20,7 @@ import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
-import io.jboot.support.seata.interceptor.TccActionInterceptor;
+import io.jboot.support.seata.tcc.TccActionInterceptor;
 import io.jboot.support.sentinel.SentinelInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
 import io.jboot.web.validate.ParaValidateInterceptor;
