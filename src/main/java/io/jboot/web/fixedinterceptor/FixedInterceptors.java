@@ -20,6 +20,7 @@ import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
 import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
+import io.jboot.support.seata.interceptor.TccActionInterceptor;
 import io.jboot.support.sentinel.SentinelInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
 import io.jboot.web.validate.ParaValidateInterceptor;
@@ -56,6 +57,7 @@ public class FixedInterceptors {
             new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
             new FixedInterceptorWapper(new JbootMetricInterceptor(), 60),
             new FixedInterceptorWapper(new SeataGlobalTransactionalInterceptor(), 80),
+            new FixedInterceptorWapper(new TccActionInterceptor(), 90),
     };
 
     private List<FixedInterceptorWapper> userInters = new ArrayList<>();

@@ -5,7 +5,7 @@ import com.jfinal.plugin.activerecord.IBean;
 import io.jboot.db.annotation.Table;
 import io.jboot.db.model.JbootModel;
 
-@Table(tableName = "seata_account", primaryKey = "ID")
+@Table(tableName = "seata_account", primaryKey = "id")
 public class Account extends JbootModel<Account> implements IBean {
 	/**
 	 * 

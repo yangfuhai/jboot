@@ -2,7 +2,9 @@ package io.jboot.test.seata.starter;
 
 import com.jfinal.aop.Inject;
 import io.jboot.app.JbootApplication;
+import io.jboot.support.seata.annotation.SeataGlobalTransactional;
 import io.jboot.test.seata.business.BusinessServiceProvider;
+import io.jboot.test.seata.service.TccActionOneService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -26,12 +28,22 @@ public class WebApplication extends JbootController {
         JbootApplication.setBootArg("jboot.seata.applicationId", "Dubbo_Seata_Business_Service");
         JbootApplication.setBootArg("jboot.seata.txServiceGroup", "dubbo_seata_tx_group");
 
+        JbootApplication.setBootArg("jboot.datasource.type", "mysql");
+        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/mini?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
+        JbootApplication.setBootArg("jboot.datasource.user", "root");
+        JbootApplication.setBootArg("jboot.datasource.password", "zhang123");
+        JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
+        JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.seata.commons");
+
         JbootApplication.run(args);
     }
 
 
     @Inject
     private BusinessServiceProvider businessServiceProvider;
+
+    @Inject
+    private TccActionOneService tccActionOneService;
 
     public void index() {
 
@@ -40,4 +52,14 @@ public class WebApplication extends JbootController {
         businessServiceProvider.deposit(1);
         renderText("ok");
     }
+
+    @SeataGlobalTransactional(timeoutMills = 300000, name = "Seata_Business_Transactional_TccOne")
+    public  void tccOne(){
+        tccActionOneService.prepare(null, "Hobbit", 10, getParaToBoolean("flag"));
+        if (getParaToBoolean("flag")) {
+            throw new RuntimeException("you have fail");
+        }
+        renderJson("you are sucess");
+    }
+
 }
