@@ -586,12 +586,8 @@
                     <artifactId>seata-config-core</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>-->
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-all</artifactId>
-            <version>${seata.version}</version>
         </dependency>
+
 
 
         <dependency>
@@ -605,8 +601,13 @@
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
 
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-all</artifactId>
+            <version>${seata.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>net.oschina.j2cache</groupId>

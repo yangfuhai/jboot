@@ -27,9 +27,9 @@ public class TccActionOneServiceImpl implements TccActionOneService {
         System.out.println("actionContext获取Xid prepare>>> "+actionContext.getXid());
         System.out.println("actionContext获取TCC参数 prepare>>> "+actionContext.getActionContext("account"));
         accountService.updateStore(account, money);
-       /* if (flag) {
+        if (flag) {
             throw new RuntimeException("you have fail");
-        }*/
+        }
         return true;
     }
 

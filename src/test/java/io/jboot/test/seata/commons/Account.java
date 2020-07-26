@@ -12,4 +12,5 @@ public class Account extends JbootModel<Account> implements IBean {
 	 */
 	private static final long serialVersionUID = 1L;
 
+
 }

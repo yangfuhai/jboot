@@ -56,9 +56,9 @@ public class WebApplication extends JbootController {
     @SeataGlobalTransactional(timeoutMills = 300000, name = "Seata_Business_Transactional_TccOne")
     public  void tccOne(){
         tccActionOneService.prepare(null, "Hobbit", 10, getParaToBoolean("flag"));
-        if (getParaToBoolean("flag")) {
+        /*if (getParaToBoolean("flag")) {
             throw new RuntimeException("you have fail");
-        }
+        }*/
         renderJson("you are sucess");
     }
 

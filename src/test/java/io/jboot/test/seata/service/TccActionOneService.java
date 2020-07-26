@@ -20,7 +20,7 @@ public interface TccActionOneService {
      */
 
     public boolean prepare(BusinessActionContext actionContext, @BusinessActionContextParameter(paramName = "account") String account, @BusinessActionContextParameter(paramName = "money") int money,
-                           @BusinessActionContextParameter(paramName = "flag") boolean flag);
+                            @BusinessActionContextParameter(paramName = "flag") boolean flag);
 
     /**
      * Commit boolean.

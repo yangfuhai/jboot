@@ -9,4 +9,5 @@ public interface IAccountService {
 	public boolean updateRollbackStore(String  account, Integer money);
 
 	public boolean update(String  accountId, Integer money);
+	
 }

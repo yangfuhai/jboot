@@ -64,7 +64,7 @@ public class TccActionInterceptor implements Interceptor,FixedInterceptor {
     @Override
     public void intercept(Invocation inv) {
         if (!RootContext.inGlobalTransaction()) {
-            //not in transaction
+            // not in transaction
             inv.invoke();
             return ;
         }

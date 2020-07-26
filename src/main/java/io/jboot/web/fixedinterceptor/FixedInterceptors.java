@@ -57,7 +57,7 @@ public class FixedInterceptors {
             new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
             new FixedInterceptorWapper(new JbootMetricInterceptor(), 60),
             new FixedInterceptorWapper(new SeataGlobalTransactionalInterceptor(), 80),
-            new FixedInterceptorWapper(new TccActionInterceptor(), 90),
+            new FixedInterceptorWapper(new TccActionInterceptor(), 90)
     };
 
     private List<FixedInterceptorWapper> userInters = new ArrayList<>();
