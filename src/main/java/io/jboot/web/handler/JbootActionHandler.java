@@ -105,9 +105,6 @@ public class JbootActionHandler extends ActionHandler {
         Controller controller = null;
         try {
             controller = controllerFactory.getController(action.getControllerClass());
-            if (injectDependency) {
-                com.jfinal.aop.Aop.inject(controller);
-            }
             JbootControllerContext.hold(controller);
 //            controller.init(request, response, urlPara[0]);
             CPI._init_(controller, action, request, response, urlPara[0]);
