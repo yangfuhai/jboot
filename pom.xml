@@ -66,7 +66,7 @@
         <httpcore.version>4.4.13</httpcore.version>
         <netty.version>4.1.50.Final</netty.version>
         <sentinel.version>1.7.2</sentinel.version>
-        <dubbo.version>2.7.7</dubbo.version>
+        <dubbo.version>2.7.8</dubbo.version>
         <resteasy.version>3.12.1.Final</resteasy.version>
         <seata.version>1.3.0</seata.version>
         <motan.version>1.1.8</motan.version>
@@ -526,87 +526,37 @@
         </dependency>
 
 
-        <!-- seata start -->
-       <!-- <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-tm</artifactId>
-            <version>${seata.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-rm-datasource</artifactId>
-            <version>${seata.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-config-core</artifactId>
-            <version>${seata.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-codec-seata</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-tcc</artifactId>
-            <version>${seata.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-sqlparser</artifactId>
-            <version>${seata.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-core</artifactId>
-            <version>${seata.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.seata</groupId>
-                    <artifactId>seata-config-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-
-
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-common</artifactId>
-            <version>${seata.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
-
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-all</artifactId>
             <version>${seata.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -636,19 +586,19 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>ch.qos.logback</groupId>-->
-<!--            <artifactId>logback-core</artifactId>-->
-<!--            <version>1.2.3</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>ch.qos.logback</groupId>-->
+        <!--            <artifactId>logback-core</artifactId>-->
+        <!--            <version>1.2.3</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>ch.qos.logback</groupId>-->
-<!--            <artifactId>logback-classic</artifactId>-->
-<!--            <version>1.2.3</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>ch.qos.logback</groupId>-->
+        <!--            <artifactId>logback-classic</artifactId>-->
+        <!--            <version>1.2.3</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
     </dependencies>
 
 
