@@ -101,11 +101,11 @@ public class Columns implements Serializable {
      *
      * @param column
      */
-    public void add(Column column) {
+    public Columns add(Column column) {
 
         //do not add null value column
         if (column.hasPara() && column.getValue() == null) {
-            return;
+            return this;
         }
 
         if (this.cols == null) {
@@ -113,6 +113,17 @@ public class Columns implements Serializable {
         }
 
         this.cols.add(column);
+        return this;
+    }
+
+
+    /**
+     * add Columns
+     * @param columns
+     * @return
+     */
+    public Columns add(Columns columns) {
+        return append(columns);
     }
 
 
@@ -125,8 +136,7 @@ public class Columns implements Serializable {
      */
     public Columns eq(String name, Object value) {
         Util.checkNullParas(this, name, value);
-        this.add(Column.create(name, value));
-        return this;
+        return add(Column.create(name, value));
     }
 
     /**
@@ -138,8 +148,7 @@ public class Columns implements Serializable {
      */
     public Columns ne(String name, Object value) {
         Util.checkNullParas(this, name, value);
-        this.add(Column.create(name, value, Column.LOGIC_NOT_EQUALS));
-        return this;
+        return add(Column.create(name, value, Column.LOGIC_NOT_EQUALS));
     }
 
 
@@ -152,8 +161,7 @@ public class Columns implements Serializable {
      */
     public Columns like(String name, Object value) {
         Util.checkNullParas(this, name, value);
-        this.add(Column.create(name, value, Column.LOGIC_LIKE));
-        return this;
+        return add(Column.create(name, value, Column.LOGIC_LIKE));
     }
 
     /**
@@ -168,8 +176,7 @@ public class Columns implements Serializable {
         if (value == null || (value instanceof String && StrUtil.isBlank((String) value))) {
             return this;
         }
-        this.add(Column.create(name, "%" + value + "%", Column.LOGIC_LIKE));
-        return this;
+        return add(Column.create(name, "%" + value + "%", Column.LOGIC_LIKE));
     }
 
     /**
@@ -181,8 +188,7 @@ public class Columns implements Serializable {
      */
     public Columns gt(String name, Object value) {
         Util.checkNullParas(this, name, value);
-        this.add(Column.create(name, value, Column.LOGIC_GT));
-        return this;
+        return add(Column.create(name, value, Column.LOGIC_GT));
     }
 
     /**
@@ -194,8 +200,7 @@ public class Columns implements Serializable {
      */
     public Columns ge(String name, Object value) {
         Util.checkNullParas(this, name, value);
-        this.add(Column.create(name, value, Column.LOGIC_GE));
-        return this;
+        return add(Column.create(name, value, Column.LOGIC_GE));
     }
 
     /**
@@ -207,8 +212,7 @@ public class Columns implements Serializable {
      */
     public Columns lt(String name, Object value) {
         Util.checkNullParas(this, name, value);
-        this.add(Column.create(name, value, Column.LOGIC_LT));
-        return this;
+        return add(Column.create(name, value, Column.LOGIC_LT));
     }
 
     /**
@@ -220,8 +224,7 @@ public class Columns implements Serializable {
      */
     public Columns le(String name, Object value) {
         Util.checkNullParas(this, name, value);
-        this.add(Column.create(name, value, Column.LOGIC_LE));
-        return this;
+        return add(Column.create(name, value, Column.LOGIC_LE));
     }
 
 
@@ -232,8 +235,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns isNull(String name) {
-        this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
-        return this;
+        return add(Column.create(name, null, Column.LOGIC_IS_NULL));
     }
 
 
@@ -244,7 +246,7 @@ public class Columns implements Serializable {
      */
     public Columns isNullIf(String name, boolean condition) {
         if (condition) {
-            this.add(Column.create(name, null, Column.LOGIC_IS_NULL));
+            add(Column.create(name, null, Column.LOGIC_IS_NULL));
         }
         return this;
     }
@@ -257,8 +259,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns isNotNull(String name) {
-        this.add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
-        return this;
+        return add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
     }
 
 
@@ -271,7 +272,7 @@ public class Columns implements Serializable {
      */
     public Columns isNotNullIf(String name, boolean condition) {
         if (condition) {
-            this.add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
+            add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
         }
         return this;
     }
@@ -286,8 +287,7 @@ public class Columns implements Serializable {
      */
     public Columns in(String name, Object... arrays) {
         Util.checkNullParas(this, name, arrays);
-        this.add(Column.create(name, arrays, Column.LOGIC_IN));
-        return this;
+        return add(Column.create(name, arrays, Column.LOGIC_IN));
     }
 
 
@@ -314,8 +314,7 @@ public class Columns implements Serializable {
      */
     public Columns notIn(String name, Object... arrays) {
         Util.checkNullParas(this, name, arrays);
-        this.add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
-        return this;
+        return add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
     }
 
 
@@ -344,8 +343,7 @@ public class Columns implements Serializable {
      */
     public Columns between(String name, Object start, Object end) {
         Util.checkNullParas(this, name, start, end);
-        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
-        return this;
+        return add(Column.create(name, new Object[]{start, end}, Column.LOGIC_BETWEEN));
     }
 
     /**
@@ -358,8 +356,7 @@ public class Columns implements Serializable {
      */
     public Columns notBetween(String name, Object start, Object end) {
         Util.checkNullParas(this, name, start, end);
-        this.add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
-        return this;
+        return add(Column.create(name, new Object[]{start, end}, Column.LOGIC_NOT_BETWEEN));
     }
 
 
@@ -374,7 +371,7 @@ public class Columns implements Serializable {
             throw new IllegalArgumentException("Columns.group(...) need a new Columns");
         }
         if (!columns.isEmpty()) {
-            this.add(new Group(columns));
+            add(new Group(columns));
         }
         return this;
     }
@@ -390,7 +387,7 @@ public class Columns implements Serializable {
             throw new IllegalArgumentException("Columns.group(...) need a new Columns");
         }
         if (conditon && !columns.isEmpty()) {
-            this.add(new Group(columns));
+            add(new Group(columns));
         }
         return this;
     }
@@ -404,7 +401,7 @@ public class Columns implements Serializable {
      */
     public Columns sqlPart(String sql) {
         if (StrUtil.isNotBlank(sql)) {
-            this.add(new SqlPart(sql));
+            add(new SqlPart(sql));
         }
         return this;
     }
@@ -419,7 +416,7 @@ public class Columns implements Serializable {
     public Columns sqlPart(String sql, Object... paras) {
         Util.checkNullParas(this, paras);
         if (StrUtil.isNotBlank(sql)) {
-            this.add(new SqlPart(sql, paras));
+            add(new SqlPart(sql, paras));
         }
         return this;
     }
@@ -433,7 +430,7 @@ public class Columns implements Serializable {
      */
     public Columns sqlPartIf(String sql, boolean condition) {
         if (condition && StrUtil.isNotBlank(sql)) {
-            this.add(new SqlPart(sql));
+            add(new SqlPart(sql));
         }
         return this;
     }
@@ -449,7 +446,7 @@ public class Columns implements Serializable {
     public Columns sqlPartIf(String sql, boolean condition, Object... paras) {
         Util.checkNullParas(this, paras);
         if (condition && StrUtil.isNotBlank(sql)) {
-            this.add(new SqlPart(sql, paras));
+            add(new SqlPart(sql, paras));
         }
         return this;
     }
@@ -462,7 +459,7 @@ public class Columns implements Serializable {
      */
     public Columns sqlPartWithoutLink(String sql) {
         if (StrUtil.isNotBlank(sql)) {
-            this.add(new SqlPart(sql, true));
+            add(new SqlPart(sql, true));
         }
         return this;
     }
@@ -477,7 +474,7 @@ public class Columns implements Serializable {
     public Columns sqlPartWithoutLink(String sql, Object... paras) {
         Util.checkNullParas(this, paras);
         if (StrUtil.isNotBlank(sql)) {
-            this.add(new SqlPart(sql, paras, true));
+            add(new SqlPart(sql, paras, true));
         }
         return this;
     }
@@ -491,7 +488,7 @@ public class Columns implements Serializable {
      */
     public Columns sqlPartWithoutLinkIf(String sql, boolean condition) {
         if (condition && StrUtil.isNotBlank(sql)) {
-            this.add(new SqlPart(sql, true));
+            add(new SqlPart(sql, true));
         }
         return this;
     }
@@ -507,14 +504,14 @@ public class Columns implements Serializable {
     public Columns sqlPartWithoutLinkIf(String sql, boolean condition, Object... paras) {
         Util.checkNullParas(this, paras);
         if (condition && StrUtil.isNotBlank(sql)) {
-            this.add(new SqlPart(sql, paras, true));
+            add(new SqlPart(sql, paras, true));
         }
         return this;
     }
 
 
     public Columns or() {
-        this.add(new Or());
+        add(new Or());
         return this;
     }
 
@@ -524,9 +521,9 @@ public class Columns implements Serializable {
         for (int i = 0; i < values.length; i++) {
             Object value = values[i];
             if (value != null) {
-                this.add(Column.create(name, value, logic));
+                add(Column.create(name, value, logic));
                 if (i != values.length - 1) {
-                    this.add(new Or());
+                    add(new Or());
                 }
             }
         }
