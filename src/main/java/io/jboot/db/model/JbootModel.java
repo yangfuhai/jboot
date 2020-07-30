@@ -414,10 +414,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected JbootDialect _getDialect() {
         Config config = _getConfig();
         if (config == null) {
-            throw new JbootException(
-                    String.format("class %s can not mapping to database table, maybe cannot connect to database. "
-                            , _getUsefulClass().getName()));
-
+            throw new JbootException("class \"" + _getUsefulClass().getName() + "\" can not mapping to the table, maybe cannot connect to database. ");
         }
         return (JbootDialect) config.getDialect();
     }

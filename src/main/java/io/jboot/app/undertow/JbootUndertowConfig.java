@@ -18,7 +18,6 @@ package io.jboot.app.undertow;
 import com.jfinal.server.undertow.PropExt;
 import com.jfinal.server.undertow.UndertowConfig;
 import com.jfinal.server.undertow.hotswap.HotSwapResolver;
-import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigManager;
 
 import java.io.IOException;
@@ -55,23 +54,36 @@ public class JbootUndertowConfig extends UndertowConfig {
                 .append(new PropExt(JbootConfigManager.me().getProperties()));
 
         String port = propExt.get(UNDERTOW_PORT);
-        Integer availablePort = getAvailablePort();
+
+        //当不配置端口号时，默认为 8080
         if (port == null || port.trim().length() == 0) {
             propExt.getProperties().put(UNDERTOW_PORT, "8080");
             JbootConfigManager.me().setBootArg(UNDERTOW_PORT, "8080");
-        } else if ((port.trim().equals("*") || port.trim().equals("-1")) && availablePort != null) {
-            propExt.getProperties().put(UNDERTOW_PORT, availablePort.toString());
-            JbootConfigManager.me().setBootArg(UNDERTOW_PORT, availablePort.toString());
         }
-        if (Jboot.isDevMode()){
-            propExt.getProperties().put(DEV_MODE, true);
+
+        //当配置为 -1 或者 * 时，默认为随机端口号
+        else if ((port.trim().equals("*") || port.trim().equals("-1"))) {
+            Integer availablePort = getAvailablePort();
+            if (availablePort != null) {
+                propExt.getProperties().put(UNDERTOW_PORT, availablePort.toString());
+                JbootConfigManager.me().setBootArg(UNDERTOW_PORT, availablePort.toString());
+            }
         }
+
+        //当不配置 undertow 开发模式时，默认开发模式为 devMode
+        String devMode = propExt.get(DEV_MODE);
+        if (devMode == null || devMode.trim().length() == 0) {
+            propExt.getProperties().put(DEV_MODE, JbootConfigManager.me().isDevMode());
+        }
+
+        //当不配置 host 时，默认为 0.0.0.0
         String host = propExt.get(UNDERTOW_HOST);
         if (host == null || host.trim().length() == 0) {
             propExt.getProperties().put(UNDERTOW_HOST, "0.0.0.0");
             JbootConfigManager.me().setBootArg(UNDERTOW_HOST, "0.0.0.0");
         }
 
+        //当不配置资源路径时，默认为 classpath 下的 webapp
         String resPath = propExt.get(UNDERTOW_RESOURCEPATH);
         if (resPath == null || resPath.trim().length() == 0) {
             propExt.getProperties().put(UNDERTOW_RESOURCEPATH, "classpath:webapp," + this.resourcePath);
