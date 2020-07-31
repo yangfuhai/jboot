@@ -227,6 +227,7 @@ public class ClassScanner {
         excludeJars.add("apiguardian-api-");
         excludeJars.add("opentest4j-");
         excludeJars.add("freemarker-");
+        excludeJars.add("protobuf-");
     }
 
 
