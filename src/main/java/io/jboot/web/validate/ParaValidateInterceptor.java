@@ -39,9 +39,14 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
         Method method = inv.getMethod();
 
-
         EmptyValidate emptyParaValidate = method.getAnnotation(EmptyValidate.class);
         if (emptyParaValidate != null && !validateEmpty(inv, emptyParaValidate)) {
+            return;
+        }
+
+
+        MatchesValidate matchesValidate = method.getAnnotation(MatchesValidate.class);
+        if (matchesValidate != null && !validatMatches(inv, matchesValidate)) {
             return;
         }
 
@@ -51,38 +56,6 @@ public class ParaValidateInterceptor implements FixedInterceptor {
         }
 
         inv.invoke();
-    }
-
-
-    /**
-     * 对验证码进行验证
-     *
-     * @param inv
-     * @param captchaValidate
-     * @return
-     */
-    private boolean validateCaptache(Invocation inv, CaptchaValidate captchaValidate) {
-        String formName = AnnotationUtil.get(captchaValidate.form());
-        if (StrUtil.isBlank(formName)) {
-            throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
-        }
-
-
-        Controller controller = inv.getController();
-        if (controller.validateCaptcha(formName)) {
-            return true;
-        }
-
-        renderError(inv.getController()
-                , AnnotationUtil.get(captchaValidate.renderType())
-                , formName
-                , AnnotationUtil.get(captchaValidate.message())
-                , AnnotationUtil.get(captchaValidate.redirectUrl())
-                , AnnotationUtil.get(captchaValidate.htmlPath())
-                , captchaValidate.errorCode()
-        );
-
-        return false;
     }
 
 
@@ -122,7 +95,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                     value = null;
                 }
             } else {
-                throw new IllegalArgumentException("para validate not support form type : " + formType + ", " +
+                throw new IllegalArgumentException("@EmptyValidate not support form type : " + formType + ", " +
                         "see : io.jboot.web.controller.validate.FormType");
             }
 
@@ -143,6 +116,95 @@ public class ParaValidateInterceptor implements FixedInterceptor {
     }
 
 
+    /**
+     * 正则验证
+     *
+     * @param inv
+     * @param matchesValidate
+     * @return
+     */
+    private boolean validatMatches(Invocation inv, MatchesValidate matchesValidate) {
+        MatchesForm[] forms = matchesValidate.value();
+        if (ArrayUtil.isNullOrEmpty(forms)) {
+            return true;
+        }
+
+
+        for (MatchesForm form : forms) {
+            String formName = AnnotationUtil.get(form.name());
+            String formType = AnnotationUtil.get(form.type());
+            if (StrUtil.isBlank(formName)) {
+                throw new IllegalArgumentException("@MatchesForm.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
+            }
+            String value = null;
+            if (FormType.FORM_DATA.equalsIgnoreCase(formType)) {
+                value = inv.getController().getPara(formName);
+            } else if (FormType.RAW_DATA.equalsIgnoreCase(formType)) {
+                try {
+                    JSONObject json = JSON.parseObject(inv.getController().getRawData());
+                    if (json != null) {
+                        Object tmp = JSONPath.eval(json, "$." + formName);
+                        if (tmp != null) {
+                            value = tmp.toString();
+                        }
+                    }
+                } catch (Exception e) {
+                    value = null;
+                }
+            } else {
+                throw new IllegalArgumentException("@MatchesValidate not support form type : " + formType + ", " +
+                        "see : io.jboot.web.controller.validate.FormType");
+            }
+
+            if (value == null || !value.matches(form.regex())) {
+                renderError(inv.getController()
+                        , AnnotationUtil.get(matchesValidate.renderType())
+                        , formName
+                        , AnnotationUtil.get(form.message())
+                        , AnnotationUtil.get(matchesValidate.redirectUrl())
+                        , AnnotationUtil.get(matchesValidate.htmlPath())
+                        , form.errorCode()
+                );
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
+     * 对验证码进行验证
+     *
+     * @param inv
+     * @param captchaValidate
+     * @return
+     */
+    private boolean validateCaptache(Invocation inv, CaptchaValidate captchaValidate) {
+        String formName = AnnotationUtil.get(captchaValidate.form());
+        if (StrUtil.isBlank(formName)) {
+            throw new IllegalArgumentException("@CaptchaValidate.form must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
+        }
+
+
+        Controller controller = inv.getController();
+        if (controller.validateCaptcha(formName)) {
+            return true;
+        }
+
+        renderError(inv.getController()
+                , AnnotationUtil.get(captchaValidate.renderType())
+                , formName
+                , AnnotationUtil.get(captchaValidate.message())
+                , AnnotationUtil.get(captchaValidate.redirectUrl())
+                , AnnotationUtil.get(captchaValidate.htmlPath())
+                , captchaValidate.errorCode()
+        );
+
+        return false;
+    }
+
+
     private void renderError(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
         switch (renderType) {
             case ValidateRenderType.DEFAULT:
@@ -153,7 +215,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                                     .setIfNotNull("formName", formName)
                     );
                 } else {
-                    controller.renderError(404);
+                    controller.renderText(formName + ":" + message);
                 }
                 break;
             case ValidateRenderType.JSON:
