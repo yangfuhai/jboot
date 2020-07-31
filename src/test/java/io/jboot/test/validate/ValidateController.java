@@ -19,18 +19,18 @@ public class ValidateController extends Controller {
     }
 
 
-    @MatchesValidate(value = @MatchesForm(name = "email", regex = "\\w+@(\\w+.)+[a-z]{2,3}", message = "请输入正确的邮箱地址"))
+    @MatchesValidate(value = @MatchesForm(name = "email", regex = Regex.EMAIL, message = "请输入正确的邮箱地址"))
     public void test2() {
         renderText("test2");
     }
 
-    @MatchesValidate(value = @MatchesForm(name = "email", regex = "\\w+@(\\w+.)+[a-z]{2,3}"))
+    @MatchesValidate(value = @MatchesForm(name = "email", regex = Regex.EMAIL))
     public void test3() {
         renderText("test3");
     }
 
 
-    @MatchesValidate(value = @MatchesForm(name = "email", regex = "\\w+@(\\w+.)+[a-z]{2,3}"), renderType = ValidateRenderType.JSON)
+    @MatchesValidate(value = @MatchesForm(name = "email", regex = Regex.EMAIL), renderType = ValidateRenderType.JSON)
     public void test4() {
         renderText("test4");
     }
