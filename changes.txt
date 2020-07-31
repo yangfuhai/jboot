@@ -1,3 +1,12 @@
+jboot v3.3.1:
+新增：Seata tcc 的支持
+新增：RegexValidate 注解对 Controller 进行验证的支持
+优化：ClassScanner 排除对 protobuf 扫描
+优化：JbootUndertowConfig 排除对 Jboot.java 的依赖
+优化：升级 JFinal、FastJson 等到最新版本
+
+
+
 jboot v3.3.0:
 新增：ObjectUtil 工具类，用于对 Object  进行对比等操作
 新增：JbootModel.useFirst() 方法，更加方便在读写分离的场景下进行使用
