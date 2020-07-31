@@ -157,7 +157,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                         "see : io.jboot.web.controller.validate.FormType");
             }
 
-            if (value == null || !value.matches(form.regex())) {
+            if (value == null || !value.trim().matches(form.regex())) {
                 renderError(inv.getController()
                         , AnnotationUtil.get(matchesValidate.renderType())
                         , formName

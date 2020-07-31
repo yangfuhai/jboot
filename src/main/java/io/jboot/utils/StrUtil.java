@@ -19,6 +19,7 @@ import com.jfinal.core.JFinal;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
+import io.jboot.web.validate.Regex;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -170,16 +171,16 @@ public class StrUtil extends StrKit {
         if (isBlank(str)) {
             return false;
         }
-        boolean hasDot  = false;
+        boolean hasDot = false;
         for (int i = str.length(); --i >= 0; ) {
             int chr = str.charAt(i);
             if ((chr < 48 || chr > 57) && chr != '.') {
                 return false;
             }
-            if (chr == '.'){
-                if (hasDot){
+            if (chr == '.') {
+                if (hasDot) {
                     return false;
-                }else {
+                } else {
                     hasDot = true;
                 }
             }
@@ -194,7 +195,7 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isEmail(String email) {
-        return isBlank(email) ? false : Pattern.matches("\\w+@(\\w+.)+[a-z]{2,3}", email);
+        return isNotBlank(email) && email.matches(Regex.EMAIL);
     }
 
 
@@ -205,7 +206,7 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isMobileNumber(String mobileNumber) {
-        return isBlank(mobileNumber) ? false : Pattern.matches("^(1[3,4,5,6,7,8,9])\\d{9}$", mobileNumber);
+        return isNotBlank(mobileNumber) && mobileNumber.matches(Regex.MOBILE);
     }
 
 
@@ -304,7 +305,6 @@ public class StrUtil extends StrKit {
     }
 
 
-
     public static String join(String[] array, String split) {
         if (array == null || array.length == 0) {
             return EMPTY;
@@ -318,7 +318,6 @@ public class StrUtil extends StrKit {
         }
         return sb.toString();
     }
-
 
 
     public static String join(Collection<String> coll, String split) {
