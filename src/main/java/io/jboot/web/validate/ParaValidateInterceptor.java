@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONPath;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
+import com.jfinal.render.TextRender;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.RequestUtil;
@@ -206,21 +207,22 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
 
     private void renderError(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
+        String newMessage = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed!");
         switch (renderType) {
             case ValidateRenderType.DEFAULT:
                 if (RequestUtil.isAjaxRequest(controller.getRequest())) {
                     controller.renderJson(
-                            Ret.fail("message", message)
+                            Ret.fail("message", newMessage)
                                     .set("errorCode", errorCode)
                                     .setIfNotNull("formName", formName)
                     );
                 } else {
-                    controller.renderText(formName + ":" + message);
+                    controller.renderError(403, new TextRender(newMessage));
                 }
                 break;
             case ValidateRenderType.JSON:
                 controller.renderJson(
-                        Ret.fail("message", message)
+                        Ret.fail("message", newMessage)
                                 .set("errorCode", errorCode)
                                 .setIfNotNull("formName", formName)
                 );
@@ -232,7 +234,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                 controller.render(htmlPath);
                 break;
             case ValidateRenderType.TEXT:
-                controller.renderText(message);
+                controller.renderText(newMessage);
                 break;
             default:
                 throw new IllegalArgumentException("can not process render : " + renderType);
