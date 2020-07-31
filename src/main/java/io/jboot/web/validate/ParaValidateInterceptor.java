@@ -45,9 +45,8 @@ public class ParaValidateInterceptor implements FixedInterceptor {
             return;
         }
 
-
-        MatchesValidate matchesValidate = method.getAnnotation(MatchesValidate.class);
-        if (matchesValidate != null && !validatMatches(inv, matchesValidate)) {
+        RegexValidate regexValidate = method.getAnnotation(RegexValidate.class);
+        if (regexValidate != null && !validateRegex(inv, regexValidate)) {
             return;
         }
 
@@ -121,17 +120,17 @@ public class ParaValidateInterceptor implements FixedInterceptor {
      * 正则验证
      *
      * @param inv
-     * @param matchesValidate
+     * @param regexValidate
      * @return
      */
-    private boolean validatMatches(Invocation inv, MatchesValidate matchesValidate) {
-        MatchesForm[] forms = matchesValidate.value();
+    private boolean validateRegex(Invocation inv, RegexValidate regexValidate) {
+        RegexForm[] forms = regexValidate.value();
         if (ArrayUtil.isNullOrEmpty(forms)) {
             return true;
         }
 
 
-        for (MatchesForm form : forms) {
+        for (RegexForm form : forms) {
             String formName = AnnotationUtil.get(form.name());
             String formType = AnnotationUtil.get(form.type());
             if (StrUtil.isBlank(formName)) {
@@ -159,11 +158,11 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
             if (value == null || !value.trim().matches(form.regex())) {
                 renderError(inv.getController()
-                        , AnnotationUtil.get(matchesValidate.renderType())
+                        , AnnotationUtil.get(regexValidate.renderType())
                         , formName
                         , AnnotationUtil.get(form.message())
-                        , AnnotationUtil.get(matchesValidate.redirectUrl())
-                        , AnnotationUtil.get(matchesValidate.htmlPath())
+                        , AnnotationUtil.get(regexValidate.redirectUrl())
+                        , AnnotationUtil.get(regexValidate.htmlPath())
                         , form.errorCode()
                 );
                 return false;

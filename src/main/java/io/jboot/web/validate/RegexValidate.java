@@ -25,9 +25,9 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MatchesValidate {
+public @interface RegexValidate {
 
-    MatchesForm[] value();
+    RegexForm[] value();
 
     String message() default "";
 
