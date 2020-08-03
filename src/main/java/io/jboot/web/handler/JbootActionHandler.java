@@ -114,9 +114,9 @@ public class JbootActionHandler extends ActionHandler {
             if (devMode) {
                 if (ActionReporter.isReportAfterInvocation(request)) {
                     invokeInvocation(invocation);
-                    ActionReporter.report(target, controller, action);
+                    JbootActionReporter.report(target, controller, action);
                 } else {
-                    ActionReporter.report(target, controller, action);
+                    JbootActionReporter.report(target, controller, action);
                     invokeInvocation(invocation);
                 }
             } else {
