@@ -16,7 +16,6 @@
 package io.jboot.core.log;
 
 import com.jfinal.log.Log;
-import com.jfinal.log.Slf4jLog;
 import io.jboot.exception.JbootExceptionHolder;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
@@ -30,7 +29,7 @@ public class Slf4jLogger extends Log {
     private LocationAwareLogger log;
 
     private static final Object[] NULL_ARGS = new Object[0];
-    private static final String callerFQCN = Slf4jLog.class.getName();
+    private static final String callerFQCN = Slf4jLogger.class.getName();
 
     public Slf4jLogger(LocationAwareLogger log) {
         this.log = log;

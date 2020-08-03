@@ -29,7 +29,17 @@ public class Slf4jLogFactory extends com.jfinal.log.Slf4jLogFactory {
     private boolean useJdkLogger;
 
     public Slf4jLogFactory() {
-        this.useJdkLogger = LoggerFactory.getILoggerFactory() instanceof NOPLoggerFactory;
+        boolean hasStaticLoggerBinder = false;
+        try {
+            Class.forName("org.slf4j.impl.StaticLoggerBinder");
+            hasStaticLoggerBinder = true;
+        } catch (ClassNotFoundException e) {}
+
+        if (!hasStaticLoggerBinder) {
+            useJdkLogger = true;
+        } else {
+            this.useJdkLogger = LoggerFactory.getILoggerFactory() instanceof NOPLoggerFactory;
+        }
     }
 
     @Override
