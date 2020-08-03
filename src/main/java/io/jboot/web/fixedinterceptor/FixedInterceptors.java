@@ -23,7 +23,7 @@ import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
 import io.jboot.support.seata.tcc.TccActionInterceptor;
 import io.jboot.support.sentinel.SentinelInterceptor;
 import io.jboot.support.shiro.JbootShiroInterceptor;
-import io.jboot.web.validate.ParaValidateInterceptor;
+import io.jboot.web.validate.ValidateInterceptor;
 import io.jboot.web.cors.CORSInterceptor;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class FixedInterceptors {
             new FixedInterceptorWapper(new SentinelInterceptor(), 9),
             new FixedInterceptorWapper(new LimiterInterceptor(), 10),
             new FixedInterceptorWapper(new CORSInterceptor(), 20),
-            new FixedInterceptorWapper(new ParaValidateInterceptor(), 30),
+            new FixedInterceptorWapper(new ValidateInterceptor(), 30),
             new FixedInterceptorWapper(new JwtInterceptor(), 40),
             new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
             new FixedInterceptorWapper(new JbootMetricInterceptor(), 60),

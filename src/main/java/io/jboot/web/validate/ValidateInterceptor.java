@@ -21,7 +21,8 @@ import com.alibaba.fastjson.JSONPath;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
-import com.jfinal.render.TextRender;
+import com.jfinal.log.Log;
+import io.jboot.Jboot;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.RequestUtil;
@@ -33,7 +34,9 @@ import java.lang.reflect.Method;
 /**
  * 验证拦截器
  */
-public class ParaValidateInterceptor implements FixedInterceptor {
+public class ValidateInterceptor implements FixedInterceptor {
+
+    private static final Log LOG = Log.getLog("Validate");
 
     @Override
     public void intercept(Invocation inv) {
@@ -42,20 +45,41 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
         EmptyValidate emptyParaValidate = method.getAnnotation(EmptyValidate.class);
         if (emptyParaValidate != null && !validateEmpty(inv, emptyParaValidate)) {
+            if (Jboot.isDevMode()){
+                LOG.error(buildErrorMessage(inv,"@EmptyValidate"));
+            }
             return;
         }
 
         RegexValidate regexValidate = method.getAnnotation(RegexValidate.class);
         if (regexValidate != null && !validateRegex(inv, regexValidate)) {
+            if (Jboot.isDevMode()){
+                LOG.error(buildErrorMessage(inv,"@RegexValidate"));
+            }
             return;
         }
 
         CaptchaValidate captchaValidate = method.getAnnotation(CaptchaValidate.class);
         if (captchaValidate != null && !validateCaptache(inv, captchaValidate)) {
+            if (Jboot.isDevMode()){
+                LOG.error(buildErrorMessage(inv,"@CaptchaValidate"));
+            }
             return;
         }
 
         inv.invoke();
+    }
+
+
+    private static String buildErrorMessage(Invocation inv,String annotation){
+        StringBuilder sb = new StringBuilder();
+        sb.append("method \"").append(inv.getController().getClass().getName())
+                .append(".")
+                .append(inv.getMethodName())
+                .append("()\"")
+                .append(" has intercepted by annotation ")
+                .append(annotation);
+        return sb.toString();
     }
 
 
@@ -217,7 +241,19 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                                     .setIfNotNull("formName", formName)
                     );
                 } else {
-                    controller.renderError(403, new TextRender(reason));
+//                    controller.render(new ErrorRender(403,null){
+//                        @Override
+//                        public void render() {
+//                            response.setContentType(contentType);
+//                            try {
+//                                response.getOutputStream().w(reason);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+                    controller.renderText(reason);
+
                 }
                 break;
             case ValidateRenderType.JSON:
