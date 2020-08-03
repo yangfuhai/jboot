@@ -1,25 +1,24 @@
 /**
- * Copyright (c) 2011-2021, James Zhan 詹波 (jfinal@126.com).
- *
+ * Copyright (c) 2015-2020, Michael Yang 杨福海 (fuhai999@gmail.com).
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.jboot.web.handler;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Action;
-import com.jfinal.core.Const;
 import com.jfinal.core.Controller;
+import io.jboot.JbootConsts;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -32,12 +31,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 
+//import com.jfinal.core.Const;
+
 /**
- * ActionReporter
+ * JbootActionReporter 参考 ActionReporter
  */
 public class JbootActionReporter {
 	
-	private static final String title = "\nJFinal-" + Const.JFINAL_VERSION + " action report -------- ";
+	private static final String title = "\nJboot-" + JbootConsts.VERSION + " action report -------- ";
 	private static boolean reportAfterInvocation = true;
 	private static int maxOutputLengthOfParaValue = 512;
 	private static Writer writer = new SystemOutWriter();
@@ -89,7 +90,7 @@ public class JbootActionReporter {
 		CtMethod ctMethod = ctClass.getDeclaredMethod(action.getMethodName());
 		int lineNumber = ctMethod.getMethodInfo().getLineNumber(0);
 
-		StringBuilder sb = new StringBuilder(title).append(sdf.get().format(new Date())).append(" --------------------------\n");
+		StringBuilder sb = new StringBuilder(title).append(sdf.get().format(new Date())).append(" -------------------------\n");
 		sb.append("Url         : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
 		Class<? extends Controller> cc = action.getControllerClass();
 		sb.append("Controller  : ").append(cc.getName()).append(".(").append(cc.getSimpleName()).append(".java:"+lineNumber+")");
