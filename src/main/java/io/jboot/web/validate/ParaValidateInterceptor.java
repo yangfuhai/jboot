@@ -206,22 +206,24 @@ public class ParaValidateInterceptor implements FixedInterceptor {
 
 
     private void renderError(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
-        String newMessage = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed!");
+        String reason = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed!");
         switch (renderType) {
             case ValidateRenderType.DEFAULT:
                 if (RequestUtil.isAjaxRequest(controller.getRequest())) {
                     controller.renderJson(
-                            Ret.fail("message", newMessage)
+                            Ret.fail("message", message)
+                                    .set("reason", reason)
                                     .set("errorCode", errorCode)
                                     .setIfNotNull("formName", formName)
                     );
                 } else {
-                    controller.renderError(403, new TextRender(newMessage));
+                    controller.renderError(403, new TextRender(reason));
                 }
                 break;
             case ValidateRenderType.JSON:
                 controller.renderJson(
-                        Ret.fail("message", newMessage)
+                        Ret.fail("message", message)
+                                .set("reason", reason)
                                 .set("errorCode", errorCode)
                                 .setIfNotNull("formName", formName)
                 );
@@ -233,7 +235,7 @@ public class ParaValidateInterceptor implements FixedInterceptor {
                 controller.render(htmlPath);
                 break;
             case ValidateRenderType.TEXT:
-                controller.renderText(newMessage);
+                controller.renderText(message);
                 break;
             default:
                 throw new IllegalArgumentException("can not process render : " + renderType);
