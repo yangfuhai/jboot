@@ -241,19 +241,7 @@ public class ValidateInterceptor implements FixedInterceptor {
                                     .setIfNotNull("formName", formName)
                     );
                 } else {
-//                    controller.render(new ErrorRender(403,null){
-//                        @Override
-//                        public void render() {
-//                            response.setContentType(contentType);
-//                            try {
-//                                response.getOutputStream().w(reason);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
                     controller.renderText(reason);
-
                 }
                 break;
             case ValidateRenderType.JSON:
