@@ -1,3 +1,8 @@
+jboot v3.3.3:
+修复：JbootActionReporter 对拦截器 Interceptor 输出的行号不正确的问题
+
+
+
 jboot v3.3.2:
 新增：新增 JbootActionReporter 用于代替 JFinal 的 ActionReporter，更精准的地位方法
 优化：重命名 ParaValidateInterceptor 为 ValidateInterceptor
