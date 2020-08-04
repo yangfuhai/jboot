@@ -15,42 +15,18 @@
  */
 package io.jboot.test;
 
-import com.jfinal.aop.Before;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.app.JbootApplication;
-import io.jboot.web.controller.JbootController;
-import io.jboot.web.controller.annotation.RequestMapping;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2019/12/12
  */
-@RequestMapping("/hello")
-public class HelloWorld extends JbootController {
+public class HelloInterceptor implements Interceptor {
 
-    @Before({MyInterceptor.class,HelloInterceptor.class})
-    public void index(){
-        renderText("hello world");
+    @Override
+    public void intercept(Invocation inv) {
+        System.out.println("HelloInterceptor.intercept");
+        inv.invoke();
     }
-
-    public void ex(){
-        throw new NullPointerException("log test");
-    }
-
-    public static void main(String[] args){
-        JbootApplication.run(args);
-    }
-
-
-    public static class MyInterceptor implements Interceptor {
-
-        @Override
-        public void intercept(Invocation inv) {
-            System.out.println("MyInterceptor.intercept");
-            inv.invoke();
-        }
-    }
-
-
 }
