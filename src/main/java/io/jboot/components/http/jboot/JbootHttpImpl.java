@@ -75,12 +75,11 @@ public class JbootHttpImpl implements JbootHttp {
                 else {
                     String postContent = request.getPostContent();
                     if (StrUtil.isNotEmpty(postContent)) {
-                        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                        dos.write(postContent.getBytes(request.getCharset()));
-                        dos.flush();
-                        dos.close();
+                        try (OutputStream outStream = connection.getOutputStream();) {
+                            outStream.write(postContent.getBytes(request.getCharset()));
+                            outStream.flush();
+                        }
                     }
-
                 }
             } else {
                 connection.setInstanceFollowRedirects(true);
