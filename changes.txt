@@ -1,3 +1,10 @@
+jboot v3.3.4:
+修复：当 Action 定义在父类后，JbootActionReporter 获取不到 Method 而出错的问题
+优化：升级 nacos 和 Apollo 客户端到最新版本
+优化：JbootHttpImpl Post 提交数据资源可能存在不正常关闭的情况
+
+
+
 jboot v3.3.3:
 修复：JbootActionReporter 对拦截器 Interceptor 输出的行号不正确的问题
 
