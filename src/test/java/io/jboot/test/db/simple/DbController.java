@@ -1,20 +1,18 @@
 package io.jboot.test.db.simple;
 
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import io.jboot.app.JbootApplication;
 import io.jboot.db.JbootDb;
 import io.jboot.db.model.Columns;
 import io.jboot.test.db.model.User;
-import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
 import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/db")
-public class DbController extends JbootController {
+public class DbController extends SuperDbController {
 
 
     public static void main(String[] args) {
@@ -39,12 +37,8 @@ public class DbController extends JbootController {
     }
 
 
-    public void index() {
-        List<Record> records = Db.find("select * from `user`");
-        renderJson(records);
-    }
 
-    public void find1(){
+    public void find1(User invocation){
 
         User dao = new User();
 

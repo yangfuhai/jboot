@@ -85,12 +85,13 @@ public class JbootActionReporter {
      */
     public static final void report(String target, Controller controller, Action action) throws NotFoundException {
         CtClass ctClass = ClassPool.getDefault().get(action.getControllerClass().getName());
-        CtMethod ctMethod = ctClass.getDeclaredMethod(action.getMethodName());
+        String desc = JbootActionReporterUtil.getMethodDescWithoutName(action.getMethod());
+        CtMethod ctMethod = ctClass.getMethod(action.getMethodName(), desc);
         int lineNumber = ctMethod.getMethodInfo().getLineNumber(0);
 
         StringBuilder sb = new StringBuilder(title).append(sdf.get().format(new Date())).append(" -------------------------\n");
         sb.append("Url         : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
-        Class<? extends Controller> cc = action.getControllerClass();
+        Class cc = action.getMethod().getDeclaringClass();
         sb.append("Controller  : ").append(cc.getName()).append(".(").append(getClassFileName(cc)).append(".java:" + lineNumber + ")");
         sb.append("\nMethod      : ").append(action.getMethodName()).append("\n");
 
@@ -107,12 +108,12 @@ public class JbootActionReporter {
                     sb.append("\n              ");
                 }
                 Interceptor inter = inters[i];
-                Class<? extends Interceptor> ic = inter.getClass();
+                Class ic = inter.getClass();
 
                 CtClass icClass = ClassPool.getDefault().get(ic.getName());
-                CtMethod icMethod = icClass.getDeclaredMethod("intercept");
+                CtMethod icMethod = icClass.getMethod("intercept", "(Lcom/jfinal/aop/Invocation;)V");
                 int icLineNumber = icMethod.getMethodInfo().getLineNumber(0);
-                sb.append(ic.getName()).append(".(").append(getClassFileName(ic)).append(".java:" + icLineNumber + ")");
+                sb.append(icMethod.getDeclaringClass().getName()).append(".(").append(getClassFileName(ic)).append(".java:" + icLineNumber + ")");
             }
             sb.append("\n");
         }
