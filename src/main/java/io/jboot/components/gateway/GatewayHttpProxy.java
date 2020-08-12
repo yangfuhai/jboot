@@ -135,21 +135,22 @@ public class GatewayHttpProxy {
 
 
     private void copyConnStreamToResponse(HttpURLConnection conn, HttpServletResponse resp) throws IOException {
+        if (resp.isCommitted()) {
+            return;
+        }
+
         InputStream inStream = null;
-        InputStreamReader reader = null;
+        OutputStream outStream = null;
         try {
-            if (!resp.isCommitted()) {
-                PrintWriter writer = resp.getWriter();
-                inStream = getInputStream(conn);
-                reader = new InputStreamReader(inStream);
-                int len;
-                char[] buffer = new char[1024];
-                while ((len = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, len);
-                }
+            inStream = getInputStream(conn);
+            outStream = resp.getOutputStream();
+            byte[] buffer = new byte[1024];
+            for (int len = -1; (len = inStream.read(buffer)) != -1; ) {
+                outStream.write(buffer, 0, len);
             }
+            outStream.flush();
         } finally {
-            quetlyClose(inStream, reader);
+            quetlyClose(inStream, outStream);
         }
     }
 
@@ -167,26 +168,34 @@ public class GatewayHttpProxy {
 
 
     private void configResponse(HttpServletResponse resp, HttpURLConnection conn) throws IOException {
-        resp.setContentType(contentType);
+
         resp.setStatus(conn.getResponseCode());
+
+        //conn 是否已经指定了 contentType，如果指定了，就用 conn 的，否则就用自己配置的
+        boolean isContentTypeSetted = false;
 
         Map<String, List<String>> headerFields = conn.getHeaderFields();
         if (headerFields != null && !headerFields.isEmpty()) {
             Set<String> headerNames = headerFields.keySet();
             for (String headerName : headerNames) {
                 //需要排除 Content-Encoding，因为 Server 可能已经使用 gzip 压缩，但是此代理已经对 gzip 内容进行解压了
-                //需要排除 Content-Type，因为会可能会进行多次设置
-                if (StrUtil.isBlank(headerName)
-                        || "Content-Encoding".equalsIgnoreCase(headerName)
-                        || "Content-Type".equalsIgnoreCase(headerName)) {
+                if (StrUtil.isBlank(headerName) || "Content-Encoding".equalsIgnoreCase(headerName)) {
                     continue;
-                } else {
-                    String headerFieldValue = conn.getHeaderField(headerName);
-                    if (StrUtil.isNotBlank(headerFieldValue)) {
-                        resp.setHeader(headerName, headerFieldValue);
+                }
+
+                String headerFieldValue = conn.getHeaderField(headerName);
+                if (StrUtil.isNotBlank(headerFieldValue)) {
+                    resp.setHeader(headerName, headerFieldValue);
+                    if ("Content-Type".equalsIgnoreCase(headerName)) {
+                        isContentTypeSetted = true;
                     }
                 }
             }
+        }
+
+        //conn 没有 Content-Type，需要设置为手动配置的内容
+        if (!isContentTypeSetted) {
+            resp.setContentType(contentType);
         }
     }
 
@@ -271,12 +280,7 @@ public class GatewayHttpProxy {
         }
     };
 
-    private static HostnameVerifier hnv = new HostnameVerifier() {
-        @Override
-        public boolean verify(String hostname, SSLSession session) {
-            return true;
-        }
-    };
+    private static HostnameVerifier hnv = (hostname, session) -> true;
 
 
     public Exception getException() {
