@@ -25,7 +25,7 @@ public class JbootHttpResponse {
     private static final Log log = Log.getLog(JbootHttpResponse.class);
 
     private String content;
-    private OutputStream outputStream;
+    private OutputStream contentStream;
     private File file;
     private Throwable error;
     private Map<String, List<String>> headers;
@@ -33,7 +33,7 @@ public class JbootHttpResponse {
     private String contentType;
 
     public JbootHttpResponse() {
-        this.outputStream = new ByteArrayOutputStream();
+        this.contentStream = new ByteArrayOutputStream();
     }
 
     public JbootHttpResponse(File file) {
@@ -47,7 +47,7 @@ public class JbootHttpResponse {
 
         try {
             this.file = file;
-            this.outputStream = new FileOutputStream(file);
+            this.contentStream = new FileOutputStream(file);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -63,8 +63,8 @@ public class JbootHttpResponse {
         if (content != null) {
             return content;
         }
-        if (outputStream != null && outputStream instanceof ByteArrayOutputStream) {
-            return new String(((ByteArrayOutputStream) outputStream).toByteArray());
+        if (contentStream != null && contentStream instanceof ByteArrayOutputStream) {
+            return new String(((ByteArrayOutputStream) contentStream).toByteArray());
         }
         return null;
     }
@@ -79,11 +79,11 @@ public class JbootHttpResponse {
      *
      * @param inputStream
      */
-    public void pipe(InputStream inputStream) {
+    public void copyStream(InputStream inputStream) {
         try {
             byte[] buffer = new byte[1024];
             for (int len = 0; (len = inputStream.read(buffer)) > 0; ) {
-                outputStream.write(buffer, 0, len);
+                contentStream.write(buffer, 0, len);
             }
         } catch (Throwable throwable) {
             log.error(throwable.toString(), throwable);
@@ -94,16 +94,17 @@ public class JbootHttpResponse {
     /**
      * 结束response和释放资源
      */
-    public void finish() {
-        if (outputStream != null) {
+    public void close() {
+        if (contentStream != null) {
             try {
-                outputStream.flush();
-                outputStream.close();
+                contentStream.flush();
+                contentStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     public boolean isNotError() {
         return !isError();

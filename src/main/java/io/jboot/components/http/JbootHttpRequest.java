@@ -308,4 +308,9 @@ public class JbootHttpRequest {
 
         setRequestUrl(originUrl);
     }
+
+
+    public boolean isHttps() {
+        return requestUrl != null && requestUrl.toLowerCase().startsWith("https");
+    }
 }

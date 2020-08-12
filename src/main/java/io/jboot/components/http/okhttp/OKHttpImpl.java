@@ -70,6 +70,8 @@ public class OKHttpImpl implements JbootHttp {
         } catch (Throwable ex) {
             LOG.error(ex.toString(), ex);
             response.setError(ex);
+        }finally {
+            response.close();
         }
     }
 
@@ -121,8 +123,7 @@ public class OKHttpImpl implements JbootHttp {
         Response okHttpResponse = call.execute();
         response.setResponseCode(okHttpResponse.code());
         response.setContentType(okHttpResponse.body().contentType().type());
-        response.pipe(okHttpResponse.body().byteStream());
-        response.finish();
+        response.copyStream(okHttpResponse.body().byteStream());
     }
 
 

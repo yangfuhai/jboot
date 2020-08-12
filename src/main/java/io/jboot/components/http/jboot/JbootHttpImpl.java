@@ -53,13 +53,17 @@ public class JbootHttpImpl implements JbootHttp {
 
     private void doProcess(JbootHttpRequest request, JbootHttpResponse response) {
         HttpURLConnection connection = null;
-        InputStream stream = null;
+        InputStream inStream = null;
         try {
 
+            //获取 http 链接
             connection = getConnection(request);
+
+            //配置 http 链接
             configConnection(connection, request);
 
 
+            //post 请求
             if (request.isPostRequest()) {
 
                 connection.setRequestMethod("POST");
@@ -71,6 +75,7 @@ public class JbootHttpImpl implements JbootHttp {
                         uploadData(request, connection);
                     }
                 }
+
                 //处理正常的post提交
                 else {
                     String postContent = request.getPostContent();
@@ -81,31 +86,36 @@ public class JbootHttpImpl implements JbootHttp {
                         }
                     }
                 }
-            } else {
+            }
+
+            //get 请求
+            else {
                 connection.setInstanceFollowRedirects(true);
                 connection.connect();
             }
 
 
-            stream = getInputStream(connection);
+            inStream = getInputStream(connection);
 
             response.setContentType(connection.getContentType());
             response.setResponseCode(connection.getResponseCode());
             response.setHeaders(connection.getHeaderFields());
 
-            response.pipe(stream);
-            response.finish();
+            response.copyStream(inStream);
 
         } catch (Throwable ex) {
             LOG.warn(ex.toString(), ex);
             response.setError(ex);
         } finally {
+
+            response.close();
+
             if (connection != null) {
                 connection.disconnect();
             }
-            if (stream != null) {
+            if (inStream != null) {
                 try {
-                    stream.close();
+                    inStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -194,23 +204,15 @@ public class JbootHttpImpl implements JbootHttp {
         }
     }
 
-    private static HttpURLConnection getConnection(JbootHttpRequest request) {
-        try {
-            if (request.isPostRequest() == false) {
-                request.initGetUrl();
-            }
-            if (request.getRequestUrl().toLowerCase().startsWith("https")) {
-                return getHttpsConnection(request);
-            } else {
-                return getHttpConnection(request.getRequestUrl());
-            }
-        } catch (Throwable ex) {
-            throw new JbootException(ex);
+    private static HttpURLConnection getConnection(JbootHttpRequest request) throws Exception {
+        if (request.isPostRequest() == false) {
+            request.initGetUrl();
         }
+        return request.isHttps() ? getHttpsConnection(request) : getHttpConnection(request);
     }
 
-    private static HttpURLConnection getHttpConnection(String urlStr) throws Exception {
-        URL url = new URL(urlStr);
+    private static HttpURLConnection getHttpConnection(JbootHttpRequest request) throws Exception {
+        URL url = new URL(request.getRequestUrl());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         return conn;
     }
@@ -265,12 +267,7 @@ public class JbootHttpImpl implements JbootHttp {
         }
     };
 
-    private static HostnameVerifier hnv = new HostnameVerifier() {
-        @Override
-        public boolean verify(String hostname, SSLSession session) {
-            return true;
-        }
-    };
+    private static HostnameVerifier hnv = (hostname, session) -> true;
 
 
 }
