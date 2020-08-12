@@ -66,7 +66,6 @@ public class JbootHttpImpl implements JbootHttp {
             //post 请求
             if (request.isPostRequest()) {
 
-                connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
 
                 //处理文件上传的post提交

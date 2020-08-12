@@ -154,4 +154,15 @@ public class JbootHttpResponse {
         this.contentType = contentType;
     }
 
+
+    @Override
+    public String toString() {
+        return "JbootHttpResponse{" +
+                "\nfile=" + file +
+                "\nheaders=" + headers +
+                "\nresponseCode=" + responseCode +
+                "\ncontentType=" + contentType +
+                "\ncontent=" + getContent() +
+                "\n}";
+    }
 }
