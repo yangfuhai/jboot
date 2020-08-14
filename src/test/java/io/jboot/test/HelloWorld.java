@@ -49,8 +49,8 @@ public class HelloWorld extends JbootController {
         @Override
         public void intercept(Invocation inv) {
             System.out.println("MyInterceptor.intercept");
-//            throw new NullPointerException("");
-            inv.invoke();
+            throw new NullPointerException("");
+//            inv.invoke();
         }
     }
 
