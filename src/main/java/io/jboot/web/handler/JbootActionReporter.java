@@ -39,6 +39,7 @@ import java.util.List;
 public class JbootActionReporter {
 
     private static final String title = "\nJboot-" + JbootConsts.VERSION + " action report -------- ";
+    private static final String interceptMethodDesc = "(Lcom/jfinal/aop/Invocation;)V";
     private static boolean reportAfterInvocation = true;
     private static int maxOutputLengthOfParaValue = 512;
     private static Writer writer = new SystemOutWriter();
@@ -109,9 +110,10 @@ public class JbootActionReporter {
                 Class ic = inter.getClass();
 
                 CtClass icClass = ClassPool.getDefault().get(ic.getName());
-                CtMethod icMethod = icClass.getMethod("intercept", "(Lcom/jfinal/aop/Invocation;)V");
+                CtMethod icMethod = icClass.getMethod("intercept", interceptMethodDesc);
                 int icLineNumber = icMethod.getMethodInfo().getLineNumber(0);
                 sb.append(icMethod.getDeclaringClass().getName()).append(".(").append(getClassFileName(ic)).append(".java:" + icLineNumber + ")");
+
                 if (invokedInterceptors.contains(inter)) {
                     sb.append(ConsoleColor.GREEN_BOLD_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
                 } else {
