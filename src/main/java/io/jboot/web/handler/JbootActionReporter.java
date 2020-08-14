@@ -113,7 +113,7 @@ public class JbootActionReporter {
                 int icLineNumber = icMethod.getMethodInfo().getLineNumber(0);
                 sb.append(icMethod.getDeclaringClass().getName()).append(".(").append(getClassFileName(ic)).append(".java:" + icLineNumber + ")");
                 if (!invokedInterceptors.contains(inter)) {
-                    sb.append(ConsoleColor.RED + " ---> not invoked！ " + ConsoleColor.RESET);
+                    sb.append(ConsoleColor.RED + " ---> not invoke！" + ConsoleColor.RESET);
                 }
             }
             sb.append("\n");
