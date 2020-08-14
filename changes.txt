@@ -1,3 +1,10 @@
+jboot v3.3.5:
+修复：通过门户网关下载文件 或者 渲染图片可能出现乱码的问题
+优化：重构 Http 工具类里的 HttpRequest 里的某些方法
+优化：增强 JbootActionReporter 功能，使之可以输出未被执行的拦截器 以及 Controller 的执行时间
+
+
+
 jboot v3.3.4:
 修复：当 Action 定义在父类后，JbootActionReporter 获取不到 Method 而出错的问题
 优化：升级 nacos 和 Apollo 客户端到最新版本
