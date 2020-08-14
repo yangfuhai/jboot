@@ -116,9 +116,9 @@ public class JbootActionReporter {
                 sb.append(icMethod.getDeclaringClass().getName()).append(".(").append(getClassFileName(ic)).append(".java:" + icLineNumber + ")");
 
                 if (invokedInterceptors.contains(inter)) {
-                    sb.append(ConsoleColor.GREEN_BOLD_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
+                    sb.append(ConsoleColor.GREEN_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
                 } else {
-                    sb.append(ConsoleColor.RED_BOLD_BRIGHT + " ---> skipped ×" + ConsoleColor.RESET);
+                    sb.append(ConsoleColor.RED_BRIGHT + " ---> skipped ×" + ConsoleColor.RESET);
                 }
             }
             sb.append("\n");
