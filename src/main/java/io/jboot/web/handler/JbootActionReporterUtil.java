@@ -18,6 +18,7 @@ package io.jboot.web.handler;
 
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 
 /**
@@ -69,9 +70,6 @@ public final class JbootActionReporterUtil {
      * short(S).
      */
     public static final char JVM_SHORT = 'S';
-
-
-
 
 
     /**
@@ -135,6 +133,34 @@ public final class JbootActionReporterUtil {
             ret.append(getDesc(parameterTypes[i]));
         }
         ret.append(')').append(getDesc(m.getReturnType()));
+        return ret.toString();
+    }
+
+
+    /**
+     * get method string
+     *
+     * @param m
+     * @return
+     */
+    public static String getMethodString(Method m) {
+        StringBuilder ret = new StringBuilder(m.getName());
+        ret.append('(');
+        Parameter[] parameters = m.getParameters();
+        int index = 0;
+        for (Parameter p : parameters) {
+            if (!p.isNamePresent()) {
+                // 必须通过添加 -parameters 进行编译，才可以获取 Parameter 的编译前的名字
+                throw new RuntimeException(" Maven or IDE config is error. see http://www.jfinal.com/doc/3-3 ");
+            }
+            ret.append(p.getType().getSimpleName());
+            ret.append(" ").append(p.getName());
+            if (index++ < parameters.length - 1) {
+                ret.append(", ");
+            }
+        }
+
+        ret.append(')');
         return ret.toString();
     }
 

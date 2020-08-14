@@ -39,6 +39,12 @@ public class HelloWorld extends JbootController {
         throw new NullPointerException("log test");
     }
 
+
+    @Before({HelloInterceptor.class})
+    public void abc(String abc, long number){
+        renderText("abc");
+    }
+
     public static void main(String[] args){
         JbootApplication.run(args);
     }
@@ -49,7 +55,8 @@ public class HelloWorld extends JbootController {
         @Override
         public void intercept(Invocation inv) {
             System.out.println("MyInterceptor.intercept");
-            throw new NullPointerException("");
+//            throw new NullPointerException("");
+            inv.getController().renderText("aaa");
 //            inv.invoke();
         }
     }

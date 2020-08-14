@@ -88,10 +88,11 @@ public class JbootActionReporter {
         int lineNumber = ctMethod.getMethodInfo().getLineNumber(0);
 
         StringBuilder sb = new StringBuilder(title).append(sdf.get().format(new Date(time))).append(" -------------------------\n");
-        sb.append("Url         : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
+        sb.append("Request     : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
         Class cc = action.getMethod().getDeclaringClass();
         sb.append("Controller  : ").append(cc.getName()).append(".(").append(getClassFileName(cc)).append(".java:" + lineNumber + ")");
-        sb.append("\nMethod      : ").append(action.getMethodName()).append("\n");
+        sb.append("\nMethod      : ").append(JbootActionReporterUtil.getMethodString(action.getMethod())).append("\n");
+
 
         String urlParas = controller.getPara();
         if (urlParas != null) {
