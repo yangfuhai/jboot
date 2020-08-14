@@ -30,6 +30,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 
 
 /**
@@ -42,11 +43,7 @@ public class JbootActionReporter {
     private static int maxOutputLengthOfParaValue = 512;
     private static Writer writer = new SystemOutWriter();
 
-    private static final ThreadLocal<SimpleDateFormat> sdf = new ThreadLocal<SimpleDateFormat>() {
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        }
-    };
+    private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
     public static void setReportAfterInvocation(boolean reportAfterInvocation) {
         JbootActionReporter.reportAfterInvocation = reportAfterInvocation;
@@ -83,13 +80,13 @@ public class JbootActionReporter {
     /**
      * Report the action
      */
-    public static final void report(String target, Controller controller, Action action) throws NotFoundException {
+    public static final void report(String target, Controller controller, Action action, long time) throws NotFoundException {
         CtClass ctClass = ClassPool.getDefault().get(action.getControllerClass().getName());
         String desc = JbootActionReporterUtil.getMethodDescWithoutName(action.getMethod());
         CtMethod ctMethod = ctClass.getMethod(action.getMethodName(), desc);
         int lineNumber = ctMethod.getMethodInfo().getLineNumber(0);
 
-        StringBuilder sb = new StringBuilder(title).append(sdf.get().format(new Date())).append(" -------------------------\n");
+        StringBuilder sb = new StringBuilder(title).append(sdf.get().format(new Date(time))).append(" -------------------------\n");
         sb.append("Url         : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
         Class cc = action.getMethod().getDeclaringClass();
         sb.append("Controller  : ").append(cc.getName()).append(".(").append(getClassFileName(cc)).append(".java:" + lineNumber + ")");
@@ -101,6 +98,7 @@ public class JbootActionReporter {
         }
 
         Interceptor[] inters = action.getInterceptors();
+        List<Interceptor> invokedInterceptors = JbootInvocationWarpper.getInvokedInterceptor();
         if (inters.length > 0) {
             sb.append("Interceptor : ");
             for (int i = 0; i < inters.length; i++) {
@@ -114,6 +112,9 @@ public class JbootActionReporter {
                 CtMethod icMethod = icClass.getMethod("intercept", "(Lcom/jfinal/aop/Invocation;)V");
                 int icLineNumber = icMethod.getMethodInfo().getLineNumber(0);
                 sb.append(icMethod.getDeclaringClass().getName()).append(".(").append(getClassFileName(ic)).append(".java:" + icLineNumber + ")");
+                if (!invokedInterceptors.contains(inter)) {
+                    sb.append(ConsoleColor.RED + " ---> not invoked！ " + ConsoleColor.RESET);
+                }
             }
             sb.append("\n");
         }
@@ -146,12 +147,14 @@ public class JbootActionReporter {
             }
             sb.append("\n");
         }
-        sb.append("--------------------------------------------------------------------------------\n");
+        sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n");
 
         try {
             writer.write(sb.toString());
         } catch (IOException ex) {
             throw new RuntimeException(ex);
+        } finally {
+            JbootInvocationWarpper.clear();
         }
     }
 

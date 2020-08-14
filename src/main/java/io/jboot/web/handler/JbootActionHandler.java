@@ -36,10 +36,11 @@ import javax.servlet.http.HttpServletResponse;
 public class JbootActionHandler extends ActionHandler {
 
 
-    private static final Log log = Log.getLog(JbootActionHandler.class);
+    private static final Log LOG = Log.getLog(JbootActionHandler.class);
 
     /**
      * 方便子类复写、从而可以实现 自定义 Action 的功能
+     *
      * @param target
      * @param urlPara
      * @param request
@@ -52,6 +53,7 @@ public class JbootActionHandler extends ActionHandler {
 
     /**
      * 方便子类复写、从而可以实现 自定义 Action 的功能
+     *
      * @param target
      * @param urlPara
      * @return
@@ -63,12 +65,13 @@ public class JbootActionHandler extends ActionHandler {
 
     /**
      * 方便子类复写、从而可以实现 自定义 Invocation 的功能
+     *
      * @param action
      * @param controller
      * @return
      */
     public Invocation getInvocation(Action action, Controller controller) {
-        return new Invocation(action, controller);
+        return devMode ? new JbootInvocationWarpper(action, controller) : new Invocation(action, controller);
     }
 
 
@@ -93,9 +96,9 @@ public class JbootActionHandler extends ActionHandler {
         Action action = getAction(target, urlPara, request);
 
         if (action == null) {
-            if (log.isWarnEnabled()) {
+            if (LOG.isWarnEnabled()) {
                 String qs = request.getQueryString();
-                log.warn("404 Action Not Found: " + (qs == null ? target : target + "?" + qs));
+                LOG.warn("404 Action Not Found: " + (qs == null ? target : target + "?" + qs));
             }
             renderManager.getRenderFactory().getErrorRender(404).setContext(request, response).render();
             return;
@@ -112,12 +115,18 @@ public class JbootActionHandler extends ActionHandler {
 //            Invocation invocation = new Invocation(action, controller);
             Invocation invocation = getInvocation(action, controller);
             if (devMode) {
-                if (ActionReporter.isReportAfterInvocation(request)) {
+//                if (ActionReporter.isReportAfterInvocation(request)) {
+//                    invokeInvocation(invocation);
+//                    JbootActionReporter.report(target, controller, action);
+//                } else {
+//                    JbootActionReporter.report(target, controller, action);
+//                    invokeInvocation(invocation);
+//                }
+                long time = System.currentTimeMillis();
+                try {
                     invokeInvocation(invocation);
-                    JbootActionReporter.report(target, controller, action);
-                } else {
-                    JbootActionReporter.report(target, controller, action);
-                    invokeInvocation(invocation);
+                } finally {
+                    JbootActionReporter.report(target, controller, action, time);
                 }
             } else {
                 invokeInvocation(invocation);
@@ -151,18 +160,18 @@ public class JbootActionHandler extends ActionHandler {
             render.setContext(request, response, action.getViewPath()).render();
 
         } catch (RenderException e) {
-            if (log.isErrorEnabled()) {
+            if (LOG.isErrorEnabled()) {
                 String qs = request.getQueryString();
-                log.error(qs == null ? target : target + "?" + qs, e);
+                LOG.error(qs == null ? target : target + "?" + qs, e);
             }
         } catch (ActionException e) {
             handleActionException(target, request, response, action, e);
         } catch (Exception e) {
-            if (log.isErrorEnabled()) {
+            if (LOG.isErrorEnabled()) {
                 String qs = request.getQueryString();
                 String targetInfo = qs == null ? target : target + "?" + qs;
                 String info = ClassUtil.buildMethodString(action.getMethod());
-                log.error(info + " : " + targetInfo, e);
+                LOG.error(info + " : " + targetInfo, e);
             }
             renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
         } finally {
@@ -186,18 +195,18 @@ public class JbootActionHandler extends ActionHandler {
         }
 
         if (msg != null) {
-            if (log.isWarnEnabled()) {
+            if (LOG.isWarnEnabled()) {
                 String qs = request.getQueryString();
                 msg = msg + (qs == null ? target : target + "?" + qs);
                 if (e.getMessage() != null) {
                     msg = msg + "\n" + e.getMessage();
                 }
-                log.warn(msg);
+                LOG.warn(msg);
             }
         } else {
-            if (log.isErrorEnabled()) {
+            if (LOG.isErrorEnabled()) {
                 String qs = request.getQueryString();
-                log.error(errorCode + " Error: " + (qs == null ? target : target + "?" + qs), e);
+                LOG.error(errorCode + " Error: " + (qs == null ? target : target + "?" + qs), e);
             }
         }
 
