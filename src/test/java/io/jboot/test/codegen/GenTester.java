@@ -38,7 +38,7 @@ public class GenTester {
 
 
         new JbootServiceInterfaceGenerator(servicePackage, serviceOutputDir, modelPackage).generate();
-        new JbootServiceImplGenerator(servicePackage, serviceImplOutputDir, modelPackage).setImplName("provider").generate();
+        new JbootServiceImplGenerator(servicePackage, serviceImplPackage,serviceImplOutputDir, modelPackage).setImplName("provider").generate();
 
     }
 }
