@@ -22,7 +22,6 @@ import io.jboot.JbootConsts;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import javassist.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -40,15 +39,11 @@ public class JbootActionReporter {
 
     private static final String title = "\nJboot-" + JbootConsts.VERSION + " action report -------- ";
     private static final String interceptMethodDesc = "(Lcom/jfinal/aop/Invocation;)V";
-    private static boolean reportAfterInvocation = true;
     private static int maxOutputLengthOfParaValue = 512;
     private static Writer writer = new SystemOutWriter();
 
     private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
-    public static void setReportAfterInvocation(boolean reportAfterInvocation) {
-        JbootActionReporter.reportAfterInvocation = reportAfterInvocation;
-    }
 
     public static void setMaxOutputLengthOfParaValue(int maxOutputLengthOfParaValue) {
         if (maxOutputLengthOfParaValue < 16) {
@@ -64,24 +59,11 @@ public class JbootActionReporter {
         JbootActionReporter.writer = writer;
     }
 
-    public static boolean isReportAfterInvocation(HttpServletRequest request) {
-        if (reportAfterInvocation) {
-            return true;
-        } else {
-            String contentType = request.getContentType();
-            if (contentType != null && contentType.toLowerCase().indexOf("multipart") != -1) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
 
     /**
      * Report the action
      */
-    public static final void report(String target, Controller controller, Action action, long time) throws NotFoundException {
+    public static final void report(String target, Controller controller, Action action, long time) throws Exception {
         CtClass ctClass = ClassPool.getDefault().get(action.getControllerClass().getName());
         String desc = JbootActionReporterUtil.getMethodDescWithoutName(action.getMethod());
         CtMethod ctMethod = ctClass.getMethod(action.getMethodName(), desc);
@@ -174,17 +156,22 @@ public class JbootActionReporter {
         }
     }
 
+
     private static class SystemOutWriter extends Writer {
+        @Override
         public void write(String str) throws IOException {
             System.out.print(str);
         }
 
+        @Override
         public void write(char[] cbuf, int off, int len) throws IOException {
         }
 
+        @Override
         public void flush() throws IOException {
         }
 
+        @Override
         public void close() throws IOException {
         }
     }
