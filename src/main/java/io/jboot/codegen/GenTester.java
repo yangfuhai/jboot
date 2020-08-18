@@ -25,7 +25,6 @@ import io.jboot.codegen.service.JbootServiceInterfaceGenerator;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.codegen
  */
 public class GenTester {
 

@@ -30,7 +30,6 @@ import io.jboot.support.redis.JbootRedis;
  * 2、高可用，不存在单点故障
  * 3、一致性，在集群环境中，只有一个任务在执行。
  * 4、Failover，支持故障转移
- * @Package io.jboot.schedule
  */
 public class JbootDistributedRunnable implements Runnable {
 

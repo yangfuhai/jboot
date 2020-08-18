@@ -21,7 +21,6 @@ import com.jfinal.aop.Invocation;
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @title 不会被 @Clear 清除掉的 拦截器
  * @version V1.0
- * @Package io.jboot.web.handler
  */
 public interface FixedInterceptor {
     void intercept(Invocation inv);

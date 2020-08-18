@@ -28,7 +28,6 @@ import java.util.Map;
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Title: 用于对Jwt的设置
- * @Package io.jboot.web.jwt
  */
 public class JwtInterceptor implements FixedInterceptor {
 

@@ -28,7 +28,6 @@ import java.util.Map;
  * @version V1.0
  * @Title: 自定义 Swagger Path
  * @Description: 目的是为了 防止 fastjson 生成 opreations 和 operationMap 的json生成
- * @Package io.jboot.component.swagger
  */
 public class SwaggerPath extends Path {
 

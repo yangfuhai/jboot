@@ -22,7 +22,6 @@ import io.jboot.support.metric.JbootMetricReporter;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.component.metric.reporter.jmx
  */
 public class JMXReporter implements JbootMetricReporter {
     @Override

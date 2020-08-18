@@ -20,7 +20,6 @@ package io.jboot.exception;
  * @version V1.0
  * @Title: 配置错误
  * @Description: 在某些情况，必须要指定的某个配置，但是用户没有配置时，抛出该错误
- * @Package io.jboot.exception
  */
 public class JbootIllegalConfigException extends JbootException {
 

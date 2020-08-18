@@ -21,7 +21,6 @@ import io.jboot.utils.StrUtil;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.web.jwt
  */
 @ConfigModel(prefix = "jboot.web.jwt")
 public class JwtConfig {

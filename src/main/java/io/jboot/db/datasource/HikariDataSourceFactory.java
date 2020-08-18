@@ -24,7 +24,6 @@ import javax.sql.DataSource;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.db.datasource
  */
 public class HikariDataSourceFactory implements DataSourceFactory {
 

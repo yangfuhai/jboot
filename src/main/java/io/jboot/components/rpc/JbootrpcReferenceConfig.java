@@ -22,7 +22,6 @@ import java.io.Serializable;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.components.rpc
  */
 public class JbootrpcReferenceConfig implements Serializable {
 

@@ -28,7 +28,6 @@ import java.io.ByteArrayOutputStream;
  * @version V1.0
  * @Title: Kryo 序列化
  * @Description: 性能和 fst一样
- * @Package io.jboot.core.serializer
  */
 public class KryoSerializer implements JbootSerializer {
 

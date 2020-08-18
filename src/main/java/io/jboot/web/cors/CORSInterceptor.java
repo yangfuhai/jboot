@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Title: CORS 处理相关 拦截器
- * @Package io.jboot.web.cors
  */
 public class CORSInterceptor implements FixedInterceptor {
 

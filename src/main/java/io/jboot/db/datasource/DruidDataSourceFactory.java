@@ -25,7 +25,6 @@ import java.sql.SQLException;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.db.datasource
  */
 public class DruidDataSourceFactory implements DataSourceFactory {
 

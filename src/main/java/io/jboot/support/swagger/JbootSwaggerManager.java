@@ -31,7 +31,6 @@ import static io.swagger.models.Scheme.HTTPS;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.component.swagger
  * <p>
  * 相关文档: https://www.gitbook.com/book/huangwenchao/swagger/details
  */

@@ -31,7 +31,6 @@ import javax.jms.*;
 /**
  * @author 徐海峰 （27533892@qq.com）
  * @version V1.0
- * @Package io.jboot.core.mq.qpid
  */
 public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
 

@@ -32,7 +32,6 @@ import java.util.Map;
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
- * @Package io.jboot.core.http.okhttp
  */
 public class OKHttpImpl implements JbootHttp {
     private static final Log LOG = Log.getLog(OKHttpImpl.class);
