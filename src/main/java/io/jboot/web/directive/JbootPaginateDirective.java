@@ -15,6 +15,7 @@
  */
 package io.jboot.web.directive;
 
+import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.template.Env;
 import com.jfinal.template.io.Writer;
@@ -24,6 +25,7 @@ import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.directive.base.PaginateDirectiveBase;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 public class JbootPaginateDirective extends PaginateDirectiveBase {
 
@@ -94,8 +96,27 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
 
     @Override
     protected Page<?> getPage(Env env, Scope scope, Writer writer) {
+        Controller controller = JbootControllerContext.get();
+        if (controller == null) {
+            return null;
+        }
+
         String pageAttr = getPara(KEY_PAGE_ATTR, scope, DEFAULT_PAGE_ATTR);
-        return JbootControllerContext.get().getAttr(pageAttr);
+        Page<?> page = controller.getAttr(pageAttr);
+        if (page != null) {
+            return page;
+        }
+
+        Enumeration<String> attrNames = controller.getAttrNames();
+        if (attrNames != null) {
+            while (attrNames.hasMoreElements()) {
+                Object attrValue = controller.get(attrNames.nextElement());
+                if (attrValue instanceof Page) {
+                    return (Page<?>) attrValue;
+                }
+            }
+        }
+        return null;
     }
 
 }
