@@ -36,4 +36,4 @@ undertow.hotSwapClassPrefix = xxx1.com, xxx2.com
 - **错误2：没有热加载**
   在 idea 开发工具中，可能会出现未正确进行热加载的情况，一般是没有配置 idea 的自动编译功能。
 
-![](./imgs/idea-auto-build.jpg)
+![](./static/images/idea-auto-build.jpg)

@@ -9,3 +9,7 @@ logs
 .DS_Store
 *.patch
 ~$*
+node_modules
+package.json
+yarn.lock
+dist

@@ -8,5 +8,5 @@
 
 - 微信群
   
-  ![](./imgs/jboot-wechat-group.png)
+  ![](./static/images/jboot-wechat-group.png)
   
