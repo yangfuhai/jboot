@@ -1,9 +1,6 @@
 {
-  "dependencies": {
-    "@vuepress-reco/vuepress-plugin-screenfull": "^1.0.1",
-    "@vuepress-reco/vuepress-plugin-back-to-top": "^1.5.5",
-    "vuepress-theme-reco": "^1.5.5"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "vuepress-theme-reco": "1.5.4"
   }
 }
