@@ -3,12 +3,9 @@
 # abort on errors
 set -e
 
-cd ..
-
 # build
-vuepress build doc
+vuepress build .
 
-cd doc
 
 
 cp CNAME .vuepress/dist

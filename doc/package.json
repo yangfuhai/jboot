@@ -1,6 +1,10 @@
 {
   "dependencies": {},
   "devDependencies": {
+    "vuepress": "^1.5.3",
+    "chalk": "^2.4.2",
+    "commander": "^2.20.3",
+    "esm": "^3.2.25",
     "vuepress-theme-reco": "1.5.4"
   }
 }
