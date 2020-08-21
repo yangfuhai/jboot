@@ -193,9 +193,6 @@ public class JbootHttpImpl implements JbootHttp {
         connection.setConnectTimeout(request.getConnectTimeOut());
         connection.setRequestMethod(request.getMethod());
 
-
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.146 Safari/537.36");
         if (request.getHeaders() != null && request.getHeaders().size() > 0) {
             for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
