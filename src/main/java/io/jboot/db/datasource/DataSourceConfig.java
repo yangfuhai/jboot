@@ -358,13 +358,20 @@ public class DataSourceConfig {
     }
 
     public String getValidationQuery() {
-        if(this.url.startsWith("jdbc:oracle")){
+        if(validationQuery != null){
+            return validationQuery;
+        }
+        if (this.url == null){
+            return null;
+        }
+        String url = this.url.toLowerCase();
+        if(url.startsWith("jdbc:oracle")){
             return "select 1 from dual";
-        }else if(this.url.startsWith("jdbc:db2")){
+        }else if(url.startsWith("jdbc:db2")){
             return "select 1 from sysibm.sysdummy1";
-        }else if(this.url.startsWith("jdbc:hsqldb")){
+        }else if(url.startsWith("jdbc:hsqldb")){
             return "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS";
-        }else if(this.url.startsWith("jdbc:derby")){
+        }else if(url.startsWith("jdbc:derby")){
             return "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS";
         }
         return "select 1";
