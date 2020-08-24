@@ -55,7 +55,7 @@ public class DataSourceConfig {
     private long minEvictableIdleTimeMillis = 1000L * 60L * 30L;
     // 配置发生错误时多久重连
     private long timeBetweenConnectErrorMillis = 500;
-    private String validationQuery = "select 1";
+    private String validationQuery;
     private boolean testWhileIdle = true;
     private boolean testOnBorrow = false;
     private boolean testOnReturn = false;
@@ -358,20 +358,20 @@ public class DataSourceConfig {
     }
 
     public String getValidationQuery() {
-        if(validationQuery != null){
+        if (validationQuery != null) {
             return validationQuery;
         }
-        if (this.url == null){
+        if (this.url == null) {
             return null;
         }
         String url = this.url.toLowerCase();
-        if(url.startsWith("jdbc:oracle")){
+        if (url.startsWith("jdbc:oracle")) {
             return "select 1 from dual";
-        }else if(url.startsWith("jdbc:db2")){
+        } else if (url.startsWith("jdbc:db2")) {
             return "select 1 from sysibm.sysdummy1";
-        }else if(url.startsWith("jdbc:hsqldb")){
+        } else if (url.startsWith("jdbc:hsqldb")) {
             return "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS";
-        }else if(url.startsWith("jdbc:derby")){
+        } else if (url.startsWith("jdbc:derby")) {
             return "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS";
         }
         return "select 1";
