@@ -30,6 +30,7 @@ jboot.gateway.proxyConnectTimeout = 5000
 jboot.gateway.proxyContentType = text/html;charset=utf-8
 
 jboot.gateway.interceptors = com.xxx.Interceptor1,com.xxx.Interceptor2
+jboot.gateway.loadBalanceStrategy = com.xxx.loadBalanceStrategy1
 
 jboot.gateway.pathEquals = /path
 jboot.gateway.pathContains = /path
@@ -55,6 +56,7 @@ jboot.gateway.queryContains = aa,bb
 - proxyConnectTimeout 发生路由后，默认的连接超时时间，默认为 5 秒
 - proxyContentType 发生路由后，返回给浏览器的 http-content-type，默认为：text/html;charset=utf-8
 - interceptors 网关拦截器，一般用于进行鉴权等功能，配置类名，多个拦截器用英文逗号隔开，拦截器必须实现 GatewayInterceptor 接口
+- loadBalanceStrategy 负载均衡策略，当配置了多个 uri 的时候，可以通过此策略对 uri 进行获取
 
 ## Path 路由
 
