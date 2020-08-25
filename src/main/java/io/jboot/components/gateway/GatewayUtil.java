@@ -28,8 +28,8 @@ public class GatewayUtil {
 
     private static final String PATH_SPLIT = "/";
 
-    public static String buildProxyUrl(JbootGatewayConfig config,HttpServletRequest request){
-        StringBuilder url = new StringBuilder(config.getRandomUri());
+    public static String buildProxyUrl(JbootGatewayConfig config, HttpServletRequest request) {
+        StringBuilder url = new StringBuilder(config.buildLoadBalanceStrategy().getUrl(config, request));
         if (StrUtil.isNotBlank(request.getRequestURI())) {
             url.append(request.getRequestURI());
         }
@@ -62,7 +62,6 @@ public class GatewayUtil {
 
         return pathInfo;
     }
-
 
 
     private static String getResourcePath(HttpServletRequest request) {
@@ -134,7 +133,7 @@ public class GatewayUtil {
                 continue;
             }
 
-            pathChars[level++] = (char)buf.length();
+            pathChars[level++] = (char) buf.length();
             buf.append(element).append(PATH_SPLIT);
         }
 

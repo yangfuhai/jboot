@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -69,6 +68,7 @@ public class JbootGatewayConfig implements Serializable {
 
     //拦截器配置，一般可以用于对请求进行 鉴权 等处理
     private String[] interceptors;
+    private String loadBalanceStrategy;
 
 //    暂时不支持 cookie
 //    private Map<String, String> cookieEquals;
@@ -90,16 +90,6 @@ public class JbootGatewayConfig implements Serializable {
 
     public void setUri(String[] uri) {
         this.uri = uri;
-    }
-
-    public String getRandomUri() {
-        if (uri == null || uri.length == 0) {
-            return null;
-        } else if (uri.length == 1) {
-            return uri[0];
-        } else {
-            return uri[ThreadLocalRandom.current().nextInt(uri.length)];
-        }
     }
 
     public boolean isEnable() {
@@ -276,6 +266,38 @@ public class JbootGatewayConfig implements Serializable {
             }
         }
         return inters;
+    }
+
+
+    public String getLoadBalanceStrategy() {
+        return loadBalanceStrategy;
+    }
+
+    public void setLoadBalanceStrategy(String loadBalanceStrategy) {
+        this.loadBalanceStrategy = loadBalanceStrategy;
+    }
+
+    private GatewayLoadBalanceStrategy gatewayLoadBalanceStrategy;
+
+    public GatewayLoadBalanceStrategy buildLoadBalanceStrategy() {
+        if (gatewayLoadBalanceStrategy != null) {
+            return gatewayLoadBalanceStrategy;
+        }
+
+        if (gatewayLoadBalanceStrategy == null) {
+            synchronized (this) {
+                if (StrUtil.isBlank(loadBalanceStrategy)) {
+                    this.gatewayLoadBalanceStrategy = GatewayLoadBalanceStrategy.DEFAULT_STRATEGY;
+                } else {
+                    GatewayLoadBalanceStrategy glbs = ClassUtil.newInstance(loadBalanceStrategy);
+                    if (glbs == null) {
+                        throw new NullPointerException("can not new instance by class:" + loadBalanceStrategy);
+                    }
+                    this.gatewayLoadBalanceStrategy = glbs;
+                }
+            }
+        }
+        return gatewayLoadBalanceStrategy;
     }
 
 
