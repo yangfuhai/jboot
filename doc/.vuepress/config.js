@@ -55,6 +55,7 @@ module.exports = {
           children: [
             {title: '安装', path: '/docs/install'},
             {title: '配置', path: '/docs/config'},
+            {title: 'JFianlConfig', path: '/docs/jfinalConfig'},
             {title: 'MVC', path: '/docs/mvc'},
             {title: 'WebSocket', path: '/docs/websocket'},
             {title: 'Jwt', path: '/docs/jwt'},

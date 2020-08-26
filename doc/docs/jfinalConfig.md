@@ -1,5 +1,7 @@
 # 如何在Jboot中添加自己的 JFianlConfig
 
+[[toc]]
+
 凡是开发过 JFinal 的同学，都知道 JFinalConfig 是 JFinal 的核心配置，详情： https://www.jfinal.com/doc/2-1 ，其内容如下：
 
 ```java
