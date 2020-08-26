@@ -2,6 +2,10 @@
 // https://github.com/vuejs/vuepress/blob/master/packages/docs/docs/.vuepress/config.js
 // https://vuepress-theme-reco.recoluan.com/views/1.x/
 module.exports = {
+  title: 'Jboot 官方网站',
+  description: 'Jboot 一个开源的分布式、商业级微服务框架。',
+  // base:'/docs/',
+
   theme: 'vuepress-theme-reco',
   themeConfig: {
     //腾讯 404 公益配置
@@ -90,11 +94,8 @@ module.exports = {
       ],
     },
     sidebarDepth: 1
-
-
   },
-  title: 'Jboot 官方网站',
-  description: 'Jboot 一个开源的分布式、商业级微服务框架。',
+
   head: [
     ['link', {rel: 'icon', href: '/logo.png'}],
     ['script', {}, `
