@@ -72,7 +72,6 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     }
 
 
-    @Override
     public File newRandomFile(String suffix) {
         String rootPath = getRootPath();
 
@@ -99,11 +98,6 @@ public class LocalAttachmentContainer implements AttachmentContainer {
         return filePath.startsWith(rootPath)
                 ? filePath.substring(rootPath.length())
                 : filePath;
-    }
-
-    @Override
-    public boolean isSafeFile(File file) {
-        return true;
     }
 
 

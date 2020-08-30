@@ -25,14 +25,56 @@ import java.io.File;
  */
 public interface AttachmentContainer {
 
+    /**
+     * 保存文件
+     * @param file
+     * @return 返回文件的相对路径
+     */
     public String saveFile(File file);
+
+
+    /**
+     * 删除文件
+     * @param relativePath
+     * @return
+     */
     public boolean deleteFile(String relativePath);
-    public File newRandomFile(String suffix);
+
+    /**
+     * 通过相对路径获取文件
+     * @param relativePath
+     * @return
+     */
     public File getFile(String relativePath);
+
+    /**
+     * 通过一个文件，获取其相对路径
+     * @param file
+     * @return
+     */
     public String getRelativePath(File file);
-    public boolean isSafeFile(File file);
+
+
+    /**
+     * 是否是 远程 文件容器
+     * @return
+     */
     public boolean isRemoteContainer();
 
+
+    /**
+     * 通过路径判断是匹配这个文件
+     * @param target
+     * @param request
+     * @return
+     */
     public boolean matchFile(String target, HttpServletRequest request);
+
+    /**
+     * 渲染这个文件
+     * @param target
+     * @param request
+     * @param response
+     */
     public void renderFile(String target, HttpServletRequest request, HttpServletResponse response);
 }
