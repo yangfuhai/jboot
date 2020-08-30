@@ -75,6 +75,7 @@ public interface AttachmentContainer {
      * @param target
      * @param request
      * @param response
+     * @return return true 渲染成功，不需要服务器再进行渲染，return false 需要服务器自行渲染
      */
-    public void renderFile(String target, HttpServletRequest request, HttpServletResponse response);
+    public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response);
 }

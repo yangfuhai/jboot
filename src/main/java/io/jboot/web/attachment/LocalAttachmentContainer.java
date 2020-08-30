@@ -38,6 +38,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     private String rootPath = PathKit.getWebRootPath();
     private String targetPrefix = DEFAULT_ATTACHEMENT_PATH;
 
+
     public LocalAttachmentContainer() {
     }
 
@@ -106,6 +107,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
         return false;
     }
 
+
     @Override
     public boolean matchFile(String target, HttpServletRequest request) {
         return target.startsWith(buildMatchTarget());
@@ -124,9 +126,28 @@ public class LocalAttachmentContainer implements AttachmentContainer {
         return matchTarget;
     }
 
+
+    private Boolean runInFatjar;
+
+    private boolean isRunInfatjar() {
+        if (runInFatjar == null) {
+            runInFatjar = LocalAttachmentContainer.class.getResource("/") == null;
+        }
+        return runInFatjar;
+    }
+
+
     @Override
-    public void renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        new FileRender(getFile(target)).setContext(request, response).render();
+    public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
+        //是否在 fatjar 运行，如果不在 fatjar 运行，由 tomcat 或者 undertow 自行渲染
+        if (!isRunInfatjar()) {
+            return false;
+        }
+        // 如果在 fatjar 运行，需要自己来渲染该文件
+        else {
+            new FileRender(getFile(target)).setContext(request, response).render();
+            return true;
+        }
     }
 
 

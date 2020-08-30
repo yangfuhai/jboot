@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.jboot.web.attachment;
 
 import com.jfinal.handler.Handler;
@@ -32,8 +31,9 @@ public class AttachmentHandler extends Handler {
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
         AttachmentContainer container = manager.matchContainer(target, request);
         if (container != null) {
-            container.renderFile(target, request, response);
-            isHandled[0] = true;
+            if (container.renderFile(target, request, response)){
+                isHandled[0] = true;
+            }
         } else {
             next.handle(target, request, response, isHandled);
         }
