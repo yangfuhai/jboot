@@ -47,6 +47,8 @@ import io.jboot.support.swagger.JbootSwaggerController;
 import io.jboot.support.swagger.JbootSwaggerManager;
 import io.jboot.utils.*;
 import io.jboot.web.JbootJson;
+import io.jboot.web.attachment.AttachmentHandler;
+import io.jboot.web.attachment.LocalAttachmentContainer;
 import io.jboot.web.controller.JbootControllerManager;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -142,6 +144,8 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setControllerFactory(JbootControllerManager.me());
         constants.setJsonFactory(JbootJson::new);
         constants.setInjectDependency(true);
+
+        constants.setBaseUploadPath(LocalAttachmentContainer.DEFAULT_ATTACHEMENT_PATH);
 
 
         JbootAppListenerManager.me().onConstantConfig(constants);
@@ -261,6 +265,7 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
 
         handlers.add(new JbootGatewayHandler());
+        handlers.add(new AttachmentHandler());
         handlers.add(new JbootFilterHandler());
         handlers.add(new JbootHandler());
 
