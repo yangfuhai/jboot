@@ -17,7 +17,9 @@ package io.jboot.web.handler;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Action;
+import com.jfinal.core.ActionReporter;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.LogKit;
 import io.jboot.JbootConsts;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -63,7 +65,19 @@ public class JbootActionReporter {
     /**
      * Report the action
      */
-    public static final void report(String target, Controller controller, Action action, long time) throws Exception {
+    public static final void report(String target, Controller controller, Action action, long time) {
+        try {
+            doReport(target, controller, action, time);
+        } catch (Exception ex) {
+            // 出错的情况，一般情况下是：用户自定义了自己的 classloader, 此 classloader 加载的 class 没有被添加到 ClassPool
+            // 如何添加可以参考 jpress 的 插件加载
+            LogKit.error("JbootActionReport.doReport error, use Jfinal Reporter");
+            ActionReporter.report(target, controller, action);
+        }
+    }
+
+
+    private static final void doReport(String target, Controller controller, Action action, long time) throws Exception {
         CtClass ctClass = ClassPool.getDefault().get(action.getControllerClass().getName());
         String desc = JbootActionReporterUtil.getMethodDescWithoutName(action.getMethod());
         CtMethod ctMethod = ctClass.getMethod(action.getMethodName(), desc);
