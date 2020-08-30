@@ -132,7 +132,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
     @Override
     public void renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        new FileRender(new File(target)).setContext(request, response).render();
+        new FileRender(getFile(target)).setContext(request, response).render();
     }
 
 

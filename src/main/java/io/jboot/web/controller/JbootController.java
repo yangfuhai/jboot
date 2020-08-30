@@ -23,7 +23,6 @@ import com.jfinal.core.NotAction;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.render.RenderManager;
-import com.jfinal.upload.UploadFile;
 import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
@@ -32,7 +31,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -395,15 +393,5 @@ public class JbootController extends Controller {
     @NotAction
     public BigDecimal getBigDecimal(String name, BigDecimal defaultValue) {
         return toBigDecimal(getTrimPara(name), defaultValue);
-    }
-
-    @Override
-    public UploadFile getFile() {
-        return super.getFile();
-    }
-
-    @Override
-    public List<UploadFile> getFiles() {
-        return super.getFiles();
     }
 }
