@@ -9,6 +9,7 @@ jboot v3.4.0:
 优化：删除一些不必要的 注释信息
 优化：修改 JbootPaginateDirective 自动去获取当前的 page 信息，而不需配置
 优化：移除 JbootHttpImpl 默认的 content-type 配置
+优化：重构 Metrics 读取的相关处理，在 Metrics 未配置的时候，没必要添加相关 Handler，提示性能
 
 
 

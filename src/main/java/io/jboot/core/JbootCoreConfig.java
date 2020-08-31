@@ -39,6 +39,7 @@ import io.jboot.components.schedule.JbootScheduleManager;
 import io.jboot.core.listener.JbootAppListenerManager;
 import io.jboot.core.log.Slf4jLogFactory;
 import io.jboot.db.ArpManager;
+import io.jboot.support.metric.JbootMetricConfig;
 import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.support.sentinel.SentinelManager;
 import io.jboot.support.shiro.JbootShiroManager;
@@ -57,8 +58,8 @@ import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.fixedinterceptor.FixedInterceptors;
 import io.jboot.web.handler.JbootActionHandler;
-import io.jboot.web.handler.JbootFilterHandler;
 import io.jboot.web.handler.JbootHandler;
+import io.jboot.web.handler.JbootMetricsHandler;
 import io.jboot.web.render.JbootRenderFactory;
 
 import java.io.File;
@@ -266,7 +267,14 @@ public class JbootCoreConfig extends JFinalConfig {
 
         handlers.add(new JbootGatewayHandler());
         handlers.add(new AttachmentHandler());
-        handlers.add(new JbootFilterHandler());
+
+        //metrics 处理
+        JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
+        if (metricsConfig.isConfigOk()){
+            handlers.add(new JbootMetricsHandler(metricsConfig.getUrl()));
+        }
+
+
         handlers.add(new JbootHandler());
 
         //若用户自己没配置 ActionHandler，默认使用 JbootActionHandler

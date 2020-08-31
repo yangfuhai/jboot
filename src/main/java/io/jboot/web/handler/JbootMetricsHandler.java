@@ -16,17 +16,19 @@
 package io.jboot.web.handler;
 
 import com.jfinal.handler.Handler;
-import io.jboot.Jboot;
-import io.jboot.support.metric.JbootMetricConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-public class JbootFilterHandler extends Handler {
+public class JbootMetricsHandler extends Handler {
 
 
-    private static JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
+    private  String metricsReadUrl;
+
+    public JbootMetricsHandler(String metricsReadUrl) {
+        this.metricsReadUrl = metricsReadUrl;
+    }
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
@@ -36,14 +38,12 @@ public class JbootFilterHandler extends Handler {
             return;
         }
 
-        // metrics
-        if (metricsConfig.isConfigOk() && target.startsWith(metricsConfig.getUrl())) {
+        // metrics servlet 处理，此处如果是 tomcat，需要在 web.xml 配置 metrics 的相关  servlet
+        if (target.startsWith(metricsReadUrl)) {
             return;
         }
 
-
         next.handle(target, request, response, isHandled);
-
     }
 
 
