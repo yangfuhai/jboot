@@ -1,3 +1,16 @@
+jboot v3.4.0:
+新增：门户网关 Gateway 新增自定义负载均衡策略的支持
+新增：AttachmentContainer 组件，方便自定义把附件上传到其他第三方任何平台
+新增：全新的文档地址 和 Jboot 官网
+修复：数据源 Datasource 的  validationQuery 属性配置不生效的问题
+优化：升级 JFinal-Weixin 版本
+优化：删除 JbootActionReporter 一些不必要的方法
+优化：删除一些不必要的 注释信息
+优化：修改 JbootPaginateDirective 自动去获取当前的 page 信息，而不需配置
+优化：移除 JbootHttpImpl 默认的 content-type 配置
+
+
+
 jboot v3.3.5:
 修复：通过门户网关下载文件 或者 渲染图片可能出现乱码的问题
 优化：重构 Http 工具类里的 HttpRequest 里的某些方法
