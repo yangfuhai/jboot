@@ -308,6 +308,7 @@ public class ClassScanner {
         excludeClasses.add("io.jboot.service.");
         excludeClasses.add("io.jboot.Jboot");
         excludeClasses.add("freemarker.");
+        excludeClasses.add("com.twelvemonkeys.");
     }
 
 
