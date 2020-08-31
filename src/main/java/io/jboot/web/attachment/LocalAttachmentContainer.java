@@ -110,7 +110,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
     @Override
     public boolean matchFile(String target, HttpServletRequest request) {
-        return target.startsWith(buildMatchTarget());
+        return target.startsWith(buildMatchTarget()) && target.indexOf('.') != -1;
     }
 
     private String matchTarget = null;
