@@ -32,7 +32,7 @@ public class JbootFilterHandler extends Handler {
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
 
         //static files
-        if (target.indexOf('.') != -1) {
+        if (target.lastIndexOf('.') != -1) {
             return;
         }
 

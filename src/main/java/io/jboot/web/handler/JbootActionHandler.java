@@ -86,7 +86,7 @@ public class JbootActionHandler extends ActionHandler {
      */
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        if (target.indexOf('.') != -1) {
+        if (target.lastIndexOf('.') != -1) {
             return;
         }
 
