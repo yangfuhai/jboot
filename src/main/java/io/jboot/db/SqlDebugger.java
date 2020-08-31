@@ -66,7 +66,7 @@ public class SqlDebugger {
                     sql = sql.replaceFirst("\\?", "null");
                 }
                 // number
-                else if (value instanceof Number) {
+                else if (value instanceof Number || value instanceof Boolean) {
                     sql = sql.replaceFirst("\\?", value.toString());
                 }
                 // numeric

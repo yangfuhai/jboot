@@ -3,6 +3,7 @@ jboot v3.4.0:
 新增：AttachmentContainer 组件，方便自定义把附件上传到其他第三方任何平台
 新增：全新的文档地址 和 Jboot 官网
 修复：数据源 Datasource 的  validationQuery 属性配置不生效的问题
+修复：SqlDebugPrinter 对参数为 Boolean 数据输出的格式不正确的问题
 优化：升级 JFinal-Weixin 版本
 优化：删除 JbootActionReporter 一些不必要的方法
 优化：删除一些不必要的 注释信息
