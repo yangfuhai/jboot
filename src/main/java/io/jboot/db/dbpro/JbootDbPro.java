@@ -41,14 +41,14 @@ public class JbootDbPro extends DbPro {
 
 
     @Override
-    protected List<Record> find(Config config, Connection conn, String sql, Object... paras) throws SQLException {
+    public List<Record> find(Config config, Connection conn, String sql, Object... paras) throws SQLException {
         SqlDebugger.debug(config, sql, paras);
         return super.find(config, conn, sql, paras);
     }
 
 
     @Override
-    protected <T> List<T> query(Config config, Connection conn, String sql, Object... paras) throws SQLException {
+    public  <T> List<T> query(Config config, Connection conn, String sql, Object... paras) throws SQLException {
         SqlDebugger.debug(config, sql, paras);
         return super.query(config, conn, sql, paras);
     }

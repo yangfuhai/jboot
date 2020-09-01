@@ -19,6 +19,7 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
+import io.jboot.db.dbpro.JbootDbPro;
 import io.jboot.db.dialect.JbootDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
@@ -27,6 +28,7 @@ import io.jboot.utils.StrUtil;
 import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
 
@@ -38,6 +40,7 @@ import java.util.*;
 public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private static final Log LOG = Log.getLog(JbootModel.class);
+    private static final Object[] NULL_PARA_ARRAY = new Object[0];
     private static final String DATASOURCE_CACHE_PREFIX = "__ds__";
 
     private static JbootModelConfig config = JbootModelConfig.getConfig();
@@ -779,4 +782,135 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return (M) this;
     }
 
+
+
+    //////copy from jfinal model /////
+    /**
+     * Paginate.
+     * @param pageNumber the page number
+     * @param pageSize the page size
+     * @param select the select part of the sql statement
+     * @param sqlExceptSelect the sql statement excluded select part
+     * @param paras the parameters of sql
+     * @return the Page object
+     */
+    @Override
+    public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
+        return doPaginate(pageNumber, pageSize, null, select, sqlExceptSelect, paras);
+    }
+
+    /**
+     * @see #paginate(int, int, String, String, Object...)
+     */
+    @Override
+    public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
+        return doPaginate(pageNumber, pageSize, null, select, sqlExceptSelect, NULL_PARA_ARRAY);
+    }
+
+    /**
+     * 指定分页 sql 最外层以是否含有 group by 语句
+     * <pre>
+     * 举例：
+     * paginate(1, 10, true, "select *", "from user where id>? group by age", 123);
+     * </pre>
+     */
+    @Override
+    public Page<M> paginate(int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
+        return doPaginate(pageNumber, pageSize, isGroupBySql, select, sqlExceptSelect, paras);
+    }
+
+    private Page<M> doPaginate(int pageNumber, int pageSize, Boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
+        Config config = _getConfig();
+        Connection conn = null;
+        try {
+            conn = config.getConnection();
+            String totalRowSql = "select count(*) " + config.getDialect().replaceOrderBy(sqlExceptSelect);
+            StringBuilder findSql = new StringBuilder();
+            findSql.append(select).append(' ').append(sqlExceptSelect);
+            return doPaginateByFullSql(config, conn, pageNumber, pageSize, isGroupBySql, totalRowSql, findSql, paras);
+        } catch (Exception e) {
+            throw new ActiveRecordException(e);
+        } finally {
+            config.close(conn);
+        }
+    }
+
+    private Page<M> doPaginateByFullSql(Config config, Connection conn, int pageNumber, int pageSize, Boolean isGroupBySql, String totalRowSql, StringBuilder findSql, Object... paras) throws Exception {
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new ActiveRecordException("pageNumber and pageSize must more than 0");
+        }
+        if (config.getDialect().isTakeOverModelPaginate()) {
+            return config.getDialect().takeOverModelPaginate(conn, _getUsefulClass(), pageNumber, pageSize, isGroupBySql, totalRowSql, findSql, paras);
+        }
+
+//        List result = Db.query(config, conn, totalRowSql, paras);
+
+        JbootDbPro dbPro = (JbootDbPro) Db.use();
+        List result = dbPro.query(config,conn,totalRowSql,paras);
+
+        int size = result.size();
+        if (isGroupBySql == null) {
+            isGroupBySql = size > 1;
+        }
+
+        long totalRow;
+        if (isGroupBySql) {
+            totalRow = size;
+        } else {
+            totalRow = (size > 0) ? ((Number)result.get(0)).longValue() : 0;
+        }
+        if (totalRow == 0) {
+            return new Page<M>(new ArrayList<M>(0), pageNumber, pageSize, 0, 0);	// totalRow = 0;
+        }
+
+        int totalPage = (int) (totalRow / pageSize);
+        if (totalRow % pageSize != 0) {
+            totalPage++;
+        }
+
+        if (pageNumber > totalPage) {
+            return new Page<M>(new ArrayList<M>(0), pageNumber, pageSize, totalPage, (int)totalRow);
+        }
+
+        // --------
+        String sql = config.getDialect().forPaginate(pageNumber, pageSize, findSql);
+        List<M> list = find(config, conn, sql, paras);
+        return new Page<M>(list, pageNumber, pageSize, totalPage, (int)totalRow);
+    }
+
+    private Page<M> doPaginateByFullSql(int pageNumber, int pageSize, Boolean isGroupBySql, String totalRowSql, String findSql, Object... paras) {
+        Config config = _getConfig();
+        Connection conn = null;
+        try {
+            conn = config.getConnection();
+            StringBuilder findSqlBuf = new StringBuilder().append(findSql);
+            return doPaginateByFullSql(config, conn, pageNumber, pageSize, isGroupBySql, totalRowSql, findSqlBuf, paras);
+        } catch (Exception e) {
+            throw new ActiveRecordException(e);
+        } finally {
+            config.close(conn);
+        }
+    }
+
+    @Override
+    public Page<M> paginateByFullSql(int pageNumber, int pageSize, String totalRowSql, String findSql, Object... paras) {
+        return doPaginateByFullSql(pageNumber, pageSize, null, totalRowSql, findSql, paras);
+    }
+
+    @Override
+    public Page<M> paginateByFullSql(int pageNumber, int pageSize, boolean isGroupBySql, String totalRowSql, String findSql, Object... paras) {
+        return doPaginateByFullSql(pageNumber, pageSize, isGroupBySql, totalRowSql, findSql, paras);
+    }
+
+
+    protected List<M> find(Config config, Connection conn, String sql, Object... paras) throws Exception {
+        SqlDebugger.debug(config,sql,paras);
+
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+            config.getDialect().fillStatement(pst, paras);
+            try(ResultSet rs = pst.executeQuery()){
+                return config.getDialect().buildModelList(rs, _getUsefulClass());	// ModelBuilder.build(rs, getUsefulClass());
+            }
+        }
+    }
 }

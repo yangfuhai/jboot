@@ -1,6 +1,7 @@
 package io.jboot.test.db.simple;
 
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import io.jboot.app.JbootApplication;
 import io.jboot.db.JbootDb;
@@ -102,6 +103,22 @@ public class DbController extends SuperDbController {
         List<User> users = dao.leftJoin("article").as("a").on("user.id=a.user_id").findListByColumns(columns);
         renderJson(users);
     }
+
+
+
+
+    public void find8(){
+        List<Record> users = JbootDb.use().find("user",Columns.create("login_name",true));
+        renderJson(users);
+    }
+
+
+    public void find9(){
+        User dao = new User();
+        Page<User> page = dao.paginateByColumns(getInt("page",1),10,Columns.create());
+        renderJson(page);
+    }
+
 
 
     public void del1(){
