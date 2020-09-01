@@ -23,7 +23,7 @@ import java.net.URL;
 class ApplicationUtil {
 
     static JbootApplicationConfig getAppConfig(String[] args) {
-        JbootConfigManager.me().parseArgs(args);
+        JbootConfigManager.parseArgs(args);
         return getConfig(JbootApplicationConfig.class);
     }
 

@@ -436,7 +436,7 @@ public class JbootConfigManager {
      *
      * @param args
      */
-    public void parseArgs(String[] args) {
+    public static void parseArgs(String[] args) {
         if (args == null || args.length == 0) {
             return;
         }
@@ -451,7 +451,7 @@ public class JbootConfigManager {
         }
     }
 
-    public void setBootArg(String key, Object value) {
+    public static void setBootArg(String key, Object value) {
         if (argMap == null) {
             argMap = new HashMap<>();
         }

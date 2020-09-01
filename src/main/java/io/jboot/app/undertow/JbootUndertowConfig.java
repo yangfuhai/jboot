@@ -58,7 +58,7 @@ public class JbootUndertowConfig extends UndertowConfig {
         //当不配置端口号时，默认为 8080
         if (port == null || port.trim().length() == 0) {
             propExt.getProperties().put(UNDERTOW_PORT, "8080");
-            JbootConfigManager.me().setBootArg(UNDERTOW_PORT, "8080");
+            JbootConfigManager.setBootArg(UNDERTOW_PORT, "8080");
         }
 
         //当配置为 -1 或者 * 时，默认为随机端口号
@@ -66,7 +66,7 @@ public class JbootUndertowConfig extends UndertowConfig {
             Integer availablePort = getAvailablePort();
             if (availablePort != null) {
                 propExt.getProperties().put(UNDERTOW_PORT, availablePort.toString());
-                JbootConfigManager.me().setBootArg(UNDERTOW_PORT, availablePort.toString());
+                JbootConfigManager.setBootArg(UNDERTOW_PORT, availablePort.toString());
             }
         }
 
@@ -80,7 +80,7 @@ public class JbootUndertowConfig extends UndertowConfig {
         String host = propExt.get(UNDERTOW_HOST);
         if (host == null || host.trim().length() == 0) {
             propExt.getProperties().put(UNDERTOW_HOST, "0.0.0.0");
-            JbootConfigManager.me().setBootArg(UNDERTOW_HOST, "0.0.0.0");
+            JbootConfigManager.setBootArg(UNDERTOW_HOST, "0.0.0.0");
         }
 
         //当不配置资源路径时，默认为 classpath 下的 webapp

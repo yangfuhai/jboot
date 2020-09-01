@@ -46,7 +46,7 @@ public class JbootApplication {
     }
 
     public static void setBootArg(String key, Object value) {
-        JbootConfigManager.me().setBootArg(key, value);
+        JbootConfigManager.setBootArg(key, value);
     }
 
     /**
