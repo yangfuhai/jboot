@@ -1,4 +1,4 @@
-# 如何在Jboot中添加自己的 JFianlConfig
+# 如何在Jboot中添加自己的 JFinalConfig
 
 [[toc]]
 
