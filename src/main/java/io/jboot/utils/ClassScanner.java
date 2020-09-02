@@ -39,6 +39,18 @@ public class ClassScanner {
     public static final Set<String> scanClasses = new HashSet<>();
     public static final Set<String> excludeClasses = new HashSet<>();
 
+//    public static final Set<String> excludeFolderInjar = new HashSet<>();
+//
+//    static {
+//        excludeFolderInjar.add("webapp");
+//        excludeFolderInjar.add("template");
+//        excludeFolderInjar.add("assets");
+//        excludeFolderInjar.add("META-INF");
+//        excludeFolderInjar.add("schemaorg_apache_xmlbeans");
+//        excludeFolderInjar.add("rest-management-private-classpath");
+//    }
+
+
     public static void addScanJarPrefix(String prefix) {
         scanJars.add(prefix.trim());
     }
@@ -511,10 +523,12 @@ public class ClassScanner {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
-                String entryName = jarEntry.getName();
-                if (!jarEntry.isDirectory() && entryName.endsWith(".class")) {
-                    String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                    addClass(classForName(className));
+                if (!jarEntry.isDirectory()) {
+                    String entryName = jarEntry.getName();
+                    if (entryName.endsWith(".class")) {
+                        String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+                        addClass(classForName(className));
+                    }
                 }
             }
         } catch (IOException e1) {
@@ -588,7 +602,7 @@ public class ClassScanner {
                     if (!path.toLowerCase().endsWith(".jar")) {
                         classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                     } else {
-                        jarPaths.add(path.replace('\\', '/'));
+                        jarPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                     }
                 }
             }
@@ -621,14 +635,13 @@ public class ClassScanner {
             if (path.startsWith("/") && path.indexOf(":") == 2) {
                 path = path.substring(1);
             }
-
-            if (!path.toLowerCase().endsWith(".jar") && !jarPaths.contains(path)) {
-                try {
+            try {
+                if (!path.toLowerCase().endsWith(".jar") && !jarPaths.contains(path)) {
                     classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
-                } catch (IOException e) {
+                } else {
+                    jarPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                 }
-            } else {
-                jarPaths.add(path.replace('\\', '/'));
+            } catch (IOException e) {
             }
         }
     }
