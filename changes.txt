@@ -1,3 +1,9 @@
+jboot v3.4.2:
+修复：当使用 Apollo 配置中心时，在某些场景下会导致 devMode 判断不正确的问题
+优化：重构 PaginateDirectiveBase，使之显示更加 "人性化" 和支持更多的功能配置
+
+
+
 jboot v3.4.1:
 修复：在 fatjar 模式下，通过 --jboot.app.mode 启动参数配置应用模式无效的问题
 修复：在 fatjar 模式下，不同位置的 java -jar 启动可能会导致 ClassScanner 两次扫描 jar 拖慢启动速度的问题
