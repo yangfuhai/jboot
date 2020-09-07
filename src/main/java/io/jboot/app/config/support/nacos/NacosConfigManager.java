@@ -17,8 +17,8 @@ package io.jboot.app.config.support.nacos;
 
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
+import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.JbootConfigManager;
-import io.jboot.utils.StrUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -56,7 +56,7 @@ public class NacosConfigManager {
             String content = configService.getConfig(nacosServerConfig.getDataId()
                     , nacosServerConfig.getGroup(), 3000);
 
-            if (StrUtil.isNotBlank(content)) {
+            if (ConfigUtil.isNotBlank(content)) {
                 contentProperties = str2Properties(content);
                 if (contentProperties != null) {
                     configManager.setRemoteProperties(contentProperties);

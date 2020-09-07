@@ -27,13 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConfigUtil {
 
 
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().equals("");
-    }
-
-    public static boolean isNotBlank(String string) {
-        return !isBlank(string);
-    }
 
     public static <T> T newInstance(Class<T> clazz) {
         try {
@@ -101,6 +94,37 @@ public class ConfigUtil {
         }
         return str;
     }
+
+    public static boolean isBlank(String str) {
+        if (str == null) {
+            return true;
+        }
+
+        for (int i = 0, len = str.length(); i < len; i++) {
+            if (str.charAt(i) > ' ') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isNotBlank(Object str) {
+        return str == null ? false : !isBlank(str.toString());
+    }
+
+    public static boolean areNotBlank(String... strs) {
+        if (strs == null || strs.length == 0) {
+            return false;
+        }
+
+        for (String string : strs) {
+            if (isBlank(string)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
 
     private static String rootClassPath;

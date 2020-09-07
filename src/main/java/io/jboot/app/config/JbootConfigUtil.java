@@ -16,10 +16,10 @@
 package io.jboot.app.config;
 
 import io.jboot.Jboot;
-import io.jboot.utils.StrUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -43,7 +43,7 @@ public class JbootConfigUtil {
         Properties prop = JbootConfigManager.me().getProperties();
 
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-            if (entry.getKey() == null || StrUtil.isBlank(entry.getKey().toString())) {
+            if (entry.getKey() == null || ConfigUtil.isBlank(entry.getKey().toString())) {
                 continue;
             }
 

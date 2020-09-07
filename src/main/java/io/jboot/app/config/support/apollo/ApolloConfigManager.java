@@ -18,11 +18,11 @@ package io.jboot.app.config.support.apollo;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChange;
-import io.jboot.Jboot;
+import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.JbootConfigManager;
-import io.jboot.utils.StrUtil;
 
 import java.util.Set;
+
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -43,7 +43,7 @@ public class ApolloConfigManager {
             return;
         }
 
-        Config config = getDefaultConfig();
+        Config config = getDefaultConfig(configManager);
 
         Set<String> propNames = config.getPropertyNames();
         if (propNames != null && !propNames.isEmpty()) {
@@ -64,9 +64,9 @@ public class ApolloConfigManager {
 
     }
 
-    private Config getDefaultConfig() {
-        ApolloServerConfig apolloServerConfig = Jboot.config(ApolloServerConfig.class);
-        if (StrUtil.isNotBlank(apolloServerConfig.getDefaultNamespace())) {
+    private Config getDefaultConfig(JbootConfigManager configManager) {
+        ApolloServerConfig apolloServerConfig = configManager.get(ApolloServerConfig.class);
+        if (ConfigUtil.isNotBlank(apolloServerConfig.getDefaultNamespace())) {
             return ConfigService.getConfig(apolloServerConfig.getDefaultNamespace());
         } else {
             return ConfigService.getAppConfig();

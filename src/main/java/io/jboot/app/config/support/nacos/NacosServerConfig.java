@@ -16,8 +16,8 @@
 package io.jboot.app.config.support.nacos;
 
 
+import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.annotation.ConfigModel;
-import io.jboot.utils.StrUtil;
 
 import java.util.Properties;
 
@@ -221,35 +221,35 @@ public class NacosServerConfig {
 
     public Properties toProperties() {
         Properties properties = new Properties();
-        putProperties(properties,"isUseCloudNamespaceParsing",isUseCloudNamespaceParsing);
-        putProperties(properties,"isUseEndpointParsingRule",isUseEndpointParsingRule);
-        putProperties(properties,"endpoint",endpoint);
-        putProperties(properties,"endpointPort",endpointPort);
-        putProperties(properties,"namespace",namespace);
-        putProperties(properties,"username",username);
-        putProperties(properties,"password",password);
-        putProperties(properties,"accessKey",accessKey);
-        putProperties(properties,"secretKey",secretKey);
-        putProperties(properties,"ramRoleName",ramRoleName);
-        putProperties(properties,"serverAddr",serverAddr);
-        putProperties(properties,"contextPath",contextPath);
-        putProperties(properties,"clusterName",clusterName);
-        putProperties(properties,"encode",encode);
-        putProperties(properties,"configLongPollTimeout",configLongPollTimeout);
-        putProperties(properties,"configRetryTime",configRetryTime);
-        putProperties(properties,"maxRetry",maxRetry);
-        putProperties(properties,"enableRemoteSyncConfig",enableRemoteSyncConfig);
+        putProperties(properties, "isUseCloudNamespaceParsing", isUseCloudNamespaceParsing);
+        putProperties(properties, "isUseEndpointParsingRule", isUseEndpointParsingRule);
+        putProperties(properties, "endpoint", endpoint);
+        putProperties(properties, "endpointPort", endpointPort);
+        putProperties(properties, "namespace", namespace);
+        putProperties(properties, "username", username);
+        putProperties(properties, "password", password);
+        putProperties(properties, "accessKey", accessKey);
+        putProperties(properties, "secretKey", secretKey);
+        putProperties(properties, "ramRoleName", ramRoleName);
+        putProperties(properties, "serverAddr", serverAddr);
+        putProperties(properties, "contextPath", contextPath);
+        putProperties(properties, "clusterName", clusterName);
+        putProperties(properties, "encode", encode);
+        putProperties(properties, "configLongPollTimeout", configLongPollTimeout);
+        putProperties(properties, "configRetryTime", configRetryTime);
+        putProperties(properties, "maxRetry", maxRetry);
+        putProperties(properties, "enableRemoteSyncConfig", enableRemoteSyncConfig);
         return properties;
     }
 
     private void putProperties(Properties p, String key, String value) {
-        if (StrUtil.isNotBlank(value)) {
+        if (value != null && value.trim().length() > 0) {
             p.put(key, value);
         }
     }
 
 
     public boolean isConfigOk() {
-        return StrUtil.areNotEmpty(serverAddr, dataId, group);
+        return ConfigUtil.areNotBlank(serverAddr, dataId, group);
     }
 }

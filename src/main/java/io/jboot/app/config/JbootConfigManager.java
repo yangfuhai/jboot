@@ -21,7 +21,6 @@ import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.app.config.support.apollo.ApolloConfigManager;
 import io.jboot.app.config.support.nacos.NacosConfigManager;
-import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -236,7 +235,7 @@ public class JbootConfigManager {
 
 
     public String getConfigValue(Properties properties, String key) {
-        if (StrUtil.isBlank(key)) {
+        if (ConfigUtil.isBlank(key)) {
             return "";
         }
         String originalValue = getOriginalConfigValue(properties, key);
@@ -249,7 +248,7 @@ public class JbootConfigManager {
 
         for (ConfigPart cp : configParts) {
             String value = getConfigValue(properties, cp.getKey());
-            value = StrUtil.isNotBlank(value) ? value : cp.getDefaultValue();
+            value = ConfigUtil.isNotBlank(value) ? value : cp.getDefaultValue();
             stringValue = stringValue.replace(cp.getPartString(), value);
         }
         return stringValue;
