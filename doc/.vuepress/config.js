@@ -33,7 +33,9 @@ module.exports = {
 
     nav: [
       {text: '首页', link: '/'},
-      {text: '提问', link: 'https://gitee.com/JPressProjects/jpress/issues'},
+      {text: 'Jboot文档', link: '/docs/'},
+      {text: 'JbootAdmin', link: '/jbootadmin/'},
+      {text: '提问', link: 'https://gitee.com/JbootProjects/jboot/issues'},
       {text: 'JPress', link: 'http://www.jpress.io'},
       {
         text: '源码下载', items: [
@@ -44,11 +46,11 @@ module.exports = {
     ],
 
     sidebar: {
-      '/': [{
+      '/docs/': [{
         title: '认识 Jboot',
         collapsable: false,
         children: [
-          {title: 'Jboot 简介', path: '/'},
+          {title: 'Jboot 简介', path: '/docs/'},
           {title: '快速开始', path: '/docs/start'}
         ],
       },
@@ -72,7 +74,8 @@ module.exports = {
             {title: 'MQ 消息队列', path: '/docs/mq'},
             {title: 'Gateway 网关', path: '/docs/gateway'},
             {title: '任务调度', path: '/docs/schedule'},
-            {title: '限流', path: '/docs/limit'},
+            {title: 'Jboot限流', path: '/docs/limit'},
+            {title: 'Sentinel限流', path: '/docs/sentinel'},
             {title: '监控', path: '/docs/metrics'},
             {title: '事件机制', path: '/docs/event'},
             {title: '序列化', path: '/docs/serialize'},
@@ -81,6 +84,8 @@ module.exports = {
             {title: '项目构建', path: '/docs/build'},
             {title: '项目部署', path: '/docs/deploy'},
             {title: 'Docker', path: '/docs/docker'},
+            {title: '热加载', path: '/docs/hotload'},
+            {title: 'Swagger', path: '/docs/swagger'},
           ],
         },
 
@@ -92,6 +97,30 @@ module.exports = {
           ],
         }
       ],
+
+
+      '/jbootadmin/': [{
+        title: '认识 JbootAdmin',
+        collapsable: false,
+        children: [
+          {title: '简介', path: '/jbootadmin/'},
+          {title: '功能介绍', path: '/jbootadmin/feature'},
+          {title: '我要购买', path: '/jbootadmin/buy'}
+        ],
+      },
+        {
+          title: '开发文档',
+          collapsable: false,
+          children: [
+            {title: '开始', path: '/jbootadmin/start'},
+            {title: '数据库设计', path: '/jbootadmin/db'},
+            {title: '后台菜单', path: '/jbootadmin/menu'},
+            {title: '权限设计', path: '/jbootadmin/permission'},
+            {title: '前端组件', path: '/jbootadmin/front'},
+            {title: '安全防护', path: '/jbootadmin/safety_precautions'},
+          ],
+        },
+      ]
     },
     sidebarDepth: 1
   },
