@@ -94,19 +94,23 @@ public class AttachmentManager {
      * @return 返回文件的相对路径
      */
     public String saveFile(File file) {
-        String retString = null;
+        AttachmentContainer defaultContainer = getDefaultContainer();
+
+        //优先从 默认的 container 去保存文件
+        String relativePath = defaultContainer.saveFile(file);
+        File defaultContainerFile = defaultContainer.getFile(relativePath);
+
         for (Map.Entry<String, AttachmentContainer> entry : containerMap.entrySet()) {
             AttachmentContainer container = entry.getValue();
             try {
-                String result = container.saveFile(file);
-                if (DEFAULT_KEY.equals(entry.getKey())) {
-                    retString = result;
+                if (container != defaultContainer) {
+                    container.saveFile(defaultContainerFile);
                 }
             } catch (Exception ex) {
-                LOG.error("save file error in container :" + container, ex);
+                LOG.error("get file error in container :" + container, ex);
             }
         }
-        return retString;
+        return relativePath;
     }
 
 
@@ -140,23 +144,25 @@ public class AttachmentManager {
      */
     public File getFile(String relativePath) {
 
+        AttachmentContainer defaultContainer = getDefaultContainer();
+
         //优先从 默认的 container 去获取
-        File file = getDefaultContainer().getFile(relativePath);
+        File file = defaultContainer.getFile(relativePath);
         if (file != null && file.exists()) {
             return file;
         }
 
         for (Map.Entry<String, AttachmentContainer> entry : containerMap.entrySet()) {
-            if (!DEFAULT_KEY.equals(entry.getKey())) {
-                AttachmentContainer container = entry.getValue();
-                try {
+            AttachmentContainer container = entry.getValue();
+            try {
+                if (container != defaultContainer) {
                     file = container.getFile(relativePath);
                     if (file != null && file.exists()) {
                         return file;
                     }
-                } catch (Exception ex) {
-                    LOG.error("get file error in container :" + container, ex);
                 }
+            } catch (Exception ex) {
+                LOG.error("get file error in container :" + container, ex);
             }
         }
         return null;
