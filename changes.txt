@@ -1,3 +1,9 @@
+jboot v3.4.3:
+新增：指令 @JFinalDirective 新增 override 配置，用于覆盖系统已经内置的指令
+优化：优化 AttachmentManager，使之更加方便的上传 获取文件
+
+
+
 jboot v3.4.2:
 修复：当使用 Apollo 配置中心时，在某些场景下会导致 devMode 判断不正确的问题
 优化：重构 PaginateDirectiveBase，使之显示更加 "人性化" 和支持更多的功能配置
