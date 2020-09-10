@@ -139,7 +139,27 @@ public class AttachmentManager {
      * @return
      */
     public File getFile(String relativePath) {
-        return getDefaultContainer().getFile(relativePath);
+
+        //优先从 默认的 container 去获取
+        File file = getDefaultContainer().getFile(relativePath);
+        if (file != null && file.exists()) {
+            return file;
+        }
+
+        for (Map.Entry<String, AttachmentContainer> entry : containerMap.entrySet()) {
+            if (!DEFAULT_KEY.equals(entry.getKey())) {
+                AttachmentContainer container = entry.getValue();
+                try {
+                    file = container.getFile(relativePath);
+                    if (file != null && file.exists()) {
+                        return file;
+                    }
+                } catch (Exception ex) {
+                    LOG.error("get file error in container :" + container, ex);
+                }
+            }
+        }
+        return null;
     }
 
     /**
