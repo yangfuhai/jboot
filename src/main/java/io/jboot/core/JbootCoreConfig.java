@@ -210,6 +210,10 @@ public class JbootCoreConfig extends JFinalConfig {
         for (Class clazz : directiveClasses) {
             JFinalDirective directive = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
             if (directive != null) {
+                if (directive.override()){
+                    //remove old directive
+                    engine.removeDirective(directive.value());
+                }
                 engine.addDirective(AnnotationUtil.get(directive.value()), clazz);
             }
 
