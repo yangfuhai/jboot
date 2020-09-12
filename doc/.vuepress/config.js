@@ -76,6 +76,7 @@ module.exports = {
             {title: '任务调度', path: '/docs/schedule'},
             {title: 'Jboot限流', path: '/docs/limit'},
             {title: 'Sentinel限流', path: '/docs/sentinel'},
+            {title: '分布式附件管理', path: '/docs/attachment'},
             {title: '监控', path: '/docs/metrics'},
             {title: '事件机制', path: '/docs/event'},
             {title: '序列化', path: '/docs/serialize'},
