@@ -97,6 +97,39 @@ jboot.rpc.autoExportEnable = true
 - jboot.rpc.groups ： 每个服务对应的 group
 - jboot.rpc.autoExportEnable ： 当 Jboot 启动的时候，是否自动暴露 @RPCBean 注解的接口。
 
+在 以上 示例中，`jboot.rpc.providers` 配置中，可以对每个 Service 进行配置，但是，在绝大多数的情况下，我们可能只需要一个配置，这个配置应用于所有的 Service 服务，此时我们需要做如下配置：
+
+```
+# 名称为 default 的 provider 配置（当不配置其名称的时候，名称默认为 default）
+jboot.rpc.dubbo.provider.timeout = xx.xx.xx
+jboot.rpc.dubbo.provider.loadbalance = xx.xx.xx
+jboot.rpc.dubbo.provider.group = xx.xx.xx
+jboot.rpc.dubbo.provider.host = xx.xx.xx
+jboot.rpc.dubbo.provider.default = true  #设置当前 provider 为默认配置，既所有未指定 provider 的 service 服务都使用此配置。 
+
+# 名称为 name1 的 provider 配置
+jboot.rpc.dubbo.provider.name1.timeout = xx.xx.xx
+jboot.rpc.dubbo.provider.name1.loadbalance = xx.xx.xx
+jboot.rpc.dubbo.provider.name1.group = xx.xx.xx
+jboot.rpc.dubbo.provider.name1.host = xx.xx.xx
+
+# 名称为 name2 的 provider 配置
+jboot.rpc.dubbo.provider.name2.timeout = xx.xx.xx
+jboot.rpc.dubbo.provider.name2.loadbalance = xx.xx.xx
+jboot.rpc.dubbo.provider.name2.group = xx.xx.xx
+jboot.rpc.dubbo.provider.name2.host = xx.xx.xx
+
+
+# 配置 com.yourdomain.AAAService 使用的 provider 配置为 name1
+# 配置 com.yourdomain.AAAService 使用的 provider 配置为 name2
+# 其他所有服务的 provider 配置使为 default，原因是名称为 default 的 provider 其属性 default 为 true 了
+# 此处要注意，如果我们给 name2 的 provider 添加配置 jboot.rpc.dubbo.provider.name2.default = true，
+# 那么所有的未配置 providers 的服务都使用 name2 作为其默认位置。
+jboot.rpc.providers = com.yourdomain.AAAService:name1,com.yourdomain.XXXService:name2
+```
+
+provider 的更多配置情况参考：http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-provider.html
+
 
 ## 开始使用
 
