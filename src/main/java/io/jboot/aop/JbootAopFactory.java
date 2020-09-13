@@ -18,7 +18,6 @@ package io.jboot.aop;
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
-import com.jfinal.ext.proxy.CglibProxyFactory;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
@@ -26,6 +25,8 @@ import com.jfinal.proxy.Proxy;
 import com.jfinal.proxy.ProxyManager;
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.*;
+import io.jboot.aop.cglib.CPI;
+import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
@@ -44,10 +45,12 @@ import io.jboot.web.controller.JbootController;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class JbootAopFactory extends AopFactory {
 
@@ -69,10 +72,11 @@ public class JbootAopFactory extends AopFactory {
 
 
     private Map<String, Object> beansMap = new ConcurrentHashMap<>();
+    private List<JbootInterceptorBuilder> interceptorBuilders = new CopyOnWriteArrayList();
 
 
     private JbootAopFactory() {
-        ProxyManager.me().setProxyFactory(new CglibProxyFactory());
+        ProxyManager.me().setProxyFactory(new JbootCglibProxyFactory());
         setInjectSuperClass(true);
         initBeanMapping();
     }
@@ -369,5 +373,30 @@ public class JbootAopFactory extends AopFactory {
 
     public void setBean(String name, Object obj) {
         beansMap.put(name, obj);
+    }
+
+    public List<JbootInterceptorBuilder> getInterceptorBuilders() {
+        return interceptorBuilders;
+    }
+
+    public void setInterceptorBuilders(List<JbootInterceptorBuilder> interceptorBuilders) {
+        this.interceptorBuilders = interceptorBuilders;
+    }
+
+
+    public void addInterceptorBuilder(JbootInterceptorBuilder interceptorBuilder){
+        if(interceptorBuilder == null){
+            throw new NullPointerException("interceptorBuilder must not be null.");
+        }
+        this.interceptorBuilders.add(interceptorBuilder);
+        CPI.clearIntersCache();
+    }
+
+    public void addInterceptorBuilders(Collection<JbootInterceptorBuilder> interceptorBuilders){
+        if(interceptorBuilders == null){
+            throw new NullPointerException("interceptorBuilder must not be null.");
+        }
+        this.interceptorBuilders.addAll(interceptorBuilders);
+        CPI.clearIntersCache();
     }
 }
