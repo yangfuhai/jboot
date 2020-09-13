@@ -13,7 +13,6 @@
 - 开启 Nacos 分布式配置中心
 - 开启 Apollo 分布式配置中心
 - 配置内容加密解密
-- 设计原因
 - 常见问题
 - Jboot所有配置参考
 
@@ -22,13 +21,17 @@
 在 Jboot 应用中，可以通过几下几种方式给 Jboot 应用进行配置。
 
 - jboot.properties 配置文件
+- jboot-xxx.properties 配置文件
 - 环境变量
 - Jvm 系统属性
 - 启动参数
 - 分布式配置中心（目前支持 Apollo 和 Nacos）
 
-> 注意：如果同一个属性被多处配置，那么 Jboot 读取配置的优先顺序是：
-> `分布式配置中心` > `启动参数` > `Jvm 系统属性` > `环境变量` > `jboot.properties 配置`
+> 注意：
+> 1、如果同一个属性被多处配置，那么 Jboot 读取配置的优先顺序是：
+> `分布式配置中心` > `启动参数` > `Jvm 系统属性` > `环境变量` > `jboot-xxx.properties` > `jboot.properties`。
+> 
+> 2、jboot-xxx.properties 的含义是：当配置 jboot.app.mode=dev 时，默认去读取 jboot-dev.properties，同理当配置 jboot.app.mode=product 时，默认去读取 jboot-product.properties，jboot-xxx.properties 的文件名称是来源于 jboot.app.mode 的配置。jboot-xxx.properties 这个文件并不是必须的，但当该配置文件存在时，其优读取顺序先于 jboot.properties。
 
 
 
@@ -315,11 +318,6 @@ public MyConfigDecriptor implements JbootConfigDecryptor {
 }
 ```
 
-## 设计原因
-
-由于 Jboot 定位是微服务框架，同时 Jboot 假设：基于 Jboot 开发的应用部署在 Docker 之上。
-
-因此，在做 Devops 的时候，编排工具（例如：k8s、mesos）会去修改应用的相关配置，而通过环境变量和启动配置，无疑是最方便快捷的。
 
 
 ## 常见问题

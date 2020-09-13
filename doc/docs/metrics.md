@@ -41,11 +41,13 @@ public class MetricsController extends JbootController {
 同时，由于我们配置了 `jboot.metric.url=-/metrics_admin` ，我们可以通过 `http://127.0.0.1:8888/metrics_admin` 来查看 `index()` 这个方法的访问次数和并发量。
 
 
-## Metrics 输出到 grafana
+## Metrics 输出到 Grafana
 
-grafana 并没有接收数据的能力，因此，jboot 的方案是先数据输出到 influxdb，在配置 grafana 来读取 influxdb 的数据。
+Grafana 是一个开源的度量分析与可视化套件。经常被用作基础设施的时间序列数据和应用程序分析的可视化，它在其他领域也被广泛的使用包括工业传感器、家庭自动化、天气和过程控制等。
 
-因此，在 grafana 正常显示 jboot 数据之前，先把 grafana 和 influxdb 启动起来。
+Grafana支持许多不同的数据源，比如： Graphite，InfluxDB，OpenTSDB，Prometheus，Elasticsearch，CloudWatch 和 KairosDB 等。每个数据源都有一个特定的查询编辑器，该编辑器定制的特性和功能是公开的特定数据来源。但是，Grafana 并没有接收数据的能力，因此，jboot 的方案是先把数据输出到 influxdb，再配置 Grafana 来读取 influxdb 的数据。
+
+因此，在 Grafana 正常显示 jboot 数据之前，先把 Grafana 和 influxdb 启动起来。
 
 **启动 influxdb ：**
 
@@ -60,13 +62,13 @@ docker run -d -p 8086:8086 -p 8083:8083 \
      influxdb
 ```
 
-**启动 grafana ：**
+**启动 Grafana ：**
 
 ```
 docker run -d -p 3000:3000 grafana/grafana
 ```
 
-同时，需要在 jboot 应用添加如下依赖：
+最后，需要在 jboot 应用添加如下依赖：
 
 ```xml
 <dependency>
@@ -105,23 +107,26 @@ public class MetricsController extends JbootController {
 }
 ```
 
-启动 jboot，当访问 `http://127.0.0.1:8080/` 之后， jboot 就会把Metrics的数据输出到 influxdb，此时我们就可以配置 grafana 读取 influxdb 的数据了。
+启动 jboot，当访问 `http://127.0.0.1:8080/` 之后， jboot 就会把 Metrics 的数据输出到 influxdb，此时我们就可以配置 grafana 读取 influxdb 的数据了。
 
 更多关于 grafana 读取 influxdb 的文档请参考 https://grafana.com/docs/features/datasources/influxdb/ 。
 
-## Metrics 输出到 graphite
+## Metrics 输出到 Graphite
 
-在开始之前，需要添加如下的 Maven 依赖。
+Graphite 是一个开源实时的、显示时间序列度量数据的图形系统。Graphite 并不收集度量数据本身，而是像一个数据库，通过其后端接收度量数据，然后以实时方式查询、转换、组合这些度量数据。Graphite支持内建的Web界面，它允许用户浏览度量数据和图。
 
-```xml
-<dependency>
-    <groupId>io.dropwizard.metrics</groupId>
-    <artifactId>metrics-graphite</artifactId>
-    <version>4.1.0</version>
-</dependency>
-```
+Graphite 有三个主要组件组成：
 
-**启动 graphite**
+- 1）Graphite-Web
+这是一个基于Django的Web应用，可以呈现图形和仪表板
+
+- 2）Carbon
+这是一个度量处理守护进程
+
+- 3）Whisper
+这是一个基于时序数据库的库
+
+在开始之前，我们需要启动 Graphite
 
 ```
 docker run -d\
@@ -135,7 +140,18 @@ docker run -d\
  graphiteapp/graphite-statsd
 ```
 
-在 jboot.properties 添加如下配置：
+
+然后，在我们自己的项目添加如下的 Maven 依赖。
+
+```xml
+<dependency>
+    <groupId>io.dropwizard.metrics</groupId>
+    <artifactId>metrics-graphite</artifactId>
+    <version>4.1.0</version>
+</dependency>
+```
+
+最后在 jboot.properties 添加如下配置：
 
 ```
 jboot.metric.url=/metrics_admin
