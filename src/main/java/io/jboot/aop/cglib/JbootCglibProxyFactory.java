@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * CglibProxyFactory 用于扩展 cglib 的代理模式，默认不使用
+ * JbootCglibProxyFactory 用于扩展 cglib 的代理模式
  *
  * <pre>
  * 配置方法：

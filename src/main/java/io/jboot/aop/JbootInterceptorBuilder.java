@@ -21,8 +21,16 @@ import java.lang.reflect.Method;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
+ * 
+ * JbootInterceptorBuilder 用于自定义每个服务方法的拦截器构建
+ *
+ * <pre>
+ * 配置方法：
+ * public void onInit() {
+ *     JbootAopFactory.me().addInterceptorBuilder(new MyInterceptorBuilder());
+ * }
+ * </pre>
  */
 public interface JbootInterceptorBuilder {
-
-    public Interceptor[] build(Class<?> serviceClass, Method method);
+    Interceptor[] build(Class<?> serviceClass, Method method);
 }
