@@ -42,7 +42,6 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     }
 
     /**
-     *
      * @param rootPath
      * @param targetPrefix 不能以 / 开头
      */
@@ -133,7 +132,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
     private Boolean runInFatjar;
 
-    private boolean isRunInfatjar() {
+    protected boolean isRunInFatjar() {
         if (runInFatjar == null) {
             runInFatjar = LocalAttachmentContainer.class.getResource("/") == null;
         }
@@ -144,14 +143,12 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     @Override
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
         //是否在 fatjar 运行，如果不在 fatjar 运行，由 tomcat 或者 undertow 自行渲染
-        if (!isRunInfatjar()) {
+        if (!isRunInFatjar()) {
             return false;
         }
         // 如果在 fatjar 运行，需要自己来渲染该文件
-        else {
-            new FileRender(getFile(target)).setContext(request, response).render();
-            return true;
-        }
+        new FileRender(getFile(target)).setContext(request, response).render();
+        return true;
     }
 
 
