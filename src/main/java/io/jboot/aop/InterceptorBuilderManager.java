@@ -18,8 +18,11 @@ package io.jboot.aop;
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
+import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.core.weight.WeightUtil;
+import io.jboot.utils.ClassScanner;
+import io.jboot.utils.ClassUtil;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -37,6 +40,18 @@ public class InterceptorBuilderManager extends AopFactory {
         return me;
     }
 
+    public InterceptorBuilderManager() {
+        List<Class<InterceptorBuilder>> builderClasses = ClassScanner.scanSubClass(InterceptorBuilder.class,true);
+        if (builderClasses != null){
+            for (Class<InterceptorBuilder> builderClass : builderClasses){
+                if (builderClass.getAnnotation(AutoLoad.class) != null){
+                    interceptorBuilders.add(ClassUtil.newInstance(builderClass,false));
+                }
+            }
+
+            JbootCglibProxyFactory.IntersCache.clear();
+        }
+    }
 
     private List<InterceptorBuilder> interceptorBuilders = new CopyOnWriteArrayList();
 

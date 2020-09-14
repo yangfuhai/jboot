@@ -305,20 +305,6 @@ public class ClassScanner {
         excludeClasses.add("cn.hutool.");
         excludeClasses.add("com.dyuproject.");
         excludeClasses.add("io.protostuff.");
-        excludeClasses.add("io.jboot.core.");
-        excludeClasses.add("io.jboot.web.");
-        excludeClasses.add("io.jboot.objects.");
-        excludeClasses.add("io.jboot.utils.");
-        excludeClasses.add("io.jboot.codegen.");
-        excludeClasses.add("io.jboot.wechat.");
-        excludeClasses.add("io.jboot.components.");
-        excludeClasses.add("io.jboot.support.");
-        excludeClasses.add("io.jboot.exception.");
-        excludeClasses.add("io.jboot.db.");
-        excludeClasses.add("io.jboot.aop.");
-        excludeClasses.add("io.jboot.app.");
-        excludeClasses.add("io.jboot.service.");
-        excludeClasses.add("io.jboot.Jboot");
         excludeClasses.add("freemarker.");
         excludeClasses.add("com.twelvemonkeys.");
     }
@@ -380,10 +366,10 @@ public class ClassScanner {
     }
 
 
-    public static <T> List<Class<T>> scanSubClass(Class<T> pclazz, boolean isInstantiable) {
+    public static <T> List<Class<T>> scanSubClass(Class<T> pclazz, boolean instantiable) {
         initIfNecessary();
         List<Class<T>> classes = new ArrayList<>();
-        findChildClasses(classes, pclazz, isInstantiable);
+        findChildClasses(classes, pclazz, instantiable);
         return classes;
     }
 
@@ -415,7 +401,7 @@ public class ClassScanner {
     }
 
 
-    public static List<Class> scanClassByAnnotation(Class annotationClass, boolean isInstantiable) {
+    public static List<Class> scanClassByAnnotation(Class annotationClass, boolean instantiable) {
         initIfNecessary();
 
         List<Class> list = new ArrayList<>();
@@ -425,7 +411,7 @@ public class ClassScanner {
                 continue;
             }
 
-            if (isInstantiable && !isInstantiable(clazz)) {
+            if (instantiable && !isInstantiable(clazz)) {
                 continue;
             }
 
@@ -442,14 +428,14 @@ public class ClassScanner {
     }
 
 
-    private static <T> void findChildClasses(List<Class<T>> classes, Class<T> parent, boolean isInstantiable) {
+    private static <T> void findChildClasses(List<Class<T>> classes, Class<T> parent, boolean instantiable) {
         for (Class clazz : appClassesCache) {
 
             if (!parent.isAssignableFrom(clazz)) {
                 continue;
             }
 
-            if (isInstantiable && !isInstantiable(clazz)) {
+            if (instantiable && !isInstantiable(clazz)) {
                 continue;
             }
 
