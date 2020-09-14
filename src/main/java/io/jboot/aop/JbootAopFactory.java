@@ -36,6 +36,7 @@ import io.jboot.components.rpc.Jbootrpc;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.annotation.RPCInject;
+import io.jboot.core.weight.WeightUtil;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.service.JbootServiceBase;
@@ -389,14 +390,19 @@ public class JbootAopFactory extends AopFactory {
             throw new NullPointerException("interceptorBuilder must not be null.");
         }
         this.interceptorBuilders.add(interceptorBuilder);
+        WeightUtil.sort(this.interceptorBuilders);
+
         CPI.clearIntersCache();
     }
+
 
     public void addInterceptorBuilders(Collection<InterceptorBuilder> interceptorBuilders){
         if(interceptorBuilders == null){
             throw new NullPointerException("interceptorBuilder must not be null.");
         }
         this.interceptorBuilders.addAll(interceptorBuilders);
+        WeightUtil.sort(this.interceptorBuilders);
+
         CPI.clearIntersCache();
     }
 
