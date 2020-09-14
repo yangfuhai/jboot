@@ -18,7 +18,6 @@ package io.jboot.web.attachment;
 import com.jfinal.ext.kit.DateKit;
 import com.jfinal.kit.LogKit;
 import com.jfinal.render.FileRender;
-import io.jboot.Jboot;
 import io.jboot.utils.FileUtil;
 import io.jboot.utils.StrUtil;
 
@@ -33,15 +32,20 @@ import java.util.Date;
  */
 public class LocalAttachmentContainer implements AttachmentContainer {
 
-    private String rootPath ;
-    private String targetPrefix ;
+    private String rootPath;
+    private String targetPrefix;
 
     public LocalAttachmentContainer() {
-        LocalAttachmentContainerConfig config = Jboot.config(LocalAttachmentContainerConfig.class);
+        LocalAttachmentContainerConfig config = LocalAttachmentContainerConfig.getInstance();
         this.rootPath = config.getRootPath();
         this.targetPrefix = config.getTargetPrefix();
     }
 
+    /**
+     *
+     * @param rootPath
+     * @param targetPrefix 不能以 / 开头
+     */
     public LocalAttachmentContainer(String rootPath, String targetPrefix) {
         this.rootPath = rootPath;
         this.targetPrefix = targetPrefix;

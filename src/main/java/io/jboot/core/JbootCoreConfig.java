@@ -49,7 +49,7 @@ import io.jboot.support.swagger.JbootSwaggerManager;
 import io.jboot.utils.*;
 import io.jboot.web.JbootJson;
 import io.jboot.web.attachment.AttachmentHandler;
-import io.jboot.web.attachment.LocalAttachmentContainer;
+import io.jboot.web.attachment.LocalAttachmentContainerConfig;
 import io.jboot.web.controller.JbootControllerManager;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.annotation.JFinalDirective;
@@ -146,8 +146,7 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setJsonFactory(JbootJson::new);
         constants.setInjectDependency(true);
 
-        constants.setBaseUploadPath(LocalAttachmentContainer.DEFAULT_ATTACHEMENT_PATH);
-
+        constants.setBaseUploadPath(LocalAttachmentContainerConfig.getInstance().buildUploadAbsolutePath());
 
         JbootAppListenerManager.me().onConstantConfig(constants);
 
@@ -158,7 +157,6 @@ public class JbootCoreConfig extends JFinalConfig {
     public void configRoute(Routes routes) {
 
         routes.setMappingSuperClass(true);
-
 
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
@@ -210,7 +208,7 @@ public class JbootCoreConfig extends JFinalConfig {
         for (Class clazz : directiveClasses) {
             JFinalDirective directive = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
             if (directive != null) {
-                if (directive.override()){
+                if (directive.override()) {
                     //remove old directive
                     engine.removeDirective(directive.value());
                 }
@@ -274,7 +272,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
         //metrics 处理
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
-        if (metricsConfig.isConfigOk()){
+        if (metricsConfig.isConfigOk()) {
             handlers.add(new JbootMetricsHandler(metricsConfig.getUrl()));
         }
 

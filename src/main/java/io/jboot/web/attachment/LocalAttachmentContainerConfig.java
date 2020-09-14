@@ -16,7 +16,10 @@
 package io.jboot.web.attachment;
 
 import com.jfinal.kit.PathKit;
+import io.jboot.Jboot;
 import io.jboot.app.config.annotation.ConfigModel;
+
+import java.io.File;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -41,5 +44,13 @@ public class LocalAttachmentContainerConfig  {
 
     public void setTargetPrefix(String targetPrefix) {
         this.targetPrefix = targetPrefix;
+    }
+
+    public static  LocalAttachmentContainerConfig getInstance(){
+        return Jboot.config(LocalAttachmentContainerConfig.class);
+    }
+
+    public String buildUploadAbsolutePath(){
+        return new File(rootPath,targetPrefix).getAbsolutePath();
     }
 }
