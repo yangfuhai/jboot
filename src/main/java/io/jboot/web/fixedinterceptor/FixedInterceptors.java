@@ -16,6 +16,7 @@
 package io.jboot.web.fixedinterceptor;
 
 import com.jfinal.aop.Aop;
+import com.jfinal.aop.Interceptor;
 import io.jboot.components.limiter.LimiterInterceptor;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.support.metric.JbootMetricInterceptor;
@@ -61,11 +62,11 @@ public class FixedInterceptors {
 
     private List<FixedInterceptorWapper> userInters = new ArrayList<>();
 
-    private FixedInterceptor[] allInters = null;
+    private Interceptor[] allInters = null;
 
     private List<FixedInterceptorWapper> inters;
 
-    public FixedInterceptor[] all() {
+    public Interceptor[] all() {
         if (allInters == null) {
             synchronized (this) {
                 if (allInters == null) {
@@ -79,7 +80,7 @@ public class FixedInterceptors {
 
     private void initInters() {
 
-        FixedInterceptor[] interceptors = new FixedInterceptor[defaultInters.length + userInters.size()];
+        Interceptor[] interceptors = new Interceptor[defaultInters.length + userInters.size()];
         inters = new ArrayList<>();
         inters.addAll(Arrays.asList(defaultInters));
         inters.addAll(userInters);

@@ -67,6 +67,7 @@ public class JbootInvocation extends Invocation {
             // jfinal 原生的构建
             inters = ArrayUtil.concat(FixedInterceptors.me().all(), action.getInterceptors());
 
+
             // builder 再次构建
             inters = InterceptorBuilderManager.me().build(action.getControllerClass(), action.getMethod(), inters);
 

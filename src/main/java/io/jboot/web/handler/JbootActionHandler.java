@@ -73,10 +73,6 @@ public class JbootActionHandler extends ActionHandler {
     }
 
 
-    public void setResponse(HttpServletResponse response, Action action) {
-    }
-
-
     /**
      * handle
      * 1: Action action = actionMapping.getAction(target)
@@ -113,13 +109,6 @@ public class JbootActionHandler extends ActionHandler {
 //            Invocation invocation = new Invocation(action, controller);
             Invocation invocation = getInvocation(action, controller);
             if (devMode) {
-//                if (ActionReporter.isReportAfterInvocation(request)) {
-//                    invokeInvocation(invocation);
-//                    JbootActionReporter.report(target, controller, action);
-//                } else {
-//                    JbootActionReporter.report(target, controller, action);
-//                    invokeInvocation(invocation);
-//                }
                 long time = System.currentTimeMillis();
                 try {
                     invocation.invoke();
@@ -141,9 +130,7 @@ public class JbootActionHandler extends ActionHandler {
                 return;
             }
 
-            if (render == null
-                    && void.class != action.getMethod().getReturnType()
-                    && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
+            if (render == null && void.class != action.getMethod().getReturnType() && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
                 JbootRenderFactory jrf = (JbootRenderFactory) renderManager.getRenderFactory();
                 render = jrf.getReturnValueRender(action, invocation.getReturnValue());
             }
@@ -151,9 +138,6 @@ public class JbootActionHandler extends ActionHandler {
             if (render == null) {
                 render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
             }
-
-            //设置 response 的一些信息，比如 headers 等
-            setResponse(response, action);
 
             render.setContext(request, response, action.getViewPath()).render();
 
