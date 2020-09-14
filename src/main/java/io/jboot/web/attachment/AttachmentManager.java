@@ -110,7 +110,7 @@ public class AttachmentManager {
                 LOG.error("get file error in container :" + container, ex);
             }
         }
-        return relativePath;
+        return relativePath.replace("\\", "/");
     }
 
 
@@ -175,6 +175,7 @@ public class AttachmentManager {
      * @return
      */
     public String getRelativePath(File file) {
-        return getDefaultContainer().getRelativePath(file);
+        String relativePath = getDefaultContainer().getRelativePath(file);
+        return relativePath != null ? relativePath.replace("\\", "/") : null;
     }
 }
