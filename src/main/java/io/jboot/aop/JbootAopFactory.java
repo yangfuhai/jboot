@@ -25,7 +25,6 @@ import com.jfinal.proxy.Proxy;
 import com.jfinal.proxy.ProxyManager;
 import io.jboot.Jboot;
 import io.jboot.aop.annotation.*;
-import io.jboot.aop.cglib.CPI;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.JbootConfigManager;
@@ -36,7 +35,6 @@ import io.jboot.components.rpc.Jbootrpc;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.annotation.RPCInject;
-import io.jboot.core.weight.WeightUtil;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.service.JbootServiceBase;
@@ -46,12 +44,10 @@ import io.jboot.web.controller.JbootController;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class JbootAopFactory extends AopFactory {
 
@@ -73,7 +69,6 @@ public class JbootAopFactory extends AopFactory {
 
 
     private Map<String, Object> beansMap = new ConcurrentHashMap<>();
-    private List<InterceptorBuilder> interceptorBuilders = new CopyOnWriteArrayList();
 
 
     private JbootAopFactory() {
@@ -374,36 +369,6 @@ public class JbootAopFactory extends AopFactory {
 
     public void setBean(String name, Object obj) {
         beansMap.put(name, obj);
-    }
-
-    public List<InterceptorBuilder> getInterceptorBuilders() {
-        return interceptorBuilders;
-    }
-
-    public void setInterceptorBuilders(List<InterceptorBuilder> interceptorBuilders) {
-        this.interceptorBuilders = interceptorBuilders;
-    }
-
-
-    public void addInterceptorBuilder(InterceptorBuilder interceptorBuilder){
-        if(interceptorBuilder == null){
-            throw new NullPointerException("interceptorBuilder must not be null.");
-        }
-        this.interceptorBuilders.add(interceptorBuilder);
-        WeightUtil.sort(this.interceptorBuilders);
-
-        CPI.clearIntersCache();
-    }
-
-
-    public void addInterceptorBuilders(Collection<InterceptorBuilder> interceptorBuilders){
-        if(interceptorBuilders == null){
-            throw new NullPointerException("interceptorBuilder must not be null.");
-        }
-        this.interceptorBuilders.addAll(interceptorBuilders);
-        WeightUtil.sort(this.interceptorBuilders);
-
-        CPI.clearIntersCache();
     }
 
 }

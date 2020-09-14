@@ -22,7 +22,6 @@ import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
-import io.jboot.web.fixedinterceptor.FixedInvocation;
 import io.jboot.web.render.JbootRenderFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +69,7 @@ public class JbootActionHandler extends ActionHandler {
      * @return
      */
     public Invocation getInvocation(Action action, Controller controller) {
-        return devMode ? new JbootInvocationWarpper(action, controller) : new Invocation(action, controller);
+        return new JbootInvocation(action, controller);
     }
 
 
@@ -123,12 +122,12 @@ public class JbootActionHandler extends ActionHandler {
 //                }
                 long time = System.currentTimeMillis();
                 try {
-                    invokeInvocation(invocation);
+                    invocation.invoke();
                 } finally {
                     JbootActionReporter.report(target, controller, action, time);
                 }
             } else {
-                invokeInvocation(invocation);
+                invocation.invoke();
             }
 
             Render render = controller.getRender();
@@ -212,9 +211,5 @@ public class JbootActionHandler extends ActionHandler {
         e.getErrorRender().setContext(request, response, action.getViewPath()).render();
     }
 
-
-    private void invokeInvocation(Invocation inv) {
-        new FixedInvocation(inv).invoke();
-    }
 
 }

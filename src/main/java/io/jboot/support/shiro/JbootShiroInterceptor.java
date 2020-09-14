@@ -19,8 +19,6 @@ import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
 import io.jboot.support.shiro.processer.AuthorizeResult;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
-import io.jboot.web.fixedinterceptor.FixedInvocation;
-
 /**
  * Shiro 拦截器
  */

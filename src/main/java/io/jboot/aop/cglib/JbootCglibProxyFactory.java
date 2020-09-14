@@ -41,7 +41,7 @@ public class JbootCglibProxyFactory extends ProxyFactory {
         return (T) net.sf.cglib.proxy.Enhancer.create(target, new JbootCglibCallback());
     }
 
-    static class IntersCache {
+   public static class IntersCache {
         private static final Map<MethodKey, Interceptor[]> cache = new SyncWriteMap<>(2048, 0.25F);
 
         public static void put(MethodKey methodKey, Interceptor[] inters) {
@@ -71,7 +71,7 @@ public class JbootCglibProxyFactory extends ProxyFactory {
         }
     }
 
-    static class MethodKey {
+   public static class MethodKey {
         final int classHash;
         final int methodHash;
         final long paraHash;

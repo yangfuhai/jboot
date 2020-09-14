@@ -15,13 +15,12 @@
  */
 package io.jboot.web.fixedinterceptor;
 
-import com.jfinal.aop.Invocation;
+import com.jfinal.aop.Interceptor;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @title 不会被 @Clear 清除掉的 拦截器
  * @version V1.0
  */
-public interface FixedInterceptor {
-    void intercept(Invocation inv);
+public interface FixedInterceptor extends Interceptor {
 }

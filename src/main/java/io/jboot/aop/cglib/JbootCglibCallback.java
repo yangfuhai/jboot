@@ -18,8 +18,7 @@ package io.jboot.aop.cglib;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
 import com.jfinal.aop.Invocation;
-import io.jboot.aop.InterceptorBuilder;
-import io.jboot.aop.JbootAopFactory;
+import io.jboot.aop.InterceptorBuilderManager;
 import io.jboot.utils.ClassUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -27,7 +26,6 @@ import net.sf.cglib.proxy.MethodProxy;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 
@@ -51,19 +49,8 @@ class JbootCglibCallback implements MethodInterceptor {
             // jfinal 原生的构建
             inters = interMan.buildServiceMethodInterceptor(targetClass, method);
 
-            // 通过 InterceptorBuilder 去构建
-            List<InterceptorBuilder> interceptorBuilder = JbootAopFactory.me().getInterceptorBuilders();
-            if (interceptorBuilder != null && interceptorBuilder.size() > 0) {
-                LinkedList<Interceptor> list = toLinkedList(inters);
-                for (InterceptorBuilder builder : interceptorBuilder) {
-                    builder.build(targetClass, method, list);
-                }
-                if (list.isEmpty()) {
-                    inters = InterceptorManager.NULL_INTERS;
-                } else {
-                    inters = list.toArray(new Interceptor[0]);
-                }
-            }
+            // builder 再次构建
+            inters = InterceptorBuilderManager.me().build(targetClass,method,inters);
 
             JbootCglibProxyFactory.IntersCache.put(key, inters);
         }

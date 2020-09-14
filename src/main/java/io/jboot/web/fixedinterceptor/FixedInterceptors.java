@@ -65,7 +65,7 @@ public class FixedInterceptors {
 
     private List<FixedInterceptorWapper> inters;
 
-    FixedInterceptor[] all() {
+    public FixedInterceptor[] all() {
         if (allInters == null) {
             synchronized (this) {
                 if (allInters == null) {

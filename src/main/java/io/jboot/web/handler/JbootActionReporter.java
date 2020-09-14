@@ -96,7 +96,7 @@ public class JbootActionReporter {
         }
 
         Interceptor[] inters = action.getInterceptors();
-        List<Interceptor> invokedInterceptors = JbootInvocationWarpper.getInvokedInterceptor();
+        List<Interceptor> invokedInterceptors = JbootInvocation.getInvokedInterceptor();
         if (inters.length > 0) {
             sb.append("Interceptor : ");
             for (int i = 0; i < inters.length; i++) {
@@ -138,8 +138,9 @@ public class JbootActionReporter {
                 } else {
                     sb.append(name).append("[]={");
                     for (int i = 0; i < values.length; i++) {
-                        if (i > 0)
+                        if (i > 0) {
                             sb.append(",");
+                        }
                         sb.append(values[i]);
                     }
                     sb.append("}");
@@ -155,7 +156,7 @@ public class JbootActionReporter {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         } finally {
-            JbootInvocationWarpper.clear();
+            JbootInvocation.clear();
         }
     }
 
