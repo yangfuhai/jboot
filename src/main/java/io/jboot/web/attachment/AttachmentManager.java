@@ -20,8 +20,8 @@ import com.jfinal.log.Log;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AttachmentManager {
 
     private static final Log LOG = Log.getLog(AttachmentManager.class);
-    private static final String DEFAULT_KEY = "default";
 
 
     private static final AttachmentManager ME = new AttachmentManager();
@@ -39,48 +38,51 @@ public class AttachmentManager {
     }
 
     private AttachmentManager() {
-        containerMap.put(DEFAULT_KEY, new LocalAttachmentContainer());
+    }
+
+    /**
+     * 默认的 附件容器
+     */
+    private AttachmentContainer defaultContainer = new LocalAttachmentContainer();
+
+    /**
+     * 其他附件容器
+     */
+    private List<AttachmentContainer> containers = new CopyOnWriteArrayList<>();
+
+
+    public AttachmentContainer getDefaultContainer() {
+        return defaultContainer;
+    }
+
+    public void setDefaultContainer(AttachmentContainer defaultContainer) {
+        this.defaultContainer = defaultContainer;
+    }
+
+    public void addContainer(AttachmentContainer container) {
+        containers.add(container);
+    }
+
+    public void setContainers(List<AttachmentContainer> containers) {
+        this.containers = containers;
     }
 
 
-    private Map<String, AttachmentContainer> containerMap = new ConcurrentHashMap<>();
+    public List<AttachmentContainer> getContainers() {
+        return containers;
+    }
 
 
     public AttachmentContainer matchContainer(String target, HttpServletRequest request) {
-        if (containerMap.size() == 0) {
-            return null;
-        }
 
-        for (AttachmentContainer container : containerMap.values()) {
-            if (container.matchFile(target, request)) {
-                return container;
-            }
-        }
-
-        return null;
-    }
-
-
-    public void addContainer(String name, AttachmentContainer container) {
-        containerMap.put(name, container);
-    }
-
-    public AttachmentContainer getContainer(String name) {
-        return getContainer(name);
-    }
-
-    public Map<String, AttachmentContainer> getContainerMap() {
-        return containerMap;
-    }
-
-    public AttachmentContainer getDefaultContainer() {
-        AttachmentContainer defaultContainer = containerMap.get(DEFAULT_KEY);
-        if (defaultContainer != null) {
+        if (defaultContainer.matchFile(target, request)) {
             return defaultContainer;
         }
 
-        if (containerMap.size() > 0) {
-            return containerMap.values().stream().findFirst().get();
+        for (AttachmentContainer container : containers) {
+            if (container.matchFile(target, request)) {
+                return container;
+            }
         }
 
         return null;
@@ -94,14 +96,11 @@ public class AttachmentManager {
      * @return 返回文件的相对路径
      */
     public String saveFile(File file) {
-        AttachmentContainer defaultContainer = getDefaultContainer();
-
         //优先从 默认的 container 去保存文件
         String relativePath = defaultContainer.saveFile(file);
         File defaultContainerFile = defaultContainer.getFile(relativePath);
 
-        for (Map.Entry<String, AttachmentContainer> entry : containerMap.entrySet()) {
-            AttachmentContainer container = entry.getValue();
+        for (AttachmentContainer container : containers) {
             try {
                 if (container != defaultContainer) {
                     container.saveFile(defaultContainerFile);
@@ -121,19 +120,14 @@ public class AttachmentManager {
      * @return
      */
     public boolean deleteFile(String relativePath) {
-        boolean ret = false;
-        for (Map.Entry<String, AttachmentContainer> entry : containerMap.entrySet()) {
-            AttachmentContainer container = entry.getValue();
+        for (AttachmentContainer container : containers) {
             try {
-                boolean result = container.deleteFile(relativePath);
-                if (DEFAULT_KEY.equals(entry.getKey())) {
-                    ret = result;
-                }
+                container.deleteFile(relativePath);
             } catch (Exception ex) {
                 LOG.error("delete file error in container :" + container, ex);
             }
         }
-        return ret;
+        return defaultContainer.deleteFile(relativePath);
     }
 
     /**
@@ -144,22 +138,17 @@ public class AttachmentManager {
      */
     public File getFile(String relativePath) {
 
-        AttachmentContainer defaultContainer = getDefaultContainer();
-
         //优先从 默认的 container 去获取
         File file = defaultContainer.getFile(relativePath);
         if (file != null && file.exists()) {
             return file;
         }
 
-        for (Map.Entry<String, AttachmentContainer> entry : containerMap.entrySet()) {
-            AttachmentContainer container = entry.getValue();
+        for (AttachmentContainer container : containers) {
             try {
-                if (container != defaultContainer) {
-                    file = container.getFile(relativePath);
-                    if (file != null && file.exists()) {
-                        return file;
-                    }
+                file = container.getFile(relativePath);
+                if (file != null && file.exists()) {
+                    return file;
                 }
             } catch (Exception ex) {
                 LOG.error("get file error in container :" + container, ex);
@@ -175,7 +164,7 @@ public class AttachmentManager {
      * @return
      */
     public String getRelativePath(File file) {
-        String relativePath = getDefaultContainer().getRelativePath(file);
+        String relativePath = defaultContainer.getRelativePath(file);
         return relativePath != null ? relativePath.replace("\\", "/") : null;
     }
 }
