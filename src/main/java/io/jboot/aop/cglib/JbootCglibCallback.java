@@ -20,6 +20,7 @@ import com.jfinal.aop.InterceptorManager;
 import com.jfinal.aop.Invocation;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.JbootAopFactory;
+import io.jboot.utils.ClassUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -41,11 +42,7 @@ class JbootCglibCallback implements MethodInterceptor {
             return methodProxy.invokeSuper(target, args);
         }
 
-        Class<?> targetClass = target.getClass();
-        if (targetClass.getName().indexOf("$$EnhancerBy") != -1) {
-            targetClass = targetClass.getSuperclass();
-        }
-
+        Class<?> targetClass = ClassUtil.getUsefulClass(target.getClass());
 
         JbootCglibProxyFactory.MethodKey key = JbootCglibProxyFactory.IntersCache.getMethodKey(targetClass, method);
         Interceptor[] inters = JbootCglibProxyFactory.IntersCache.get(key);
@@ -61,9 +58,12 @@ class JbootCglibCallback implements MethodInterceptor {
                 for (InterceptorBuilder builder : interceptorBuilder) {
                     builder.build(targetClass, method, list);
                 }
-                inters = list.toArray(new Interceptor[0]);
+                if (list.isEmpty()) {
+                    inters = InterceptorManager.NULL_INTERS;
+                } else {
+                    inters = list.toArray(new Interceptor[0]);
+                }
             }
-
 
             JbootCglibProxyFactory.IntersCache.put(key, inters);
         }
@@ -79,6 +79,8 @@ class JbootCglibCallback implements MethodInterceptor {
         return invocation.getReturnValue();
     }
 
+
+
     private static final Set<String> buildExcludedMethodName() {
         Set<String> excludedMethodName = new HashSet<String>(64, 0.25F);
         Method[] methods = Object.class.getDeclaredMethods();
@@ -91,8 +93,10 @@ class JbootCglibCallback implements MethodInterceptor {
         return excludedMethodName;
     }
 
-    private LinkedList toLinkedList(Interceptor[] interceptors) {
-        LinkedList linkedList = new LinkedList();
+
+
+    private static LinkedList<Interceptor> toLinkedList(Interceptor[] interceptors) {
+        LinkedList<Interceptor> linkedList = new LinkedList<>();
         if (interceptors != null) {
             for (Interceptor interceptor : interceptors) {
                 linkedList.add(interceptor);
