@@ -50,7 +50,7 @@ class JbootCglibCallback implements MethodInterceptor {
             inters = interMan.buildServiceMethodInterceptor(targetClass, method);
 
             // builder 再次构建
-            inters = InterceptorBuilderManager.me().build(targetClass,method,inters);
+            inters = InterceptorBuilderManager.me().build(targetClass, method, inters);
 
             JbootCglibProxyFactory.IntersCache.put(key, inters);
         }
@@ -67,7 +67,6 @@ class JbootCglibCallback implements MethodInterceptor {
     }
 
 
-
     private static final Set<String> buildExcludedMethodName() {
         Set<String> excludedMethodName = new HashSet<String>(64, 0.25F);
         Method[] methods = Object.class.getDeclaredMethods();
@@ -79,7 +78,6 @@ class JbootCglibCallback implements MethodInterceptor {
         // excludedMethodName.remove("registerNatives");
         return excludedMethodName;
     }
-
 
 
     private static LinkedList<Interceptor> toLinkedList(Interceptor[] interceptors) {
