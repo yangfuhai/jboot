@@ -72,7 +72,7 @@ public class JbootAopFactory extends AopFactory {
 
 
     private Map<String, Object> beansMap = new ConcurrentHashMap<>();
-    private List<JbootInterceptorBuilder> interceptorBuilders = new CopyOnWriteArrayList();
+    private List<InterceptorBuilder> interceptorBuilders = new CopyOnWriteArrayList();
 
 
     private JbootAopFactory() {
@@ -375,16 +375,16 @@ public class JbootAopFactory extends AopFactory {
         beansMap.put(name, obj);
     }
 
-    public List<JbootInterceptorBuilder> getInterceptorBuilders() {
+    public List<InterceptorBuilder> getInterceptorBuilders() {
         return interceptorBuilders;
     }
 
-    public void setInterceptorBuilders(List<JbootInterceptorBuilder> interceptorBuilders) {
+    public void setInterceptorBuilders(List<InterceptorBuilder> interceptorBuilders) {
         this.interceptorBuilders = interceptorBuilders;
     }
 
 
-    public void addInterceptorBuilder(JbootInterceptorBuilder interceptorBuilder){
+    public void addInterceptorBuilder(InterceptorBuilder interceptorBuilder){
         if(interceptorBuilder == null){
             throw new NullPointerException("interceptorBuilder must not be null.");
         }
@@ -392,11 +392,12 @@ public class JbootAopFactory extends AopFactory {
         CPI.clearIntersCache();
     }
 
-    public void addInterceptorBuilders(Collection<JbootInterceptorBuilder> interceptorBuilders){
+    public void addInterceptorBuilders(Collection<InterceptorBuilder> interceptorBuilders){
         if(interceptorBuilders == null){
             throw new NullPointerException("interceptorBuilder must not be null.");
         }
         this.interceptorBuilders.addAll(interceptorBuilders);
         CPI.clearIntersCache();
     }
+
 }

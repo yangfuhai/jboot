@@ -18,14 +18,14 @@ package io.jboot.aop.cglib;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
 import com.jfinal.aop.Invocation;
+import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.JbootAopFactory;
-import io.jboot.aop.JbootInterceptorBuilder;
-import io.jboot.utils.ArrayUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -54,15 +54,16 @@ class JbootCglibCallback implements MethodInterceptor {
             // jfinal 原生的构建
             inters = interMan.buildServiceMethodInterceptor(targetClass, method);
 
-            List<JbootInterceptorBuilder> interceptorBuilders = JbootAopFactory.me().getInterceptorBuilders();
-            if (interceptorBuilders != null && interceptorBuilders.size() > 0) {
-                for (JbootInterceptorBuilder builder : interceptorBuilders) {
-                    Interceptor[] buildInters = builder.build(targetClass, method);
-                    if (buildInters != null || buildInters.length > 0) {
-                        inters = ArrayUtil.concat(inters, buildInters);
-                    }
+            // 通过 InterceptorBuilder 去构建
+            List<InterceptorBuilder> interceptorBuilder = JbootAopFactory.me().getInterceptorBuilders();
+            if (interceptorBuilder != null && interceptorBuilder.size() > 0) {
+                LinkedList<Interceptor> list = toLinkedList(inters);
+                for (InterceptorBuilder builder : interceptorBuilder) {
+                    builder.build(targetClass, method, list);
                 }
+                inters = list.toArray(new Interceptor[0]);
             }
+
 
             JbootCglibProxyFactory.IntersCache.put(key, inters);
         }
@@ -88,6 +89,16 @@ class JbootCglibCallback implements MethodInterceptor {
         // excludedMethodName.remove("getClass");
         // excludedMethodName.remove("registerNatives");
         return excludedMethodName;
+    }
+
+    private LinkedList toLinkedList(Interceptor[] interceptors) {
+        LinkedList linkedList = new LinkedList();
+        if (interceptors != null) {
+            for (Interceptor interceptor : interceptors) {
+                linkedList.add(interceptor);
+            }
+        }
+        return linkedList;
     }
 }
 

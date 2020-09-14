@@ -18,11 +18,12 @@ package io.jboot.aop;
 import com.jfinal.aop.Interceptor;
 
 import java.lang.reflect.Method;
+import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  * 
- * JbootInterceptorBuilder 用于自定义每个服务方法的拦截器构建
+ * InterceptorHandler 用于控制某个方法已经添加好的拦截器，可以对其删除或者添加
  *
  * <pre>
  * 配置方法：
@@ -31,6 +32,6 @@ import java.lang.reflect.Method;
  * }
  * </pre>
  */
-public interface JbootInterceptorBuilder {
-    Interceptor[] build(Class<?> serviceClass, Method method);
+public interface InterceptorBuilder {
+    void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors);
 }
