@@ -113,7 +113,9 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
     @Override
     public boolean matchFile(String target, HttpServletRequest request) {
-        return target.startsWith(buildMatchTarget()) && target.lastIndexOf('.') != -1;
+        return !isRunInFatjar() //非 fatjar 模式下，让容器（tomcat 或者 undertow）去渲染
+                && target.startsWith(buildMatchTarget())
+                && target.lastIndexOf('.') != -1;
     }
 
     private String matchTarget = null;
@@ -142,11 +144,6 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
     @Override
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        //是否在 fatjar 运行，如果不在 fatjar 运行，由 tomcat 或者 undertow 自行渲染
-        if (!isRunInFatjar()) {
-            return false;
-        }
-        // 如果在 fatjar 运行，需要自己来渲染该文件
         new FileRender(getFile(target)).setContext(request, response).render();
         return true;
     }
