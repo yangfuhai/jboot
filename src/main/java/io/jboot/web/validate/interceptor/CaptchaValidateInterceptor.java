@@ -15,19 +15,19 @@
  */
 package io.jboot.web.validate.interceptor;
 
+import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.validate.CaptchaValidate;
 
 /**
  * 验证拦截器
  */
-public class CaptchaValidateInterceptor implements FixedInterceptor {
+public class CaptchaValidateInterceptor implements Interceptor {
 
     private static final Log LOG = Log.getLog("Validate");
 

@@ -22,9 +22,8 @@ import io.jboot.Jboot;
 import io.jboot.support.metric.annotation.EnableMetricHistogram;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
-public class MetricHistogramInterceptor implements Interceptor, FixedInterceptor {
+public class MetricHistogramInterceptor implements Interceptor {
 
 
     @Override

@@ -22,9 +22,8 @@ import io.jboot.Jboot;
 import io.jboot.support.metric.annotation.EnableMetricMeter;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
-public class MetricMeterInterceptor implements Interceptor, FixedInterceptor {
+public class MetricMeterInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {

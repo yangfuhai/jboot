@@ -15,11 +15,11 @@
  */
 package io.jboot.web.cors;
 
+import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.ext.cors.EnableCORS;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * @version V1.0
  * @Title: CORS 处理相关 拦截器
  */
-public class CORSInterceptor implements FixedInterceptor {
+public class CORSInterceptor implements Interceptor {
 
     private static final String METHOD_OPTIONS = "OPTIONS";
 

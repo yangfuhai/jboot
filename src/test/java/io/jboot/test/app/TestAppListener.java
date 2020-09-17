@@ -7,7 +7,6 @@ import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.core.listener.JbootAppListener;
-import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 public class TestAppListener implements JbootAppListener {
     @Override
@@ -38,11 +37,6 @@ public class TestAppListener implements JbootAppListener {
     @Override
     public void onInterceptorConfig(Interceptors interceptors) {
         System.out.println("TestAppListener.onInterceptorConfig");
-    }
-
-    @Override
-    public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors) {
-        System.out.println("TestAppListener.onFixedInterceptorConfig");
     }
 
     @Override

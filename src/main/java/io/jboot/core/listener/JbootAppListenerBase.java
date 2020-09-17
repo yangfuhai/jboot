@@ -15,11 +15,12 @@
  */
 package io.jboot.core.listener;
 
-import com.jfinal.config.*;
+import com.jfinal.config.Constants;
+import com.jfinal.config.Interceptors;
+import com.jfinal.config.Routes;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 
 public class JbootAppListenerBase implements JbootAppListener {
@@ -52,11 +53,6 @@ public class JbootAppListenerBase implements JbootAppListener {
 
     @Override
     public void onInterceptorConfig(Interceptors interceptors) {
-
-    }
-
-    @Override
-    public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors) {
 
     }
 

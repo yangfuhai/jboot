@@ -15,11 +15,11 @@
  */
 package io.jboot.support.jwt;
 
+import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +30,7 @@ import java.util.Map;
  * @version V1.0
  * @Title: 用于对Jwt的设置
  */
-public class JwtInterceptor implements FixedInterceptor {
+public class JwtInterceptor implements Interceptor {
 
     public static final String ISUUED_AT = "isuuedAt";
 

@@ -22,9 +22,8 @@ import io.jboot.Jboot;
 import io.jboot.support.metric.annotation.EnableMetricConcurrency;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
-public class MetricConcurrencyInterceptor implements Interceptor, FixedInterceptor {
+public class MetricConcurrencyInterceptor implements Interceptor {
 
 
     @Override

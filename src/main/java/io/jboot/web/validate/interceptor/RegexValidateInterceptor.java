@@ -18,13 +18,13 @@ package io.jboot.web.validate.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
+import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 import io.jboot.web.validate.FormType;
 import io.jboot.web.validate.RegexForm;
 import io.jboot.web.validate.RegexValidate;
@@ -32,7 +32,7 @@ import io.jboot.web.validate.RegexValidate;
 /**
  * 验证拦截器
  */
-public class RegexValidateInterceptor implements FixedInterceptor {
+public class RegexValidateInterceptor implements Interceptor {
 
     private static final Log LOG = Log.getLog("Validate");
 

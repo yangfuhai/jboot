@@ -22,8 +22,6 @@ import com.jfinal.core.Controller;
 import com.jfinal.core.JFinal;
 import io.jboot.aop.InterceptorBuilderManager;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
-import io.jboot.utils.ArrayUtil;
-import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -65,8 +63,7 @@ public class JbootInvocation extends Invocation {
         if (inters == null) {
 
             // jfinal 原生的构建
-            inters = ArrayUtil.concat(FixedInterceptors.me().all(), action.getInterceptors());
-
+            inters = action.getInterceptors();
 
             // builder 再次构建
             inters = InterceptorBuilderManager.me().build(action.getControllerClass(), action.getMethod(), inters);

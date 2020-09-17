@@ -25,7 +25,6 @@ import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.core.weight.WeightUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.ClassUtil;
-import io.jboot.web.fixedinterceptor.FixedInterceptors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,16 +129,6 @@ public class JbootAppListenerManager implements JbootAppListener {
         }
     }
 
-    @Override
-    public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onFixedInterceptorConfig(fixedInterceptors);
-            } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
-            }
-        }
-    }
 
     @Override
     public void onHandlerConfig(JfinalHandlers handlers) {

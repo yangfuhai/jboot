@@ -18,7 +18,6 @@ package io.jboot.support.seata.tcc;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.support.seata.JbootSeataManager;
-import io.jboot.web.fixedinterceptor.FixedInterceptor;
 
 
 /**
@@ -28,7 +27,7 @@ import io.jboot.web.fixedinterceptor.FixedInterceptor;
  *
  * @author zhangsen
  */
-public class TccActionInterceptor implements Interceptor, FixedInterceptor {
+public class TccActionInterceptor implements Interceptor {
 
 
     @Override

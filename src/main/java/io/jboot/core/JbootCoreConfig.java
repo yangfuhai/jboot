@@ -55,7 +55,6 @@ import io.jboot.web.directive.annotation.JFinalDirective;
 import io.jboot.web.directive.annotation.JFinalSharedMethod;
 import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
-import io.jboot.web.fixedinterceptor.FixedInterceptors;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.handler.JbootMetricsHandler;
@@ -252,9 +251,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void configInterceptor(Interceptors interceptors) {
-
         JbootAppListenerManager.me().onInterceptorConfig(interceptors);
-        JbootAppListenerManager.me().onFixedInterceptorConfig(FixedInterceptors.me());
     }
 
     @Override
