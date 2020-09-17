@@ -88,6 +88,11 @@ public class JbootActionReporter {
         sb.append("Request     : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
         Class cc = action.getMethod().getDeclaringClass();
         sb.append("Controller  : ").append(cc.getName()).append(".(").append(getClassFileName(cc)).append(".java:" + lineNumber + ")");
+        if (JbootInvocation.isControllerInvoked()) {
+            sb.append(ConsoleColor.GREEN_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
+        } else {
+            sb.append(ConsoleColor.RED_BRIGHT + " ---> skipped ×" + ConsoleColor.RESET);
+        }
         sb.append("\nMethod      : ").append(JbootActionReporterUtil.getMethodString(action.getMethod())).append("\n");
 
 

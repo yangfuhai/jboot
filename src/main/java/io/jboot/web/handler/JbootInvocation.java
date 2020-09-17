@@ -41,7 +41,9 @@ public class JbootInvocation extends Invocation {
 
     private Object returnValue;
 
-    private static ThreadLocal<List<Interceptor>> invokedInterceptors = ThreadLocal.withInitial(ArrayList::new);
+    protected static ThreadLocal<List<Interceptor>> invokedInterceptors = ThreadLocal.withInitial(ArrayList::new);
+    protected static ThreadLocal<Boolean> controllerInvokeFlag = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
     private static boolean devMode = JFinal.me().getConstants().getDevMode();
 
     public JbootInvocation(Action action, Controller controller) {
@@ -86,6 +88,9 @@ public class JbootInvocation extends Invocation {
         } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
             try {
                 // Invoke the action
+                if (devMode){
+                    controllerInvokeFlag.set(true);
+                }
                 returnValue = action.getMethod().invoke(target, args);
             } catch (InvocationTargetException e) {
                 Throwable t = e.getTargetException();
@@ -117,10 +122,15 @@ public class JbootInvocation extends Invocation {
         return invokedInterceptors.get();
     }
 
+    public static boolean isControllerInvoked(){
+        return controllerInvokeFlag.get();
+    }
+
 
     public static void clear() {
         invokedInterceptors.get().clear();
         invokedInterceptors.remove();
+        controllerInvokeFlag.remove();
     }
 
     public Interceptor[] getInters() {
