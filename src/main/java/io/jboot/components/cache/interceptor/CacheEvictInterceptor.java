@@ -18,42 +18,36 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.components.cache.annotation.CachePut;
-import io.jboot.utils.AnnotationUtil;
+import io.jboot.components.cache.annotation.CacheEvict;
 
 import java.lang.reflect.Method;
 
 /**
- * 缓存设置拦截器
+ * 清除缓存操作的拦截器
  */
-public class JbootCachePutInterceptor implements Interceptor {
+public class CacheEvictInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
 
-        //先执行，之后再保存数据
-        inv.invoke();
-
         Method method = inv.getMethod();
-        CachePut cachePut = method.getAnnotation(CachePut.class);
-        if (cachePut == null) {
-            return;
-        }
 
-        Object data = inv.getReturnValue();
-
-        String unless = AnnotationUtil.get(cachePut.unless());
-        if (Utils.isUnless(unless, method, inv.getArgs())) {
+        CacheEvict cacheEvict = method.getAnnotation(CacheEvict.class);
+        if (cacheEvict == null) {
+            inv.invoke();
             return;
         }
 
         Class targetClass = inv.getTarget().getClass();
-        String cacheName = AnnotationUtil.get(cachePut.name());
-        Utils.ensureCachenameAvailable(method, targetClass, cacheName);
-        String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cachePut.key()), targetClass, method, inv.getArgs());
 
-        Utils.putDataToCache(cachePut.liveSeconds(),cacheName,cacheKey,data);
+        if (cacheEvict.beforeInvocation()) {
+            Utils.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
+        }
+
+        inv.invoke();
+
+        if (!cacheEvict.beforeInvocation()) {
+            Utils.doCacheEvict(inv.getArgs(), targetClass, method, cacheEvict);
+        }
     }
-
-
 }

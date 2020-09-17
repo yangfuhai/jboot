@@ -13,26 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.support.sentinel;
+package io.jboot.support.seata.tcc;
 
 import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
+import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.annotation.AutoLoad;
+import io.seata.rm.tcc.api.TwoPhaseBusinessAction;
+
+import java.lang.reflect.Method;
+import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
- * @Date: 2020/1/7
  */
-public class SentinelInterceptor implements Interceptor{
+@AutoLoad
+public class TccInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
-    public void intercept(Invocation inv) {
-        SentinelProcesser processer = SentinelManager.me().getProcesser();
-        if (processer != null){
-            processer.doProcess(inv);
-        }else {
-            inv.invoke();
-        }
+    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+        try {
+            Class.forName("io.seata.rm.tcc.api.TwoPhaseBusinessAction");
+
+            TwoPhaseBusinessAction businessAction = method.getAnnotation(TwoPhaseBusinessAction.class);
+            if (businessAction != null ){
+                interceptors.add(new TccActionInterceptor());
+            }
+        }catch (Exception ex){}
+
     }
 
 

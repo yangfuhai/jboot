@@ -16,6 +16,7 @@
 package io.jboot.support.jwt;
 
 import com.jfinal.aop.Invocation;
+import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.fixedinterceptor.FixedInterceptor;
@@ -35,9 +36,9 @@ public class JwtInterceptor implements FixedInterceptor {
 
     @Override
     public void intercept(Invocation inv) {
+
         if (!JwtManager.me().getConfig().isConfigOk()) {
-            inv.invoke();
-            return;
+            throw new JbootException("jwt secret can not config well, please config jboot.web.jwt.secret in jboot.properties.");
         }
 
         HttpServletRequest request = inv.getController().getRequest();

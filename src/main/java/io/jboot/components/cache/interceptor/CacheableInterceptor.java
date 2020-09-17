@@ -36,7 +36,7 @@ import java.util.Set;
  *
  * @author michael yang
  */
-public class JbootCacheInterceptor implements Interceptor {
+public class CacheableInterceptor implements Interceptor {
 
     private static final String NULL_VALUE = "NULL_VALUE";
 

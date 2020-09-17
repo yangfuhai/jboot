@@ -113,7 +113,7 @@ public class JbootActionHandler extends ActionHandler {
                 try {
                     invocation.invoke();
                 } finally {
-                    JbootActionReporter.report(target, controller, action, time);
+                    JbootActionReporter.report(target, controller, action,invocation,time);
                 }
             } else {
                 invocation.invoke();

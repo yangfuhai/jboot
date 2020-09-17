@@ -29,8 +29,8 @@ import java.util.List;
 /**
  * 清除缓存操作的拦截器
  */
-public class JbootCachesEvictInterceptor implements Interceptor {
-    private static final Log LOG = Log.getLog(JbootCachesEvictInterceptor.class);
+public class CachesEvictInterceptor implements Interceptor {
+    private static final Log LOG = Log.getLog(CachesEvictInterceptor.class);
 
 
     @Override

@@ -17,15 +17,6 @@ package io.jboot.web.fixedinterceptor;
 
 import com.jfinal.aop.Aop;
 import com.jfinal.aop.Interceptor;
-import io.jboot.components.limiter.LimiterInterceptor;
-import io.jboot.support.jwt.JwtInterceptor;
-import io.jboot.support.metric.JbootMetricInterceptor;
-import io.jboot.support.seata.interceptor.SeataGlobalTransactionalInterceptor;
-import io.jboot.support.seata.tcc.TccActionInterceptor;
-import io.jboot.support.sentinel.SentinelInterceptor;
-import io.jboot.support.shiro.JbootShiroInterceptor;
-import io.jboot.web.validate.ValidateInterceptor;
-import io.jboot.web.cors.CORSInterceptor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,15 +40,15 @@ public class FixedInterceptors {
      * 默认的 Jboot 系统拦截器
      */
     private FixedInterceptorWapper[] defaultInters = new FixedInterceptorWapper[]{
-            new FixedInterceptorWapper(new SentinelInterceptor(), 9),
-            new FixedInterceptorWapper(new LimiterInterceptor(), 10),
-            new FixedInterceptorWapper(new CORSInterceptor(), 20),
-            new FixedInterceptorWapper(new ValidateInterceptor(), 30),
-            new FixedInterceptorWapper(new JwtInterceptor(), 40),
-            new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
-            new FixedInterceptorWapper(new JbootMetricInterceptor(), 60),
-            new FixedInterceptorWapper(new SeataGlobalTransactionalInterceptor(), 80),
-            new FixedInterceptorWapper(new TccActionInterceptor(), 90)
+//            new FixedInterceptorWapper(new SentinelInterceptor(), 9),
+//            new FixedInterceptorWapper(new LimiterInterceptor(), 10),
+//            new FixedInterceptorWapper(new CORSInterceptor(), 20),
+//            new FixedInterceptorWapper(new ValidateInterceptor(), 30),
+//            new FixedInterceptorWapper(new JwtInterceptor(), 40),
+//            new FixedInterceptorWapper(new JbootShiroInterceptor(), 50),
+//            new FixedInterceptorWapper(new JbootMetricInterceptor(), 60),
+//            new FixedInterceptorWapper(new SeataGlobalTransactionalInterceptor(), 80),
+//            new FixedInterceptorWapper(new TccActionInterceptor(), 90)
     };
 
     private List<FixedInterceptorWapper> userInters = new ArrayList<>();

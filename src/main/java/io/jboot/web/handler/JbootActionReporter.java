@@ -16,6 +16,7 @@
 package io.jboot.web.handler;
 
 import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import com.jfinal.core.Action;
 import com.jfinal.core.ActionReporter;
 import com.jfinal.core.Controller;
@@ -65,9 +66,9 @@ public class JbootActionReporter {
     /**
      * Report the action
      */
-    public static final void report(String target, Controller controller, Action action, long time) {
+    public static final void report(String target, Controller controller, Action action, Invocation invocation, long time) {
         try {
-            doReport(target, controller, action, time);
+            doReport(target, controller, action,invocation, time);
         } catch (Exception ex) {
             // 出错的情况，一般情况下是：用户自定义了自己的 classloader, 此 classloader 加载的 class 没有被添加到 ClassPool
             // 如何添加可以参考 jpress 的 插件加载
@@ -77,7 +78,7 @@ public class JbootActionReporter {
     }
 
 
-    private static final void doReport(String target, Controller controller, Action action, long time) throws Exception {
+    private static final void doReport(String target, Controller controller, Action action, Invocation invocation, long time) throws Exception {
         CtClass ctClass = ClassPool.getDefault().get(action.getControllerClass().getName());
         String desc = JbootActionReporterUtil.getMethodDescWithoutName(action.getMethod());
         CtMethod ctMethod = ctClass.getMethod(action.getMethodName(), desc);
@@ -95,7 +96,7 @@ public class JbootActionReporter {
             sb.append("UrlPara     : ").append(urlParas).append("\n");
         }
 
-        Interceptor[] inters = action.getInterceptors();
+        Interceptor[] inters = invocation instanceof JbootInvocation ? ((JbootInvocation) invocation).getInters() : action.getInterceptors();
         List<Interceptor> invokedInterceptors = JbootInvocation.getInvokedInterceptor();
         if (inters.length > 0) {
             sb.append("Interceptor : ");

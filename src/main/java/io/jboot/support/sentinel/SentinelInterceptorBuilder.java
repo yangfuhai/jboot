@@ -15,24 +15,32 @@
  */
 package io.jboot.support.sentinel;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.Invocation;
+import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.annotation.AutoLoad;
+
+import java.lang.reflect.Method;
+import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
- * @Date: 2020/1/7
  */
-public class SentinelInterceptor implements Interceptor{
+@AutoLoad
+public class SentinelInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
-    public void intercept(Invocation inv) {
-        SentinelProcesser processer = SentinelManager.me().getProcesser();
-        if (processer != null){
-            processer.doProcess(inv);
-        }else {
-            inv.invoke();
-        }
+    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+        try {
+            Class.forName("com.alibaba.csp.sentinel.Sph");
+
+            SentinelResource annotation = method.getAnnotation(SentinelResource.class);
+            if (annotation != null ){
+                interceptors.add(new SentinelInterceptor());
+            }
+        }catch (Exception ex){}
+
     }
 
 

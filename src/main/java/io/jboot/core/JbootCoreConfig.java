@@ -27,7 +27,6 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
-import io.jboot.aop.JbootAopInterceptor;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.app.config.support.apollo.ApolloServerConfig;
@@ -253,8 +252,6 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void configInterceptor(Interceptors interceptors) {
-
-        interceptors.addGlobalServiceInterceptor(new JbootAopInterceptor());
 
         JbootAppListenerManager.me().onInterceptorConfig(interceptors);
         JbootAppListenerManager.me().onFixedInterceptorConfig(FixedInterceptors.me());

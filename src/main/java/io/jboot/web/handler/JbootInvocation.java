@@ -126,5 +126,7 @@ public class JbootInvocation extends Invocation {
         invokedInterceptors.remove();
     }
 
-
+    public Interceptor[] getInters() {
+        return inters;
+    }
 }

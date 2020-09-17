@@ -154,6 +154,13 @@ public class LimiterManager {
         return semaphore;
     }
 
+    public Set<String> getConfigPackageOrTargets() {
+        return configPackageOrTargets;
+    }
+
+    public void setConfigPackageOrTargets(Set<String> configPackageOrTargets) {
+        this.configPackageOrTargets = configPackageOrTargets;
+    }
 
     private static boolean match(String string, String regex) {
         Pattern pattern = Pattern.compile(regex);
