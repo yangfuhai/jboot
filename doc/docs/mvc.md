@@ -7,7 +7,6 @@
 - Controller : 控制器
 - Action ：请求的基本单位
 - Interceptor ： 拦截器
-- FixedInterceptor ：永久拦截器
 - Handler ： 处理器
 - Render ：渲染器
 - Session 
@@ -40,9 +39,6 @@ Action 的相关文档请参考： [https://www.jfinal.com/doc/3-2](https://www.
 
 Interceptor 拦截器的相关文档请参考 [https://www.jfinal.com/doc/4-2](https://www.jfinal.com/doc/4-2) 
 
-## FixedInterceptor ：永久拦截器
-
-FixedInterceptor 的用法和 Interceptor 一样，但是 `FixedInterceptor` 不会被 `@Clear` 清除，常用于给 Controller 或者 Service 的注解进行增强。
 
 ## Handler ： 处理器
 

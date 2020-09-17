@@ -62,12 +62,6 @@ public class JbootAppListenerBase implements JbootAppListener {
     }
 
     @Override
-    public void onFixedInterceptorConfig(FixedInterceptors fixedInterceptors) {
-        //FixedInterceptor 类似 Interceptor，
-        // 但是 FixedInterceptor 不会被注解 @Clear 清除
-    }
-
-    @Override
     public void onHandlerConfig(JfinalHandlers handlers) {
         //对应 JFinalConfig 的 configHandler
     }
