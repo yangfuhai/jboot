@@ -15,15 +15,14 @@
  */
 package io.jboot.support.metric.interceptor;
 
-import com.jfinal.aop.Interceptor;
 import io.jboot.Jboot;
 import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.support.metric.JbootMetricConfig;
 import io.jboot.support.metric.annotation.*;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -34,7 +33,7 @@ public class MetricInterceptorBuilder implements InterceptorBuilder {
     private static JbootMetricConfig config = Jboot.config(JbootMetricConfig.class);
 
     @Override
-    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
         if (!config.isConfigOk()) {
             return;
         }

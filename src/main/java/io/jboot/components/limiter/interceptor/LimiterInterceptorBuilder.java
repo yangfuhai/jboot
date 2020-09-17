@@ -15,14 +15,13 @@
  */
 package io.jboot.components.limiter.interceptor;
 
-import com.jfinal.aop.Interceptor;
 import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.limiter.annotation.EnableLimit;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -33,7 +32,7 @@ public class LimiterInterceptorBuilder implements InterceptorBuilder {
     private LimiterManager manager = LimiterManager.me();
 
     @Override
-    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
         if (manager.isEnable() && !manager.getConfigPackageOrTargets().isEmpty()) {
             interceptors.add(new LimiterGlobalInterceptor());

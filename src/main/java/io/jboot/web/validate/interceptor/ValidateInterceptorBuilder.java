@@ -15,16 +15,15 @@
  */
 package io.jboot.web.validate.interceptor;
 
-import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Controller;
 import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.web.validate.CaptchaValidate;
 import io.jboot.web.validate.EmptyValidate;
 import io.jboot.web.validate.RegexValidate;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -34,7 +33,7 @@ public class ValidateInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
 
         EmptyValidate emptyParaValidate = method.getAnnotation(EmptyValidate.class);

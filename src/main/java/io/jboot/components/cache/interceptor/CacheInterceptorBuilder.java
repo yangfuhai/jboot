@@ -15,8 +15,8 @@
  */
 package io.jboot.components.cache.interceptor;
 
-import com.jfinal.aop.Interceptor;
 import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.components.cache.annotation.CachePut;
@@ -24,7 +24,6 @@ import io.jboot.components.cache.annotation.Cacheable;
 import io.jboot.components.cache.annotation.CachesEvict;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -34,7 +33,7 @@ public class CacheInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
         CacheEvict cacheEvict = method.getAnnotation(CacheEvict.class);
         if (cacheEvict != null) {
             interceptors.add(new CacheEvictInterceptor());

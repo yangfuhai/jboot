@@ -15,14 +15,13 @@
  */
 package io.jboot.support.seata.interceptor;
 
-import com.jfinal.aop.Interceptor;
 import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.support.seata.annotation.SeataGlobalLock;
 import io.jboot.support.seata.annotation.SeataGlobalTransactional;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -32,7 +31,7 @@ public class SeataGlobalInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
         final SeataGlobalTransactional globalTrxAnno = method.getAnnotation(SeataGlobalTransactional.class);
         final SeataGlobalLock globalLockAnno = method.getAnnotation(SeataGlobalLock.class);

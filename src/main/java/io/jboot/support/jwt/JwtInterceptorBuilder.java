@@ -15,13 +15,12 @@
  */
 package io.jboot.support.jwt;
 
-import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Controller;
 import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -32,7 +31,7 @@ public class JwtInterceptorBuilder implements InterceptorBuilder {
     private static JwtManager manager = JwtManager.me();
 
     @Override
-    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
         EnableJwt enableAnnotation = getAnnotation(serviceClass,method);
         if (enableAnnotation != null && Controller.class.isAssignableFrom(serviceClass)) {
             interceptors.add(new JwtInterceptor());

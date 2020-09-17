@@ -17,7 +17,6 @@ package io.jboot.aop;
 
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Interceptor;
-import com.jfinal.aop.InterceptorManager;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.core.weight.WeightUtil;
@@ -26,7 +25,6 @@ import io.jboot.utils.ClassUtil;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -88,29 +86,18 @@ public class InterceptorBuilderManager extends AopFactory {
 
 
 
-    public Interceptor[] build(Class targetClass, Method method, Interceptor[] interceptors) {
+    public Interceptor[] build(Class targetClass, Method method, Interceptor[] inters) {
         if (interceptorBuilders != null && interceptorBuilders.size() > 0) {
-            LinkedList<Interceptor> list = toLinkedList(interceptors);
+            Interceptors interceptors = new Interceptors(inters);
             for (InterceptorBuilder builder : interceptorBuilders) {
-                builder.build(targetClass, method, list);
+                builder.build(targetClass, method, interceptors);
             }
-            return list.isEmpty() ? InterceptorManager.NULL_INTERS : list.toArray(new Interceptor[0]);
+            return interceptors.getInterceptorArray();
         }
 
-        return interceptors;
+        return inters;
     }
 
 
-
-
-    private static LinkedList<Interceptor> toLinkedList(Interceptor[] interceptors) {
-        LinkedList<Interceptor> linkedList = new LinkedList<>();
-        if (interceptors != null) {
-            for (Interceptor interceptor : interceptors) {
-                linkedList.add(interceptor);
-            }
-        }
-        return linkedList;
-    }
 
 }

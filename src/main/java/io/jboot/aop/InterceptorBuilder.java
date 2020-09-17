@@ -15,15 +15,12 @@
  */
 package io.jboot.aop;
 
-import com.jfinal.aop.Interceptor;
-
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
- * 
- * InterceptorHandler 用于控制某个方法已经添加好的拦截器，可以对其删除或者添加
+ * <p>
+ * InterceptorBuilder 用于控制某个方法已经添加好的拦截器，可以对其删除或者添加
  *
  * <pre>
  * 配置方法：
@@ -33,5 +30,5 @@ import java.util.LinkedList;
  * </pre>
  */
 public interface InterceptorBuilder {
-    void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors);
+    void build(Class<?> serviceClass, Method method, Interceptors interceptors);
 }

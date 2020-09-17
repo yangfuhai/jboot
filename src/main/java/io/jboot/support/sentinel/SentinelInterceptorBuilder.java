@@ -16,12 +16,11 @@
 package io.jboot.support.sentinel;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
-import com.jfinal.aop.Interceptor;
 import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -31,7 +30,7 @@ public class SentinelInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
         try {
             Class.forName("com.alibaba.csp.sentinel.Sph");
 

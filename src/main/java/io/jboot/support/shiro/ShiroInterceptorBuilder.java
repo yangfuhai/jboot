@@ -15,14 +15,13 @@
  */
 package io.jboot.support.shiro;
 
-import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -33,7 +32,7 @@ public class ShiroInterceptorBuilder implements InterceptorBuilder {
     private static JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
 
     @Override
-    public void build(Class<?> serviceClass, Method method, LinkedList<Interceptor> interceptors) {
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
         if (config.isConfigOK() && Controller.class.isAssignableFrom(serviceClass)) {
             interceptors.add(new JbootShiroInterceptor());
