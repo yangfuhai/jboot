@@ -28,7 +28,7 @@ import java.io.File;
 public class LocalAttachmentContainerConfig  {
 
     private String rootPath = PathKit.getWebRootPath();
-    private String targetPrefix = "attachment";
+    private String targetPrefix = "/attachment";
 
     public String getRootPath() {
         return rootPath;

@@ -29,12 +29,12 @@ public class AttachmentHandler extends Handler {
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        AttachmentContainer container = manager.matchContainer(target, request);
-        if (container != null) {
-            if (container.renderFile(target, request, response)){
-                isHandled[0] = true;
-            }
-        } else {
+        // manager 成功渲染文件
+        if (manager.renderFile(target, request, response)) {
+            isHandled[0] = true;
+        }
+        // manager 不渲染，由容器本身去渲染
+        else {
             next.handle(target, request, response, isHandled);
         }
     }

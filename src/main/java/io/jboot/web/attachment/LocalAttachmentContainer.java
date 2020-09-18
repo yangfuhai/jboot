@@ -17,12 +17,9 @@ package io.jboot.web.attachment;
 
 import com.jfinal.ext.kit.DateKit;
 import com.jfinal.kit.LogKit;
-import com.jfinal.render.FileRender;
 import io.jboot.utils.FileUtil;
 import io.jboot.utils.StrUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -49,6 +46,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
         this.rootPath = rootPath;
         this.targetPrefix = targetPrefix;
     }
+
 
     @Override
     public String saveFile(File file) {
@@ -79,8 +77,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     public File newRandomFile(String suffix) {
         String rootPath = getRootPath();
 
-        StringBuilder newFileName = new StringBuilder(rootPath)
-                .append(File.separator).append(targetPrefix)
+        StringBuilder newFileName = new StringBuilder(rootPath).append(targetPrefix)
                 .append(File.separator).append(DateKit.toStr(new Date(), "yyyyMMdd"))
                 .append(File.separator).append(StrUtil.uuid())
                 .append(suffix);
@@ -105,49 +102,6 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     }
 
 
-    @Override
-    public boolean isRemoteContainer() {
-        return false;
-    }
-
-
-    @Override
-    public boolean matchFile(String target, HttpServletRequest request) {
-        return !isRunInFatjar() //非 fatjar 模式下，让容器（tomcat 或者 undertow）去渲染
-                && target.startsWith(buildMatchTarget())
-                && target.lastIndexOf('.') != -1;
-    }
-
-    private String matchTarget = null;
-
-    private String buildMatchTarget() {
-        if (matchTarget == null) {
-            synchronized (this) {
-                if (matchTarget == null) {
-                    matchTarget = "/" + getTargetPrefix() + "/";
-                }
-            }
-        }
-        return matchTarget;
-    }
-
-
-    private Boolean runInFatjar;
-
-    protected boolean isRunInFatjar() {
-        if (runInFatjar == null) {
-            runInFatjar = LocalAttachmentContainer.class.getResource("/") == null;
-        }
-        return runInFatjar;
-    }
-
-
-    @Override
-    public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        new FileRender(getFile(target)).setContext(request, response).render();
-        return true;
-    }
-
 
     public String getRootPath() {
         return rootPath;
@@ -163,6 +117,5 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
     public void setTargetPrefix(String targetPrefix) {
         this.targetPrefix = targetPrefix;
-        this.matchTarget = null;
     }
 }

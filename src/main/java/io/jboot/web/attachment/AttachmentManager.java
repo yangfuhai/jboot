@@ -17,8 +17,10 @@
 package io.jboot.web.attachment;
 
 import com.jfinal.log.Log;
+import com.jfinal.render.FileRender;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -43,7 +45,7 @@ public class AttachmentManager {
     /**
      * 默认的 附件容器
      */
-    private AttachmentContainer defaultContainer = new LocalAttachmentContainer();
+    private LocalAttachmentContainer defaultContainer = new LocalAttachmentContainer();
 
     /**
      * 其他附件容器
@@ -51,11 +53,11 @@ public class AttachmentManager {
     private List<AttachmentContainer> containers = new CopyOnWriteArrayList<>();
 
 
-    public AttachmentContainer getDefaultContainer() {
+    public LocalAttachmentContainer getDefaultContainer() {
         return defaultContainer;
     }
 
-    public void setDefaultContainer(AttachmentContainer defaultContainer) {
+    public void setDefaultContainer(LocalAttachmentContainer defaultContainer) {
         this.defaultContainer = defaultContainer;
     }
 
@@ -72,21 +74,6 @@ public class AttachmentManager {
         return containers;
     }
 
-
-    public AttachmentContainer matchContainer(String target, HttpServletRequest request) {
-
-        if (defaultContainer.matchFile(target, request)) {
-            return defaultContainer;
-        }
-
-        for (AttachmentContainer container : containers) {
-            if (container.matchFile(target, request)) {
-                return container;
-            }
-        }
-
-        return null;
-    }
 
 
     /**
@@ -167,4 +154,18 @@ public class AttachmentManager {
         String relativePath = defaultContainer.getRelativePath(file);
         return relativePath != null ? relativePath.replace("\\", "/") : null;
     }
+
+
+
+
+    public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
+        if (target.startsWith(defaultContainer.getTargetPrefix()) && target.lastIndexOf('.') != -1){
+            new FileRender(getFile(target)).setContext(request, response).render();
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+
 }

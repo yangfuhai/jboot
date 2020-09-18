@@ -16,8 +16,6 @@
 
 package io.jboot.web.attachment;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 /**
@@ -40,12 +38,14 @@ public interface AttachmentContainer {
      */
     public boolean deleteFile(String relativePath);
 
+
     /**
      * 通过相对路径获取文件
      * @param relativePath
      * @return
      */
     public File getFile(String relativePath);
+
 
     /**
      * 通过一个文件，获取其相对路径
@@ -55,27 +55,5 @@ public interface AttachmentContainer {
     public String getRelativePath(File file);
 
 
-    /**
-     * 是否是 远程 文件容器
-     * @return
-     */
-    public boolean isRemoteContainer();
 
-
-    /**
-     * 通过路径判断是匹配这个文件
-     * @param target
-     * @param request
-     * @return
-     */
-    public boolean matchFile(String target, HttpServletRequest request);
-
-    /**
-     * 渲染这个文件
-     * @param target
-     * @param request
-     * @param response
-     * @return return true 渲染成功，不需要服务器再进行渲染，return false 需要服务器自行渲染
-     */
-    public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response);
 }
