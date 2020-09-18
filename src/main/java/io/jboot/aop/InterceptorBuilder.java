@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
  * <pre>
  * 配置方法：
  * public void onInit() {
- *     JbootAopFactory.me().addInterceptorBuilder(new MyInterceptorBuilder());
+ *     InterceptorBuilderManager.me().addInterceptorBuilder(new MyInterceptorBuilder());
  * }
  * </pre>
  */

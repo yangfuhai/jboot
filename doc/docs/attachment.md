@@ -18,7 +18,7 @@ Jboot 定位是分布式的开发系统，在项目进行分布式部署的时�
 ```
 AliyunOssAttachmentContainer aliyunOss = new AliyunOssAttachmentContainer();
 
-AttachmentManager.me().addContainer("containerName",aliyunOss);
+AttachmentManager.me().addContainer(aliyunOss);
 ```
 
 当我们的 Controller 有文件上传的时候，我们需要调用 AttachmentManager 进行保存，AttachmentManager 最终会保持到其所有的容器里去。
@@ -150,24 +150,6 @@ public class AliyunOssAttachmenetContainer implements AttachmentContainer {
     @Override
     public String getRelativePath(File file) {
         return FileUtil.removePrefix(file.getAbsolutePath(), basePath);
-    }
-
-
-    @Override
-    public boolean isRemoteContainer() {
-        return true;
-    }
-
-
-    @Override
-    public boolean matchFile(String target, HttpServletRequest request) {
-        return false;
-    }
-
-
-    @Override
-    public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        return false;
     }
 
 
