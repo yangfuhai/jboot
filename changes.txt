@@ -1,3 +1,11 @@
+jboot v3.5.0:
+新增：InterceptorBuilder 组件，方便对 Controller 或者 AOP 对象的拦截器进行构建
+优化：移除 FixedInterceptor 组件，其可以通过 InterceptorBuilder 进行替代
+优化：新增 Controller 方法是否被正常执行的 log
+优化：优化 AttachmentManager 对分布式文件的渲染流程
+
+
+
 jboot v3.4.3:
 新增：指令 @JFinalDirective 新增 override 配置，用于覆盖系统已经内置的指令
 优化：优化 AttachmentManager，使之更加方便的上传 获取文件
