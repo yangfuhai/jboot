@@ -1,0 +1,4 @@
+1、安装好 yarn
+2、执行 yarn install 初始化
+3、执行 yarn dev 预览
+4、执行 yarn build 构建生成 html

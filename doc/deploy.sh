@@ -4,7 +4,7 @@
 set -e
 
 # build
-vuepress build .
+yarn build
 
 
 
