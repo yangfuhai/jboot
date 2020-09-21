@@ -85,6 +85,7 @@ public class JbootHttpSession implements HttpSession {
         return maxInactiveInterval;
     }
 
+    @Override
     @Deprecated
     public HttpSessionContext getSessionContext() {
         return null;
