@@ -320,7 +320,7 @@ public class JbootManager {
     }
 
     public static JbootManager create(){
-        return new JbootManager()
+        return new JbootManager();
     }
 
     private JbootManager(){
@@ -328,3 +328,41 @@ public class JbootManager {
     }
 }
 ```
+
+## InterceptorBuilder
+
+InterceptorBuilder 能够根据当前 Controller、Service 的方法，来对当前方法应该使用哪些拦截器进行构建，在之前 JFinal 的体系里，给某个方法添加拦截器只能通过 @Before({MyInterceptor.class}) 或者 configInterceptor() 配置方法里添加全局拦截器。
+
+这样带来一个不够优雅的地方是，如果我们想给某个方法 ”增强“，只能以添加全局拦截器的方式来做，这样所有方法都会被该拦截器拦截，然后再通过其判断进行 ”放行“ 。这样就带来了性能效率的下降，因为在我们整个系统中，有非常多的方法是没有必要走拦截器的。
+
+有了 InterceptorBuilder 之后，我们可以通过 InterceptBuilder 给某个方法来构建其特定的拦截器，而不是全局拦截器，这样，极大的提高了性能，同时减少了不必要的调用堆栈。
+
+如何使用 InterceptorBuilder 呢？如下代码：
+
+```java
+public void onInit() {
+   InterceptorBuilderManager.me().addInterceptorBuilder(new MyInterceptorBuilder());
+}
+```
+
+或者 `CacheInterceptorBuilder` 添加主键 `@AutoLoad`
+
+> 注意：使用主键 `@Autoload` 之后就不要通过 `InterceptorBuilderManager` 来添加了，`@Autoload` 的作用就是在其启动的时候自动添加过去
+
+比如 @Cacheable 的拦截器构建 CacheInterceptorBuilder 代码如下：
+
+```java
+@AutoLoad //自动把当前的 CacheInterceptorBuilder 添加到 InterceptorBuilderManager 里去。
+public class CacheInterceptorBuilder implements InterceptorBuilder {
+
+    @Override
+    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+       
+        Cacheable cacheable = method.getAnnotation(Cacheable.class);
+        if (cacheable != null) {
+            interceptors.add(new CacheableInterceptor());
+        }
+    }
+}
+```
+在 `build()` 方法中的 Interceptors，我们不仅仅可以通过 Interceptors 来添加拦截器，我们还可以通过其来删除拦截器、或者移动拦截器位置等等操作。

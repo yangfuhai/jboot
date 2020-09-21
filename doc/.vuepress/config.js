@@ -66,7 +66,7 @@ module.exports = {
             {title: 'WebSocket', path: '/docs/websocket'},
             {title: 'Jwt', path: '/docs/jwt'},
             {title: 'Swagger', path: '/docs/swagger'},
-            {title: 'Aop', path: '/docs/aop'},
+            {title: 'AOP', path: '/docs/aop'},
             {title: '数据库', path: '/docs/db'},
             {title: '缓存', path: '/docs/cache'},
             {title: 'Redis', path: '/docs/redis'},
