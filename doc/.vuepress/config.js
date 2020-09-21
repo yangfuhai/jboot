@@ -64,6 +64,7 @@ module.exports = {
             {title: 'JFinalConfig', path: '/docs/jfinalConfig'},
             {title: 'MVC', path: '/docs/mvc'},
             {title: 'WebSocket', path: '/docs/websocket'},
+            {title: 'Json', path: '/docs/json'},
             {title: 'Jwt', path: '/docs/jwt'},
             {title: 'Swagger', path: '/docs/swagger'},
             {title: 'AOP', path: '/docs/aop'},
