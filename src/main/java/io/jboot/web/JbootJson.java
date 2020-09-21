@@ -35,20 +35,17 @@ import java.util.Map;
 
 public class JbootJson extends JFinalJson {
 
-    protected boolean isCamelCaseJsonStyleEnable = Jboot.config(JbootWebConfig.class).isCamelCaseJsonStyleEnable();
-    protected boolean camelCaseToLowerCaseAnyway = Jboot.config(JbootWebConfig.class).isCamelCaseToLowerCaseAnyway();
-    protected String jsonTimestampPattern = Jboot.config(JbootWebConfig.class).getJsonTimestampPattern();
-
-    protected Map<Class, MethodsAndFieldsWrapper> methodAndFieldsCache = new HashMap<>();
+    private JbootJsonConfig config = Jboot.config(JbootJsonConfig.class);
+    protected static Map<Class, MethodsAndFieldsWrapper> methodAndFieldsCache = new HashMap<>();
 
     public JbootJson() {
 
         //跳过 null 值输出到浏览器，提高传输性能
-        setSkipNullValueField(true);
+        setSkipNullValueField(config.isSkipNullValueField());
 
         //默认设置为 CamelCase 的属性模式
-        if (isCamelCaseJsonStyleEnable) {
-            setModelAndRecordFieldNameConverter((fieldName) -> StrKit.toCamelCase(fieldName, camelCaseToLowerCaseAnyway));
+        if (config.isCamelCaseJsonStyleEnable()) {
+            setModelAndRecordFieldNameConverter((fieldName) -> StrKit.toCamelCase(fieldName, config.isCamelCaseToLowerCaseAnyway()));
         }
 
 
@@ -60,8 +57,8 @@ public class JbootJson extends JFinalJson {
             }
         });
 
-        if (StrUtil.isNotBlank(jsonTimestampPattern)) {
-            setTimestampPattern(jsonTimestampPattern);
+        if (StrUtil.isNotBlank(config.getTimestampPattern())) {
+            setTimestampPattern(config.getTimestampPattern());
         }
     }
 
@@ -87,8 +84,8 @@ public class JbootJson extends JFinalJson {
         if (fillMap != null && !fillMap.isEmpty()) {
             for (Map.Entry<String, Object> entry : fillMap.entrySet()) {
                 String fieldName = entry.getKey();
-                if (isCamelCaseJsonStyleEnable) {
-                    fieldName = StrKit.toCamelCase(fieldName, camelCaseToLowerCaseAnyway);
+                if (config.isCamelCaseJsonStyleEnable()) {
+                    fieldName = StrKit.toCamelCase(fieldName, config.isCamelCaseToLowerCaseAnyway());
                 }
                 toMap.put(fieldName, entry.getValue());
             }
@@ -115,10 +112,8 @@ public class JbootJson extends JFinalJson {
                 try {
                     Object value = wrapper.methods.get(index++).invoke(bean);
                     toMap.put(field, value);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         }
