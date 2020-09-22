@@ -27,6 +27,8 @@ import java.lang.reflect.Method;
  * public void onInit() {
  *     InterceptorBuilderManager.me().addInterceptorBuilder(new MyInterceptorBuilder());
  * }
+ *
+ * 或者给 MyInterceptorBuilder 类添加 @AutoLoad 注解
  * </pre>
  */
 public interface InterceptorBuilder {

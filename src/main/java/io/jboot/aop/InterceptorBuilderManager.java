@@ -92,7 +92,7 @@ public class InterceptorBuilderManager extends AopFactory {
             for (InterceptorBuilder builder : interceptorBuilders) {
                 builder.build(targetClass, method, interceptors);
             }
-            return interceptors.getInterceptorArray();
+            return interceptors.toArray();
         }
 
         return inters;

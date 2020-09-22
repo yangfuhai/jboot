@@ -76,6 +76,7 @@ public class Interceptors {
         warppers.add(new InterceptorWarpper(interceptor, ++maximumWeight));
     }
 
+
     public void addBefore(Interceptor interceptor, Class<? extends Interceptor> interceptroClass) {
         int weight = ++currentWeight;
         for (InterceptorWarpper warpper : warppers) {
@@ -88,6 +89,7 @@ public class Interceptors {
             maximumWeight = currentWeight;
         }
     }
+
 
     public void addAfter(Interceptor interceptor, Class<? extends Interceptor> interceptroClass) {
         int weight = ++currentWeight;
@@ -108,15 +110,39 @@ public class Interceptors {
         warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor == interceptor);
     }
 
+
     public void removeByClass(Class clazz) {
         warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor.getClass() == clazz);
     }
 
-    public List<Interceptor> getInterceptors() {
+
+    public Integer getWeight(Interceptor interceptor) {
+        for (InterceptorWarpper warpper : warppers) {
+            if (warpper.interceptor == interceptor) {
+                return warpper.weight;
+            }
+        }
+        return null;
+    }
+
+
+    public Integer getWeightByClass(Class<? extends Interceptor> clazz) {
+        for (InterceptorWarpper warpper : warppers) {
+            if (warpper.interceptor.getClass() == clazz) {
+                return warpper.weight;
+            }
+        }
+        return null;
+    }
+
+
+    public List<Interceptor> toList() {
+        warppers.sort(Comparator.comparingInt(InterceptorWarpper::getWeight));
         return warppers.stream().map(InterceptorWarpper::getInterceptor).collect(Collectors.toList());
     }
 
-    public Interceptor[] getInterceptorArray() {
+
+    public Interceptor[] toArray() {
         if (warppers == null || warppers.size() == 0) {
             return InterceptorManager.NULL_INTERS;
         } else {
@@ -129,11 +155,23 @@ public class Interceptors {
         }
     }
 
+    public int getMinimalWeight() {
+        return minimalWeight;
+    }
+
+    public int getMaximumWeight() {
+        return maximumWeight;
+    }
+
+    public int getCurrentWeight() {
+        return currentWeight;
+    }
+
 
     static class InterceptorWarpper {
 
         private Interceptor interceptor;
-        private int weight = 0;
+        private int weight;
 
         public InterceptorWarpper(Interceptor interceptor, int weight) {
             this.interceptor = interceptor;

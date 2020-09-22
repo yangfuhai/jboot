@@ -156,8 +156,13 @@ public class AttachmentManager {
     }
 
 
-
-
+    /**
+     * 渲染文件到浏览器
+     * @param target
+     * @param request
+     * @param response
+     * @return true 渲染成功，false 不进行渲染
+     */
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith(defaultContainer.getTargetPrefix()) && target.lastIndexOf('.') != -1){
             new FileRender(getFile(target)).setContext(request, response).render();
