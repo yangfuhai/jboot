@@ -1,3 +1,10 @@
+jboot v3.5.1:
+优化：JbootRedisCacheImpl buildKey() 方法
+优化：JbootJson 并新增更多的配置
+优化：InterceptorBuilderManager 的方法名并添加更多可配置的方法
+
+
+
 jboot v3.5.0:
 新增：InterceptorBuilder 组件，方便对 Controller 或者 AOP 对象的拦截器进行构建
 优化：移除 FixedInterceptor 组件，其可以通过 InterceptorBuilder 进行替代
