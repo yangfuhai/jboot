@@ -25,6 +25,7 @@ import io.jboot.exception.JbootIllegalConfigException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 
 public class JbootRedisCacheImpl extends JbootCacheBase {
@@ -107,17 +108,18 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
 
     private String buildKey(String cacheName, Object key) {
-        if (key instanceof Number) {
-            return String.format("%s:I:%s", cacheName, key);
+        StringBuilder keyBuilder = new StringBuilder(cacheName).append(":");
+        if (key instanceof String) {
+            keyBuilder.append("S");
+        } else if (key instanceof Number) {
+            keyBuilder.append("I");
+        } else if (key == null) {
+            keyBuilder.append("S");
+            key = "null";
         } else {
-            Class keyClass = key.getClass();
-            if (String.class.equals(keyClass) ||
-                    StringBuffer.class.equals(keyClass) ||
-                    StringBuilder.class.equals(keyClass)) {
-                return String.format("%s:S:%s", cacheName, key);
-            }
+            keyBuilder.append("O");
         }
-        return String.format("%s:O:%s", cacheName, key);
+        return keyBuilder.append(":").append(key).toString();
     }
 
     @Override
