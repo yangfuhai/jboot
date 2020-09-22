@@ -29,3 +29,7 @@ jboot.web.camelCaseToLowerCaseAnyway = false
 jboot.web.jsonTimestampPattern
 ```
 
+## 通过 Java 代码配置
+
+更多的配置可以通过 JFinalJsonKit 工具类来进行配置。
+
