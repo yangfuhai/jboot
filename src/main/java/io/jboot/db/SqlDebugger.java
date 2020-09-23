@@ -38,7 +38,7 @@ public class SqlDebugger {
 
         @Override
         public void print(String sql) {
-            System.out.println("\r\njboot exec sql >>> " + sql);
+            System.out.println("Jboot exec sql >>>  " + sql);
         }
     };
 
