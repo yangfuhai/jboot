@@ -53,10 +53,7 @@ public class CaffeineCacheObject implements Serializable {
             return -1;
         }
 
-        long timeMillis = cachetime - DateUtils.addSeconds(new Date(), -liveSeconds)
-                .getTime();
-
-        System.out.println("timeMillis:" + timeMillis);
+        long timeMillis = cachetime - DateUtils.addSeconds(new Date(), -liveSeconds).getTime();
 
         if (timeMillis > 0) {
             return (int) (timeMillis / 1000);
