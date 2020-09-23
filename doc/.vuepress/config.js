@@ -122,6 +122,18 @@ module.exports = {
             {title: '安全防护', path: '/jbootadmin/safety_precautions'},
           ],
         },
+        {
+          title: '运维和部署',
+          collapsable: false,
+          children: [
+            {title: '部署', path: '/jbootadmin/deploy'},
+            {title: 'CDN配置', path: '/jbootadmin/cdn'},
+            {title: '文件同步', path: '/jbootadmin/attachment'},
+            {title: '配置中心', path: '/jbootadmin/config'},
+            {title: '门户网关', path: '/jbootadmin/gateway'},
+            {title: '服务器管理', path: '/jbootadmin/server'},
+          ],
+        },
       ]
     },
     sidebarDepth: 1
