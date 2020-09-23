@@ -44,9 +44,9 @@ class ApplicationUtil {
         try {
             URL resourceURL = ApplicationUtil.class.getResource("/");
             if (resourceURL != null) {
-                System.out.println("Classpath : " + resourceURL.toURI().getPath());
+                System.out.println("JbootApplication ClassPath: " + resourceURL.toURI().getPath());
             } else {
-                System.out.println("Classpath : application in one jar.");
+                System.out.println("JbootApplication ClassPath in fat jar.");
             }
         } catch (URISyntaxException e) {
             e.printStackTrace();

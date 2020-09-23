@@ -473,7 +473,7 @@ public class ClassScanner {
             }
 
             if (JbootConfigManager.me().isDevMode()) {
-                System.out.println("ClassScanner scan classpath : " + classPath);
+                System.out.println("Jboot Scan ClassPath: " + classPath);
             }
 
             addClassesFromClassPath(classPath);
@@ -493,7 +493,7 @@ public class ClassScanner {
             }
 
             if (JbootConfigManager.me().isDevMode()) {
-                System.out.println("ClassScanner scan jar : " + jarPath);
+                System.out.println("Jboot Scan Jar: " + jarPath);
             }
 
             addClassesFromJar(jarPath);

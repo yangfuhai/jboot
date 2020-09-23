@@ -74,7 +74,7 @@ public class DataSourceBuilder {
             default:
                 DataSourceFactory dataSourceFactory = JbootSpiLoader.load(DataSourceFactory.class, factory);
                 if (dataSourceFactory == null) {
-                    throw new NullPointerException("can not load DataSourceFactory spi for name : " + factory);
+                    throw new NullPointerException("can not load DataSourceFactory spi for name: " + factory);
                 }
                 return dataSourceFactory.createDataSource(dsc);
         }
