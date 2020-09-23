@@ -20,7 +20,9 @@ import com.jfinal.aop.InterceptorManager;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +33,6 @@ public class Interceptors {
     private List<InterceptorWarpper> warppers = new ArrayList<>();
 
     private int minimalWeight = 1;
-    private int maximumWeight = 1;
     private int currentWeight = 1;
 
     public Interceptors() {
@@ -48,71 +49,124 @@ public class Interceptors {
 
     public void add(Interceptor interceptor) {
         warppers.add(new InterceptorWarpper(interceptor, currentWeight++));
-
-        if (currentWeight > maximumWeight) {
-            maximumWeight = currentWeight;
-        }
     }
-
 
     public void add(Interceptor interceptor, int weight) {
         warppers.add(new InterceptorWarpper(interceptor, weight));
-
-        if (weight >= maximumWeight) {
-            maximumWeight = weight + 1;
-        }
-        if (weight <= minimalWeight) {
-            minimalWeight = weight - 1;
-        }
     }
-
 
     public void addToFirst(Interceptor interceptor) {
         warppers.add(new InterceptorWarpper(interceptor, --minimalWeight));
     }
 
-
-    public void addToLast(Interceptor interceptor) {
-        warppers.add(new InterceptorWarpper(interceptor, ++maximumWeight));
-    }
-
-
-    public void addBefore(Interceptor interceptor, Class<? extends Interceptor> interceptroClass) {
-        int weight = ++currentWeight;
+    public boolean addBefore(Interceptor interceptor, Predicate<? super Interceptor> filter) {
+        Integer weight = null;
         for (InterceptorWarpper warpper : warppers) {
-            if (warpper.getInterceptor().getClass() == interceptroClass) {
-                weight = warpper.weight - 1;
+            if (filter.test(warpper.interceptor)) {
+                weight = warpper.weight;
+                break;
             }
         }
-        warppers.add(new InterceptorWarpper(interceptor, weight));
-        if (currentWeight > maximumWeight) {
-            maximumWeight = currentWeight;
+
+        //所有在 新加 的拦截器往前推 1
+        if (weight != null) {
+            for (InterceptorWarpper warpper : warppers) {
+                if (warpper.weight < weight) {
+                    warpper.weight--;
+                }
+            }
+            minimalWeight--;
+            warppers.add(new InterceptorWarpper(interceptor, --weight));
+            return true;
+        }else {
+            return false;
         }
     }
 
-
-    public void addAfter(Interceptor interceptor, Class<? extends Interceptor> interceptroClass) {
-        int weight = ++currentWeight;
+    public boolean addBefore(Interceptor interceptor, Class<? extends Interceptor> interceptroClass) {
+        Integer weight = null;
         for (InterceptorWarpper warpper : warppers) {
             if (warpper.getInterceptor().getClass() == interceptroClass) {
-                weight = warpper.weight + 1;
+                weight = warpper.weight;
+                break;
             }
         }
-        warppers.add(new InterceptorWarpper(interceptor, weight));
 
-        if (currentWeight > maximumWeight) {
-            maximumWeight = currentWeight;
+        //所有在 新加 的拦截器往前推 1
+        if (weight != null) {
+            for (InterceptorWarpper warpper : warppers) {
+                if (warpper.weight < weight) {
+                    warpper.weight--;
+                }
+            }
+            minimalWeight--;
+            warppers.add(new InterceptorWarpper(interceptor, --weight));
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public boolean addAfter(Interceptor interceptor, Predicate<? super Interceptor> filter) {
+        Integer weight = null;
+        for (InterceptorWarpper warpper : warppers) {
+            if (filter.test(warpper.interceptor)) {
+                weight = warpper.weight;
+                break;
+            }
+        }
+
+        //所有在 新加 的拦截器往后推 1
+        if (weight != null) {
+            for (InterceptorWarpper warpper : warppers) {
+                if (warpper.weight > weight) {
+                    warpper.weight++;
+                }
+            }
+            currentWeight++;
+            warppers.add(new InterceptorWarpper(interceptor, ++weight));
+            return true;
+        }else {
+            return false;
         }
     }
 
 
-    public void remove(Interceptor interceptor) {
-        warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor == interceptor);
+    public boolean addAfter(Interceptor interceptor, Class<? extends Interceptor> interceptroClass) {
+        Integer weight = null;
+        for (InterceptorWarpper warpper : warppers) {
+            if (warpper.getInterceptor().getClass() == interceptroClass) {
+                weight = warpper.weight;
+                break;
+            }
+        }
+
+        if (weight != null) {
+            for (InterceptorWarpper warpper : warppers) {
+                if (warpper.weight > weight) {
+                    warpper.weight++;
+                }
+            }
+            currentWeight++;
+            warppers.add(new InterceptorWarpper(interceptor, ++weight));
+            return true;
+        }else {
+            return false;
+        }
     }
 
 
-    public void removeByClass(Class clazz) {
-        warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor.getClass() == clazz);
+    public boolean remove(Interceptor interceptor) {
+       return warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor == interceptor);
+    }
+
+
+    public boolean remove(Predicate<? super Interceptor> predicate) {
+        return warppers.removeIf(warpper -> predicate.test(warpper.interceptor));
+    }
+
+    public boolean removeByClass(Class clazz) {
+        return warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor.getClass() == clazz);
     }
 
 
@@ -157,10 +211,6 @@ public class Interceptors {
 
     public int getMinimalWeight() {
         return minimalWeight;
-    }
-
-    public int getMaximumWeight() {
-        return maximumWeight;
     }
 
     public int getCurrentWeight() {

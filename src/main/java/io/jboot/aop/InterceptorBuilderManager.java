@@ -15,7 +15,6 @@
  */
 package io.jboot.aop;
 
-import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Interceptor;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
@@ -27,8 +26,9 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
-public class InterceptorBuilderManager extends AopFactory {
+public class InterceptorBuilderManager{
 
 
     private static InterceptorBuilderManager me = new InterceptorBuilderManager();
@@ -73,7 +73,7 @@ public class InterceptorBuilderManager extends AopFactory {
 
 
 
-    public void addInterceptorBuilders(Collection<InterceptorBuilder> interceptorBuilders) {
+    public void addInterceptorBuilder(Collection<InterceptorBuilder> interceptorBuilders) {
         if (interceptorBuilders == null) {
             throw new NullPointerException("interceptorBuilder must not be null.");
         }
@@ -85,6 +85,15 @@ public class InterceptorBuilderManager extends AopFactory {
 
 
 
+    public void removeInterceptorBuilder(Predicate<? super InterceptorBuilder> filter){
+        if (interceptorBuilders != null && !interceptorBuilders.isEmpty()){
+            if (interceptorBuilders.removeIf(filter)) {
+                JbootCglibProxyFactory.IntersCache.clear();
+            }
+        }
+    }
+
+
 
     public Interceptor[] build(Class targetClass, Method method, Interceptor[] inters) {
         if (interceptorBuilders != null && interceptorBuilders.size() > 0) {
@@ -94,7 +103,6 @@ public class InterceptorBuilderManager extends AopFactory {
             }
             return interceptors.toArray();
         }
-
         return inters;
     }
 
