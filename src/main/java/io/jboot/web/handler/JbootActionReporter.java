@@ -155,7 +155,7 @@ public class JbootActionReporter {
             }
             sb.append("\n");
         }
-        sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n");
+        sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n\n\n");
 
         try {
             writer.write(sb.toString());
