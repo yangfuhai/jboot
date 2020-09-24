@@ -6,7 +6,9 @@
 - 2）将源码导入 idea 或者 eclipse 等开发工具
 - 3）编译 JbootAdmin
 - 4）运行 JbootAdmin
-- 5）通过 JbootAdmin 创建自己的业务模块
+- 5）通过代码生成器，生成自己的业务模块
+- 6）定义后台菜单组
+- 7）编写 Controller 代码，并生成菜单
 
 ## 创建数据库
 
@@ -226,4 +228,62 @@ public class CmsModuleCodeGenerator {
 
 其他 Module 需要复制一份这个代码，然后修改掉 表明、包名、模块名称即可。
 
+
+## 定义后台菜单组
+
+我们通过 CmsModuleCodeGenerator 只是生成了 Model/Service/Provider 的代码，并不会生成 Controller 和 html，以及后台菜单，因此，我们需要来定义一个菜单组，我们登陆的时候，才能看到 CMS 模块的菜单，其他模块通用需要定义一个模块自己的菜单组。
+
+如果定义后台菜单呢？代码如下：
+
+```java
+public class CmsMenus implements MenuBuilder {
+
+    public static final String ARTICLES = "articles";
+    public static final String ARTICLE_CATEGORY = "article-category";
+
+
+    static List<MenuBean> cmsMenus = new ArrayList<>();
+
+    static {
+        cmsMenus.add(new MenuBean(ARTICLES, "文章管理", "fa-cart-plus", MenuTypes.MODULE, 11));
+        cmsMenus.add(new MenuBean(ARTICLE_CATEGORY, "文章分类", "fa-crown", MenuTypes.MODULE, 22));
+    }
+
+
+    @Override
+    public List<MenuBean> buildMenus() {
+        return cmsMenus;
+    }
+
+}
+```
+
+- 1、编写一个类，实现 MenuBuilder 接口
+- 2、复写 buildMenus 方法，并返回一个 `List<MenuBean>`
+
+需要注意的是，如果 MenuBean 有配置了 pid 属性，那说明其实一个 “菜单”，如果没有 pid，说明其实一个 “菜单组”。
+
+
+## 编写 Controller 代码，并生成菜单
+
+Controller 代码如下
+
+```java
+@RequestMapping("/cms/article")
+public class ArticleController extends BaseAdminController {
+
+    private CmsArticleService articleService;
+
+    @MenuDef(text = "文章列表", pid = CmsMenus.ARTICLES, sortNo = 1)
+    public void list(){
+        render("");
+    }
+
+}
+```
+
+- 1）通过 `@RequestMapping("/cms/article")` 来配置 Controller 的映射路径
+- 2）通过 `@MenuDef(text = "文章列表", pid = CmsMenus.ARTICLES, sortNo = 1)` 来定义菜单名称，及其归属在哪个 “菜单组” 下。
+
+完成 Controller 代码后，我们需要进入后台，并点击 ` “开发管理” > “菜单构建”` 就可以显示出我们在 `ArticleController.list()` 里定义的菜单了。
 
