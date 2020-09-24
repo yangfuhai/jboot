@@ -73,7 +73,7 @@ public class JbootRender extends Render {
     private void renderNormal(Map<Object, Object> data){
         try {
             OutputStream os = response.getOutputStream();
-            engine.getTemplate(view).render(data, os);
+            getEngine().getTemplate(view).render(data, os);
             os.flush();
         } catch (RuntimeException e) {	// 捕获 ByteWriter.close() 抛出的 RuntimeException
             Throwable cause = e.getCause();
