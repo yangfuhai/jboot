@@ -16,8 +16,9 @@
 
 package io.jboot.web.attachment;
 
+import com.jfinal.kit.HandlerKit;
 import com.jfinal.log.Log;
-import com.jfinal.render.FileRender;
+import com.jfinal.render.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +52,8 @@ public class AttachmentManager {
      * 其他附件容器
      */
     private List<AttachmentContainer> containers = new CopyOnWriteArrayList<>();
+
+    private IRenderFactory renderFactory = RenderManager.me().getRenderFactory();
 
 
     public LocalAttachmentContainer getDefaultContainer() {
@@ -165,11 +168,18 @@ public class AttachmentManager {
      */
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith(defaultContainer.getTargetPrefix()) && target.lastIndexOf('.') != -1){
-            new FileRender(getFile(target)).setContext(request, response).render();
+            Render render = getFileRender(getFile(target));
+            render.setContext(request, response).render();
             return true;
         }else {
             return false;
         }
+    }
+
+    private Render getFileRender(File file){
+        return file == null || !file.isFile()
+                ? renderFactory.getErrorRender(404)
+                : renderFactory.getFileRender(file);
     }
 
 
