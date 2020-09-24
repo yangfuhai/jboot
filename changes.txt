@@ -1,3 +1,13 @@
+jboot v3.5.2:
+优化：InterceptorBuilderManager，添加移除 Builder 等方法及其相关测试
+优化：ClassUtil，完善 singleton 等方法
+优化：Jboot 缓存默认类型 由 ehcache 修改为 caffeine
+优化：优化启动输出内容 和 sql 打印内容
+优化：JbootRender，当不启用 CDN 的时候进一步提升性能
+修复：AttachmentManager，当分布式文件不存在时，访问文件出现空指针的问题
+
+
+
 jboot v3.5.1:
 优化：JbootRedisCacheImpl buildKey() 方法
 优化：JbootJson 并新增更多的配置
