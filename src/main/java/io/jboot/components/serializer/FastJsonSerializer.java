@@ -19,10 +19,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.log.Log;
 
+import java.io.Serializable;
 
-public class FastjsonSerializer implements JbootSerializer {
 
-    private static final Log LOG = Log.getLog(FastjsonSerializer.class);
+public class FastJsonSerializer implements JbootSerializer {
+
+    private static final Log LOG = Log.getLog(FastJsonSerializer.class);
 
     @Override
     public byte[] serialize(Object obj) {
@@ -52,7 +54,7 @@ public class FastjsonSerializer implements JbootSerializer {
     }
 
 
-    public static class FastJsonCacheObject {
+    public static class FastJsonCacheObject implements Serializable {
         private Class clazz;
         private Object object;
 
