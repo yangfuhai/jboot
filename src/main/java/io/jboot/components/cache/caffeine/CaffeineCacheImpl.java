@@ -37,6 +37,7 @@ public class CaffeineCacheImpl extends JbootCacheBase {
         Cache cache = cacheMap.get(cacheName);
         if (cache == null) {
             synchronized (CaffeineCacheImpl.class) {
+                cache = cacheMap.get(cacheName);
                 if (cache == null) {
                     cache = createCacheBuilder().build();
                     cacheMap.put(cacheName,cache);
