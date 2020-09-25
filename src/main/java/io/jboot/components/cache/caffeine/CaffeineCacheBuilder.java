@@ -20,5 +20,5 @@ import com.github.benmanes.caffeine.cache.Cache;
 
 public interface CaffeineCacheBuilder {
 
-    public Cache build();
+    Cache build(String cacheName);
 }
