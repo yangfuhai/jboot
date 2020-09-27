@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.render;
+package io.jboot.web.render.cdn;
 
+import com.jfinal.core.JFinal;
 import com.jfinal.render.RenderException;
 import io.jboot.utils.StrUtil;
 import org.jsoup.Jsoup;
@@ -23,6 +24,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
@@ -30,33 +33,19 @@ import java.util.Iterator;
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  */
-public class RenderHelpler {
+public class CdnUtil {
 
-    public static void renderHtml(HttpServletResponse response, String html, String contentType) {
-        response.setContentType(contentType);
-        try {
-            PrintWriter responseWriter = response.getWriter();
-            responseWriter.write(html);
-        } catch (Exception e) {
-            throw new RenderException(e);
-        }
-    }
+    private static String charSet =  JFinal.me().getConstants().getEncoding();
 
 
-    public static String processCDN(String content, String domain) {
-        if (StrUtil.isBlank(content)) {
-            return content;
-        }
-
-
-        Document doc = Jsoup.parse(content);
+    public static String toHtml(InputStream content, String domain) throws IOException {
+        Document doc = Jsoup.parse(content,charSet,"");
 
         Elements jsElements = doc.select("script[src]");
         replace(jsElements, "src", domain);
 
         Elements imgElements = doc.select("img[src]");
         replace(imgElements, "src", domain);
-
 
         Elements linkElements = doc.select("link[href]");
         replace(linkElements, "href", domain);

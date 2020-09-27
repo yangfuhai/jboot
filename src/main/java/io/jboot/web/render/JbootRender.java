@@ -20,9 +20,12 @@ import com.jfinal.render.RenderException;
 import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
+import io.jboot.utils.StrUtil;
+import io.jboot.web.render.cdn.MixedByteArrayOutputStream;
+import io.jboot.web.render.cdn.CdnUtil;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +44,9 @@ public class JbootRender extends Render {
     }
 
     public JbootRender(String view) {
+        if (StrUtil.isBlank(view)){
+            throw new IllegalArgumentException("view cant not be null or empty.");
+        }
         this.view = view;
     }
 
@@ -58,35 +64,32 @@ public class JbootRender extends Render {
             data.put(attrName, request.getAttribute(attrName));
         }
 
-        if (cdnConfig.isEnable()){
-            renderWithCdnConfig(data);
-        }else {
-            renderNormal(data);
-        }
-    }
-
-    private void renderWithCdnConfig(Map<Object, Object> data){
-        String html = getEngine().getTemplate(view).renderToString(data);
-        RenderHelpler.renderHtml(response, RenderHelpler.processCDN(html, cdnConfig.getDomain()) , contentType);
-    }
-
-    private void renderNormal(Map<Object, Object> data){
         try {
-            OutputStream os = response.getOutputStream();
-            getEngine().getTemplate(view).render(data, os);
-            os.flush();
-        } catch (RuntimeException e) {	// 捕获 ByteWriter.close() 抛出的 RuntimeException
+            if (cdnConfig.isEnable()) {
+                renderWithCdn(data);
+            } else {
+                getEngine().getTemplate(view).render(data, response.getWriter());
+            }
+        } catch (RuntimeException e) {    // 捕获 ByteWriter.close() 抛出的 RuntimeException
             Throwable cause = e.getCause();
-            if (cause instanceof IOException) {	// ClientAbortException、EofException 直接或间接继承自 IOException
+            if (cause instanceof IOException) {    // ClientAbortException、EofException 直接或间接继承自 IOException
                 String name = cause.getClass().getSimpleName();
                 if ("ClientAbortException".equals(name) || "EofException".equals(name)) {
-                    return ;
+                    return;
                 }
             }
             throw e;
         } catch (IOException e) {
             throw new RenderException(e);
         }
+    }
+
+    private void renderWithCdn(Map<Object, Object> data) throws IOException {
+        MixedByteArrayOutputStream baos = new MixedByteArrayOutputStream();
+        getEngine().getTemplate(view).render(data, baos);
+
+        PrintWriter responseWriter = response.getWriter();
+        responseWriter.write(CdnUtil.toHtml(baos.getInputStream(), cdnConfig.getDomain()));
     }
 
 
