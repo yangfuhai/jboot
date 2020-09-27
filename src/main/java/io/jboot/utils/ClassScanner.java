@@ -240,6 +240,14 @@ public class ClassScanner {
         excludeJars.add("opentest4j-");
         excludeJars.add("freemarker-");
         excludeJars.add("protobuf-");
+        excludeJars.add("jdom2-");
+        excludeJars.add("useragentutils-");
+        excludeJars.add("common-io-");
+        excludeJars.add("common-image-");
+        excludeJars.add("common-lang-");
+        excludeJars.add("imageio-");
+        excludeJars.add("curvesapi-");
+        excludeJars.add("myexcel-");
     }
 
 
@@ -265,6 +273,7 @@ public class ClassScanner {
         excludeClasses.add("org.yaml.");
         excludeClasses.add("org.checker");
         excludeClasses.add("org.codehaus");
+        excludeClasses.add("org.jdom2.");
         excludeClasses.add("ch.qos.");
         excludeClasses.add("com.alibaba.csp.");
         excludeClasses.add("com.alibaba.nacos.");
@@ -307,6 +316,7 @@ public class ClassScanner {
         excludeClasses.add("io.protostuff.");
         excludeClasses.add("freemarker.");
         excludeClasses.add("com.twelvemonkeys.");
+        excludeClasses.add("eu.bitwalker.");
     }
 
 
