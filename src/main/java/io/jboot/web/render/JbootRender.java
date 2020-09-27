@@ -21,6 +21,7 @@ import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
+import io.jboot.web.render.cdn.JbootWebCdnConfig;
 import io.jboot.web.render.cdn.MixedByteArrayOutputStream;
 import io.jboot.web.render.cdn.CdnUtil;
 
@@ -45,7 +46,7 @@ public class JbootRender extends Render {
 
     public JbootRender(String view) {
         if (StrUtil.isBlank(view)){
-            throw new IllegalArgumentException("view cant not be null or empty.");
+            throw new IllegalArgumentException("view cannot be null or empty.");
         }
         this.view = view;
     }

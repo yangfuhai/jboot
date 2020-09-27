@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.render;
+package io.jboot.web.render.cdn;
 
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.utils.StrUtil;
