@@ -1,3 +1,11 @@
+jboot v3.5.3:
+优化：CaffeineCacheBuilder 构建器可能根据名称进行构建
+优化：提高 CDN 渲染的构建性能
+修复: Caffeine Cache 在某些极端情况下可能存在多份 Cache 的问题，感谢波总 @JFinal
+修复：当 Render 发生错误时，html 页面无法再次渲染 500 错误页面或者异常信息的问题
+
+
+
 jboot v3.5.2:
 优化：InterceptorBuilderManager，添加移除 Builder 等方法及其相关测试
 优化：ClassUtil，完善 singleton 等方法
