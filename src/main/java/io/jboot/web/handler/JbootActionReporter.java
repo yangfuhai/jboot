@@ -20,6 +20,7 @@ import com.jfinal.aop.Invocation;
 import com.jfinal.core.Action;
 import com.jfinal.core.ActionReporter;
 import com.jfinal.core.Controller;
+import com.jfinal.core.JFinal;
 import com.jfinal.kit.LogKit;
 import io.jboot.JbootConsts;
 import javassist.ClassPool;
@@ -44,8 +45,12 @@ public class JbootActionReporter {
     private static final String interceptMethodDesc = "(Lcom/jfinal/aop/Invocation;)V";
     private static int maxOutputLengthOfParaValue = 512;
     private static Writer writer = new SystemOutWriter();
+    private static ActionReporter actionReporter = JFinal.me().getConstants().getActionReporter();
 
     private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+
+
 
 
     public static void setMaxOutputLengthOfParaValue(int maxOutputLengthOfParaValue) {
@@ -70,10 +75,9 @@ public class JbootActionReporter {
         try {
             doReport(target, controller, action,invocation, time);
         } catch (Exception ex) {
-            // 出错的情况，一般情况下是：用户自定义了自己的 classloader, 此 classloader 加载的 class 没有被添加到 ClassPool
+            // 出错的情况，一般情况下是：用户自定义了自己的 classloader, 此 classloader 加载的 class 没有被添加到 javassist 的 ClassPool
             // 如何添加可以参考 jpress 的 插件加载
-            LogKit.error("JbootActionReport.doReport error, use Jfinal Reporter");
-            ActionReporter.report(target, controller, action);
+            actionReporter.report(target, controller, action);
         }
     }
 

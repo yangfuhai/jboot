@@ -41,7 +41,7 @@
 
 
     <properties>
-        <jfinal.version>4.9.01</jfinal.version>
+        <jfinal.version>4.9.02</jfinal.version>
         <jfinal-cos.version>2020.4</jfinal-cos.version>
         <jfinal-undertow.version>2.1</jfinal-undertow.version>
         <jfinal-weixin.version>2.7</jfinal-weixin.version>
