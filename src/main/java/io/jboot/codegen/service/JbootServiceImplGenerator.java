@@ -35,6 +35,7 @@ import java.util.Map;
 public class JbootServiceImplGenerator {
 
     private String basePackage;
+    private String implPackage;
     private String modelPackage;
 
     private MetaBuilder metaBuilder;
@@ -53,9 +54,10 @@ public class JbootServiceImplGenerator {
         this.outputDir = buildOutPutDir();
 
     }
-    public JbootServiceImplGenerator(String basePackage,String outputDir ,String modelPackage) {
+    public JbootServiceImplGenerator(String basePackage,String implPackage,String outputDir ,String modelPackage) {
 
         this.basePackage = basePackage;
+        this.implPackage = implPackage;
         this.modelPackage = modelPackage;
         this.template = "io/jboot/codegen/service/service_impl_template.tp";
         this.metaBuilder = CodeGenHelpler.createMetaBuilder();
@@ -115,7 +117,7 @@ public class JbootServiceImplGenerator {
 
 
     protected void genBaseModelContent(TableMeta tableMeta) {
-        Kv data = Kv.by("serviceImplPackageName", basePackage + "." + implName);
+        Kv data = Kv.by("serviceImplPackageName", implPackage == null ? (basePackage + "." + implName) : implPackage);
 //        data.set("generateChainSetter", generateChainSetter);
         data.set("tableMeta", tableMeta);
         data.set("basePackage", basePackage);
