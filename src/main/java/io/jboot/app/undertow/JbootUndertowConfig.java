@@ -80,8 +80,8 @@ public class JbootUndertowConfig extends UndertowConfig {
         String host = propExt.get(UNDERTOW_HOST);
         if (host == null || host.trim().length() == 0) {
             if (isAppDevMode()) {
-                propExt.getProperties().put(UNDERTOW_HOST, "127.0.0.1");
-                JbootConfigManager.setBootArg(UNDERTOW_HOST, "127.0.0.1");
+                propExt.getProperties().put(UNDERTOW_HOST, "localhost");
+                JbootConfigManager.setBootArg(UNDERTOW_HOST, "localhost");
             } else {
                 propExt.getProperties().put(UNDERTOW_HOST, "0.0.0.0");
                 JbootConfigManager.setBootArg(UNDERTOW_HOST, "0.0.0.0");
