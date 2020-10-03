@@ -42,12 +42,13 @@ public class ClassUtil {
      * @return
      */
     public static <T> T singleton(Class<T> clazz) {
-        return singleton(clazz,true);
+        return singleton(clazz, true);
     }
 
 
     /**
      * 获取单利
+     *
      * @param clazz
      * @param createByAop
      * @param <T>
@@ -61,6 +62,27 @@ public class ClassUtil {
                 if (ret == null) {
                     ret = newInstance(clazz, createByAop);
                     if (ret != null) {
+                        singletons.put(clazz, ret);
+                    } else {
+                        LOG.error("cannot new newInstance!!!!");
+                    }
+                }
+            }
+        }
+        return (T) ret;
+    }
+
+    public static <T> T singleton(Class<T> clazz, boolean createByAop, boolean inject) {
+        Object ret = singletons.get(clazz);
+        if (ret == null) {
+            synchronized (clazz) {
+                ret = singletons.get(clazz);
+                if (ret == null) {
+                    ret = newInstance(clazz, createByAop);
+                    if (ret != null) {
+                        if (inject && !createByAop) {
+                            Aop.inject(ret);
+                        }
                         singletons.put(clazz, ret);
                     } else {
                         LOG.error("cannot new newInstance!!!!");
