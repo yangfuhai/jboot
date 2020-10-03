@@ -47,7 +47,7 @@ public class CdnUtil {
         Elements imgElements = doc.select("img[src]");
         replace(imgElements, "src", domain);
 
-        Elements linkElements = doc.select("link[href]");
+        Elements linkElements = doc.select("link");
         replace(linkElements, "href", domain);
 
         return doc.toString();

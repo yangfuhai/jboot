@@ -22,7 +22,7 @@ import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.render.cdn.JbootWebCdnConfig;
-import io.jboot.web.render.cdn.MixedByteArrayOutputStream;
+import io.jboot.ext.MixedByteArrayOutputStream;
 import io.jboot.web.render.cdn.CdnUtil;
 
 import java.io.IOException;
