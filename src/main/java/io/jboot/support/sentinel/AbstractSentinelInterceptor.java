@@ -33,7 +33,7 @@ import java.util.Arrays;
  *
  * @author Eric Zhao
  */
-public abstract class AbstractSentinelProccesser {
+public abstract class AbstractSentinelInterceptor {
 
     protected void traceException(Throwable ex) {
         Tracer.trace(ex);

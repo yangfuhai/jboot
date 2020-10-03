@@ -28,18 +28,32 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class SentinelInterceptorBuilder implements InterceptorBuilder {
 
+    private static Boolean checkedSentinelDependency = null;
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+
+        if (checkedSentinelDependency()){
+            SentinelResource annotation = method.getAnnotation(SentinelResource.class);
+            if (annotation != null) {
+                interceptors.add(SentinelInterceptor.class);
+            }
+        }
+    }
+
+    private static boolean checkedSentinelDependency() {
+        if (checkedSentinelDependency != null) {
+            return checkedSentinelDependency;
+        }
+
         try {
             Class.forName("com.alibaba.csp.sentinel.Sph");
+            checkedSentinelDependency = true;
+        } catch (Exception ex) {
+            checkedSentinelDependency = false;
+        }
 
-            SentinelResource annotation = method.getAnnotation(SentinelResource.class);
-            if (annotation != null ){
-                interceptors.add(new SentinelInterceptor());
-            }
-        }catch (Exception ex){}
-
+        return checkedSentinelDependency;
     }
 
 
