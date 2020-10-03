@@ -18,6 +18,12 @@ package io.jboot.support.seata.tcc;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.support.seata.JbootSeataManager;
+import io.seata.common.util.StringUtils;
+import io.seata.core.context.RootContext;
+import io.seata.core.model.BranchType;
+import io.seata.rm.tcc.api.TwoPhaseBusinessAction;
+
+import java.lang.reflect.Method;
 
 
 /**
@@ -30,6 +36,9 @@ import io.jboot.support.seata.JbootSeataManager;
 public class TccActionInterceptor implements Interceptor {
 
 
+    private ActionInterceptorHandler actionInterceptorHandler = new ActionInterceptorHandler();
+
+
     @Override
     public void intercept(Invocation inv) {
 
@@ -38,7 +47,35 @@ public class TccActionInterceptor implements Interceptor {
             return;
         }
 
-        new TccActionProcesser().intercept(inv);
+        if (!RootContext.inGlobalTransaction()) {
+            // not in transaction
+            inv.invoke();
+            return;
+        }
+
+        Method method = inv.getMethod();
+        TwoPhaseBusinessAction businessAction = method.getAnnotation(TwoPhaseBusinessAction.class);
+        //try method
+        if (businessAction != null) {
+            //save the xid
+            String xid = RootContext.getXID();
+            //clear the context
+            String previousBranchType = RootContext.getBranchType();
+            RootContext.bindBranchType(BranchType.TCC);
+            try {
+                Object[] methodArgs = inv.getArgs();
+                //Handler the TCC Aspect
+                actionInterceptorHandler.proceed(method, methodArgs, xid, businessAction, inv);
+            } finally {
+                RootContext.unbindBranchType();
+                //restore the TCC branchType if exists
+                if (StringUtils.equals(BranchType.TCC.name(), previousBranchType)) {
+                    RootContext.bindBranchType(BranchType.TCC);
+                }
+            }
+        } else {
+            inv.invoke();
+        }
     }
 
 }

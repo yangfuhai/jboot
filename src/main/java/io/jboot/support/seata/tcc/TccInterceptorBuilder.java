@@ -28,18 +28,32 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class TccInterceptorBuilder implements InterceptorBuilder {
 
+    private static Boolean checkedSeataTccDependency = null;
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        try {
-            Class.forName("io.seata.rm.tcc.api.TwoPhaseBusinessAction");
-
+        if (checkedSeataTccDependency()){
             TwoPhaseBusinessAction businessAction = method.getAnnotation(TwoPhaseBusinessAction.class);
             if (businessAction != null ){
                 interceptors.add(new TccActionInterceptor());
             }
-        }catch (Exception ex){}
+        }
+    }
 
+
+    private static boolean checkedSeataTccDependency() {
+        if (checkedSeataTccDependency != null) {
+            return checkedSeataTccDependency;
+        }
+
+        try {
+            Class.forName("io.seata.rm.tcc.api.TwoPhaseBusinessAction");
+            checkedSeataTccDependency = true;
+        } catch (Exception ex) {
+            checkedSeataTccDependency = false;
+        }
+
+        return checkedSeataTccDependency;
     }
 
 
