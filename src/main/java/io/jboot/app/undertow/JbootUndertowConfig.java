@@ -76,11 +76,16 @@ public class JbootUndertowConfig extends UndertowConfig {
             propExt.getProperties().put(DEV_MODE, JbootConfigManager.me().isDevMode());
         }
 
-        //当不配置 host 时，默认为 0.0.0.0
+        //当不配置 host 时，为其配置默认的 host
         String host = propExt.get(UNDERTOW_HOST);
         if (host == null || host.trim().length() == 0) {
-            propExt.getProperties().put(UNDERTOW_HOST, "0.0.0.0");
-            JbootConfigManager.setBootArg(UNDERTOW_HOST, "0.0.0.0");
+            if (isAppDevMode()) {
+                propExt.getProperties().put(UNDERTOW_HOST, "127.0.0.1");
+                JbootConfigManager.setBootArg(UNDERTOW_HOST, "127.0.0.1");
+            } else {
+                propExt.getProperties().put(UNDERTOW_HOST, "0.0.0.0");
+                JbootConfigManager.setBootArg(UNDERTOW_HOST, "0.0.0.0");
+            }
         }
 
         //当不配置资源路径时，默认为 classpath 下的 webapp
@@ -97,7 +102,7 @@ public class JbootUndertowConfig extends UndertowConfig {
      *
      * @return
      */
-    public static Integer getAvailablePort() {
+    private static Integer getAvailablePort() {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(0);
@@ -113,6 +118,13 @@ public class JbootUndertowConfig extends UndertowConfig {
         }
         return null;
     }
+
+
+    private static boolean isAppDevMode() {
+        String appMode = JbootConfigManager.me().getConfigValue("jboot.app.mode");
+        return (null == appMode || "".equals(appMode.trim()) || "dev".equalsIgnoreCase(appMode.trim()));
+    }
+
 
     @Override
     public HotSwapResolver getHotSwapResolver() {
