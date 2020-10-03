@@ -28,19 +28,16 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class JwtInterceptorBuilder implements InterceptorBuilder {
 
-    private static JwtManager manager = JwtManager.me();
-
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        EnableJwt enableAnnotation = getAnnotation(serviceClass,method);
-        if (enableAnnotation != null && Controller.class.isAssignableFrom(serviceClass)) {
-            interceptors.add(new JwtInterceptor());
+        if (Controller.class.isAssignableFrom(serviceClass) && getAnnotation(serviceClass, method) != null) {
+            interceptors.add(JwtInterceptor.class);
         }
 
     }
 
     private EnableJwt getAnnotation(Class<?> serviceClass, Method method) {
-        EnableJwt enableAnnotation = serviceClass.getClass().getAnnotation(EnableJwt.class);
+        EnableJwt enableAnnotation = serviceClass.getAnnotation(EnableJwt.class);
         return enableAnnotation != null ? enableAnnotation : method.getAnnotation(EnableJwt.class);
     }
 
