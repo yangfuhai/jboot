@@ -15,8 +15,10 @@
  */
 package io.jboot.aop;
 
+import com.jfinal.aop.Aop;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
+import io.jboot.utils.ClassUtil;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -46,17 +48,28 @@ public class Interceptors {
         }
     }
 
-
     public void add(Interceptor interceptor) {
         warppers.add(new InterceptorWarpper(interceptor, currentWeight++));
+    }
+
+    public void add(Class<? extends Interceptor> interceptorClass) {
+        add(singleton(interceptorClass));
     }
 
     public void add(Interceptor interceptor, int weight) {
         warppers.add(new InterceptorWarpper(interceptor, weight));
     }
 
+    public void add(Class<? extends Interceptor> interceptorClass, int weight) {
+        add(singleton(interceptorClass), weight);
+    }
+
     public void addToFirst(Interceptor interceptor) {
         warppers.add(new InterceptorWarpper(interceptor, --minimalWeight));
+    }
+
+    public void addToFirst(Class<? extends Interceptor> interceptorClass) {
+        addToFirst(singleton(interceptorClass));
     }
 
     public boolean addBefore(Interceptor interceptor, Predicate<? super Interceptor> filter) {
@@ -78,34 +91,23 @@ public class Interceptors {
             minimalWeight--;
             warppers.add(new InterceptorWarpper(interceptor, --weight));
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
-    public boolean addBefore(Interceptor interceptor, Class<? extends Interceptor> interceptroClass) {
-        Integer weight = null;
-        for (InterceptorWarpper warpper : warppers) {
-            if (warpper.getInterceptor().getClass() == interceptroClass) {
-                weight = warpper.weight;
-                break;
-            }
-        }
-
-        //所有在 新加 的拦截器往前推 1
-        if (weight != null) {
-            for (InterceptorWarpper warpper : warppers) {
-                if (warpper.weight < weight) {
-                    warpper.weight--;
-                }
-            }
-            minimalWeight--;
-            warppers.add(new InterceptorWarpper(interceptor, --weight));
-            return true;
-        }else {
-            return false;
-        }
+    public boolean addBefore(Class<? extends Interceptor> interceptorClass, Predicate<? super Interceptor> filter) {
+        return addBefore(singleton(interceptorClass), filter);
     }
+
+    public boolean addBefore(Interceptor interceptor, Class<? extends Interceptor> toClass) {
+        return addBefore(interceptor, interceptor1 -> interceptor1.getClass() == toClass);
+    }
+
+    public boolean addBefore(Class<? extends Interceptor> interceptorClass, Class<? extends Interceptor> toClass) {
+        return addBefore(singleton(interceptorClass), toClass);
+    }
+
 
     public boolean addAfter(Interceptor interceptor, Predicate<? super Interceptor> filter) {
         Integer weight = null;
@@ -126,38 +128,28 @@ public class Interceptors {
             currentWeight++;
             warppers.add(new InterceptorWarpper(interceptor, ++weight));
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
+    public boolean addAfter(Class<? extends Interceptor> interceptorClass, Predicate<? super Interceptor> filter) {
+        return addAfter(singleton(interceptorClass), filter);
+    }
 
-    public boolean addAfter(Interceptor interceptor, Class<? extends Interceptor> interceptroClass) {
-        Integer weight = null;
-        for (InterceptorWarpper warpper : warppers) {
-            if (warpper.getInterceptor().getClass() == interceptroClass) {
-                weight = warpper.weight;
-                break;
-            }
-        }
 
-        if (weight != null) {
-            for (InterceptorWarpper warpper : warppers) {
-                if (warpper.weight > weight) {
-                    warpper.weight++;
-                }
-            }
-            currentWeight++;
-            warppers.add(new InterceptorWarpper(interceptor, ++weight));
-            return true;
-        }else {
-            return false;
-        }
+    public boolean addAfter(Interceptor interceptor, Class<? extends Interceptor> toClass) {
+        return addAfter(interceptor, interceptor1 -> interceptor1.getClass() == toClass);
+    }
+
+
+    public boolean addAfter(Class<? extends Interceptor> interceptorClass, Class<? extends Interceptor> toClass) {
+        return addAfter(singleton(interceptorClass), toClass);
     }
 
 
     public boolean remove(Interceptor interceptor) {
-       return warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor == interceptor);
+        return warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor == interceptor);
     }
 
 
@@ -215,6 +207,11 @@ public class Interceptors {
 
     public int getCurrentWeight() {
         return currentWeight;
+    }
+
+
+    private Interceptor singleton(Class<? extends Interceptor> interceptorClass) {
+        return ClassUtil.singleton(interceptorClass, false, true);
     }
 
 
