@@ -29,15 +29,10 @@ public class LimiterInterceptor extends BaseLimiterInterceptor implements Interc
     public void intercept(Invocation inv) {
 
         String packageOrTarget = getPackageOrTarget(inv);
-
         EnableLimit enableLimit = inv.getMethod().getAnnotation(EnableLimit.class);
-        if (enableLimit != null) {
-            String resource = StrUtil.obtainDefaultIfBlank(enableLimit.resource(), packageOrTarget);
-            doInterceptByLimitInfo(enableLimit, resource, inv);
-            return;
-        }
+        String resource = StrUtil.obtainDefaultIfBlank(enableLimit.resource(), packageOrTarget);
 
-        inv.invoke();
+        doInterceptByLimitInfo(enableLimit, resource, inv);
     }
 
 

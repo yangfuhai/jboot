@@ -34,8 +34,8 @@ public class ShiroInterceptorBuilder implements InterceptorBuilder {
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
-        if (config.isConfigOK() && Controller.class.isAssignableFrom(serviceClass)) {
-            interceptors.add(new JbootShiroInterceptor());
+        if (Controller.class.isAssignableFrom(serviceClass) && config.isConfigOK()) {
+            interceptors.add(JbootShiroInterceptor.class);
         }
     }
 

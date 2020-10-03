@@ -35,13 +35,13 @@ public class LimiterInterceptorBuilder implements InterceptorBuilder {
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
         if (manager.isEnable() && !manager.getConfigPackageOrTargets().isEmpty()) {
-            interceptors.add(new LimiterGlobalInterceptor());
+            interceptors.add(LimiterGlobalInterceptor.class);
             return;
         }
 
         EnableLimit enableLimit = method.getAnnotation(EnableLimit.class);
         if (enableLimit != null) {
-            interceptors.add(new LimiterInterceptor());
+            interceptors.add(LimiterInterceptor.class);
         }
 
     }

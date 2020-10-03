@@ -15,10 +15,12 @@
  */
 package io.jboot.web.cors;
 
+import com.jfinal.core.Controller;
 import com.jfinal.ext.cors.EnableCORS;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
+import io.jboot.utils.ClassUtil;
 
 import java.lang.reflect.Method;
 
@@ -28,12 +30,10 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class CORSInterceptorBuilder implements InterceptorBuilder {
 
-
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        EnableCORS enableCORS = getAnnotation(serviceClass,method);
-        if (enableCORS != null) {
-            interceptors.add(new CORSInterceptor());
+        if (Controller.class.isAssignableFrom(serviceClass) && getAnnotation(serviceClass,method) != null) {
+            interceptors.add(CORSInterceptor.class);
         }
     }
 

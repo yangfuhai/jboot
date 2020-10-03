@@ -30,7 +30,6 @@ public class CachePutInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
-
         //先执行，之后再保存数据
         inv.invoke();
 
@@ -49,10 +48,10 @@ public class CachePutInterceptor implements Interceptor {
 
         Class targetClass = inv.getTarget().getClass();
         String cacheName = AnnotationUtil.get(cachePut.name());
-        Utils.ensureCachenameAvailable(method, targetClass, cacheName);
+        Utils.ensureCachenameAvailable(method, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cachePut.key()), targetClass, method, inv.getArgs());
 
-        Utils.putDataToCache(cachePut.liveSeconds(),cacheName,cacheKey,data);
+        Utils.putDataToCache(cachePut.liveSeconds(), cacheName, cacheKey, data);
     }
 
 

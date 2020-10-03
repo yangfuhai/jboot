@@ -58,7 +58,7 @@ public class CacheableInterceptor implements Interceptor {
 
         Class targetClass = inv.getTarget().getClass();
         String cacheName = AnnotationUtil.get(cacheable.name());
-        Utils.ensureCachenameAvailable(method, targetClass, cacheName);
+        Utils.ensureCachenameAvailable(method, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cacheable.key()), targetClass, method, inv.getArgs());
 
         Object data = AopCache.get(cacheName, cacheKey);

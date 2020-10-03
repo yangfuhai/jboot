@@ -65,6 +65,7 @@ public class JbootSeataManager {
                 config.getTxServiceGroup(),
                 config.getMode()
         );
+
         transactionManager.init();
 
         this.transactionalTemplate = new TransactionalTemplate();

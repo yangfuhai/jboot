@@ -36,8 +36,6 @@ import java.util.Map;
 
 class Utils {
 
-
-    static final Log LOG = Log.getLog(Utils.class);
     static final Engine ENGINE = new Engine("JbootCacheRender");
 
     /**
@@ -81,12 +79,12 @@ class Utils {
         Class[] paramTypes = method.getParameterTypes();
         int index = 0;
         for (Object argument : arguments) {
-            String argStr = converteToString(argument);
-            ensureArgumentNotNull(argStr, clazz, method);
+            String argString = converteToString(argument);
+            ensureArgumentNotNull(argString, method);
             keyBuilder
                     .append(paramTypes[index++].getClass().getName())
                     .append(":")
-                    .append(argStr)
+                    .append(argString)
                     .append("-");
         }
 
@@ -103,7 +101,7 @@ class Utils {
         return engineRender(key, method, arguments);
     }
 
-    public static void ensureArgumentNotNull(String argument, Class clazz, Method method) {
+    public static void ensureArgumentNotNull(String argument, Method method) {
         if (argument == null) {
             throw new JbootException("not support empty key for annotation @Cacheable, @CacheEvict or @CachePut " +
                     "at method[" + ClassUtil.buildMethodString(method) + "], " +
@@ -111,7 +109,7 @@ class Utils {
         }
     }
 
-    public static void ensureCachenameAvailable(Method method, Class targetClass, String cacheName) {
+    public static void ensureCachenameAvailable(Method method, String cacheName) {
         if (StrUtil.isBlank(cacheName)) {
             throw new JbootException(String.format("CacheEvict.name() must not empty in method [%s].",
                     ClassUtil.buildMethodString(method)));

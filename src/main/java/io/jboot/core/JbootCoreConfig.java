@@ -40,7 +40,6 @@ import io.jboot.core.log.Slf4jLogFactory;
 import io.jboot.db.ArpManager;
 import io.jboot.support.metric.JbootMetricConfig;
 import io.jboot.support.seata.JbootSeataManager;
-import io.jboot.support.sentinel.SentinelManager;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
@@ -296,7 +295,6 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootSwaggerManager.me().init();
         LimiterManager.me().init();
         JbootSeataManager.me().init();
-        SentinelManager.me().init();
         JbootGatewayManager.me().init();
 
         JbootAppListenerManager.me().onStart();

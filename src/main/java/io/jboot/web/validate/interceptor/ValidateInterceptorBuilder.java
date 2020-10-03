@@ -31,26 +31,27 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class ValidateInterceptorBuilder implements InterceptorBuilder {
 
-
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-
-
-        EmptyValidate emptyParaValidate = method.getAnnotation(EmptyValidate.class);
-        if (emptyParaValidate != null && Controller.class.isAssignableFrom(serviceClass)) {
-            interceptors.add(new EmptyValidateInterceptor());
+        if (isControllerClass(serviceClass) && hasAnnotation(method, EmptyValidate.class)) {
+            interceptors.add(EmptyValidateInterceptor.class);
         }
 
-        RegexValidate regexValidate = method.getAnnotation(RegexValidate.class);
-        if (regexValidate != null && Controller.class.isAssignableFrom(serviceClass)) {
-            interceptors.add(new RegexValidateInterceptor());
+        if (isControllerClass(serviceClass) && hasAnnotation(method, RegexValidate.class)) {
+            interceptors.add(RegexValidateInterceptor.class);
         }
 
-        CaptchaValidate captchaValidate = method.getAnnotation(CaptchaValidate.class);
-        if (captchaValidate != null && Controller.class.isAssignableFrom(serviceClass)) {
-            interceptors.add(new CaptchaValidateInterceptor());
+        if (isControllerClass(serviceClass) && hasAnnotation(method, CaptchaValidate.class)) {
+            interceptors.add(CaptchaValidateInterceptor.class);
         }
     }
 
+    private boolean isControllerClass(Class<?> serviceClass) {
+        return Controller.class.isAssignableFrom(serviceClass);
+    }
+
+    private boolean hasAnnotation(Method method, Class annotationClass) {
+        return method.getAnnotation(annotationClass) != null;
+    }
 
 }
