@@ -151,7 +151,7 @@ public class OKHttpImpl implements JbootHttp {
             TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
 
 
-            SSLContext sslContext = SSLContext.getInstance("TLSv1");
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(keyManagers, trustManagers, new SecureRandom());
 
             X509TrustManager x509TrustManager = trustAnyTrustManager;

@@ -230,7 +230,7 @@ public class JbootHttpImpl implements JbootHttp {
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(clientStore);
 
-            SSLContext sslContext = SSLContext.getInstance("TLSv1");
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(keyManagers, trustManagerFactory.getTrustManagers(), new SecureRandom());
 
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
