@@ -35,7 +35,7 @@ https://github.com/alibaba/Sentinel/wiki/%E4%BB%8B%E7%BB%8D
 下载 Sentinel 的 jar 到本地，并通过如下方式启动 启动 sentinel dashboard
 
 ```
-java -jar sentinel-dashboard-1.7.1.jar
+java -jar sentinel-dashboard-1.8.0.jar
 ```
 
  jar 的下载地址：https://github.com/alibaba/Sentinel/releases
@@ -45,7 +45,7 @@ java -jar sentinel-dashboard-1.7.1.jar
 例如：
 
 ```
-java -Dserver.port=8888 -jar sentinel-dashboard-1.7.1.jar
+java -Dserver.port=8888 -jar sentinel-dashboard-1.8.0.jar
 ```
 
 从 Sentinel 1.6.0 起，Sentinel 控制台引入基本的登录功能，默认用户名和密码都是 sentinel。
