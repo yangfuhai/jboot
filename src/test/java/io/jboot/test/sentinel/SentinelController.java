@@ -16,6 +16,7 @@
 package io.jboot.test.sentinel;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -24,16 +25,22 @@ import io.jboot.web.controller.annotation.RequestMapping;
  * @Date: 2020/2/3
  *
  * 使用方法：
- * 第一步，启动 sentinel dashboard
- *   java -jar sentinel-dashboard-1.7.1.jar
- *
- * 第二步：在 resource/sentinel.properties 配置相关信息
+ * http://jbootprojects.gitee.io/docs/docs/sentinel.html
  */
 @RequestMapping("/sentinel")
 public class SentinelController extends JbootController {
 
-    @SentinelResource
+    @SentinelResource(blockHandler = "block")
     public void index(){
         renderText("sentinel index...");
+    }
+
+
+    /**
+     * 注意：这个降级方法里的参数，必须是 SentinelResource 方法 index() 参数最后多出一个 BlockException 参数
+     * @param ex
+     */
+    public void block(BlockException ex){
+        renderText("sentinel block");
     }
 }

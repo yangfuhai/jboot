@@ -114,8 +114,7 @@ public abstract class AbstractSentinelInterceptor {
         return handleDefaultFallback(inv, defaultFallback, fallbackClass, ex);
     }
 
-    protected Object handleDefaultFallback(Invocation inv, String defaultFallback,
-                                           Class<?>[] fallbackClass, Throwable ex) throws Throwable {
+    protected Object handleDefaultFallback(Invocation inv, String defaultFallback,  Class<?>[] fallbackClass, Throwable ex) throws Throwable {
         // Execute the default fallback function if configured.
         Method fallbackMethod = extractDefaultFallbackMethod(inv, defaultFallback, fallbackClass);
         if (fallbackMethod != null) {
