@@ -1,3 +1,13 @@
+jboot v3.5.4:
+优化：使用 InterceptorBuilder 重构 Sentinel 模块，使代码更加简洁
+优化：使用 InterceptorBuilder 重构 Seata Tcc 模块，使代码更加简洁
+优化：Interceptors 可以通过 Class 直接添加，而无需添加具体的实例
+优化：更新 JFinal、JFinal-undertow 等到最新版本
+优化：移动 MixedByteArrayOutputStream 所在的包目录
+修复：解决CGLIB代理下获取不到注解问题，感谢 @huangzekai_1
+
+
+
 jboot v3.5.3:
 优化：CaffeineCacheBuilder 构建器可能根据名称进行构建
 优化：提高 CDN 渲染的构建性能
