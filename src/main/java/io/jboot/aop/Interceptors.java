@@ -157,7 +157,8 @@ public class Interceptors {
         return warppers.removeIf(warpper -> predicate.test(warpper.interceptor));
     }
 
-    public boolean removeByClass(Class clazz) {
+
+    public boolean remove(Class<? extends Interceptor> clazz) {
         return warppers.removeIf(interceptorWarpper -> interceptorWarpper.interceptor.getClass() == clazz);
     }
 
@@ -172,7 +173,7 @@ public class Interceptors {
     }
 
 
-    public Integer getWeightByClass(Class<? extends Interceptor> clazz) {
+    public Integer getWeight(Class<? extends Interceptor> clazz) {
         for (InterceptorWarpper warpper : warppers) {
             if (warpper.interceptor.getClass() == clazz) {
                 return warpper.weight;
@@ -200,6 +201,27 @@ public class Interceptors {
             return inters;
         }
     }
+
+
+    public boolean hasInterceptor(Interceptor interceptor) {
+        for (InterceptorWarpper warpper : warppers) {
+            if (warpper.interceptor == interceptor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean hasInterceptor(Class<? extends Interceptor> clazz) {
+        for (InterceptorWarpper warpper : warppers) {
+            if (warpper.interceptor.getClass() == clazz) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public int getMinimalWeight() {
         return minimalWeight;
