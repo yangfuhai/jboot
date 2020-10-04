@@ -347,7 +347,7 @@ public void onInit() {
 
 或者 `CacheInterceptorBuilder` 添加主键 `@AutoLoad`
 
-> 注意：使用主键 `@Autoload` 之后就不要通过 `InterceptorBuilderManager` 来添加了，`@Autoload` 的作用就是在其启动的时候自动添加过去
+> 注意：使用注解 `@Autoload` 之后就不要通过 `InterceptorBuilderManager` 来添加了，`@Autoload` 的作用就是在其启动的时候自动添加过去
 
 比如 @Cacheable 的拦截器构建 CacheInterceptorBuilder 代码如下：
 
@@ -361,6 +361,9 @@ public class CacheInterceptorBuilder implements InterceptorBuilder {
         Cacheable cacheable = method.getAnnotation(Cacheable.class);
         if (cacheable != null) {
             interceptors.add(new CacheableInterceptor());
+            
+            // 或者使用如下的方式添加，这样，所有的方法都会被同一个 "实例" 拦截
+            // interceptors.add(CacheableInterceptor.class)
         }
     }
 }
