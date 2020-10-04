@@ -105,3 +105,29 @@ function myfunc(data){
 - data-success-message: ajax 支持成功后，弹出提示内容
 - data-fail-function: ajax 提交失败后，执行的 js 方法
 - data-fail-message: ajax 提交失败后，弹出的提示内容。
+
+## 图片上传组件
+
+JbootAdmin 图片上传组件支持了图片剪切的功能，如下图所示:
+
+![](./images/font-image-uploader.png)
+
+
+上传图片的本质是使用了 layer 组件，当 上传图片 的 layer 弹出被关闭的时候，会自动把 src 只返回来。我们可以使用属性 data-layer-binds 来为其绑定数据。例如：
+
+```html
+<a href="/cms/upload/image" open-type="layer"  
+data-layer-area="['800px', '600px']" 
+data-layer-title="上传图片..." 
+data-layer-binds="#input:src">选择图片</a > 
+```
+调用上传图片组件，调用完成后，自动把图片的地址绑定到 `id='input'` 的组件里去。
+
+
+```html
+<a href="/cms/upload/image" open-type="layer"  
+data-layer-area="['800px', '600px']" 
+data-layer-title="上传图片..." 
+data-layer-end="endFunction">选择图片</a > 
+```
+调用上传图片组件，调用完成后，自动把自动执行 `endFunction(data)` 这个 js 方法，通过 `data.src` 可以获得图片的 url 地址。 
