@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Date: 2019/11/21
  */
 public class NamedThreadFactory implements ThreadFactory {
+
     protected static final AtomicInteger POOL_COUNTER = new AtomicInteger(1);
     protected final AtomicInteger mThreadCounter;
     protected final String mPrefix;

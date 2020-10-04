@@ -17,6 +17,7 @@ package io.jboot.components.event.annotation;
 
 import java.lang.annotation.*;
 
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented

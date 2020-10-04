@@ -33,7 +33,7 @@ public class ObjectUtil {
      * @param <T>
      * @return true 包含，false 不包含
      */
-    public static <T extends Object> boolean isContainsObject(Collection<T> objects, T compareObject, ObjectFunc<T>... compareAttrGetters) {
+    public static <T> boolean isContainsObject(Collection<T> objects, T compareObject, ObjectFunc<T>... compareAttrGetters) {
         if (objects == null || objects.isEmpty() || compareObject == null) {
             return false;
         }
@@ -62,7 +62,7 @@ public class ObjectUtil {
      * @param <T>
      * @return 返回 objects 结合中对比成功的 object
      */
-    public static <T extends Object> T getContainsObject(Collection<T> objects, T compareObject, ObjectFunc<T>... compareAttrGetters) {
+    public static <T> T getContainsObject(Collection<T> objects, T compareObject, ObjectFunc<T>... compareAttrGetters) {
         if (objects == null || objects.isEmpty() || compareObject == null) {
             return null;
         }
@@ -91,7 +91,7 @@ public class ObjectUtil {
      * @param <T>
      * @return
      */
-    public static <T extends Object> boolean isSameObject(T object1, T object2, ObjectFunc<T>... compareAttrGetters) {
+    public static <T> boolean isSameObject(T object1, T object2, ObjectFunc<T>... compareAttrGetters) {
         if (object1 == null || object2 == null) {
             return object1 == object2;
         }
@@ -126,7 +126,7 @@ public class ObjectUtil {
      * @param <T>
      * @return
      */
-    public static <T extends Object> boolean notSameObject(T object1, T object2, ObjectFunc<T>... compareAttrGetters) {
+    public static <T> boolean notSameObject(T object1, T object2, ObjectFunc<T>... compareAttrGetters) {
         return !isSameObject(object1, object2, compareAttrGetters);
     }
 

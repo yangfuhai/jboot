@@ -18,6 +18,6 @@ package io.jboot.utils;
 /**
  * @author michael yang (fuhai999@gmail.com)
  */
-public interface ObjectFunc<T extends Object>{
+public interface ObjectFunc<T>{
     public Object get(T Object);
 }
