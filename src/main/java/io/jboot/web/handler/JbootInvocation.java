@@ -45,6 +45,7 @@ public class JbootInvocation extends Invocation {
     protected static ThreadLocal<Boolean> controllerInvokeFlag = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     private static boolean devMode = JFinal.me().getConstants().getDevMode();
+    private static InterceptorBuilderManager builderManager = InterceptorBuilderManager.me();
 
     public JbootInvocation(Action action, Controller controller) {
         super(action, controller);
@@ -61,25 +62,21 @@ public class JbootInvocation extends Invocation {
     private Interceptor[] buildInterceptors(Action action) {
 
         JbootCglibProxyFactory.MethodKey key = JbootCglibProxyFactory.IntersCache.getMethodKey(action.getControllerClass(), action.getMethod());
-        Interceptor[] cachedInterceptors = JbootCglibProxyFactory.IntersCache.get(key);
-        if (cachedInterceptors == null) {
+        Interceptor[] inters = JbootCglibProxyFactory.IntersCache.get(key);
+        if (inters == null) {
             synchronized (action) {
-                if (cachedInterceptors == null) {
+                inters = JbootCglibProxyFactory.IntersCache.get(key);
+                if (inters == null) {
 
-                    // jfinal 原生的构建
-                    Interceptor[] interceptors = action.getInterceptors();
+                    inters = action.getInterceptors();
+                    inters = builderManager.build(action.getControllerClass(), action.getMethod(), inters);
 
-                    // builder 再次构建
-                    interceptors = InterceptorBuilderManager.me().build(action.getControllerClass(), action.getMethod(), interceptors);
-
-                    JbootCglibProxyFactory.IntersCache.put(key, interceptors);
-
-                    cachedInterceptors = interceptors;
+                    JbootCglibProxyFactory.IntersCache.put(key, inters);
                 }
             }
         }
 
-        return cachedInterceptors;
+        return inters;
     }
 
 

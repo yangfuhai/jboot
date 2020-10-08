@@ -32,7 +32,8 @@ import java.util.Set;
 class JbootCglibCallback implements MethodInterceptor {
 
     private static final Set<String> excludedMethodName = buildExcludedMethodName();
-    private static final InterceptorManager interMan = InterceptorManager.me();
+    private static final InterceptorManager interManager = InterceptorManager.me();
+    private static final InterceptorBuilderManager builderManager = InterceptorBuilderManager.me();
 
     @Override
     public Object intercept(Object target, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
@@ -46,17 +47,13 @@ class JbootCglibCallback implements MethodInterceptor {
         Interceptor[] inters = JbootCglibProxyFactory.IntersCache.get(key);
         if (inters == null) {
             synchronized (method) {
+                inters = JbootCglibProxyFactory.IntersCache.get(key);
                 if (inters == null) {
 
-                    // jfinal 原生的构建
-                    Interceptor[] interceptors = interMan.buildServiceMethodInterceptor(targetClass, method);
+                    inters = interManager.buildServiceMethodInterceptor(targetClass, method);
+                    inters = builderManager.build(targetClass, method, inters);
 
-                    // builder 再次构建
-                    interceptors = InterceptorBuilderManager.me().build(targetClass, method, interceptors);
-
-                    JbootCglibProxyFactory.IntersCache.put(key, interceptors);
-
-                    inters = interceptors;
+                    JbootCglibProxyFactory.IntersCache.put(key, inters);
                 }
             }
         }
