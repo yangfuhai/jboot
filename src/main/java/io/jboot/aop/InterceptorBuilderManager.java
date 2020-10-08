@@ -17,7 +17,6 @@ package io.jboot.aop;
 
 import com.jfinal.aop.Interceptor;
 import io.jboot.aop.annotation.AutoLoad;
-import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.core.weight.WeightUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.ClassUtil;
@@ -47,7 +46,7 @@ public class InterceptorBuilderManager{
                 }
             }
 
-            JbootCglibProxyFactory.IntersCache.clear();
+            InterceptorCache.clear();
         }
     }
 
@@ -67,7 +66,7 @@ public class InterceptorBuilderManager{
         this.interceptorBuilders.add(interceptorBuilder);
         WeightUtil.sort(this.interceptorBuilders);
 
-        JbootCglibProxyFactory.IntersCache.clear();
+        InterceptorCache.clear();
     }
 
 
@@ -80,7 +79,7 @@ public class InterceptorBuilderManager{
         this.interceptorBuilders.addAll(interceptorBuilders);
         WeightUtil.sort(this.interceptorBuilders);
 
-        JbootCglibProxyFactory.IntersCache.clear();
+        InterceptorCache.clear();
     }
 
 
@@ -88,7 +87,7 @@ public class InterceptorBuilderManager{
     public void removeInterceptorBuilder(Predicate<? super InterceptorBuilder> filter){
         if (interceptorBuilders != null && !interceptorBuilders.isEmpty()){
             if (interceptorBuilders.removeIf(filter)) {
-                JbootCglibProxyFactory.IntersCache.clear();
+                InterceptorCache.clear();
             }
         }
     }

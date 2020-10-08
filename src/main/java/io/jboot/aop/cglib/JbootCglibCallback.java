@@ -19,6 +19,7 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
 import com.jfinal.aop.Invocation;
 import io.jboot.aop.InterceptorBuilderManager;
+import io.jboot.aop.InterceptorCache;
 import io.jboot.utils.ClassUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -43,17 +44,17 @@ class JbootCglibCallback implements MethodInterceptor {
 
         Class<?> targetClass = ClassUtil.getUsefulClass(target.getClass());
 
-        JbootCglibProxyFactory.MethodKey key = JbootCglibProxyFactory.IntersCache.getMethodKey(targetClass, method);
-        Interceptor[] inters = JbootCglibProxyFactory.IntersCache.get(key);
+        InterceptorCache.MethodKey key = InterceptorCache.getMethodKey(targetClass, method);
+        Interceptor[] inters = InterceptorCache.get(key);
         if (inters == null) {
             synchronized (method) {
-                inters = JbootCglibProxyFactory.IntersCache.get(key);
+                inters = InterceptorCache.get(key);
                 if (inters == null) {
 
                     inters = interManager.buildServiceMethodInterceptor(targetClass, method);
                     inters = builderManager.build(targetClass, method, inters);
 
-                    JbootCglibProxyFactory.IntersCache.put(key, inters);
+                    InterceptorCache.put(key, inters);
                 }
             }
         }

@@ -21,7 +21,7 @@ import com.jfinal.core.Action;
 import com.jfinal.core.Controller;
 import com.jfinal.core.JFinal;
 import io.jboot.aop.InterceptorBuilderManager;
-import io.jboot.aop.cglib.JbootCglibProxyFactory;
+import io.jboot.aop.InterceptorCache;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -61,17 +61,17 @@ public class JbootInvocation extends Invocation {
 
     private Interceptor[] buildInterceptors(Action action) {
 
-        JbootCglibProxyFactory.MethodKey key = JbootCglibProxyFactory.IntersCache.getMethodKey(action.getControllerClass(), action.getMethod());
-        Interceptor[] inters = JbootCglibProxyFactory.IntersCache.get(key);
+        InterceptorCache.MethodKey key = InterceptorCache.getMethodKey(action.getControllerClass(), action.getMethod());
+        Interceptor[] inters = InterceptorCache.get(key);
         if (inters == null) {
             synchronized (action) {
-                inters = JbootCglibProxyFactory.IntersCache.get(key);
+                inters = InterceptorCache.get(key);
                 if (inters == null) {
 
                     inters = action.getInterceptors();
                     inters = builderManager.build(action.getControllerClass(), action.getMethod(), inters);
 
-                    JbootCglibProxyFactory.IntersCache.put(key, inters);
+                    InterceptorCache.put(key, inters);
                 }
             }
         }
