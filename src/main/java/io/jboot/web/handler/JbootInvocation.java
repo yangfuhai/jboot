@@ -61,19 +61,25 @@ public class JbootInvocation extends Invocation {
     private Interceptor[] buildInterceptors(Action action) {
 
         JbootCglibProxyFactory.MethodKey key = JbootCglibProxyFactory.IntersCache.getMethodKey(action.getControllerClass(), action.getMethod());
-        Interceptor[] inters = JbootCglibProxyFactory.IntersCache.get(key);
-        if (inters == null) {
+        Interceptor[] cachedInterceptors = JbootCglibProxyFactory.IntersCache.get(key);
+        if (cachedInterceptors == null) {
+            synchronized (action) {
+                if (cachedInterceptors == null) {
 
-            // jfinal 原生的构建
-            inters = action.getInterceptors();
+                    // jfinal 原生的构建
+                    Interceptor[] interceptors = action.getInterceptors();
 
-            // builder 再次构建
-            inters = InterceptorBuilderManager.me().build(action.getControllerClass(), action.getMethod(), inters);
+                    // builder 再次构建
+                    interceptors = InterceptorBuilderManager.me().build(action.getControllerClass(), action.getMethod(), interceptors);
 
-            JbootCglibProxyFactory.IntersCache.put(key, inters);
+                    JbootCglibProxyFactory.IntersCache.put(key, interceptors);
+
+                    cachedInterceptors = interceptors;
+                }
+            }
         }
 
-        return inters;
+        return cachedInterceptors;
     }
 
 
@@ -88,7 +94,7 @@ public class JbootInvocation extends Invocation {
         } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
             try {
                 // Invoke the action
-                if (devMode){
+                if (devMode) {
                     controllerInvokeFlag.set(true);
                 }
                 returnValue = action.getMethod().invoke(target, args);
@@ -122,7 +128,7 @@ public class JbootInvocation extends Invocation {
         return invokedInterceptors.get();
     }
 
-    public static boolean isControllerInvoked(){
+    public static boolean isControllerInvoked() {
         return controllerInvokeFlag.get();
     }
 

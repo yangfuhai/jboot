@@ -45,22 +45,25 @@ class JbootCglibCallback implements MethodInterceptor {
         JbootCglibProxyFactory.MethodKey key = JbootCglibProxyFactory.IntersCache.getMethodKey(targetClass, method);
         Interceptor[] inters = JbootCglibProxyFactory.IntersCache.get(key);
         if (inters == null) {
+            synchronized (method) {
+                if (inters == null) {
 
-            // jfinal 原生的构建
-            inters = interMan.buildServiceMethodInterceptor(targetClass, method);
+                    // jfinal 原生的构建
+                    Interceptor[] interceptors = interMan.buildServiceMethodInterceptor(targetClass, method);
 
-            // builder 再次构建
-            inters = InterceptorBuilderManager.me().build(targetClass, method, inters);
+                    // builder 再次构建
+                    interceptors = InterceptorBuilderManager.me().build(targetClass, method, interceptors);
 
-            JbootCglibProxyFactory.IntersCache.put(key, inters);
+                    JbootCglibProxyFactory.IntersCache.put(key, interceptors);
+
+                    inters = interceptors;
+                }
+            }
         }
 
-        Invocation invocation = new Invocation(target, method, inters,
-                x -> {
-                    return methodProxy.invokeSuper(target, x);
-                }
-                , args);
 
+        Invocation invocation = new Invocation(target, method, inters,
+                x -> methodProxy.invokeSuper(target, x), args);
 
         invocation.invoke();
         return invocation.getReturnValue();
@@ -79,16 +82,6 @@ class JbootCglibCallback implements MethodInterceptor {
         return excludedMethodName;
     }
 
-
-    private static LinkedList<Interceptor> toLinkedList(Interceptor[] interceptors) {
-        LinkedList<Interceptor> linkedList = new LinkedList<>();
-        if (interceptors != null) {
-            for (Interceptor interceptor : interceptors) {
-                linkedList.add(interceptor);
-            }
-        }
-        return linkedList;
-    }
 }
 
 
