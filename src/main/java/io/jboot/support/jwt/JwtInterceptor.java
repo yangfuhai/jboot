@@ -36,59 +36,26 @@ public class JwtInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
-
-        if (!JwtManager.me().getConfig().isConfigOk()) {
-            throw new JbootException("jwt secret can not config well, please config jboot.web.jwt.secret in jboot.properties.");
-        }
-
-        HttpServletRequest request = inv.getController().getRequest();
-        String token = request.getHeader(JwtManager.me().getHttpHeaderName());
-
-        if (StrUtil.isBlank(token) && StrUtil.isNotBlank(JwtManager.me().getHttpParameterKey())) {
-            token = request.getParameter(JwtManager.me().getHttpParameterKey());
-        }
-
-        if (StrUtil.isBlank(token)) {
-            processInvoke(inv, null);
-            return;
-        }
-
-        Map map = JwtManager.me().parseJwtToken(token);
-        if (map == null) {
-            processInvoke(inv, null);
-            return;
-        }
-
         try {
-            JwtManager.me().holdJwts(map);
-            processInvoke(inv, map);
+            inv.invoke();
         } finally {
-            JwtManager.me().releaseJwts();
+            if (!(inv.getController() instanceof JbootController)) {
+                return;
+            }
+
+            JbootController jbootController = (JbootController) inv.getController();
+            Map<String, Object> jwtMap = jbootController.getJwtAttrs();
+
+
+            if (jwtMap == null || jwtMap.isEmpty()) {
+                refreshIfNecessary(inv, JwtManager.me().getParas());
+                return;
+            }
+
+            String token = JwtManager.me().createJwtToken(jwtMap);
+            HttpServletResponse response = inv.getController().getResponse();
+            response.addHeader(JwtManager.me().getHttpHeaderName(), token);
         }
-    }
-
-
-    private void processInvoke(Invocation inv, Map oldData) {
-
-        inv.invoke();
-
-
-        if (!(inv.getController() instanceof JbootController)) {
-            return;
-        }
-
-        JbootController jbootController = (JbootController) inv.getController();
-        Map<String, Object> jwtMap = jbootController.getJwtAttrs();
-
-
-        if (jwtMap == null || jwtMap.isEmpty()) {
-            refreshIfNecessary(inv, oldData);
-            return;
-        }
-
-        String token = JwtManager.me().createJwtToken(jwtMap);
-        HttpServletResponse response = inv.getController().getResponse();
-        response.addHeader(JwtManager.me().getHttpHeaderName(), token);
     }
 
 

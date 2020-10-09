@@ -20,14 +20,17 @@ import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
+import io.jboot.web.controller.JbootControllerContext;
 import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -42,15 +45,25 @@ public class JwtManager {
         return me;
     }
 
-    private ThreadLocal<Map> jwtThreadLocal = new ThreadLocal<>();
+    private ThreadLocal<Map> jwtThreadLocal = ThreadLocal.withInitial(() -> {
+        if (!getConfig().isConfigOk()) {
+            throw new JbootException("Jwt secret can not config well, please config jboot.web.jwt.secret in jboot.properties.");
+        }
 
-    public void holdJwts(Map map) {
-        jwtThreadLocal.set(map);
-    }
+        HttpServletRequest request = JbootControllerContext.get().getRequest();
+        String token = request.getHeader(JwtManager.me().getHttpHeaderName());
 
-    public void releaseJwts() {
-        jwtThreadLocal.remove();
-    }
+        if (StrUtil.isBlank(token) && StrUtil.isNotBlank(JwtManager.me().getHttpParameterKey())) {
+            token = request.getParameter(JwtManager.me().getHttpParameterKey());
+        }
+
+        if (StrUtil.isBlank(token)){
+            return null;
+        }
+
+        return parseJwtToken(token);
+    });
+
 
     public <T> T getPara(String key) {
         Map map = jwtThreadLocal.get();
