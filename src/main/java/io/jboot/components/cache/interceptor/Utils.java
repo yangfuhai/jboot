@@ -193,7 +193,7 @@ class Utils {
 
     private static final JbootCacheConfig CONFIG = Jboot.config(JbootCacheConfig.class);
 
-    static void putDataToCache(int liveSeconds, String cacheName, String cacheKey, Object data) {
+    static void putDataToCache(String cacheName, String cacheKey, Object data,int liveSeconds) {
          liveSeconds = liveSeconds > 0
                 ? liveSeconds
                 : CONFIG.getAopCacheLiveSeconds();

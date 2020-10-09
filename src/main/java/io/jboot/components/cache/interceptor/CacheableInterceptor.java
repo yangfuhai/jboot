@@ -18,7 +18,9 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.kit.LogKit;
 import com.jfinal.plugin.activerecord.Page;
+import io.jboot.Jboot;
 import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.annotation.Cacheable;
 import io.jboot.db.model.JbootModel;
@@ -39,6 +41,7 @@ import java.util.Set;
 public class CacheableInterceptor implements Interceptor {
 
     private static final String NULL_VALUE = "NULL_VALUE";
+    private static final boolean devMode = Jboot.isDevMode();
 
     @Override
     public void intercept(Invocation inv) {
@@ -70,12 +73,15 @@ public class CacheableInterceptor implements Interceptor {
             } else {
                 inv.setReturnValue(data);
             }
+            if (devMode) {
+                LogKit.debug("Return value by @Cacheable for method: " + ClassUtil.buildMethodString(method));
+            }
         } else {
             inv.invoke();
             data = inv.getReturnValue();
             if (data != null) {
 
-                Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, data);
+                Utils.putDataToCache(cacheName, cacheKey, data, cacheable.liveSeconds());
 
                 //当启用返回 copy 值的时候，返回的内容应该是一个进行copy之后的值
                 if (cacheable.returnCopyEnable()) {
@@ -83,7 +89,7 @@ public class CacheableInterceptor implements Interceptor {
                 }
 
             } else if (cacheable.nullCacheEnable()) {
-                Utils.putDataToCache(cacheable.liveSeconds(), cacheName, cacheKey, NULL_VALUE);
+                Utils.putDataToCache(cacheName, cacheKey, NULL_VALUE, cacheable.liveSeconds());
             }
         }
     }

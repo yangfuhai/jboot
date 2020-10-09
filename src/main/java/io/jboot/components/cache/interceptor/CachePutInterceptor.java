@@ -51,7 +51,7 @@ public class CachePutInterceptor implements Interceptor {
         Utils.ensureCachenameAvailable(method, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cachePut.key()), targetClass, method, inv.getArgs());
 
-        Utils.putDataToCache(cachePut.liveSeconds(), cacheName, cacheKey, data);
+        Utils.putDataToCache(cacheName, cacheKey, data, cachePut.liveSeconds());
     }
 
 
