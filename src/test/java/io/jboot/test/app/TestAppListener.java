@@ -7,6 +7,7 @@ import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.core.listener.JbootAppListener;
+import io.jboot.web.render.JbootCaptchaRender;
 
 public class TestAppListener implements JbootAppListener {
     @Override
@@ -52,6 +53,7 @@ public class TestAppListener implements JbootAppListener {
     @Override
     public void onStart() {
         System.out.println("TestAppListener.onStart");
+        JbootCaptchaRender.setRandomArrayString("1234567890");
     }
 
     @Override

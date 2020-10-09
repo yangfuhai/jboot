@@ -125,6 +125,11 @@ public class JbootRenderFactory extends RenderFactory {
         return new JbootRedirect301Render(url, withQueryString);
     }
 
+    @Override
+    public Render getCaptchaRender() {
+        return new JbootCaptchaRender();
+    }
+
     public Render getReturnValueRender(Action action, Object returnValue) {
         return new JbootReturnValueRender(action, returnValue);
     }
