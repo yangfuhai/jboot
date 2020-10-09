@@ -52,7 +52,7 @@
         <undertow.version>2.2.0.Final</undertow.version>
         <slf4j.version>1.7.30</slf4j.version>
         <fst.version>2.57</fst.version>
-        <fastjson.version>1.2.73</fastjson.version>
+        <fastjson.version>1.2.74</fastjson.version>
         <guava.version>29.0-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>2.10.2</jedis.version>
@@ -247,7 +247,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.1.23</version>
+            <version>1.2.1</version>
             <scope>provided</scope>
         </dependency>
 
