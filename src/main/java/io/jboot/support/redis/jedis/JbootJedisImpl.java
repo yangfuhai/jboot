@@ -15,6 +15,7 @@
  */
 package io.jboot.support.redis.jedis;
 
+import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.utils.StrUtil;
 import io.jboot.support.redis.JbootRedisBase;
@@ -1456,9 +1457,10 @@ public class JbootJedisImpl extends JbootRedisBase {
             @Override
             public void run() {
                 //订阅线程断开连接，需要进行重连
-                while (true) {
-                    Jedis jedis = getJedis();
+                while (!isClose()) {
+                    Jedis jedis = null;
                     try {
+                        jedis = jedisPool.getResource();
                         // subscribe 方法是阻塞的，不用担心会走到returnResource，除非异常
                         jedis.subscribe(binaryListener, channels);
                         LOG.warn("Disconnect to redis channel in subscribe binaryListener!");
@@ -1471,7 +1473,9 @@ public class JbootJedisImpl extends JbootRedisBase {
                             break;
                         }
                     } finally {
-                        returnResource(jedis);
+                        if (jedis != null) {
+                            returnResource(jedis);
+                        }
                     }
                 }
             }

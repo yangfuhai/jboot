@@ -1194,7 +1194,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
         new Thread("jboot-redisCluster-subscribe-BinaryJedisPubSub") {
             @Override
             public void run() {
-                while (true) {
+                while (!isClose()) {
                     //订阅线程断开连接，需要进行重连
                     try {
                         jedisCluster.subscribe(binaryListener, channels);

@@ -60,9 +60,7 @@ public class JbootRedisManager {
             case JbootRedisConfig.TYPE_REDISSON:
                 return getRedissonClient(config);
         }
-
         return null;
-
     }
 
 

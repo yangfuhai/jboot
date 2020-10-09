@@ -630,6 +630,7 @@ public interface JbootRedis {
     public void subscribe(BinaryJedisPubSub binaryListener, final byte[]... channels);
 
 
+
     public byte[] keyToBytes(Object key);
 
     public String bytesToKey(byte[] bytes);

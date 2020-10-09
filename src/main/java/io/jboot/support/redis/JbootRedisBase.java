@@ -32,9 +32,8 @@ import java.util.Set;
  */
 public abstract class JbootRedisBase implements JbootRedis {
 
-    private static final Log LOG = Log.getLog(JbootRedisBase.class);
-
     private final JbootSerializer serializer;
+    private boolean close = false;
 
     public JbootRedisBase(JbootRedisConfig config) {
         if (config == null || StrUtil.isBlank(config.getSerializer())) {
@@ -42,17 +41,30 @@ public abstract class JbootRedisBase implements JbootRedis {
         } else {
             serializer = JbootSerializerManager.me().getSerializer(config.getSerializer());
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            close = true;
+            System.err.println("JbootApplication exited, redis disconnection.");
+        }, "jboot-redis-hook"));
     }
 
 
+    public boolean isClose() {
+        return close;
+    }
+
+
+    @Override
     public byte[] keyToBytes(Object key) {
         return key.toString().getBytes();
     }
 
+    @Override
     public String bytesToKey(byte[] bytes) {
         return new String(bytes);
     }
 
+    @Override
     public byte[][] keysToBytesArray(Object... keys) {
         byte[][] result = new byte[keys.length][];
         for (int i = 0; i < result.length; i++)
@@ -61,16 +73,19 @@ public abstract class JbootRedisBase implements JbootRedis {
     }
 
 
+    @Override
     public void fieldSetFromBytesSet(Set<byte[]> data, Set<Object> result) {
         for (byte[] fieldBytes : data) {
             result.add(valueFromBytes(fieldBytes));
         }
     }
 
+    @Override
     public byte[] valueToBytes(Object value) {
         return serializer.serialize(value);
     }
 
+    @Override
     public Object valueFromBytes(byte[] bytes) {
         if (bytes == null || bytes.length == 0) {
             return null;
@@ -78,6 +93,7 @@ public abstract class JbootRedisBase implements JbootRedis {
         return serializer.deserialize(bytes);
     }
 
+    @Override
     public byte[][] valuesToBytesArray(Object... valuesArray) {
         byte[][] data = new byte[valuesArray.length][];
         for (int i = 0; i < data.length; i++)
@@ -85,12 +101,14 @@ public abstract class JbootRedisBase implements JbootRedis {
         return data;
     }
 
+    @Override
     public void valueSetFromBytesSet(Set<byte[]> data, Set<Object> result) {
         for (byte[] valueBytes : data) {
             result.add(valueFromBytes(valueBytes));
         }
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
     public List valueListFromBytesList(Collection<byte[]> data) {
         List<Object> result = new ArrayList<Object>();
