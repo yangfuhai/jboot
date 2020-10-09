@@ -21,6 +21,10 @@ public class AopCache {
         return aopCache;
     }
 
+    public static void setAopCache(JbootCache aopCache) {
+        AopCache.aopCache = aopCache;
+    }
+
     public static <T> T get(String cacheName, Object key) {
         return getAopCache().get(cacheName, key);
     }
