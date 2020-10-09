@@ -9,4 +9,12 @@ public class CaptchaController extends Controller {
     public void index(){
         renderCaptcha();
     }
+
+    public void validate(){
+        if (validateCaptcha("c")){
+            renderText("validated");
+        }else {
+            renderText("not validate");
+        }
+    }
 }
