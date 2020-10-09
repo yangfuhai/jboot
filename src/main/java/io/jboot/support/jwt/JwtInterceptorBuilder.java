@@ -33,7 +33,6 @@ public class JwtInterceptorBuilder implements InterceptorBuilder {
         if (Controller.class.isAssignableFrom(serviceClass) && getAnnotation(serviceClass, method) != null) {
             interceptors.add(JwtInterceptor.class);
         }
-
     }
 
     private EnableJwt getAnnotation(Class<?> serviceClass, Method method) {
