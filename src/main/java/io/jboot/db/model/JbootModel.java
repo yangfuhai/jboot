@@ -81,12 +81,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public M alias(String alias) {
-        if (this.joins != null) {
-            throw new IllegalStateException("please invoke alias() method before join methods like: DAO.alias(\"your_alias_name\").leftJoin...");
+        M model = joins == null ? copy().superUse(datasourceName) : (M) this;
+        if (model.joins == null) {
+            model.joins = new LinkedList<>();
         }
-        M model = copy().superUse(datasourceName);
         model.alias = alias;
-        model.joins = new LinkedList<>();
         return model;
     }
 

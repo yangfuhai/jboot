@@ -100,7 +100,7 @@ public class DbController extends SuperDbController {
 
 
 //        List<User> users = dao.leftJoin("article","a","user.id=a.user_id").findListByColumns(columns);
-        List<User> users = dao.leftJoin("article").as("a").on("user.id=a.user_id").findListByColumns(columns);
+        List<User> users = dao.alias("u").leftJoin("article").as("a").on("u.id=a.user_id").findListByColumns(columns);
         renderJson(users);
     }
 
