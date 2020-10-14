@@ -19,10 +19,10 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
-import io.jboot.db.dbpro.JbootDbPro;
 import io.jboot.db.dialect.JbootDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Array;
@@ -34,11 +34,9 @@ import java.util.Date;
 /**
  * @author michael yang
  */
-@SuppressWarnings("serial")
 public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     private static final Log LOG = Log.getLog(JbootModel.class);
-    private static final Object[] NULL_PARA_ARRAY = new Object[0];
     private static final String DATASOURCE_CACHE_PREFIX = "__ds__";
 
     private static JbootModelConfig config = JbootModelConfig.getConfig();
@@ -294,7 +292,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                     , () -> JbootModel.super.findByIds(idValues)
                     , config.getIdCacheTime());
         } catch (Exception ex) {
-            LOG.error(ex.toString(), ex);
+            LOG.error("Jboot load model [" + ClassUtil.getUsefulClass(getClass())+"] by cache is error, safe deleted it in cache.", ex);
             safeDeleteCache(idValues);
         }
 
@@ -306,7 +304,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             config.getIdCache().remove(_getTableName()
                     , buildIdCacheKey(idValues));
         } catch (Exception ex) {
-            LOG.error("remove cache exception by name [" + _getTableName() + "] and key [" + buildIdCacheKey(idValues) + "]", ex);
+            LOG.error("Remove cache is error by name [" + _getTableName() + "] and key [" + buildIdCacheKey(idValues) + "]", ex);
         }
     }
 
