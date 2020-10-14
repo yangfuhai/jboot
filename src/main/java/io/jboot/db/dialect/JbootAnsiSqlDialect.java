@@ -28,8 +28,8 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements JbootDialect 
 
 
     @Override
-    public String forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
-        StringBuilder sqlBuilder = SqlBuilder.forFindByColumns(joins, table, loadColumns, columns, orderBy, ' ');
+    public String forFindByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
+        StringBuilder sqlBuilder = SqlBuilder.forFindByColumns(alias, joins, table, loadColumns, columns, orderBy, ' ');
 
         if (limit != null) {
             throw new JbootException("limit param not finished JbootAnsiSqlDialect.");
@@ -39,13 +39,13 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements JbootDialect 
     }
 
     @Override
-    public String forFindCountByColumns(List<Join> joins, String table, List<Column> columns) {
-        return SqlBuilder.forFindCountByColumns(joins, table, columns, ' ');
+    public String forFindCountByColumns(String alias, List<Join> joins, String table, List<Column> columns) {
+        return SqlBuilder.forFindCountByColumns(alias, joins, table, columns, ' ');
     }
 
     @Override
-    public String forDeleteByColumns(List<Join> joins, String table, List<Column> columns) {
-        return SqlBuilder.forDeleteByColumns(joins,table, columns, ' ');
+    public String forDeleteByColumns(String alias, List<Join> joins, String table, List<Column> columns) {
+        return SqlBuilder.forDeleteByColumns(alias, joins, table, columns, ' ');
     }
 
 
@@ -56,8 +56,8 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements JbootDialect 
 
 
     @Override
-    public String forPaginateFrom(List<Join> joins, String table, List<Column> columns, String orderBy) {
-        return SqlBuilder.forPaginateFrom(joins, table, columns, orderBy, ' ');
+    public String forPaginateFrom(String alias, List<Join> joins, String table, List<Column> columns, String orderBy) {
+        return SqlBuilder.forPaginateFrom(alias, joins, table, columns, orderBy, ' ');
     }
 
 

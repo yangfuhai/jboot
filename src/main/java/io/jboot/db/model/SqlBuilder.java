@@ -33,14 +33,18 @@ public class SqlBuilder {
         buildWhereSql(sqlBuilder, columns, '`');
     }
 
-    public static String forDeleteByColumns(List<Join> joins, String table, List<Column> columns, char separator) {
-        StringBuilder sql = new StringBuilder(45);
-        sql.append("DELETE FROM ").append(separator).append(table).append(separator);
+    public static String forDeleteByColumns(String alias, List<Join> joins, String table, List<Column> columns, char separator) {
+        StringBuilder sqlBuilder = new StringBuilder(45);
+        sqlBuilder.append("DELETE FROM ")
+                .append(separator)
+                .append(table)
+                .append(separator);
 
-        buildJoinSql(sql, joins, separator);
-        buildWhereSql(sql, columns, separator);
+        buildAlias(sqlBuilder, alias);
+        buildJoinSql(sqlBuilder, joins, separator);
+        buildWhereSql(sqlBuilder, columns, separator);
 
-        return sql.toString();
+        return sqlBuilder.toString();
     }
 
 
@@ -200,7 +204,7 @@ public class SqlBuilder {
         sqlBuilder.append(" ? AND ?");
     }
 
-    public static StringBuilder forFindByColumns(List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, char separator) {
+    public static StringBuilder forFindByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, char separator) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT ");
         sqlBuilder.append(loadColumns)
                 .append(" FROM ")
@@ -208,8 +212,8 @@ public class SqlBuilder {
                 .append(table)
                 .append(separator);
 
+        buildAlias(sqlBuilder, alias);
         buildJoinSql(sqlBuilder, joins, separator);
-
         buildWhereSql(sqlBuilder, columns, separator);
 
         if (StrUtil.isNotBlank(orderBy)) {
@@ -219,13 +223,13 @@ public class SqlBuilder {
         return sqlBuilder;
     }
 
-    public static String forPaginateFrom(List<Join> joins, String table, List<Column> columns, String orderBy, char separator) {
+    public static String forPaginateFrom(String alias, List<Join> joins, String table, List<Column> columns, String orderBy, char separator) {
         StringBuilder sqlBuilder = new StringBuilder(" FROM ")
                 .append(separator)
                 .append(table)
                 .append(separator);
 
-
+        buildAlias(sqlBuilder, alias);
         buildJoinSql(sqlBuilder, joins, separator);
         buildWhereSql(sqlBuilder, columns, separator);
 
@@ -250,9 +254,7 @@ public class SqlBuilder {
                     .append(join.getTable())
                     .append(separator);
 
-            if (StrUtil.isNotBlank(join.getAs())) {
-                sqlBuilder.append(" AS ").append(join.getAs());
-            }
+            buildAlias(sqlBuilder, join.getAs());
 
             sqlBuilder.append(" ON ")
                     .append(join.getOn());
@@ -260,12 +262,20 @@ public class SqlBuilder {
     }
 
 
-    public static String forFindCountByColumns(List<Join> joins, String table, List<Column> columns, char separator) {
+    private static void buildAlias(StringBuilder sqlBuilder, String alias) {
+        if (StrUtil.isNotBlank(alias)) {
+            sqlBuilder.append(" AS ").append(alias);
+        }
+    }
+
+
+    public static String forFindCountByColumns(String alias, List<Join> joins, String table, List<Column> columns, char separator) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT count(*) FROM ")
                 .append(separator)
                 .append(table)
                 .append(separator);
 
+        buildAlias(sqlBuilder, alias);
         buildJoinSql(sqlBuilder, joins, separator);
         buildWhereSql(sqlBuilder, columns, separator);
 
