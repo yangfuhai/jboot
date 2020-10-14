@@ -26,11 +26,9 @@ import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Array;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 
 /**
@@ -233,35 +231,34 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         Table table = _getTable();
 
         StringBuilder sql = new StringBuilder();
-        List<Object> paras = new ArrayList<Object>();
+        List<Object> paras = new ArrayList<>();
 
         Dialect dialect = _getConfig().getDialect();
-
         dialect.forModelSave(table, _getAttrs(), sql, paras);
-        // if (paras.size() == 0)	return false;	// The sql "insert into tableName() values()" works fine, so delete this line
 
-        // --------
-        Connection conn = null;
-        PreparedStatement pst = null;
-        int result = 0;
         try {
-            conn = config.getConnection();
-            if (dialect.isOracle()) {
-                pst = conn.prepareStatement(sql.toString(), table.getPrimaryKey());
-            } else {
-                pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
-            }
-            dialect.fillStatement(pst, paras);
-            result = pst.executeUpdate();
-            dialect.getModelGeneratedKey(this, pst, table);
-            _getModifyFlag().clear();
-            return result >= 1;
-        } catch (Exception e) {
+            return SqlDebugger.debug(() -> {
+                Connection conn = null;
+                PreparedStatement pst = null;
+                int result = 0;
+                try {
+                    conn = config.getConnection();
+                    if (dialect.isOracle()) {
+                        pst = conn.prepareStatement(sql.toString(), table.getPrimaryKey());
+                    } else {
+                        pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+                    }
+                    dialect.fillStatement(pst, paras);
+                    result = pst.executeUpdate();
+                    dialect.getModelGeneratedKey(this, pst, table);
+                    _getModifyFlag().clear();
+                    return result >= 1;
+                } finally {
+                    config.close(pst, conn);
+                }
+            }, config, sql.toString(), paras.toArray());
+        } catch (SQLException e) {
             throw new ActiveRecordException(e);
-        } finally {
-            //add sqlDebugger print sql
-            SqlDebugger.debug(config, sql.toString(), paras.toArray());
-            config.close(pst, conn);
         }
     }
 
@@ -786,11 +783,19 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-
     @Override
     protected List<M> find(Config config, Connection conn, String sql, Object... paras) throws Exception {
-        SqlDebugger.debug(config, sql, paras);
-        return super.find(config, conn, sql, paras);
+        return SqlDebugger.debug(() -> {
+            try {
+                return super.find(config, conn, sql, paras);
+            } catch (Exception e) {
+                if (e instanceof SQLException) {
+                    throw (SQLException) e;
+                } else {
+                    throw new SQLException(e);
+                }
+            }
+        }, config, sql, paras);
     }
 
 }

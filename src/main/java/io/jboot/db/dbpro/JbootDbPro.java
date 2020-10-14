@@ -42,22 +42,19 @@ public class JbootDbPro extends DbPro {
 
     @Override
     public List<Record> find(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        SqlDebugger.debug(config, sql, paras);
-        return super.find(config, conn, sql, paras);
+        return SqlDebugger.debug(() -> super.find(config, conn, sql, paras), config, sql, paras);
     }
 
 
     @Override
-    public  <T> List<T> query(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        SqlDebugger.debug(config, sql, paras);
-        return super.query(config, conn, sql, paras);
+    public <T> List<T> query(Config config, Connection conn, String sql, Object... paras) throws SQLException {
+        return SqlDebugger.debug(() -> super.query(config, conn, sql, paras), config, sql, paras);
     }
 
 
     @Override
     public int update(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        SqlDebugger.debug(config, sql, paras);
-        return super.update(config, conn, sql, paras);
+        return SqlDebugger.debug(() -> super.update(config, conn, sql, paras), config, sql, paras);
     }
 
 
@@ -72,27 +69,47 @@ public class JbootDbPro extends DbPro {
         dialect.forDbSave(tableName, pKeys, record, sql, paras);
 
         //add sql debug support
-        SqlDebugger.debug(config, sql.toString(), paras.toArray());
-
-        PreparedStatement pst;
-        if (dialect.isOracle()) {
-            pst = conn.prepareStatement(sql.toString(), pKeys);
-        } else {
-            pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
-        }
-        dialect.fillStatement(pst, paras);
-        int result = pst.executeUpdate();
-        dialect.getRecordGeneratedKey(pst, record, pKeys);
-
-        if (pst != null) {
-            try {
-                pst.close();
-            } catch (SQLException e) {
-                throw new ActiveRecordException(e);
+        return SqlDebugger.debug(() -> {
+            PreparedStatement pst;
+            if (dialect.isOracle()) {
+                pst = conn.prepareStatement(sql.toString(), pKeys);
+            } else {
+                pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
             }
-        }
+            dialect.fillStatement(pst, paras);
+            int result = pst.executeUpdate();
+            dialect.getRecordGeneratedKey(pst, record, pKeys);
 
-        return result >= 1;
+            if (pst != null) {
+                try {
+                    pst.close();
+                } catch (SQLException e) {
+                    throw new ActiveRecordException(e);
+                }
+            }
+
+            return result >= 1;
+        }, config, sql.toString(), paras.toArray());
+
+//        PreparedStatement pst;
+//        if (dialect.isOracle()) {
+//            pst = conn.prepareStatement(sql.toString(), pKeys);
+//        } else {
+//            pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+//        }
+//        dialect.fillStatement(pst, paras);
+//        int result = pst.executeUpdate();
+//        dialect.getRecordGeneratedKey(pst, record, pKeys);
+//
+//        if (pst != null) {
+//            try {
+//                pst.close();
+//            } catch (SQLException e) {
+//                throw new ActiveRecordException(e);
+//            }
+//        }
+//
+//        return result >= 1;
     }
 
 
@@ -113,14 +130,14 @@ public class JbootDbPro extends DbPro {
 
     public List<Record> find(String tableName, Columns columns, String orderBy, Object limit) {
         JbootDialect dialect = (JbootDialect) getConfig().getDialect();
-        String sql = dialect.forFindByColumns(null, tableName, "*", columns.getList(), orderBy, limit);
+        String sql = dialect.forFindByColumns(null, null, tableName, "*", columns.getList(), orderBy, limit);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 
 
     public int delete(String tableName, Columns columns) {
         JbootDialect dialect = (JbootDialect) getConfig().getDialect();
-        String sql = dialect.forDeleteByColumns(null, tableName, columns.getList());
+        String sql = dialect.forDeleteByColumns(null, null, tableName, columns.getList());
         return columns.isEmpty() ? delete(sql) : delete(sql, columns.getValueArray());
     }
 

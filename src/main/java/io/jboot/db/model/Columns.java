@@ -736,7 +736,7 @@ public class Columns implements Serializable {
      */
     public String toMysqlSql() {
         JbootMysqlDialect dialect = new JbootMysqlDialect();
-        return dialect.forFindByColumns(null, "table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null,null, "table", "*", getList(), null, null);
     }
 
 
@@ -746,7 +746,7 @@ public class Columns implements Serializable {
      */
     public String toSqlServerSql() {
         JbootSqlServerDialect dialect = new JbootSqlServerDialect();
-        return dialect.forFindByColumns(null, "table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null,null, "table", "*", getList(), null, null);
     }
 
     @Override
