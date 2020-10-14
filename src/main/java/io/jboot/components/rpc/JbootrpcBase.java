@@ -35,7 +35,8 @@ public abstract class JbootrpcBase implements Jbootrpc {
         T object = (T) objectCache.get(key);
         if (object == null) {
             synchronized (this) {
-                if (objectCache.get(key) == null) {
+                object = (T) objectCache.get(key);
+                if (object == null) {
 
                     // onStart 方法是在 app 启动完成后，Jboot 主动去调用的
                     // 但是，在某些场景可能存在没有等 app 启动完成就去获取 Service 的情况
