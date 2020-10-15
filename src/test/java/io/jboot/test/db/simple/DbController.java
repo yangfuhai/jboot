@@ -95,9 +95,8 @@ public class DbController extends SuperDbController {
         User dao = new User();
 
         Columns columns = Columns.create();
-        columns.in("user.`id`",1,2,3,4);
-        columns.likeAppendPercent("login_name","c");
-
+        columns.in("u.id",1,2,3,4);
+//        columns.likeAppendPercent("login_name","c");
 
 //        List<User> users = dao.leftJoin("article","a","user.id=a.user_id").findListByColumns(columns);
         List<User> users = dao.alias("u").leftJoin("article").as("a").on("u.id=a.user_id").findListByColumns(columns);
