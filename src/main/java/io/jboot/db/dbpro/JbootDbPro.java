@@ -81,35 +81,12 @@ public class JbootDbPro extends DbPro {
             dialect.getRecordGeneratedKey(pst, record, pKeys);
 
             if (pst != null) {
-                try {
-                    pst.close();
-                } catch (SQLException e) {
-                    throw new ActiveRecordException(e);
-                }
+                pst.close();
             }
 
             return result >= 1;
-        }, config, sql.toString(), paras.toArray());
 
-//        PreparedStatement pst;
-//        if (dialect.isOracle()) {
-//            pst = conn.prepareStatement(sql.toString(), pKeys);
-//        } else {
-//            pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
-//        }
-//        dialect.fillStatement(pst, paras);
-//        int result = pst.executeUpdate();
-//        dialect.getRecordGeneratedKey(pst, record, pKeys);
-//
-//        if (pst != null) {
-//            try {
-//                pst.close();
-//            } catch (SQLException e) {
-//                throw new ActiveRecordException(e);
-//            }
-//        }
-//
-//        return result >= 1;
+        }, config, sql.toString(), paras.toArray());
     }
 
 
