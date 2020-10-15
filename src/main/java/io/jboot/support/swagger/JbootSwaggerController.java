@@ -45,7 +45,7 @@ public class JbootSwaggerController extends JbootController {
         }
 
         String basePath = getRequest().getRequestURL().toString();
-        String jsonUrl = basePath + "json";
+        String jsonUrl = basePath.endsWith("/") ? basePath + "json" : basePath + "/json";
 
         html = html.replace("http://petstore.swagger.io/v2/swagger.json", jsonUrl);
         // 可能是 https ，看下载的 swagger 版本
