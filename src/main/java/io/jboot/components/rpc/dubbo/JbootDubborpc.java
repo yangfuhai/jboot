@@ -27,7 +27,6 @@ public class JbootDubborpc extends JbootrpcBase {
     @Override
     public void onStart() {
         DubboUtil.initDubbo();
-        setStarted(true);
     }
 
     @Override

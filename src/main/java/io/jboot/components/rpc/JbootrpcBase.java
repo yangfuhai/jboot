@@ -58,6 +58,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
             synchronized (this) {
                 if (!started) {
                     onStart();
+                    setStarted(true);
                 }
             }
         }
@@ -67,7 +68,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
 
     @Override
     public void onStart() {
-        setStarted(true);
+
     }
 
 

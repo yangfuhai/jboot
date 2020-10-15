@@ -33,7 +33,6 @@ public class JbootMotanrpc extends JbootrpcBase {
     @Override
     public void onStart() {
         MotanUtil.initMotan();
-        setStarted(true);
     }
 
     @Override
