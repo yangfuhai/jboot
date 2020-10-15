@@ -1,3 +1,13 @@
+jboot v3.5.6:
+新增：Jboot 通过 columns 查询新增设置主表别名的支持
+优化：重构 SqlDebugger，控制台实时输出 Sql 的执行时间，方便对 Sql 进行优化
+优化：SwaggerController，兼容请求地址结尾没斜杠json加载失败问题，感谢 @xiaoyu512
+优化：优化 JbootRpcBase onStart 方法，减少子类复写时调用不必要的方法
+修复：高并发下，第一次去获取 RPC 服务时，可能为 null 的问题，感谢 @huangzekai_1
+文档：优化 json 相关文档注释不明确的问题
+
+
+
 jboot v3.5.5:
 新增：JbootCaptchaRender 渲染，可以自定义动态码的内容
 新增：AopCache 新增 setAopCache 方法，方便通过代码配置 Aop 缓存
