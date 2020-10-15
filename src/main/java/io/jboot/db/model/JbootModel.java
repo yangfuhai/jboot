@@ -80,7 +80,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return joining(Join.TYPE_FULL, table, condition);
     }
 
+    /**
+     * set table alias in sql
+     * @param alias
+     * @return
+     */
     public M alias(String alias) {
+        if (StrUtil.isBlank(alias)){
+            throw new IllegalArgumentException("alias must not be null or empty.");
+        }
         M model = joins == null ? copy().superUse(datasourceName) : (M) this;
         if (model.joins == null) {
             model.joins = new LinkedList<>();
@@ -177,7 +185,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                     newDao = this.copy().superUse(configName);
                     if (newDao._getConfig() == null) {
                         if (validateExist) {
-                            throw new JbootIllegalConfigException("the datasource \"" + configName + "\" not config well, please config it.");
+                            throw new JbootIllegalConfigException("the datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
                         } else {
                             return null;
                         }
@@ -681,7 +689,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             table = super._getTable();
             if (table == null && validateMapping) {
                 throw new JbootException(
-                        String.format("class %s can not mapping to database table,maybe application cannot connect to database. "
+                        String.format("class %s can not mapping to database table, maybe application cannot connect to database. "
                                 , _getUsefulClass().getName()));
             }
         }
@@ -780,6 +788,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * Override for print sql
+     * @param config
+     * @param conn
+     * @param sql
+     * @param paras
+     * @return
+     * @throws Exception
+     */
     @Override
     protected List<M> find(Config config, Connection conn, String sql, Object... paras) throws Exception {
         return SqlDebugger.debug(() -> {

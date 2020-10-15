@@ -1,7 +1,7 @@
 jboot v3.5.5:
 新增：JbootCaptchaRender 渲染，可以自定义动态码的内容
 新增：AopCache 新增 setAopCache 方法，方便通过代码配置 Aop 缓存
-优化：冲个 JWT 模块，使之在调整 Jwt 拦截器顺序时也可以正常工作
+优化：重构 JWT 模块，使之在调整 Jwt 拦截器顺序时也可以正常工作
 优化：移除 JbootAopInvocation，使代码更加简洁
 优化：Utils.putDataToCache 方法，使其更加便于阅读
 优化：优化 Redis 订阅模块，使其在应用关闭时主动断开连接
