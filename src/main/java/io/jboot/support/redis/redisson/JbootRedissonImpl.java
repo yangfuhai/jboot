@@ -16,6 +16,7 @@
 package io.jboot.support.redis.redisson;
 
 import io.jboot.support.redis.JbootRedis;
+import io.jboot.support.redis.RedisScanResult;
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.JedisPubSub;
 
@@ -462,6 +463,11 @@ public class JbootRedissonImpl implements JbootRedis {
     @Override
     public void subscribe(BinaryJedisPubSub binaryListener, byte[]... channels) {
 
+    }
+
+    @Override
+    public RedisScanResult scan(String pattern, String cursor, int scanCount) {
+        return null;
     }
 
     @Override

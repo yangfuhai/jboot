@@ -17,6 +17,7 @@ package io.jboot.support.redis.jedis;
 
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
+import io.jboot.support.redis.RedisScanResult;
 import io.jboot.utils.StrUtil;
 import io.jboot.support.redis.JbootRedisBase;
 import io.jboot.support.redis.JbootRedisConfig;
@@ -1480,6 +1481,16 @@ public class JbootJedisImpl extends JbootRedisBase {
                 }
             }
         }.start();
+    }
+
+    @Override
+    public RedisScanResult scan(String pattern, String cursor, int scanCount) {
+        ScanParams params = new ScanParams();
+        params.match(pattern).count(scanCount);
+        try (Jedis jedis = getJedis()) {
+            ScanResult<String> scanResult = jedis.scan(cursor, params);
+            return scanResult == null ? null : new RedisScanResult(scanResult.getStringCursor(),scanResult.getResult());
+        }
     }
 
 

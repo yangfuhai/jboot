@@ -40,6 +40,7 @@ public interface JbootRedis {
 
     /**
      * 当且仅当 key 不存在能成功设置
+     *
      * @param key
      * @param value 设置成功，返回 1，设置失败，返回 0
      * @return
@@ -629,6 +630,15 @@ public interface JbootRedis {
      */
     public void subscribe(BinaryJedisPubSub binaryListener, final byte[]... channels);
 
+
+    /**
+     * 扫描
+     *
+     * @param pattern
+     * @param scanCount
+     * @return
+     */
+    public RedisScanResult scan(String pattern, String cursor, int scanCount);
 
 
     public byte[] keyToBytes(Object key);

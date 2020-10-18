@@ -16,6 +16,7 @@
 package io.jboot.support.redis.jedis;
 
 import com.jfinal.log.Log;
+import io.jboot.support.redis.RedisScanResult;
 import io.jboot.utils.StrUtil;
 import io.jboot.support.redis.JbootRedisBase;
 import io.jboot.support.redis.JbootRedisConfig;
@@ -787,7 +788,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 //        for (int i = 0; i < keys.length; i++) {
 //            keysStrings[i] = keys[i].toString();
 //        }
-        
+
         List<byte[]> data = jedisCluster.blpop(timeout, keysToBytesArray(keys));
 
         if (data != null && data.size() == 2) {
@@ -1211,6 +1212,14 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
                 }
             }
         }.start();
+    }
+
+    @Override
+    public RedisScanResult scan(String pattern, String cursor, int scanCount) {
+        ScanParams params = new ScanParams();
+        params.match(pattern).count(scanCount);
+        ScanResult<String> scanResult = jedisCluster.scan(cursor, params);
+        return scanResult == null ? null : new RedisScanResult(scanResult.getStringCursor(),scanResult.getResult());
     }
 
 
