@@ -21,11 +21,12 @@ import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.components.cache.JbootCacheBase;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.support.redis.RedisScanResult;
+import redis.clients.jedis.MultiKeyCommands;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 
 public class JbootRedisCacheImpl extends JbootCacheBase {
@@ -93,6 +94,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         if (keys != null && keys.length > 0) {
             redis.del(keys);
         }
+        redis.srem(redisCacheNamesKey, cacheName);
     }
 
 
@@ -159,14 +161,27 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     @Override
     public List getKeys(String cacheName) {
-        Set<String> keyset = redis.keys(cacheName + ":*");
-        if (keyset == null || keyset.size() == 0) {
-            return null;
-        }
-        List<String> keys = new ArrayList<>(keyset);
-        for (int i = 0; i < keys.size(); i++) {
-            keys.set(i, keys.get(i).substring(cacheName.length() + 3));
-        }
+        List<String> keys = new ArrayList<>();
+        String cursor = "0";
+        int scanCount = 1000;
+        List<String> scanKeys = null;
+        do {
+            RedisScanResult redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
+            if (redisScanResult != null) {
+                scanKeys = redisScanResult.getResults();
+                cursor = redisScanResult.getCursor();
+
+                if (scanKeys!= null && scanKeys.size() > 0) {
+                    keys.addAll(scanKeys);
+                }
+
+                if (redisScanResult.isCompleteIteration()){
+                    //终止循环
+                    scanKeys = null;
+                }
+            }
+        } while (scanKeys != null && scanKeys.size() != 0);
+
         return keys;
     }
 
