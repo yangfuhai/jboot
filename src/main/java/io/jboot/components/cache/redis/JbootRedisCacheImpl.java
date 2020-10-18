@@ -22,9 +22,6 @@ import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.components.cache.JbootCacheBase;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.RedisScanResult;
-import redis.clients.jedis.MultiKeyCommands;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 
 import java.util.*;
 
@@ -89,11 +86,24 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     @Override
     public void removeAll(String cacheName) {
-        String[] keys = new String[]{};
-        keys = redis.keys(cacheName + ":*").toArray(keys);
-        if (keys != null && keys.length > 0) {
-            redis.del(keys);
-        }
+        String cursor = "0";
+        int scanCount = 1000;
+        List<String> scanKeys = null;
+        do {
+            RedisScanResult redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
+            if (redisScanResult != null) {
+                scanKeys = redisScanResult.getResults();
+                cursor = redisScanResult.getCursor();
+
+                redis.del(scanKeys.toArray(new String[0]));
+
+                if (redisScanResult.isCompleteIteration()) {
+                    //终止循环
+                    scanKeys = null;
+                }
+            }
+        } while (scanKeys != null && scanKeys.size() != 0);
+
         redis.srem(redisCacheNamesKey, cacheName);
     }
 
@@ -171,11 +181,13 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
                 scanKeys = redisScanResult.getResults();
                 cursor = redisScanResult.getCursor();
 
-                if (scanKeys!= null && scanKeys.size() > 0) {
-                    keys.addAll(scanKeys);
+                if (scanKeys != null && scanKeys.size() > 0) {
+                    for (String key : scanKeys) {
+                        keys.add(key.substring(cacheName.length() + 3));
+                    }
                 }
 
-                if (redisScanResult.isCompleteIteration()){
+                if (redisScanResult.isCompleteIteration()) {
                     //终止循环
                     scanKeys = null;
                 }
