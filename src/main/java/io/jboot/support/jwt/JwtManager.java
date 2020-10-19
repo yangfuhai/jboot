@@ -47,7 +47,7 @@ public class JwtManager {
 
     private ThreadLocal<Map> jwtThreadLocal = ThreadLocal.withInitial(() -> {
         if (!getConfig().isConfigOk()) {
-            throw new JbootException("Jwt secret can not config well, please config jboot.web.jwt.secret in jboot.properties.");
+            throw new JbootException("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
         }
 
         HttpServletRequest request = JbootControllerContext.get().getRequest();
