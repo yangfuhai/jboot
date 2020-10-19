@@ -58,6 +58,7 @@ public class JwtManager {
         }
 
         if (StrUtil.isBlank(token)){
+            LOG.error("Can not get jwt token form header or http parameter!!");
             return null;
         }
 
@@ -96,10 +97,10 @@ public class JwtManager {
         } catch (SignatureException | MalformedJwtException e) {
             // don't trust the JWT!
             // jwt 签名错误或解析错误，可能是伪造的，不能相信
-            LOG.error("do not trast the jwt!",e);
+            LOG.error("do not trast the jwt, return null.",e);
         } catch (ExpiredJwtException e) {
             // jwt 已经过期
-            LOG.error("jwt is expired!",e);
+            LOG.error("jwt is expired, return null.",e);
         } catch (Throwable ex) {
             //其他错误
             LOG.error("jwt parseJwtToken error, return null.");
@@ -111,7 +112,7 @@ public class JwtManager {
     public String createJwtToken(Map map) {
 
         if (!getConfig().isConfigOk()) {
-            throw new JbootException("can not create jwt, please config jboot.web.jwt.secret in jboot.properties.");
+            throw new JbootException("Can not create jwt, please config jboot.web.jwt.secret in jboot.properties.");
         }
 
         SecretKey secretKey = generalKey();
