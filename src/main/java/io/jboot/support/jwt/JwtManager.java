@@ -20,17 +20,14 @@ import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.controller.JbootControllerContext;
 import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -43,36 +40,6 @@ public class JwtManager {
 
     public static JwtManager me() {
         return me;
-    }
-
-    private ThreadLocal<Map> jwtThreadLocal = ThreadLocal.withInitial(() -> {
-        if (!getConfig().isConfigOk()) {
-            throw new JbootException("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
-        }
-
-        HttpServletRequest request = JbootControllerContext.get().getRequest();
-        String token = request.getHeader(JwtManager.me().getHttpHeaderName());
-
-        if (StrUtil.isBlank(token) && StrUtil.isNotBlank(JwtManager.me().getHttpParameterKey())) {
-            token = request.getParameter(JwtManager.me().getHttpParameterKey());
-        }
-
-        if (StrUtil.isBlank(token)){
-            LOG.error("Can not get jwt token form header or http parameter!!");
-            return null;
-        }
-
-        return parseJwtToken(token);
-    });
-
-
-    public <T> T getPara(String key) {
-        Map map = jwtThreadLocal.get();
-        return map == null ? null : (T) map.get(key);
-    }
-
-    public Map getParas() {
-        return jwtThreadLocal.get();
     }
 
     public String getHttpHeaderName() {
@@ -97,16 +64,16 @@ public class JwtManager {
         } catch (SignatureException | MalformedJwtException e) {
             // don't trust the JWT!
             // jwt 签名错误或解析错误，可能是伪造的，不能相信
-            LOG.error("do not trast the jwt, return null.",e);
+            LOG.error("do not trast the jwt.",e);
         } catch (ExpiredJwtException e) {
             // jwt 已经过期
-            LOG.error("jwt is expired, return null.",e);
+            LOG.error("jwt is expired.",e);
         } catch (Throwable ex) {
             //其他错误
-            LOG.error("jwt parseJwtToken error, return null.");
+            LOG.error("jwt parseJwtToken error.");
         }
 
-        return null;
+        return new HashMap();
     }
 
     public String createJwtToken(Map map) {

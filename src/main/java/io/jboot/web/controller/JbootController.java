@@ -21,8 +21,10 @@ import com.jfinal.core.ActionException;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.render.RenderManager;
+import io.jboot.exception.JbootException;
 import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
@@ -119,7 +121,7 @@ public class JbootController extends Controller {
     }
 
 
-    private HashMap<String, Object> jwtMap;
+    private Map<String, Object> jwtMap;
 
     @NotAction
     public Controller setJwtAttr(String name, Object value) {
@@ -153,18 +155,53 @@ public class JbootController extends Controller {
 
 
     @NotAction
-    public HashMap<String, Object> getJwtAttrs() {
+    public Map<String, Object> getJwtAttrs() {
         return jwtMap;
     }
 
+    private Map jwtParas;
+
     @NotAction
     public <T> T getJwtPara(String name) {
-        return JwtManager.me().getPara(name);
+        if (jwtParas == null) {
+            synchronized (this) {
+                if (jwtParas == null) {
+                    initJwtParas();
+                }
+            }
+        }
+        return (T) jwtParas.get(name);
     }
 
     @NotAction
     public Map getJwtParas() {
-        return JwtManager.me().getParas();
+        if (jwtParas == null) {
+            synchronized (this) {
+                if (jwtParas == null) {
+                    initJwtParas();
+                }
+            }
+        }
+        return jwtParas;
+    }
+
+    private void initJwtParas() {
+        if (!JwtManager.me().getConfig().isConfigOk()) {
+            throw new JbootException("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
+        }
+
+        String token = getHeader(JwtManager.me().getHttpHeaderName());
+
+        if (StrUtil.isBlank(token) && StrUtil.isNotBlank(JwtManager.me().getHttpParameterKey())) {
+            token = getPara(JwtManager.me().getHttpParameterKey());
+        }
+
+        if (StrUtil.isBlank(token)) {
+            LogKit.error("Can not get jwt token form http header or parameter!!");
+            jwtParas = new HashMap();
+        } else {
+            jwtParas = JwtManager.me().parseJwtToken(token);
+        }
     }
 
     @NotAction

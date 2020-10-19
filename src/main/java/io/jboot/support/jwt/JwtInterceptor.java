@@ -17,11 +17,9 @@ package io.jboot.support.jwt;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import io.jboot.exception.JbootException;
-import io.jboot.utils.StrUtil;
+import com.jfinal.core.Controller;
 import io.jboot.web.controller.JbootController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -39,28 +37,23 @@ public class JwtInterceptor implements Interceptor {
         try {
             inv.invoke();
         } finally {
-            if (!(inv.getController() instanceof JbootController)) {
-                return;
-            }
 
             JbootController jbootController = (JbootController) inv.getController();
             Map<String, Object> jwtMap = jbootController.getJwtAttrs();
 
-
             if (jwtMap == null || jwtMap.isEmpty()) {
-                refreshIfNecessary(inv, JwtManager.me().getParas());
-                return;
+                refreshIfNecessary(jbootController, jbootController.getJwtParas());
+            }else {
+                String token = JwtManager.me().createJwtToken(jwtMap);
+                HttpServletResponse response = inv.getController().getResponse();
+                response.addHeader(JwtManager.me().getHttpHeaderName(), token);
             }
-
-            String token = JwtManager.me().createJwtToken(jwtMap);
-            HttpServletResponse response = inv.getController().getResponse();
-            response.addHeader(JwtManager.me().getHttpHeaderName(), token);
         }
     }
 
 
-    private void refreshIfNecessary(Invocation inv, Map oldData) {
-        if (oldData == null) {
+    private void refreshIfNecessary(Controller ctr, Map oldData) {
+        if (oldData == null || oldData.isEmpty()) {
             return;
         }
 
@@ -75,7 +68,7 @@ public class JwtInterceptor implements Interceptor {
 
         if (savedMillis > JwtManager.me().getConfig().getValidityPeriod() / 2) {
             String token = JwtManager.me().createJwtToken(oldData);
-            HttpServletResponse response = inv.getController().getResponse();
+            HttpServletResponse response = ctr.getResponse();
             response.addHeader(JwtManager.me().getHttpHeaderName(), token);
         }
 

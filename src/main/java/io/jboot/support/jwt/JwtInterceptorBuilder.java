@@ -15,10 +15,10 @@
  */
 package io.jboot.support.jwt;
 
-import com.jfinal.core.Controller;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
+import io.jboot.web.controller.JbootController;
 
 import java.lang.reflect.Method;
 
@@ -30,7 +30,7 @@ public class JwtInterceptorBuilder implements InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Controller.class.isAssignableFrom(serviceClass) && getAnnotation(serviceClass, method) != null) {
+        if (JbootController.class.isAssignableFrom(serviceClass) && getAnnotation(serviceClass, method) != null) {
             interceptors.add(JwtInterceptor.class);
         }
     }
