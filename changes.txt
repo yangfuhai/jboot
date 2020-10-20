@@ -1,3 +1,10 @@
+jboot v3.5.7:
+新增：JbootRedis 新增 scan 方法
+优化：JbootRedisCache 的 getKeys removaAll 等方法使用 scan 去读取 keys
+优化：重构 Jwt 模块，使之代码更加简洁
+
+
+
 jboot v3.5.6:
 新增：Jboot 通过 columns 查询新增设置主表别名的支持
 优化：重构 SqlDebugger，控制台实时输出 Sql 的执行时间，方便对 Sql 进行优化
