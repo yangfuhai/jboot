@@ -64,13 +64,13 @@ public class JwtManager {
         } catch (SignatureException | MalformedJwtException e) {
             // don't trust the JWT!
             // jwt 签名错误或解析错误，可能是伪造的，不能相信
-            LOG.error("do not trast the jwt.",e);
+            LOG.error("Do not trast the jwt. return empty",e);
         } catch (ExpiredJwtException e) {
             // jwt 已经过期
-            LOG.error("jwt is expired.",e);
+            LOG.error("Jwt is expired. return empty",e);
         } catch (Throwable ex) {
             //其他错误
-            LOG.error("jwt parseJwtToken error.");
+            LOG.error("Jwt parseJwtToken error. return empty");
         }
 
         return new HashMap();

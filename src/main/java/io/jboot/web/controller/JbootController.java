@@ -121,15 +121,15 @@ public class JbootController extends Controller {
     }
 
 
-    private Map<String, Object> jwtMap;
+    private Map<String, Object> jwtAttrs;
 
     @NotAction
     public Controller setJwtAttr(String name, Object value) {
-        if (jwtMap == null) {
-            jwtMap = new HashMap<>();
+        if (jwtAttrs == null) {
+            jwtAttrs = new HashMap<>();
         }
 
-        jwtMap.put(name, value);
+        jwtAttrs.put(name, value);
         return this;
     }
 
@@ -137,26 +137,26 @@ public class JbootController extends Controller {
     @NotAction
     public Controller setJwtMap(Map map) {
         if (map == null) {
-            throw new NullPointerException("map is null");
+            throw new NullPointerException("Jwt attrs is null");
         }
-        if (jwtMap == null) {
-            jwtMap = new HashMap<>();
+        if (jwtAttrs == null) {
+            jwtAttrs = new HashMap<>();
         }
 
-        jwtMap.putAll(map);
+        jwtAttrs.putAll(map);
         return this;
     }
 
 
     @NotAction
     public <T> T getJwtAttr(String name) {
-        return jwtMap == null ? null : (T) jwtMap.get(name);
+        return jwtAttrs == null ? null : (T) jwtAttrs.get(name);
     }
 
 
     @NotAction
     public Map<String, Object> getJwtAttrs() {
-        return jwtMap;
+        return jwtAttrs;
     }
 
     private Map jwtParas;
@@ -206,10 +206,10 @@ public class JbootController extends Controller {
 
     @NotAction
     public String createJwtToken() {
-        if (jwtMap == null) {
+        if (jwtAttrs == null) {
             throw new NullPointerException("jwt attrs is null");
         }
-        return JwtManager.me().createJwtToken(jwtMap);
+        return JwtManager.me().createJwtToken(jwtAttrs);
     }
 
     /**
