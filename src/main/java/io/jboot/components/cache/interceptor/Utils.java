@@ -15,7 +15,6 @@
  */
 package io.jboot.components.cache.interceptor;
 
-import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.components.cache.AopCache;
@@ -165,7 +164,7 @@ class Utils {
                 .append(")")
                 .toString();
 
-        return "true".equals(engineRender(template,method, arguments));
+        return "true".equals(engineRender(template, method, arguments));
     }
 
 
@@ -193,10 +192,8 @@ class Utils {
 
     private static final JbootCacheConfig CONFIG = Jboot.config(JbootCacheConfig.class);
 
-    static void putDataToCache(String cacheName, String cacheKey, Object data,int liveSeconds) {
-         liveSeconds = liveSeconds > 0
-                ? liveSeconds
-                : CONFIG.getAopCacheLiveSeconds();
+    static void putDataToCache(String cacheName, String cacheKey, Object data, int liveSeconds) {
+        liveSeconds = liveSeconds > 0 ? liveSeconds : CONFIG.getAopCacheLiveSeconds();
         if (liveSeconds > 0) {
             AopCache.put(cacheName, cacheKey, data, liveSeconds);
         } else {

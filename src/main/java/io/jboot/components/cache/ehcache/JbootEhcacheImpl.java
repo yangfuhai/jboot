@@ -112,6 +112,7 @@ public class JbootEhcacheImpl extends JbootCacheBase {
     @Override
     public void removeAll(String cacheName) {
         getOrAddCache(cacheName).removeAll();
+        cacheManager.removeCache(cacheName);
     }
 
     @Override

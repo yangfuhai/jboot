@@ -93,6 +93,7 @@ public class CaffeineCacheImpl extends JbootCacheBase {
         if (cache != null) {
             cache.invalidateAll();
         }
+        cacheMap.remove(cacheName);
     }
 
     @Override
