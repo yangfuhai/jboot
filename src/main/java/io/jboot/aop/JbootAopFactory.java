@@ -284,13 +284,14 @@ public class JbootAopFactory extends AopFactory {
 
             Class<?>[] interfaceClasses = implClass.getInterfaces();
             if (interfaceClasses == null || interfaceClasses.length == 0) {
-                continue;
-            }
-
-            Class[] excludes = buildExcludeClasses(implClass);
-            for (Class interfaceClass : interfaceClasses) {
-                if (!inExcludes(interfaceClass, excludes)) {
-                    this.addMapping(interfaceClass, implClass);
+                //add self
+                this.addMapping(implClass, implClass);
+            } else {
+                Class[] excludes = buildExcludeClasses(implClass);
+                for (Class interfaceClass : interfaceClasses) {
+                    if (!inExcludes(interfaceClass, excludes)) {
+                        this.addMapping(interfaceClass, implClass);
+                    }
                 }
             }
         }
@@ -306,7 +307,7 @@ public class JbootAopFactory extends AopFactory {
             for (Method method : methods) {
                 Bean bean = method.getAnnotation(Bean.class);
                 if (bean != null) {
-                    String beanName = StrUtil.obtainDefaultIfBlank(AnnotationUtil.get(bean.name()), method.getName());
+                    String beanName = StrUtil.obtainDefault(AnnotationUtil.get(bean.name()), method.getName());
                     if (beansMap.containsKey(beanName)) {
                         throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
                                 + ", can not add again by method:" + ClassUtil.buildMethodString(method));
@@ -327,13 +328,14 @@ public class JbootAopFactory extends AopFactory {
                         Class implClass = ClassUtil.getUsefulClass(methodObj.getClass());
                         Class<?>[] interfaceClasses = implClass.getInterfaces();
                         if (interfaceClasses == null || interfaceClasses.length == 0) {
-                            continue;
-                        }
-
-                        Class[] excludes = buildExcludeClasses(implClass);
-                        for (Class interfaceClass : interfaceClasses) {
-                            if (!inExcludes(interfaceClass, excludes) && !mapping.containsKey(interfaceClass)) {
-                                this.addMapping(interfaceClass, implClass);
+                            //add self
+                            this.addMapping(implClass, implClass);
+                        }else {
+                            Class[] excludes = buildExcludeClasses(implClass);
+                            for (Class interfaceClass : interfaceClasses) {
+                                if (!inExcludes(interfaceClass, excludes) && !mapping.containsKey(interfaceClass)) {
+                                    this.addMapping(interfaceClass, implClass);
+                                }
                             }
                         }
                     }
