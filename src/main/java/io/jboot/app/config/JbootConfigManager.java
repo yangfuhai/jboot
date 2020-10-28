@@ -66,15 +66,14 @@ public class JbootConfigManager {
 
     private void init() {
 
-        mainProperties = new Prop("jboot.properties").getProperties();
+        mainProperties = new JbootProp("jboot.properties").getProperties();
 
         String mode = getConfigValue("jboot.app.mode");
 
         if (ConfigUtil.isNotBlank(mode)) {
-            String p = String.format("jboot-%s.properties", mode);
-            mainProperties.putAll(new Prop(p).getProperties());
+            String modePropertiesName = "jboot-" + mode + ".properties";
+            mainProperties.putAll(new JbootProp(modePropertiesName).getProperties());
         }
-
 
         NacosConfigManager.me().init(this);
         ApolloConfigManager.me().init(this);
@@ -163,17 +162,18 @@ public class JbootConfigManager {
         return get(clazz, prefix, file);
     }
 
+
+
     private void refreshMainProperties() {
 
-        Properties properties = new Prop("jboot.properties").getProperties();
+        Properties properties = new JbootProp("jboot.properties").getProperties();
         mainProperties.putAll(properties);
 
         String mode = getConfigValue(properties, "jboot.app.mode");
         if (ConfigUtil.isNotBlank(mode)) {
-            String p = String.format("jboot-%s.properties", mode);
-            mainProperties.putAll(new Prop(p).getProperties());
+            String modePropertiesName = "jboot-" + mode + ".properties";
+            mainProperties.putAll(new JbootProp(modePropertiesName).getProperties());
         }
-
     }
 
 
@@ -196,7 +196,7 @@ public class JbootConfigManager {
                 String value = getConfigValue(key);
 
                 if (ConfigUtil.isNotBlank(file)) {
-                    Prop prop = new Prop(file);
+                    JbootProp prop = new JbootProp(file);
                     String filePropValue = getConfigValue(prop.getProperties(), key);
                     if (ConfigUtil.isNotBlank(filePropValue)) {
                         value = filePropValue;

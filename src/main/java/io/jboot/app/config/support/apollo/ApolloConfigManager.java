@@ -43,6 +43,11 @@ public class ApolloConfigManager {
             return;
         }
 
+        //apollo 配置
+        System.setProperty("app.id", apolloServerConfig.getAppId());
+        System.setProperty("apollo.meta", apolloServerConfig.getMeta());
+
+
         Config config = getDefaultConfig(configManager);
 
         Set<String> propNames = config.getPropertyNames();

@@ -29,7 +29,6 @@ import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
-import io.jboot.app.config.support.apollo.ApolloServerConfig;
 import io.jboot.components.gateway.JbootGatewayHandler;
 import io.jboot.components.gateway.JbootGatewayManager;
 import io.jboot.components.limiter.LimiterManager;
@@ -77,8 +76,11 @@ public class JbootCoreConfig extends JFinalConfig {
 
         initSystemProperties();
 
+        // 自动为 Interceptor 和 Controller 等添加依赖注入
         AopManager.me().setInjectDependency(true);
+
         AopManager.me().setAopFactory(JbootAopFactory.me());
+
         Aop.inject(this);
 
         JbootAppListenerManager.me().onInit();
@@ -111,14 +113,6 @@ public class JbootCoreConfig extends JFinalConfig {
                 }
             }
         }
-
-        //apollo 配置
-        ApolloServerConfig apolloConfig = Jboot.config(ApolloServerConfig.class);
-        if (apolloConfig.isEnable() && apolloConfig.isConfigOk()) {
-            System.setProperty("app.id", apolloConfig.getAppId());
-            System.setProperty("apollo.meta", apolloConfig.getMeta());
-        }
-
     }
 
 
@@ -250,6 +244,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void configInterceptor(Interceptors interceptors) {
+        // 拦截器的 inject 通过  AopManager.me().setInjectDependency(true); 去配置
         JbootAppListenerManager.me().onInterceptorConfig(interceptors);
     }
 
@@ -257,7 +252,7 @@ public class JbootCoreConfig extends JFinalConfig {
     public void configHandler(Handlers handlers) {
 
         //先添加用户的handler，再添加jboot自己的handler
-        //用户的handler优先于jboot的handler执行
+        //用户的 handler 优先于 jboot 的 handler 执行
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
 
         handlers.add(new JbootGatewayHandler());

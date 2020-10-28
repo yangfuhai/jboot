@@ -19,15 +19,15 @@ import java.io.*;
 import java.util.Properties;
 
 
-class Prop {
+class JbootProp {
     protected Properties properties = null;
     private static final String DEFAULT_ENCODING = "UTF-8";
 
-    public Prop(String fileName) {
+    public JbootProp(String fileName) {
         this(fileName, DEFAULT_ENCODING);
     }
 
-    public Prop(String fileName, String encoding) {
+    public JbootProp(String fileName, String encoding) {
         properties = new Properties();
         InputStream inputStream = null;
         try {
@@ -36,7 +36,7 @@ class Prop {
                 properties.load(new InputStreamReader(inputStream, encoding));
             }
         } catch (Exception e) {
-            System.err.println("warning: can not load properties file in classpath, file name :" + fileName);
+            System.err.println("Warning: Can not load properties file in classpath, file name :" + fileName);
         } finally {
             if (inputStream != null) {
                 try {
