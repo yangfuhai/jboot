@@ -91,8 +91,14 @@ public class StrUtil extends StrKit {
         return str;
     }
 
-    public static String obtainDefaultIfBlank(String str, String defaultValue) {
-        return isBlank(str) ? defaultValue : str;
+    @Deprecated
+    public static String obtainDefaultIfBlank(String value, String defaultValue) {
+        return obtainDefault(value, defaultValue);
+    }
+
+
+    public static String obtainDefault(String value, String defaultValue) {
+        return isBlank(value) ? defaultValue : value;
     }
 
     /**
@@ -113,7 +119,7 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isNotBlank(Object str) {
-        return str == null ? false : notBlank(str.toString());
+        return str != null && notBlank(str.toString());
     }
 
 
