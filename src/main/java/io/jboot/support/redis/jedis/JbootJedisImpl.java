@@ -229,6 +229,9 @@ public class JbootJedisImpl extends JbootRedisBase {
      * 不存在的 key 会被忽略。
      */
     public Long del(Object... keys) {
+        if (keys == null || keys.length == 0){
+            return 0L;
+        }
         Jedis jedis = getJedis();
         try {
             return jedis.del(keysToBytesArray(keys));

@@ -95,7 +95,9 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
                 scanKeys = redisScanResult.getResults();
                 cursor = redisScanResult.getCursor();
 
-                redis.del(scanKeys.toArray(new String[0]));
+                if (scanKeys != null && scanKeys.size() > 0){
+                    redis.del(scanKeys.toArray(new String[0]));
+                }
 
                 if (redisScanResult.isCompleteIteration()) {
                     //终止循环
