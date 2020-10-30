@@ -1,3 +1,11 @@
+jboot v3.5.8:
+新增：StrUti.obtainDefault 替代 obtainDefaultIfBlank
+优化：JbootAopFactory，新增 @Bean 注解对非接口类的支持
+优化：ApolloConfigManager 对 Apollo 配置的管理
+修复：修复 Redis 缓存 removeAll 在某些情况下错误的问题
+
+
+
 jboot v3.5.7:
 新增：JbootRedis 新增 scan 方法
 优化：JbootRedisCache 的 getKeys removaAll 等方法使用 scan 去读取 keys
