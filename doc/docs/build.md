@@ -310,3 +310,67 @@ fatjar 打包第一步，在 pom.xml 添加如下配置
 
 执行命令 `mvn clean package` 进行打包，在 pom.xml 对应的模块下会生成一个 xxx-with-dependencies.jar 的 jar 包，复制该 jar
 到服务器上，执行 `java -jar xxx-with-dependencies.jar` 即可启动项目。
+
+注意：如果您使用了motan，那么在打包fatjar时需要将spi扩展声明文件需要使用追加模式，可参考  
+```
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>2.3</version>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>shade</goal>
+            </goals>
+            <configuration>
+                <transformers>
+                    
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/spring.schemas</resource>
+                    </transformer>
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/spring.handlers</resource>
+                    </transformer>
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/services/com.weibo.api.motan.registry.Registry</resource>
+                    </transformer>
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/services/com.weibo.api.motan.registry.RegistryFactory</resource>
+                    </transformer>
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/services/com.weibo.api.motan.rpc.Protocol</resource>
+                    </transformer>
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/services/com.weibo.api.motan.cluster.LoadBalance</resource>
+                    </transformer>
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/services/com.weibo.api.motan.cluster.Cluster</resource>
+                    </transformer>
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/services/com.weibo.api.motan.codec.Codec</resource>
+                    </transformer>
+                </transformers>
+                <filters>
+                    <filter>
+                        <artifact>*:*</artifact>
+                        <excludes>
+                            <exclude>META-INF/*.SF</exclude>
+                            <exclude>META-INF/*.DSA</exclude>
+                            <exclude>META-INF/*.RSA</exclude>
+                        </excludes>
+                    </filter>
+                </filters>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
