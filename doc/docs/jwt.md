@@ -21,7 +21,10 @@ JWT 是 Json web token 的简称, 是为了在网络应用环境间传递声明�
 
 ## JWT 使用
 
-在 `JbootController` 中，新增了如下几个用于操作 JWT 的方法：
+在 `JbootController` 中，新增了如下几个用于操作 JWT 的方法，在使用 Jwt 之前，需要在使用 Jwt 的 Controller
+里添加注解 `@EnableJwt` ，才能够正常的生成和刷新 Jwt 。当有很多个 Controller 都使用 Jwt 的话，可以直接 创建
+一个 BaseController，然后在 BaseController 里添加注解 `@EnableJwt`。
+
 
 - setJwtAttr()：设置 jwt 的 key 和 value
 - setJwtMap()：把整个 map的key和value 设置到 jwt

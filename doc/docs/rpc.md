@@ -71,7 +71,7 @@ Jboot 支持 dubbo 和 motan，假设我们需要使用 dubbo 作为底层的 RP
 ```
 
 ## 配置
-在 Jboot 中，默认实现了对 Dubbo、motan 的 RPC 调用支持。在使用 RPC 远程调用之前，需要做一些基本的配置。
+在 Jboot 中默认实现了对 Dubbo、motan 的 RPC 调用支持。在使用 RPC 远程调用之前，需要做一些基本的配置。
 
 
 例如 ：
@@ -170,6 +170,7 @@ public class BlogServiceProvider implements BlogService {
 }
 ```
 
+### Dubbo 
 **启动 Server 暴露服务**
 
 
@@ -209,7 +210,7 @@ public class DubboServer {
 
 
 
-**启动客户端、通过 RPC 调用 Server 提供的服务**
+**启动 dubbo 客户端、通过 RPC 调用 Server 提供的服务**
 ```java
 
 @RequestMapping("/dubbo")
@@ -237,6 +238,88 @@ public class DubboClient extends JbootController{
         System.out.println(blogService);
         renderText("blogId : " + blogService.findById());
     }
+}
+```
+
+### Motan
+
+**Motan 服务端**
+
+```java
+public class MotanServer {
+
+    public static void main(String[] args) throws InterruptedException {
+
+
+        JbootApplication.setBootArg("jboot.rpc.type", "motan");
+
+        // 开启 @RPCBean 自动暴露功能，默认情况下是开启的，无需配置，
+        // 但是此测试代码的 jboot.properties 文件关闭了，这里需要开启下
+        JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
+
+        // motan 与 dubbo 不一样，motan 需要配置 export，
+        // export 配置内容为 协议ID:端口号，默认的协议 id 为 default
+        JbootApplication.setBootArg("jboot.rpc.motan.defaultExport", "default:28080");
+
+        // motan 的注册中心的协议
+        // JbootApplication.setBootArg("jboot.rpc.motan.registry.regProtocol", "zookeeper");
+        //注册中心地址，即zookeeper的地址
+        // JbootApplication.setBootArg("jboot.rpc.motan.registry.address", "127.0.0.1:2181");
+
+
+
+
+        JbootSimpleApplication.run(args);
+
+        System.out.println("MotanServer started...");
+
+    }
+}
+
+```
+
+
+**Motan 客户端**
+
+```java
+@RequestMapping("/motan")
+public class MotanClient extends JbootController {
+
+    public static void main(String[] args) {
+
+
+        //Undertow端口号配置
+        JbootApplication.setBootArg("undertow.port", "9999");
+
+        //RPC配置
+        JbootApplication.setBootArg("jboot.rpc.type", "motan");
+        JbootApplication.setBootArg("jboot.rpc.autoExportEnable", false);
+
+        //设置直连模式，方便调试，默认为注册中心
+        JbootApplication.setBootArg("jboot.rpc.urls", "io.jboot.test.rpc.commons.BlogService:127.0.0.1:28080");
+
+
+        // motan 的注册中心的协议
+        // JbootApplication.setBootArg("jboot.rpc.motan.registry.regProtocol", "zookeeper");
+        //注册中心地址，即zookeeper的地址
+        // JbootApplication.setBootArg("jboot.rpc.motan.registry.address", "127.0.0.1:2181");
+
+        JbootApplication.run(args);
+    }
+
+
+    @RPCInject
+    private BlogService blogService;
+
+//    @Before(MotanInterceptor.class)
+    public void index() {
+
+        System.out.println("blogService:" + blogService);
+
+        renderText("blogId : " + blogService.findById());
+    }
+
+
 }
 ```
 
