@@ -33,8 +33,8 @@ public class JbootResourceLoader {
     private List<FileScanner> scanners = new ArrayList<>();
 
     public JbootResourceLoader() {
-        String configResourcePathName = JbootConfigManager.me().getConfigValue("jboot.app.resourcePathName");
-        this.resourcePathName = StrUtil.obtainDefaultIfBlank(configResourcePathName, "webapp");
+        String pathName = JbootConfigManager.me().getConfigValue("jboot.app.resourcePathName");
+        this.resourcePathName = StrUtil.obtainDefault(pathName, "webapp");
     }
 
     public JbootResourceLoader(String resourcePathName) {
