@@ -241,17 +241,7 @@ public class JbootConfigManager {
         String originalValue = getOriginalConfigValue(properties, key);
         String stringValue = decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
 
-        List<ConfigPart> configParts = ConfigUtil.parseParts(stringValue);
-        if (configParts == null || configParts.isEmpty()) {
-            return stringValue;
-        }
-
-        for (ConfigPart cp : configParts) {
-            String value = getConfigValue(properties, cp.getKey());
-            value = ConfigUtil.isNotBlank(value) ? value : cp.getDefaultValue();
-            stringValue = stringValue.replace(cp.getPartString(), value);
-        }
-        return stringValue;
+        return ConfigUtil.parseValue(stringValue);
     }
 
 

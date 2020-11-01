@@ -23,32 +23,37 @@ public class ConfigPart {
 
     private int start = 0;
     private int end = 0;
-    private int keyValueIndexOf = 0;
-    private StringBuilder sb = null;
+    private StringBuilder keyStringBuilder = null;
+    private StringBuilder defaultValueStringBuilder = null;
 
-    public String getKey(){
-        if (sb == null){
+
+    public String getKey() {
+        if (keyStringBuilder == null) {
             return null;
         }
-        return keyValueIndexOf > 0 ? sb.substring(0,keyValueIndexOf - 1) : sb.toString();
+        return keyStringBuilder.toString();
     }
 
-    public String getDefaultValue(){
-        if (sb == null){
+    public String getDefaultValue() {
+        if (defaultValueStringBuilder == null) {
             return "";
         }
-        return keyValueIndexOf > 0 ? sb.substring(keyValueIndexOf).trim(): "";
+        return defaultValueStringBuilder.toString();
     }
 
-    public boolean isOk(){
-        return start > end && sb != null;
-    }
 
-    public void append(char c){
-        if(sb == null){
-            sb = new StringBuilder();
+    void appendToKey(char c) {
+        if (keyStringBuilder == null) {
+            keyStringBuilder = new StringBuilder();
         }
-        sb.append(c);
+        keyStringBuilder.append(c);
+    }
+
+    void appendToDefaultValue(char c) {
+        if (defaultValueStringBuilder == null) {
+            defaultValueStringBuilder = new StringBuilder();
+        }
+        defaultValueStringBuilder.append(c);
     }
 
     public int getStart() {
@@ -67,15 +72,4 @@ public class ConfigPart {
         this.end = end;
     }
 
-    public int getKeyValueIndexOf() {
-        return keyValueIndexOf;
-    }
-
-    public void setKeyValueIndexOf(int keyValueIndexOf) {
-        this.keyValueIndexOf = keyValueIndexOf;
-    }
-
-    public String getPartString(){
-        return sb == null ? "${}" : "${" + sb.toString() +"}";
-    }
 }

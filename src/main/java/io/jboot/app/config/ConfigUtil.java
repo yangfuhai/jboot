@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConfigUtil {
 
 
-
     public static <T> T newInstance(Class<T> clazz) {
         try {
             Constructor constructor = clazz.getDeclaredConstructor();
@@ -47,24 +46,56 @@ public class ConfigUtil {
         char[] chars = string.toCharArray();
         ConfigPart part = null;
         int index = 0;
+        boolean hasDefaultValue = false;
         for (char c : chars) {
             //第一个字符是 '{' 会出现 ArrayIndexOutOfBoundsException 错误
             if (c == '{' && index > 0 && chars[index - 1] == '$' && part == null) {
                 part = new ConfigPart();
+                hasDefaultValue = false;
                 part.setStart(index);
             } else if (c == '}' && part != null) {
                 part.setEnd(index);
                 configParts.add(part);
                 part = null;
             } else if (part != null) {
-                part.append(c);
-                if (c == ':' && part.getKeyValueIndexOf() == 0) {
-                    part.setKeyValueIndexOf(index - part.getStart());
+                if (c == ':' && !hasDefaultValue) {
+                    hasDefaultValue = true;
+                } else if (hasDefaultValue) {
+                    part.appendToDefaultValue(c);
+                } else {
+                    part.appendToKey(c);
                 }
             }
             index++;
         }
         return configParts;
+    }
+
+
+    public static String parseValue(String value) {
+        List<ConfigPart> configParts = parseParts(value);
+        if (configParts == null || configParts.size() == 0) {
+            return value;
+        }
+
+        StringBuilder newString = new StringBuilder();
+        int curentIndex = 0;
+        for (ConfigPart cp : configParts) {
+            if (cp.getStart() - 1 > curentIndex) {
+                newString.append(value, curentIndex, cp.getStart() - 1);
+            }
+
+            String configValue = JbootConfigManager.me().getConfigValue(cp.getKey());
+            configValue = StrUtil.isNotBlank(configValue) ? configValue : cp.getDefaultValue();
+            newString.append(configValue);
+            curentIndex = cp.getEnd() + 1;
+        }
+
+        if (curentIndex < value.length()) {
+            newString.append(value, curentIndex, value.length());
+        }
+
+        return newString.toString();
     }
 
 
@@ -124,7 +155,6 @@ public class ConfigUtil {
         }
         return true;
     }
-
 
 
     private static String rootClassPath;
