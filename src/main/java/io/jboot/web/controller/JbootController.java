@@ -330,7 +330,7 @@ public class JbootController extends Controller {
      * Returns the value of a request parameter and convert to BigInteger.
      *
      * @param name a String specifying the name of the parameter
-     * @return a Integer representing the single value of the parameter
+     * @return a BigInteger representing the single value of the parameter
      */
     @NotAction
     public BigInteger getParaToBigInteger(String name) {
@@ -341,7 +341,7 @@ public class JbootController extends Controller {
      * Returns the value of a request parameter and convert to BigInteger with a default value if it is null.
      *
      * @param name a String specifying the name of the parameter
-     * @return a Integer representing the single value of the parameter
+     * @return a BigInteger representing the single value of the parameter
      */
     @NotAction
     public BigInteger getParaToBigInteger(String name, BigInteger defaultValue) {
@@ -353,7 +353,7 @@ public class JbootController extends Controller {
      * Returns the value of a request parameter and convert to BigInteger.
      *
      * @param name a String specifying the name of the parameter
-     * @return a Integer representing the single value of the parameter
+     * @return a BigInteger representing the single value of the parameter
      */
     @NotAction
     public BigInteger getBigInteger(String name) {
@@ -364,7 +364,7 @@ public class JbootController extends Controller {
      * Returns the value of a request parameter and convert to BigInteger with a default value if it is null.
      *
      * @param name a String specifying the name of the parameter
-     * @return a Integer representing the single value of the parameter
+     * @return a BigInteger representing the single value of the parameter
      */
     @NotAction
     public BigInteger getBigInteger(String name, BigInteger defaultValue) {
@@ -391,7 +391,7 @@ public class JbootController extends Controller {
      * Returns the value of a request parameter and convert to BigDecimal.
      *
      * @param name a String specifying the name of the parameter
-     * @return a Integer representing the single value of the parameter
+     * @return a BigDecimal representing the single value of the parameter
      */
     @NotAction
     public BigDecimal getParaToBigDecimal(String name) {
@@ -402,7 +402,7 @@ public class JbootController extends Controller {
      * Returns the value of a request parameter and convert to BigDecimal with a default value if it is null.
      *
      * @param name a String specifying the name of the parameter
-     * @return a Integer representing the single value of the parameter
+     * @return a BigDecimal representing the single value of the parameter
      */
     @NotAction
     public BigDecimal getParaToBigDecimal(String name, BigDecimal defaultValue) {
@@ -414,7 +414,7 @@ public class JbootController extends Controller {
      * Returns the value of a request parameter and convert to BigDecimal.
      *
      * @param name a String specifying the name of the parameter
-     * @return a Integer representing the single value of the parameter
+     * @return a BigDecimal representing the single value of the parameter
      */
     @NotAction
     public BigDecimal getBigDecimal(String name) {
@@ -425,7 +425,7 @@ public class JbootController extends Controller {
      * Returns the value of a request parameter and convert to BigDecimal with a default value if it is null.
      *
      * @param name a String specifying the name of the parameter
-     * @return a Integer representing the single value of the parameter
+     * @return a BigDecimal representing the single value of the parameter
      */
     @NotAction
     public BigDecimal getBigDecimal(String name, BigDecimal defaultValue) {
