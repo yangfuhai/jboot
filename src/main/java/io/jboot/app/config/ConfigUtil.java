@@ -52,7 +52,7 @@ public class ConfigUtil {
             if (c == '{' && index > 0 && chars[index - 1] == '$' && part == null) {
                 part = new ConfigPart();
                 hasDefaultValue = false;
-                part.setStart(index);
+                part.setStart(index - 1);
             } else if (c == '}' && part != null) {
                 part.setEnd(index);
                 configParts.add(part);
@@ -81,8 +81,8 @@ public class ConfigUtil {
         StringBuilder newString = new StringBuilder();
         int curentIndex = 0;
         for (ConfigPart cp : configParts) {
-            if (cp.getStart() - 1 > curentIndex) {
-                newString.append(value, curentIndex, cp.getStart() - 1);
+            if (cp.getStart() > curentIndex) {
+                newString.append(value, curentIndex, cp.getStart());
             }
 
             String configValue = JbootConfigManager.me().getConfigValue(cp.getKey());
@@ -104,8 +104,8 @@ public class ConfigUtil {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (method.getName().startsWith("set")
-                    && Character.isUpperCase(method.getName().charAt(3))
                     && method.getName().length() > 3
+                    && Character.isUpperCase(method.getName().charAt(3))
                     && method.getParameterCount() == 1
                     && Modifier.isPublic(method.getModifiers())
                     && !Modifier.isStatic(method.getModifiers())) {
