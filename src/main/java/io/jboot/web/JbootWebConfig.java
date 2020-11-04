@@ -26,8 +26,8 @@ public class JbootWebConfig {
 
     public static final String DEFAULT_COOKIE_ENCRYPT_KEY = "JBOOT_DEFAULT_ENCRYPT_KEY";
 
-
     private String cookieEncryptKey = DEFAULT_COOKIE_ENCRYPT_KEY;
+    private int cookieMaxAge = 60 * 60 * 24 * 2; // 2 days（单位：秒）
     private String webSocketEndpoint;
 
     public String getCookieEncryptKey() {
@@ -36,6 +36,14 @@ public class JbootWebConfig {
 
     public void setCookieEncryptKey(String cookieEncryptKey) {
         this.cookieEncryptKey = cookieEncryptKey;
+    }
+
+    public int getCookieMaxAge() {
+        return cookieMaxAge;
+    }
+
+    public void setCookieMaxAge(int cookieMaxAge) {
+        this.cookieMaxAge = cookieMaxAge;
     }
 
     public String getWebSocketEndpoint() {

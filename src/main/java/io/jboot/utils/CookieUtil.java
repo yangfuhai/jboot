@@ -35,14 +35,15 @@ import java.math.BigInteger;
  * 加密的cookie工具类
  */
 public class CookieUtil {
+    private static final Log LOG = Log.getLog(CookieUtil.class);
 
     private final static String COOKIE_SEPARATOR = "#";
 
+    // cookie 加密秘钥
     private static String COOKIE_ENCRYPT_KEY = Jboot.config(JbootWebConfig.class).getCookieEncryptKey();
-    private static Log log = Log.getLog(CookieUtil.class);
 
-    // 2 days
-    private static int COOKIE_MAX_AGE = 60 * 60 * 24 * 2;
+    // 2 days（单位：秒）
+    private static int COOKIE_MAX_AGE =  Jboot.config(JbootWebConfig.class).getCookieMaxAge();
 
 
     /**
@@ -55,7 +56,7 @@ public class CookieUtil {
     }
 
     /**
-     * 设置 默认的 Cookie 有效时间
+     * 设置 默认的 Cookie 有效时间，单位：秒
      *
      * @param seconds
      */
@@ -140,7 +141,7 @@ public class CookieUtil {
 
     private static String encrypt(String secretKey, Object saveTime, Object maxAgeInSeconds, String value) {
         if (JbootWebConfig.DEFAULT_COOKIE_ENCRYPT_KEY.equals(secretKey)) {
-            log.warn("warn!!! encrypt key is defalut value. please config \"jboot.web.cookieEncryptKey = xxx\" in jboot.properties ");
+            LOG.warn("warn!!! encrypt key is defalut value. please config \"jboot.web.cookieEncryptKey = xxx\" in jboot.properties ");
         }
         return HashKit.md5(secretKey + saveTime.toString() + maxAgeInSeconds.toString() + value);
     }
