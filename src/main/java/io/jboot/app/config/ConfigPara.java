@@ -19,7 +19,7 @@ package io.jboot.app.config;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/24
  */
-public class ConfigPart {
+public class ConfigPara {
 
     private int start = 0;
     private int end = 0;

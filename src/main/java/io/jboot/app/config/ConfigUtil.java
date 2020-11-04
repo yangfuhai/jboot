@@ -38,61 +38,61 @@ public class ConfigUtil {
         return null;
     }
 
-    public static List<ConfigPart> parseParts(String string) {
+    public static List<ConfigPara> parseParas(String string) {
         if (StrUtil.isBlank(string)) {
             return null;
         }
-        List<ConfigPart> configParts = new LinkedList<>();
+        List<ConfigPara> paras = new LinkedList<>();
         char[] chars = string.toCharArray();
-        ConfigPart part = null;
+        ConfigPara para = null;
         int index = 0;
         boolean hasDefaultValue = false;
         for (char c : chars) {
             //第一个字符是 '{' 会出现 ArrayIndexOutOfBoundsException 错误
-            if (c == '{' && index > 0 && chars[index - 1] == '$' && part == null) {
-                part = new ConfigPart();
+            if (c == '{' && index > 0 && chars[index - 1] == '$' && para == null) {
+                para = new ConfigPara();
                 hasDefaultValue = false;
-                part.setStart(index - 1);
-            } else if (c == '}' && part != null) {
-                part.setEnd(index);
-                configParts.add(part);
-                part = null;
-            } else if (part != null) {
+                para.setStart(index - 1);
+            } else if (c == '}' && para != null) {
+                para.setEnd(index);
+                paras.add(para);
+                para = null;
+            } else if (para != null) {
                 if (c == ':' && !hasDefaultValue) {
                     hasDefaultValue = true;
                 } else if (hasDefaultValue) {
-                    part.appendToDefaultValue(c);
+                    para.appendToDefaultValue(c);
                 } else {
-                    part.appendToKey(c);
+                    para.appendToKey(c);
                 }
             }
             index++;
         }
-        return configParts;
+        return paras;
     }
 
 
     public static String parseValue(String value) {
-        List<ConfigPart> configParts = parseParts(value);
-        if (configParts == null || configParts.size() == 0) {
+        List<ConfigPara> paras = parseParas(value);
+        if (paras == null || paras.size() == 0) {
             return value;
         }
 
         StringBuilder newString = new StringBuilder();
-        int curentIndex = 0;
-        for (ConfigPart cp : configParts) {
-            if (cp.getStart() > curentIndex) {
-                newString.append(value, curentIndex, cp.getStart());
+        int index = 0;
+        for (ConfigPara para : paras) {
+            if (para.getStart() > index) {
+                newString.append(value, index, para.getStart());
             }
 
-            String configValue = JbootConfigManager.me().getConfigValue(cp.getKey());
-            configValue = StrUtil.isNotBlank(configValue) ? configValue : cp.getDefaultValue();
+            String configValue = JbootConfigManager.me().getConfigValue(para.getKey());
+            configValue = StrUtil.isNotBlank(configValue) ? configValue : para.getDefaultValue();
             newString.append(configValue);
-            curentIndex = cp.getEnd() + 1;
+            index = para.getEnd() + 1;
         }
 
-        if (curentIndex < value.length()) {
-            newString.append(value, curentIndex, value.length());
+        if (index < value.length()) {
+            newString.append(value, index, value.length());
         }
 
         return newString.toString();
