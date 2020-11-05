@@ -1,3 +1,14 @@
+jboot v3.5.9:
+新增：StrUtil.obtainDefault 方法用于替代 obtainDefaultIfBlank 方法
+新增：jboot.web.cookieMaxAge 的配置支持，用于配置默认的 cookie 保存时间
+优化：提升配置参数 ${xxx} 解析性能
+优化：JbootController 的代码注释错误
+优化：ClassScanner
+文档：优化 motan rpc 的构建文档，增加必要的说明，感谢 @zcoder
+文档：新增 Nacos 分布式配置下的一些文档
+
+
+
 jboot v3.5.8:
 新增：StrUti.obtainDefault 替代 obtainDefaultIfBlank
 优化：JbootAopFactory，新增 @Bean 注解对非接口类的支持
