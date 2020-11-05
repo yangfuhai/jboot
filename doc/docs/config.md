@@ -220,7 +220,33 @@ Component1Config config = Jboot.config(Component1Config.class);
 
 **第二步：启动 nacos**
 
-如何启动 nacos 的相关文档在 
+- Clone Nacos 项目
+
+```
+git clone https://github.com/nacos-group/nacos-docker.git
+cd nacos-docker
+```
+
+单机模式 Derby
+```
+docker-compose -f example/standalone-derby.yaml up
+```
+
+单机模式 Mysql
+```
+docker-compose -f example/standalone-mysql.yaml up
+```
+
+集群模式
+```
+docker-compose -f example/cluster-hostname.yaml up 
+```
+
+Nacos 控制台
+
+link：http://127.0.0.1:8848/nacos/
+
+nacos 的相关文档在 
 
 https://nacos.io/zh-cn/docs/quick-start.html 
 

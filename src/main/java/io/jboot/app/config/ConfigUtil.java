@@ -156,6 +156,18 @@ public class ConfigUtil {
         return true;
     }
 
+    public static String map2string(Map map) {
+        if (map == null || map.isEmpty()) {
+            return "{ }";
+        }
+
+        StringJoiner joiner = new StringJoiner(", ", "{ ", " }");
+        for (Object key : map.keySet()) {
+            joiner.add(key + "='" + map.get(key) + "'");
+        }
+        return joiner.toString();
+    }
+
 
     private static String rootClassPath;
 

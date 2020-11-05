@@ -80,7 +80,6 @@ public class NacosConfigManager {
         Properties properties = str2Properties(configInfo);
         if (contentProperties == null) {
             contentProperties = properties;
-
             configManager.setRemoteProperties(properties);
         } else {
             for (Object key : properties.keySet()) {

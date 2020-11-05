@@ -21,6 +21,8 @@ import com.ctrip.framework.apollo.model.ConfigChange;
 import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.JbootConfigManager;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -52,10 +54,13 @@ public class ApolloConfigManager {
 
         Set<String> propNames = config.getPropertyNames();
         if (propNames != null && !propNames.isEmpty()) {
+            Map properties = new HashMap();
             for (String name : propNames) {
                 String value = config.getProperty(name, null);
-                configManager.setRemoteProperty(name, value);
+                properties.put(name,value);
             }
+            configManager.setRemoteProperties(properties);
+
         }
 
         config.addChangeListener(changeEvent -> {
