@@ -248,6 +248,7 @@ public class ClassScanner {
         excludeJars.add("imageio-");
         excludeJars.add("curvesapi-");
         excludeJars.add("myexcel-");
+        excludeJars.add("oshi-");
     }
 
 
@@ -290,6 +291,7 @@ public class ClassScanner {
         excludeClasses.add("com.google.");
         excludeClasses.add("com.rabbitmq.");
         excludeClasses.add("com.squareup.");
+        excludeClasses.add("com.sun.");
         excludeClasses.add("com.typesafe.");
         excludeClasses.add("com.weibo.api.motan.");
         excludeClasses.add("com.zaxxer.");
@@ -317,6 +319,7 @@ public class ClassScanner {
         excludeClasses.add("freemarker.");
         excludeClasses.add("com.twelvemonkeys.");
         excludeClasses.add("eu.bitwalker.");
+        excludeClasses.add("oshi.");
     }
 
 
