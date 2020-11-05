@@ -78,7 +78,7 @@ public class ConfigUtil {
             return value;
         }
 
-        StringBuilder newString = new StringBuilder();
+        StringBuilder newString = new StringBuilder(value.length());
         int index = 0;
         for (ConfigPara para : paras) {
             if (para.getStart() > index) {
