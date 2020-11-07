@@ -15,6 +15,7 @@
  */
 package io.jboot.utils;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,5 +37,9 @@ public class CollectionUtil {
             }
         }
         return map;
+    }
+
+    public static boolean isEmpty(Collection collection){
+        return collection == null || collection.isEmpty();
     }
 }
