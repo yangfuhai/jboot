@@ -28,10 +28,7 @@ import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class JbootJson extends JFinalJson {
@@ -72,7 +69,7 @@ public class JbootJson extends JFinalJson {
         Map<String, Object> map = new HashMap<>();
 
         fillMapToMap(CPI.getAttrs(model), map);
-        fillBeanGetterValueToMap(model, map);
+        fillBeanToMap(model, map);
 
 
         optimizeMapAttrs(map);
@@ -94,7 +91,7 @@ public class JbootJson extends JFinalJson {
     }
 
 
-    protected void fillBeanGetterValueToMap(Object bean, Map toMap) {
+    protected void fillBeanToMap(Object bean, Map toMap) {
 
         MethodsAndFieldsWrapper wrapper = methodAndFieldsCache.get(bean.getClass());
         if (wrapper == null) {
@@ -108,14 +105,25 @@ public class JbootJson extends JFinalJson {
         }
 
         if (wrapper.fields.size() > 0) {
-            int index = 0;
-            for (String field : wrapper.fields) {
+            for (int i = 0; i < wrapper.fields.size(); i++) {
                 try {
-                    Object value = wrapper.methods.get(index++).invoke(bean);
+                    Object value = wrapper.methods.get(i).invoke(bean);
+                    String field = wrapper.fields.get(i);
+
+                    String originalField = wrapper.originalFields.get(i);
+                    toMap.remove(originalField);
+
                     toMap.put(field, value);
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+            }
+        }
+
+        if (wrapper.ignoreFields.size() > 0) {
+            for (String ignoreField : wrapper.ignoreFields) {
+                toMap.remove(ignoreField);
             }
         }
     }
@@ -138,54 +146,66 @@ public class JbootJson extends JFinalJson {
 
         private List<String> fields = new LinkedList<>();
         private List<Method> methods = new LinkedList<>();
+        private List<String> originalFields = new LinkedList<>();
+
+        //需要忽略的字段
+        private List<String> ignoreFields = new ArrayList<>();
 
         public MethodsAndFieldsWrapper(Class reflectiveClass) {
 
             Method[] methodArray = reflectiveClass.getMethods();
-            for (Method m : methodArray) {
-                if (m.getParameterCount() != 0
-                        || m.getReturnType() == void.class
-                        || !Modifier.isPublic(m.getModifiers())
-                        || m.getAnnotation(JsonIgnore.class) != null) {
+            for (Method method : methodArray) {
+                if (method.getParameterCount() != 0
+                        || method.getReturnType() == void.class
+                        || !Modifier.isPublic(method.getModifiers())
+                        || "getClass".equals(method.getName())) {
                     continue;
                 }
 
-                if (hasFastJson) {
-                    JSONField jsonField = m.getAnnotation(JSONField.class);
-                    if (jsonField != null && !jsonField.serialize()) {
-                        continue;
+
+                String fieldName = getGetterMethodField(method.getName());
+                if (fieldName != null) {
+                    String attrName = StrKit.firstCharToLowerCase(fieldName);
+                    if (isIgnoreFiled(method)) {
+                        ignoreFields.add(attrName);
+                    } else {
+                        originalFields.add(attrName);
+                        fields.add(getDefineName(method, attrName));
+                        methods.add(method);
                     }
                 }
 
-                String methodName = m.getName();
-                int indexOfGet = methodName.indexOf("get");
-                if (indexOfGet == 0 && methodName.length() > 3) {    // Only getter
-                    String attrName = methodName.substring(3);
-                    if (!attrName.equals("Class")) {  // Ignore Object.getClass()
-                        String fieldName = StrKit.firstCharToLowerCase(attrName);
-                        fields.add(getDefineName(m, fieldName));
-                        methods.add(m);
-                    }
-                } else {
-                    int indexOfIs = methodName.indexOf("is");
-                    if (indexOfIs == 0 && methodName.length() > 2) {
-                        String attrName = methodName.substring(2);
-                        fields.add(getDefineName(m, StrKit.firstCharToLowerCase(attrName)));
-                        methods.add(m);
-                    }
-                }
             }
+        }
+
+        private String getGetterMethodField(String methodName) {
+            if (methodName.startsWith("get") && methodName.length() > 3) {
+                return methodName.substring(3);
+            } else if (methodName.startsWith("is") && methodName.length() > 2) {
+                return methodName.substring(2);
+            }
+            return null;
         }
 
 
         private String getDefineName(Method method, String orginalName) {
             if (hasFastJson) {
                 JSONField jsonField = method.getAnnotation(JSONField.class);
-                if (StrUtil.isNotBlank(jsonField.name())) {
+                if (jsonField != null && StrUtil.isNotBlank(jsonField.name())) {
                     return jsonField.name();
                 }
             }
             return orginalName;
+        }
+
+        private boolean isIgnoreFiled(Method method) {
+            if (hasFastJson) {
+                JSONField jsonField = method.getAnnotation(JSONField.class);
+                if (jsonField != null && !jsonField.serialize()) {
+                    return true;
+                }
+            }
+            return method.getAnnotation(JsonIgnore.class) != null;
         }
     }
 }
