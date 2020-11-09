@@ -120,7 +120,7 @@ public class WechatUserInterceptor implements Interceptor {
         }
 
 
-        String controllerKey = inv.getControllerKey();
+        String controllerKey = inv.getControllerPath();
         String callbackControllerKey = controllerKey + "/wechatCallback";
 
         if (!JFinal.me().getAllActionKeys().contains(callbackControllerKey)) {

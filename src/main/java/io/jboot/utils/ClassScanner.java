@@ -457,10 +457,12 @@ public class ClassScanner {
     }
 
 
+
     private static void initAppClasses() {
 
         Set<String> jarPaths = new HashSet<>();
         Set<String> classPaths = new HashSet<>();
+
 
         // jdk8 及以下、
         // tomcat 容器、

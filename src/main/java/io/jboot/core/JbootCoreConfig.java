@@ -180,7 +180,7 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootAppListenerManager.me().onRouteConfig(routes);
 
         for (Routes.Route route : routes.getRouteItemList()) {
-            JbootControllerManager.me().setMapping(route.getControllerKey(), route.getControllerClass());
+            JbootControllerManager.me().setMapping(route.getControllerPath(), route.getControllerClass());
         }
 
         routeList.addAll(routes.getRouteItemList());

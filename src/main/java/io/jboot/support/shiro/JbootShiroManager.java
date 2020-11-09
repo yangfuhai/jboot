@@ -71,7 +71,7 @@ public class JbootShiroManager {
         for (Routes.Route route : routes) {
             Class<? extends Controller> controllerClass = route.getControllerClass();
 
-            String controllerKey = route.getControllerKey();
+            String controllerKey = route.getControllerPath();
 
             Annotation[] controllerAnnotations = controllerClass.getAnnotations();
 
