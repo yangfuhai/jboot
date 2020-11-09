@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.jfinal.json.JFinalJson;
 import com.jfinal.json.JFinalJsonKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.CPI;
 import com.jfinal.plugin.activerecord.Model;
@@ -104,32 +105,33 @@ public class JbootJson extends JFinalJson {
             }
         }
 
-        if (wrapper.fields.size() > 0) {
-            for (int i = 0; i < wrapper.fields.size(); i++) {
-                try {
-                    Object value = wrapper.methods.get(i).invoke(bean);
-                    String field = wrapper.fields.get(i);
-
-                    String originalField = wrapper.originalFields.get(i);
-                    toMap.remove(originalField);
-
-                    toMap.put(field, value);
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
+        for (String ignoreField : wrapper.ignoreFields) {
+            toMap.remove(ignoreField);
         }
 
-        if (wrapper.ignoreFields.size() > 0) {
-            for (String ignoreField : wrapper.ignoreFields) {
-                toMap.remove(ignoreField);
-            }
+
+        for (int i = 0; i < wrapper.fields.size(); i++) {
+            String originalField = wrapper.originalFields.get(i);
+            toMap.remove(originalField);
+
+            Object value = invokeMethod(wrapper.methods.get(i), bean);
+            String field = wrapper.fields.get(i);
+            toMap.put(field, value);
         }
+
     }
 
 
     protected void optimizeMapAttrs(Map<String, Object> map) {
+    }
+
+    protected Object invokeMethod(Method method, Object bean) {
+        try {
+            return method.invoke(bean);
+        } catch (Exception ex) {
+            LogKit.error("can not invoke method: " + ClassUtil.buildMethodString(method), ex);
+            return null;
+        }
     }
 
 
