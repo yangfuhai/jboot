@@ -20,10 +20,7 @@ import io.jboot.db.dialect.JbootSqlServerDialect;
 import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Column 的工具类，用于方便组装sql
@@ -295,13 +292,13 @@ public class Columns implements Serializable {
      * in list
      *
      * @param name
-     * @param list
+     * @param collection
      * @return
      */
-    public Columns in(String name, List list) {
-        Util.checkNullParas(this, list);
-        if (list != null && !list.isEmpty()) {
-            in(name, list.toArray());
+    public Columns in(String name, Collection collection) {
+        Util.checkNullParas(this, collection);
+        if (collection != null && !collection.isEmpty()) {
+            in(name, collection.toArray());
         }
         return this;
     }
@@ -323,13 +320,13 @@ public class Columns implements Serializable {
      * not in list
      *
      * @param name
-     * @param list
+     * @param collection
      * @return
      */
-    public Columns notIn(String name, List list) {
-        Util.checkNullParas(this, list);
-        if (list != null && !list.isEmpty()) {
-            notIn(name, list.toArray());
+    public Columns notIn(String name, Collection collection) {
+        Util.checkNullParas(this, collection);
+        if (collection != null && !collection.isEmpty()) {
+            notIn(name, collection.toArray());
         }
         return this;
     }

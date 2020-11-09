@@ -20,7 +20,10 @@ import com.jfinal.ext.kit.DateKit;
 import io.jboot.utils.CollectionUtil;
 import io.jboot.utils.StrUtil;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 class Util {
@@ -170,9 +173,9 @@ class Util {
         }
     }
 
-    static void checkNullParas(Columns columns, List list) {
+    static void checkNullParas(Columns columns, Collection collection) {
         if (columns.isUseSafeMode()) {
-            if (CollectionUtil.isEmpty(list)) {
+            if (CollectionUtil.isEmpty(collection)) {
                 throw new NullPointerException("Columns must has not empty collection in safeMode.");
             }
         }
