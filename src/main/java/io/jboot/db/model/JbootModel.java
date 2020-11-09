@@ -44,11 +44,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private static String column_modified = config.getColumnModified();
     private static boolean idCacheEnable = config.isIdCacheEnable();
 
-    protected List<Join> joins = null;
-    String datasourceName = null;
-    String alias = null;
-    String loadColumns = null;
-    boolean isCopyModel = false;
+    transient List<Join> joins = null;
+    transient String datasourceName = null;
+    transient String alias = null;
+    transient String loadColumns = null;
+    transient boolean isCopyModel = false;
 
     public Joiner<M> leftJoin(String table) {
         return joining(Join.TYPE_LEFT, table, true);
