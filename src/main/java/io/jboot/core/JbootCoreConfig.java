@@ -19,6 +19,7 @@ import com.jfinal.aop.Aop;
 import com.jfinal.aop.AopManager;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
+import com.jfinal.core.Path;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
@@ -152,23 +153,8 @@ public class JbootCoreConfig extends JFinalConfig {
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
-                RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
-                if (mapping == null) {
-                    continue;
-                }
-
-                String value = AnnotationUtil.get(mapping.value());
-                if (value == null) {
-                    continue;
-                }
-
-                String viewPath = AnnotationUtil.get(mapping.viewPath());
-
-                if (StrUtil.isNotBlank(viewPath)) {
-                    routes.add(value, clazz, viewPath);
-                } else {
-                    routes.add(value, clazz);
-                }
+                initRoutesByRequestMapping(routes, clazz, clazz.getAnnotation(RequestMapping.class));
+                initRoutesByPath(routes, clazz, clazz.getAnnotation(Path.class));
             }
         }
 
@@ -185,6 +171,47 @@ public class JbootCoreConfig extends JFinalConfig {
 
         routeList.addAll(routes.getRouteItemList());
     }
+
+
+    private void initRoutesByRequestMapping(Routes routes, Class<Controller> controllerClass, RequestMapping mapping) {
+        if (mapping == null) {
+            return;
+        }
+
+        String value = AnnotationUtil.get(mapping.value());
+        if (value == null) {
+            return;
+        }
+
+        String viewPath = AnnotationUtil.get(mapping.viewPath());
+
+        if (StrUtil.isNotBlank(viewPath)) {
+            routes.add(value, controllerClass, viewPath);
+        } else {
+            routes.add(value, controllerClass);
+        }
+    }
+
+
+    private void initRoutesByPath(Routes routes, Class<Controller> controllerClass, Path path) {
+        if (path == null) {
+            return;
+        }
+
+        String value = AnnotationUtil.get(path.value());
+        if (value == null) {
+            return;
+        }
+
+        String viewPath = AnnotationUtil.get(path.viewPath());
+
+        if (Path.NULL_VIEW_PATH.equals(viewPath)) {
+            routes.add(value, controllerClass);
+        } else {
+            routes.add(value, controllerClass, viewPath);
+        }
+    }
+
 
     @Override
     public void configEngine(Engine engine) {
