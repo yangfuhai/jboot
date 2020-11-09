@@ -22,7 +22,6 @@ import io.jboot.utils.StrUtil;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 
 /**
@@ -58,7 +57,7 @@ public class SqlDebugger {
         SqlDebugger.printer = printer;
     }
 
-    public static <T> T debug(SqlRunner<T> runner, Config config, String sql, Object... paras) throws SQLException {
+    public static <T> T run(SqlRunner<T> runner, Config config, String sql, Object... paras) throws SQLException {
         if (!printer.isPrintEnable(config)) {
             return runner.run();
         } else {
@@ -71,12 +70,6 @@ public class SqlDebugger {
         }
     }
 
-
-    public static void debug(Config config, String sql, Object... paras) {
-        if (printer.isPrintEnable(config)) {
-            doDebug(null, sql, paras);
-        }
-    }
 
 
     private static void doDebug(Long takedTimeMillis, String sql, Object... paras) {

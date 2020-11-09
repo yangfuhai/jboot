@@ -242,7 +242,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         dialect.forModelSave(table, _getAttrs(), sql, paras);
 
         try {
-            return SqlDebugger.debug(() -> {
+            return SqlDebugger.run(() -> {
                 Connection conn = null;
                 PreparedStatement pst = null;
                 int result = 0;
@@ -799,7 +799,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      */
     @Override
     protected List<M> find(Config config, Connection conn, String sql, Object... paras) throws Exception {
-        return SqlDebugger.debug(() -> {
+        return SqlDebugger.run(() -> {
             try {
                 return super.find(config, conn, sql, paras);
             } catch (Exception e) {

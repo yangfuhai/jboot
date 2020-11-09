@@ -42,19 +42,19 @@ public class JbootDbPro extends DbPro {
 
     @Override
     public List<Record> find(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        return SqlDebugger.debug(() -> super.find(config, conn, sql, paras), config, sql, paras);
+        return SqlDebugger.run(() -> super.find(config, conn, sql, paras), config, sql, paras);
     }
 
 
     @Override
     public <T> List<T> query(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        return SqlDebugger.debug(() -> super.query(config, conn, sql, paras), config, sql, paras);
+        return SqlDebugger.run(() -> super.query(config, conn, sql, paras), config, sql, paras);
     }
 
 
     @Override
     public int update(Config config, Connection conn, String sql, Object... paras) throws SQLException {
-        return SqlDebugger.debug(() -> super.update(config, conn, sql, paras), config, sql, paras);
+        return SqlDebugger.run(() -> super.update(config, conn, sql, paras), config, sql, paras);
     }
 
 
@@ -69,7 +69,7 @@ public class JbootDbPro extends DbPro {
         dialect.forDbSave(tableName, pKeys, record, sql, paras);
 
         //add sql debug support
-        return SqlDebugger.debug(() -> {
+        return SqlDebugger.run(() -> {
             PreparedStatement pst;
             if (dialect.isOracle()) {
                 pst = conn.prepareStatement(sql.toString(), pKeys);
