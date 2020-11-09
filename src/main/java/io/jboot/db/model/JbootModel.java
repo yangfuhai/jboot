@@ -47,6 +47,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected List<Join> joins = null;
     String datasourceName = null;
     String alias = null;
+    String loadColumns = null;
+    boolean isCopyModel = false;
 
     public Joiner<M> leftJoin(String table) {
         return joining(Join.TYPE_LEFT, table, true);
@@ -82,30 +84,54 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     /**
      * set table alias in sql
+     *
      * @param alias
      * @return
      */
     public M alias(String alias) {
-        if (StrUtil.isBlank(alias)){
+        if (StrUtil.isBlank(alias)) {
             throw new IllegalArgumentException("alias must not be null or empty.");
         }
-        M model = joins == null ? copy().superUse(datasourceName) : (M) this;
-        if (model.joins == null) {
-            model.joins = new LinkedList<>();
-        }
+        M model = getOrCopyModel();
         model.alias = alias;
         return model;
     }
 
 
     protected Joiner<M> joining(String type, String table, boolean condition) {
-        M model = joins == null ? copy().superUse(datasourceName) : (M) this;
+        M model = getOrCopyModel();
         if (model.joins == null) {
             model.joins = new LinkedList<>();
         }
         Join join = new Join(type, table, condition);
         model.joins.add(join);
         return new Joiner<>(model, join);
+    }
+
+
+    /**
+     * set load columns in sql
+     * @param loadColumns
+     * @return
+     */
+    public M loadColumns(String loadColumns) {
+        if (StrUtil.isBlank(loadColumns)) {
+            throw new IllegalArgumentException("loadColumns must not be null or empty.");
+        }
+        M model = getOrCopyModel();
+        model.loadColumns = loadColumns;
+        return model;
+    }
+
+
+    private M getOrCopyModel() {
+        if (isCopyModel) {
+            return (M) this;
+        } else {
+            M model = copy().superUse(datasourceName);
+            model.isCopyModel = true;
+            return model;
+        }
     }
 
 
@@ -299,7 +325,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                     , () -> JbootModel.super.findByIds(idValues)
                     , config.getIdCacheTime());
         } catch (Exception ex) {
-            LOG.error("Jboot load model [" + ClassUtil.getUsefulClass(getClass())+"] by cache is error, safe deleted it in cache.", ex);
+            LOG.error("Jboot load model [" + ClassUtil.getUsefulClass(getClass()) + "] by cache is error, safe deleted it in cache.", ex);
             safeDeleteCache(idValues);
         }
 
@@ -461,10 +487,16 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public M findFirstByColumns(Columns columns, String orderby) {
-        return findFirstByColumns(columns, orderby, "*");
+        return findFirstByColumns(columns, orderby, null);
     }
 
     public M findFirstByColumns(Columns columns, String orderby, String loadColumns) {
+        if (StrUtil.isBlank(loadColumns) && this.loadColumns != null) {
+            loadColumns = this.loadColumns;
+        }
+        if (StrUtil.isBlank(loadColumns)) {
+            loadColumns = "*";
+        }
         String sql = _getDialect().forFindByColumns(alias, joins, _getTableName(), loadColumns, columns.getList(), orderby, 1);
         return columns.isEmpty() ? findFirst(sql) : findFirst(sql, columns.getValueArray());
     }
@@ -587,10 +619,16 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count) {
-        return findListByColumns(columns, orderBy, count, "*");
+        return findListByColumns(columns, orderBy, count, null);
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count, String loadColumns) {
+        if (StrUtil.isBlank(loadColumns) && this.loadColumns != null) {
+            loadColumns = this.loadColumns;
+        }
+        if (StrUtil.isBlank(loadColumns)) {
+            loadColumns = "*";
+        }
         String sql = _getDialect().forFindByColumns(alias, joins, _getTableName(), loadColumns, columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
@@ -632,10 +670,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy) {
-        return paginateByColumns(pageNumber, pageSize, columns, orderBy, "*");
+        return paginateByColumns(pageNumber, pageSize, columns, orderBy, null);
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy, String loadColumns) {
+        if (StrUtil.isBlank(loadColumns) && this.loadColumns != null) {
+            loadColumns = this.loadColumns;
+        }
+        if (StrUtil.isBlank(loadColumns)) {
+            loadColumns = "*";
+        }
+
         String selectPartSql = _getDialect().forPaginateSelect(loadColumns);
         String fromPartSql = _getDialect().forPaginateFrom(alias, joins, _getTableName(), columns.getList(), orderBy);
 
@@ -790,6 +835,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     /**
      * Override for print sql
+     *
      * @param config
      * @param conn
      * @param sql

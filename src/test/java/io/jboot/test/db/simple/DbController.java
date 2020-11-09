@@ -99,7 +99,10 @@ public class DbController extends SuperDbController {
 //        columns.likeAppendPercent("login_name","c");
 
 //        List<User> users = dao.leftJoin("article","a","user.id=a.user_id").findListByColumns(columns);
-        List<User> users = dao.alias("u").leftJoin("article").as("a").on("u.id=a.user_id").findListByColumns(columns);
+        List<User> users = dao.loadColumns("u.id,a.id").alias("u").leftJoin("article").as("a").on("u.id=a.user_id").findListByColumns(columns);
+
+        dao.findAll();
+
         renderJson(users);
     }
 
