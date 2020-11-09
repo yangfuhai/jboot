@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web;
+package io.jboot.web.json;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.jfinal.json.JFinalJson;
 import com.jfinal.json.JFinalJsonKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.CPI;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.Jboot;
+import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class JbootJson extends JFinalJson {
@@ -130,12 +128,13 @@ public class JbootJson extends JFinalJson {
     }
 
 
-
-
     public static class MethodsAndFieldsWrapper {
 
-        private List<String> fields = new ArrayList<>();
-        private List<Method> methods = new ArrayList<>();
+
+        private static boolean hasFastJson = ClassUtil.hasClass("com.alibaba.fastjson.JSON");
+
+        private List<String> fields = new LinkedList<>();
+        private List<Method> methods = new LinkedList<>();
 
         public MethodsAndFieldsWrapper(Class reflectiveClass) {
 
@@ -143,27 +142,47 @@ public class JbootJson extends JFinalJson {
             for (Method m : methodArray) {
                 if (m.getParameterCount() != 0
                         || m.getReturnType() == void.class
-                        || !Modifier.isPublic(m.getModifiers())) {
+                        || !Modifier.isPublic(m.getModifiers())
+                        || m.getAnnotation(JsonIgnore.class) != null) {
                     continue;
+                }
+
+                if (hasFastJson) {
+                    JSONField jsonField = m.getAnnotation(JSONField.class);
+                    if (jsonField != null && !jsonField.serialize()) {
+                        continue;
+                    }
                 }
 
                 String methodName = m.getName();
                 int indexOfGet = methodName.indexOf("get");
                 if (indexOfGet == 0 && methodName.length() > 3) {    // Only getter
                     String attrName = methodName.substring(3);
-                    if (!attrName.equals("Class")) {                // Ignore Object.getClass()
-                        fields.add(StrKit.firstCharToLowerCase(attrName));
+                    if (!attrName.equals("Class")) {  // Ignore Object.getClass()
+                        String fieldName = StrKit.firstCharToLowerCase(attrName);
+                        fields.add(getDefineName(m, fieldName));
                         methods.add(m);
                     }
                 } else {
                     int indexOfIs = methodName.indexOf("is");
                     if (indexOfIs == 0 && methodName.length() > 2) {
                         String attrName = methodName.substring(2);
-                        fields.add(StrKit.firstCharToLowerCase(attrName));
+                        fields.add(getDefineName(m, StrKit.firstCharToLowerCase(attrName)));
                         methods.add(m);
                     }
                 }
             }
+        }
+
+
+        private String getDefineName(Method method, String orginalName) {
+            if (hasFastJson) {
+                JSONField jsonField = method.getAnnotation(JSONField.class);
+                if (StrUtil.isNotBlank(jsonField.name())) {
+                    return jsonField.name();
+                }
+            }
+            return orginalName;
         }
     }
 }

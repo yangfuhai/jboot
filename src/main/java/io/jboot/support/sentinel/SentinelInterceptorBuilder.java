@@ -19,6 +19,7 @@ import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
+import io.jboot.utils.ClassUtil;
 
 import java.lang.reflect.Method;
 
@@ -28,32 +29,17 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class SentinelInterceptorBuilder implements InterceptorBuilder {
 
-    private static Boolean checkedSentinelDependency = null;
+    private static Boolean hasSentinelDependency = ClassUtil.hasClass("com.alibaba.csp.sentinel.Sph");
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
-        if (checkedSentinelDependency()){
+        if (hasSentinelDependency){
             SentinelResource annotation = method.getAnnotation(SentinelResource.class);
             if (annotation != null) {
                 interceptors.add(SentinelInterceptor.class);
             }
         }
-    }
-
-    private static boolean checkedSentinelDependency() {
-        if (checkedSentinelDependency != null) {
-            return checkedSentinelDependency;
-        }
-
-        try {
-            Class.forName("com.alibaba.csp.sentinel.Sph");
-            checkedSentinelDependency = true;
-        } catch (Exception ex) {
-            checkedSentinelDependency = false;
-        }
-
-        return checkedSentinelDependency;
     }
 
 

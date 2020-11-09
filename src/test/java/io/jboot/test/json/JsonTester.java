@@ -1,7 +1,7 @@
 package io.jboot.test.json;
 
 import io.jboot.test.db.model.User;
-import io.jboot.web.JbootJson;
+import io.jboot.web.json.JbootJson;
 
 import java.util.HashMap;
 import java.util.Map;

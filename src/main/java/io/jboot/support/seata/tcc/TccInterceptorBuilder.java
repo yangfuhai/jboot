@@ -18,6 +18,7 @@ package io.jboot.support.seata.tcc;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
+import io.jboot.utils.ClassUtil;
 import io.seata.rm.tcc.api.TwoPhaseBusinessAction;
 
 import java.lang.reflect.Method;
@@ -28,32 +29,16 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class TccInterceptorBuilder implements InterceptorBuilder {
 
-    private static Boolean checkedSeataTccDependency = null;
+    private static Boolean hasSeataTccDependency = ClassUtil.hasClass("io.seata.rm.tcc.api.TwoPhaseBusinessAction");
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (checkedSeataTccDependency()){
+        if (hasSeataTccDependency){
             TwoPhaseBusinessAction businessAction = method.getAnnotation(TwoPhaseBusinessAction.class);
             if (businessAction != null ){
                 interceptors.add(new TccActionInterceptor());
             }
         }
-    }
-
-
-    private static boolean checkedSeataTccDependency() {
-        if (checkedSeataTccDependency != null) {
-            return checkedSeataTccDependency;
-        }
-
-        try {
-            Class.forName("io.seata.rm.tcc.api.TwoPhaseBusinessAction");
-            checkedSeataTccDependency = true;
-        } catch (Exception ex) {
-            checkedSeataTccDependency = false;
-        }
-
-        return checkedSeataTccDependency;
     }
 
 
