@@ -17,6 +17,7 @@ package io.jboot.db.model;
 
 
 import com.jfinal.ext.kit.DateKit;
+import io.jboot.utils.CollectionUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.*;
@@ -165,6 +166,14 @@ class Util {
                 if (obj == null) {
                     throw new NullPointerException("Columns must has not null para value in safeMode.");
                 }
+            }
+        }
+    }
+
+    static void checkNullParas(Columns columns, List list) {
+        if (columns.isUseSafeMode()) {
+            if (CollectionUtil.isEmpty(list)) {
+                throw new NullPointerException("Columns must has not empty collection in safeMode.");
             }
         }
     }

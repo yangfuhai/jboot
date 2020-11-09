@@ -299,6 +299,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns in(String name, List list) {
+        Util.checkNullParas(this, list);
         if (list != null && !list.isEmpty()) {
             in(name, list.toArray());
         }
@@ -326,6 +327,7 @@ public class Columns implements Serializable {
      * @return
      */
     public Columns notIn(String name, List list) {
+        Util.checkNullParas(this, list);
         if (list != null && !list.isEmpty()) {
             notIn(name, list.toArray());
         }
