@@ -40,8 +40,8 @@ public class FstSerializer implements JbootSerializer {
         }
         try {
             return fst.asObject(bytes);
-        } catch (Throwable ex) {
-            LOG.error(ex.toString(), ex);
+        } catch (Exception ex) {
+            LOG.error("FstSerializer deserialize error!");
         }
         return null;
     }
