@@ -1,3 +1,20 @@
+jboot v3.6.0:
+新增：ClassUtil.hasClass 方法，用于判断一些第三方组件依赖
+新增：Model 新增 @JsonIgnore 注解，用于配置某些不输出的字段
+新增：Model 新增 FastJson 的注解 @JsonField 的配置支持
+新增：新增对 JFinal 最新版本 @Path 的配置支持
+新增：DAO 查询的时候，支持通过 loadColumns() 方法配置其查询的列
+修复：Columns组装sql工具类in()、notIn()方法新增安全模式检查参数是否为空，解决安全模式下，List不为null，但没有元素时跳过安全检查。感谢 @liuenxin
+优化：Columns.in() 和 Columns.notIn 修改参数 List 为 Collection
+优化：升级 JFinal、Fastjson、Nacos 等到最新版本
+优化：为 Json 的相关代码创建独立包
+优化：重构 JbootJson 使之代码更加简洁
+优化：重命名 SqlDebugger.debug 为 SqlDebugger.run，删除其不必要的方法
+优化：优化 AopCache，使之在缓存数据错误时，自动刷新缓存信息
+文档：更新 json 的相关文档
+
+
+
 jboot v3.5.9:
 新增：StrUtil.obtainDefault 方法用于替代 obtainDefaultIfBlank 方法
 新增：jboot.web.cookieMaxAge 的配置支持，用于配置默认的 cookie 保存时间
