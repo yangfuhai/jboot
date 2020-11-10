@@ -1,6 +1,21 @@
+
+
 # 关于 JbootAdmin
 
+## 简介
+
 JbootAdmin 是 Jboot 作者海哥基于 Jboot 开发的一个功能强大、简单易用的快速开发框架，是一个真正的微服务框架平台。在各种 ***Admin 开源盛行的今天，我们为什么还要推出 JbootAdmin 呢？ 主要是有以下几点原因：
+
+
+### JbootAdmin 双11活动正在促销中...
+
+- 1) [功能介绍](https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw) 
+- 2) [点击查看](https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw) 
+- 3) [我要购买](https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw) 
+
+JbootAdmin 双11活动正在促销中...
+
+## 特点
 
 **第一：JbootAdmin 提供长久的商业技术支持**
 
