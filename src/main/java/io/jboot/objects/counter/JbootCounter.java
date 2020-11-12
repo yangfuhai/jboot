@@ -21,8 +21,8 @@ package io.jboot.objects.counter;
  */
 public interface JbootCounter {
 
-    public void increment();
-    public void decrement();
+    public Long increment();
+    public Long decrement();
     public Long get();
     public void set(long newValue);
 

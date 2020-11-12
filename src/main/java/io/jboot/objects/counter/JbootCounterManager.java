@@ -37,7 +37,7 @@ public class JbootCounterManager {
     public JbootCounter create(String name){
         switch (config.getType()){
             case JbootCounterConfig.TYPE_LOCAL:
-                return new JbootLocalCounter();
+                return new JbootLocalCounter(name);
             case JbootCounterConfig.TYPE_REDIS:
                 return new JbootRedicCounter(name);
             default:

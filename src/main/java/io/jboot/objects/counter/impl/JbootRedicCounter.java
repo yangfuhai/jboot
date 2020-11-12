@@ -34,13 +34,13 @@ public class JbootRedicCounter implements JbootCounter {
     }
 
     @Override
-    public void increment() {
-        redis.incr(name);
+    public Long increment() {
+        return redis.incr(name);
     }
 
     @Override
-    public void decrement() {
-        redis.decr(name);
+    public Long decrement() {
+        return redis.decr(name);
     }
 
     @Override
