@@ -153,8 +153,15 @@ public class JbootCoreConfig extends JFinalConfig {
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
-                initRoutesByRequestMapping(routes, clazz, clazz.getAnnotation(RequestMapping.class));
-                initRoutesByPath(routes, clazz, clazz.getAnnotation(Path.class));
+                RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
+                if (mapping != null) {
+                    initRoutes(routes, clazz, mapping.value(), mapping.viewPath());
+                } else {
+                    Path path = clazz.getAnnotation(Path.class);
+                    if (path != null) {
+                        initRoutes(routes, clazz, path.value(), path.viewPath());
+                    }
+                }
             }
         }
 
@@ -173,42 +180,19 @@ public class JbootCoreConfig extends JFinalConfig {
     }
 
 
-    private void initRoutesByRequestMapping(Routes routes, Class<Controller> controllerClass, RequestMapping mapping) {
-        if (mapping == null) {
+    private void initRoutes(Routes routes, Class<Controller> controllerClass, String path, String viewPath) {
+        if (StrUtil.isBlank(path)) {
             return;
-        }
-
-        String value = AnnotationUtil.get(mapping.value());
-        if (value == null) {
-            return;
-        }
-
-        String viewPath = AnnotationUtil.get(mapping.viewPath());
-
-        if (StrUtil.isNotBlank(viewPath)) {
-            routes.add(value, controllerClass, viewPath);
         } else {
-            routes.add(value, controllerClass);
-        }
-    }
-
-
-    private void initRoutesByPath(Routes routes, Class<Controller> controllerClass, Path path) {
-        if (path == null) {
-            return;
+            path = AnnotationUtil.get(path);
         }
 
-        String value = AnnotationUtil.get(path.value());
-        if (value == null) {
-            return;
-        }
-
-        String viewPath = AnnotationUtil.get(path.viewPath());
+        viewPath = AnnotationUtil.get(viewPath);
 
         if (Path.NULL_VIEW_PATH.equals(viewPath)) {
-            routes.add(value, controllerClass);
+            routes.add(path, controllerClass);
         } else {
-            routes.add(value, controllerClass, viewPath);
+            routes.add(path, controllerClass, viewPath);
         }
     }
 

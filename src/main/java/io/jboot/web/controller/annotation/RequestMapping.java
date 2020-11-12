@@ -21,7 +21,13 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface RequestMapping {
+
+    /**
+     * 由于空字符串可以被用于配置 viewPath，所以使用如下字符串表示默认值
+     */
+    String NULL_VIEW_PATH = "*";
+
     String value();
 
-    String viewPath() default "";
+    String viewPath() default NULL_VIEW_PATH;
 }
