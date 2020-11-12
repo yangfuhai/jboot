@@ -30,6 +30,8 @@ import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.components.cache.support.JbootCaptchaCache;
+import io.jboot.components.cache.support.JbootTokenCache;
 import io.jboot.components.gateway.JbootGatewayHandler;
 import io.jboot.components.gateway.JbootGatewayManager;
 import io.jboot.components.limiter.LimiterManager;
@@ -137,6 +139,9 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setControllerFactory(JbootControllerManager.me());
         constants.setJsonFactory(JbootJson::new);
         constants.setInjectDependency(true);
+
+        constants.setTokenCache(new JbootTokenCache());
+        constants.setCaptchaCache(new JbootCaptchaCache());
 
         constants.setBaseUploadPath(LocalAttachmentContainerConfig.getInstance().buildUploadAbsolutePath());
 
