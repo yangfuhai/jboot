@@ -6,6 +6,5 @@ public class TestAppStater {
 
     public static void main(String[] args){
         JbootApplication.run(args);
-//        JbootRpcApplication.run(args);
     }
 }
