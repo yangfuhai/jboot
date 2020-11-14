@@ -36,7 +36,7 @@ public class JbootRedisLock implements JbootLock {
 
     @Override
     public void lock() {
-        lock.setTimeoutMsecs(10 * 60 * 1000); // 10 分钟
+        lock.setTimeoutMsecs(60 * 1000); // 1 分钟
         if (!lock.acquire()){
             throw new IllegalStateException("can not get lock in JbootRedisLock");
         }

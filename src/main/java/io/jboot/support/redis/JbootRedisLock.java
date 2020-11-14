@@ -45,7 +45,7 @@ import io.jboot.Jboot;
  */
 public class JbootRedisLock {
 
-    long expireMsecs = 1000 * 60;//60秒expireMsecs 锁持有超时，防止线程在入锁以后，无限的执行下去，让锁无法释放
+    long expireMsecs = 1000 * 60;// 60 秒 expireMsecs 锁持有超时，防止线程在入锁以后，无限的执行下去，让锁无法释放
     long timeoutMsecs = 0;// 锁等待超时
 
     private String lockName;
@@ -88,6 +88,14 @@ public class JbootRedisLock {
         this.timeoutMsecs = timeoutMsecs;
     }
 
+    public long getExpireMsecs() {
+        return expireMsecs;
+    }
+
+    public void setExpireMsecs(long expireMsecs) {
+        this.expireMsecs = expireMsecs;
+    }
+
     public void runIfAcquired(Runnable runnable) {
         if (runnable == null) {
             throw new NullPointerException("runnable must not null!");
@@ -121,15 +129,16 @@ public class JbootRedisLock {
                 return true;
             }
 
-            Long currentValue = redis.get(lockName);
-            if (currentValue != null && currentValue < System.currentTimeMillis()) {
-                //判断是否为空，不为空的情况下，如果被其他线程设置了值，则第二个条件判断是过不去的
+            Long savedValue = redis.get(lockName);
+            if (savedValue != null && savedValue < System.currentTimeMillis()) {
+                // 判断是否为空，不为空的情况下，如果被其他线程设置了值，则第二个条件判断是过不去的
                 // lock is expired
 
                 Long oldValue = redis.getSet(lockName, expires);
                 //获取上一个锁到期时间，并设置现在的锁到期时间，
                 //只有一个线程才能获取上一个线上的设置时间，因为jedis.getSet是同步的
-                if (oldValue != null && oldValue.equals(currentValue)) {
+
+                if (oldValue != null && oldValue.equals(savedValue)) {
                     //如果这个时候，多个线程恰好都到了这里
                     //只有一个线程的设置值和当前值相同，他才有权利获取锁
                     //lock acquired
