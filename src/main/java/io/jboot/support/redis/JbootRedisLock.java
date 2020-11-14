@@ -80,6 +80,13 @@ public class JbootRedisLock {
         this.redis = Jboot.getRedis();
     }
 
+    public long getTimeoutMsecs() {
+        return timeoutMsecs;
+    }
+
+    public void setTimeoutMsecs(long timeoutMsecs) {
+        this.timeoutMsecs = timeoutMsecs;
+    }
 
     public void runIfAcquired(Runnable runnable) {
         if (runnable == null) {
@@ -141,6 +148,7 @@ public class JbootRedisLock {
             }
 
         } while (timeout > 0);
+
         return false;
     }
 

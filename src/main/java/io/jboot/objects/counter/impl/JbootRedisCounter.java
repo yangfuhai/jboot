@@ -24,12 +24,12 @@ import io.jboot.utils.StrUtil;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/7
  */
-public class JbootRedicCounter implements JbootCounter {
+public class JbootRedisCounter implements JbootCounter {
 
     private JbootRedis redis = Jboot.getRedis();
     private String name;
 
-    public JbootRedicCounter(String name) {
+    public JbootRedisCounter(String name) {
         this.name = name;
     }
 

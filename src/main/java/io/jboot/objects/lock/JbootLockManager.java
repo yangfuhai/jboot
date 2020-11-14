@@ -13,35 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.objects.counter;
+package io.jboot.objects.lock;
 
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.objects.counter.impl.JbootLocalCounter;
-import io.jboot.objects.counter.impl.JbootRedisCounter;
+import io.jboot.objects.counter.JbootCounterConfig;
+import io.jboot.objects.lock.impl.JbootLocalLock;
+import io.jboot.objects.lock.impl.JbootRedisLock;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/2/28
  */
-public class JbootCounterManager {
+public class JbootLockManager {
 
-    private static JbootCounterManager instance = new JbootCounterManager();
-    public static JbootCounterManager me() {
+    private static JbootLockManager instance = new JbootLockManager();
+    public static JbootLockManager me() {
         return instance;
     }
 
 
-    private JbootCounterConfig config = Jboot.config(JbootCounterConfig.class);
+    private JbootLockConfig config = Jboot.config(JbootLockConfig.class);
 
-    public JbootCounter create(String name){
+    public JbootLock create(String name){
         switch (config.getType()){
             case JbootCounterConfig.TYPE_LOCAL:
-                return new JbootLocalCounter(name);
+                return new JbootLocalLock(name);
             case JbootCounterConfig.TYPE_REDIS:
-                return new JbootRedisCounter(name);
+                return new JbootRedisLock(name);
             default:
-                return JbootSpiLoader.load(JbootCounter.class,config.getType());
+                return JbootSpiLoader.load(JbootLock.class,config.getType());
         }
 
 
