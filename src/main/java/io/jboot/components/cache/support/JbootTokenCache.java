@@ -8,21 +8,21 @@ import java.util.List;
 
 public class JbootTokenCache implements ITokenCache {
 
-    static final String JBOOT_TOKEN = "__jboot_token";
+    static final String CACHE_NAME = "__jboot_token";
 
     @Override
     public void put(Token token) {
-        Jboot.getCache().put(JBOOT_TOKEN, token.getId(), token, (int) ((token.getExpirationTime() - System.currentTimeMillis()) / 1000));
+        Jboot.getCache().put(CACHE_NAME, token.getId(), token, (int) ((token.getExpirationTime() - System.currentTimeMillis()) / 1000));
     }
 
     @Override
     public void remove(Token token) {
-        Jboot.getCache().remove(JBOOT_TOKEN, token.getId());
+        Jboot.getCache().remove(CACHE_NAME, token.getId());
     }
 
     @Override
     public boolean contains(Token token) {
-        return Jboot.getCache().get(JBOOT_TOKEN, token.getId()) != null;
+        return Jboot.getCache().get(CACHE_NAME, token.getId()) != null;
     }
 
     @Override
