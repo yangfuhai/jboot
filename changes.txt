@@ -1,3 +1,13 @@
+jboot v3.6.1:
+新增：JbootCaptchaCache 方便在分布式的场景下进行验证码验证
+新增：JbootTokenCache 方便在分布式下进行 token 验证
+新增：JbootLock，方便在本地模式下分布式模型下进行锁机制编写
+优化：RequestMapping 注解添加空字符串 "" 配置的支持。
+优化：移动 JbootAccessTokenCache 的包名
+优化：重构 JbootCounter，使其在单体模型下和分布式场景下有一致的特征
+
+
+
 jboot v3.6.0:
 新增：ClassUtil.hasClass 方法，用于判断一些第三方组件依赖
 新增：Model 新增 @JsonIgnore 注解，用于配置某些不输出的字段
