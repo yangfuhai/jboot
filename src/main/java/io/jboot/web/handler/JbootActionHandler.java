@@ -69,7 +69,7 @@ public class JbootActionHandler extends ActionHandler {
      * @return
      */
     public Invocation getInvocation(Action action, Controller controller) {
-        return new JbootInvocation(action, controller);
+        return new JbootActionInvocation(action, controller);
     }
 
 

@@ -24,13 +24,14 @@ import io.jboot.aop.InterceptorBuilderManager;
 import io.jboot.aop.InterceptorCache;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  */
-public class JbootInvocation extends Invocation {
+public class JbootActionInvocation extends Invocation {
 
     private Action action;
     private Object target;
@@ -47,14 +48,13 @@ public class JbootInvocation extends Invocation {
     private static boolean devMode = JFinal.me().getConstants().getDevMode();
     private static InterceptorBuilderManager builderManager = InterceptorBuilderManager.me();
 
-    public JbootInvocation(Action action, Controller controller) {
+    public JbootActionInvocation(Action action, Controller controller) {
         super(action, controller);
 
         this.action = action;
         this.inters = buildInterceptors(action);
         this.target = controller;
 
-        // this.args = NULL_ARGS;
         this.args = action.getParameterGetter().get(action, controller);
     }
 
@@ -110,17 +110,6 @@ public class JbootInvocation extends Invocation {
     }
 
 
-    @Override
-    public Object getReturnValue() {
-        return returnValue;
-    }
-
-    @Override
-    public void setReturnValue(Object returnValue) {
-        this.returnValue = returnValue;
-    }
-
-
     public static List<Interceptor> getInvokedInterceptor() {
         return invokedInterceptors.get();
     }
@@ -138,5 +127,122 @@ public class JbootInvocation extends Invocation {
 
     public Interceptor[] getInters() {
         return inters;
+    }
+
+
+    @Override
+    public Object getArg(int index) {
+        if (index >= args.length) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        return args[index];
+    }
+
+
+    @Override
+    public void setArg(int index, Object value) {
+        if (index >= args.length) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        args[index] = value;
+    }
+
+
+    @Override
+    public Object[] getArgs() {
+        return args;
+    }
+
+
+    @Override
+    public <T> T getTarget() {
+        return (T) target;
+    }
+
+    /**
+     * Return the method of this action.
+     * <p>
+     * You can getMethod.getAnnotations() to get annotation on action method to do more things
+     */
+    @Override
+    public Method getMethod() {
+        return action.getMethod();
+    }
+
+    /**
+     * Return the method name of this action's method.
+     */
+    @Override
+    public String getMethodName() {
+        return action.getMethodName();
+    }
+
+    /**
+     * Get the return value of the target method
+     */
+    @Override
+    public <T> T getReturnValue() {
+        return (T) returnValue;
+    }
+
+
+    @Override
+    public void setReturnValue(Object returnValue) {
+        this.returnValue = returnValue;
+    }
+    // ---------
+
+    /**
+     * Return the controller of this action.
+     */
+    @Override
+    public Controller getController() {
+        return (Controller) target;
+    }
+
+    /**
+     * Return the action key.
+     * actionKey = controllerPath + methodName
+     */
+    @Override
+    public String getActionKey() {
+        if (action == null)
+            throw new RuntimeException("This method can only be used for action interception");
+        return action.getActionKey();
+    }
+
+    /**
+     * Return the controller path.
+     */
+    @Override
+    public String getControllerPath() {
+        if (action == null)
+            throw new RuntimeException("This method can only be used for action interception");
+        return action.getControllerPath();
+    }
+
+    /**
+     * 该方法已改名为 getControllerPath()
+     */
+    @Override
+    @Deprecated
+    public String getControllerKey() {
+        return getControllerPath();
+    }
+
+    /**
+     * Return view path of this controller.
+     */
+    @Override
+    public String getViewPath() {
+        return action.getViewPath();
+    }
+
+    /**
+     * return true if it is action invocation.
+     */
+    @Override
+    public boolean isActionInvocation() {
+        return action != null;
     }
 }

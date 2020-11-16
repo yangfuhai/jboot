@@ -21,7 +21,6 @@ import com.jfinal.core.Action;
 import com.jfinal.core.ActionReporter;
 import com.jfinal.core.Controller;
 import com.jfinal.core.JFinal;
-import com.jfinal.kit.LogKit;
 import io.jboot.JbootConsts;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -92,7 +91,7 @@ public class JbootActionReporter {
         sb.append("Request     : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
         Class cc = action.getMethod().getDeclaringClass();
         sb.append("Controller  : ").append(cc.getName()).append(".(").append(getClassFileName(cc)).append(".java:" + lineNumber + ")");
-        if (JbootInvocation.isControllerInvoked()) {
+        if (JbootActionInvocation.isControllerInvoked()) {
             sb.append(ConsoleColor.GREEN_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
         } else {
             sb.append(ConsoleColor.RED_BRIGHT + " ---> skipped ×" + ConsoleColor.RESET);
@@ -105,8 +104,8 @@ public class JbootActionReporter {
             sb.append("UrlPara     : ").append(urlParas).append("\n");
         }
 
-        Interceptor[] inters = invocation instanceof JbootInvocation ? ((JbootInvocation) invocation).getInters() : action.getInterceptors();
-        List<Interceptor> invokedInterceptors = JbootInvocation.getInvokedInterceptor();
+        Interceptor[] inters = invocation instanceof JbootActionInvocation ? ((JbootActionInvocation) invocation).getInters() : action.getInterceptors();
+        List<Interceptor> invokedInterceptors = JbootActionInvocation.getInvokedInterceptor();
         if (inters.length > 0) {
             sb.append("Interceptor : ");
             for (int i = 0; i < inters.length; i++) {
@@ -166,7 +165,7 @@ public class JbootActionReporter {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         } finally {
-            JbootInvocation.clear();
+            JbootActionInvocation.clear();
         }
     }
 
