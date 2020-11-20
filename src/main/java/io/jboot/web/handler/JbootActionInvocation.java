@@ -67,10 +67,8 @@ public class JbootActionInvocation extends Invocation {
             synchronized (action) {
                 inters = InterceptorCache.get(key);
                 if (inters == null) {
-
                     inters = action.getInterceptors();
                     inters = builderManager.build(action.getControllerClass(), action.getMethod(), inters);
-
                     InterceptorCache.put(key, inters);
                 }
             }
@@ -206,8 +204,6 @@ public class JbootActionInvocation extends Invocation {
      */
     @Override
     public String getActionKey() {
-        if (action == null)
-            throw new RuntimeException("This method can only be used for action interception");
         return action.getActionKey();
     }
 
@@ -216,8 +212,6 @@ public class JbootActionInvocation extends Invocation {
      */
     @Override
     public String getControllerPath() {
-        if (action == null)
-            throw new RuntimeException("This method can only be used for action interception");
         return action.getControllerPath();
     }
 
