@@ -21,7 +21,10 @@ import com.jfinal.core.Action;
 import com.jfinal.core.ActionReporter;
 import com.jfinal.core.Controller;
 import com.jfinal.core.JFinal;
+import com.jfinal.kit.JsonKit;
 import io.jboot.JbootConsts;
+import io.jboot.support.jwt.JwtInterceptor;
+import io.jboot.web.controller.JbootController;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -49,9 +52,6 @@ public class JbootActionReporter {
     private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
 
-
-
-
     public static void setMaxOutputLengthOfParaValue(int maxOutputLengthOfParaValue) {
         if (maxOutputLengthOfParaValue < 16) {
             throw new IllegalArgumentException("maxOutputLengthOfParaValue must more than 16");
@@ -72,7 +72,7 @@ public class JbootActionReporter {
      */
     public static final void report(String target, Controller controller, Action action, Invocation invocation, long time) {
         try {
-            doReport(target, controller, action,invocation, time);
+            doReport(target, controller, action, invocation, time);
         } catch (Exception ex) {
             // 出错的情况，一般情况下是：用户自定义了自己的 classloader, 此 classloader 加载的 class 没有被添加到 javassist 的 ClassPool
             // 如何添加可以参考 jpress 的 插件加载
@@ -106,6 +106,9 @@ public class JbootActionReporter {
 
         Interceptor[] inters = invocation instanceof JbootActionInvocation ? ((JbootActionInvocation) invocation).getInters() : action.getInterceptors();
         List<Interceptor> invokedInterceptors = JbootActionInvocation.getInvokedInterceptor();
+
+        boolean printJwt = false;
+
         if (inters.length > 0) {
             sb.append("Interceptor : ");
             for (int i = 0; i < inters.length; i++) {
@@ -114,6 +117,10 @@ public class JbootActionReporter {
                 }
                 Interceptor inter = inters[i];
                 Class ic = inter.getClass();
+
+                if (ic == JwtInterceptor.class) {
+                    printJwt = true;
+                }
 
                 CtClass icClass = ClassPool.getDefault().get(ic.getName());
                 CtMethod icMethod = icClass.getMethod("intercept", interceptMethodDesc);
@@ -158,6 +165,12 @@ public class JbootActionReporter {
             }
             sb.append("\n");
         }
+
+        if (printJwt && controller instanceof JbootController) {
+            sb.append("Jwt         : ").append(JsonKit.toJson(((JbootController) controller).getJwtParas()));
+            sb.append("\n");
+        }
+
         sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n\n\n");
 
         try {
