@@ -40,7 +40,8 @@ public class JbootApplication {
 
     public static void start(UndertowServer server) {
         server.start();
-        if (ApplicationUtil.isDevMode()) {
+        String resourceLoaderEnable = JbootConfigManager.me().getConfigValue("jboot.app.resourceLoaderEnable");
+        if (ApplicationUtil.isDevMode() && !"false".equalsIgnoreCase(resourceLoaderEnable)) {
             new JbootResourceLoader().start();
         }
     }
@@ -97,9 +98,6 @@ public class JbootApplication {
     }
 
 
-
-
-
     public static UndertowConfig createUndertowConfig(JbootApplicationConfig appConfig) {
         UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
         undertowConfig.addSystemClassPrefix("io.jboot.app");
@@ -143,9 +141,6 @@ public class JbootApplication {
             }
         }
     }
-
-
-
 
 
 }
