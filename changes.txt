@@ -1,3 +1,10 @@
+jboot v3.6.2:
+新增：控制台新增 Jwt 参数内容的打印，方便调试开发
+新增：jboot.app.resourceLoaderEnable 配置，在 dev 模块下可以关闭 resourceLoader
+优化：重命名 JbootInvocation 为 JbootActionInvocation
+
+
+
 jboot v3.6.1:
 新增：JbootCaptchaCache 方便在分布式的场景下进行验证码验证
 新增：JbootTokenCache 方便在分布式下进行 token 验证
