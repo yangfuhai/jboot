@@ -20,7 +20,6 @@ import com.jfinal.ext.cors.EnableCORS;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
-import io.jboot.utils.ClassUtil;
 
 import java.lang.reflect.Method;
 
@@ -38,7 +37,7 @@ public class CORSInterceptorBuilder implements InterceptorBuilder {
     }
 
     private EnableCORS getAnnotation(Class<?> serviceClass, Method method) {
-        EnableCORS enableCORS = serviceClass.getClass().getAnnotation(EnableCORS.class);
+        EnableCORS enableCORS = serviceClass.getAnnotation(EnableCORS.class);
         return enableCORS != null ? enableCORS : method.getAnnotation(EnableCORS.class);
     }
 
