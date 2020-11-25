@@ -1,3 +1,11 @@
+jboot v3.6.3:
+新增：DateUtil 工具类，方便对日期进行计算或转换
+新增：StrUtil.queryStringToMap 和 StrUtil.mapToQueryString
+优化：JbootCaptchaCache 进行缓存 Captcha 时，配置过期时间
+修复：CORSInterceptorBuilder 构建跨域注解拦截器时，注解在类上获取错误
+
+
+
 jboot v3.6.2:
 新增：控制台新增 Jwt 参数内容的打印，方便调试开发
 新增：jboot.app.resourceLoaderEnable 配置，在 dev 模块下可以关闭 resourceLoader
