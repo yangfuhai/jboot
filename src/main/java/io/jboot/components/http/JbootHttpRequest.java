@@ -15,7 +15,6 @@
  */
 package io.jboot.components.http;
 
-import io.jboot.utils.HttpUtil;
 import io.jboot.utils.StrUtil;
 
 import java.io.File;
@@ -288,7 +287,7 @@ public class JbootHttpRequest {
 
 //        return builder.toString();
 
-        return HttpUtil.mapToQueryString(getParams());
+        return StrUtil.mapToQueryString(getParams());
     }
 
 

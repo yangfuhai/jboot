@@ -64,6 +64,47 @@ public class StrUtil extends StrKit {
         return redirect;
     }
 
+    public static Map<String, String> queryStringToMap(String queryString) {
+        Map<String, String> map = new HashMap<>();
+        if (StrUtil.isBlank(queryString)) {
+            return map;
+        }
+
+        String[] params = queryString.split("&");
+        for (String paramPair : params) {
+            String[] keyAndValue = paramPair.split("=");
+            if (keyAndValue.length == 2) {
+                map.put(keyAndValue[0], keyAndValue[1]);
+            } else if (keyAndValue.length == 1) {
+                map.put(keyAndValue[0], "");
+            }
+        }
+        return map;
+    }
+
+
+    public static String mapToQueryString(Map map) {
+        if (map == null || map.isEmpty()) {
+            return EMPTY;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (Object key : map.keySet()) {
+            Object value = map.get(key);
+            if (key != null) {
+                if (sb.length() > 0) {
+                    sb.append("&");
+                }
+                sb.append(key.toString().trim()).append("=")
+                        .append(value == null ? EMPTY : StrUtil.urlEncode(value.toString().trim()));
+            }
+        }
+
+
+        return sb.toString();
+    }
+
     public static boolean areNotEmpty(String... strs) {
         if (strs == null || strs.length == 0) {
             return false;
