@@ -225,4 +225,45 @@ public class HttpUtil {
     }
 
 
+    public static Map<String, String> queryStringToMap(String queryString) {
+        Map<String, String> map = new HashMap<>();
+        if (StrUtil.isBlank(queryString)) {
+            return map;
+        }
+
+        String[] params = queryString.split("&");
+        for (String paramPair : params) {
+            String[] keyAndValue = paramPair.split("=");
+            if (keyAndValue.length == 2) {
+                map.put(keyAndValue[0], keyAndValue[1]);
+            }
+        }
+        return map;
+    }
+
+
+    public static String mapToQueryString(Map map) {
+        if (map == null || map.isEmpty()) {
+            return StrUtil.EMPTY;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (Object key : map.entrySet()) {
+            Object value = map.get(key);
+            if (key != null) {
+                sb.append(key.toString().trim()).append("=")
+                        .append(value == null ? "" : StrUtil.urlEncode(value.toString()))
+                        .append("&");
+            }
+        }
+
+        if (sb.charAt(sb.length() - 1) == '&') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        return sb.toString();
+    }
+
+
 }

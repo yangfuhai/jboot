@@ -108,7 +108,7 @@ public class StrUtil extends StrKit {
      * @return
      */
     public static boolean isNotEmpty(String str) {
-        return str != null && !str.equals("");
+        return str != null && !str.equals(EMPTY);
     }
 
 

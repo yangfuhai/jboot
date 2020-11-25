@@ -15,11 +15,10 @@
  */
 package io.jboot.components.http;
 
+import io.jboot.utils.HttpUtil;
 import io.jboot.utils.StrUtil;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -266,28 +265,30 @@ public class JbootHttpRequest {
 
 
     private String buildParams() {
-        Map<String, Object> params = getParams();
-        if (params == null || params.isEmpty()) {
-            return null;
-        }
+//        Map<String, Object> params = getParams();
+//        if (params == null || params.isEmpty()) {
+//            return null;
+//        }
+//
+//        StringBuilder builder = new StringBuilder();
+//        for (Map.Entry<String, Object> entry : params.entrySet()) {
+//            if (entry.getKey() != null && StrUtil.isNotBlank(entry.getValue())) {
+//                try {
+//                    builder.append(entry.getKey().trim()).append("=")
+//                            .append(URLEncoder.encode(entry.getValue().toString(), getCharset())).append("&");
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//
+//        if (builder.charAt(builder.length() - 1) == '&') {
+//            builder.deleteCharAt(builder.length() - 1);
+//        }
 
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            if (entry.getKey() != null && StrUtil.isNotBlank(entry.getValue())) {
-                try {
-                    builder.append(entry.getKey().trim()).append("=")
-                            .append(URLEncoder.encode(entry.getValue().toString(), getCharset())).append("&");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+//        return builder.toString();
 
-        if (builder.charAt(builder.length() - 1) == '&') {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-
-        return builder.toString();
+        return HttpUtil.mapToQueryString(getParams());
     }
 
 
