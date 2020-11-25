@@ -10,7 +10,7 @@ public class JbootCaptchaCache implements ICaptchaCache {
 
     @Override
     public void put(Captcha captcha) {
-        Jboot.getCache().put(CACHE_NAME, captcha.getKey(), captcha);
+        Jboot.getCache().put(CACHE_NAME, captcha.getKey(), captcha, (int) ((captcha.getExpireAt() - System.currentTimeMillis())/1000));
     }
 
     @Override
