@@ -177,6 +177,7 @@ public class DateUtil {
      */
     public static Date getStartOfThisWeek() {
         Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONDAY), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         return cal.getTime();
@@ -189,6 +190,7 @@ public class DateUtil {
      */
     public static Date getEndOfThisWeek() {
         Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         cal.setTime(getStartOfThisWeek());
         cal.add(Calendar.DAY_OF_WEEK, 7);
         return cal.getTime();
@@ -530,6 +532,7 @@ public class DateUtil {
      */
     public static int getDayOfWeekNumber(Date date) {
         Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         cal.setTime(date);
         return cal.get(Calendar.DAY_OF_WEEK);
     }
@@ -543,6 +546,7 @@ public class DateUtil {
      */
     public static int getWeekOfYearNumber(Date date) {
         Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         cal.setTime(date);
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
@@ -555,6 +559,7 @@ public class DateUtil {
      */
     public static int getWeekOfMonthNumber(Date date) {
         Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         cal.setTime(date);
         return cal.get(Calendar.WEEK_OF_MONTH);
     }
@@ -803,10 +808,17 @@ public class DateUtil {
 
         System.out.println("=============");
         System.out.println("今天星期：" + getWeekDay(new Date()));
+        System.out.println("isToday：" + isToday(parseDate("2020-11-29")));
+        System.out.println("isThisWeek：" + isThisWeek(parseDate("2020-11-24")));
+        System.out.println("isThisMonth：" + isThisMonth(parseDate("2020-10-02")));
+        System.out.println("isThisQuarter：" + isThisQuarter(parseDate("2020-10-02")));
+        System.out.println("isThisYear：" + isThisYear(parseDate("2020-02-02")));
         System.out.println("第1季度：" + toDateTimeString(getEndOfQuarter(1)));
         System.out.println("第2季度：" + toDateTimeString(getEndOfQuarter(2)));
         System.out.println("第3季度：" + toDateTimeString(getEndOfQuarter(3)));
         System.out.println("第4季度：" + toDateTimeString(getEndOfQuarter(4)));
+        System.out.println("本季度：" + toDateTimeString(getStartOfThisQuarter()));
+        System.out.println("本季度：" + toDateTimeString(getEndOfThisQuarter()));
 
     }
 }
