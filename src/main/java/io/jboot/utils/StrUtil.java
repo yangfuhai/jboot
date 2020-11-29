@@ -91,14 +91,17 @@ public class StrUtil extends StrKit {
         StringBuilder sb = new StringBuilder();
 
         for (Object key : map.keySet()) {
-            Object value = map.get(key);
-            if (key != null) {
-                if (sb.length() > 0) {
-                    sb.append("&");
-                }
-                sb.append(key.toString().trim()).append("=")
-                        .append(value == null ? EMPTY : StrUtil.urlEncode(value.toString().trim()));
+            if (key == null || key.equals(StrUtil.EMPTY)) {
+                continue;
             }
+            if (sb.length() > 0) {
+                sb.append("&");
+            }
+
+            sb.append(key.toString().trim());
+            sb.append("=");
+            Object value = map.get(key);
+            sb.append(value == null ? EMPTY : StrUtil.urlEncode(value.toString().trim()));
         }
 
 

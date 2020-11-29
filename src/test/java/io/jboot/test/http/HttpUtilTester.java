@@ -30,7 +30,7 @@ public class HttpUtilTester {
         map.put("aa",123);
         map.put(null,"ddd");
         map.put("cc",null);
-        map.put("ooo","xx");
+        map.put("你好","xx");
         System.out.println(StrUtil.mapToQueryString(map));
     }
 
