@@ -15,9 +15,9 @@
  */
 package io.jboot.db;
 
-import com.jfinal.ext.kit.DateKit;
 import com.jfinal.plugin.activerecord.Config;
 import io.jboot.Jboot;
+import io.jboot.utils.DateUtil;
 import io.jboot.utils.StrUtil;
 
 import java.sql.SQLException;
@@ -92,7 +92,7 @@ public class SqlDebugger {
                     StringBuilder sb = new StringBuilder();
                     sb.append("'");
                     if (value instanceof Date) {
-                        sb.append(DateKit.toStr((Date) value, DateKit.timeStampPattern));
+                        sb.append(DateUtil.toDateTimeString((Date) value));
                     } else {
                         sb.append(value.toString());
                     }
