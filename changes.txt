@@ -1,3 +1,9 @@
+jboot v3.6.4:
+修复：DateUtil 的 bug，和新增若干方法
+优化：StrUtil.mapToQueryString 的方法
+
+
+
 jboot v3.6.3:
 新增：DateUtil 工具类，方便对日期进行计算或转换
 新增：StrUtil.queryStringToMap 和 StrUtil.mapToQueryString
