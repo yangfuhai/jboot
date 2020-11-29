@@ -247,7 +247,7 @@ public class DateUtil {
         } else if (currentMonth >= 4 && currentMonth <= 6) {
             cal.set(Calendar.MONTH, 3);
         } else if (currentMonth >= 7 && currentMonth <= 9) {
-            cal.set(Calendar.MONTH, 4);
+            cal.set(Calendar.MONTH, 6);
         } else if (currentMonth >= 10 && currentMonth <= 12) {
             cal.set(Calendar.MONTH, 9);
         }
@@ -261,6 +261,7 @@ public class DateUtil {
         return cal.getTime();
     }
 
+
     /**
      * 获取 本季度的 结束时间
      *
@@ -269,6 +270,51 @@ public class DateUtil {
     public static Date getEndOfThisQuarter() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(getStartOfThisQuarter());
+        cal.add(Calendar.MONTH, 3);
+        return cal.getTime();
+    }
+
+
+    /**
+     * 获取 季度 的开始时间
+     *
+     * @param quarterNumber
+     * @return
+     */
+    public static Date getStartOfQuarter(int quarterNumber) {
+        if (quarterNumber < 1 || quarterNumber > 4) {
+            throw new IllegalArgumentException("quarterNumber must 1,2,3,4");
+        }
+        Calendar cal = Calendar.getInstance();
+        if (quarterNumber == 1) {
+            cal.set(Calendar.MONTH, 0);
+        } else if (quarterNumber == 2) {
+            cal.set(Calendar.MONTH, 3);
+        } else if (quarterNumber == 3) {
+            cal.set(Calendar.MONTH, 6);
+        } else {
+            cal.set(Calendar.MONTH, 9);
+        }
+
+        cal.set(Calendar.DATE, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 24);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        return cal.getTime();
+    }
+
+
+    /**
+     * 获取 季度 的结束时间
+     *
+     * @param quarterNumber
+     * @return
+     */
+    public static Date getEndOfQuarter(int quarterNumber) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(getStartOfQuarter(quarterNumber));
         cal.add(Calendar.MONTH, 3);
         return cal.getTime();
     }
@@ -416,6 +462,26 @@ public class DateUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.MONTH) + 1;
+    }
+
+
+    /**
+     * 获取日期的季度
+     *
+     * @param date
+     * @return
+     */
+    public static int getQuarterNumber(Date date) {
+        int monthNumber = getMonthNumber(date);
+        if (monthNumber >= 1 && monthNumber <= 3) {
+            return 1;
+        } else if (monthNumber >= 4 && monthNumber <= 6) {
+            return 2;
+        } else if (monthNumber >= 7 && monthNumber <= 9) {
+            return 3;
+        } else {
+            return 4;
+        }
     }
 
 
@@ -633,6 +699,22 @@ public class DateUtil {
     }
 
     /**
+     * 是否是相同的月份
+     */
+    public static boolean isSameQuarter(Date self, Date other) {
+        return getYearNumber(self) == getYearNumber(other)
+                && getQuarterNumber(self) == getQuarterNumber(other);
+    }
+
+    /**
+     * 是否是相同的月份
+     */
+    public static boolean isSameYear(Date self, Date other) {
+        return getYearNumber(self) == getYearNumber(other);
+    }
+
+
+    /**
      * 此日期是否是今天
      */
     public static boolean isToday(Date date) {
@@ -653,6 +735,13 @@ public class DateUtil {
         return isSameMonth(new Date(), date);
     }
 
+
+    /**
+     * 此日期是否是本月份
+     */
+    public static boolean isThisQuarter(Date date) {
+        return isSameQuarter(new Date(), date);
+    }
 
     /**
      * 此日期是否是本年份
@@ -714,6 +803,10 @@ public class DateUtil {
 
         System.out.println("=============");
         System.out.println("今天星期：" + getWeekDay(new Date()));
+        System.out.println("第1季度：" + toDateTimeString(getEndOfQuarter(1)));
+        System.out.println("第2季度：" + toDateTimeString(getEndOfQuarter(2)));
+        System.out.println("第3季度：" + toDateTimeString(getEndOfQuarter(3)));
+        System.out.println("第4季度：" + toDateTimeString(getEndOfQuarter(4)));
 
     }
 }
