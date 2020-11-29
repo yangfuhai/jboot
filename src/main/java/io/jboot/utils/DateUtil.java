@@ -807,7 +807,7 @@ public class DateUtil {
         System.out.println("新增年份：" + toDateTimeString(addYears(parseDate("2020-02-11 12:21:55"), 20)));
 
         System.out.println("=============");
-        System.out.println("今天星期：" + getWeekDay(new Date()));
+        System.out.println("今天星期：" + getWeekDay(parseDate("2020-11-23")));
         System.out.println("isToday：" + isToday(parseDate("2020-11-29")));
         System.out.println("isThisWeek：" + isThisWeek(parseDate("2020-11-24")));
         System.out.println("isThisMonth：" + isThisMonth(parseDate("2020-10-02")));
