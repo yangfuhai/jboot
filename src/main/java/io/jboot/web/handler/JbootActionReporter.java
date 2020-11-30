@@ -24,6 +24,7 @@ import com.jfinal.core.JFinal;
 import com.jfinal.kit.JsonKit;
 import io.jboot.JbootConsts;
 import io.jboot.support.jwt.JwtInterceptor;
+import io.jboot.utils.RequestUtil;
 import io.jboot.web.controller.JbootController;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -166,10 +167,16 @@ public class JbootActionReporter {
             sb.append("\n");
         }
 
+        if ("POST".equalsIgnoreCase(controller.getRequest().getMethod()) && !RequestUtil.isMultipartRequest(controller.getRequest())){
+            sb.append("RawData     : ").append(controller.getRawData());
+            sb.append("\n");
+        }
+
         if (printJwt && controller instanceof JbootController) {
             sb.append("Jwt         : ").append(JsonKit.toJson(((JbootController) controller).getJwtParas()));
             sb.append("\n");
         }
+
 
         sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n\n\n");
 
