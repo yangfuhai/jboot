@@ -17,6 +17,7 @@ package io.jboot.app;
 
 import com.jfinal.config.Interceptors;
 import com.jfinal.config.Plugins;
+import com.jfinal.core.JFinal;
 import com.jfinal.plugin.IPlugin;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.core.JbootCoreConfig;
@@ -70,6 +71,10 @@ public class JbootSimpleApplication {
         }
 
         private void doInit() {
+
+            //constants
+            coreConfig.configConstant(JFinal.me().getConstants());
+
             //aop interceptors
             coreConfig.configInterceptor(interceptors);
 
@@ -115,7 +120,7 @@ public class JbootSimpleApplication {
                 LOCK.lock();
                 STOP.await();
             } catch (InterruptedException e) {
-                System.err.println("JbootApplication has stopped, interrupted by other thread!");
+                System.out.println("JbootApplication has stopped, interrupted by other thread!");
             } finally {
                 LOCK.unlock();
             }
@@ -123,20 +128,20 @@ public class JbootSimpleApplication {
 
         private void initShutdownHook() {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                System.out.println("\nJbootApplication shutdown ...... please wait.");
                 try {
                     coreConfig.onStop();
                 } catch (Exception e) {
-                    System.err.println("jboot rpc stop exception : " + e.toString());
+                    System.out.println("JbootApplication shutdown exception: " + e.toString());
                 }
-
-                System.err.println("JbootApplication exited, all service stopped.");
+                System.out.println("JbootApplication has exited, all services stopped.");
                 try {
                     LOCK.lock();
                     STOP.signal();
                 } finally {
                     LOCK.unlock();
                 }
-            }, "jboot-rpc-application-hook"));
+            }, "jboot-simple-application-hook"));
         }
     }
 
