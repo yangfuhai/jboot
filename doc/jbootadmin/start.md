@@ -113,7 +113,7 @@ starter-cms/src/main/io.jboot.cms.admin.CmsStarter
  \____||_____| \___/  \___/   |__|  
                                     
 
-JbootApplication { name='jboot', mode='dev', version='3.6.4', config='io.jboot.core.JbootCoreConfig' }
+JbootApplication { name='jboot', mode='dev', version='3.6.5', config='io.jboot.core.JbootCoreConfig' }
 Classpath : /Users/michael/work/git/JbootAdmin/starter-cms/target/classes/
 Starting JFinal 4.9.01 -> http://0.0.0.0:8003
 Info: jfinal-undertow 2.1, undertow 2.0.30.Final, jvm 1.8.0_261
@@ -126,7 +126,7 @@ ClassScanner scan classpath : /Users/michael/work/git/JbootAdmin/core-framework/
 ClassScanner scan classpath : /Users/michael/work/git/JbootAdmin/module-cms/module-cms-web/target/classes
 ClassScanner scan classpath : /Users/michael/work/git/JbootAdmin/core-commons/target/classes
 ClassScanner scan classpath : /Users/michael/work/git/JbootAdmin/core-framework/core-framework-service/target/classes
-ClassScanner scan jar : /Users/michael/.m2/repository/io/jboot/jboot/3.6.4/jboot-3.6.4.jar
+ClassScanner scan jar : /Users/michael/.m2/repository/io/jboot/jboot/3.6.5/jboot-3.6.5.jar
 ClassScanner scan jar : /Users/michael/.m2/repository/eu/bitwalker/UserAgentUtils/1.21/UserAgentUtils-1.21.jar
 ClassScanner scan jar : /Users/michael/.m2/repository/cn/smallbun/screw/screw-core/1.0.0/screw-core-1.0.0.jar
 
