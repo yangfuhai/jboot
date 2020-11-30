@@ -21,6 +21,7 @@ import com.jfinal.plugin.IPlugin;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.core.JbootCoreConfig;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -44,24 +45,27 @@ public class JbootSimpleApplication {
 
     public static void run(String[] args) {
 
+        long startTimeMillis = System.currentTimeMillis();
         JbootApplicationConfig appConfig = ApplicationUtil.getAppConfig(args);
         ApplicationUtil.printBannerInfo(appConfig);
         ApplicationUtil.printApplicationInfo(appConfig);
         ApplicationUtil.printClassPath();
 
         JbootCoreConfig coreConfig = new JbootCoreConfig();
-        new RPCServer(coreConfig).start();
+        new RPCServer(coreConfig, startTimeMillis).start();
     }
 
 
     static class RPCServer extends Thread {
 
         private final JbootCoreConfig coreConfig;
+        private final long startTimeMillis;
         private final Plugins plugins = new Plugins();
         private final Interceptors interceptors = new Interceptors();
 
-        public RPCServer(JbootCoreConfig coreConfig) {
+        public RPCServer(JbootCoreConfig coreConfig, long startTimeMillis) {
             this.coreConfig = coreConfig;
+            this.startTimeMillis = startTimeMillis;
             doInit();
         }
 
@@ -75,6 +79,8 @@ public class JbootSimpleApplication {
 
             //on start
             coreConfig.onStart();
+
+
         }
 
         private void startPlugins() {
@@ -98,6 +104,8 @@ public class JbootSimpleApplication {
 
         @Override
         public void run() {
+            String timeString = new DecimalFormat("#.#").format((System.currentTimeMillis() - startTimeMillis) / 1000F);
+            System.out.println("JbootApplication has started in " + timeString + " seconds. Welcome To The Jboot World (^_^)\n\n");
             initShutdownHook();
             await();
         }
@@ -107,7 +115,7 @@ public class JbootSimpleApplication {
                 LOCK.lock();
                 STOP.await();
             } catch (InterruptedException e) {
-                System.err.println("jboot rpc application has stopped, interrupted by other thread!");
+                System.err.println("JbootApplication has stopped, interrupted by other thread!");
             } finally {
                 LOCK.unlock();
             }
@@ -121,7 +129,7 @@ public class JbootSimpleApplication {
                     System.err.println("jboot rpc stop exception : " + e.toString());
                 }
 
-                System.err.println("jboot rpc application exit, all service stopped.");
+                System.err.println("JbootApplication exited, all service stopped.");
                 try {
                     LOCK.lock();
                     STOP.signal();

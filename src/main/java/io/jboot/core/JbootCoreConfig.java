@@ -30,6 +30,7 @@ import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.app.ApplicationUtil;
 import io.jboot.components.cache.support.JbootCaptchaCache;
 import io.jboot.components.cache.support.JbootTokenCache;
 import io.jboot.components.gateway.JbootGatewayHandler;
@@ -206,7 +207,7 @@ public class JbootCoreConfig extends JFinalConfig {
     public void configEngine(Engine engine) {
 
         //通过 java -jar xxx.jar 在单独的jar里运行
-        if (runInFatjar()) {
+        if (ApplicationUtil.runInFatjar()) {
             engine.setToClassPathSourceFactory();
             engine.setBaseTemplatePath("webapp");
         }
@@ -241,9 +242,6 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootAppListenerManager.me().onEngineConfig(engine);
     }
 
-    private boolean runInFatjar() {
-        return Thread.currentThread().getContextClassLoader().getResource("") == null;
-    }
 
     @Override
     public void configPlugin(Plugins plugins) {

@@ -46,7 +46,7 @@ public class JbootResourceLoader {
         try {
 
             URL url = JbootResourceLoader.class.getClassLoader().getResource("");
-            if (url == null) {
+            if (url == null || url.toString().endsWith(".jar!/")) {
                 return;
             }
 

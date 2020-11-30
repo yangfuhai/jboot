@@ -20,7 +20,7 @@ import io.jboot.app.config.JbootConfigManager;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-class ApplicationUtil {
+public class ApplicationUtil {
 
     static JbootApplicationConfig getAppConfig(String[] args) {
         JbootConfigManager.parseArgs(args);
@@ -40,13 +40,17 @@ class ApplicationUtil {
         System.out.println(appConfig.toString());
     }
 
+    public static boolean runInFatjar(){
+        URL url =  Thread.currentThread().getContextClassLoader().getResource("");
+        return url == null || url.toString().toLowerCase().endsWith(".jar!/");
+    }
+
     static void printClassPath() {
         try {
-            URL resourceURL = ApplicationUtil.class.getResource("/");
-            if (resourceURL != null) {
-                System.out.println("JbootApplication ClassPath: " + resourceURL.toURI().getPath());
+            if (runInFatjar()) {
+                System.out.println("JbootApplication is running in fatjar.");
             } else {
-                System.out.println("JbootApplication ClassPath in fat jar.");
+                System.out.println("JbootApplication ClassPath: " + ApplicationUtil.class.getResource("/").toURI().getPath());
             }
         } catch (URISyntaxException e) {
             e.printStackTrace();
