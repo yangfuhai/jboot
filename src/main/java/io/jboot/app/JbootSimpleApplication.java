@@ -22,6 +22,7 @@ import com.jfinal.plugin.IPlugin;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.core.JbootCoreConfig;
 
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
@@ -67,7 +68,25 @@ public class JbootSimpleApplication {
         public RPCServer(JbootCoreConfig coreConfig, long startTimeMillis) {
             this.coreConfig = coreConfig;
             this.startTimeMillis = startTimeMillis;
+            doConfigJFinalPathKit();
             doInit();
+        }
+
+
+        private void doConfigJFinalPathKit(){
+            try {
+                Class<?> c = JbootSimpleApplication.class.getClassLoader().loadClass("com.jfinal.kit.PathKit");
+                Method setWebRootPath = c.getMethod("setWebRootPath", String.class);
+                String webRootPath = PathKitExt.getWebRootPath();
+                setWebRootPath.invoke(null, webRootPath);
+
+                // -------
+                Method setRootClassPath = c.getMethod("setRootClassPath", String.class);
+                String rootClassPath = PathKitExt.getRootClassPath();
+                setRootClassPath.invoke(null, rootClassPath);
+            }catch (Exception ex){
+                throw new RuntimeException(ex);
+            }
         }
 
         private void doInit() {
@@ -128,7 +147,7 @@ public class JbootSimpleApplication {
 
         private void initShutdownHook() {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                System.out.println("\nJbootApplication shutdown ...... please wait.");
+                System.out.println("\nJbootApplication shutdown, please wait ...... ");
                 try {
                     coreConfig.onStop();
                 } catch (Exception e) {
