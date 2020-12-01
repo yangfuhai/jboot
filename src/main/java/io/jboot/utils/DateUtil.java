@@ -329,8 +329,8 @@ public class DateUtil {
      */
     public static Date getStartOfThisYear() {
         Calendar cal = Calendar.getInstance();
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONDAY), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.YEAR));
+        cal.setTime(new Date());
+        cal.set(cal.get(Calendar.YEAR),0,1,0,0,0);
         return cal.getTime();
     }
 
@@ -807,8 +807,8 @@ public class DateUtil {
         System.out.println("新增年份：" + toDateTimeString(addYears(parseDate("2020-02-11 12:21:55"), 20)));
 
         System.out.println("=============");
-        System.out.println("今天星期：" + getWeekDay(parseDate("2020-11-23")));
-        System.out.println("isToday：" + isToday(parseDate("2020-11-29")));
+        System.out.println("今天星期：" + getWeekDay(parseDate("2020-11-24")));
+        System.out.println("isToday：" + isToday(parseDate("2020-12-01")));
         System.out.println("isThisWeek：" + isThisWeek(parseDate("2020-11-24")));
         System.out.println("isThisMonth：" + isThisMonth(parseDate("2020-10-02")));
         System.out.println("isThisQuarter：" + isThisQuarter(parseDate("2020-10-02")));
