@@ -1,3 +1,9 @@
+jboot v3.6.6:
+新增：AttachmentManager 新增保存文件的若干方法
+修复：DateUtil 某些方法不正确的问题
+
+
+
 jboot v3.6.5:
 新增：控制台信息打印新增 RawData 的内容打印，方便开发调试
 优化：优化通过 JbootSimpleApplication 启动 RPC 服务时控制台的输出信息
