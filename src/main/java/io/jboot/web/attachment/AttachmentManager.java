@@ -16,13 +16,15 @@
 
 package io.jboot.web.attachment;
 
-import com.jfinal.kit.HandlerKit;
 import com.jfinal.log.Log;
-import com.jfinal.render.*;
+import com.jfinal.render.IRenderFactory;
+import com.jfinal.render.Render;
+import com.jfinal.render.RenderManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -78,7 +80,6 @@ public class AttachmentManager {
     }
 
 
-
     /**
      * 保存文件
      *
@@ -94,6 +95,53 @@ public class AttachmentManager {
             try {
                 if (container != defaultContainer) {
                     container.saveFile(defaultContainerFile);
+                }
+            } catch (Exception ex) {
+                LOG.error("get file error in container :" + container, ex);
+            }
+        }
+        return relativePath.replace("\\", "/");
+    }
+
+
+    /**
+     * 保存文件
+     *
+     * @param file
+     * @return 返回文件的相对路径
+     */
+    public String saveFile(File file, String toRelativePath) {
+        //优先从 默认的 container 去保存文件
+        String relativePath = defaultContainer.saveFile(file, toRelativePath);
+        File defaultContainerFile = defaultContainer.getFile(relativePath);
+
+        for (AttachmentContainer container : containers) {
+            try {
+                if (container != defaultContainer) {
+                    container.saveFile(defaultContainerFile, toRelativePath);
+                }
+            } catch (Exception ex) {
+                LOG.error("get file error in container :" + container, ex);
+            }
+        }
+        return relativePath.replace("\\", "/");
+    }
+
+    /**
+     * 保存文件
+     *
+     * @param inputStream
+     * @return
+     */
+    public String saveFile(InputStream inputStream, String toRelativePath) {
+        //优先从 默认的 container 去保存文件
+        String relativePath = defaultContainer.saveFile(inputStream, toRelativePath);
+        File defaultContainerFile = defaultContainer.getFile(relativePath);
+
+        for (AttachmentContainer container : containers) {
+            try {
+                if (container != defaultContainer) {
+                    container.saveFile(defaultContainerFile, toRelativePath);
                 }
             } catch (Exception ex) {
                 LOG.error("get file error in container :" + container, ex);
@@ -161,22 +209,23 @@ public class AttachmentManager {
 
     /**
      * 渲染文件到浏览器
+     *
      * @param target
      * @param request
      * @param response
      * @return true 渲染成功，false 不进行渲染
      */
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        if (target.startsWith(defaultContainer.getTargetPrefix()) && target.lastIndexOf('.') != -1){
+        if (target.startsWith(defaultContainer.getTargetPrefix()) && target.lastIndexOf('.') != -1) {
             Render render = getFileRender(getFile(target));
             render.setContext(request, response).render();
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
-    private Render getFileRender(File file){
+    private Render getFileRender(File file) {
         return file == null || !file.isFile()
                 ? renderFactory.getErrorRender(404)
                 : renderFactory.getFileRender(file);

@@ -21,7 +21,9 @@ import io.jboot.utils.FileUtil;
 import io.jboot.utils.StrUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -69,8 +71,55 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
 
     @Override
+    public String saveFile(File file, String toRelativePath) {
+        File toFile = new File(getRootPath(), toRelativePath);
+
+        if (!toFile.getParentFile().exists()) {
+            toFile.getParentFile().mkdirs();
+        }
+
+        try {
+            org.apache.commons.io.FileUtils.moveFile(file, toFile);
+            toFile.setReadable(true, false);
+        } catch (IOException e) {
+            LogKit.error(e.toString(), e);
+        }
+
+        return toRelativePath;
+
+
+    }
+
+    @Override
+    public String saveFile(InputStream inputStream, String toRelativePath) {
+
+        File toFile = new File(getRootPath(), toRelativePath);
+
+        if (!toFile.getParentFile().exists()) {
+            toFile.getParentFile().mkdirs();
+        }
+
+        FileOutputStream fOutStream = null;
+        try {
+            fOutStream = new FileOutputStream(toFile);
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) > -1) {
+                fOutStream.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            FileUtil.close(fOutStream, inputStream);
+        }
+        return toRelativePath;
+    }
+
+
+    @Override
     public boolean deleteFile(String relativePath) {
-        return getFile(relativePath).delete();
+        File file = getFile(relativePath);
+        return file != null && file.delete();
     }
 
 
@@ -100,7 +149,6 @@ public class LocalAttachmentContainer implements AttachmentContainer {
                 ? filePath.substring(rootPath.length())
                 : filePath;
     }
-
 
 
     public String getRootPath() {

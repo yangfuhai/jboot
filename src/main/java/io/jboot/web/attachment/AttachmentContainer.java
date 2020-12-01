@@ -17,6 +17,7 @@
 package io.jboot.web.attachment;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -25,6 +26,7 @@ public interface AttachmentContainer {
 
     /**
      * 保存文件
+     *
      * @param file
      * @return 返回文件的相对路径
      */
@@ -32,7 +34,25 @@ public interface AttachmentContainer {
 
 
     /**
+     * 保存文件
+     *
+     * @param file
+     * @return 返回文件的相对路径
+     */
+    public String saveFile(File file, String toRelativePath);
+
+    /**
+     * 保存文件
+     *
+     * @param inputStream
+     * @return
+     */
+    public String saveFile(InputStream inputStream, String toRelativePath);
+
+
+    /**
      * 删除文件
+     *
      * @param relativePath
      * @return
      */
@@ -41,6 +61,7 @@ public interface AttachmentContainer {
 
     /**
      * 通过相对路径获取文件
+     *
      * @param relativePath
      * @return
      */
@@ -49,11 +70,11 @@ public interface AttachmentContainer {
 
     /**
      * 通过一个文件，获取其相对路径
+     *
      * @param file
      * @return
      */
     public String getRelativePath(File file);
-
 
 
 }
