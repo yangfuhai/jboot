@@ -48,32 +48,34 @@ public class JbootSimpleApplication {
     public static void run(String[] args) {
 
         long startTimeMillis = System.currentTimeMillis();
+
         JbootApplicationConfig appConfig = ApplicationUtil.getAppConfig(args);
         ApplicationUtil.printBannerInfo(appConfig);
         ApplicationUtil.printApplicationInfo(appConfig);
         ApplicationUtil.printClassPath();
 
         JbootCoreConfig coreConfig = new JbootCoreConfig();
-        new RPCServer(coreConfig, startTimeMillis).start();
+        new SimpleServer(coreConfig, startTimeMillis).start();
     }
 
 
-    static class RPCServer extends Thread {
+    static class SimpleServer extends Thread {
 
         private final JbootCoreConfig coreConfig;
         private final long startTimeMillis;
         private final Plugins plugins = new Plugins();
         private final Interceptors interceptors = new Interceptors();
 
-        public RPCServer(JbootCoreConfig coreConfig, long startTimeMillis) {
+        public SimpleServer(JbootCoreConfig coreConfig, long startTimeMillis) {
             this.coreConfig = coreConfig;
             this.startTimeMillis = startTimeMillis;
+
             doConfigJFinalPathKit();
-            doInit();
+            doInitCoreConfig();
         }
 
 
-        private void doConfigJFinalPathKit(){
+        private void doConfigJFinalPathKit() {
             try {
                 Class<?> c = JbootSimpleApplication.class.getClassLoader().loadClass("com.jfinal.kit.PathKit");
                 Method setWebRootPath = c.getMethod("setWebRootPath", String.class);
@@ -84,12 +86,12 @@ public class JbootSimpleApplication {
                 Method setRootClassPath = c.getMethod("setRootClassPath", String.class);
                 String rootClassPath = PathKitExt.getRootClassPath();
                 setRootClassPath.invoke(null, rootClassPath);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         }
 
-        private void doInit() {
+        private void doInitCoreConfig() {
 
             //constants
             coreConfig.configConstant(JFinal.me().getConstants());
@@ -103,8 +105,6 @@ public class JbootSimpleApplication {
 
             //on start
             coreConfig.onStart();
-
-
         }
 
         private void startPlugins() {
@@ -128,22 +128,13 @@ public class JbootSimpleApplication {
 
         @Override
         public void run() {
-            String timeString = new DecimalFormat("#.#").format((System.currentTimeMillis() - startTimeMillis) / 1000F);
-            System.out.println("JbootApplication has started in " + timeString + " seconds. Welcome To The Jboot World (^_^)\n\n");
+            String seconds = new DecimalFormat("#.#").format((System.currentTimeMillis() - startTimeMillis) / 1000F);
+            System.out.println("JbootApplication has started in " + seconds + " seconds. Welcome To The Jboot World (^_^)\n\n");
+
             initShutdownHook();
-            await();
+            startAwait();
         }
 
-        private void await() {
-            try {
-                LOCK.lock();
-                STOP.await();
-            } catch (InterruptedException e) {
-                System.out.println("JbootApplication has stopped, interrupted by other thread!");
-            } finally {
-                LOCK.unlock();
-            }
-        }
 
         private void initShutdownHook() {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -162,6 +153,20 @@ public class JbootSimpleApplication {
                 }
             }, "jboot-simple-application-hook"));
         }
+
+
+        private void startAwait() {
+            try {
+                LOCK.lock();
+                STOP.await();
+            } catch (InterruptedException e) {
+                System.out.println("JbootApplication has stopped, interrupted by other thread!");
+            } finally {
+                LOCK.unlock();
+            }
+        }
+
+
     }
 
 }
