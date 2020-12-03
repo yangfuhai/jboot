@@ -2,6 +2,7 @@ package io.jboot.components.cache.support;
 
 import com.jfinal.weixin.sdk.cache.IAccessTokenCache;
 import io.jboot.Jboot;
+import io.jboot.components.cache.CacheTime;
 
 public class JbootAccessTokenCache implements IAccessTokenCache {
 
@@ -14,7 +15,8 @@ public class JbootAccessTokenCache implements IAccessTokenCache {
 
     @Override
     public void set(String key, String value) {
-        Jboot.getCache().put(CACHE_NAME, key, value);
+        // 微信相关 token 的有效期之多 2 个小时
+        Jboot.getCache().put(CACHE_NAME, key, value,2 * CacheTime.HOUR);
     }
 
     @Override
