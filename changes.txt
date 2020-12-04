@@ -1,3 +1,12 @@
+jboot v3.6.7:
+优化：JbootSimpleApplication，使之代码更加简洁
+优化：优化缓存拦截器对方法的 key 进行构建，提高性能
+优化：默认为 JbootAccessTokenCache 添加 2 个小时的缓存时间
+优化：LocalAttachmentContainer，默认保存文件的时候，对文件进行相同文件验证
+优化：JwtManager 对 Jwt 解析出错或没有 Jwt 数据时，返回常亮 map
+
+
+
 jboot v3.6.6:
 新增：AttachmentManager 新增保存文件的若干方法
 修复：DateUtil 某些方法不正确的问题
