@@ -69,7 +69,7 @@ class Utils {
         }
 
         StringBuilder keyBuilder = new StringBuilder(clazz.getName());
-        keyBuilder.append("#").append(method.getName());
+        keyBuilder.append('#').append(method.getName());
 
         if (ArrayUtil.isNullOrEmpty(arguments)) {
             return keyBuilder.toString();
@@ -80,24 +80,28 @@ class Utils {
         for (Object argument : arguments) {
             String argString = converteToString(argument);
             ensureArgumentNotNull(argString, method);
-            keyBuilder
-                    .append(paramTypes[index++].getClass().getName())
-                    .append(":")
-                    .append(argString)
-                    .append("-");
+
+            if (index > 0){
+                keyBuilder.append('-');
+            }
+            keyBuilder.append(paramTypes[index++].getClass().getName())
+                    .append(':')
+                    .append(argString);
         }
 
-        //remove last chat '-'
-        return keyBuilder.deleteCharAt(keyBuilder.length() - 1).toString();
-
+        return keyBuilder.toString();
     }
 
     private static String renderKey(String key, Method method, Object[] arguments) {
-        if (!key.contains("#(") || !key.contains(")")) {
-            return key;
+        int indexOfStartFlag  = key.indexOf("#(");
+        if (indexOfStartFlag > -1){
+            int indexOfEndFlag = key.indexOf(")");
+            if (indexOfEndFlag > indexOfStartFlag){
+                return engineRender(key,method,arguments);
+            }
         }
 
-        return engineRender(key, method, arguments);
+        return key;
     }
 
     public static void ensureArgumentNotNull(String argument, Method method) {

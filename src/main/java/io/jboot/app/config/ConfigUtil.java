@@ -78,24 +78,24 @@ public class ConfigUtil {
             return value;
         }
 
-        StringBuilder newString = new StringBuilder(value.length());
+        StringBuilder newStringBuilder = new StringBuilder(value.length());
         int index = 0;
         for (ConfigPara para : paras) {
             if (para.getStart() > index) {
-                newString.append(value, index, para.getStart());
+                newStringBuilder.append(value, index, para.getStart());
             }
 
             String configValue = JbootConfigManager.me().getConfigValue(para.getKey());
             configValue = StrUtil.isNotBlank(configValue) ? configValue : para.getDefaultValue();
-            newString.append(configValue);
+            newStringBuilder.append(configValue);
             index = para.getEnd() + 1;
         }
 
         if (index < value.length()) {
-            newString.append(value, index, value.length());
+            newStringBuilder.append(value, index, value.length());
         }
 
-        return newString.toString();
+        return newStringBuilder.toString();
     }
 
 
