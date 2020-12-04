@@ -198,7 +198,7 @@ public class JbootController extends Controller {
 
         if (StrUtil.isBlank(token)) {
             LogKit.error("Can not get jwt token form http header or parameter!!");
-            jwtParas = new HashMap();
+            jwtParas = JwtManager.EMPTY_MAP;
         } else {
             jwtParas = JwtManager.me().parseJwtToken(token);
         }

@@ -37,6 +37,7 @@ public class JwtManager {
 
     private static final JwtManager me = new JwtManager();
     private static final Log LOG = Log.getLog(JwtManager.class);
+    public static final Map EMPTY_MAP = new HashMap();
 
     public static JwtManager me() {
         return me;
@@ -61,19 +62,19 @@ public class JwtManager {
             if (StrUtil.isNotBlank(jsonString)) {
                 return JsonKit.parse(jsonString, HashMap.class);
             }
-        } catch (SignatureException | MalformedJwtException e) {
+        } catch (SignatureException | MalformedJwtException ex) {
             // don't trust the JWT!
             // jwt 签名错误或解析错误，可能是伪造的，不能相信
-            LOG.error("Do not trast the jwt. return empty",e);
-        } catch (ExpiredJwtException e) {
+            LOG.error("Do not trast the jwt. return empty", ex);
+        } catch (ExpiredJwtException ex) {
             // jwt 已经过期
-            LOG.error("Jwt is expired. return empty",e);
-        } catch (Throwable ex) {
+            LOG.error("Jwt is expired. return empty", ex);
+        } catch (Exception ex) {
             //其他错误
-            LOG.error("Jwt parseJwtToken error. return empty");
+            LOG.error("Jwt parseJwtToken error. return empty", ex);
         }
 
-        return new HashMap();
+        return EMPTY_MAP;
     }
 
     public String createJwtToken(Map map) {
