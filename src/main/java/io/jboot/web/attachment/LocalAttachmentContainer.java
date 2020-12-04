@@ -74,13 +74,20 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     public String saveFile(File file, String toRelativePath) {
         File toFile = new File(getRootPath(), toRelativePath);
 
-        if (!toFile.getParentFile().exists()) {
-            toFile.getParentFile().mkdirs();
-        }
-
         try {
+
+            //相同的文件，不需要做任何处理
+            if (file.getCanonicalPath().equals(toFile.getCanonicalPath())){
+                return toRelativePath;
+            }
+
+            if (!toFile.getParentFile().exists()) {
+                toFile.getParentFile().mkdirs();
+            }
+
             org.apache.commons.io.FileUtils.moveFile(file, toFile);
             toFile.setReadable(true, false);
+
         } catch (IOException e) {
             LogKit.error(e.toString(), e);
         }
@@ -95,6 +102,10 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
         File toFile = new File(getRootPath(), toRelativePath);
 
+        if (toFile.exists()){
+            toFile.delete();
+        }
+
         if (!toFile.getParentFile().exists()) {
             toFile.getParentFile().mkdirs();
         }
@@ -108,7 +119,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
                 fOutStream.write(buffer, 0, len);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LogKit.error(e.toString(), e);
         } finally {
             FileUtil.close(fOutStream, inputStream);
         }
