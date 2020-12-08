@@ -25,6 +25,13 @@ public class JbootHttpConfig {
     public static final String TYPE_OKHTTP = "okhttp";
 
     public String type = TYPE_DEFAULT;
+    private String certPath;
+    private String certPass;
+    private int readTimeOut = JbootHttpRequest.READ_TIME_OUT;
+    private int connectTimeOut = JbootHttpRequest.CONNECT_TIME_OUT;
+    private String contentType = JbootHttpRequest.CONTENT_TYPE_URL_ENCODED;
+
+
 
     public String getType() {
         return type;
@@ -32,5 +39,45 @@ public class JbootHttpConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getCertPath() {
+        return certPath;
+    }
+
+    public void setCertPath(String certPath) {
+        this.certPath = certPath;
+    }
+
+    public String getCertPass() {
+        return certPass;
+    }
+
+    public void setCertPass(String certPass) {
+        this.certPass = certPass;
+    }
+
+    public int getReadTimeOut() {
+        return readTimeOut;
+    }
+
+    public void setReadTimeOut(int readTimeOut) {
+        this.readTimeOut = readTimeOut;
+    }
+
+    public int getConnectTimeOut() {
+        return connectTimeOut;
+    }
+
+    public void setConnectTimeOut(int connectTimeOut) {
+        this.connectTimeOut = connectTimeOut;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }

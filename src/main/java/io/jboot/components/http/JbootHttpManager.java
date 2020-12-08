@@ -29,12 +29,15 @@ public class JbootHttpManager {
     public static JbootHttpManager me() {
         if (manager == null) {
             manager = ClassUtil.singleton(JbootHttpManager.class);
+            manager.httpConfig = Jboot.config(JbootHttpConfig.class);
+
         }
         return manager;
     }
 
 
     private JbootHttp jbootHttp;
+    private JbootHttpConfig httpConfig;
 
     public JbootHttp getJbootHttp() {
         if (jbootHttp == null) {
@@ -43,11 +46,13 @@ public class JbootHttpManager {
         return jbootHttp;
     }
 
+    public JbootHttpConfig getHttpConfig() {
+        return httpConfig;
+    }
 
     private JbootHttp buildJbootHttp() {
-        JbootHttpConfig config = Jboot.config(JbootHttpConfig.class);
 
-        switch (config.getType()) {
+        switch (httpConfig.getType()) {
             case JbootHttpConfig.TYPE_DEFAULT:
                 return new JbootHttpImpl();
             case JbootHttpConfig.TYPE_OKHTTP:
@@ -55,7 +60,7 @@ public class JbootHttpManager {
             case JbootHttpConfig.TYPE_HTTPCLIENT:
                 throw new RuntimeException("not finished!!!!");
             default:
-                return JbootSpiLoader.load(JbootHttp.class, config.getType());
+                return JbootSpiLoader.load(JbootHttp.class, httpConfig.getType());
         }
 
     }

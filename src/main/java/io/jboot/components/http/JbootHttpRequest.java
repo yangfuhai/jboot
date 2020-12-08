@@ -18,6 +18,9 @@ package io.jboot.components.http;
 import io.jboot.utils.StrUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,22 +46,26 @@ public class JbootHttpRequest {
     public static final String CONTENT_TYPE_JSON = "application/json; charset=utf-8";
     public static final String CONTENT_TYPE_URL_ENCODED = "application/x-www-form-urlencoded;charset=utf-8";
 
-    Map<String, String> headers;
-    Map<String, Object> params;
-
     private String requestUrl;
-    private String certPath;
-    private String certPass;
+
+    private Map<String, String> headers;
+    private Map<String, Object> params;
+
 
     private String method = METHOD_GET;
-    private int readTimeOut = READ_TIME_OUT;
-    private int connectTimeOut = CONNECT_TIME_OUT;
     private String charset = CHAR_SET;
 
     private boolean multipartFormData = false;
 
+    private String certPath;
+    private String certPass;
+
+    private int readTimeOut;
+    private int connectTimeOut;
+    private String contentType;
+
+
     private File downloadFile;
-    private String contentType = CONTENT_TYPE_URL_ENCODED;
     private String postContent;
 
 
@@ -86,9 +93,22 @@ public class JbootHttpRequest {
     }
 
     public JbootHttpRequest() {
+        JbootHttpConfig config = JbootHttpManager.me().getHttpConfig();
+
+        if (StrUtil.isNotBlank(config.getCertPath())) {
+            this.certPath = config.getCertPath();
+        }
+        if (StrUtil.isNotBlank(config.getCertPass())) {
+            this.certPass = config.getCertPass();
+        }
+
+        this.readTimeOut = config.getReadTimeOut();
+        this.connectTimeOut = config.getConnectTimeOut();
+        this.contentType = config.getContentType();
     }
 
     public JbootHttpRequest(String url) {
+        this();
         this.requestUrl = url;
     }
 
@@ -125,6 +145,35 @@ public class JbootHttpRequest {
 
     public String getCertPath() {
         return certPath;
+    }
+
+    public InputStream getCertInputStream() throws FileNotFoundException {
+        if (StrUtil.isBlank(certPath)) {
+            return null;
+        }
+
+        if (certPath.toLowerCase().startsWith("classpath:")) {
+
+            String path = certPath.substring(10).trim();
+            InputStream inStream = getClassLoader().getResourceAsStream(path);
+
+            if (inStream == null) {
+                inStream = getClassLoader().getResourceAsStream("webapp/" + path);
+            }
+
+            if (inStream == null) {
+                throw new FileNotFoundException("Can not load resource: " + path + " in classpath.");
+            } else {
+                return inStream;
+            }
+        } else {
+            return new FileInputStream(certPath);
+        }
+    }
+
+    private ClassLoader getClassLoader() {
+        ClassLoader ret = Thread.currentThread().getContextClassLoader();
+        return ret != null ? ret : getClass().getClassLoader();
     }
 
     public void setCertPath(String certPath) {

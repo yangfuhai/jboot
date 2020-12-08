@@ -220,7 +220,7 @@ public class JbootHttpImpl implements JbootHttp {
         if (request.getCertPath() != null && request.getCertPass() != null) {
 
             KeyStore clientStore = KeyStore.getInstance("PKCS12");
-            clientStore.load(new FileInputStream(request.getCertPath()), request.getCertPass().toCharArray());
+            clientStore.load(request.getCertInputStream(), request.getCertPass().toCharArray());
 
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(clientStore, request.getCertPass().toCharArray());

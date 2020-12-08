@@ -23,7 +23,6 @@ import okhttp3.*;
 
 import javax.net.ssl.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -138,7 +137,7 @@ public class OKHttpImpl implements JbootHttp {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         if (request.getCertPath() != null && request.getCertPass() != null) {
             KeyStore clientStore = KeyStore.getInstance("PKCS12");
-            clientStore.load(new FileInputStream(request.getCertPath()), request.getCertPass().toCharArray());
+            clientStore.load(request.getCertInputStream(), request.getCertPass().toCharArray());
 
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(clientStore, request.getCertPass().toCharArray());
