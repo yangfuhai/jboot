@@ -65,13 +65,13 @@ public class JwtManager {
         } catch (SignatureException | MalformedJwtException ex) {
             // don't trust the JWT!
             // jwt 签名错误或解析错误，可能是伪造的，不能相信
-            LOG.error("Do not trast the jwt. return empty", ex);
+            LOG.error("Do not trast the jwt. " + ex.getMessage());
         } catch (ExpiredJwtException ex) {
             // jwt 已经过期
-            LOG.error("Jwt is expired. return empty", ex);
+            LOG.error("Jwt is expired. " + ex.getMessage());
         } catch (Exception ex) {
             //其他错误
-            LOG.error("Jwt parseJwtToken error. return empty", ex);
+            LOG.error("Jwt parseJwtToken error. " + ex.getMessage());
         }
 
         return EMPTY_MAP;
