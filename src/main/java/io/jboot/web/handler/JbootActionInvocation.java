@@ -49,7 +49,7 @@ public class JbootActionInvocation extends Invocation {
     private static InterceptorBuilderManager builderManager = InterceptorBuilderManager.me();
 
     public JbootActionInvocation(Action action, Controller controller) {
-        super(action, controller);
+//        super(action, controller);
 
         this.action = action;
         this.inters = buildInterceptors(action);

@@ -167,7 +167,8 @@ public class JbootActionReporter {
             sb.append("\n");
         }
 
-        if ("POST".equalsIgnoreCase(controller.getRequest().getMethod()) && !RequestUtil.isMultipartRequest(controller.getRequest())){
+
+        if (!"GET".equalsIgnoreCase(controller.getRequest().getMethod()) && !RequestUtil.isMultipartRequest(controller.getRequest())){
             sb.append("RawData     : ").append(controller.getRawData());
             sb.append("\n");
         }
