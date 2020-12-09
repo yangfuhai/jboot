@@ -30,6 +30,7 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                     }
                     if (rawObject != null && !rawObject.isEmpty()) {
                         Class typeClass = parameters[index].getType();
-                        if (Map.class.isAssignableFrom(typeClass)) {
+                        if (Map.class.isAssignableFrom(typeClass) && canNewInstance(typeClass)) {
                             Map map = (Map) typeClass.newInstance();
                             for (String key : rawObject.keySet()) {
                                 map.put(key, rawObject.get(key));
@@ -83,6 +84,12 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
 
         inv.invoke();
+    }
+
+
+    private boolean canNewInstance(Class clazz) {
+        int modifiers = clazz.getModifiers();
+        return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
 
 
