@@ -1,6 +1,6 @@
 jboot v3.6.9:
 新增：@JsonBody 新增对 set 的支持
-
+优化：升级 JFinal、Undertow、Jackson 等到最新版本
 
 
 jboot v3.6.8:

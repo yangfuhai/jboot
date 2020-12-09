@@ -41,15 +41,15 @@
 
 
     <properties>
-        <jfinal.version>4.9.03</jfinal.version>
+        <jfinal.version>4.9.05</jfinal.version>
         <jfinal-cos.version>2020.4</jfinal-cos.version>
-        <jfinal-undertow.version>2.2</jfinal-undertow.version>
+        <jfinal-undertow.version>2.3</jfinal-undertow.version>
         <jfinal-weixin.version>2.8</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>3.4.5</HikariCP.version>
-        <jackson.version>2.11.3</jackson.version>
+        <jackson.version>2.12.0</jackson.version>
         <mysql.version>5.1.49</mysql.version>
-        <undertow.version>2.2.2.Final</undertow.version>
+        <undertow.version>2.2.3.Final</undertow.version>
         <slf4j.version>1.7.30</slf4j.version>
         <fst.version>2.57</fst.version>
         <fastjson.version>1.2.75</fastjson.version>
@@ -58,7 +58,7 @@
         <jedis.version>2.10.2</jedis.version>
         <jsoup.version>1.13.1</jsoup.version>
         <ehcache.version>2.10.6</ehcache.version>
-        <caffeine.version>2.8.6</caffeine.version>
+        <caffeine.version>2.8.8</caffeine.version>
         <commons-lang3.version>3.11</commons-lang3.version>
         <commons-io.version>2.8.0</commons-io.version>
         <commons-codec.version>1.14</commons-codec.version>
@@ -70,7 +70,7 @@
         <resteasy.version>3.13.2.Final</resteasy.version>
         <seata.version>1.3.0</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.1.14</metrics.version>
+        <metrics.version>4.1.16</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
