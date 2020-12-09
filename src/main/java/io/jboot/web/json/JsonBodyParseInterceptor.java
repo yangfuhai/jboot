@@ -46,23 +46,27 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         for (int index = 0; index < parameters.length; index++) {
             JsonBody jsonBody = parameters[index].getAnnotation(JsonBody.class);
             if (jsonBody != null) {
-                Class typeClass = parameters[index].getType();
-                Object result = null;
-                try {
-                    if (List.class.isAssignableFrom(typeClass) || typeClass.isArray()){
-                        result = parseArray(rawData,typeClass,jsonBody);
-                    }else {
-                        result = parseObject(rawData, typeClass, jsonBody);
+                if (StrUtil.isBlank(rawData)) {
+                    inv.setArg(index, null);
+                } else {
+                    Class typeClass = parameters[index].getType();
+                    Object result = null;
+                    try {
+                        if (List.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
+                            result = parseArray(rawData, typeClass, jsonBody);
+                        } else {
+                            result = parseObject(rawData, typeClass, jsonBody);
+                        }
+                    } catch (Exception e) {
+                        String message = "Can not parse json to type: " + parameters[index].getType() + " in method: " + ClassUtil.buildMethodString(inv.getMethod());
+                        if (jsonBody.skipConvertError()) {
+                            LogKit.error(message);
+                        } else {
+                            throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), message);
+                        }
                     }
-                } catch (Exception e) {
-                    String message = "Can not parse json to type: " + parameters[index].getType() + " in method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    if (jsonBody.skipConvertError()) {
-                        LogKit.error(message);
-                    } else {
-                        throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), message);
-                    }
+                    inv.setArg(index, result);
                 }
-                inv.setArg(index, result);
             }
         }
 
@@ -72,10 +76,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
 
     private Object parseObject(String rawData, Class typeClass, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
-        if (StrUtil.isBlank(rawData)) {
-            return null;
-        }
-
         JSONObject rawObject = JSON.parseObject(rawData);
         if (StrUtil.isNotBlank(jsonBody.value())) {
             String[] values = jsonBody.value().split("\\.");
@@ -109,23 +109,19 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         return rawObject.toJavaObject(typeClass);
     }
 
-    private Object parseArray(String rawData, Class typeClass, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
-        if (StrUtil.isBlank(rawData)) {
-            return null;
-        }
-
+    private Object parseArray(String rawData, Class typeClass, JsonBody jsonBody) {
         JSONArray jsonArray = null;
-        if (StrUtil.isBlank(jsonBody.value())){
+        if (StrUtil.isBlank(jsonBody.value())) {
             jsonArray = JSON.parseArray(rawData);
-        }else {
+        } else {
             JSONObject jsonObject = JSON.parseObject(rawData);
             String[] values = jsonBody.value().split("\\.");
             for (int i = 0; i < values.length; i++) {
                 String value = values[i];
                 if (StrUtil.isNotBlank(value)) {
-                    if (i == values.length - 1){
+                    if (i == values.length - 1) {
                         jsonArray = jsonObject.getJSONArray(value);
-                    }else {
+                    } else {
                         jsonObject = jsonObject.getJSONObject(value);
                         if (jsonObject == null || jsonObject.isEmpty()) {
                             break;
