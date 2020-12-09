@@ -15,12 +15,13 @@
  */
 package io.jboot.web.render;
 
+import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.Ret;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import com.jfinal.render.RenderManager;
 import io.jboot.exception.JbootExceptionHolder;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -29,7 +30,8 @@ import java.util.List;
  */
 public class JbootErrorRender extends Render {
 
-    protected static final String contentType = "text/html; charset=" + getEncoding();
+    protected static final String htmlContentType = "text/html;charset=" + getEncoding();
+    protected static final String jsonContentType = "application/json;charset=" + getEncoding();
 
     protected static final String poweredBy = "<center><a href='http://jboot.io' target='_blank'><b>Powered by Jboot</b></a></center>";
 
@@ -43,6 +45,12 @@ public class JbootErrorRender extends Render {
 
     protected static final String html500_footer = "<hr>" + poweredBy + "</body></html>";
 
+
+    protected static final String json401 = JsonKit.toJson(Ret.fail().set("errorCode", 401).set("message", "401 Unauthorized"));
+    protected static final String json403 = JsonKit.toJson(Ret.fail().set("errorCode", 403).set("message", "403 Forbidden"));
+    protected static final String json404 = JsonKit.toJson(Ret.fail().set("errorCode", 404).set("message", "404 Not Found"));
+
+
     protected int errorCode;
 
     public JbootErrorRender(int errorCode, String view) {
@@ -53,6 +61,7 @@ public class JbootErrorRender extends Render {
     @Override
     public void render() {
         response.setStatus(getErrorCode());
+
 
         //render with view
         String view = getView();
@@ -65,13 +74,19 @@ public class JbootErrorRender extends Render {
         }
 
         try {
-            response.setContentType(contentType);
+            String contentType = request.getContentType();
+            boolean needRenderJson = contentType != null && contentType.toLowerCase().contains("application/json");
+
+            response.setContentType(needRenderJson ? jsonContentType : htmlContentType);
+
             PrintWriter writer = response.getWriter();
-            writer.write(getErrorHtml());
-        } catch (IOException e) {
-            throw new RenderException(e);
+            writer.write(needRenderJson ? getErrorJson() : getErrorHtml());
+        } catch (Exception ex) {
+            throw new RenderException(ex);
         }
+
     }
+
 
     public String getErrorHtml() {
         int errorCode = getErrorCode();
@@ -89,6 +104,26 @@ public class JbootErrorRender extends Render {
         }
         return "<html><head><title>" + errorCode + " Error</title></head><body bgcolor='white'><center><h1>" + errorCode + " Error</h1></center><hr>" + poweredBy + "</body></html>";
     }
+
+
+    public String getErrorJson() {
+        int errorCode = getErrorCode();
+        if (errorCode == 404) {
+            return json404;
+        }
+        if (errorCode == 401) {
+            return json401;
+        }
+        if (errorCode == 403) {
+            return json403;
+        }
+        if (errorCode == 500 || errorCode == 400) {
+            return buildErrorJson();
+        }
+
+        return JsonKit.toJson(Ret.fail().set("errorCode", errorCode).set("message", errorCode + " Error"));
+    }
+
 
     public int getErrorCode() {
         return errorCode;
@@ -115,6 +150,26 @@ public class JbootErrorRender extends Render {
         }
 
         return stringBuilder.append(html500_footer).toString();
+    }
+
+
+    public String buildErrorJson() {
+
+        Ret ret = Ret.fail().set("errorCode", getErrorCode()).set("message", getErrorCode() + " Internal Server Error");
+
+        StringBuilder errorMsgBuilder = new StringBuilder();
+        List<String> messages = JbootExceptionHolder.getMessages();
+        for (String message : messages) {
+            errorMsgBuilder.append(message);
+        }
+
+        StringBuilder throwableMsgBuilder = new StringBuilder();
+        List<Throwable> throwables = JbootExceptionHolder.getThrowables();
+        for (Throwable throwable : throwables) {
+            throwableMsgBuilder.append(throwable.getClass().getName() + ": " + throwable.getMessage());
+        }
+
+        return JsonKit.toJson(ret.set("errorMessage", errorMsgBuilder.toString()).set("throwable", throwableMsgBuilder.toString()));
     }
 }
 

@@ -39,8 +39,12 @@ public class JbootExceptionHolder {
         throwables.get().add(ex);
     }
     public static void hold(String message,Throwable ex) {
-        messages.get().add(message);
-        throwables.get().add(ex);
+        if (message != null) {
+            messages.get().add(message);
+        }
+        if (ex != null) {
+            throwables.get().add(ex);
+        }
     }
 
     public static List<Throwable> getThrowables() {
