@@ -77,6 +77,7 @@ public class Slf4jLogger extends Log {
 
     @Override
     public void error(String message) {
+        JbootExceptionHolder.hold(message,null);
         log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, message, NULL_ARGS, null);
     }
 

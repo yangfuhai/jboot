@@ -81,6 +81,7 @@ public class JdkLogger extends Log {
 
 	@Override
 	public void error(String message) {
+		JbootExceptionHolder.hold(message,null);
 		log.logp(Level.SEVERE, clazzName, Thread.currentThread().getStackTrace()[1].getMethodName(), message);
 	}
 
