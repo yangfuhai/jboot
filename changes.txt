@@ -1,3 +1,8 @@
+jboot v3.6.9:
+新增：@JsonBody 新增对 set 的支持
+
+
+
 jboot v3.6.8:
 新增：Controller 参数新增 @JsonBody 的支持
 新增：Http 工具模块添加更多的配置，方便在 fatjar 模式下能配置 https 相关证书
