@@ -32,5 +32,5 @@ public @interface JsonBody {
      * 是否提过转换异常
      * @return
      */
-    public boolean skipConvertError() default true;
+    public boolean skipConvertError() default false;
 }

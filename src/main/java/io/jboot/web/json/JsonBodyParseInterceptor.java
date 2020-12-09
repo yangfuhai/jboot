@@ -34,6 +34,7 @@ import io.jboot.web.controller.JbootController;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -43,40 +44,41 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     @Override
     public void intercept(Invocation inv) {
         String rawData = inv.getController().getRawData();
+        if (StrUtil.isBlank(rawData)) {
+            inv.invoke();
+            return;
+        }
+
         Parameter[] parameters = inv.getMethod().getParameters();
+        Type[] paraTypes = inv.getMethod().getGenericParameterTypes();
         for (int index = 0; index < parameters.length; index++) {
             JsonBody jsonBody = parameters[index].getAnnotation(JsonBody.class);
             if (jsonBody != null) {
-                if (StrUtil.isBlank(rawData)) {
-                    inv.setArg(index, null);
-                } else {
-                    Class typeClass = parameters[index].getType();
-                    Object result = null;
-                    try {
-                        if (List.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
-                            result = parseArray(rawData, typeClass, jsonBody);
-                        } else {
-                            result = parseObject(rawData, typeClass, jsonBody);
-                        }
-                    } catch (Exception e) {
-                        String message = "Can not parse json to type: " + parameters[index].getType() + " in method: " + ClassUtil.buildMethodString(inv.getMethod());
-                        if (jsonBody.skipConvertError()) {
-                            LogKit.error(message);
-                        } else {
-                            throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), message);
-                        }
+                Class typeClass = parameters[index].getType();
+                Object result = null;
+                try {
+                    if (List.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
+                        result = parseArray(rawData, typeClass, paraTypes[index], jsonBody);
+                    } else {
+                        result = parseObject(rawData, typeClass, paraTypes[index], jsonBody);
                     }
-                    inv.setArg(index, result);
+                } catch (Exception e) {
+                    String message = "Can not parse json to type: " + parameters[index].getType() + " in method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    if (jsonBody.skipConvertError()) {
+                        LogKit.error(message);
+                    } else {
+                        throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), message);
+                    }
                 }
+                inv.setArg(index, result);
             }
         }
-
 
         inv.invoke();
     }
 
 
-    private Object parseObject(String rawData, Class typeClass, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
+    private Object parseObject(String rawData, Class typeClass, Type type, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
         JSONObject rawObject = JSON.parseObject(rawData);
         if (StrUtil.isNotBlank(jsonBody.value())) {
             String[] values = jsonBody.value().split("\\.");
@@ -95,11 +97,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return null;
         }
 
-        if (typeClass == Map.class || typeClass == JSONObject.class) {
+        //非泛型 的 map
+        if ((typeClass == Map.class || typeClass == JSONObject.class) && typeClass == type) {
             return rawObject;
         }
 
-        if (Map.class.isAssignableFrom(typeClass) && canNewInstance(typeClass)) {
+        //非泛型 的 map
+        if (Map.class.isAssignableFrom(typeClass) && typeClass == type && canNewInstance(typeClass)) {
             Map map = (Map) typeClass.newInstance();
             for (String key : rawObject.keySet()) {
                 map.put(key, rawObject.get(key));
@@ -107,10 +111,10 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return map;
         }
 
-        return rawObject.toJavaObject(typeClass);
+        return rawObject.toJavaObject(type);
     }
 
-    private Object parseArray(String rawData, Class typeClass, JsonBody jsonBody) {
+    private Object parseArray(String rawData, Class typeClass, Type type, JsonBody jsonBody) {
         JSONArray jsonArray = null;
         if (StrUtil.isBlank(jsonBody.value())) {
             jsonArray = JSON.parseArray(rawData);
@@ -136,7 +140,8 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return null;
         }
 
-        return jsonArray.toJavaObject(typeClass);
+        return jsonArray.toJavaObject(type);
+
     }
 
 

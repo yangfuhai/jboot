@@ -5,8 +5,8 @@ import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.json.JsonBody;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RequestMapping("/jsonbody")
 public class JsonBodyController extends JbootController {
@@ -32,25 +32,32 @@ public class JsonBodyController extends JbootController {
     }
 
 
-    public void map(@JsonBody("aaa.bbb") Map map) {
+    public void map(@JsonBody("aaa.bbb") HashMap map) {
+        System.out.println("map--->" + JsonKit.toJson(map));
+        renderText("ok");
+    }
+
+
+    public void mapString(@JsonBody("aaa.bbb") HashMap<String, String> map) {
         System.out.println("map--->" + JsonKit.toJson(map));
         renderText("ok");
     }
 
     /**
      * {
-     *     "aaa":{
-     *         "bbb":[{
-     *             "id":"abc",
-     *             "age":17,
-     *             "amount":123
-     *         },{
-     *             "id":"abc",
-     *             "age":17,
-     *             "amount":123
-     *         }]
-     *     }
+     * "aaa":{
+     * "bbb":[{
+     * "id":"abc",
+     * "age":17,
+     * "amount":123
+     * },{
+     * "id":"abc",
+     * "age":17,
+     * "amount":123
+     * }]
      * }
+     * }
+     *
      * @param list
      */
     public void list(@JsonBody("aaa.bbb") List<MyBean> list) {
@@ -61,18 +68,19 @@ public class JsonBodyController extends JbootController {
 
     /**
      * {
-     *     "aaa":{
-     *         "bbb":[{
-     *             "id":"abc",
-     *             "age":17,
-     *             "amount":123
-     *         },{
-     *             "id":"abc",
-     *             "age":17,
-     *             "amount":123
-     *         }]
-     *     }
+     * "aaa":{
+     * "bbb":[{
+     * "id":"abc",
+     * "age":17,
+     * "amount":123
+     * },{
+     * "id":"abc",
+     * "age":17,
+     * "amount":123
+     * }]
      * }
+     * }
+     *
      * @param beans
      */
     public void array(@JsonBody("aaa.bbb") MyBean[] beans) {
@@ -83,10 +91,11 @@ public class JsonBodyController extends JbootController {
 
     /**
      * {
-     *     "aaa":{
-     *         "bbb":[1,2,3]
-     *     }
+     * "aaa":{
+     * "bbb":[1,2,3]
      * }
+     * }
+     *
      * @param list
      */
     public void list1(@JsonBody("aaa.bbb") List<Integer> list) {
@@ -97,10 +106,11 @@ public class JsonBodyController extends JbootController {
 
     /**
      * {
-     *     "aaa":{
-     *         "bbb":[1,2,3]
-     *     }
+     * "aaa":{
+     * "bbb":[1,2,3]
      * }
+     * }
+     *
      * @param beans
      */
     public void array1(@JsonBody("aaa.bbb") int[] beans) {
@@ -109,10 +119,9 @@ public class JsonBodyController extends JbootController {
     }
 
 
-
-
     /**
      * [1,2,3]
+     *
      * @param list
      */
     public void list2(@JsonBody() List<Integer> list) {
@@ -123,10 +132,35 @@ public class JsonBodyController extends JbootController {
 
     /**
      * [1,2,3]
+     *
      * @param beans
      */
     public void array2(@JsonBody() int[] beans) {
         System.out.println("array2--->" + JsonKit.toJson(beans));
         renderText("ok");
     }
+
+
+    /**
+     * [1,2,3]
+     *
+     * @param array
+     */
+    public void array3(@JsonBody() List<String> array, int a) {
+        String s = array.get(0);
+        System.out.println("array3--->" + JsonKit.toJson(array));
+        renderText("ok");
+    }
+
+    /**
+     * [1,2,3]
+     *
+     * @param array
+     */
+    public void array4(@JsonBody() List array, int a) {
+        System.out.println("array4--->" + JsonKit.toJson(array));
+        renderText("ok");
+    }
+
+
 }
