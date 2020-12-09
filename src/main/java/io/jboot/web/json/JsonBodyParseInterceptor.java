@@ -29,6 +29,7 @@ import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
+import io.jboot.web.controller.JbootController;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -152,6 +153,12 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             if (parameters != null && parameters.length > 0) {
                 for (Parameter p : parameters) {
                     if (p.getAnnotation(JsonBody.class) != null) {
+                        Class typeClass = p.getType();
+                        if ((Map.class.isAssignableFrom(typeClass) || List.class.isAssignableFrom(typeClass) || typeClass.isArray())
+                                && !JbootController.class.isAssignableFrom(serviceClass)) {
+                            throw new IllegalArgumentException("Can not use @JsonBody for Map/List/Array type if your controller not extends JbootController, method: " + ClassUtil.buildMethodString(method));
+                        }
+
                         interceptors.add(this);
                         return;
                     }
