@@ -113,7 +113,7 @@ public class JbootActionHandler extends ActionHandler {
                 try {
                     invocation.invoke();
                 } finally {
-                    JbootActionReporter.report(target, controller, action,invocation,time);
+                    JbootActionReporter.report(target, controller, action, invocation, time);
                 }
             } else {
                 invocation.invoke();
@@ -176,14 +176,20 @@ public class JbootActionHandler extends ActionHandler {
             msg = "403 Forbidden: ";
         }
 
+
         if (msg != null) {
-            if (LOG.isWarnEnabled()) {
-                String qs = request.getQueryString();
-                msg = msg + (qs == null ? target : target + "?" + qs);
-                if (e.getMessage() != null) {
-                    msg = msg + "\n" + e.getMessage();
+            if (errorCode == 404 || errorCode == 401 || errorCode == 403) {
+                if (LOG.isWarnEnabled()) {
+                    String qs = request.getQueryString();
+                    msg = msg + (qs == null ? target : target + "?" + qs);
+                    LOG.warn(msg, e);
                 }
-                LOG.warn(msg);
+            } else {
+                if (LOG.isErrorEnabled()) {
+                    String qs = request.getQueryString();
+                    msg = msg + (qs == null ? target : target + "?" + qs);
+                    LOG.error(msg, e);
+                }
             }
         } else {
             if (LOG.isErrorEnabled()) {
