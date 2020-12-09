@@ -183,6 +183,27 @@ public class JsonBodyController extends JbootController {
         renderText("ok");
     }
 
+    /**
+     * [1,2,3]
+     *
+     * @param array
+     */
+    public void set3(@JsonBody() HashSet<String> array, int a) {
+//        String s = array.g(0);
+        System.out.println("set1--->" + JsonKit.toJson(array));
+        renderText("ok");
+    }
+
+    /**
+     * [1,2,3]
+     *
+     * @param array
+     */
+    public void set4(@JsonBody() HashSet array, int a) {
+        System.out.println("set2--->" + JsonKit.toJson(array));
+        renderText("ok");
+    }
+
 
     /**
      * [1,2,3]

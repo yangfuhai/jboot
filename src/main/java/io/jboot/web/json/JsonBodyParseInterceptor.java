@@ -80,7 +80,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-
     private Object parseObject(String rawData, Class typeClass, Type type, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
         JSONObject rawObject = JSON.parseObject(rawData);
         if (StrUtil.isNotBlank(jsonBody.value())) {
@@ -118,7 +117,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-
     private Object parseArray(String rawData, Class typeClass, Type type, JsonBody jsonBody) {
         JSONArray jsonArray = null;
         if (StrUtil.isBlank(jsonBody.value())) {
@@ -145,7 +143,8 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return null;
         }
 
-        if (typeClass == Set.class && typeClass == type){
+        //非泛型 set
+        if ((typeClass == Set.class || typeClass == HashSet.class) && typeClass == type) {
             return new HashSet<>(jsonArray);
         }
 
@@ -153,12 +152,10 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-
     private boolean canNewInstance(Class clazz) {
         int modifiers = clazz.getModifiers();
         return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
-
 
 
     @Override
