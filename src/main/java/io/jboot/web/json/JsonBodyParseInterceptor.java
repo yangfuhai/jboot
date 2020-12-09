@@ -60,7 +60,9 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                     }
                     if (rawObject != null && !rawObject.isEmpty()) {
                         Class typeClass = parameters[index].getType();
-                        if (Map.class.isAssignableFrom(typeClass) && canNewInstance(typeClass)) {
+                        if (typeClass == Map.class || typeClass == JSONObject.class || typeClass == JSON.class){
+                            result = rawObject;
+                        }else if (Map.class.isAssignableFrom(typeClass) && canNewInstance(typeClass)) {
                             Map map = (Map) typeClass.newInstance();
                             for (String key : rawObject.keySet()) {
                                 map.put(key, rawObject.get(key));
