@@ -16,6 +16,7 @@
 package io.jboot.web.json;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
@@ -32,6 +33,7 @@ import io.jboot.utils.StrUtil;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
+import java.util.List;
 import java.util.Map;
 
 @AutoLoad
@@ -44,33 +46,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         for (int index = 0; index < parameters.length; index++) {
             JsonBody jsonBody = parameters[index].getAnnotation(JsonBody.class);
             if (jsonBody != null) {
+                Class typeClass = parameters[index].getType();
                 Object result = null;
                 try {
-                    JSONObject rawObject = JSON.parseObject(rawData);
-                    if (StrUtil.isNotBlank(jsonBody.value())) {
-                        String[] values = jsonBody.value().split("\\.");
-                        for (String value : values) {
-                            if (StrUtil.isNotBlank(value)) {
-                                rawObject = rawObject.getJSONObject(value);
-                                if (rawObject == null || rawObject.isEmpty()) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (rawObject != null && !rawObject.isEmpty()) {
-                        Class typeClass = parameters[index].getType();
-                        if (typeClass == Map.class || typeClass == JSONObject.class || typeClass == JSON.class){
-                            result = rawObject;
-                        }else if (Map.class.isAssignableFrom(typeClass) && canNewInstance(typeClass)) {
-                            Map map = (Map) typeClass.newInstance();
-                            for (String key : rawObject.keySet()) {
-                                map.put(key, rawObject.get(key));
-                            }
-                            result = map;
-                        } else {
-                            result = rawObject.toJavaObject(typeClass);
-                        }
+                    if (List.class.isAssignableFrom(typeClass) || typeClass.isArray()){
+                        result = parseArray(rawData,typeClass,jsonBody);
+                    }else {
+                        result = parseObject(rawData, typeClass, jsonBody);
                     }
                 } catch (Exception e) {
                     String message = "Can not parse json to type: " + parameters[index].getType() + " in method: " + ClassUtil.buildMethodString(inv.getMethod());
@@ -86,6 +68,78 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
 
         inv.invoke();
+    }
+
+
+    private Object parseObject(String rawData, Class typeClass, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
+        if (StrUtil.isBlank(rawData)) {
+            return null;
+        }
+
+        JSONObject rawObject = JSON.parseObject(rawData);
+        if (StrUtil.isNotBlank(jsonBody.value())) {
+            String[] values = jsonBody.value().split("\\.");
+            for (int i = 0; i < values.length; i++) {
+                String value = values[i];
+                if (StrUtil.isNotBlank(value)) {
+                    rawObject = rawObject.getJSONObject(value);
+                    if (rawObject == null || rawObject.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (rawObject == null || rawObject.isEmpty()) {
+            return null;
+        }
+
+        if (typeClass == Map.class || typeClass == JSONObject.class) {
+            return rawObject;
+        }
+
+        if (Map.class.isAssignableFrom(typeClass) && canNewInstance(typeClass)) {
+            Map map = (Map) typeClass.newInstance();
+            for (String key : rawObject.keySet()) {
+                map.put(key, rawObject.get(key));
+            }
+            return map;
+        }
+
+        return rawObject.toJavaObject(typeClass);
+    }
+
+    private Object parseArray(String rawData, Class typeClass, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
+        if (StrUtil.isBlank(rawData)) {
+            return null;
+        }
+
+        JSONArray jsonArray = null;
+        if (StrUtil.isBlank(jsonBody.value())){
+            jsonArray = JSON.parseArray(rawData);
+        }else {
+            JSONObject jsonObject = JSON.parseObject(rawData);
+            String[] values = jsonBody.value().split("\\.");
+            for (int i = 0; i < values.length; i++) {
+                String value = values[i];
+                if (StrUtil.isNotBlank(value)) {
+                    if (i == values.length - 1){
+                        jsonArray = jsonObject.getJSONArray(value);
+                    }else {
+                        jsonObject = jsonObject.getJSONObject(value);
+                        if (jsonObject == null || jsonObject.isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (jsonArray == null || jsonArray.isEmpty()) {
+            return null;
+        }
+
+        return jsonArray.toJavaObject(typeClass);
     }
 
 

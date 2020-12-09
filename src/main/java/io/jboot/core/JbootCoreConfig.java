@@ -20,7 +20,6 @@ import com.jfinal.aop.AopManager;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.ParaProcessorBuilder;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
@@ -49,7 +48,6 @@ import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
 import io.jboot.support.swagger.JbootSwaggerManager;
 import io.jboot.utils.*;
-import io.jboot.web.json.JbootJson;
 import io.jboot.web.attachment.AttachmentHandler;
 import io.jboot.web.attachment.LocalAttachmentContainerConfig;
 import io.jboot.web.controller.JbootControllerManager;
@@ -61,13 +59,16 @@ import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.handler.JbootMetricsHandler;
-import io.jboot.web.para.MapParaGetter;
+import io.jboot.web.json.JbootJson;
 import io.jboot.web.render.JbootRenderFactory;
 
 import java.io.File;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
 
 
 public class JbootCoreConfig extends JFinalConfig {
@@ -144,8 +145,6 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setCaptchaCache(new JbootCaptchaCache());
 
         constants.setBaseUploadPath(LocalAttachmentContainerConfig.getInstance().buildUploadAbsolutePath());
-
-        ParaProcessorBuilder.me.regist(Map.class, MapParaGetter.class,null);
 
         JbootAppListenerManager.me().onConstantConfig(constants);
 

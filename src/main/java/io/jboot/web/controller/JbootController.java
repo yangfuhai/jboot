@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -251,6 +252,25 @@ public class JbootController extends Controller {
         return StrUtil.isBlank(getRawData()) ? null : JSON.parseObject(getRawData());
     }
 
+
+    /**
+     * BeanGetter 会调用此方法生成 bean，在 Map List Array 下，JFinal
+     * 通过 Injector.injectBean 去实例化的时候会出错，从而无法实现通过 @JsonBody 对 map list array 的注入
+     * @param beanClass
+     * @param beanName
+     * @param skipConvertError
+     * @param <T>
+     * @return
+     */
+    @NotAction
+    @Override
+    public <T> T getBean(Class<T> beanClass, String beanName, boolean skipConvertError) {
+        if (Map.class.isAssignableFrom(beanClass) || List.class.isAssignableFrom(beanClass) || beanClass.isArray()){
+            return null;
+        }else {
+            return super.getBean(beanClass, beanName, skipConvertError);
+        }
+    }
 
     @Override
     @NotAction
