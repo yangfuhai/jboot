@@ -35,8 +35,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @AutoLoad
 public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder {
@@ -57,7 +59,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 Class typeClass = parameters[index].getType();
                 Object result = null;
                 try {
-                    if (List.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
+                    if (Collection.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
                         result = parseArray(rawData, typeClass, paraTypes[index], jsonBody);
                     } else {
                         result = parseObject(rawData, typeClass, paraTypes[index], jsonBody);
@@ -76,6 +78,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
         inv.invoke();
     }
+
 
 
     private Object parseObject(String rawData, Class typeClass, Type type, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
@@ -114,6 +117,8 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         return rawObject.toJavaObject(type);
     }
 
+
+
     private Object parseArray(String rawData, Class typeClass, Type type, JsonBody jsonBody) {
         JSONArray jsonArray = null;
         if (StrUtil.isBlank(jsonBody.value())) {
@@ -140,15 +145,20 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return null;
         }
 
-        return jsonArray.toJavaObject(type);
+        if (typeClass == Set.class && typeClass == type){
+            return new HashSet<>(jsonArray);
+        }
 
+        return jsonArray.toJavaObject(type);
     }
+
 
 
     private boolean canNewInstance(Class clazz) {
         int modifiers = clazz.getModifiers();
         return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
+
 
 
     @Override
@@ -159,9 +169,9 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 for (Parameter p : parameters) {
                     if (p.getAnnotation(JsonBody.class) != null) {
                         Class typeClass = p.getType();
-                        if ((Map.class.isAssignableFrom(typeClass) || List.class.isAssignableFrom(typeClass) || typeClass.isArray())
+                        if ((Map.class.isAssignableFrom(typeClass) || Collection.class.isAssignableFrom(typeClass) || typeClass.isArray())
                                 && !JbootController.class.isAssignableFrom(serviceClass)) {
-                            throw new IllegalArgumentException("Can not use @JsonBody for Map/List/Array type if your controller not extends JbootController, method: " + ClassUtil.buildMethodString(method));
+                            throw new IllegalArgumentException("Can not use @JsonBody for Map/List(Collection)/Array type if your controller not extends JbootController, method: " + ClassUtil.buildMethodString(method));
                         }
 
                         interceptors.add(this);
