@@ -28,6 +28,7 @@ import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.DateUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 
@@ -35,10 +36,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @AutoLoad
 public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder {
@@ -65,7 +63,8 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                         result = parseObject(rawData, typeClass, paraTypes[index], jsonBody);
                     }
                 } catch (Exception e) {
-                    String message = "Can not parse json to type: " + parameters[index].getType() + " in method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    String message = "Can not parse json to type: " + parameters[index].getType()
+                            + " in method " + ClassUtil.buildMethodString(inv.getMethod()) + ", cause: " + e.getMessage();
                     if (jsonBody.skipConvertError()) {
                         LogKit.error(message);
                     } else {
@@ -82,20 +81,35 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     private Object parseObject(String rawData, Class typeClass, Type type, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
         JSONObject rawObject = JSON.parseObject(rawData);
+        Object parseResult = null;
         if (StrUtil.isNotBlank(jsonBody.value())) {
             String[] values = jsonBody.value().split("\\.");
             for (int i = 0; i < values.length; i++) {
                 String value = values[i];
                 if (StrUtil.isNotBlank(value)) {
-                    rawObject = rawObject.getJSONObject(value);
-                    if (rawObject == null || rawObject.isEmpty()) {
-                        break;
+                    if (i == values.length - 1) {
+                        parseResult = rawObject.get(value);
+                    } else {
+                        rawObject = rawObject.getJSONObject(value);
+                        if (rawObject == null || rawObject.isEmpty()) {
+                            break;
+                        }
                     }
                 }
             }
         }
 
-        if (rawObject == null || rawObject.isEmpty()) {
+        if (parseResult == null) {
+            return null;
+        }
+
+        if (parseResult instanceof JSONObject) {
+            rawObject = (JSONObject) parseResult;
+        } else {
+            return convert(parseResult, typeClass);
+        }
+
+        if (rawObject.isEmpty()) {
             return null;
         }
 
@@ -114,6 +128,55 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         return rawObject.toJavaObject(type);
+    }
+
+
+    private static Object convert(Object value, Class targetClass) {
+
+        if (value.getClass().isAssignableFrom(targetClass)) {
+            return value;
+        }
+
+        if (targetClass == Integer.class || targetClass == int.class) {
+            if (value instanceof Number) {
+                return ((Number) value).intValue();
+            }
+            return Integer.parseInt(value.toString());
+        } else if (targetClass == Long.class || targetClass == long.class) {
+            if (value instanceof Number) {
+                return ((Number) value).longValue();
+            }
+            return Long.parseLong(value.toString());
+        } else if (targetClass == Double.class || targetClass == double.class) {
+            if (value instanceof Number) {
+                return ((Number) value).doubleValue();
+            }
+            return Double.parseDouble(value.toString());
+        } else if (targetClass == Float.class || targetClass == float.class) {
+            if (value instanceof Number) {
+                return ((Number) value).floatValue();
+            }
+            return Float.parseFloat(value.toString());
+        } else if (targetClass == Boolean.class || targetClass == boolean.class) {
+            String v = value.toString().toLowerCase();
+            if ("1".equals(v) || "true".equals(v)) {
+                return Boolean.TRUE;
+            } else if ("0".equals(v) || "false".equals(v)) {
+                return Boolean.FALSE;
+            } else {
+                throw new RuntimeException("Can not parse to boolean type of value: " + value);
+            }
+        } else if (targetClass == java.math.BigDecimal.class) {
+            return new java.math.BigDecimal(value.toString());
+        } else if (targetClass == java.math.BigInteger.class) {
+            return new java.math.BigInteger(value.toString());
+        } else if (targetClass == byte[].class) {
+            return value.toString().getBytes();
+        } else if (targetClass == Date.class) {
+            return DateUtil.parseDate(value.toString());
+        }
+
+        throw new RuntimeException(targetClass.getName() + " can not be parsed in json!");
     }
 
 

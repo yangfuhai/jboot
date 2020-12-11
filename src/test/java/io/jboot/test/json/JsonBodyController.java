@@ -5,6 +5,8 @@ import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.json.JsonBody;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 @RequestMapping("/jsonbody")
@@ -29,6 +31,55 @@ public class JsonBodyController extends JbootController {
         System.out.println("bean--->" + JsonKit.toJson(bean));
         renderText("ok");
     }
+
+    public void intValue(@JsonBody("aaa.bbb.age") int bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+
+    public void intValue1(@JsonBody("aaa.bbb.age") Integer bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+    public void intValue2(@JsonBody("aaa.bbb.age") String bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+
+    public void bigint1(@JsonBody("aaa.bbb.age") BigInteger bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+
+    public void bigdec1(@JsonBody("aaa.bbb.age") BigDecimal bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+
+    public void float1(@JsonBody("aaa.bbb.age") float bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+
+    public void long1(@JsonBody("aaa.bbb.age") long bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+
+    public void long2(@JsonBody("aaa.bbb.age") Long bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+
+    public void strValue(@JsonBody("aaa.bbb.id") String bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+    public void date(@JsonBody("aaa.bbb.date") Date bean) {
+        System.out.println("bean--->" + bean);
+        renderText("ok");
+    }
+
 
 
     public void map(@JsonBody("aaa.bbb") HashMap map) {
