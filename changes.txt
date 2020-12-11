@@ -1,3 +1,10 @@
+jboot v3.7.0:
+优化：提高在 Controller 有多个 @JsonBody 参数时 JsonBodyParseInterceptor 解析性能
+修复：JsonBodyParseInterceptor 在解析原始数据参数出错的问题
+修复：JbootJedisImpl 在某些情况下配置 database 无效的问题
+
+
+
 jboot v3.6.9:
 新增：@JsonBody 新增对 set 的支持
 优化：升级 JFinal、Undertow、Jackson 等到最新版本
