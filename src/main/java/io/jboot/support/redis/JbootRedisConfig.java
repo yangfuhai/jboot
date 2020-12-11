@@ -33,7 +33,7 @@ public class JbootRedisConfig {
     private Integer port = 6379;
     private Integer timeout = 2000;
     private String password;
-    private Integer database;
+    private Integer database = 0;
     private String clientName;
     private Boolean testOnCreate;
     private Boolean testOnBorrow;

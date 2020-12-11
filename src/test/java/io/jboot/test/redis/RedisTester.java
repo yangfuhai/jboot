@@ -13,6 +13,7 @@ public class RedisTester {
 
     public static void main(String[] args) {
         JbootApplication.setBootArg("jboot.redis.host", "127.0.0.1");
+        JbootApplication.setBootArg("jboot.redis.database", "3");
 
 //        for (int i=0;i<2350;i++){
 //            redis.set("testkey:"+i,i);
