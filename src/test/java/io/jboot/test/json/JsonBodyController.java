@@ -32,6 +32,19 @@ public class JsonBodyController extends JbootController {
         renderText("ok");
     }
 
+    public void bean1(@JsonBody("aaa.bbb") MyBean bean,@JsonBody("aaa.bbb") MyBean bean1,@JsonBody("aaa.bbb.age") int age) {
+        System.out.println("bean--->" + JsonKit.toJson(bean));
+        System.out.println("bean--->" + JsonKit.toJson(bean1));
+        System.out.println("bean--->" + JsonKit.toJson(age));
+        renderText("ok");
+    }
+
+
+    public void bean2(@JsonBody() MyBean bean) {
+        System.out.println("bean--->" + JsonKit.toJson(bean));
+        renderText("ok");
+    }
+
     public void intValue(@JsonBody("aaa.bbb.age") int bean) {
         System.out.println("bean--->" + bean);
         renderText("ok");

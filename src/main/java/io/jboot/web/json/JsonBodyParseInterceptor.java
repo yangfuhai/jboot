@@ -51,6 +51,9 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
         Parameter[] parameters = inv.getMethod().getParameters();
         Type[] paraTypes = inv.getMethod().getGenericParameterTypes();
+
+        Object jsonObjectOrArray = JSON.parse(rawData);
+
         for (int index = 0; index < parameters.length; index++) {
             JsonBody jsonBody = parameters[index].getAnnotation(JsonBody.class);
             if (jsonBody != null) {
@@ -58,9 +61,9 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 Object result = null;
                 try {
                     if (Collection.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
-                        result = parseArray(rawData, typeClass, paraTypes[index], jsonBody);
+                        result = parseArray(jsonObjectOrArray, typeClass, paraTypes[index], jsonBody);
                     } else {
-                        result = parseObject(rawData, typeClass, paraTypes[index], jsonBody);
+                        result = parseObject((JSONObject) jsonObjectOrArray, typeClass, paraTypes[index], jsonBody);
                     }
                 } catch (Exception e) {
                     String message = "Can not parse json to type: " + parameters[index].getType()
@@ -79,8 +82,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private Object parseObject(String rawData, Class typeClass, Type type, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
-        JSONObject rawObject = JSON.parseObject(rawData);
+    private Object parseObject(JSONObject rawObject, Class typeClass, Type type, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
         Object parseResult = null;
         if (StrUtil.isNotBlank(jsonBody.value())) {
             String[] values = jsonBody.value().split("\\.");
@@ -97,6 +99,8 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                     }
                 }
             }
+        } else {
+            return toJavaObject(rawObject, typeClass, type);
         }
 
         if (parseResult == null) {
@@ -104,11 +108,14 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         if (parseResult instanceof JSONObject) {
-            rawObject = (JSONObject) parseResult;
+            return toJavaObject((JSONObject) parseResult, typeClass, type);
         } else {
             return convert(parseResult, typeClass);
         }
+    }
 
+
+    private static Object toJavaObject(JSONObject rawObject, Class typeClass, Type type) throws IllegalAccessException, InstantiationException {
         if (rawObject.isEmpty()) {
             return null;
         }
@@ -180,12 +187,12 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private Object parseArray(String rawData, Class typeClass, Type type, JsonBody jsonBody) {
+    private Object parseArray(Object rawJsonObjectOrArray, Class typeClass, Type type, JsonBody jsonBody) {
         JSONArray jsonArray = null;
         if (StrUtil.isBlank(jsonBody.value())) {
-            jsonArray = JSON.parseArray(rawData);
+            jsonArray = (JSONArray) rawJsonObjectOrArray;
         } else {
-            JSONObject jsonObject = JSON.parseObject(rawData);
+            JSONObject jsonObject = (JSONObject) rawJsonObjectOrArray;
             String[] values = jsonBody.value().split("\\.");
             for (int i = 0; i < values.length; i++) {
                 String value = values[i];
@@ -215,7 +222,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private boolean canNewInstance(Class clazz) {
+    private static boolean canNewInstance(Class clazz) {
         int modifiers = clazz.getModifiers();
         return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
