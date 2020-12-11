@@ -85,14 +85,14 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     private Object parseObject(JSONObject rawObject, Class typeClass, Type type, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
         Object parseResult = null;
         if (StrUtil.isNotBlank(jsonBody.value())) {
-            String[] values = jsonBody.value().split("\\.");
-            for (int i = 0; i < values.length; i++) {
-                String value = values[i];
-                if (StrUtil.isNotBlank(value)) {
-                    if (i == values.length - 1) {
-                        parseResult = rawObject.get(value);
+            String[] keys = jsonBody.value().split("\\.");
+            for (int i = 0; i < keys.length; i++) {
+                String key = keys[i];
+                if (StrUtil.isNotBlank(key)) {
+                    if (i == keys.length - 1) {
+                        parseResult = rawObject.get(key);
                     } else {
-                        rawObject = rawObject.getJSONObject(value);
+                        rawObject = rawObject.getJSONObject(key);
                         if (rawObject == null || rawObject.isEmpty()) {
                             break;
                         }
@@ -183,7 +183,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return DateUtil.parseDate(value.toString());
         }
 
-        throw new RuntimeException(targetClass.getName() + " can not be parsed in json!");
+        throw new RuntimeException(targetClass.getName() + " can not be parsed in json.");
     }
 
 
@@ -193,14 +193,14 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             jsonArray = (JSONArray) rawJsonObjectOrArray;
         } else {
             JSONObject jsonObject = (JSONObject) rawJsonObjectOrArray;
-            String[] values = jsonBody.value().split("\\.");
-            for (int i = 0; i < values.length; i++) {
-                String value = values[i];
-                if (StrUtil.isNotBlank(value)) {
-                    if (i == values.length - 1) {
-                        jsonArray = jsonObject.getJSONArray(value);
+            String[] keys = jsonBody.value().split("\\.");
+            for (int i = 0; i < keys.length; i++) {
+                String key = keys[i];
+                if (StrUtil.isNotBlank(key)) {
+                    if (i == keys.length - 1) {
+                        jsonArray = jsonObject.getJSONArray(key);
                     } else {
-                        jsonObject = jsonObject.getJSONObject(value);
+                        jsonObject = jsonObject.getJSONObject(key);
                         if (jsonObject == null || jsonObject.isEmpty()) {
                             break;
                         }
