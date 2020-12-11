@@ -78,6 +78,8 @@ public class JbootActionReporter {
             // 出错的情况，一般情况下是：用户自定义了自己的 classloader, 此 classloader 加载的 class 没有被添加到 javassist 的 ClassPool
             // 如何添加可以参考 jpress 的 插件加载
             actionReporter.report(target, controller, action);
+        } finally {
+            JbootActionInvocation.clear();
         }
     }
 
@@ -168,7 +170,7 @@ public class JbootActionReporter {
         }
 
 
-        if (!"GET".equalsIgnoreCase(controller.getRequest().getMethod()) && !RequestUtil.isMultipartRequest(controller.getRequest())){
+        if (!"GET".equalsIgnoreCase(controller.getRequest().getMethod()) && !RequestUtil.isMultipartRequest(controller.getRequest())) {
             sb.append("RawData     : ").append(controller.getRawData());
             sb.append("\n");
         }
@@ -181,13 +183,7 @@ public class JbootActionReporter {
 
         sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n\n\n");
 
-        try {
-            writer.write(sb.toString());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        } finally {
-            JbootActionInvocation.clear();
-        }
+        writer.write(sb.toString());
     }
 
 
