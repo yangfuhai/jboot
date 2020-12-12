@@ -28,7 +28,10 @@ import java.util.HashMap;
 public class DateUtil {
 
     public static String datePattern = "yyyy-MM-dd";
+    public static final String dateMinutePattern = "yyyy-MM-dd HH:mm";
     public static String datetimePattern = "yyyy-MM-dd HH:mm:ss";
+    public static final String dateMillisecondPattern = "yyyy-MM-dd HH:mm:ss SSS";
+
     public static String dateChinesePattern = "yyyy年MM月dd日";
     public static String datetimeChinesePattern = "yyyy年MM月dd日 HH时mm分ss秒";
 
@@ -45,13 +48,23 @@ public class DateUtil {
         return ret;
     }
 
+
+    public static String toDateString(Date date) {
+        return toString(date, datePattern);
+    }
+
+
+    public static String toDateMinuteString(Date date) {
+        return toString(date, dateMinutePattern);
+    }
+
     public static String toDateTimeString(Date date) {
         return toString(date, datetimePattern);
     }
 
 
-    public static String toDateString(Date date) {
-        return toString(date, datePattern);
+    public static String toDateMillisecondString(Date date) {
+        return toString(date, dateMillisecondPattern);
     }
 
 
@@ -65,33 +78,40 @@ public class DateUtil {
             return null;
         }
         dateString = dateString.trim();
-        int length = dateString.length();
         try {
-            if (length == datetimePattern.length()) {
-                SimpleDateFormat sdf = getSimpleDateFormat(datetimePattern);
-                try {
-                    return sdf.parse(dateString);
-                } catch (ParseException e) {
+            SimpleDateFormat sdf = getSimpleDateFormat(getPattern(dateString));
+            try {
+                return sdf.parse(dateString);
+            } catch (ParseException e) {
+                if (dateString.contains(".")) {
                     dateString = dateString.replace(".", "-");
-                    dateString = dateString.replace("/", "-");
-                    return sdf.parse(dateString);
                 }
-            } else if (length == datePattern.length()) {
-                SimpleDateFormat sdfDate = getSimpleDateFormat(datePattern);
-                try {
-                    return sdfDate.parse(dateString);
-                } catch (ParseException e) {
-                    dateString = dateString.replace(".", "-");
+                if (dateString.contains("/")) {
                     dateString = dateString.replace("/", "-");
-                    return sdfDate.parse(dateString);
                 }
-            } else {
-                throw new IllegalArgumentException("The date format is not supported for the date string: " + dateString);
+                return sdf.parse(dateString);
             }
         } catch (ParseException e) {
             throw new IllegalArgumentException("The date format is not supported for the date string: " + dateString);
         }
     }
+
+
+    private static String getPattern(String dateString) {
+        int length = dateString.length();
+        if (length == datetimePattern.length()) {
+            return datetimePattern;
+        } else if (length == datePattern.length()) {
+            return datePattern;
+        } else if (length == dateMinutePattern.length()) {
+            return dateMinutePattern;
+        } else if (length == dateMillisecondPattern.length()) {
+            return dateMillisecondPattern;
+        } else {
+            throw new IllegalArgumentException("The date format is not supported for the date string: " + dateString);
+        }
+    }
+
 
     public static Date parseDate(String dateString, String pattern) {
         if (StrUtil.isBlank(dateString)) {
@@ -102,6 +122,37 @@ public class DateUtil {
         } catch (ParseException e) {
             throw new IllegalArgumentException("The date format is not supported for the date string: " + dateString);
         }
+    }
+
+
+    /**
+     * 任意一天的开始时间
+     *
+     * @return date
+     */
+    public static Date getStartOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    /**
+     * 任意一天的结束时间
+     *
+     * @return date
+     */
+    public static Date getEndOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 24);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
     }
 
 
@@ -127,7 +178,7 @@ public class DateUtil {
      */
     public static Date getStartOfYesterday() {
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(getStartOfToday().getTime() - 3600 * 24 * 1000);
+        cal.setTimeInMillis(getStartOfToday().getTime() - 3600L * 24 * 1000);
         return cal.getTime();
     }
 
@@ -150,7 +201,7 @@ public class DateUtil {
      */
     public static Date getStartOfNearestDays(int days) {
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(getStartOfToday().getTime() - 3600 * 24 * 1000 * days);
+        cal.setTimeInMillis(getStartOfToday().getTime() - 3600L * 24 * 1000 * days);
         return cal.getTime();
     }
 
@@ -330,7 +381,7 @@ public class DateUtil {
     public static Date getStartOfThisYear() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.set(cal.get(Calendar.YEAR),0,1,0,0,0);
+        cal.set(cal.get(Calendar.YEAR), 0, 1, 0, 0, 0);
         return cal.getTime();
     }
 
@@ -771,6 +822,10 @@ public class DateUtil {
 
 
     public static void main(String[] args) {
+        System.out.println("当天24点时间：" + toDateTimeString(getStartOfDay(addDays(new Date(), 2))));
+        System.out.println("当天24点时间：" + toDateTimeString(getEndOfDay(addDays(new Date(), 2))));
+
+
         System.out.println("当天24点时间：" + toDateTimeString(getEndOfToday()));
         System.out.println("当前时间：" + toDateTimeString(new Date()));
         System.out.println("当天0点时间：" + toDateTimeString(getStartOfToday()));
