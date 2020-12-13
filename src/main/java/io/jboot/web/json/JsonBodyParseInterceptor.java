@@ -180,6 +180,9 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         } else if (targetClass == byte[].class) {
             return value.toString().getBytes();
         } else if (targetClass == Date.class) {
+            if (value instanceof Number) {
+                return new Date(((Number) value).longValue());
+            }
             return DateUtil.parseDate(value.toString());
         }
 

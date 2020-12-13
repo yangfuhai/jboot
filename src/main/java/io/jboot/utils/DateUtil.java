@@ -17,10 +17,7 @@ package io.jboot.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -31,6 +28,7 @@ public class DateUtil {
     public static final String dateMinutePattern = "yyyy-MM-dd HH:mm";
     public static String datetimePattern = "yyyy-MM-dd HH:mm:ss";
     public static final String dateMillisecondPattern = "yyyy-MM-dd HH:mm:ss SSS";
+    public static final String dateCSTPattern = "EEE MMM dd HH:mm:ss zzz yyyy";
 
     public static String dateChinesePattern = "yyyy年MM月dd日";
     public static String datetimeChinesePattern = "yyyy年MM月dd日 HH时mm分ss秒";
@@ -42,7 +40,11 @@ public class DateUtil {
     public static SimpleDateFormat getSimpleDateFormat(String pattern) {
         SimpleDateFormat ret = TL.get().get(pattern);
         if (ret == null) {
-            ret = new SimpleDateFormat(pattern);
+            if (dateCSTPattern.equals(pattern)) {
+                ret = new SimpleDateFormat(dateCSTPattern, Locale.US);
+            } else {
+                ret = new SimpleDateFormat(pattern);
+            }
             TL.get().put(pattern, ret);
         }
         return ret;
@@ -83,13 +85,11 @@ public class DateUtil {
             try {
                 return sdf.parse(dateString);
             } catch (ParseException e) {
-                if (dateString.contains(".")) {
-                    dateString = dateString.replace(".", "-");
+                if (dateString.contains(".") || dateString.contains("/")) {
+                    dateString = dateString.replace(".", "-").replace("/", "-");
+                    return sdf.parse(dateString);
                 }
-                if (dateString.contains("/")) {
-                    dateString = dateString.replace("/", "-");
-                }
-                return sdf.parse(dateString);
+                throw e;
             }
         } catch (ParseException e) {
             throw new IllegalArgumentException("The date format is not supported for the date string: " + dateString);
@@ -107,6 +107,8 @@ public class DateUtil {
             return dateMinutePattern;
         } else if (length == dateMillisecondPattern.length()) {
             return dateMillisecondPattern;
+        } else if (length == dateCSTPattern.length()) {
+            return dateCSTPattern;
         } else {
             throw new IllegalArgumentException("The date format is not supported for the date string: " + dateString);
         }
@@ -822,8 +824,10 @@ public class DateUtil {
 
 
     public static void main(String[] args) {
-        System.out.println("当天24点时间：" + toDateTimeString(getStartOfDay(addDays(new Date(), 2))));
-        System.out.println("当天24点时间：" + toDateTimeString(getEndOfDay(addDays(new Date(), 2))));
+        System.out.println("两天后的开始时间：" + toDateTimeString(getStartOfDay(addDays(new Date(), 2))));
+        System.out.println("两天后的结束时间：" + toDateTimeString(getEndOfDay(addDays(new Date(), 2))));
+
+        System.out.println("CST时间解析：" + toDateTimeString(parseDate("Mon Sep 02 11:23:45 CST 2019")));
 
 
         System.out.println("当天24点时间：" + toDateTimeString(getEndOfToday()));
