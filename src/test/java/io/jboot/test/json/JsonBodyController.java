@@ -129,6 +129,12 @@ public class JsonBodyController extends JbootController {
     }
 
 
+    public void intInArray(@JsonBody("aaa.bbb [  ] .amount") int intvalue) {
+        System.out.println("intInArray--->" + intvalue);
+        renderText("ok");
+    }
+
+
     /**
      * {
      * "aaa":{

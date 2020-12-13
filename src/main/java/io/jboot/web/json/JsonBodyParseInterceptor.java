@@ -87,15 +87,15 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         if (StrUtil.isNotBlank(jsonBody.value())) {
             String[] keys = jsonBody.value().split("\\.");
             for (int i = 0; i < keys.length; i++) {
-                String key = keys[i];
+                if (rawObject == null || rawObject.isEmpty()) {
+                    break;
+                }
+                String key = keys[i].trim();
                 if (StrUtil.isNotBlank(key)) {
                     if (i == keys.length - 1) {
                         parseResult = rawObject.get(key);
                     } else {
-                        rawObject = rawObject.getJSONObject(key);
-                        if (rawObject == null || rawObject.isEmpty()) {
-                            break;
-                        }
+                        rawObject = getJSONObjectByKey(rawObject, key);
                     }
                 }
             }
@@ -104,7 +104,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         if (parseResult == null) {
-            return null;
+            return typeClass.isPrimitive() ? 0 : null;
         }
 
         if (parseResult instanceof JSONObject) {
@@ -115,9 +115,60 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
+    private Object parseArray(Object rawJsonObjectOrArray, Class typeClass, Type type, JsonBody jsonBody) {
+        JSONArray jsonArray = null;
+        if (StrUtil.isBlank(jsonBody.value())) {
+            jsonArray = (JSONArray) rawJsonObjectOrArray;
+        } else {
+            JSONObject rawObject = (JSONObject) rawJsonObjectOrArray;
+            String[] keys = jsonBody.value().split("\\.");
+            for (int i = 0; i < keys.length; i++) {
+                if (rawObject == null || rawObject.isEmpty()) {
+                    break;
+                }
+                String key = keys[i].trim();
+                if (StrUtil.isNotBlank(key)) {
+                    if (i == keys.length - 1) {
+                        jsonArray = rawObject.getJSONArray(key);
+                    } else {
+                        rawObject = getJSONObjectByKey(rawObject, key);
+                    }
+                }
+            }
+        }
+
+        if (jsonArray == null || jsonArray.isEmpty()) {
+            return null;
+        }
+
+        //非泛型 set
+        if ((typeClass == Set.class || typeClass == HashSet.class) && typeClass == type) {
+            return new HashSet<>(jsonArray);
+        }
+
+        return jsonArray.toJavaObject(type);
+    }
+
+
+    private static JSONObject getJSONObjectByKey(JSONObject jsonObject, String key) {
+        if (key.endsWith("]") && key.contains("[")) {
+            String realKey = key.substring(0, key.indexOf("["));
+            JSONArray jarray = jsonObject.getJSONArray(realKey.trim());
+            if (jarray == null || jarray.isEmpty()) {
+                return null;
+            }
+            String arrayString = key.substring(key.indexOf("[") + 1, key.length() - 1);
+            int arrayIndex = StrUtil.isBlank(arrayString) ? 0 : Integer.parseInt(arrayString.trim());
+            return arrayIndex >= jarray.size() ? null : jarray.getJSONObject(arrayIndex);
+        } else {
+            return jsonObject.getJSONObject(key);
+        }
+    }
+
+
     private static Object toJavaObject(JSONObject rawObject, Class typeClass, Type type) throws IllegalAccessException, InstantiationException {
         if (rawObject.isEmpty()) {
-            return null;
+            return typeClass.isPrimitive() ? 0 : null;
         }
 
         //非泛型 的 map
@@ -135,6 +186,12 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         return rawObject.toJavaObject(type);
+    }
+
+
+    private static boolean canNewInstance(Class clazz) {
+        int modifiers = clazz.getModifiers();
+        return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
 
 
@@ -187,47 +244,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         throw new RuntimeException(targetClass.getName() + " can not be parsed in json.");
-    }
-
-
-    private Object parseArray(Object rawJsonObjectOrArray, Class typeClass, Type type, JsonBody jsonBody) {
-        JSONArray jsonArray = null;
-        if (StrUtil.isBlank(jsonBody.value())) {
-            jsonArray = (JSONArray) rawJsonObjectOrArray;
-        } else {
-            JSONObject jsonObject = (JSONObject) rawJsonObjectOrArray;
-            String[] keys = jsonBody.value().split("\\.");
-            for (int i = 0; i < keys.length; i++) {
-                String key = keys[i];
-                if (StrUtil.isNotBlank(key)) {
-                    if (i == keys.length - 1) {
-                        jsonArray = jsonObject.getJSONArray(key);
-                    } else {
-                        jsonObject = jsonObject.getJSONObject(key);
-                        if (jsonObject == null || jsonObject.isEmpty()) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (jsonArray == null || jsonArray.isEmpty()) {
-            return null;
-        }
-
-        //非泛型 set
-        if ((typeClass == Set.class || typeClass == HashSet.class) && typeClass == type) {
-            return new HashSet<>(jsonArray);
-        }
-
-        return jsonArray.toJavaObject(type);
-    }
-
-
-    private static boolean canNewInstance(Class clazz) {
-        int modifiers = clazz.getModifiers();
-        return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
 
 
