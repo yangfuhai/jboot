@@ -157,6 +157,15 @@ public class JsonBodyController extends JbootController {
     }
 
 
+    public void strArray(@JsonBody("aaa.bbb[0].xx[age]") String[] beans) {
+        renderText("strArray--->" + JsonKit.toJson(beans));
+    }
+
+    public void strArray1() {
+        renderText("strArray--->" + JsonKit.toJson(getRawObject(String[].class,"aaa.bbb[0].xx[id]")));
+    }
+
+
     /**
      * {
      * "aaa":{

@@ -60,11 +60,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 Class typeClass = parameters[index].getType();
                 Object result = null;
                 try {
-                    if (Collection.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
-                        result = parseArray(jsonObjectOrArray, typeClass, paraTypes[index], jsonBody);
-                    } else {
-                        result = parseObject((JSONObject) jsonObjectOrArray, typeClass, paraTypes[index], jsonBody);
-                    }
+                    result = parseJsonBody(jsonObjectOrArray, typeClass, paraTypes[index], jsonBody.value());
                 } catch (Exception e) {
                     String message = "Can not parse \"" + parameters[index].getType()
                             + "\" in method " + ClassUtil.buildMethodString(inv.getMethod()) + ", Cause: " + e.getMessage();
@@ -81,11 +77,19 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         inv.invoke();
     }
 
+    public static Object parseJsonBody(Object jsonObjectOrArray, Class typeClass, Type type, String jsonKey) throws InstantiationException, IllegalAccessException {
+        if (Collection.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
+            return parseArray(jsonObjectOrArray, typeClass, type, jsonKey);
+        } else {
+            return parseObject((JSONObject) jsonObjectOrArray, typeClass, type, jsonKey);
+        }
+    }
 
-    private Object parseObject(JSONObject rawObject, Class typeClass, Type type, JsonBody jsonBody) throws IllegalAccessException, InstantiationException {
+
+    private static Object parseObject(JSONObject rawObject, Class typeClass, Type type, String jsonKey) throws IllegalAccessException, InstantiationException {
         Object parseResult = null;
-        if (StrUtil.isNotBlank(jsonBody.value())) {
-            String[] keys = jsonBody.value().split("\\.");
+        if (StrUtil.isNotBlank(jsonKey)) {
+            String[] keys = jsonKey.split("\\.");
             for (int i = 0; i < keys.length; i++) {
                 if (rawObject == null || rawObject.isEmpty()) {
                     break;
@@ -115,13 +119,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private Object parseArray(Object rawJsonObjectOrArray, Class typeClass, Type type, JsonBody jsonBody) {
+    private static Object parseArray(Object rawJsonObjectOrArray, Class typeClass, Type type, String jsonKey) {
         JSONArray jsonArray = null;
-        if (StrUtil.isBlank(jsonBody.value())) {
+        if (StrUtil.isBlank(jsonKey)) {
             jsonArray = (JSONArray) rawJsonObjectOrArray;
         } else {
             JSONObject rawObject = (JSONObject) rawJsonObjectOrArray;
-            String[] keys = jsonBody.value().split("\\.");
+            String[] keys = jsonKey.split("\\.");
             for (int i = 0; i < keys.length; i++) {
                 if (rawObject == null || rawObject.isEmpty()) {
                     break;
@@ -129,7 +133,28 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 String key = keys[i].trim();
                 if (StrUtil.isNotBlank(key)) {
                     if (i == keys.length - 1) {
-                        jsonArray = rawObject.getJSONArray(key);
+                        if (key.endsWith("]") && key.contains("[")) {
+                            String realKey = key.substring(0, key.indexOf("["));
+                            JSONArray jarray = rawObject.getJSONArray(realKey.trim());
+                            if (jarray == null || jarray.isEmpty()) {
+                                return null;
+                            }
+                            String subKey = key.substring(key.indexOf("[") + 1, key.length() - 1).trim();
+                            if (StrUtil.isBlank(subKey)) {
+                                throw new IllegalStateException("Sub key can not empty: " + jsonKey);
+                            }
+
+                            JSONArray newJsonArray = new JSONArray();
+                            for (int j = 0; j < jarray.size(); j++) {
+                                Object value = jarray.getJSONObject(j).get(subKey);
+                                if (value != null) {
+                                    newJsonArray.add(value);
+                                }
+                            }
+                            jsonArray = newJsonArray;
+                        } else {
+                            jsonArray = rawObject.getJSONArray(key);
+                        }
                     } else {
                         rawObject = getJSONObjectByKey(rawObject, key);
                     }

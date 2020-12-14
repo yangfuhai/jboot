@@ -28,6 +28,7 @@ import io.jboot.exception.JbootException;
 import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
+import io.jboot.web.json.JsonBodyParseInterceptor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -226,6 +227,18 @@ public class JbootController extends Controller {
         return RequestUtil.getCurrentUrl(getRequest());
     }
 
+
+    /**
+     * 接收 Json 转化为 JSONObject
+     *
+     * @return
+     */
+    @NotAction
+    public JSONObject getRawObject() {
+        return StrUtil.isBlank(getRawData()) ? null : JSON.parseObject(getRawData());
+    }
+
+
     /**
      * 接收 json 转化为 object
      *
@@ -238,15 +251,22 @@ public class JbootController extends Controller {
         return StrUtil.isBlank(getRawData()) ? null : JsonKit.parse(getRawData(), tClass);
     }
 
-
     /**
-     * 接收 Json 转化为 JSONObject
+     * 接收 json 转化为 object
      *
+     * @param tClass
+     * @param jsonKey
+     * @param <T>
      * @return
      */
     @NotAction
-    public JSONObject getRawObject() {
-        return StrUtil.isBlank(getRawData()) ? null : JSON.parseObject(getRawData());
+    public <T> T getRawObject(Class<T> tClass, String jsonKey) {
+        try {
+            return StrUtil.isBlank(getRawData()) ? null
+                    : (T) JsonBodyParseInterceptor.parseJsonBody(JSON.parse(getRawData()), tClass, tClass, jsonKey);
+        } catch (Exception ex) {
+            throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
+        }
     }
 
 
