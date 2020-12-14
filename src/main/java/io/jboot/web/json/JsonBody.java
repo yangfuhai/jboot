@@ -26,11 +26,12 @@ public @interface JsonBody {
     /**
      * 自定义前缀
      */
-    public String value() default "";
+    String value() default "";
 
     /**
      * 是否提过转换异常
      * @return
      */
-    public boolean skipConvertError() default false;
+    boolean skipConvertError() default false;
+
 }

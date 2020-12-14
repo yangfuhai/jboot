@@ -66,8 +66,8 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                         result = parseObject((JSONObject) jsonObjectOrArray, typeClass, paraTypes[index], jsonBody);
                     }
                 } catch (Exception e) {
-                    String message = "Can not parse json to type: " + parameters[index].getType()
-                            + " in method " + ClassUtil.buildMethodString(inv.getMethod()) + ", cause: " + e.getMessage();
+                    String message = "Can not parse \"" + parameters[index].getType()
+                            + "\" in method " + ClassUtil.buildMethodString(inv.getMethod()) + ", Cause: " + e.getMessage();
                     if (jsonBody.skipConvertError()) {
                         LogKit.error(message);
                     } else {
@@ -104,7 +104,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         if (parseResult == null) {
-            return typeClass.isPrimitive() ? 0 : null;
+            return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
         }
 
         if (parseResult instanceof JSONObject) {
@@ -168,7 +168,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     private static Object toJavaObject(JSONObject rawObject, Class typeClass, Type type) throws IllegalAccessException, InstantiationException {
         if (rawObject.isEmpty()) {
-            return typeClass.isPrimitive() ? 0 : null;
+            return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
         }
 
         //非泛型 的 map
@@ -241,9 +241,31 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 return new Date(((Number) value).longValue());
             }
             return DateUtil.parseDate(value.toString());
+        } else if (targetClass == Short.class || targetClass == short.class) {
+            if (value instanceof Number) {
+                return ((Number) value).shortValue();
+            }
+            return Short.parseShort(value.toString());
         }
 
         throw new RuntimeException(targetClass.getName() + " can not be parsed in json.");
+    }
+
+    private static Object getPrimitiveDefaultValue(Class typeClass) {
+        if (typeClass == int.class || typeClass == long.class || typeClass == float.class || typeClass == double.class) {
+            return 0;
+        } else if (typeClass == boolean.class) {
+            return Boolean.FALSE;
+        } else if (typeClass == short.class) {
+            return (short) 0;
+        } else if (typeClass == byte.class) {
+            return (byte) 0;
+        } else if (typeClass == char.class) {
+            return '\u0000';
+        } else {
+            //不存在这种类型
+            return null;
+        }
     }
 
 
