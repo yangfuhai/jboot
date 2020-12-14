@@ -1,3 +1,9 @@
+jboot v3.7.2:
+新增：@JsonBody 新增新的 JsonKey 语法支持
+新增：JbootController 新增传入 JsonKey 获取数据
+
+
+
 jboot v3.7.1:
 新增：DateUtil 新增 getStartOfDay()  和 getEndOfDay() 两个方法
 新增：@JsonBody 支持多 Date 类型的注入
