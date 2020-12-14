@@ -1,3 +1,11 @@
+jboot v3.7.1:
+新增：DateUtil 新增 getStartOfDay()  和 getEndOfDay() 两个方法
+新增：@JsonBody 支持多 Date 类型的注入
+优化：DateUtil 支持更多的自动 parse 方法
+修复：@JsonBody 对原始数据类型的注入为 null 是不正确的问题
+
+
+
 jboot v3.7.0:
 优化：提高在 Controller 有多个 @JsonBody 参数时 JsonBodyParseInterceptor 解析性能
 修复：JsonBodyParseInterceptor 在解析原始数据参数出错的问题
