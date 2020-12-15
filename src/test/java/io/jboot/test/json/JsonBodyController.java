@@ -133,6 +133,10 @@ public class JsonBodyController extends JbootController {
         renderText("intInArray--->" + intvalue);
     }
 
+    public void array11(@JsonBody("aaa.bbb[0].beans[id]") String[] ids) {
+        System.out.println("array--->" + JsonKit.toJson(ids));
+        renderText("ok");
+    }
 
     /**
      * {

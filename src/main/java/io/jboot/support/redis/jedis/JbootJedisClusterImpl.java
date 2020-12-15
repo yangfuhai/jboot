@@ -16,6 +16,7 @@
 package io.jboot.support.redis.jedis;
 
 import com.jfinal.log.Log;
+import io.jboot.support.redis.JbootRedisCall;
 import io.jboot.support.redis.RedisScanResult;
 import io.jboot.utils.StrUtil;
 import io.jboot.support.redis.JbootRedisBase;
@@ -1212,6 +1213,11 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
                 }
             }
         }.start();
+    }
+
+    @Override
+    public <T> T call(JbootRedisCall call) {
+        throw new IllegalStateException("call not support yet in JbootJedisClusterImpl.");
     }
 
     @Override

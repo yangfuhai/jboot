@@ -54,7 +54,7 @@ public class JbootRedisManager {
 
         switch (config.getType()) {
             case JbootRedisConfig.TYPE_JEDIS:
-                return getJedisClinet(config);
+                return getJedisClient(config);
             case JbootRedisConfig.TYPE_LETTUCE:
                 return getLettuceClient(config);
             case JbootRedisConfig.TYPE_REDISSON:
@@ -64,7 +64,7 @@ public class JbootRedisManager {
     }
 
 
-    private JbootRedis getJedisClinet(JbootRedisConfig config) {
+    private JbootRedis getJedisClient(JbootRedisConfig config) {
         if (config.isCluster()) {
             return new JbootJedisClusterImpl(config);
         } else {

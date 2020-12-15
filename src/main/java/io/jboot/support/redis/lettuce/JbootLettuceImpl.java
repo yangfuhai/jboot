@@ -16,6 +16,7 @@
 package io.jboot.support.redis.lettuce;
 
 import io.jboot.support.redis.JbootRedis;
+import io.jboot.support.redis.JbootRedisCall;
 import io.jboot.support.redis.JbootRedisConfig;
 import io.jboot.support.redis.RedisScanResult;
 import io.lettuce.core.RedisClient;
@@ -474,6 +475,11 @@ public class JbootLettuceImpl implements JbootRedis {
     @Override
     public void subscribe(BinaryJedisPubSub binaryListener, byte[]... channels) {
 
+    }
+
+    @Override
+    public <T> T call(JbootRedisCall call) {
+        return null;
     }
 
     @Override

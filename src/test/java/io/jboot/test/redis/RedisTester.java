@@ -1,8 +1,9 @@
 package io.jboot.test.redis;
 
+import io.jboot.Jboot;
 import io.jboot.app.JbootApplication;
-import io.jboot.components.cache.redis.JbootRedisCacheImpl;
 import io.jboot.support.redis.JbootRedis;
+import io.jboot.support.redis.JbootRedisCall;
 import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.support.redis.RedisScanResult;
 
@@ -18,20 +19,29 @@ public class RedisTester {
 //        for (int i=0;i<2350;i++){
 //            redis.set("testkey:"+i,i);
 //        }
-        System.out.println("set ok");
+//        System.out.println("set ok");
+//
+//        System.out.println(getKeys("testkey").size());
+//
+//
+//        JbootRedisCacheImpl redisCache = new JbootRedisCacheImpl();
+//        for (int i = 0; i < 23; i++) {
+//            redisCache.put("myName", "myKey" + i, i);
+//        }
+//        System.out.println(redisCache.getKeys("myName"));
+//        System.out.println(redisCache.getNames());
+//        redisCache.removeAll("myName");
+//        System.out.println(redisCache.getKeys("myName"));
+//        System.out.println(redisCache.getNames());
 
-        System.out.println(getKeys("testkey").size());
-
-
-        JbootRedisCacheImpl redisCache = new JbootRedisCacheImpl();
-        for (int i = 0; i < 23; i++) {
-            redisCache.put("myName", "myKey" + i, i);
-        }
-        System.out.println(redisCache.getKeys("myName"));
-        System.out.println(redisCache.getNames());
-        redisCache.removeAll("myName");
-        System.out.println(redisCache.getKeys("myName"));
-        System.out.println(redisCache.getNames());
+        Jboot.getRedis().call(new JbootRedisCall() {
+            @Override
+            public <T> T call(JbootRedis redis) {
+                redis.select(5);
+                redis.set("aaa","bbb");
+                return null;
+            }
+        });
     }
 
     public static List getKeys(String cacheName) {
