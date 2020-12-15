@@ -163,7 +163,11 @@ public class JsonBodyController extends JbootController {
 
     public void arrayb() {
         List<MyBean> beans = getRawObject(new TypeDef<List<MyBean>>(){},"aaa.bbb");
-        System.out.println("array--->" + JsonKit.toJson(beans));
+        MyBean bean  = getRawObject(MyBean.class,"aaa.bbb[1]");
+        String id  = getRawObject(String.class,"aaa.bbb[1].id");
+        System.out.println("beans--->" + JsonKit.toJson(beans));
+        System.out.println("bean--->" + JsonKit.toJson(bean));
+        System.out.println("id--->" + JsonKit.toJson(id));
         renderText("ok");
     }
 

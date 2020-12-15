@@ -41,6 +41,9 @@ import java.util.*;
 @AutoLoad
 public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder {
 
+    private static final String startOfArray = "[";
+    private static final String endOfArray = "]";
+
     @Override
     public void intercept(Invocation inv) {
         String rawData = inv.getController().getRawData();
@@ -100,9 +103,22 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             if (rawObject != null && !rawObject.isEmpty()) {
                 String key = keys[i].trim();
                 if (StrUtil.isNotBlank(key)) {
+                    //the last
                     if (i == keys.length - 1) {
-                        result = rawObject.get(key);
-                    } else {
+                        if (key.endsWith(endOfArray) && key.contains(startOfArray)) {
+                            String realKey = key.substring(0, key.indexOf(startOfArray));
+                            JSONArray jarray = rawObject.getJSONArray(realKey.trim());
+                            if (jarray != null && jarray.size() > 0) {
+                                String arrayString = key.substring(key.indexOf(startOfArray) + 1, key.length() - 1);
+                                int arrayIndex = StrUtil.isBlank(arrayString) ? 0 : Integer.parseInt(arrayString.trim());
+                                result = arrayIndex >= jarray.size() ? null : jarray.get(arrayIndex);
+                            }
+                        } else {
+                            result = rawObject.get(key);
+                        }
+                    }
+                    //not last
+                    else {
                         rawObject = getJSONObjectByKey(rawObject, key);
                     }
                 }
@@ -136,13 +152,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 if (StrUtil.isNotBlank(key)) {
                     //the last
                     if (i == keys.length - 1) {
-                        if (key.endsWith("]") && key.contains("[")) {
-                            String realKey = key.substring(0, key.indexOf("["));
+                        if (key.endsWith(endOfArray) && key.contains(startOfArray)) {
+                            String realKey = key.substring(0, key.indexOf(startOfArray));
                             JSONArray jarray = rawObject.getJSONArray(realKey.trim());
                             if (jarray == null || jarray.isEmpty()) {
                                 return null;
                             }
-                            String subKey = key.substring(key.indexOf("[") + 1, key.length() - 1).trim();
+                            String subKey = key.substring(key.indexOf(startOfArray) + 1, key.length() - 1).trim();
                             if (StrUtil.isBlank(subKey)) {
                                 throw new IllegalStateException("Sub key can not empty: " + jsonKey);
                             }
@@ -181,13 +197,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
 
     private static JSONObject getJSONObjectByKey(JSONObject jsonObject, String key) {
-        if (key.endsWith("]") && key.contains("[")) {
-            String realKey = key.substring(0, key.indexOf("["));
+        if (key.endsWith(endOfArray) && key.contains(startOfArray)) {
+            String realKey = key.substring(0, key.indexOf(startOfArray));
             JSONArray jarray = jsonObject.getJSONArray(realKey.trim());
             if (jarray == null || jarray.isEmpty()) {
                 return null;
             }
-            String arrayString = key.substring(key.indexOf("[") + 1, key.length() - 1);
+            String arrayString = key.substring(key.indexOf(startOfArray) + 1, key.length() - 1);
             int arrayIndex = StrUtil.isBlank(arrayString) ? 0 : Integer.parseInt(arrayString.trim());
             return arrayIndex >= jarray.size() ? null : jarray.getJSONObject(arrayIndex);
         } else {
