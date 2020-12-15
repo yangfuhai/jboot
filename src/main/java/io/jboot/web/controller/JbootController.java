@@ -28,11 +28,15 @@ import io.jboot.exception.JbootException;
 import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
+import io.jboot.utils.TypeDef;
 import io.jboot.web.json.JsonBodyParseInterceptor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class JbootController extends Controller {
@@ -251,6 +255,7 @@ public class JbootController extends Controller {
         return StrUtil.isBlank(getRawData()) ? null : JsonKit.parse(getRawData(), tClass);
     }
 
+
     /**
      * 接收 json 转化为 object
      *
@@ -264,6 +269,38 @@ public class JbootController extends Controller {
         try {
             return StrUtil.isBlank(getRawData()) ? null
                     : (T) JsonBodyParseInterceptor.parseJsonBody(JSON.parse(getRawData()), tClass, tClass, jsonKey);
+        } catch (Exception ex) {
+            throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
+        }
+    }
+
+
+    /**
+     * 接收 json 转化为 object
+     *
+     * @param typeDef 泛型的定义类
+     * @param <T>
+     * @return
+     */
+    @NotAction
+    public <T> T getRawObject(TypeDef<T> typeDef) {
+        return getRawObject(typeDef, null);
+    }
+
+
+    /**
+     * 接收 json 转化为 object
+     *
+     * @param typeDef 泛型的定义类
+     * @param jsonKey
+     * @param <T>
+     * @return
+     */
+    @NotAction
+    public <T> T getRawObject(TypeDef<T> typeDef, String jsonKey) {
+        try {
+            return StrUtil.isBlank(getRawData()) ? null
+                    : (T) JsonBodyParseInterceptor.parseJsonBody(JSON.parse(getRawData()), typeDef.getDefClass(), typeDef.getType(), jsonKey);
         } catch (Exception ex) {
             throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
         }

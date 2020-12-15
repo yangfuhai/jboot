@@ -1,6 +1,7 @@
 package io.jboot.test.json;
 
 import com.jfinal.kit.JsonKit;
+import io.jboot.utils.TypeDef;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.json.JsonBody;
@@ -160,10 +161,19 @@ public class JsonBodyController extends JbootController {
         renderText("ok");
     }
 
+    public void arrayb() {
+        List<MyBean> beans = getRawObject(new TypeDef<List<MyBean>>(){},"aaa.bbb");
+        System.out.println("array--->" + JsonKit.toJson(beans));
+        renderText("ok");
+    }
+
+
 
     public void strArray(@JsonBody("aaa.bbb[0].xx[age]") String[] beans) {
         renderText("strArray--->" + JsonKit.toJson(beans));
     }
+
+
 
     public void strArray1() {
         renderText("strArray--->" + JsonKit.toJson(getRawObject(String[].class,"aaa.bbb[0].xx[id]")));
