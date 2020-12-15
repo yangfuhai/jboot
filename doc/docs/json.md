@@ -386,7 +386,7 @@ public void array(@JsonBody("aaa.bbb[0].beans[id]") String[] ids) {
 }
 ```
 
-### 不通过 @JsonBody 接收 Json
+### 直接通过 Controller 接收 Json
 
 在 Controller 中，我们如果不通过 `@JsonBody` 接收 Json 数据，也是没问题的。
 
@@ -429,7 +429,28 @@ public void array() {
 }
 ```
 
+此处要注意，如果我们想获取一个泛型 List<MyBean>，需要使用如下方法：
+
+```java
+public void array() {
+    List<MyBean> beans = getRawObject(new TypeDef<List<MyBean>>(){},"aaa.bbb[0].beans");
+    System.out.println("array--->" + JsonKit.toJson(beans));
+    renderText("ok");
+}
+```
+
+或者
+
+```java
+public void array() {
+    Set<MyBean> beans = getRawObject(new TypeDef<Set<MyBean>>(){},"aaa.bbb[0].beans");
+    System.out.println("array--->" + JsonKit.toJson(beans));
+    renderText("ok");
+}
+```
+
 如果我们想获取 `beans` 下的所有 `id` 值，Controller 内容如下：
+
 
 ```java
 public void array(@JsonBody() {
@@ -439,6 +460,24 @@ public void array(@JsonBody() {
 }
 ```
 
+或者 
+```java
+public void array() {
+    List<Strint> ids = getRawObject(new TypeDef<List<String>>(){},"aaa.bbb[0].beans[id]");
+    System.out.println("array--->" + JsonKit.toJson(ids));
+    renderText("ok");
+}
+```
+
+或者
+
+```java
+public void array() {
+    Set<Strint> ids = getRawObject(new TypeDef<Set<String>>(){},"aaa.bbb[0].beans[id]");
+    System.out.println("array--->" + JsonKit.toJson(ids));
+    renderText("ok");
+}
+```
 
 ## 输出 Json
 

@@ -329,12 +329,16 @@ public class JbootController extends Controller {
         }
     }
 
+
+
     @Override
     @NotAction
     public String getPara(String name) {
         String value = super.getPara(name);
         return "".equals(value) ? null : value;
     }
+
+
 
 
     @NotAction
