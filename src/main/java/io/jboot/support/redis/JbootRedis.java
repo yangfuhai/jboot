@@ -630,10 +630,6 @@ public interface JbootRedis {
      */
     public void subscribe(BinaryJedisPubSub binaryListener, final byte[]... channels);
 
-
-    public <T>  T call(JbootRedisCall call);
-
-
     /**
      * 扫描
      *

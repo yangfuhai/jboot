@@ -18,7 +18,6 @@ package io.jboot.support.redis.jedis;
 import com.jfinal.log.Log;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.JbootRedisBase;
-import io.jboot.support.redis.JbootRedisCall;
 import io.jboot.support.redis.JbootRedisConfig;
 import io.jboot.support.redis.RedisScanResult;
 import io.jboot.utils.StrUtil;
@@ -36,7 +35,6 @@ public class JbootJedisImpl extends JbootRedisBase {
 
     protected JedisPool jedisPool;
     protected JbootRedisConfig config;
-    protected final ThreadLocal<Jedis> threadLocalJedis = new ThreadLocal<>();
 
     private static final Log LOG = Log.getLog(JbootJedisImpl.class);
 
@@ -1556,18 +1554,6 @@ public class JbootJedisImpl extends JbootRedisBase {
     }
 
     @Override
-    public <T> T call(JbootRedisCall call) {
-        Jedis jedis = getJedis();
-        try {
-            threadLocalJedis.set(jedis);
-            return call.call(this);
-        }finally {
-            threadLocalJedis.remove();
-            returnResource(jedis);
-        }
-    }
-
-    @Override
     public RedisScanResult scan(String pattern, String cursor, int scanCount) {
         ScanParams params = new ScanParams();
         params.match(pattern).count(scanCount);
@@ -1580,8 +1566,7 @@ public class JbootJedisImpl extends JbootRedisBase {
 
     public Jedis getJedis() {
         try {
-            Jedis jedis = threadLocalJedis.get();
-            return jedis  != null ? jedis : jedisPool.getResource();
+            return jedisPool.getResource();
         } catch (JedisConnectionException e) {
             throw new JbootIllegalConfigException("can not connect to redis host  " + config.getHost() + ":" + config.getPort() + " ," +
                     " cause : " + e.toString(), e);
@@ -1589,12 +1574,8 @@ public class JbootJedisImpl extends JbootRedisBase {
     }
 
 
-
     public void returnResource(Jedis jedis) {
-        if (jedis != null && threadLocalJedis.get() == null) {
-            /**
-             * close 实际上是 returnResource，查看源码
-             */
+        if (jedis != null) {
             jedis.close();
         }
     }

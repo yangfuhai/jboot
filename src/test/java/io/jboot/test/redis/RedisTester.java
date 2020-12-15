@@ -1,9 +1,7 @@
 package io.jboot.test.redis;
 
-import io.jboot.Jboot;
 import io.jboot.app.JbootApplication;
 import io.jboot.support.redis.JbootRedis;
-import io.jboot.support.redis.JbootRedisCall;
 import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.support.redis.RedisScanResult;
 
@@ -34,14 +32,6 @@ public class RedisTester {
 //        System.out.println(redisCache.getKeys("myName"));
 //        System.out.println(redisCache.getNames());
 
-        Jboot.getRedis().call(new JbootRedisCall() {
-            @Override
-            public <T> T call(JbootRedis redis) {
-                redis.select(5);
-                redis.set("aaa","bbb");
-                return null;
-            }
-        });
     }
 
     public static List getKeys(String cacheName) {

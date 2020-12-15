@@ -16,12 +16,11 @@
 package io.jboot.support.redis.jedis;
 
 import com.jfinal.log.Log;
-import io.jboot.support.redis.JbootRedisCall;
-import io.jboot.support.redis.RedisScanResult;
-import io.jboot.utils.StrUtil;
+import io.jboot.exception.JbootException;
 import io.jboot.support.redis.JbootRedisBase;
 import io.jboot.support.redis.JbootRedisConfig;
-import io.jboot.exception.JbootException;
+import io.jboot.support.redis.RedisScanResult;
+import io.jboot.utils.StrUtil;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
@@ -1215,10 +1214,6 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
         }.start();
     }
 
-    @Override
-    public <T> T call(JbootRedisCall call) {
-        throw new IllegalStateException("call not support yet in JbootJedisClusterImpl.");
-    }
 
     @Override
     public RedisScanResult scan(String pattern, String cursor, int scanCount) {
