@@ -1,3 +1,11 @@
+jboot v3.7.3:
+新增：JbootController 新增 getRawObject(TypeDef) 方法，可以获得指定泛型数据
+优化：JsonBodyParseInterceptor 的解析效率
+优化：JbootController 的 getRawObject 的效率
+修复：当最后一个节点是数组而去获取指定 index 的 Object 时，返回 null 的问题
+
+
+
 jboot v3.7.2:
 新增：@JsonBody 新增新的 JsonKey 语法支持
 新增：JbootController 新增传入 JsonKey 获取数据
