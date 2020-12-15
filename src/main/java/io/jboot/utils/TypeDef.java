@@ -8,19 +8,13 @@ import java.util.Map;
 
 public class TypeDef<T> {
 
-    public static final TypeDef list_string = new TypeDef<List<String>>() {
-    };
-    public static final TypeDef list_integer = new TypeDef<List<Integer>>() {
-    };
-    public static final TypeDef list_biginteger = new TypeDef<List<BigInteger>>() {
-    };
+    public static final TypeDef list_string = new TypeDef<List<String>>() {};
+    public static final TypeDef list_integer = new TypeDef<List<Integer>>() {};
+    public static final TypeDef list_biginteger = new TypeDef<List<BigInteger>>() {};
 
-    public static final TypeDef map_string = new TypeDef<Map<String, String>>() {
-    };
-    public static final TypeDef map_integer = new TypeDef<Map<String, Integer>>() {
-    };
-    public static final TypeDef map_biginteger = new TypeDef<Map<String, BigInteger>>() {
-    };
+    public static final TypeDef map_string = new TypeDef<Map<String, String>>() {};
+    public static final TypeDef map_integer = new TypeDef<Map<String, Integer>>() {};
+    public static final TypeDef map_biginteger = new TypeDef<Map<String, BigInteger>>() {};
 
 
     protected Type type;
@@ -35,8 +29,8 @@ public class TypeDef<T> {
         Type type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
         if (type instanceof ParameterizedType) {
             ParameterizedType paraType = (ParameterizedType) type;
-            this.defClass = (Class) paraType.getRawType();
             this.type = paraType;
+            this.defClass = (Class) paraType.getRawType();
         } else {
             this.type = type;
             this.defClass = (Class) type;
@@ -47,6 +41,7 @@ public class TypeDef<T> {
     public Type getType() {
         return type;
     }
+
 
     public Class getDefClass() {
         return defClass;

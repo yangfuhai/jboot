@@ -78,6 +78,9 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
     public static Object parseJsonBody(Object jsonObjectOrArray, Class typeClass, Type type, String jsonKey) throws InstantiationException, IllegalAccessException {
+        if (jsonObjectOrArray == null) {
+            return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
+        }
         if (Collection.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
             return parseArray(jsonObjectOrArray, typeClass, type, jsonKey);
         } else {

@@ -16,11 +16,9 @@
 package io.jboot.web.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.ActionException;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
-import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.render.RenderManager;
@@ -40,6 +38,9 @@ import java.util.Map;
 
 
 public class JbootController extends Controller {
+
+    private Object rawObject;
+    private Map jwtParas;
 
     /**
      * 是否是手机浏览器
@@ -162,7 +163,6 @@ public class JbootController extends Controller {
         return jwtAttrs;
     }
 
-    private Map jwtParas;
 
     @NotAction
     public <T> T getJwtPara(String name) {
@@ -238,37 +238,43 @@ public class JbootController extends Controller {
      * @return
      */
     @NotAction
-    public JSONObject getRawObject() {
-        return StrUtil.isBlank(getRawData()) ? null : JSON.parseObject(getRawData());
+    public <T> T getRawObject() {
+        if (rawObject == null && StrUtil.isNotBlank(getRawData())) {
+            rawObject = JSON.parse(getRawData());
+        }
+        return (T) rawObject;
     }
 
 
     /**
      * 接收 json 转化为 object
      *
-     * @param tClass
+     * @param typeClass
      * @param <T>
      * @return
      */
     @NotAction
-    public <T> T getRawObject(Class<T> tClass) {
-        return StrUtil.isBlank(getRawData()) ? null : JsonKit.parse(getRawData(), tClass);
+    public <T> T getRawObject(Class<T> typeClass) {
+        if (rawObject == null && StrUtil.isNotBlank(getRawData())) {
+            rawObject = JSON.parse(getRawData());
+        }
+        return rawObject != null ? ((JSON) rawObject).toJavaObject(typeClass) : null;
     }
 
 
     /**
      * 接收 json 转化为 object
      *
-     * @param tClass
+     * @param typeClass
      * @param jsonKey
      * @param <T>
      * @return
      */
     @NotAction
-    public <T> T getRawObject(Class<T> tClass, String jsonKey) {
+    public <T> T getRawObject(Class<T> typeClass, String jsonKey) {
         try {
             return StrUtil.isBlank(getRawData()) ? null
-                    : (T) JsonBodyParseInterceptor.parseJsonBody(JSON.parse(getRawData()), tClass, tClass, jsonKey);
+                    : (T) JsonBodyParseInterceptor.parseJsonBody(getRawObject(), typeClass, typeClass, jsonKey);
         } catch (Exception ex) {
             throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
         }
@@ -300,7 +306,7 @@ public class JbootController extends Controller {
     public <T> T getRawObject(TypeDef<T> typeDef, String jsonKey) {
         try {
             return StrUtil.isBlank(getRawData()) ? null
-                    : (T) JsonBodyParseInterceptor.parseJsonBody(JSON.parse(getRawData()), typeDef.getDefClass(), typeDef.getType(), jsonKey);
+                    : (T) JsonBodyParseInterceptor.parseJsonBody(getRawObject(), typeDef.getDefClass(), typeDef.getType(), jsonKey);
         } catch (Exception ex) {
             throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
         }
@@ -330,15 +336,12 @@ public class JbootController extends Controller {
     }
 
 
-
     @Override
     @NotAction
     public String getPara(String name) {
         String value = super.getPara(name);
         return "".equals(value) ? null : value;
     }
-
-
 
 
     @NotAction
