@@ -236,7 +236,7 @@ public class CodeGenerator {
 
         // 生成 Service 接口 及其 实现类
         new JbootServiceInterfaceGenerator(servicePackage, serviceOutputDir, modelPackage).generate();
-        new JbootServiceImplGenerator(servicePackage, serviceImplOutputDir, modelPackage).setImplName("impl").generate();
+        new JbootServiceImplGenerator(servicePackage, serviceImplPackage, serviceImplOutputDir, modelPackage).setImplName("impl").generate();
 
 
     }
