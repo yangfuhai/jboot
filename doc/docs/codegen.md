@@ -52,7 +52,7 @@ public class GenTester {
 
         //开始生成代码
         new JbootServiceInterfaceGenerator(servicePackage, serviceOutputDir, modelPackage).generate();
-        new JbootServiceImplGenerator(servicePackage, serviceImplOutputDir, modelPackage).setImplName("provider").generate();
+        new JbootServiceImplGenerator(servicePackage, serviceImplPackage, serviceImplOutputDir, modelPackage).setImplName("provider").generate();
 
     }
 }
