@@ -278,7 +278,7 @@ public class CodeGenerator {
 **再次运行该代码生成器的时候，BaseUser、BaseArticle会被重新覆盖，其他代码不会被覆盖。** 若需要重新生成 service 层 和 User、Article 等代码，需要手动删除后，再次运行代码生成器 CodeGenerator 。
 
 ## 自动注入
-Jboot 通过 Google Guice 提供了强健稳定的代码注入功能，使用注入功能只需要了解一下三个注解：
+Jboot 通过 Google Guice 提供了强健稳定的代码注入功能，使用注入功能只需要了解以下三个注解：
 1. @Bean : 声明此类可以被自动注入
 2. @Inject : 对属性进行赋值注入
 

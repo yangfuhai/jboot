@@ -582,11 +582,11 @@ jboot.datasource.a2.user=root
 jboot.datasource.a2.password=your_password
 ```
 
-这表示，我们又增加了数据源 `a1` 和数据源 `a2`，在使用的时候，我们只需要做一下使用：
+这表示，我们又增加了数据源 `a1` 和数据源 `a2`，在使用的时候，我们只需要做以下使用：
 
 ```java
 Company company = new Company();
-company.setCid("1");
+company.setId(1);
 company.setName("name");
 
 company.use("a1").save();

@@ -57,7 +57,7 @@ File attachment = AttachmentManager.me().getFile(relativePath);
 `AttachmentManager.me().getFile(relativePath);` 读取文件的时候，会优先从 默认 的 ”容器“ 去读取，当默认 ”容器“ 不存在该文件的时候，AttachmentManager 会遍历所有的 Container ，直到读到为此。
 
 
-一下是 `AttachmentManager.me().getFile()` 代码的实现逻辑：
+以下是 `AttachmentManager.me().getFile()` 代码的实现逻辑：
 
 ```
 public File getFile(String relativePath) {
@@ -87,7 +87,7 @@ public File getFile(String relativePath) {
 }
 ```
 
-一下是阿里云 Oss 的代码实现逻辑，可供参考：
+以下是阿里云 Oss 的代码实现逻辑，可供参考：
 
 ```
 public class AliyunOssAttachmenetContainer implements AttachmentContainer {
