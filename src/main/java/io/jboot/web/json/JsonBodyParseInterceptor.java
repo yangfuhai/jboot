@@ -32,6 +32,9 @@ import io.jboot.utils.DateUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -43,6 +46,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     private static final String startOfArray = "[";
     private static final String endOfArray = "]";
+    private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Override
     public void intercept(Invocation inv) {
@@ -73,12 +77,26 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                         throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), message);
                     }
                 }
+
+                //对 jsonObject 进行验证
+                if (result != null && jsonBody.validate()) {
+                    Set<ConstraintViolation<Object>> constraintViolations = validator.validate(result);
+                    if (constraintViolations != null && constraintViolations.size() > 0) {
+                        StringJoiner msgJoiner = new StringJoiner("; ");
+                        for (ConstraintViolation cv : constraintViolations) {
+                            msgJoiner.add(cv.getMessage());
+                        }
+                        throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), msgJoiner.toString());
+                    }
+                }
+
                 inv.setArg(index, result);
             }
         }
 
         inv.invoke();
     }
+
 
     public static Object parseJsonBody(Object jsonObjectOrArray, Class typeClass, Type type, String jsonKey) throws InstantiationException, IllegalAccessException {
         if (jsonObjectOrArray == null) {

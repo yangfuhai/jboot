@@ -176,6 +176,8 @@ public class JbootController extends Controller {
         return (T) jwtParas.get(name);
     }
 
+
+
     @NotAction
     public Map getJwtParas() {
         if (jwtParas == null) {
