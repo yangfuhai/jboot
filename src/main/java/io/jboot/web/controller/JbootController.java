@@ -233,7 +233,7 @@ public class JbootController extends Controller {
 
 
     /**
-     * 接收 Json 转化为 JSONObject
+     * 接收 Json 转化为 JsonObject 或者 JsonArray
      *
      * @return
      */
@@ -255,10 +255,7 @@ public class JbootController extends Controller {
      */
     @NotAction
     public <T> T getRawObject(Class<T> typeClass) {
-        if (rawObject == null && StrUtil.isNotBlank(getRawData())) {
-            rawObject = JSON.parse(getRawData());
-        }
-        return rawObject != null ? ((JSON) rawObject).toJavaObject(typeClass) : null;
+        return getRawObject(typeClass, null);
     }
 
 
@@ -273,8 +270,7 @@ public class JbootController extends Controller {
     @NotAction
     public <T> T getRawObject(Class<T> typeClass, String jsonKey) {
         try {
-            return StrUtil.isBlank(getRawData()) ? null
-                    : (T) JsonBodyParseInterceptor.parseJsonBody(getRawObject(), typeClass, typeClass, jsonKey);
+            return (T) JsonBodyParseInterceptor.parseJsonBody(getRawObject(), typeClass, typeClass, jsonKey);
         } catch (Exception ex) {
             throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
         }
@@ -305,8 +301,7 @@ public class JbootController extends Controller {
     @NotAction
     public <T> T getRawObject(TypeDef<T> typeDef, String jsonKey) {
         try {
-            return StrUtil.isBlank(getRawData()) ? null
-                    : (T) JsonBodyParseInterceptor.parseJsonBody(getRawObject(), typeDef.getDefClass(), typeDef.getType(), jsonKey);
+            return (T) JsonBodyParseInterceptor.parseJsonBody(getRawObject(), typeDef.getDefClass(), typeDef.getType(), jsonKey);
         } catch (Exception ex) {
             throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
         }
