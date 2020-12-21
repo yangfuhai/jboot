@@ -28,7 +28,7 @@ public class JsonBodyController extends JbootController {
      *
      * @param bean
      */
-    public void bean(@JsonBody("aaa.bbb") MyBean bean) {
+    public void bean(@JsonBody(value = "aaa.bbb",validate = true) MyBean bean) {
         System.out.println("bean--->" + JsonKit.toJson(bean));
         renderText("ok");
     }

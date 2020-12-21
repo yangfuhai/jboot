@@ -249,6 +249,8 @@ public class ClassScanner {
         excludeJars.add("curvesapi-");
         excludeJars.add("myexcel-");
         excludeJars.add("oshi-");
+        excludeJars.add("classmate-");
+        excludeJars.add("hibernate-");
     }
 
 

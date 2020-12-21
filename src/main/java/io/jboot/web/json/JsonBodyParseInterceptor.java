@@ -46,7 +46,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     private static final String startOfArray = "[";
     private static final String endOfArray = "]";
-    private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private static Validator validator;
 
     @Override
     public void intercept(Invocation inv) {
@@ -79,14 +79,14 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 }
 
                 //对 jsonObject 进行验证
-                if (result != null && jsonBody.validate()) {
-                    Set<ConstraintViolation<Object>> constraintViolations = validator.validate(result);
+                if (jsonBody.validate() && result != null) {
+                    Set<ConstraintViolation<Object>> constraintViolations = getValidator().validate(result);
                     if (constraintViolations != null && constraintViolations.size() > 0) {
-                        StringJoiner msgJoiner = new StringJoiner("; ");
+                        StringJoiner msg = new StringJoiner("; ");
                         for (ConstraintViolation cv : constraintViolations) {
-                            msgJoiner.add(cv.getMessage());
+                            msg.add(cv.getRootBeanClass().getName() + "." + cv.getPropertyPath() + cv.getMessage());
                         }
-                        throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), msgJoiner.toString());
+                        throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), msg.toString());
                     }
                 }
 
@@ -95,6 +95,14 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         inv.invoke();
+    }
+
+
+    private static Validator getValidator() {
+        if (validator == null) {
+            validator = Validation.buildDefaultValidatorFactory().getValidator();
+        }
+        return validator;
     }
 
 
