@@ -4,19 +4,19 @@ import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
 public class MyBean {
-//    private String id;
+    private String id;
     private int age;
     private BigInteger amount;
 
     @NotNull
     public String getId() {
-        return null;
+        return id;
     }
 
 
-//    public void setId(String id) {
-//        this.id = id;
-//    }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public int getAge() {
         return age;
@@ -37,7 +37,7 @@ public class MyBean {
     @Override
     public String toString() {
         return "MyBean{" +
-//                "id='" + id + '\'' +
+                "id='" + id + '\'' +
                 ", age=" + age +
                 ", amount=" + amount +
                 '}';
