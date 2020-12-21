@@ -24,6 +24,7 @@ import java.util.*;
  */
 public class DateUtil {
 
+    public static String datePatternWithoutDividing = "yyyyMMdd";
     public static String datePattern = "yyyy-MM-dd";
     public static final String dateMinutePattern = "yyyy-MM-dd HH:mm";
     public static String datetimePattern = "yyyy-MM-dd HH:mm:ss";
@@ -84,14 +85,15 @@ public class DateUtil {
             SimpleDateFormat sdf = getSimpleDateFormat(getPattern(dateString));
             try {
                 return sdf.parse(dateString);
-            } catch (ParseException e) {
+            } catch (ParseException ex) {
                 if (dateString.contains(".") || dateString.contains("/")) {
                     dateString = dateString.replace(".", "-").replace("/", "-");
                     return sdf.parse(dateString);
+                } else {
+                    throw ex;
                 }
-                throw e;
             }
-        } catch (ParseException e) {
+        } catch (ParseException ex) {
             throw new IllegalArgumentException("The date format is not supported for the date string: " + dateString);
         }
     }
@@ -107,6 +109,8 @@ public class DateUtil {
             return dateMinutePattern;
         } else if (length == dateMillisecondPattern.length()) {
             return dateMillisecondPattern;
+        } else if (length == datePatternWithoutDividing.length()) {
+            return datePatternWithoutDividing;
         } else if (length == dateCSTPattern.length()) {
             return dateCSTPattern;
         } else {
