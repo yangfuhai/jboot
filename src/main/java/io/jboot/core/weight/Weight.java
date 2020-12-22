@@ -25,6 +25,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 public @interface Weight {
 
-    int value() default 0;
+    int value();
 
 }
