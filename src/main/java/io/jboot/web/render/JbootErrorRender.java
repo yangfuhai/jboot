@@ -21,6 +21,7 @@ import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import com.jfinal.render.RenderManager;
 import io.jboot.exception.JbootExceptionHolder;
+import io.jboot.utils.RequestUtil;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -74,13 +75,10 @@ public class JbootErrorRender extends Render {
         }
 
         try {
-            String contentType = request.getContentType();
-            boolean needRenderJson = contentType != null && contentType.toLowerCase().contains("application/json");
-
-            response.setContentType(needRenderJson ? jsonContentType : htmlContentType);
-
+            boolean isJconContentType = RequestUtil.isJsonContentType(request);
+            response.setContentType(isJconContentType ? jsonContentType : htmlContentType);
             PrintWriter writer = response.getWriter();
-            writer.write(needRenderJson ? getErrorJson() : getErrorHtml());
+            writer.write(isJconContentType ? getErrorJson() : getErrorHtml());
         } catch (Exception ex) {
             throw new RenderException(ex);
         }

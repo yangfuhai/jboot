@@ -42,6 +42,12 @@ public class RequestUtil {
         return "XMLHttpRequest".equalsIgnoreCase(header);
     }
 
+    public static boolean isJsonContentType(HttpServletRequest request){
+        String contentType = request.getContentType();
+        return contentType != null && contentType.toLowerCase().contains("application/json");
+    }
+
+
     public static boolean isMultipartRequest(HttpServletRequest request) {
         String contentType = request.getContentType();
         return contentType != null && contentType.toLowerCase().indexOf("multipart") != -1;
