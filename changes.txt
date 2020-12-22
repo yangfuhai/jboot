@@ -1,3 +1,14 @@
+jboot v3.7.4:
+新增：NotNull、NotBlank、NotEmpty、Valid、Pattern、Min、Max、Size、Email 等验证注解
+新增：RequestUtil.isJsonContentType() 方法
+优化：NotEmpty、Regex 等验证返回更加当前请求类型返回 json 内容
+优化：JbootErrorRender，当发生错误的时候，对 ajax 请求返回 json 内容
+优化：移除注解 Weight 的默认值
+修复：JbootController.getRawObject 在某些情况下可能出现异常的问题
+修复：使用 Autoload 注解，同时配置 Weight 不生效的问题
+
+
+
 jboot v3.7.3:
 新增：JbootController 新增 getRawObject(TypeDef) 方法，可以获得指定泛型数据
 优化：JsonBodyParseInterceptor 的解析效率
