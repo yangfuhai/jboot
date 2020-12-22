@@ -30,7 +30,8 @@ class Util {
         String reason = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed!");
         switch (renderType) {
             case ValidateRenderType.DEFAULT:
-                if (RequestUtil.isAjaxRequest(controller.getRequest())) {
+                if (RequestUtil.isAjaxRequest(controller.getRequest())
+                        || RequestUtil.isJsonContentType(controller.getRequest())) {
                     controller.renderJson(
                             Ret.fail("message", message)
                                     .set("reason", reason)
