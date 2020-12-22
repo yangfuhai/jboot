@@ -50,7 +50,7 @@ public class RequestUtil {
 
     public static boolean isMultipartRequest(HttpServletRequest request) {
         String contentType = request.getContentType();
-        return contentType != null && contentType.toLowerCase().indexOf("multipart") != -1;
+        return contentType != null && contentType.toLowerCase().contains("multipart");
     }
 
     /**

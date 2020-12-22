@@ -78,10 +78,10 @@ public class JbootErrorRender extends Render {
         }
 
         try {
-            boolean isJconContentType = RequestUtil.isJsonContentType(request);
-            response.setContentType(isJconContentType ? jsonContentType : htmlContentType);
+            boolean needRenderJson = RequestUtil.isJsonContentType(request) || RequestUtil.isAjaxRequest(request);
+            response.setContentType(needRenderJson ? jsonContentType : htmlContentType);
             PrintWriter writer = response.getWriter();
-            writer.write(isJconContentType ? getErrorJson() : getErrorHtml());
+            writer.write(needRenderJson ? getErrorJson() : getErrorHtml());
         } catch (Exception ex) {
             throw new RenderException(ex);
         }
