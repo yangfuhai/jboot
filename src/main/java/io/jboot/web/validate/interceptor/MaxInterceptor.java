@@ -17,21 +17,13 @@ package io.jboot.web.validate.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
-import io.jboot.aop.InterceptorBuilder;
-import io.jboot.aop.Interceptors;
-import io.jboot.aop.annotation.AutoLoad;
-import io.jboot.core.weight.Weight;
 import io.jboot.utils.ClassUtil;
 
 import javax.validation.constraints.Max;
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-@AutoLoad
-@Weight(100)
-public class MaxInterceptor implements Interceptor, InterceptorBuilder {
+public class MaxInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
@@ -44,8 +36,7 @@ public class MaxInterceptor implements Interceptor, InterceptorBuilder {
                 if (validObject != null && max.value() < ((Number) validObject).longValue()) {
                     String reason = parameters[index].getName() + " max value is " + max.value() + ", but current value is " + validObject + " at method:" + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("value", max.value());
-                    Util.renderError(inv.getController(), max.message(), paras, reason);
-                    return;
+                    Util.throwValidException(max.message(), paras, reason);
                 }
             }
         }
@@ -54,18 +45,4 @@ public class MaxInterceptor implements Interceptor, InterceptorBuilder {
     }
 
 
-    @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Controller.class.isAssignableFrom(serviceClass)) {
-            Parameter[] parameters = method.getParameters();
-            if (parameters != null && parameters.length > 0) {
-                for (Parameter p : parameters) {
-                    if (p.getAnnotation(Max.class) != null) {
-                        interceptors.add(this);
-                        return;
-                    }
-                }
-            }
-        }
-    }
 }

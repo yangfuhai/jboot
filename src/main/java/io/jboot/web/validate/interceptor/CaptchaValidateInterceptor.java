@@ -65,7 +65,7 @@ public class CaptchaValidateInterceptor implements Interceptor {
             return true;
         }
 
-        Util.renderError(inv.getController()
+        Util.throwValidException(inv.getController()
                 , AnnotationUtil.get(captchaValidate.renderType())
                 , formName
                 , AnnotationUtil.get(captchaValidate.message())

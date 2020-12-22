@@ -22,7 +22,9 @@ import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
+import io.jboot.web.render.JbootErrorRender;
 import io.jboot.web.render.JbootRenderFactory;
+import io.jboot.web.validate.ValidException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -148,6 +150,15 @@ public class JbootActionHandler extends ActionHandler {
             }
         } catch (ActionException e) {
             handleActionException(target, request, response, action, e);
+        } catch (ValidException e) {
+            Render render = renderManager.getRenderFactory().getErrorRender(400);
+            if (render instanceof JbootErrorRender) {
+                ((JbootErrorRender) render).setThrowable(e);
+            }
+
+            render.setContext(request, response, action.getViewPath())
+                    .render();
+
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 String qs = request.getQueryString();

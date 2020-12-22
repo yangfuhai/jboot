@@ -70,6 +70,18 @@ public class ValidateController extends Controller {
     }
 
     public void test12(@Min(10) @JsonBody("aaa.bbb.age") int para1) {
-        renderText("@Min(10):");
+        renderText("test12");
+    }
+
+    public void test13(@Size(min = 10,max = 20) @JsonBody("aaa.bbb.age") int para1) {
+        renderText("test13");
+    }
+
+    public void test14(@Size(min = 10,max = 20) @JsonBody("aaa.bbb.name") String name) {
+        renderText("test14");
+    }
+
+    public void test15(@Digits(integer = 2,fraction = 3) @JsonBody("aaa.bbb.fff") float name) {
+        renderText("test15");
     }
 }

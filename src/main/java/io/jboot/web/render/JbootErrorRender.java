@@ -22,6 +22,8 @@ import com.jfinal.render.RenderException;
 import com.jfinal.render.RenderManager;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.utils.RequestUtil;
+import io.jboot.utils.StrUtil;
+import io.jboot.web.validate.ValidException;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -56,6 +58,32 @@ public class JbootErrorRender extends Render {
 
 
     protected int errorCode;
+    protected String message;
+    protected Throwable throwable;
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
 
     public JbootErrorRender(int errorCode, String view) {
         this.errorCode = errorCode;
@@ -126,11 +154,6 @@ public class JbootErrorRender extends Render {
     }
 
 
-    public int getErrorCode() {
-        return errorCode;
-    }
-
-
     public String buildErrorInfo(int code) {
         StringBuilder stringBuilder = new StringBuilder(code == 400 ? html400_header : html500_header);
 
@@ -164,13 +187,29 @@ public class JbootErrorRender extends Render {
             errorMsgBuilder.append(message);
         }
 
-        StringBuilder throwableMsgBuilder = new StringBuilder();
+        ret.set("errorMessage", errorMsgBuilder.toString());
+
         List<Throwable> throwables = JbootExceptionHolder.getThrowables();
-        for (Throwable throwable : throwables) {
-            throwableMsgBuilder.append(throwable.getClass().getName() + ": " + throwable.getMessage());
+        if (throwables.size() > 0) {
+            Throwable throwable = throwables.get(0);
+            ret.set("throwable", throwable.getClass().getName() + ": " + throwable.getMessage());
+            ret.set("message", throwable.getMessage());
         }
 
-        return JsonKit.toJson(ret.set("errorMessage", errorMsgBuilder.toString()).set("throwable", throwableMsgBuilder.toString()));
+        if (this.throwable != null) {
+            ret.set("throwable", this.throwable.getClass().getName() + ": " + this.throwable.getMessage());
+            ret.set("message", throwable.getMessage());
+
+            if (throwable instanceof ValidException) {
+                ret.set("errorMessage", ((ValidException) throwable).getReason());
+            }
+        }
+
+        if (StrUtil.isNotBlank(this.message)) {
+            ret.set("message", this.message);
+        }
+
+        return JsonKit.toJson(ret);
     }
 }
 

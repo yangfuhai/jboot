@@ -17,27 +17,16 @@ package io.jboot.web.validate.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.Controller;
-import io.jboot.aop.InterceptorBuilder;
-import io.jboot.aop.Interceptors;
-import io.jboot.aop.annotation.AutoLoad;
-import io.jboot.core.weight.Weight;
 import io.jboot.utils.ClassUtil;
+import io.jboot.web.validate.ValidateUtil;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Set;
-import java.util.StringJoiner;
 
-@AutoLoad
-@Weight(100)
-public class ValidInterceptor implements Interceptor, InterceptorBuilder {
+public class ValidInterceptor implements Interceptor {
 
-    private static Validator validator;
 
     @Override
     public void intercept(Invocation inv) {
@@ -48,15 +37,17 @@ public class ValidInterceptor implements Interceptor, InterceptorBuilder {
             if (parameters[index].getAnnotation(Valid.class) != null) {
                 Object validObject = inv.getArg(index);
                 if (validObject != null) {
-                    Set<ConstraintViolation<Object>> constraintViolations = getValidator().validate(validObject);
+                    Set<ConstraintViolation<Object>> constraintViolations = ValidateUtil.validate(validObject);
                     if (constraintViolations != null && constraintViolations.size() > 0) {
-                        StringJoiner msg = new StringJoiner("; ");
+                        StringBuilder msg = new StringBuilder();
                         for (ConstraintViolation cv : constraintViolations) {
-                            msg.add(cv.getRootBeanClass().getName() + "." + cv.getPropertyPath() + cv.getMessage());
+                            msg.append(cv.getRootBeanClass().getName())
+                                    .append(".")
+                                    .append(cv.getPropertyPath())
+                                    .append(cv.getMessage());
                         }
                         String reason = parameters[index].getName() + " is valid failed at " + ClassUtil.buildMethodString(inv.getMethod());
-                        Util.renderError(inv.getController(), msg.toString(), reason);
-                        return;
+                        Util.throwValidException(msg.toString(), reason);
                     }
                 }
             }
@@ -66,26 +57,4 @@ public class ValidInterceptor implements Interceptor, InterceptorBuilder {
     }
 
 
-    private static Validator getValidator() {
-        if (validator == null) {
-            validator = Validation.buildDefaultValidatorFactory().getValidator();
-        }
-        return validator;
-    }
-
-
-    @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Controller.class.isAssignableFrom(serviceClass)) {
-            Parameter[] parameters = method.getParameters();
-            if (parameters != null && parameters.length > 0) {
-                for (Parameter p : parameters) {
-                    if (p.getAnnotation(Valid.class) != null) {
-                        interceptors.add(this);
-                        return;
-                    }
-                }
-            }
-        }
-    }
 }

@@ -5,6 +5,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
+import io.jboot.web.validate.ValidException;
 import io.jboot.web.validate.ValidateRenderType;
 
 import javax.validation.Validation;
@@ -27,25 +28,21 @@ class Util {
     }
 
 
-    static void renderError(Controller controller, String message, String reason) {
-        renderError(controller, message, null, reason);
+    static void throwValidException(String message, String reason) {
+        throwValidException(message, null, reason);
     }
 
 
-    static void renderError(Controller controller, String message, Ret paras, String reason) {
+    static void throwValidException(String message, Ret paras, String reason) {
         if (message != null) {
-            message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleMessageContext(paras));
+            message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleContext(paras));
         }
-        if (RequestUtil.isAjaxRequest(controller.getRequest())
-                || RequestUtil.isJsonContentType(controller.getRequest())) {
-            controller.renderJson(Ret.fail("message", message).set("reason", reason).set("errorCode", 1));
-        } else {
-            controller.renderText(reason);
-        }
+
+        throw new ValidException(message, reason);
     }
 
 
-    static void renderError(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
+    static void throwValidException(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
         String reason = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed!");
         switch (renderType) {
             case ValidateRenderType.DEFAULT:

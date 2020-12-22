@@ -17,47 +17,28 @@ package io.jboot.web.validate.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.kit.Ret;
 import io.jboot.utils.ClassUtil;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import java.lang.reflect.Parameter;
 
-public class PatternInterceptor implements Interceptor {
+public class PositiveInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
-            Pattern pattern = parameters[index].getAnnotation(Pattern.class);
-            if (pattern != null) {
+            Positive positive = parameters[index].getAnnotation(Positive.class);
+            if (positive != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject == null || !matches(pattern, validObject.toString())) {
-                    String reason = parameters[index].getName() + " is null or not matches the regex at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("regexp", pattern.regexp());
-                    Util.throwValidException(pattern.message(), paras, reason);
+                if (validObject == null || ((Number) validObject).longValue() <= 0) {
+                    String reason = parameters[index].getName() + " is null or not positive at method:" + ClassUtil.buildMethodString(inv.getMethod());
+                    Util.throwValidException(positive.message(), reason);
                 }
             }
         }
 
-
         inv.invoke();
-    }
-
-    private static boolean matches(Pattern pattern, String value) {
-        Pattern.Flag[] flags = pattern.flags();
-        if (flags.length == 0) {
-            return value.matches(pattern.regexp());
-        }
-
-        int intFlag = 0;
-        for (Pattern.Flag flag : flags) {
-            intFlag = intFlag | flag.getValue();
-        }
-
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern.regexp(), intFlag);
-        return p.matcher(value).matches();
-
     }
 
 

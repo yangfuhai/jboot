@@ -17,23 +17,15 @@ package io.jboot.web.validate.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.Controller;
-import io.jboot.aop.InterceptorBuilder;
-import io.jboot.aop.Interceptors;
-import io.jboot.aop.annotation.AutoLoad;
-import io.jboot.core.weight.Weight;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.validation.constraints.NotEmpty;
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.Map;
 
-@AutoLoad
-@Weight(100)
-public class NotEmptyInterceptor implements Interceptor, InterceptorBuilder {
+public class NotEmptyInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
@@ -48,8 +40,7 @@ public class NotEmptyInterceptor implements Interceptor, InterceptorBuilder {
                         || (validObject instanceof Collection && ((Collection) validObject).isEmpty())
                         || (validObject.getClass().isArray() && ((Object[]) validObject).length == 0)) {
                     String reason = parameters[index].getName() + " is null or empty at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Util.renderError(inv.getController(), notEmpty.message(), reason);
-                    return;
+                    Util.throwValidException(notEmpty.message(), reason);
                 }
             }
         }
@@ -58,18 +49,4 @@ public class NotEmptyInterceptor implements Interceptor, InterceptorBuilder {
     }
 
 
-    @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Controller.class.isAssignableFrom(serviceClass)) {
-            Parameter[] parameters = method.getParameters();
-            if (parameters != null && parameters.length > 0) {
-                for (Parameter p : parameters) {
-                    if (p.getAnnotation(NotEmpty.class) != null) {
-                        interceptors.add(this);
-                        return;
-                    }
-                }
-            }
-        }
-    }
 }

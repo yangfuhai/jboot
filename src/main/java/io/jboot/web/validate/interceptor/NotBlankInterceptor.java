@@ -17,21 +17,13 @@ package io.jboot.web.validate.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.Controller;
-import io.jboot.aop.InterceptorBuilder;
-import io.jboot.aop.Interceptors;
-import io.jboot.aop.annotation.AutoLoad;
-import io.jboot.core.weight.Weight;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.validation.constraints.NotBlank;
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-@AutoLoad
-@Weight(100)
-public class NotBlankInterceptor implements Interceptor, InterceptorBuilder {
+public class NotBlankInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
@@ -42,8 +34,7 @@ public class NotBlankInterceptor implements Interceptor, InterceptorBuilder {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || (validObject instanceof String && StrUtil.isBlank((String) validObject))) {
                     String msg = parameters[index].getName() + " is blank at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Util.renderError(inv.getController(), notBlank.message(), msg);
-                    return;
+                    Util.throwValidException(notBlank.message(), msg);
                 }
             }
         }
@@ -52,18 +43,4 @@ public class NotBlankInterceptor implements Interceptor, InterceptorBuilder {
     }
 
 
-    @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Controller.class.isAssignableFrom(serviceClass)) {
-            Parameter[] parameters = method.getParameters();
-            if (parameters != null && parameters.length > 0) {
-                for (Parameter p : parameters) {
-                    if (p.getAnnotation(NotBlank.class) != null) {
-                        interceptors.add(this);
-                        return;
-                    }
-                }
-            }
-        }
-    }
 }
