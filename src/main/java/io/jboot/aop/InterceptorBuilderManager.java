@@ -42,7 +42,7 @@ public class InterceptorBuilderManager{
         if (builderClasses != null){
             for (Class<InterceptorBuilder> builderClass : builderClasses){
                 if (builderClass.getAnnotation(AutoLoad.class) != null){
-                    interceptorBuilders.add(ClassUtil.newInstance(builderClass,false));
+                    addInterceptorBuilder(ClassUtil.newInstance(builderClass,false));
                 }
             }
 
