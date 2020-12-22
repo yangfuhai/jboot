@@ -43,6 +43,9 @@ public class JbootErrorRender extends Render {
     protected static final String html500_header = "<html><head><title>500 Internal Server Error</title></head>" +
             "<body bgcolor='white'><center><h1>500 Internal Server Error</h1></center>" +
             "<hr>";
+    protected static final String html400_header = "<html><head><title>400 Internal Server Error</title></head>" +
+            "<body bgcolor='white'><center><h1>400 Internal Server Error</h1></center>" +
+            "<hr>";
 
     protected static final String html500_footer = "<hr>" + poweredBy + "</body></html>";
 
@@ -97,8 +100,8 @@ public class JbootErrorRender extends Render {
         if (errorCode == 403) {
             return html403;
         }
-        if (errorCode == 500) {
-            return build500ErrorInfo();
+        if (errorCode == 500 || errorCode == 400) {
+            return buildErrorInfo(errorCode);
         }
         return "<html><head><title>" + errorCode + " Error</title></head><body bgcolor='white'><center><h1>" + errorCode + " Error</h1></center><hr>" + poweredBy + "</body></html>";
     }
@@ -128,8 +131,8 @@ public class JbootErrorRender extends Render {
     }
 
 
-    public String build500ErrorInfo() {
-        StringBuilder stringBuilder = new StringBuilder(html500_header);
+    public String buildErrorInfo(int code) {
+        StringBuilder stringBuilder = new StringBuilder(code == 400 ? html400_header : html500_header);
 
         List<String> messages = JbootExceptionHolder.getMessages();
         for (String message : messages) {

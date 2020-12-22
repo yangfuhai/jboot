@@ -71,7 +71,7 @@ public class RegexValidateInterceptor implements Interceptor {
             String formName = AnnotationUtil.get(form.name());
             String formType = AnnotationUtil.get(form.type());
             if (StrUtil.isBlank(formName)) {
-                throw new IllegalArgumentException("@MatchesForm.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
+                throw new IllegalArgumentException("@RegexForm.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
             }
             String value = null;
             if (FormType.FORM_DATA.equalsIgnoreCase(formType)) {
@@ -89,7 +89,7 @@ public class RegexValidateInterceptor implements Interceptor {
                     value = null;
                 }
             } else {
-                throw new IllegalArgumentException("@MatchesValidate not support form type : " + formType + ", " +
+                throw new IllegalArgumentException("@RegexValidate not support form type : " + formType + ", " +
                         "see : io.jboot.web.controller.validate.FormType");
             }
 
