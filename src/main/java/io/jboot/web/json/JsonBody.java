@@ -38,6 +38,6 @@ public @interface JsonBody {
      * 是否对 Model 进行验证
      * @return
      */
-    boolean validate() default false;
+    boolean valid() default false;
 
 }

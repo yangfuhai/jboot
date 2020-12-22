@@ -79,7 +79,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 }
 
                 //对 jsonObject 进行验证
-                if (jsonBody.validate() && result != null) {
+                if (jsonBody.valid() && result != null) {
                     Set<ConstraintViolation<Object>> constraintViolations = getValidator().validate(result);
                     if (constraintViolations != null && constraintViolations.size() > 0) {
                         StringJoiner msg = new StringJoiner("; ");
