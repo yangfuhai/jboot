@@ -17,13 +17,12 @@ package io.jboot.web.validate.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.ActionException;
 import com.jfinal.core.Controller;
-import com.jfinal.render.RenderManager;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.core.weight.Weight;
+import io.jboot.utils.ClassUtil;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
@@ -55,7 +54,9 @@ public class ValidInterceptor implements Interceptor, InterceptorBuilder {
                         for (ConstraintViolation cv : constraintViolations) {
                             msg.add(cv.getRootBeanClass().getName() + "." + cv.getPropertyPath() + cv.getMessage());
                         }
-                        throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), msg.toString());
+                        String reason = parameters[index].getName() + " is valid failed at " + ClassUtil.buildMethodString(inv.getMethod());
+                        Util.renderError(inv.getController(), msg.toString(), reason);
+                        return;
                     }
                 }
             }

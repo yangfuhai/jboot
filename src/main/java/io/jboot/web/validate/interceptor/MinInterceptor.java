@@ -25,48 +25,32 @@ import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.core.weight.Weight;
 import io.jboot.utils.ClassUtil;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Min;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 @AutoLoad
 @Weight(100)
-public class PatternInterceptor implements Interceptor, InterceptorBuilder {
+public class MinInterceptor implements Interceptor, InterceptorBuilder {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
+
         for (int index = 0; index < parameters.length; index++) {
-            Pattern pattern = parameters[index].getAnnotation(Pattern.class);
-            if (pattern != null) {
+            Min min = parameters[index].getAnnotation(Min.class);
+            if (min != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject == null || !matches(pattern, validObject.toString())) {
-                    String reason = parameters[index].getName() + " is null or not matches the regex at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("regexp", pattern.regexp());
-                    Util.renderError(inv.getController(), pattern.message(), paras, reason);
+                if (validObject != null && min.value() > ((Number) validObject).longValue()) {
+                    String reason = parameters[index].getName() + " min value is " + min.value() + ", but current value is " + validObject + " at method:" + ClassUtil.buildMethodString(inv.getMethod());
+                    Ret paras = Ret.by("value", min.value());
+                    Util.renderError(inv.getController(), min.message(), paras, reason);
                     return;
                 }
             }
         }
 
-
         inv.invoke();
-    }
-
-    private static boolean matches(Pattern pattern, String value) {
-        Pattern.Flag[] flags = pattern.flags();
-        if (flags.length == 0) {
-            return value.matches(pattern.regexp());
-        }
-
-        int intFlag = 0;
-        for (Pattern.Flag flag : flags) {
-            intFlag = intFlag | flag.getValue();
-        }
-
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern.regexp(), intFlag);
-        return p.matcher(value).matches();
-
     }
 
 
@@ -76,7 +60,7 @@ public class PatternInterceptor implements Interceptor, InterceptorBuilder {
             Parameter[] parameters = method.getParameters();
             if (parameters != null && parameters.length > 0) {
                 for (Parameter p : parameters) {
-                    if (p.getAnnotation(Pattern.class) != null) {
+                    if (p.getAnnotation(Min.class) != null) {
                         interceptors.add(this);
                         return;
                     }

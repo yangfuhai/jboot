@@ -7,13 +7,15 @@ import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.validate.ValidateRenderType;
 
+import javax.validation.Validation;
+
 /**
  * @author michael yang (fuhai999@gmail.com)
  */
 class Util {
 
 
-    static String buildErrorMessage(Invocation inv, String annotation){
+    static String buildErrorMessage(Invocation inv, String annotation) {
         StringBuilder sb = new StringBuilder();
         sb.append("method \"").append(inv.getController().getClass().getName())
                 .append(".")
@@ -24,6 +26,23 @@ class Util {
         return sb.toString();
     }
 
+
+    static void renderError(Controller controller, String message, String reason) {
+        renderError(controller, message, null, reason);
+    }
+
+
+    static void renderError(Controller controller, String message, Ret paras, String reason) {
+        if (message != null) {
+            message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleMessageContext(paras));
+        }
+        if (RequestUtil.isAjaxRequest(controller.getRequest())
+                || RequestUtil.isJsonContentType(controller.getRequest())) {
+            controller.renderJson(Ret.fail("message", message).set("reason", reason).set("errorCode", 1));
+        } else {
+            controller.renderText(reason);
+        }
+    }
 
 
     static void renderError(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {

@@ -17,9 +17,7 @@ package io.jboot.web.validate.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.ActionException;
 import com.jfinal.core.Controller;
-import com.jfinal.render.RenderManager;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
@@ -39,15 +37,16 @@ public class NotNullInterceptor implements Interceptor, InterceptorBuilder {
         Parameter[] parameters = inv.getMethod().getParameters();
 
         for (int index = 0; index < parameters.length; index++) {
-            if (parameters[index].getAnnotation(NotNull.class) != null && inv.getArg(index) == null) {
-                String msg = parameters[index].getName() + " is null at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), msg);
+            NotNull notNull = parameters[index].getAnnotation(NotNull.class);
+            if (notNull != null && inv.getArg(index) == null) {
+                String reason = parameters[index].getName() + " is null at method:" + ClassUtil.buildMethodString(inv.getMethod());
+                Util.renderError(inv.getController(), notNull.message(), reason);
+                return;
             }
         }
 
         inv.invoke();
     }
-
 
 
     @Override

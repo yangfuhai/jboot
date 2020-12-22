@@ -32,7 +32,6 @@ import io.jboot.utils.DateUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.lang.reflect.Method;
@@ -75,18 +74,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                         LogKit.error(message);
                     } else {
                         throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), message);
-                    }
-                }
-
-                //对 jsonObject 进行验证
-                if (jsonBody.valid() && result != null) {
-                    Set<ConstraintViolation<Object>> constraintViolations = getValidator().validate(result);
-                    if (constraintViolations != null && constraintViolations.size() > 0) {
-                        StringJoiner msg = new StringJoiner("; ");
-                        for (ConstraintViolation cv : constraintViolations) {
-                            msg.add(cv.getRootBeanClass().getName() + "." + cv.getPropertyPath() + cv.getMessage());
-                        }
-                        throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), msg.toString());
                     }
                 }
 

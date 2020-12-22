@@ -6,6 +6,7 @@ import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.json.JsonBody;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -28,7 +29,7 @@ public class JsonBodyController extends JbootController {
      *
      * @param bean
      */
-    public void bean(@JsonBody(value = "aaa.bbb", valid = true) MyBean bean) {
+    public void bean(@JsonBody(value = "aaa.bbb") @Valid  MyBean bean) {
         System.out.println("bean--->" + JsonKit.toJson(bean));
         renderText("ok");
     }

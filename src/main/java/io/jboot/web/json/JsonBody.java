@@ -34,10 +34,4 @@ public @interface JsonBody {
      */
     boolean skipConvertError() default false;
 
-    /**
-     * 是否对 Model 进行验证
-     * @return
-     */
-    boolean valid() default false;
-
 }

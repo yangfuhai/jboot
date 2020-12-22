@@ -17,9 +17,7 @@ package io.jboot.web.validate.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.ActionException;
 import com.jfinal.core.Controller;
-import com.jfinal.render.RenderManager;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
@@ -39,18 +37,19 @@ public class NotBlankInterceptor implements Interceptor, InterceptorBuilder {
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
-            if (parameters[index].getAnnotation(NotBlank.class) != null) {
+            NotBlank notBlank = parameters[index].getAnnotation(NotBlank.class);
+            if (notBlank != null) {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || (validObject instanceof String && StrUtil.isBlank((String) validObject))) {
                     String msg = parameters[index].getName() + " is blank at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), msg);
+                    Util.renderError(inv.getController(), notBlank.message(), msg);
+                    return;
                 }
             }
         }
 
         inv.invoke();
     }
-
 
 
     @Override
