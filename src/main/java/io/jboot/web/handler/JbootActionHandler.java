@@ -152,7 +152,9 @@ public class JbootActionHandler extends ActionHandler {
             handleActionException(target, request, response, action, e);
         } catch (ValidException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error(e.getReason(), e);
+                String qs = request.getQueryString();
+                String targetInfo = qs == null ? target : target + "?" + qs;
+                LOG.error(e.getReason() + " : " + targetInfo, e);
             }
             Render render = renderManager.getRenderFactory().getErrorRender(400);
             if (render instanceof JbootErrorRender) {

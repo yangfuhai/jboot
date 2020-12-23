@@ -1,5 +1,8 @@
 jboot v3.7.5:
-新增：支持更多的验证注解，比如
+新增：支持更多的验证注解，比如 Digits DecimalMax DecimalMin Positive Negative 等
+新增：支持在 Service 任何被注入的方法里进行验证
+新增：JbootApplication 运行下 fatjar 的时候，支持在同级目录下读取 jboot.properties 文件
+
 
 
 jboot v3.7.4:
