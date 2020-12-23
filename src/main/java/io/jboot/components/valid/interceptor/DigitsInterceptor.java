@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.kit.Ret;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 
 import javax.validation.constraints.Digits;
@@ -33,9 +34,9 @@ public class DigitsInterceptor implements Interceptor {
             if (digits != null) {
                 Object validObject = inv.getArg(index);
                 if (validObject != null && !matchesDigits(digits, validObject)) {
-                    String reason = parameters[index].getName() + " not matches @Digits at method:" + ClassUtil.buildMethodString(inv.getMethod());
+                    String reason = parameters[index].getName() + " not matches @Digits at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("integer", digits.integer()).set("fraction", digits.fraction());
-                    Util.throwValidException(digits.message(), paras, reason);
+                    ValidUtil.throwValidException(digits.message(), paras, reason);
                 }
             }
         }

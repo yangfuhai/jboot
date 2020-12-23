@@ -24,7 +24,7 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.render.JbootErrorRender;
 import io.jboot.web.render.JbootRenderFactory;
-import io.jboot.web.validate.ValidException;
+import io.jboot.components.valid.ValidException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

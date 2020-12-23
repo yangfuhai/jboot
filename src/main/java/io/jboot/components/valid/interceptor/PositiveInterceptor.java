@@ -13,28 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Positive;
 import java.lang.reflect.Parameter;
 
-public class PositiveOrZeroInterceptor implements Interceptor {
+public class PositiveInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
-
         for (int index = 0; index < parameters.length; index++) {
-            PositiveOrZero positiveOrZero = parameters[index].getAnnotation(PositiveOrZero.class);
-            if (positiveOrZero != null) {
+            Positive positive = parameters[index].getAnnotation(Positive.class);
+            if (positive != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject == null || ((Number) validObject).longValue() < 0) {
-                    String reason = parameters[index].getName() + " is null or less than 0 at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Util.throwValidException(positiveOrZero.message(), reason);
+                if (validObject == null || ((Number) validObject).longValue() <= 0) {
+                    String reason = parameters[index].getName() + " is null or not positive at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    ValidUtil.throwValidException(positive.message(), reason);
                 }
             }
         }

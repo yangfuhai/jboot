@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.kit.Ret;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 
 import javax.validation.constraints.Pattern;
@@ -33,9 +34,9 @@ public class PatternInterceptor implements Interceptor {
             if (pattern != null) {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || !matches(pattern, validObject.toString())) {
-                    String reason = parameters[index].getName() + " is null or not matches the regex at method:" + ClassUtil.buildMethodString(inv.getMethod());
+                    String reason = parameters[index].getName() + " is null or not matches the regex at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("regexp", pattern.regexp());
-                    Util.throwValidException(pattern.message(), paras, reason);
+                    ValidUtil.throwValidException(pattern.message(), paras, reason);
                 }
             }
         }

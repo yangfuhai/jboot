@@ -5,10 +5,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.validate.ValidException;
 import io.jboot.web.validate.ValidateRenderType;
-
-import javax.validation.Validation;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -27,19 +24,6 @@ class Util {
         return sb.toString();
     }
 
-
-    static void throwValidException(String message, String reason) {
-        throwValidException(message, null, reason);
-    }
-
-
-    static void throwValidException(String message, Ret paras, String reason) {
-        if (message != null) {
-            message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleContext(paras));
-        }
-
-        throw new ValidException(message, reason);
-    }
 
 
     static void throwValidException(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {

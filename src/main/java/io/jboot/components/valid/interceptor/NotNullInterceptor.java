@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 
-import javax.validation.constraints.Negative;
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Parameter;
 
-public class NegativeInterceptor implements Interceptor {
+public class NotNullInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
+
         for (int index = 0; index < parameters.length; index++) {
-            Negative negative = parameters[index].getAnnotation(Negative.class);
-            if (negative != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject == null || ((Number) validObject).longValue() >= 0) {
-                    String reason = parameters[index].getName() + " is null or not negative at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Util.throwValidException(negative.message(), reason);
-                }
+            NotNull notNull = parameters[index].getAnnotation(NotNull.class);
+            if (notNull != null && inv.getArg(index) == null) {
+                String reason = parameters[index].getName() + " is null at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                ValidUtil.throwValidException(notNull.message(), reason);
             }
         }
 

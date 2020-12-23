@@ -13,27 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.kit.Ret;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.Max;
 import java.lang.reflect.Parameter;
 
-public class PositiveInterceptor implements Interceptor {
+public class MaxInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
+
         for (int index = 0; index < parameters.length; index++) {
-            Positive positive = parameters[index].getAnnotation(Positive.class);
-            if (positive != null) {
+            Max max = parameters[index].getAnnotation(Max.class);
+            if (max != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject == null || ((Number) validObject).longValue() <= 0) {
-                    String reason = parameters[index].getName() + " is null or not positive at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Util.throwValidException(positive.message(), reason);
+                if (validObject != null && max.value() < ((Number) validObject).longValue()) {
+                    String reason = parameters[index].getName() + " max value is " + max.value() + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    Ret paras = Ret.by("value", max.value());
+                    ValidUtil.throwValidException(max.message(), paras, reason);
                 }
             }
         }

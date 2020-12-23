@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.web.validate.Regex;
 
@@ -34,8 +35,8 @@ public class EmailInterceptor implements Interceptor {
             if (email != null) {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || !matches(email, validObject.toString())) {
-                    String reason = parameters[index].getName() + " is not email at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Util.throwValidException(email.message(), reason);
+                    String reason = parameters[index].getName() + " is not email at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    ValidUtil.throwValidException(email.message(), reason);
                 }
             }
         }

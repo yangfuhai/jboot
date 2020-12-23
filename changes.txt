@@ -1,3 +1,7 @@
+jboot v3.7.5:
+新增：支持更多的验证注解，比如
+
+
 jboot v3.7.4:
 新增：NotNull、NotBlank、NotEmpty、Valid、Pattern、Min、Max、Size、Email 等验证注解
 新增：RequestUtil.isJsonContentType() 方法

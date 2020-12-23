@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
-import io.jboot.web.validate.ValidateUtil;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
@@ -37,7 +37,7 @@ public class ValidInterceptor implements Interceptor {
             if (parameters[index].getAnnotation(Valid.class) != null) {
                 Object validObject = inv.getArg(index);
                 if (validObject != null) {
-                    Set<ConstraintViolation<Object>> constraintViolations = ValidateUtil.validate(validObject);
+                    Set<ConstraintViolation<Object>> constraintViolations = ValidUtil.validate(validObject);
                     if (constraintViolations != null && constraintViolations.size() > 0) {
                         StringBuilder msg = new StringBuilder();
                         for (ConstraintViolation cv : constraintViolations) {
@@ -46,8 +46,8 @@ public class ValidInterceptor implements Interceptor {
                                     .append(cv.getPropertyPath())
                                     .append(cv.getMessage());
                         }
-                        String reason = parameters[index].getName() + " is valid failed at " + ClassUtil.buildMethodString(inv.getMethod());
-                        Util.throwValidException(msg.toString(), reason);
+                        String reason = parameters[index].getName() + " is valid failed at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                        ValidUtil.throwValidException(msg.toString(), reason);
                     }
                 }
             }

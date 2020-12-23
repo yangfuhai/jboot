@@ -13,32 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.kit.Ret;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 
-import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.DecimalMax;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class DecimalMinInterceptor implements Interceptor {
+public class DecimalMaxInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
 
         for (int index = 0; index < parameters.length; index++) {
-            DecimalMin decimalMin = parameters[index].getAnnotation(DecimalMin.class);
-            if (decimalMin != null) {
+            DecimalMax decimalMax = parameters[index].getAnnotation(DecimalMax.class);
+            if (decimalMax != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject != null && !matches(decimalMin, validObject)) {
-                    String reason = parameters[index].getName() + " max value is " + decimalMin.value() + ", but current value is " + validObject + " at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("value", decimalMin.value());
-                    Util.throwValidException(decimalMin.message(), paras, reason);
+                if (validObject != null && !matches(decimalMax, validObject)) {
+                    String reason = parameters[index].getName() + " max value is " + decimalMax.value()
+                            + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    Ret paras = Ret.by("value", decimalMax.value());
+                    ValidUtil.throwValidException(decimalMax.message(), paras, reason);
                 }
             }
         }
@@ -46,16 +48,15 @@ public class DecimalMinInterceptor implements Interceptor {
         inv.invoke();
     }
 
-
-    private boolean matches(DecimalMin decimalMax, Object validObject) {
+    private boolean matches(DecimalMax decimalMax, Object validObject) {
         if (validObject instanceof BigInteger) {
-            return ((BigInteger) validObject).compareTo(new BigInteger(decimalMax.value())) >= 0;
+            return ((BigInteger) validObject).compareTo(new BigInteger(decimalMax.value())) <= 0;
         } else if (validObject instanceof BigDecimal) {
-            return ((BigDecimal) validObject).compareTo(new BigDecimal(decimalMax.value())) >= 0;
+            return ((BigDecimal) validObject).compareTo(new BigDecimal(decimalMax.value())) <= 0;
         } else if (validObject instanceof CharSequence) {
-            return (new BigDecimal(validObject.toString())).compareTo(new BigDecimal(decimalMax.value())) >= 0;
+            return (new BigDecimal(validObject.toString())).compareTo(new BigDecimal(decimalMax.value())) <= 0;
         } else if (validObject instanceof Number) {
-            return ((Number) validObject).longValue() >= new BigInteger(decimalMax.value()).longValue();
+            return ((Number) validObject).longValue() <= new BigInteger(decimalMax.value()).longValue();
         }
         return false;
     }

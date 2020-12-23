@@ -23,7 +23,7 @@ import com.jfinal.render.RenderManager;
 import io.jboot.exception.JbootExceptionHolder;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.validate.ValidException;
+import io.jboot.components.valid.ValidException;
 
 import java.io.PrintWriter;
 import java.util.List;

@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.kit.Ret;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
-import io.jboot.utils.StrUtil;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Min;
 import java.lang.reflect.Parameter;
-import java.util.Collection;
-import java.util.Map;
 
-public class NotEmptyInterceptor implements Interceptor {
+public class MinInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
+
         for (int index = 0; index < parameters.length; index++) {
-            NotEmpty notEmpty = parameters[index].getAnnotation(NotEmpty.class);
-            if (notEmpty != null) {
+            Min min = parameters[index].getAnnotation(Min.class);
+            if (min != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject == null
-                        || (validObject instanceof String && StrUtil.isBlank((String) validObject))
-                        || (validObject instanceof Map && ((Map) validObject).isEmpty())
-                        || (validObject instanceof Collection && ((Collection) validObject).isEmpty())
-                        || (validObject.getClass().isArray() && ((Object[]) validObject).length == 0)) {
-                    String reason = parameters[index].getName() + " is null or empty at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Util.throwValidException(notEmpty.message(), reason);
+                if (validObject != null && min.value() > ((Number) validObject).longValue()) {
+                    String reason = parameters[index].getName() + " min value is " + min.value() + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    Ret paras = Ret.by("value", min.value());
+                    ValidUtil.throwValidException(min.message(), paras, reason);
                 }
             }
         }

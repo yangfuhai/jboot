@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate;
+package io.jboot.components.valid;
 
+import com.jfinal.kit.Ret;
+import io.jboot.components.valid.interceptor.SimpleContext;
 import org.hibernate.validator.HibernateValidator;
 
 import javax.validation.ConstraintViolation;
@@ -22,7 +24,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Set;
 
-public class ValidateUtil {
+public class ValidUtil {
 
     private static Validator validator = Validation.byProvider(HibernateValidator.class)
             .configure().failFast(true)
@@ -37,5 +39,19 @@ public class ValidateUtil {
 
     public static Set<ConstraintViolation<Object>> validate(Object object){
         return validator.validate(object);
+    }
+
+
+    public static void throwValidException(String message, String reason) {
+        throwValidException(message, null, reason);
+    }
+
+
+    public static void throwValidException(String message, Ret paras, String reason) {
+        if (message != null) {
+            message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleContext(paras));
+        }
+
+        throw new ValidException(message, reason);
     }
 }

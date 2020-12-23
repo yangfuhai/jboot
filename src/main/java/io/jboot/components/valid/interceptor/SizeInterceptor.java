@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
@@ -24,6 +24,8 @@ import javax.validation.constraints.Size;
 import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.Map;
+
+import static io.jboot.components.valid.ValidUtil.throwValidException;
 
 public class SizeInterceptor implements Interceptor {
 
@@ -37,17 +39,17 @@ public class SizeInterceptor implements Interceptor {
                 Object validObject = inv.getArg(index);
                 if (validObject == null) {
                     String reason = parameters[index].getName() + " size value is " + size.min() + " ~ " + size.max()
-                            + ", but current value is null at method:" + ClassUtil.buildMethodString(inv.getMethod());
+                            + ", but current value is null at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("max", size.max()).set("min", size.min());
-                    Util.throwValidException(size.message(), paras, reason);
+                    throwValidException(size.message(), paras, reason);
                 }
 
                 int len = getObjectLen(validObject);
                 if (len < size.min() || len > size.max()) {
                     String reason = parameters[index].getName() + " size value is " + size.min() + " ~ " + size.max()
-                            + ", but current value size (or length) is " + len + " at method:" + ClassUtil.buildMethodString(inv.getMethod());
+                            + ", but current value size (or length) is " + len + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("max", size.max()).set("min", size.min());
-                    Util.throwValidException(size.message(), paras, reason);
+                    throwValidException(size.message(), paras, reason);
                 }
             }
         }

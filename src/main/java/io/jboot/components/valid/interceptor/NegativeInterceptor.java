@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.kit.Ret;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 
-import javax.validation.constraints.Max;
+import javax.validation.constraints.Negative;
 import java.lang.reflect.Parameter;
 
-public class MaxInterceptor implements Interceptor {
+public class NegativeInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
-
         for (int index = 0; index < parameters.length; index++) {
-            Max max = parameters[index].getAnnotation(Max.class);
-            if (max != null) {
+            Negative negative = parameters[index].getAnnotation(Negative.class);
+            if (negative != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject != null && max.value() < ((Number) validObject).longValue()) {
-                    String reason = parameters[index].getName() + " max value is " + max.value() + ", but current value is " + validObject + " at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("value", max.value());
-                    Util.throwValidException(max.message(), paras, reason);
+                if (validObject == null || ((Number) validObject).longValue() >= 0) {
+                    String reason = parameters[index].getName() + " is null or not negative at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    ValidUtil.throwValidException(negative.message(), reason);
                 }
             }
         }

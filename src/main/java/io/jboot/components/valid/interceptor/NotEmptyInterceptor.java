@@ -13,28 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.lang.reflect.Parameter;
+import java.util.Collection;
+import java.util.Map;
 
-public class NotBlankInterceptor implements Interceptor {
+public class NotEmptyInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
-            NotBlank notBlank = parameters[index].getAnnotation(NotBlank.class);
-            if (notBlank != null) {
+            NotEmpty notEmpty = parameters[index].getAnnotation(NotEmpty.class);
+            if (notEmpty != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject == null || (validObject instanceof String && StrUtil.isBlank((String) validObject))) {
-                    String msg = parameters[index].getName() + " is blank at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                    Util.throwValidException(notBlank.message(), msg);
+                if (validObject == null
+                        || (validObject instanceof String && StrUtil.isBlank((String) validObject))
+                        || (validObject instanceof Map && ((Map) validObject).isEmpty())
+                        || (validObject instanceof Collection && ((Collection) validObject).isEmpty())
+                        || (validObject.getClass().isArray() && ((Object[]) validObject).length == 0)) {
+                    String reason = parameters[index].getName() + " is null or empty at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    ValidUtil.throwValidException(notEmpty.message(), reason);
                 }
             }
         }

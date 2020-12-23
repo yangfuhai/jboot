@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.validate.interceptor;
+package io.jboot.components.valid.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.lang.reflect.Parameter;
 
-public class NotNullInterceptor implements Interceptor {
+public class NotBlankInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
-
         for (int index = 0; index < parameters.length; index++) {
-            NotNull notNull = parameters[index].getAnnotation(NotNull.class);
-            if (notNull != null && inv.getArg(index) == null) {
-                String reason = parameters[index].getName() + " is null at method:" + ClassUtil.buildMethodString(inv.getMethod());
-                Util.throwValidException(notNull.message(), reason);
+            NotBlank notBlank = parameters[index].getAnnotation(NotBlank.class);
+            if (notBlank != null) {
+                Object validObject = inv.getArg(index);
+                if (validObject == null || (validObject instanceof String && StrUtil.isBlank((String) validObject))) {
+                    String msg = parameters[index].getName() + " is blank at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    ValidUtil.throwValidException(notBlank.message(), msg);
+                }
             }
         }
 
