@@ -1,5 +1,6 @@
 package io.jboot.test.validate;
 
+import com.jfinal.aop.Aop;
 import com.jfinal.core.Controller;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.json.JsonBody;
@@ -83,5 +84,10 @@ public class ValidateController extends Controller {
 
     public void test15(@Digits(integer = 2,fraction = 3) @JsonBody("aaa.bbb.fff") float name) {
         renderText("test15");
+    }
+
+    public void test16() {
+        Aop.get(TestValideService.class).calc(getInt("para"));
+        renderText("test16 :" );
     }
 }

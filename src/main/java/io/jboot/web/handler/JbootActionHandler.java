@@ -151,14 +151,14 @@ public class JbootActionHandler extends ActionHandler {
         } catch (ActionException e) {
             handleActionException(target, request, response, action, e);
         } catch (ValidException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e.getReason(), e);
+            }
             Render render = renderManager.getRenderFactory().getErrorRender(400);
             if (render instanceof JbootErrorRender) {
                 ((JbootErrorRender) render).setThrowable(e);
             }
-
-            render.setContext(request, response, action.getViewPath())
-                    .render();
-
+            render.setContext(request, response, action.getViewPath()).render();
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 String qs = request.getQueryString();
