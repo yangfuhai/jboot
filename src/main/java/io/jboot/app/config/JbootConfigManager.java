@@ -75,6 +75,11 @@ public class JbootConfigManager {
             mainProperties.putAll(new JbootProp(modePropertiesName).getProperties());
         }
 
+        Properties externalProperties = ConfigUtil.readExternalProperties();
+        if (externalProperties != null && !externalProperties.isEmpty()) {
+            mainProperties.putAll(externalProperties);
+        }
+
         NacosConfigManager.me().init(this);
         ApolloConfigManager.me().init(this);
     }
@@ -161,7 +166,6 @@ public class JbootConfigManager {
 
         return get(clazz, prefix, file);
     }
-
 
 
     private void refreshMainProperties() {

@@ -168,6 +168,17 @@ public class ConfigUtil {
         return joiner.toString();
     }
 
+    
+    static Properties readExternalProperties() {
+        String currentJarFilePath = ConfigUtil.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        File fileDir = new File(currentJarFilePath).getParentFile();
+        File externalProperties = new File(fileDir, "jboot.properties");
+        if (externalProperties.exists()) {
+            return new JbootProp(externalProperties).getProperties();
+        }
+        return null;
+    }
+
 
     private static String rootClassPath;
 
