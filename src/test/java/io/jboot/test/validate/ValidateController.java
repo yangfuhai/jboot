@@ -88,6 +88,10 @@ public class ValidateController extends Controller {
 
     public void test16() {
         Aop.get(TestValideService.class).calc(getInt("para"));
-        renderText("test16 :" );
+        renderText("test16" );
+    }
+
+    public void test17(@DecimalMax("200") @DecimalMin("100") int age) {
+        renderText("test17" );
     }
 }
