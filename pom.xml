@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.7.5</version>
+    <version>3.7.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -296,22 +296,23 @@
             <scope>provided</scope>
         </dependency>
 
-
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>6.0.21.Final</version>
-<!--            <scope>provided</scope>-->
         </dependency>
 
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
             <version>3.0.0</version>
-<!--            <scope>provided</scope>-->
         </dependency>
-
 
         <dependency>
             <groupId>com.weibo</groupId>
