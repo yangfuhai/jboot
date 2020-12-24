@@ -72,7 +72,7 @@ public class DateUtil {
 
 
     public static String toString(Date date, String pattern) {
-        return getSimpleDateFormat(pattern).format(date);
+        return date == null ? null : getSimpleDateFormat(pattern).format(date);
     }
 
 
