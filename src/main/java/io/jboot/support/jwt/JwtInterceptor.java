@@ -39,38 +39,52 @@ public class JwtInterceptor implements Interceptor {
         } finally {
 
             JbootController jbootController = (JbootController) inv.getController();
-            Map<String, Object> jwtMap = jbootController.getJwtAttrs();
+            Map<String, Object> jwtAttrs = jbootController.getJwtAttrs();
 
-            if (jwtMap == null || jwtMap.isEmpty()) {
+            if (jwtAttrs == null) {
                 refreshIfNecessary(jbootController, jbootController.getJwtParas());
-            }else {
-                String token = JwtManager.me().createJwtToken(jwtMap);
-                HttpServletResponse response = inv.getController().getResponse();
-                response.addHeader(JwtManager.me().getHttpHeaderName(), token);
+            } else {
+                responseJwt(jbootController, jwtAttrs);
             }
         }
     }
 
 
-    private void refreshIfNecessary(Controller ctr, Map oldData) {
+    private void refreshIfNecessary(Controller controller, Map oldData) {
         if (oldData == null || oldData.isEmpty()) {
             return;
         }
 
         // Jwt token 的发布时间
         Long isuuedAtMillis = (Long) oldData.get(ISUUED_AT);
-        if (isuuedAtMillis == null || JwtManager.me().getConfig().getValidityPeriod() <= 0) {
+
+        // 有效期
+        long validityPeriod = JwtManager.me().getConfig().getValidityPeriod();
+
+        // 永久有效，没必要刷新 Jwt
+        if (isuuedAtMillis == null || validityPeriod <= 0) {
             return;
         }
 
-        Long nowMillis = System.currentTimeMillis();
-        long savedMillis = nowMillis - isuuedAtMillis;
+        // 已经发布的时间
+        long savedMillis = System.currentTimeMillis() - isuuedAtMillis;
 
-        if (savedMillis > JwtManager.me().getConfig().getValidityPeriod() / 2) {
-            String token = JwtManager.me().createJwtToken(oldData);
-            HttpServletResponse response = ctr.getResponse();
-            response.addHeader(JwtManager.me().getHttpHeaderName(), token);
+        // 已经发布的时间 大于有效期的一半，重新刷新
+        if (savedMillis > validityPeriod / 2) {
+            responseJwt(controller, oldData);
         }
+    }
 
+
+    /**
+     * 输出 jwt 内容到客户端
+     *
+     * @param controller
+     * @param map
+     */
+    private void responseJwt(Controller controller, Map map) {
+        String token = JwtManager.me().createJwtToken(map);
+        HttpServletResponse response = controller.getResponse();
+        response.addHeader(JwtManager.me().getHttpHeaderName(), token);
     }
 }

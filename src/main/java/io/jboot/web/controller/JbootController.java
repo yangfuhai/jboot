@@ -19,10 +19,8 @@ import com.alibaba.fastjson.JSON;
 import com.jfinal.core.ActionException;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
-import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.render.RenderManager;
-import io.jboot.exception.JbootException;
 import io.jboot.support.jwt.JwtManager;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
@@ -41,6 +39,9 @@ public class JbootController extends Controller {
 
     private Object rawObject;
     private Map jwtParas;
+
+    private Map<String, Object> jwtAttrs;
+
 
     /**
      * 是否是手机浏览器
@@ -125,8 +126,6 @@ public class JbootController extends Controller {
     }
 
 
-    private Map<String, Object> jwtAttrs;
-
     @NotAction
     public Controller setJwtAttr(String name, Object value) {
         if (jwtAttrs == null) {
@@ -141,13 +140,20 @@ public class JbootController extends Controller {
     @NotAction
     public Controller setJwtMap(Map map) {
         if (map == null) {
-            throw new NullPointerException("Jwt attrs is null");
+            throw new NullPointerException("Jwt map is null");
         }
         if (jwtAttrs == null) {
             jwtAttrs = new HashMap<>();
         }
 
         jwtAttrs.putAll(map);
+        return this;
+    }
+
+
+    @NotAction
+    public Controller setJwtEmpty() {
+        jwtAttrs = new HashMap<>();
         return this;
     }
 
@@ -169,7 +175,7 @@ public class JbootController extends Controller {
         if (jwtParas == null) {
             synchronized (this) {
                 if (jwtParas == null) {
-                    initJwtParas();
+                    jwtParas = JwtManager.me().parseJwtToken(this);
                 }
             }
         }
@@ -177,37 +183,18 @@ public class JbootController extends Controller {
     }
 
 
-
     @NotAction
     public Map getJwtParas() {
         if (jwtParas == null) {
             synchronized (this) {
                 if (jwtParas == null) {
-                    initJwtParas();
+                    jwtParas = JwtManager.me().parseJwtToken(this);
                 }
             }
         }
         return jwtParas;
     }
 
-    private void initJwtParas() {
-        if (!JwtManager.me().getConfig().isConfigOk()) {
-            throw new JbootException("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
-        }
-
-        String token = getHeader(JwtManager.me().getHttpHeaderName());
-
-        if (StrUtil.isBlank(token) && StrUtil.isNotBlank(JwtManager.me().getHttpParameterKey())) {
-            token = getPara(JwtManager.me().getHttpParameterKey());
-        }
-
-        if (StrUtil.isBlank(token)) {
-            LogKit.error("Can not get jwt token form http header or parameter!!");
-            jwtParas = JwtManager.EMPTY_MAP;
-        } else {
-            jwtParas = JwtManager.me().parseJwtToken(token);
-        }
-    }
 
     @NotAction
     public String createJwtToken() {

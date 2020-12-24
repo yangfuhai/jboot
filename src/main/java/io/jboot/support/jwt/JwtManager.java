@@ -15,7 +15,9 @@
  */
 package io.jboot.support.jwt;
 
+import com.jfinal.core.Controller;
 import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootException;
@@ -51,6 +53,37 @@ public class JwtManager {
         return getConfig().getHttpParameterKey();
     }
 
+    /**
+     * 通过 Controller 解析 Map
+     * @param controller 控制器
+     * @return 所有 JWT 数据
+     */
+    public Map parseJwtToken(Controller controller) {
+
+        if (!getConfig().isConfigOk()) {
+            throw new JbootException("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
+        }
+
+        String token = controller.getHeader(getHttpHeaderName());
+
+        if (StrUtil.isBlank(token) && StrUtil.isNotBlank(getHttpParameterKey())) {
+            token = controller.get(getHttpParameterKey());
+        }
+
+        if (StrUtil.isBlank(token)) {
+            LogKit.error("Can not get jwt token form http header or parameter!!");
+            return EMPTY_MAP;
+        }
+
+        return parseJwtToken(token);
+    }
+
+
+    /**
+     * 解析 JWT Token 内容
+     * @param token 加密的 token
+     * @return 返回 JWT 的 MAP 数据
+     */
     public Map parseJwtToken(String token) {
         SecretKey secretKey = generalKey();
         try {
@@ -77,6 +110,8 @@ public class JwtManager {
         return EMPTY_MAP;
     }
 
+
+
     public String createJwtToken(Map map) {
 
         if (!getConfig().isConfigOk()) {
@@ -89,6 +124,7 @@ public class JwtManager {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
+        //追加保存 JWT 的生成时间
         map.put(JwtInterceptor.ISUUED_AT, nowMillis);
         String subject = JsonKit.toJson(map);
 
@@ -106,11 +142,14 @@ public class JwtManager {
     }
 
 
+
     private SecretKey generalKey() {
         byte[] encodedKey = DatatypeConverter.parseBase64Binary(getConfig().getSecret());
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return key;
     }
+
+
 
     private JwtConfig config;
 
