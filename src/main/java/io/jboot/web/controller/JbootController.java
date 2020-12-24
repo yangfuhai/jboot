@@ -310,6 +310,82 @@ public class JbootController extends Controller {
 
 
     /**
+     * 接收 Json 转化为 JsonObject 或者 JsonArray
+     *
+     * @return
+     */
+    @NotAction
+    public <T> T getJsonBody() {
+        if (rawObject == null && StrUtil.isNotBlank(getRawData())) {
+            rawObject = JSON.parse(getRawData());
+        }
+        return (T) rawObject;
+    }
+
+
+    /**
+     * 接收 json 转化为 object
+     *
+     * @param typeClass
+     * @param <T>
+     * @return
+     */
+    @NotAction
+    public <T> T getJsonBody(Class<T> typeClass) {
+        return getJsonBody(typeClass, null);
+    }
+
+
+    /**
+     * 接收 json 转化为 object
+     *
+     * @param typeClass
+     * @param jsonKey
+     * @param <T>
+     * @return
+     */
+    @NotAction
+    public <T> T getJsonBody(Class<T> typeClass, String jsonKey) {
+        try {
+            return (T) JsonBodyParseInterceptor.parseJsonBody(getJsonBody(), typeClass, typeClass, jsonKey);
+        } catch (Exception ex) {
+            throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
+        }
+    }
+
+
+    /**
+     * 接收 json 转化为 object
+     *
+     * @param typeDef 泛型的定义类
+     * @param <T>
+     * @return
+     */
+    @NotAction
+    public <T> T getJsonBody(TypeDef<T> typeDef) {
+        return getJsonBody(typeDef, null);
+    }
+
+
+    /**
+     * 接收 json 转化为 object
+     *
+     * @param typeDef 泛型的定义类
+     * @param jsonKey
+     * @param <T>
+     * @return
+     */
+    @NotAction
+    public <T> T getJsonBody(TypeDef<T> typeDef, String jsonKey) {
+        try {
+            return (T) JsonBodyParseInterceptor.parseJsonBody(getJsonBody(), typeDef.getDefClass(), typeDef.getType(), jsonKey);
+        } catch (Exception ex) {
+            throw new ActionException(400, RenderManager.me().getRenderFactory().getErrorRender(400), ex.getMessage());
+        }
+    }
+
+
+    /**
      * BeanGetter 会调用此方法生成 bean，在 Map List Array 下，JFinal
      * 通过 Injector.injectBean 去实例化的时候会出错，从而无法实现通过 @JsonBody 对 map list array 的注入
      *
