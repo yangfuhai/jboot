@@ -172,14 +172,26 @@ public class JbootController extends Controller {
 
     @NotAction
     public <T> T getJwtPara(String name) {
-        if (jwtParas == null) {
-            synchronized (this) {
-                if (jwtParas == null) {
-                    jwtParas = JwtManager.me().parseJwtToken(this);
-                }
-            }
+        return (T) getJwtAttrs().get(name);
+    }
+
+
+    @NotAction
+    public String getJwtParaToString(String name) {
+        Object ret = getJwtAttrs().get(name);
+        return ret == null ? null : ret.toString();
+    }
+
+
+    @NotAction
+    public BigInteger getJwtParaToBigInteger(String name) {
+        Object ret = getJwtAttrs().get(name);
+        if (ret instanceof BigInteger) {
+            return (BigInteger) ret;
+        } else if (ret instanceof Number) {
+            return BigInteger.valueOf(((Number) ret).longValue());
         }
-        return (T) jwtParas.get(name);
+        return toBigInteger(ret.toString(), null);
     }
 
 
@@ -199,7 +211,7 @@ public class JbootController extends Controller {
     @NotAction
     public String createJwtToken() {
         if (jwtAttrs == null) {
-            throw new NullPointerException("jwt attrs is null");
+            jwtAttrs = new HashMap<>();
         }
         return JwtManager.me().createJwtToken(jwtAttrs);
     }
@@ -386,7 +398,7 @@ public class JbootController extends Controller {
             }
             value = value.trim();
             if (value.startsWith("N") || value.startsWith("n")) {
-                return BigInteger.ZERO.subtract(new BigInteger(value));
+                return BigInteger.ZERO.subtract(new BigInteger(value.substring(1)));
             }
             return new BigInteger(value);
         } catch (Exception e) {
@@ -447,7 +459,7 @@ public class JbootController extends Controller {
             }
             value = value.trim();
             if (value.startsWith("N") || value.startsWith("n")) {
-                return BigDecimal.ZERO.subtract(new BigDecimal(value));
+                return BigDecimal.ZERO.subtract(new BigDecimal(value.substring(1)));
             }
             return new BigDecimal(value);
         } catch (Exception e) {
