@@ -318,17 +318,24 @@ public class ClassUtil {
                 sb.append(",");
             }
         }
-        return sb.append(")").toString();
 
+        return sb.append(")").toString();
     }
 
-    public static boolean hasClass(String className){
+
+    public static boolean hasClass(String className) {
         try {
-            Class.forName(className);
+            Class.forName(className, false, getClassLoader());
             return true;
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+
+    public static ClassLoader getClassLoader() {
+        ClassLoader ret = Thread.currentThread().getContextClassLoader();
+        return ret != null ? ret : ClassUtil.class.getClassLoader();
     }
 
 }

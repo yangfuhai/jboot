@@ -29,12 +29,13 @@ public class DataSourceConfig {
     public static final String TYPE_ANSISQL = "ansisql";
     public static final String TYPE_POSTGRESQL = "postgresql";
 
+
     private String name;
     private String type = TYPE_MYSQL;
     private String url;
     private String user;
     private String password;
-    private String driverClassName = "com.mysql.jdbc.Driver";
+    private String driverClassName;
     private String connectionInitSql;
     private String poolName;
     private boolean cachePrepStmts = true;
@@ -125,7 +126,10 @@ public class DataSourceConfig {
     }
 
     public String getDriverClassName() {
-        return driverClassName;
+        if (StrUtil.isNotBlank(driverClassName)) {
+            return driverClassName;
+        }
+        return DriverClassNames.getDefaultDriverClass(getType());
     }
 
     public void setDriverClassName(String driverClassName) {
