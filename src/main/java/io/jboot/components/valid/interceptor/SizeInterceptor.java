@@ -38,7 +38,7 @@ public class SizeInterceptor implements Interceptor {
             if (size != null) {
                 Object validObject = inv.getArg(index);
                 if (validObject == null) {
-                    String reason = parameters[index].getName() + " size value is " + size.min() + " ~ " + size.max()
+                    String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
                             + ", but current value is null at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("max", size.max()).set("min", size.min());
                     throwValidException(size.message(), paras, reason);
@@ -46,7 +46,7 @@ public class SizeInterceptor implements Interceptor {
 
                 int len = getObjectLen(validObject);
                 if (len < size.min() || len > size.max()) {
-                    String reason = parameters[index].getName() + " size value is " + size.min() + " ~ " + size.max()
+                    String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
                             + ", but current value size (or length) is " + len + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("max", size.max()).set("min", size.min());
                     throwValidException(size.message(), paras, reason);
