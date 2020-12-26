@@ -726,21 +726,21 @@ public class DateUtil {
      * 判断 A 的时间是否在 B 的时间 "之后"
      */
     public static boolean isAfter(Date self, Date other) {
-        return self.getTime() > other.getTime();
+        return self != null && other != null && self.getTime() > other.getTime();
     }
 
     /**
      * 判断 A 的时间是否在 B 的时间 "之后"
      */
     public static boolean isBefore(Date self, Date other) {
-        return self.getTime() < other.getTime();
+        return self != null && other != null && self.getTime() < other.getTime();
     }
 
     /**
      * 是否是相同的一天
      */
     public static boolean isSameDay(Date self, Date other) {
-        return getYearNumber(self) == getYearNumber(other)
+        return self != null && other != null && getYearNumber(self) == getYearNumber(other)
                 && getDayOfYearNumber(self) == getDayOfYearNumber(other);
     }
 
@@ -748,7 +748,7 @@ public class DateUtil {
      * 是否是相同的星期
      */
     public static boolean isSameWeek(Date self, Date other) {
-        return getYearNumber(self) == getYearNumber(other)
+        return self != null && other != null && getYearNumber(self) == getYearNumber(other)
                 && getWeekOfYearNumber(self) == getWeekOfYearNumber(other);
     }
 
@@ -756,7 +756,7 @@ public class DateUtil {
      * 是否是相同的月份
      */
     public static boolean isSameMonth(Date self, Date other) {
-        return getYearNumber(self) == getYearNumber(other)
+        return self != null && other != null && getYearNumber(self) == getYearNumber(other)
                 && getMonthNumber(self) == getMonthNumber(other);
     }
 
@@ -764,7 +764,7 @@ public class DateUtil {
      * 是否是相同的月份
      */
     public static boolean isSameQuarter(Date self, Date other) {
-        return getYearNumber(self) == getYearNumber(other)
+        return self != null && other != null && getYearNumber(self) == getYearNumber(other)
                 && getQuarterNumber(self) == getQuarterNumber(other);
     }
 
@@ -772,7 +772,7 @@ public class DateUtil {
      * 是否是相同的月份
      */
     public static boolean isSameYear(Date self, Date other) {
-        return getYearNumber(self) == getYearNumber(other);
+        return self != null && other != null && getYearNumber(self) == getYearNumber(other);
     }
 
 
@@ -809,21 +809,21 @@ public class DateUtil {
      * 此日期是否是本年份
      */
     public static boolean isThisYear(Date date) {
-        return getYearNumber(new Date()) == getYearNumber(date);
+        return date != null && getYearNumber(new Date()) == getYearNumber(date);
     }
 
     /**
      * 判断是否是润年
      */
     public static boolean isLeapYear(Date date) {
-        return new GregorianCalendar().isLeapYear(getYearNumber(date));
+        return date != null && new GregorianCalendar().isLeapYear(getYearNumber(date));
     }
 
     /**
      * 求出指定的时间那天是星期几
      */
     public static String getWeekDay(Date date) {
-        return DateUtil.WEEKS[getDayOfWeekNumber(date) - 1];
+        return date == null ? null : DateUtil.WEEKS[getDayOfWeekNumber(date) - 1];
     }
 
 
