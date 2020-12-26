@@ -1,3 +1,13 @@
+jboot v3.7.6:
+新增：新增默认的 DriverClassNames，当用户不配置的时候使用默认的进行配置
+新增：JbootController.getJsonBody() 的方法
+优化：默认添加 validation-api 验证框架依赖
+优化：DateUtil 当前端传入 null 值的时候有适合的返回值
+优化：jwt 拦截器提高性能，并新增清空 jwt 数据的方法
+修复：JbootController.toBigDecimal 当已 N 开头时解析不对的问题
+
+
+
 jboot v3.7.5:
 新增：支持更多的验证注解，比如 Digits DecimalMax DecimalMin Positive Negative 等
 新增：支持在 Service 任何被注入的方法里进行验证
