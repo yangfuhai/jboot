@@ -172,20 +172,20 @@ public class JbootController extends Controller {
 
     @NotAction
     public <T> T getJwtPara(String name) {
-        return (T) getJwtAttrs().get(name);
+        return (T) getJwtParas().get(name);
     }
 
 
     @NotAction
     public String getJwtParaToString(String name) {
-        Object ret = getJwtAttrs().get(name);
+        Object ret = getJwtParas().get(name);
         return ret == null ? null : ret.toString();
     }
 
 
     @NotAction
     public BigInteger getJwtParaToBigInteger(String name) {
-        Object ret = getJwtAttrs().get(name);
+        Object ret = getJwtParas().get(name);
         if (ret instanceof BigInteger) {
             return (BigInteger) ret;
         } else if (ret instanceof Number) {
