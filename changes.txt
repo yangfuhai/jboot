@@ -1,3 +1,10 @@
+jboot v3.7.7:
+优化：优化 @Configuration 注解初始化流程
+优化：AOP 对接口或者抽象类进行注入，但有找不到其实现类的时候可能出现 methodNoFund 的错误
+修复：通过 @Bean(name=xxx) 注解去定义 Service 时在某些情况下可能无法正常获取的问题
+
+
+
 jboot v3.7.6:
 新增：新增默认的 DriverClassNames，当用户不配置的时候使用默认的进行配置
 新增：JbootController.getJsonBody() 的方法
