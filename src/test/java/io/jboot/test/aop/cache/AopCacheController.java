@@ -17,14 +17,26 @@ public class AopCacheController extends JbootController {
 
     @Inject
     @Bean(name = "myCommentServiceFromConfiguration")
-    private CommentService myCommentService;
+    private CommentService myCommentService1;
+
+
+    @Inject
+    @Bean(name = "myCommentService1")
+    private CommentService myCommentService2;
+
+
+    @Inject
+    @Bean(name = "name222")
+    private CommentService myCommentServiceImpl222;
 
 
     public void index() {
-        System.out.println("commentService:"+commentService);
-        System.out.println("myCommentService:"+myCommentService);
+        System.out.println("defaultCommentService:"+commentService);
+        System.out.println("myCommentService1:"+myCommentService1);
+        System.out.println("myCommentService2:"+myCommentService2);
+        System.out.println("myCommentServiceImpl222:"+myCommentServiceImpl222);
 
-        renderText("text from : " + commentService.getCommentById("index"));
+        renderText("text from : " + myCommentServiceImpl222.getCommentById("index"));
     }
 
 

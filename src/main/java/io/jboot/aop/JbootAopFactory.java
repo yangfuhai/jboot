@@ -17,6 +17,7 @@ package io.jboot.aop;
 
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
+import com.jfinal.aop.Singleton;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
@@ -44,6 +45,7 @@ import io.jboot.web.controller.JbootController;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +80,28 @@ public class JbootAopFactory extends AopFactory {
         initBeanMapping();
     }
 
+    @Override
+    protected <T> T doGet(Class<T> targetClass) throws ReflectiveOperationException {
+        // Aop.get(obj.getClass()) 可以用 Aop.inject(obj)，所以注掉下一行代码
+        // targetClass = (Class<T>)getUsefulClass(targetClass);
+
+        targetClass = (Class<T>) getMappingClass(targetClass);
+        int modifiers = targetClass.getModifiers();
+
+        //注入目标是接口 或者 抽象类，则直接返回（不对其进行注入）
+        if (Modifier.isInterface(modifiers) || Modifier.isAbstract(modifiers)) {
+            return null;
+        }
+
+        Singleton si = targetClass.getAnnotation(Singleton.class);
+        boolean singleton = (si != null ? si.value() : this.singleton);
+
+        if (singleton) {
+            return doGetSingleton(targetClass);
+        } else {
+            return doGetPrototype(targetClass);
+        }
+    }
 
     @Override
     protected Object createObject(Class<?> targetClass) {
@@ -277,7 +301,10 @@ public class JbootAopFactory extends AopFactory {
      */
     private void initBeanMapping() {
 
+        // 添加映射
         initBeansMapping();
+
+        // 初始化 @Configuration 里的 beans
         initConfigurationBeansObject();
 
     }
@@ -291,43 +318,30 @@ public class JbootAopFactory extends AopFactory {
         for (Class implClass : classes) {
             Bean bean = (Bean) implClass.getAnnotation(Bean.class);
             String beanName = AnnotationUtil.get(bean.name());
-
-
-            Class<?>[] interfaceClasses = implClass.getInterfaces();
-            if (interfaceClasses == null || interfaceClasses.length == 0) {
-                //add self
-                this.addMapping(implClass, implClass);
-                if (StrUtil.isNotBlank(beanName)) {
-                    this.addStringNameBeansMapping(beanName, implClass);
+            if (StrUtil.isNotBlank(beanName)) {
+                if (beanNameClassesMapping.containsKey(beanName)) {
+                    throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
+                            + ", can not add for class " + implClass);
                 }
-
+                beanNameClassesMapping.put(beanName, implClass);
             } else {
-                Class[] excludes = buildExcludeClasses(implClass);
-                boolean alreadyAddStringNameForImplClass = false;
-                for (Class interfaceClass : interfaceClasses) {
-                    if (alreadyAddStringNameForImplClass && StrUtil.isNotBlank(beanName)) {
-                        throw new JbootException("can not default \"" + beanName + "\" for class: " + implClass.getName()
-                                + ", because it implements multi interface. ");
-                    }
-                    if (!inExcludes(interfaceClass, excludes)) {
-                        this.addMapping(interfaceClass, implClass);
-                        if (StrUtil.isNotBlank(beanName)) {
-                            this.addStringNameBeansMapping(beanName, implClass);
-                            alreadyAddStringNameForImplClass = true;
+                Class<?>[] interfaceClasses = implClass.getInterfaces();
+                if (interfaceClasses == null || interfaceClasses.length == 0) {
+                    //add self
+                    this.addMapping(implClass, implClass);
+
+                } else {
+                    Class[] excludes = buildExcludeClasses(implClass);
+                    for (Class interfaceClass : interfaceClasses) {
+                        if (!inExcludes(interfaceClass, excludes)) {
+                            this.addMapping(interfaceClass, implClass);
                         }
                     }
                 }
             }
         }
-    }
 
 
-    private void addStringNameBeansMapping(String beanName, Class implClass) {
-        if (beanNameClassesMapping.containsKey(beanName)) {
-            throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
-                    + ", can not add for class " + implClass);
-        }
-        beanNameClassesMapping.put(beanName, implClass);
     }
 
 
@@ -337,7 +351,7 @@ public class JbootAopFactory extends AopFactory {
     private void initConfigurationBeansObject() {
         List<Class> configurationClasses = ClassScanner.scanClassByAnnotation(Configuration.class, true);
         for (Class configurationClass : configurationClasses) {
-            Object configurationObj = ClassUtil.newInstance(configurationClass);
+            Object configurationObj = ClassUtil.newInstance(configurationClass, false);
             if (configurationObj == null) {
                 throw new NullPointerException("can not newInstance for class : " + configurationClass);
             }
@@ -360,22 +374,6 @@ public class JbootAopFactory extends AopFactory {
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
-                    }
-
-                    if (methodObj != null) {
-                        Class implClass = ClassUtil.getUsefulClass(methodObj.getClass());
-                        Class<?>[] interfaceClasses = implClass.getInterfaces();
-                        if (interfaceClasses == null || interfaceClasses.length == 0) {
-                            //add self
-                            this.addMapping(implClass, implClass);
-                        } else {
-                            Class[] excludes = buildExcludeClasses(implClass);
-                            for (Class interfaceClass : interfaceClasses) {
-                                if (!inExcludes(interfaceClass, excludes) && !mapping.containsKey(interfaceClass)) {
-                                    this.addMapping(interfaceClass, implClass);
-                                }
-                            }
-                        }
                     }
                 }
             }
