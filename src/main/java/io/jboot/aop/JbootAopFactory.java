@@ -68,7 +68,8 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    private Map<String, Object> beansMap = new ConcurrentHashMap<>();
+    private Map<String, Object> beansCache = new ConcurrentHashMap<>();
+    private Map<String, Class<?>> beanNameClassesMapping = new ConcurrentHashMap<>();
 
 
     private JbootAopFactory() {
@@ -108,7 +109,7 @@ public class JbootAopFactory extends AopFactory {
                     Bean bean = field.getAnnotation(Bean.class);
                     String beanName = bean != null ? AnnotationUtil.get(bean.name()) : null;
                     if (StrUtil.isNotBlank(beanName)) {
-                        doInjectByName(targetObject, field, inject, beanName);
+                        doInjectByName(targetObject, field, beanName);
                     } else {
                         doInjectJFinalOrginal(targetObject, field, inject);
                     }
@@ -147,14 +148,19 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    private void doInjectByName(Object targetObject, Field field, Inject inject, String name) throws ReflectiveOperationException {
-        Object fieldInjectedObject = getBean(name);
-        if (fieldInjectedObject != null) {
-            setFieldValue(field, targetObject, fieldInjectedObject);
-        } else {
-            LOG.warn("can not inject by name [" + name + "] in " + targetObject.getClass() + "." + field.getName() + ", use default.");
-            doInjectJFinalOrginal(targetObject, field, inject);
+    private void doInjectByName(Object targetObject, Field field, String beanName) throws ReflectiveOperationException {
+        Object fieldInjectedObject = beansCache.get(beanName);
+        if (fieldInjectedObject == null) {
+            Class<?> fieldInjectedClass = beanNameClassesMapping.get(beanName);
+            if (fieldInjectedClass == null || fieldInjectedClass == Void.class) {
+                fieldInjectedClass = field.getType();
+            }
+
+            fieldInjectedObject = doGet(fieldInjectedClass);
+            beansCache.put(beanName, fieldInjectedObject);
         }
+
+        setFieldValue(field, targetObject, fieldInjectedObject);
     }
 
     /**
@@ -270,33 +276,65 @@ public class JbootAopFactory extends AopFactory {
      * 初始化 @Bean 注解的映射关系
      */
     private void initBeanMapping() {
+
+        initBeansMapping();
+        initConfigurationBeansObject();
+
+    }
+
+
+    /**
+     * 添加 所有的 Bean 和实现类 的映射
+     */
+    private void initBeansMapping() {
         List<Class> classes = ClassScanner.scanClassByAnnotation(Bean.class, true);
         for (Class implClass : classes) {
             Bean bean = (Bean) implClass.getAnnotation(Bean.class);
             String beanName = AnnotationUtil.get(bean.name());
-            if (StrUtil.isNotBlank(beanName)) {
-                if (beansMap.containsKey(beanName)) {
-                    throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
-                            + ", can not add for class " + implClass);
-                }
-                beansMap.put(beanName, get(implClass));
-            }
+
 
             Class<?>[] interfaceClasses = implClass.getInterfaces();
             if (interfaceClasses == null || interfaceClasses.length == 0) {
                 //add self
                 this.addMapping(implClass, implClass);
+                if (StrUtil.isNotBlank(beanName)) {
+                    this.addStringNameBeansMapping(beanName, implClass);
+                }
+
             } else {
                 Class[] excludes = buildExcludeClasses(implClass);
+                boolean alreadyAddStringNameForImplClass = false;
                 for (Class interfaceClass : interfaceClasses) {
+                    if (alreadyAddStringNameForImplClass && StrUtil.isNotBlank(beanName)) {
+                        throw new JbootException("can not default \"" + beanName + "\" for class: " + implClass.getName()
+                                + ", because it implements multi interface. ");
+                    }
                     if (!inExcludes(interfaceClass, excludes)) {
                         this.addMapping(interfaceClass, implClass);
+                        if (StrUtil.isNotBlank(beanName)) {
+                            this.addStringNameBeansMapping(beanName, implClass);
+                            alreadyAddStringNameForImplClass = true;
+                        }
                     }
                 }
             }
         }
+    }
 
 
+    private void addStringNameBeansMapping(String beanName, Class implClass) {
+        if (beanNameClassesMapping.containsKey(beanName)) {
+            throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
+                    + ", can not add for class " + implClass);
+        }
+        beanNameClassesMapping.put(beanName, implClass);
+    }
+
+
+    /**
+     * 初始化 @Configuration 里的 bean 配置
+     */
+    private void initConfigurationBeansObject() {
         List<Class> configurationClasses = ClassScanner.scanClassByAnnotation(Configuration.class, true);
         for (Class configurationClass : configurationClasses) {
             Object configurationObj = ClassUtil.newInstance(configurationClass);
@@ -308,7 +346,7 @@ public class JbootAopFactory extends AopFactory {
                 Bean bean = method.getAnnotation(Bean.class);
                 if (bean != null) {
                     String beanName = StrUtil.obtainDefault(AnnotationUtil.get(bean.name()), method.getName());
-                    if (beansMap.containsKey(beanName)) {
+                    if (beansCache.containsKey(beanName)) {
                         throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
                                 + ", can not add again by method:" + ClassUtil.buildMethodString(method));
                     }
@@ -318,7 +356,7 @@ public class JbootAopFactory extends AopFactory {
                         methodObj = method.invoke(configurationObj);
                         if (methodObj != null) {
                             inject(methodObj);
-                            beansMap.put(beanName, methodObj);
+                            beansCache.put(beanName, methodObj);
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -330,7 +368,7 @@ public class JbootAopFactory extends AopFactory {
                         if (interfaceClasses == null || interfaceClasses.length == 0) {
                             //add self
                             this.addMapping(implClass, implClass);
-                        }else {
+                        } else {
                             Class[] excludes = buildExcludeClasses(implClass);
                             for (Class interfaceClass : interfaceClasses) {
                                 if (!inExcludes(interfaceClass, excludes) && !mapping.containsKey(interfaceClass)) {
@@ -366,11 +404,11 @@ public class JbootAopFactory extends AopFactory {
 
 
     public <T> T getBean(String name) {
-        return (T) beansMap.get(name);
+        return (T) beansCache.get(name);
     }
 
     public void setBean(String name, Object obj) {
-        beansMap.put(name, obj);
+        beansCache.put(name, obj);
     }
 
 }
