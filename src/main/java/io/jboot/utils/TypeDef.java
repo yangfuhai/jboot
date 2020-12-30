@@ -2,19 +2,22 @@ package io.jboot.utils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
 public class TypeDef<T> {
 
-    public static final TypeDef list_string = new TypeDef<List<String>>() {};
-    public static final TypeDef list_integer = new TypeDef<List<Integer>>() {};
-    public static final TypeDef list_biginteger = new TypeDef<List<BigInteger>>() {};
+    public static final TypeDef LIST_STRING = new TypeDef<List<String>>() {};
+    public static final TypeDef LIST_INTEGER = new TypeDef<List<Integer>>() {};
+    public static final TypeDef LIST_BIGINTEGER = new TypeDef<List<BigInteger>>() {};
+    public static final TypeDef LIST_BIGDECIMAL = new TypeDef<List<BigDecimal>>() {};
 
-    public static final TypeDef map_string = new TypeDef<Map<String, String>>() {};
-    public static final TypeDef map_integer = new TypeDef<Map<String, Integer>>() {};
-    public static final TypeDef map_biginteger = new TypeDef<Map<String, BigInteger>>() {};
+    public static final TypeDef MAP_STRING = new TypeDef<Map<String, String>>() {};
+    public static final TypeDef MAP_INTEGER = new TypeDef<Map<String, Integer>>() {};
+    public static final TypeDef MAP_BIGINTEGER = new TypeDef<Map<String, BigInteger>>() {};
+    public static final TypeDef MAP_BIGDECIMAL = new TypeDef<Map<String, BigDecimal>>() {};
 
 
     protected Type type;
