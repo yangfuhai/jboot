@@ -17,14 +17,12 @@ package io.jboot.aop;
 
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
-import com.jfinal.aop.Singleton;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.proxy.Proxy;
 import com.jfinal.proxy.ProxyManager;
-import io.jboot.Jboot;
 import io.jboot.aop.annotation.*;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.app.config.ConfigUtil;
@@ -45,7 +43,6 @@ import io.jboot.web.controller.JbootController;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,29 +75,6 @@ public class JbootAopFactory extends AopFactory {
         ProxyManager.me().setProxyFactory(new JbootCglibProxyFactory());
         setInjectSuperClass(true);
         initBeanMapping();
-    }
-
-    @Override
-    protected <T> T doGet(Class<T> targetClass) throws ReflectiveOperationException {
-        // Aop.get(obj.getClass()) 可以用 Aop.inject(obj)，所以注掉下一行代码
-        // targetClass = (Class<T>)getUsefulClass(targetClass);
-
-        targetClass = (Class<T>) getMappingClass(targetClass);
-        int modifiers = targetClass.getModifiers();
-
-        //注入目标是接口 或者 抽象类，则直接返回（不对其进行注入）
-        if (Modifier.isInterface(modifiers) || Modifier.isAbstract(modifiers)) {
-            return null;
-        }
-
-        Singleton si = targetClass.getAnnotation(Singleton.class);
-        boolean singleton = (si != null ? si.value() : this.singleton);
-
-        if (singleton) {
-            return doGetSingleton(targetClass);
-        } else {
-            return doGetPrototype(targetClass);
-        }
     }
 
     @Override
@@ -214,19 +188,16 @@ public class JbootAopFactory extends AopFactory {
      * @param rpcInject
      */
     private void doInjectRPC(Object targetObject, Field field, RPCInject rpcInject) {
-
         try {
-            JbootrpcReferenceConfig serviceConfig = new JbootrpcReferenceConfig(rpcInject);
             Class<?> fieldInjectedClass = field.getType();
+            JbootrpcReferenceConfig referenceConfig = new JbootrpcReferenceConfig(rpcInject);
 
             Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
-
-            Object fieldInjectedObject = jbootrpc.serviceObtain(fieldInjectedClass, serviceConfig);
+            Object fieldInjectedObject = jbootrpc.serviceObtain(fieldInjectedClass, referenceConfig);
 
             setFieldValue(field, targetObject, fieldInjectedObject);
-
         } catch (Exception ex) {
-            LOG.error("can not inject rpc service in " + targetObject.getClass() + " by config " + rpcInject, ex);
+            LOG.error("Can not inject rpc service in " + targetObject.getClass() + " by config " + rpcInject, ex);
         }
     }
 
@@ -241,7 +212,7 @@ public class JbootAopFactory extends AopFactory {
     private void doInjectConfigValue(Object targetObject, Field field, ConfigValue configValue) throws IllegalAccessException {
         String key = AnnotationUtil.get(configValue.value());
         Class<?> fieldInjectedClass = field.getType();
-        String value = getConfigValue(key, targetObject, field);
+        String value = JbootConfigManager.me().getConfigValue(key);
 
         if (StrUtil.isNotBlank(value)) {
             Object fieldInjectedObject = ConfigUtil.convert(fieldInjectedClass, value, field.getGenericType());
@@ -251,10 +222,6 @@ public class JbootAopFactory extends AopFactory {
         }
     }
 
-
-    private String getConfigValue(String key, Object targetObject, Field field) {
-        return Jboot.configValue(key);
-    }
 
 
     /**

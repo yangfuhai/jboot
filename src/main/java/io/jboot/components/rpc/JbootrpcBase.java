@@ -41,7 +41,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
                     // onStart 方法是在 app 启动完成后，Jboot 主动去调用的
                     // 但是，在某些场景可能存在没有等 app 启动完成就去获取 Service 的情况
                     // 此时，需要主动先调用下 onStart 方法
-                    callStartMethodIfNecessary();
+                    invokeOnStartIfNecessary();
 
                     object = onServiceCreate(interfaceClass, config);
                     if (object != null) {
@@ -53,7 +53,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
         return object;
     }
 
-    protected void callStartMethodIfNecessary() {
+    protected void invokeOnStartIfNecessary() {
         if (!started) {
             synchronized (this) {
                 if (!started) {
@@ -63,6 +63,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
             }
         }
     }
+
 
     public abstract <T> T onServiceCreate(Class<T> serviceClass, JbootrpcReferenceConfig config);
 
