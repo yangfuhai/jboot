@@ -1,3 +1,8 @@
+jboot v3.7.8:
+修复：修复 v3.7.7 的 Aop.get(Interface.class) 在某些情况下无法获取服务的问题
+
+
+
 jboot v3.7.7:
 优化：优化 @Configuration 注解初始化流程
 优化：AOP 对接口或者抽象类进行注入，但有找不到其实现类的时候可能出现 methodNoFund 的错误
