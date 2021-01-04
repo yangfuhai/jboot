@@ -223,7 +223,6 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-
     /**
      * 允许多次执行 AddMapping，方便在应用运行中可以切换 Mapping
      *
@@ -335,12 +334,32 @@ public class JbootAopFactory extends AopFactory {
                     Object methodObj = null;
                     try {
                         methodObj = method.invoke(configurationObj);
-                        if (methodObj != null) {
-                            inject(methodObj);
-                            beansCache.put(beanName, methodObj);
-                        }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
+                    }
+
+                    if (methodObj != null) {
+
+                        inject(methodObj);
+                        beansCache.put(beanName, methodObj);
+
+                        //空注解
+                        if (StrUtil.isBlank(bean.name())) {
+                            Class implClass = ClassUtil.getUsefulClass(methodObj.getClass());
+                            Class<?>[] interfaceClasses = implClass.getInterfaces();
+                            if (interfaceClasses == null || interfaceClasses.length == 0) {
+                                //add self
+                                this.addMapping(implClass, implClass);
+
+                            } else {
+                                Class[] excludes = buildExcludeClasses(implClass);
+                                for (Class interfaceClass : interfaceClasses) {
+                                    if (!inExcludes(interfaceClass, excludes)) {
+                                        this.addMapping(interfaceClass, implClass);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
