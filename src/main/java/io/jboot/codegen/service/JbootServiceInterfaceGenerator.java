@@ -34,6 +34,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
 
     private String modelPacket;
     private String basePackage;
+    private String classSuffix = "Service";
 
     private MetaBuilder metaBuilder;
 
@@ -100,6 +101,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
         data.set("tableMeta", tableMeta);
         data.set("modelPacket", modelPacket);
         data.set("basePackage", basePackage);
+        data.set("classSuffix", this.classSuffix);
 
         Engine engine = Engine.use("forService");
         tableMeta.baseModelContent = engine.getTemplate(template).renderToString(data);
@@ -116,7 +118,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
             dir.mkdirs();
         }
 
-        String target = baseModelOutputDir + File.separator + tableMeta.modelName + "Service" + ".java";
+        String target = baseModelOutputDir + File.separator + tableMeta.modelName + classSuffix + ".java";
 
         File targetFile = new File(target);
         if (targetFile.exists()) {
