@@ -20,7 +20,7 @@ import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 import io.jsonwebtoken.*;
 
@@ -61,7 +61,7 @@ public class JwtManager {
     public Map parseJwtToken(Controller controller) {
 
         if (!getConfig().isConfigOk()) {
-            throw new JbootException("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
+            throw new JbootIllegalConfigException("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
         }
 
         String token = controller.getHeader(getHttpHeaderName());
@@ -115,7 +115,7 @@ public class JwtManager {
     public String createJwtToken(Map map) {
 
         if (!getConfig().isConfigOk()) {
-            throw new JbootException("Can not create jwt, please config jboot.web.jwt.secret in jboot.properties.");
+            throw new JbootIllegalConfigException("Can not create jwt, please config jboot.web.jwt.secret in jboot.properties.");
         }
 
         SecretKey secretKey = generalKey();
