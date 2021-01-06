@@ -15,11 +15,13 @@
  */
 package io.jboot.support.metric;
 
+import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.jvm.*;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.utils.StrUtil;
+import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.support.metric.reporter.console.JbootConsoleReporter;
 import io.jboot.support.metric.reporter.csv.CSVReporter;
 import io.jboot.support.metric.reporter.elasticsearch.ElasticsearchReporter;
@@ -27,12 +29,15 @@ import io.jboot.support.metric.reporter.ganglia.GangliaReporter;
 import io.jboot.support.metric.reporter.graphite.JbootGraphiteReporter;
 import io.jboot.support.metric.reporter.influxdb.InfluxdbReporter;
 import io.jboot.support.metric.reporter.jmx.JMXReporter;
+import io.jboot.support.metric.reporter.prometheus.PrometheusReporter;
 import io.jboot.support.metric.reporter.slf4j.JbootSlf4jReporter;
-import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.StrUtil;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class JbootMetricManager {
@@ -53,6 +58,7 @@ public class JbootMetricManager {
     private JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
 
     private boolean enable = false;
+
     private JbootMetricManager() {
 
         if (!metricsConfig.isConfigOk()) {
@@ -61,6 +67,18 @@ public class JbootMetricManager {
 
         metricRegistry = new MetricRegistry();
         healthCheckRegistry = new HealthCheckRegistry();
+
+
+        if (metricsConfig.isReportJvmEnable()) {
+            metricRegistry.register("jvm.up_time", (Gauge<Long>) () -> ManagementFactory.getRuntimeMXBean().getUptime());
+            metricRegistry.register("jvm.current_time", (Gauge<Long>) () -> System.currentTimeMillis());
+            metricRegistry.register("jvm.classes", new ClassLoadingGaugeSet());
+            metricRegistry.register("jvm.fd", new FileDescriptorRatioGauge());
+            metricRegistry.register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
+            metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
+            metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
+            metricRegistry.register("jvm.threads", new CachedThreadStatesGaugeSet(10, TimeUnit.SECONDS));
+        }
 
         List<JbootMetricReporter> reporters = getReporters();
         if (ArrayUtil.isNullOrEmpty(reporters)) {
@@ -130,6 +148,9 @@ public class JbootMetricManager {
                 break;
             case JbootMetricConfig.REPORTER_SLF4J:
                 reporter = new JbootSlf4jReporter();
+                break;
+            case JbootMetricConfig.REPORTER_PROMETHEUS:
+                reporter = new PrometheusReporter();
                 break;
             default:
                 reporter = JbootSpiLoader.load(JbootMetricReporter.class, repoterName);

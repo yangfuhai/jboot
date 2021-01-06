@@ -28,9 +28,11 @@ public class JbootMetricConfig {
     public static final String REPORTER_CONSOLE = "console";
     public static final String REPORTER_CSV = "csv";
     public static final String REPORTER_SLF4J = "slf4j";
+    public static final String REPORTER_PROMETHEUS= "prometheus";
 
     private String url;
     private String reporter;
+    private boolean reportJvmEnable = true;
 
     public String getMappingUrl() {
         //在metrics中，会访问到配置的二级目录，必须添加下 /* 才能正常访问
@@ -55,6 +57,14 @@ public class JbootMetricConfig {
 
     public void setReporter(String reporter) {
         this.reporter = reporter;
+    }
+
+    public boolean isReportJvmEnable() {
+        return reportJvmEnable;
+    }
+
+    public void setReportJvmEnable(boolean reportJvmEnable) {
+        this.reportJvmEnable = reportJvmEnable;
     }
 
     public boolean isConfigOk() {
