@@ -251,6 +251,7 @@ public class ClassScanner {
         excludeJars.add("oshi-");
         excludeJars.add("classmate-");
         excludeJars.add("hibernate-");
+        excludeJars.add("simpleclient_");
     }
 
 
@@ -300,10 +301,10 @@ public class ClassScanner {
         excludeClasses.add("com.mysql.");
         excludeClasses.add("org.gjt.");
         excludeClasses.add("io.dropwizard");
+        excludeClasses.add("io.prometheus");
         excludeClasses.add("io.jsonwebtoken");
         excludeClasses.add("io.lettuce");
         excludeClasses.add("reactor.adapter");
-        excludeClasses.add("io.prometheus");
         excludeClasses.add("io.seata.");
         excludeClasses.add("io.swagger.");
         excludeClasses.add("io.undertow.");

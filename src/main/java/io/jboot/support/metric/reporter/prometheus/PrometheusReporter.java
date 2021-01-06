@@ -40,6 +40,17 @@ public class PrometheusReporter implements JbootMetricReporter {
         } catch (IOException e) {
             throw new JbootIllegalConfigException("Prometheus config is error, please check your jboot.properties. ", e);
         }
+
+//        if (httpServer != null) {
+//            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+//                if (httpServer != null) {
+//                    try {
+//                        httpServer.stop();
+//                    } catch (Exception ex) {
+//                    }
+//                }
+//            }, "prometheus-httpserver-hook"));
+//        }
     }
 
     @Override
