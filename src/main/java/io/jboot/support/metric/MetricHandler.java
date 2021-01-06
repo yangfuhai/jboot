@@ -13,38 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.web.handler;
+package io.jboot.support.metric;
 
 import com.jfinal.handler.Handler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+public class MetricHandler extends Handler {
 
-public class JbootMetricsHandler extends Handler {
+    private String url;
 
-
-    private  String metricsReadUrl;
-
-    public JbootMetricsHandler(String metricsReadUrl) {
-        this.metricsReadUrl = metricsReadUrl;
+    public MetricHandler(String url) {
+        this.url = url;
     }
+
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-
-        //static files
-        if (target.lastIndexOf('.') != -1) {
+        if (target.startsWith(url)) {
             return;
+        } else {
+            next.handle(target, request, response, isHandled);
         }
-
-        // metrics servlet 处理，此处如果是 tomcat，需要在 web.xml 配置 metrics 的相关  servlet
-        if (target.startsWith(metricsReadUrl)) {
-            return;
-        }
-
-        next.handle(target, request, response, isHandled);
     }
-
-
 }

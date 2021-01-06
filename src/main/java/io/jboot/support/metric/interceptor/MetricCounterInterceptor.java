@@ -19,15 +19,12 @@ import com.codahale.metrics.Counter;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
-import io.jboot.support.metric.JbootMetricConfig;
 import io.jboot.support.metric.annotation.EnableMetricCounter;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 
 
 public class MetricCounterInterceptor implements Interceptor {
-
-    private static JbootMetricConfig config = Jboot.config(JbootMetricConfig.class);
 
 
     @Override

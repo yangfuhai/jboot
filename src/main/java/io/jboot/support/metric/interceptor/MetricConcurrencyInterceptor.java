@@ -42,8 +42,6 @@ public class MetricConcurrencyInterceptor implements Interceptor {
             concurrencyRecord.inc();
         }
 
-
-
         try {
             inv.invoke();
         } finally {

@@ -42,6 +42,7 @@ import io.jboot.core.listener.JbootAppListenerManager;
 import io.jboot.core.log.Slf4jLogFactory;
 import io.jboot.db.ArpManager;
 import io.jboot.support.metric.JbootMetricConfig;
+import io.jboot.support.metric.MetricHandler;
 import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
@@ -58,7 +59,6 @@ import io.jboot.web.directive.annotation.JFinalSharedObject;
 import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
-import io.jboot.web.handler.JbootMetricsHandler;
 import io.jboot.web.json.JbootJson;
 import io.jboot.web.render.JbootRenderFactory;
 
@@ -269,15 +269,15 @@ public class JbootCoreConfig extends JFinalConfig {
         //用户的 handler 优先于 jboot 的 handler 执行
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
 
+
         handlers.add(new JbootGatewayHandler());
         handlers.add(new AttachmentHandler());
 
         //metrics 处理
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
         if (metricsConfig.isConfigOk()) {
-            handlers.add(new JbootMetricsHandler(metricsConfig.getUrl()));
+            handlers.add(new MetricHandler(metricsConfig.getUrl()));
         }
-
 
         handlers.add(new JbootHandler());
 
