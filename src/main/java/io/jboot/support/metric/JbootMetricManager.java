@@ -18,6 +18,7 @@ package io.jboot.support.metric;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
 import com.codahale.metrics.jvm.*;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
@@ -68,17 +69,20 @@ public class JbootMetricManager {
         metricRegistry = new MetricRegistry();
         healthCheckRegistry = new HealthCheckRegistry();
 
-
         if (metricsConfig.isReportJvmEnable()) {
             metricRegistry.register("jvm.up_time", (Gauge<Long>) () -> ManagementFactory.getRuntimeMXBean().getUptime());
-            metricRegistry.register("jvm.current_time", (Gauge<Long>) () -> System.currentTimeMillis());
+            metricRegistry.register("jvm.current_time", (Gauge<Long>) () -> System.nanoTime());
             metricRegistry.register("jvm.classes", new ClassLoadingGaugeSet());
+            metricRegistry.register("jvm.attribute", new JvmAttributeGaugeSet());
             metricRegistry.register("jvm.fd", new FileDescriptorRatioGauge());
             metricRegistry.register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
             metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
             metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
             metricRegistry.register("jvm.threads", new CachedThreadStatesGaugeSet(10, TimeUnit.SECONDS));
+
+            healthCheckRegistry.register("jvm.thread_deadlocks", new ThreadDeadlockHealthCheck());
         }
+
 
         List<JbootMetricReporter> reporters = getReporters();
         if (ArrayUtil.isNullOrEmpty(reporters)) {
