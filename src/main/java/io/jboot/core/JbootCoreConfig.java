@@ -42,7 +42,8 @@ import io.jboot.core.listener.JbootAppListenerManager;
 import io.jboot.core.log.Slf4jLogFactory;
 import io.jboot.db.ArpManager;
 import io.jboot.support.metric.JbootMetricConfig;
-import io.jboot.support.metric.MetricHandler;
+import io.jboot.support.metric.MetricServletHandler;
+import io.jboot.support.metric.request.JbootRequestMetricHandler;
 import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
@@ -276,7 +277,11 @@ public class JbootCoreConfig extends JFinalConfig {
         //metrics 处理
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
         if (metricsConfig.isConfigOk()) {
-            handlers.add(new MetricHandler(metricsConfig.getUrl()));
+            handlers.add(new MetricServletHandler(metricsConfig.getUrl()));
+
+            if (metricsConfig.isRequestMetricEnable()){
+                handlers.add(new JbootRequestMetricHandler());
+            }
         }
 
         handlers.add(new JbootHandler());

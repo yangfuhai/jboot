@@ -20,11 +20,11 @@ import com.jfinal.handler.Handler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class MetricHandler extends Handler {
+public class MetricServletHandler extends Handler {
 
     private String url;
 
-    public MetricHandler(String url) {
+    public MetricServletHandler(String url) {
         this.url = url;
     }
 

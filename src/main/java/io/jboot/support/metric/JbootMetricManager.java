@@ -69,8 +69,8 @@ public class JbootMetricManager {
         metricRegistry = new MetricRegistry();
         healthCheckRegistry = new HealthCheckRegistry();
 
-        if (metricsConfig.isReportJvmEnable()) {
-            metricRegistry.register("jvm.up_time", (Gauge<Long>) () -> ManagementFactory.getRuntimeMXBean().getUptime());
+        if (metricsConfig.isJvmMetricEnable()) {
+            metricRegistry.register("jvm.uptime", (Gauge<Long>) () -> ManagementFactory.getRuntimeMXBean().getUptime());
             metricRegistry.register("jvm.current_time", (Gauge<Long>) () -> System.nanoTime());
             metricRegistry.register("jvm.classes", new ClassLoadingGaugeSet());
             metricRegistry.register("jvm.attribute", new JvmAttributeGaugeSet());

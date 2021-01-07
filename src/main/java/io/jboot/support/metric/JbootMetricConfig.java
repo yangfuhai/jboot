@@ -32,7 +32,13 @@ public class JbootMetricConfig {
 
     private String url;
     private String reporter;
-    private boolean reportJvmEnable = true;
+
+    //是否启用 jvm 监控
+    private boolean jvmMetricEnable = true;
+
+    //是否启用请求监控
+    private boolean requestMetricEnable = true;
+    private String requestMetricName = "jboot-request";
 
     public String getMappingUrl() {
         //在metrics中，会访问到配置的二级目录，必须添加下 /* 才能正常访问
@@ -59,12 +65,28 @@ public class JbootMetricConfig {
         this.reporter = reporter;
     }
 
-    public boolean isReportJvmEnable() {
-        return reportJvmEnable;
+    public boolean isJvmMetricEnable() {
+        return jvmMetricEnable;
     }
 
-    public void setReportJvmEnable(boolean reportJvmEnable) {
-        this.reportJvmEnable = reportJvmEnable;
+    public void setJvmMetricEnable(boolean jvmMetricEnable) {
+        this.jvmMetricEnable = jvmMetricEnable;
+    }
+
+    public boolean isRequestMetricEnable() {
+        return requestMetricEnable;
+    }
+
+    public void setRequestMetricEnable(boolean requestMetricEnable) {
+        this.requestMetricEnable = requestMetricEnable;
+    }
+
+    public String getRequestMetricName() {
+        return requestMetricName;
+    }
+
+    public void setRequestMetricName(String requestMetricName) {
+        this.requestMetricName = requestMetricName;
     }
 
     public boolean isConfigOk() {
