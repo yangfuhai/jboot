@@ -62,7 +62,7 @@ public class JbootMetricManager {
 
     private JbootMetricManager() {
 
-        if (!metricsConfig.isConfigOk()) {
+        if (!metricsConfig.isConfigOk() || !metricsConfig.isEnable()) {
             return;
         }
 

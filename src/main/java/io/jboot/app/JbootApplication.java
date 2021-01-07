@@ -107,7 +107,7 @@ public class JbootApplication {
 
 
     private static void tryAddMetricsSupport(WebBuilder webBuilder) {
-        String url = ApplicationUtil.getConfigValue("jboot.metric.url");
+        String url = ApplicationUtil.getConfigValue("jboot.metric.adminServletMapping");
         String reporter = ApplicationUtil.getConfigValue("jboot.metric.reporter");
         if (url != null && reporter != null) {
             webBuilder.addServlet("MetricsAdminServlet", "com.codahale.metrics.servlets.AdminServlet")

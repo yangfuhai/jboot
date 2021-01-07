@@ -34,7 +34,7 @@ public class MetricInterceptorBuilder implements InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (!config.isConfigOk()) {
+        if (!config.isConfigOk() || !config.isEnable()) {
             return;
         }
 

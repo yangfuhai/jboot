@@ -276,10 +276,13 @@ public class JbootCoreConfig extends JFinalConfig {
 
         //metrics 处理
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);
-        if (metricsConfig.isConfigOk()) {
-            handlers.add(new MetricServletHandler(metricsConfig.getUrl()));
+        if (metricsConfig.isEnable() && metricsConfig.isConfigOk()) {
 
-            if (metricsConfig.isRequestMetricEnable()){
+            if (StrUtil.isNotBlank(metricsConfig.getAdminServletMapping())) {
+                handlers.add(new MetricServletHandler(metricsConfig.getAdminServletMapping()));
+            }
+
+            if (metricsConfig.isRequestMetricEnable()) {
                 handlers.add(new JbootRequestMetricHandler());
             }
         }

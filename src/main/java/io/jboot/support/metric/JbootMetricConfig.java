@@ -16,6 +16,7 @@
 package io.jboot.support.metric;
 
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.utils.StrUtil;
 
 @ConfigModel(prefix = "jboot.metric")
 public class JbootMetricConfig {
@@ -30,7 +31,9 @@ public class JbootMetricConfig {
     public static final String REPORTER_SLF4J = "slf4j";
     public static final String REPORTER_PROMETHEUS= "prometheus";
 
-    private String url;
+    private boolean enable = false;
+
+    private String adminServletMapping;
     private String reporter;
 
     //是否启用 jvm 监控
@@ -40,22 +43,22 @@ public class JbootMetricConfig {
     private boolean requestMetricEnable = true;
     private String requestMetricName = "jboot-request";
 
-    public String getMappingUrl() {
-        //在metrics中，会访问到配置的二级目录，必须添加下 /* 才能正常访问
-        if (url != null && !url.endsWith("/*")) {
-            return url + "/*";
-        }
-        return url;
+
+    public boolean isEnable() {
+        return enable;
     }
 
-    public String getUrl() {
-        return url;
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public String getAdminServletMapping() {
+        return adminServletMapping;
     }
 
+    public void setAdminServletMapping(String adminServletMapping) {
+        this.adminServletMapping = adminServletMapping;
+    }
 
     public String getReporter() {
         return reporter;
@@ -90,7 +93,7 @@ public class JbootMetricConfig {
     }
 
     public boolean isConfigOk() {
-        return url != null && reporter != null;
+        return StrUtil.isNotBlank(reporter);
     }
 }
 

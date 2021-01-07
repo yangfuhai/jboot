@@ -36,7 +36,8 @@ public class MetricsInfluxdbController extends JbootController {
      * @param args
      */
     public static void main(String[] args) {
-        JbootApplication.setBootArg("jboot.metric.url", "/metrics_admin");
+        JbootApplication.setBootArg("jboot.metric.enable", "true");
+        JbootApplication.setBootArg("jboot.metric.adminServletMapping", "/metrics_admin");
         JbootApplication.setBootArg("jboot.metric.reporter", "influxdb");
 
         JbootApplication.setBootArg("jboot.metric.reporter.influxdb.host", "127.0.0.1");

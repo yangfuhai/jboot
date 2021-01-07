@@ -22,16 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 
 public class MetricServletHandler extends Handler {
 
-    private String url;
+    private String adminServletMapping;
 
-    public MetricServletHandler(String url) {
-        this.url = url;
+    public MetricServletHandler(String adminServletMapping) {
+        this.adminServletMapping = adminServletMapping;
     }
 
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        if (target.startsWith(url)) {
+        if (target.startsWith(adminServletMapping)) {
             return;
         } else {
             next.handle(target, request, response, isHandled);

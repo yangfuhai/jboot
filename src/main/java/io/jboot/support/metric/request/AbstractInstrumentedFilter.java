@@ -40,7 +40,6 @@ import static com.codahale.metrics.MetricRegistry.name;
  * codes being returned.
  */
 public abstract class AbstractInstrumentedFilter extends Handler {
-//    static final String METRIC_PREFIX = "name-prefix";
 
     private final Map<Integer, String> meterNamesByStatusCode;
 
