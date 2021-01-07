@@ -56,7 +56,7 @@ public class GatewaySentinelProcesser {
     private static void processBlocked(JbootGatewayConfig config, HttpServletRequest req, HttpServletResponse resp) {
         StringBuffer url = req.getRequestURL();
 
-        if ("GET".equals(req.getMethod()) && StrUtil.isNotBlank(req.getQueryString())) {
+        if ("GET".equalsIgnoreCase(req.getMethod()) && StrUtil.isNotBlank(req.getQueryString())) {
             url.append("?").append(req.getQueryString());
         }
 

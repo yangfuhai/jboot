@@ -23,8 +23,8 @@ public class MetricsController extends JbootController {
      */
     public static void main(String[] args) {
         JbootApplication.setBootArg("jboot.metric.enable", "true");
-        JbootApplication.setBootArg("jboot.metric.adminServletMapping", "/metrics.admin");
-        JbootApplication.setBootArg("jboot.metric.reporter", "slf4j");
+//        JbootApplication.setBootArg("jboot.metric.adminServletMapping", "/metrics.admin");
+//        JbootApplication.setBootArg("jboot.metric.reporter", "slf4j");
 
         JbootApplication.run(args);
     }

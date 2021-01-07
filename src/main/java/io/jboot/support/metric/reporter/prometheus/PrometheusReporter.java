@@ -37,6 +37,8 @@ public class PrometheusReporter implements JbootMetricReporter {
         PrometheusReporterConfig config = Jboot.config(PrometheusReporterConfig.class);
         try {
             httpServer = new HTTPServer(config.getHost(), config.getPort());
+            String printMsg = "Prometheus Reporter Server started -> http://" + config.getHost() + ":" + config.getPort();
+            System.out.println(printMsg);
         } catch (IOException e) {
             throw new JbootIllegalConfigException("Prometheus config is error, please check your jboot.properties. ", e);
         }

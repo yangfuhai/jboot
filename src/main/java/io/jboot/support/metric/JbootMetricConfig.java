@@ -34,14 +34,14 @@ public class JbootMetricConfig {
     private boolean enable = false;
 
     private String adminServletMapping;
-    private String reporter;
+    private String reporter = REPORTER_CONSOLE;
 
     //是否启用 jvm 监控
     private boolean jvmMetricEnable = true;
 
     //是否启用请求监控
     private boolean requestMetricEnable = true;
-    private String requestMetricName = "jboot-request";
+    private String requestMetricName = "jboot-http";
 
 
     public boolean isEnable() {
