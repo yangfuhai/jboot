@@ -19,7 +19,6 @@ import com.codahale.metrics.MetricRegistry;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.metric.JbootMetricReporter;
-import io.prometheus.client.dropwizard.DropwizardExports;
 import io.prometheus.client.exporter.HTTPServer;
 
 import java.io.IOException;
@@ -57,6 +56,10 @@ public class PrometheusReporter implements JbootMetricReporter {
 
     @Override
     public void report(MetricRegistry metricRegistry) {
-        new DropwizardExports(metricRegistry).register();
+//        new DropwizardExports(metricRegistry).register();
+
+        // 使用 PrometheusExports 主要是可以添加 application 和 instance 的参数
+        // 例如 jvm_memory_total_used{application="jboot",instance="192.168.3.24:8818",} 1.521354E8
+        new PrometheusExports(metricRegistry).register();
     }
 }

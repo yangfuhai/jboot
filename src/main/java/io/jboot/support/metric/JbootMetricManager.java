@@ -66,11 +66,15 @@ public class JbootMetricManager {
             return;
         }
 
+
         metricRegistry = new MetricRegistry();
         healthCheckRegistry = new HealthCheckRegistry();
 
+
         if (metricsConfig.isJvmMetricEnable()) {
+
             metricRegistry.register("jvm.uptime", (Gauge<Long>) () -> ManagementFactory.getRuntimeMXBean().getUptime());
+            metricRegistry.register("jvm.start_time", (Gauge<Long>) () -> ManagementFactory.getRuntimeMXBean().getStartTime());
             metricRegistry.register("jvm.current_time", (Gauge<Long>) () -> System.nanoTime());
             metricRegistry.register("jvm.classes", new ClassLoadingGaugeSet());
             metricRegistry.register("jvm.attribute", new JvmAttributeGaugeSet());
@@ -79,6 +83,8 @@ public class JbootMetricManager {
             metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
             metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
             metricRegistry.register("jvm.threads", new CachedThreadStatesGaugeSet(10, TimeUnit.SECONDS));
+
+            metricRegistry.registerAll(new JvmCpuGaugeSet());
 
             healthCheckRegistry.register("jvm.thread_deadlocks", new ThreadDeadlockHealthCheck());
         }

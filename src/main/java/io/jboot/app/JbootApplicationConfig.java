@@ -69,6 +69,8 @@ public class JbootApplicationConfig {
         this.jfinalConfig = jfinalConfig;
     }
 
+
+
     @Override
     public String toString() {
         return "JbootApplication {" +
