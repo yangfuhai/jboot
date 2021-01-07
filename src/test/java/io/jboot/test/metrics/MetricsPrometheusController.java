@@ -26,4 +26,11 @@ public class MetricsPrometheusController extends JbootController {
     public void index() {
         renderText("metrics prometheus index. ");
     }
+
+
+
+    public void error1(){
+        int i = 1/0;
+        render("aaa");
+    }
 }

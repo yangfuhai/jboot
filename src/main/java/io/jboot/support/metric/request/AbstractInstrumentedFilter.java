@@ -94,7 +94,7 @@ public abstract class AbstractInstrumentedFilter extends Handler {
         final Timer.Context context = requestTimer.time();
         boolean error = false;
         try {
-            next.handle(target, request, response, isHandled);
+            next.handle(target, request, wrappedResponse, isHandled);
         } catch (Exception e) {
             error = true;
             throw e;
@@ -104,7 +104,7 @@ public abstract class AbstractInstrumentedFilter extends Handler {
             } else {
                 context.stop();
                 activeRequests.dec();
-                if (error || wrappedResponse.httpStatus >= 500) {
+                if (error) {
                     errorsMeter.mark();
                 } else {
                     markMeterForStatusCode(wrappedResponse.getStatus());
