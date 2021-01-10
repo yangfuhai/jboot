@@ -181,6 +181,13 @@ public class PrometheusExports extends io.prometheus.client.Collector implements
      * @param factor         a factor to apply to histogram values.
      */
     MetricFamilySamples fromSnapshotAndCount(String dropwizardName, Snapshot snapshot, long count, double factor, String helpMessage) {
+        long sum = 0;
+        long[] values = snapshot.getValues();
+        if (values != null){
+            for (long value : values) {
+                sum += value;
+            }
+        }
         List<MetricFamilySamples.Sample> samples = Arrays.asList(
                 sampleBuilder.createSample(dropwizardName, "", getDefaultAdditionalLabelNames("quantile"), getDefaultAdditionalLabelValues("0.5"), snapshot.getMedian() * factor),
                 sampleBuilder.createSample(dropwizardName, "", getDefaultAdditionalLabelNames("quantile"), getDefaultAdditionalLabelValues("0.75"), snapshot.get75thPercentile() * factor),
@@ -191,7 +198,27 @@ public class PrometheusExports extends io.prometheus.client.Collector implements
                 sampleBuilder.createSample(dropwizardName, "_count"
                         , getDefaultAdditionalLabelNames()
                         , getDefaultAdditionalLabelValues()
-                        , count)
+                        , count),
+                sampleBuilder.createSample(dropwizardName, "_sum"
+                        , getDefaultAdditionalLabelNames()
+                        , getDefaultAdditionalLabelValues()
+                        , sum),
+                sampleBuilder.createSample(dropwizardName, "_mean"
+                        , getDefaultAdditionalLabelNames()
+                        , getDefaultAdditionalLabelValues()
+                        , snapshot.getMean()),
+                sampleBuilder.createSample(dropwizardName, "_median"
+                        , getDefaultAdditionalLabelNames()
+                        , getDefaultAdditionalLabelValues()
+                        , snapshot.getMedian()),
+                sampleBuilder.createSample(dropwizardName, "_min"
+                        , getDefaultAdditionalLabelNames()
+                        , getDefaultAdditionalLabelValues()
+                        , snapshot.getMin()),
+                sampleBuilder.createSample(dropwizardName, "_max"
+                        , getDefaultAdditionalLabelNames()
+                        , getDefaultAdditionalLabelValues()
+                        , snapshot.getMax())
         );
         return new MetricFamilySamples(samples.get(0).name, Type.SUMMARY, helpMessage, samples);
     }

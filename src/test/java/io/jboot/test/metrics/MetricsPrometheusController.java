@@ -5,6 +5,9 @@ import io.jboot.support.metric.annotation.*;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RequestMapping("/metrics/prometheus")
 public class MetricsPrometheusController extends JbootController {
 
@@ -32,5 +35,15 @@ public class MetricsPrometheusController extends JbootController {
     public void error1(){
         int i = 1/0;
         render("aaa");
+    }
+
+    public void error2(){
+        for (int i=0;i< 100;i++){
+            Map map = new HashMap();
+            for (int j=0;j<10000;j++){
+                map.put("aaa" + j,"value" + j);
+            }
+        }
+        renderText("error2");
     }
 }

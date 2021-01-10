@@ -85,6 +85,8 @@ public class JbootMetricManager {
             metricRegistry.register("jvm.threads", new CachedThreadStatesGaugeSet(10, TimeUnit.SECONDS));
 
             metricRegistry.registerAll(new JvmCpuGaugeSet());
+            metricRegistry.registerAll(new JvmGcMetrics(metricRegistry));
+            metricRegistry.registerAll(new ProcessFilesGaugeSet());
 
             healthCheckRegistry.register("jvm.thread_deadlocks", new ThreadDeadlockHealthCheck());
         }
