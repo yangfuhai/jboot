@@ -1,3 +1,11 @@
+jboot v3.8.0:
+新增：代码生成器生成 Service 的前缀和后缀配置
+优化：升级 Jfinal、Jfinal-undertow、Jfinal-weixin 等到最新版本
+优化：AOPFactory 优化对 @Configration 的空注解的构建
+优化：完全重构 Metrics，添加对 Prometheus 的输出
+
+
+
 jboot v3.7.8:
 修复：修复 v3.7.7 的 Aop.get(Interface.class) 在某些情况下无法获取服务的问题
 
