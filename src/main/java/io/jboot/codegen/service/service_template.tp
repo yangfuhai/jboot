@@ -6,7 +6,7 @@ import io.jboot.db.model.Columns;
 
 import java.util.List;
 
-public interface #(tableMeta.modelName)#(classSuffix)  {
+public interface #(classPrefix)#(tableMeta.modelName)#(classSuffix)  {
 
     /**
      * 根据主键查找Model
