@@ -33,7 +33,7 @@ public @interface SeataGlobalTransactional {
      *
      * @return timeoutMills in MILLISECONDS.
      */
-    int timeoutMills() default TransactionInfo.DEFAULT_TIME_OUT;
+    int timeoutMills() default 60000;
 
     /**
      * Given name of the global transaction instance.

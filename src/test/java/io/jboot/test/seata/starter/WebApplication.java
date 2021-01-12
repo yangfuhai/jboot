@@ -1,9 +1,11 @@
 package io.jboot.test.seata.starter;
 
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import io.jboot.app.JbootApplication;
 import io.jboot.support.seata.annotation.SeataGlobalTransactional;
 import io.jboot.test.seata.business.BusinessServiceProvider;
+import io.jboot.test.seata.interceptor.ExceptionInterceptor;
 import io.jboot.test.seata.service.TccActionOneService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
@@ -45,6 +47,8 @@ public class WebApplication extends JbootController {
     @Inject
     private TccActionOneService tccActionOneService;
 
+    @Before(ExceptionInterceptor.class)
+    @SeataGlobalTransactional(timeoutMills = 300000, name = "Dubbo_Seata_Business_Transactional")
     public void index() {
 
         System.out.println("WebApplication.index()");
@@ -58,7 +62,7 @@ public class WebApplication extends JbootController {
         tccActionOneService.prepare(null, "Hobbit", 10, getParaToBoolean("flag"));
         /*if (getParaToBoolean("flag")) {
             throw new RuntimeException("you have fail");
-        }*/
+    }*/
         renderJson("you are sucess");
     }
 

@@ -18,14 +18,14 @@ public class StockApplication {
         JbootApplication.setBootArg("jboot.rpc.autoExportEnable", true);
         JbootApplication.setBootArg("jboot.rpc.filter", "seata");
         JbootApplication.setBootArg("jboot.seata.enable", true);
-        JbootApplication.setBootArg("jboot.seata.failureHandler", "com.alibaba.io.seata.tm.api.DefaultFailureHandlerImpl");
+        JbootApplication.setBootArg("jboot.seata.failureHandler", "io.seata.tm.api.DefaultFailureHandlerImpl");
         JbootApplication.setBootArg("jboot.seata.applicationId", "Dubbo_Seata_Stock_Service");
         JbootApplication.setBootArg("jboot.seata.txServiceGroup", "dubbo_seata_tx_group");
 
         JbootApplication.setBootArg("jboot.datasource.type", "mysql");
-        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://192.168.0.100:3306/mini?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
+        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/mini?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
         JbootApplication.setBootArg("jboot.datasource.user", "root");
-        JbootApplication.setBootArg("jboot.datasource.password", "123456");
+        JbootApplication.setBootArg("jboot.datasource.password", "zhang123");
         
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
         JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.seata.commons");
