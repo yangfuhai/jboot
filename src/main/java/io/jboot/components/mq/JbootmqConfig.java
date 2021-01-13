@@ -30,7 +30,7 @@ public class JbootmqConfig {
 
     private String type;
     private String channel;
-    private String syncRecevieMessageChannel; //可同步接收消息的channel配置
+    private String syncRecevieMessageChannel; //可同步接收消息的 channel 配置
     private String serializer;
 
     public String getChannel() {

@@ -112,7 +112,7 @@ public abstract class JbootmqBase implements Jbootmq {
         boolean channelResult = notifyListeners(channel, message, channelListeners.get(channel));
 
         if (!globalResult && !channelResult) {
-            LOG.error("application has recevied mq message, bug has no listener to process it. channel:" +
+            LOG.error("Application has recevied mq message, But has no listener to process it. channel:" +
                     channel + "  message:" + message);
         }
     }
