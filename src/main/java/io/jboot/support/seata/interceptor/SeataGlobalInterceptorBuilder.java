@@ -37,7 +37,7 @@ public class SeataGlobalInterceptorBuilder implements InterceptorBuilder {
         final SeataGlobalLock globalLockAnno = method.getAnnotation(SeataGlobalLock.class);
 
         if (globalTrxAnno != null || globalLockAnno != null){
-            interceptors.add(SeataGlobalTransactionalInterceptor.class);
+            interceptors.add(SeataGlobalTransactionalInterceptor.class, 0);
         }
     }
 

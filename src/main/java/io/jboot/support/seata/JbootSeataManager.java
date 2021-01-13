@@ -45,7 +45,7 @@ public class JbootSeataManager {
     private boolean enable = false;
 
     private TransactionalTemplate transactionalTemplate;
-    private GlobalLockTemplate<Object> globalLockTemplate;
+    private GlobalLockTemplate globalLockTemplate;
     private SeataGlobalTransactionManager transactionManager;
 
 
@@ -69,7 +69,7 @@ public class JbootSeataManager {
         transactionManager.init();
 
         this.transactionalTemplate = new TransactionalTemplate();
-        this.globalLockTemplate = new GlobalLockTemplate<>();
+        this.globalLockTemplate = new GlobalLockTemplate();
         this.enable = true;
     }
 
@@ -118,11 +118,11 @@ public class JbootSeataManager {
         this.transactionalTemplate = transactionalTemplate;
     }
 
-    public GlobalLockTemplate<Object> getGlobalLockTemplate() {
+    public GlobalLockTemplate getGlobalLockTemplate() {
         return globalLockTemplate;
     }
 
-    public void setGlobalLockTemplate(GlobalLockTemplate<Object> globalLockTemplate) {
+    public void setGlobalLockTemplate(GlobalLockTemplate globalLockTemplate) {
         this.globalLockTemplate = globalLockTemplate;
     }
 

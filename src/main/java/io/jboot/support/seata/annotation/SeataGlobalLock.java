@@ -34,4 +34,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Inherited
 public @interface SeataGlobalLock {
+
+    int lockRetryInternal() default 0;
+
+    int lockRetryTimes() default -1;
+
 }

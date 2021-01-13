@@ -1,6 +1,7 @@
 package io.jboot.test.seata.business;
 
 
+import com.jfinal.aop.Inject;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.service.JbootServiceBase;
 import io.jboot.support.seata.annotation.SeataGlobalTransactional;
@@ -10,15 +11,14 @@ import io.jboot.test.seata.stock.IStockService;
 
 public class BusinessServiceProvider extends JbootServiceBase<Account> {
 
-	@RPCInject
+	@Inject
 	private IAccountService accountService;
-	@RPCInject
+	@Inject
 	private IStockService stockService;
 
-	@SeataGlobalTransactional(timeoutMills = 300000, name = "Dubbo_Seata_Business_Transactional")
 	public boolean deposit(Integer accountId) {
-		accountService.deposit(accountId, 1000);
-		stockService.deposit(accountId, 2000);
+		accountService.deposit(accountId, 100);
+		stockService.deposit(accountId, 200);
 		return true;
 	}
 

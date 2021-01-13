@@ -41,7 +41,7 @@ public class AccountServiceProvider extends JbootServiceBase<Account> implements
     public boolean update(String account, Integer money) {
         Account account1 = dao.findFirst("select * from seata_account where account = ? ", account);
         account1.set("store", account1.getInt("store") - money);
-        account1.set("money",  account1.getInt("money") - money);
+        account1.set("money",  account1.getInt("money") + money);
         return account1.saveOrUpdate();
     }
 }
