@@ -32,14 +32,16 @@ public class RabbitMqSender {
 
         while (true && index < 3) {
 
-            Jboot.getMq().publish("message from RabbitMqSender for channel1", "channel1");
-            Jboot.getMq().publish("message from RabbitMqSender for channel2", "channel2");
-            Jboot.getMq().publish("message from RabbitMqSender for myChannel", "myChannel");
+            Jboot.getMq().publish("broadcast-channel1-index:" + index, "channel1");
+            Jboot.getMq().publish("broadcast-channel2-index:" + index, "channel2");
+            Jboot.getMq().publish("broadcast-myChannel-index:" + index, "myChannel");
 
-            Jboot.getMq().enqueue("message from RabbitMqSender by enqueue " + (index++), "channel1");
+            Jboot.getMq().enqueue("enqueue-channel1-index:" + index, "channel1");
+
+            System.out.println("jboot mq publish success... index: " + index);
+            index++;
 
             Thread.sleep(2000);
-            System.out.println("jboot mq publish success... index: " + index);
         }
 
     }

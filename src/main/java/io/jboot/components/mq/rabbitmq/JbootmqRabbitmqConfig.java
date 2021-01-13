@@ -29,7 +29,7 @@ public class JbootmqRabbitmqConfig {
     private int port = 5672;
     private String virtualHost;
 
-    private String broadcastQueueNamePrefix;
+    private String broadcastQueuePrefix;
 
 
     public String getUsername() {
@@ -72,11 +72,11 @@ public class JbootmqRabbitmqConfig {
         this.virtualHost = virtualHost;
     }
 
-    public String getBroadcastQueueNamePrefix() {
-        return broadcastQueueNamePrefix;
+    public String getBroadcastQueuePrefix() {
+        return broadcastQueuePrefix;
     }
 
-    public void setBroadcastQueueNamePrefix(String broadcastQueueNamePrefix) {
-        this.broadcastQueueNamePrefix = broadcastQueueNamePrefix;
+    public void setBroadcastQueuePrefix(String broadcastQueuePrefix) {
+        this.broadcastQueuePrefix = broadcastQueuePrefix;
     }
 }

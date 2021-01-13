@@ -28,6 +28,9 @@ public class RabbitMqReceiver1 {
 //        JbootApplication.setBootArg("jboot.mq.rabbitmq.port", "5672");
 //        JbootApplication.setBootArg("jboot.mq.rabbitmq.virtualHost", "");
 
+        //非常重要，多个应用如果同时接受同一个 channel 的广播，必须配置此项，而且必须不能相同，否则广播的时候只有一个应用能够接受到
+        JbootApplication.setBootArg("jboot.mq.rabbitmq.broadcastQueuePrefix", "app1");
+
         //启动应用程序
         JbootApplication.run(args);
 

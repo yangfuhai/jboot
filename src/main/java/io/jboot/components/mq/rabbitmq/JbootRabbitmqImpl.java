@@ -39,32 +39,36 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     private JbootmqRabbitmqConfig rabbitmqConfig;
     private JbootApplicationConfig appConfig;
 
+
     public JbootRabbitmqImpl() {
         super();
         rabbitmqConfig = Jboot.config(JbootmqRabbitmqConfig.class);
         appConfig = Jboot.config(JbootApplicationConfig.class);
 
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(rabbitmqConfig.getHost());
-        factory.setPort(rabbitmqConfig.getPort());
-
-        if (StrUtil.isNotBlank(rabbitmqConfig.getVirtualHost())) {
-            factory.setVirtualHost(rabbitmqConfig.getVirtualHost());
-        }
-        if (StrUtil.isNotBlank(rabbitmqConfig.getUsername())) {
-            factory.setUsername(rabbitmqConfig.getUsername());
-        }
-
-        if (StrUtil.isNotBlank(rabbitmqConfig.getPassword())) {
-            factory.setPassword(rabbitmqConfig.getPassword());
-        }
-
         try {
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost(rabbitmqConfig.getHost());
+            factory.setPort(rabbitmqConfig.getPort());
+
+            if (StrUtil.isNotBlank(rabbitmqConfig.getVirtualHost())) {
+                factory.setVirtualHost(rabbitmqConfig.getVirtualHost());
+            }
+
+            if (StrUtil.isNotBlank(rabbitmqConfig.getUsername())) {
+                factory.setUsername(rabbitmqConfig.getUsername());
+            }
+
+            if (StrUtil.isNotBlank(rabbitmqConfig.getPassword())) {
+                factory.setPassword(rabbitmqConfig.getPassword());
+            }
+
             connection = factory.newConnection();
+
         } catch (Exception e) {
-            throw new JbootException("can not connection rabbitmq server", e);
+            throw new JbootException("Can not connection rabbitmq server", e);
         }
     }
+
 
     @Override
     protected void onStartListening() {
@@ -100,7 +104,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private Channel getChannel(String toChannel, boolean queueMode) {
+    private synchronized Channel getChannel(String toChannel, boolean queueMode) {
 
         Channel channel = channelMap.get(toChannel + queueMode);
         if (channel == null) {
@@ -115,16 +119,12 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
                 //广播模式，需要定义交换机，发送者直接把消息发送到交换机里
                 else {
                     channel.queueDeclare(buildBroadcastChannelName(toChannel), false, false, true, null);
-
-                    //定义交换机
                     channel.exchangeDeclare(toChannel, BuiltinExchangeType.FANOUT, true);
-
-
                     channel.queueBind(buildBroadcastChannelName(toChannel), toChannel, "");
                 }
 
-            } catch (IOException e) {
-                throw new JbootException("Can not create rabbit mq channel.", e);
+            } catch (Exception ex) {
+                throw new JbootException("Can not create rabbit mq channel.", ex);
             }
 
             if (channel != null) {
@@ -136,7 +136,9 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     }
 
     private synchronized String buildBroadcastChannelName(String channel) {
-        String prefix = StrUtil.isNotBlank(rabbitmqConfig.getBroadcastQueueNamePrefix()) ? rabbitmqConfig.getBroadcastQueueNamePrefix() : appConfig.getName();
+        String prefix = StrUtil.isNotBlank(rabbitmqConfig.getBroadcastQueuePrefix())
+                ? rabbitmqConfig.getBroadcastQueuePrefix()
+                : appConfig.getName();
         return prefix + "-" + channel;
     }
 
