@@ -23,8 +23,15 @@ import java.util.Map;
 @ConfigModel(prefix = "jboot.sentinel")
 public class SentinelConfig {
 
+    public static final String DATASOURCE_REDIS = "redis";
+    public static final String DATASOURCE_ZOOKEEPER = "zookeeper";
+    public static final String DATASOURCE_NACOS = "nacos";
+    public static final String DATASOURCE_APOLLO = "apollo";
+
     // 是否启用
     private boolean enable = false;
+
+    private String datasource;
 
     // 是否对 http 请求启用限流，启用后还需要去 sentinel 后台配置
     private boolean reqeustEnable = true;
@@ -35,12 +42,23 @@ public class SentinelConfig {
     // 如果 http 被限流后渲染的 json 数据，requestBlockPage 配置优先于此项
     private Map requestBlockJsonMap;
 
+    private String localRuleFile = "sentinel-rule.json";
+
     public boolean isEnable() {
         return enable;
     }
 
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+
+
+    public String getDatasource() {
+        return datasource;
+    }
+
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
     }
 
     public boolean isReqeustEnable() {
@@ -65,6 +83,14 @@ public class SentinelConfig {
 
     public void setRequestBlockJsonMap(Map requestBlockJsonMap) {
         this.requestBlockJsonMap = requestBlockJsonMap;
+    }
+
+    public String getLocalRuleFile() {
+        return localRuleFile;
+    }
+
+    public void setLocalRuleFile(String localRuleFile) {
+        this.localRuleFile = localRuleFile;
     }
 
     private static SentinelConfig sentinelConfig;

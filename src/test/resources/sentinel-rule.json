@@ -1,0 +1,1 @@
+[{"clusterConfig":{"fallbackToLocalWhenFail":true,"sampleCount":10,"strategy":0,"thresholdType":0,"windowIntervalMs":1000},"clusterMode":false,"controlBehavior":0,"count":2.0,"grade":1,"limitApp":"default","maxQueueingTimeMs":500,"resource":"/","strategy":0,"warmUpPeriodSec":10}]
