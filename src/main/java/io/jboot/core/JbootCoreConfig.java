@@ -45,6 +45,8 @@ import io.jboot.support.metric.JbootMetricConfig;
 import io.jboot.support.metric.MetricServletHandler;
 import io.jboot.support.metric.request.JbootRequestMetricHandler;
 import io.jboot.support.seata.JbootSeataManager;
+import io.jboot.support.sentinel.SentinelConfig;
+import io.jboot.support.sentinel.SentinelHandler;
 import io.jboot.support.shiro.JbootShiroManager;
 import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
@@ -273,6 +275,11 @@ public class JbootCoreConfig extends JFinalConfig {
 
         handlers.add(new JbootGatewayHandler());
         handlers.add(new AttachmentHandler());
+
+        SentinelConfig sentinelConfig = SentinelConfig.get();
+        if (sentinelConfig.isEnable() && sentinelConfig.isReqeustEnable()){
+            handlers.add(new SentinelHandler());
+        }
 
         //metrics 处理
         JbootMetricConfig metricsConfig = Jboot.config(JbootMetricConfig.class);

@@ -15,6 +15,8 @@
  */
 package io.jboot.components.gateway;
 
+import io.jboot.utils.StrUtil;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,13 +57,25 @@ public class GatewayInvocation {
 
     protected void doInvoke(){
         Runnable runnable = () -> {
-            proxy.sendRequest(GatewayUtil.buildProxyUrl(config, request), request, response);
+            proxy.sendRequest(buildProxyUrl(config, request), request, response);
         };
         if (config.isSentinelEnable()) {
             new GatewaySentinelProcesser().process(runnable, config, request, response);
         } else {
             runnable.run();
         }
+    }
+
+
+    private static String buildProxyUrl(JbootGatewayConfig config, HttpServletRequest request) {
+        StringBuilder url = new StringBuilder(config.buildLoadBalanceStrategy().getUrl(config, request));
+        if (StrUtil.isNotBlank(request.getRequestURI())) {
+            url.append(request.getRequestURI());
+        }
+        if (StrUtil.isNotBlank(request.getQueryString())) {
+            url.append("?").append(request.getQueryString());
+        }
+        return url.toString();
     }
 
 

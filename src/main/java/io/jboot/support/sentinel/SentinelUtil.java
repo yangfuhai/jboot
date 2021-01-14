@@ -13,32 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.components.gateway;
+package io.jboot.support.sentinel;
 
 import com.alibaba.csp.sentinel.util.StringUtil;
-import io.jboot.utils.StrUtil;
+import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.LogKit;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/22
  */
-public class GatewayUtil {
+public class SentinelUtil {
 
     private static final String PATH_SPLIT = "/";
-
-    public static String buildProxyUrl(JbootGatewayConfig config, HttpServletRequest request) {
-        StringBuilder url = new StringBuilder(config.buildLoadBalanceStrategy().getUrl(config, request));
-        if (StrUtil.isNotBlank(request.getRequestURI())) {
-            url.append(request.getRequestURI());
-        }
-        if (StrUtil.isNotBlank(request.getQueryString())) {
-            url.append("?").append(request.getQueryString());
-        }
-        return url.toString();
-    }
-
 
     public static String buildResource(HttpServletRequest request) {
         String pathInfo = getResourcePath(request);
@@ -166,4 +159,46 @@ public class GatewayUtil {
 
         return i;
     }
+
+
+    protected static final String contentType = "application/json; charset=utf-8";
+
+    public static void writeDefaultBlockedJson(HttpServletResponse resp, Map map) throws IOException {
+        resp.setStatus(200);
+        resp.setContentType(contentType);
+        PrintWriter out = resp.getWriter();
+        out.print(JsonKit.toJson(map));
+    }
+
+
+    public static void writeDefaultBlockedPage(HttpServletResponse resp) throws IOException {
+        resp.setStatus(200);
+        PrintWriter out = resp.getWriter();
+        out.print("Blocked by Sentinel (flow limiting) in Jboot");
+    }
+
+
+    public static void blockRequest(HttpServletRequest request, HttpServletResponse response) {
+        StringBuffer url = request.getRequestURL();
+
+        if ("GET".equals(request.getMethod()) && StringUtil.isNotBlank(request.getQueryString())) {
+            url.append("?").append(request.getQueryString());
+        }
+
+        SentinelConfig config = SentinelConfig.get();
+
+        try {
+            if (StringUtil.isNotBlank(config.getRequestBlockPage())) {
+                String redirectUrl = config.getRequestBlockPage() + "?http_referer=" + url.toString();
+                response.sendRedirect(redirectUrl);
+            } else if (config.getRequestBlockJsonMap() != null && !config.getRequestBlockJsonMap().isEmpty()) {
+                writeDefaultBlockedJson(response, config.getRequestBlockJsonMap());
+            } else {
+                writeDefaultBlockedPage(response);
+            }
+        } catch (IOException ex) {
+            LogKit.error(ex.toString(), ex);
+        }
+    }
+
 }
