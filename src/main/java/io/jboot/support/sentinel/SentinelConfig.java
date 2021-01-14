@@ -42,7 +42,7 @@ public class SentinelConfig {
     // 如果 http 被限流后渲染的 json 数据，requestBlockPage 配置优先于此项
     private Map requestBlockJsonMap;
 
-    private String localRuleFile = "sentinel-rule.json";
+    private String ruleFile = "sentinel-rule.json";
 
     public boolean isEnable() {
         return enable;
@@ -85,12 +85,12 @@ public class SentinelConfig {
         this.requestBlockJsonMap = requestBlockJsonMap;
     }
 
-    public String getLocalRuleFile() {
-        return localRuleFile;
+    public String getRuleFile() {
+        return ruleFile;
     }
 
-    public void setLocalRuleFile(String localRuleFile) {
-        this.localRuleFile = localRuleFile;
+    public void setRuleFile(String ruleFile) {
+        this.ruleFile = ruleFile;
     }
 
     private static SentinelConfig sentinelConfig;

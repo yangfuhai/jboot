@@ -23,6 +23,7 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.alibaba.csp.sentinel.transport.util.WritableDataSourceRegistry;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.jfinal.kit.PathKit;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.support.sentinel.datasource.*;
@@ -50,7 +51,9 @@ public class JbootSentinelManager {
             return;
         }
 
-        // 初始化 sentinel 数据源
+        // 初始化 sentinel 数据源，
+        // 当配置数据源的时候，sentinel 控制面板的配置将会更新的时候，无法写入到数据源的，需要去实现主动写入，这是 Sentinel 的一个坑
+        // todo 晚点实现主动 Sentinel 控制台写入到数据源
         if (StrUtil.isNotBlank(config.getDatasource())) {
             SentinelDatasourceFactory factory = getDatasourceFactory();
             ReadableDataSource rds = factory.createDataSource();
@@ -63,12 +66,13 @@ public class JbootSentinelManager {
         // 文档：https://github.com/alibaba/Sentinel/wiki/%E5%9C%A8%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B8%AD%E4%BD%BF%E7%94%A8-Sentinel
         else {
 
-            FlowRuleManager.register2Property(new FileDatasourceFactory().createDataSource().getProperty());
+            String rulePath = config.getRuleFile();
+            File ruleFile = rulePath.startsWith("/") ? new File(rulePath) : new File(PathKit.getWebRootPath(), rulePath);
 
-            String rulePath = config.getLocalRuleFile();
-            File flowRuleFile = rulePath.startsWith("/") ? new File(rulePath) : new File(PathKit.getWebRootPath(), rulePath);
+            ReadableDataSource rds = new FileDataSource<>(ruleFile, this::decodeJson);
+            FlowRuleManager.register2Property(rds.getProperty());
 
-            WritableDataSource<List<FlowRule>> wds = new FileWritableDataSource<>(flowRuleFile, this::encodeJson);
+            WritableDataSource<List<FlowRule>> wds = new FileWritableDataSource<>(ruleFile, this::encodeJson);
             WritableDataSourceRegistry.registerFlowDataSource(wds);
         }
 
@@ -76,6 +80,11 @@ public class JbootSentinelManager {
 
     private <T> String encodeJson(T t) {
         return JSON.toJSONString(t);
+    }
+
+    private List<FlowRule> decodeJson(String source) {
+        return JSON.parseObject(source, new TypeReference<List<FlowRule>>() {
+        });
     }
 
 
