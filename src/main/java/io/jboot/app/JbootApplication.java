@@ -86,7 +86,6 @@ public class JbootApplication {
 
 
         return new JbootUndertowServer(undertowConfig)
-                .setDevMode(ApplicationUtil.isDevMode())
                 .configWeb(webBuilder -> {
                     tryAddMetricsSupport(webBuilder);
                     tryAddShiroSupport(webBuilder);
