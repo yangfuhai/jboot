@@ -30,11 +30,12 @@ import java.lang.reflect.Method;
 public class SentinelInterceptorBuilder implements InterceptorBuilder {
 
     private static Boolean hasSentinelDependency = ClassUtil.hasClass("com.alibaba.csp.sentinel.Sph");
+    private static Boolean isEnable = SentinelConfig.get().isEnable();;
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
-        if (hasSentinelDependency){
+        if (hasSentinelDependency && isEnable){
             SentinelResource annotation = method.getAnnotation(SentinelResource.class);
             if (annotation != null) {
                 interceptors.add(SentinelInterceptor.class);

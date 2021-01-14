@@ -32,6 +32,14 @@ public class SentinelHandler extends Handler {
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
+
+        // 不对静态资源进行流量管理
+        if (target.contains(".")){
+            next.handle(target, request, response, isHandled);
+            return;
+        }
+
+
         Entry urlEntry = null;
         try {
             String targetResource = SentinelUtil.buildResource(request);
@@ -42,7 +50,6 @@ public class SentinelHandler extends Handler {
             }
 
             next.handle(target, request, response, isHandled);
-
         } catch (BlockException e) {
             SentinelUtil.blockRequest(request, response);
         } catch (Exception e2) {

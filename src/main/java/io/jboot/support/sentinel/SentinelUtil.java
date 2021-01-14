@@ -64,9 +64,11 @@ public class SentinelUtil {
         return servletPath + pathInfo;
     }
 
+
     private static String normalizeAbsolutePath(String path, boolean removeTrailingSlash) throws IllegalStateException {
         return normalizePath(path, true, false, removeTrailingSlash);
     }
+
 
     private static String normalizePath(String path, boolean forceAbsolute, boolean forceRelative,
                                         boolean removeTrailingSlash) throws IllegalStateException {
@@ -140,6 +142,7 @@ public class SentinelUtil {
         return buf.toString();
     }
 
+
     private static int indexOfSlash(char[] chars, int beginIndex, boolean slash) {
         int i = beginIndex;
 
@@ -159,6 +162,7 @@ public class SentinelUtil {
 
         return i;
     }
+
 
 
     protected static final String contentType = "application/json; charset=utf-8";
