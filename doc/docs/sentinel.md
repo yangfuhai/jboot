@@ -112,7 +112,7 @@ https://github.com/alibaba/Sentinel/wiki/%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E9
 </dependency>
   ```
 
-如果使用 阿里云ahas 替代 sentinel dashboard，需要添加如下依赖（以上依赖不再需要）：
+如果使用 阿里云 AHAS 替代 sentinel dashboard，需要添加如下依赖（以上依赖不再需要）：
 
 
 ```xml
@@ -122,6 +122,8 @@ https://github.com/alibaba/Sentinel/wiki/%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E9
     <version>1.8.0</version>
 </dependency>
 ```
+
+更多关于 阿里云 AHAS 的文档请参考：https://github.com/alibaba/Sentinel/wiki/AHAS-Sentinel-%E6%8E%A7%E5%88%B6%E5%8F%B0
 
 
 
