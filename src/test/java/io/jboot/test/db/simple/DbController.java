@@ -1,6 +1,7 @@
 package io.jboot.test.db.simple;
 
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import io.jboot.app.JbootApplication;
@@ -33,7 +34,10 @@ public class DbController extends SuperDbController {
         Columns columns = Columns.create();
         columns.between("id",1,5);
         List<User> users = new User().findListByColumns(columns);
+
+
         System.out.println(Arrays.toString(users.toArray()));
+        System.out.println(Db.find("select * from user"));
 
     }
 
