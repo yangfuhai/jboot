@@ -45,6 +45,7 @@ import io.jboot.support.metric.JbootMetricConfig;
 import io.jboot.support.metric.MetricServletHandler;
 import io.jboot.support.metric.request.JbootRequestMetricHandler;
 import io.jboot.support.seata.JbootSeataManager;
+import io.jboot.support.sentinel.JbootSentinelManager;
 import io.jboot.support.sentinel.SentinelConfig;
 import io.jboot.support.sentinel.SentinelHandler;
 import io.jboot.support.shiro.JbootShiroManager;
@@ -320,6 +321,7 @@ public class JbootCoreConfig extends JFinalConfig {
         LimiterManager.me().init();
         JbootSeataManager.me().init();
         JbootGatewayManager.me().init();
+        JbootSentinelManager.me().init();
 
         JbootAppListenerManager.me().onStart();
 
