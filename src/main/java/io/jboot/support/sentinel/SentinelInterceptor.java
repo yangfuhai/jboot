@@ -44,8 +44,6 @@ public class SentinelInterceptor extends AbstractSentinelInterceptor implements 
         Entry entry = null;
         try {
             entry = SphU.entry(resourceName, resourceType, entryType, inv.getArgs());
-//            Object result = pjp.proceed();
-//            return result;
             inv.invoke();
         } catch (BlockException ex) {
             try {
