@@ -19,7 +19,6 @@ import com.alibaba.csp.sentinel.*;
 import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.jfinal.handler.Handler;
-import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +37,6 @@ public class SentinelHandler extends Handler {
             next.handle(target, request, response, isHandled);
             return;
         }
-
 
         Entry urlEntry = null;
         try {
@@ -61,11 +59,11 @@ public class SentinelHandler extends Handler {
             }
             ContextUtil.exit();
         }
+
     }
 
-    private String getOrigin(HttpServletRequest request) {
-        String origin = RequestUtil.getReferer(request);
-        return origin == null ? EMPTY_ORIGIN : origin;
+    protected String getOrigin(HttpServletRequest request) {
+        return EMPTY_ORIGIN;
     }
 
 
