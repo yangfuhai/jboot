@@ -50,6 +50,7 @@ public class SentinelHandler extends Handler {
             next.handle(target, request, response, isHandled);
         } catch (BlockException e) {
             SentinelUtil.blockRequest(request, response);
+            isHandled[0] = true;
         } catch (Exception e2) {
             Tracer.traceEntry(e2, urlEntry);
             throw e2;
