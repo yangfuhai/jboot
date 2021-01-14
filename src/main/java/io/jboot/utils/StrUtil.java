@@ -121,6 +121,19 @@ public class StrUtil extends StrKit {
         return true;
     }
 
+    public static boolean isAnyBlank(String... strs) {
+        if (strs == null || strs.length == 0) {
+            return false;
+        }
+
+        for (String str : strs) {
+            if (isBlank(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static String requireNonBlank(String str) {
         if (isBlank(str)) {
             throw new NullPointerException();
