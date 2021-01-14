@@ -25,7 +25,7 @@ public class DbController extends SuperDbController {
         JbootApplication.setBootArg("jboot.datasource.password", "123456");
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
         JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.db.model");
-        JbootApplication.setBootArg("undertow.devMode", "false");
+//        JbootApplication.setBootArg("undertow.devMode", "false");
 
         //启动应用程序
         JbootApplication.run(args);
