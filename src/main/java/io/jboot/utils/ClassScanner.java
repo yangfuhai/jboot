@@ -251,6 +251,8 @@ public class ClassScanner {
         excludeJars.add("oshi-");
         excludeJars.add("classmate-");
         excludeJars.add("hibernate-");
+        excludeJars.add("aspectjweaver-");
+        excludeJars.add("aspectjrt-");
         excludeJars.add("simpleclient_");
     }
 
@@ -278,6 +280,9 @@ public class ClassScanner {
         excludeClasses.add("org.checker");
         excludeClasses.add("org.codehaus");
         excludeClasses.add("org.jdom2.");
+        excludeClasses.add("org.aspectj.");
+        excludeClasses.add("org.hibernate.");
+        excludeClasses.add("aj.org.");
         excludeClasses.add("ch.qos.");
         excludeClasses.add("com.alibaba.csp.");
         excludeClasses.add("com.alibaba.nacos.");
@@ -292,6 +297,8 @@ public class ClassScanner {
         excludeClasses.add("com.fasterxml.");
         excludeClasses.add("com.github.");
         excludeClasses.add("com.google.");
+        excludeClasses.add("google.");
+        excludeClasses.add("metrics_influxdb.");
         excludeClasses.add("com.rabbitmq.");
         excludeClasses.add("com.squareup.");
         excludeClasses.add("com.sun.");
@@ -299,7 +306,9 @@ public class ClassScanner {
         excludeClasses.add("com.weibo.api.motan.");
         excludeClasses.add("com.zaxxer.");
         excludeClasses.add("com.mysql.");
+        excludeClasses.add("com.papertrail.");
         excludeClasses.add("org.gjt.");
+        excludeClasses.add("org.fusesource.");
         excludeClasses.add("io.dropwizard");
         excludeClasses.add("io.prometheus");
         excludeClasses.add("io.jsonwebtoken");
@@ -308,6 +317,7 @@ public class ClassScanner {
         excludeClasses.add("io.seata.");
         excludeClasses.add("io.swagger.");
         excludeClasses.add("io.undertow.");
+        excludeClasses.add("io.netty.");
         excludeClasses.add("it.sauronsoftware");
         excludeClasses.add("javax.");
         excludeClasses.add("java.");

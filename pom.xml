@@ -314,12 +314,12 @@
         </dependency>
 
 
-        <!--        <dependency>-->
-        <!--            <groupId>com.alibaba.csp</groupId>-->
-        <!--            <artifactId>ahas-sentinel-client</artifactId>-->
-        <!--            <version>1.8.3</version>-->
-        <!--            <scope>provided</scope>-->
-        <!--        </dependency>-->
+<!--                <dependency>-->
+<!--                    <groupId>com.alibaba.csp</groupId>-->
+<!--                    <artifactId>ahas-sentinel-client</artifactId>-->
+<!--                    <version>1.8.3</version>-->
+<!--                    <scope>provided</scope>-->
+<!--                </dependency>-->
 
 
         <dependency>
@@ -333,7 +333,7 @@
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <scope>provided</scope>
         </dependency>
 
