@@ -1,3 +1,11 @@
+jboot v3.8.1:
+优化：增强 Sentinel 与其控制面板设置的能力，增加数据源配置，并可以通过阿里云 AHAS 进行完全控制
+优化：升级 Undertow 的 devMode 默认值为 false，防止在 devMode 的情况下，不同的 classloader 导致获取不到数据查询实例的问题
+修复：修复分布式 Seata 的 bug 、升级 Seata 到最新版本并添加相关测试代码，感谢 @菜农
+修复：修复 Rabbitmq 在某些情况下出现 bug 的问题，并添加相关测试代码
+
+
+
 jboot v3.8.0:
 新增：代码生成器生成 Service 的前缀和后缀配置
 优化：升级 Jfinal、Jfinal-undertow、Jfinal-weixin 等到最新版本
