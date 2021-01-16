@@ -168,6 +168,11 @@ docker run -d -p 3000:3000 grafana/grafana
 
 ![grafana_import](./static/images/grafana_import_json.png)
 
+- 为 Grafana 添加 Prometheus 的数据源
+
+![grafana_import](./static/images/grafana_datasource_new.png)
+
+
 在 `Import via panel json` 中输入  `https://gitee.com/JbootProjects/jboot/raw/master/doc/jboot_jvm_grafana.json` 中的内容，然后点击 load，就可以见到如下的 JVM 大图了。
 
 ![grafana_import](./static/images/grafana_jboot_jvm.png)

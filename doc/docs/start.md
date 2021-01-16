@@ -31,9 +31,11 @@ IntelliJ IDEA 下载地址：https://www.jetbrains.com/idea/ ，下载完成后�
 ![](./static/images/idea_002.png "")
 
 第三步：填写 项目存储路径
+
 ![](./static/images/idea_003.png "")
 
 创建完毕后，我们会看到如下图所示，注意点击 Enable Auto-Import.
+
 ![](./static/images/idea_004.png "")
 
 ###  通过 Eclipse 创建项目
@@ -54,6 +56,7 @@ IntelliJ IDEA 下载地址：https://www.jetbrains.com/idea/ ，下载完成后�
 ```
 
 如下图所示：
+
 ![](./static/images/idea_005.png "")
 
 ## Hello World
@@ -64,8 +67,10 @@ IntelliJ IDEA 下载地址：https://www.jetbrains.com/idea/ ，下载完成后�
 
 > **通过编写代码，我们在浏览器访问后输出 “Hello World Jboot” 的文字内容。** 
 
-通过以上步骤，我们创建好了项目、添加好了 jboot 的maven依赖，接下来我们需要来创建一个叫 IndexController 的java文件，
+通过以上步骤，我们创建好了项目、添加好了 jboot 的maven依赖，接下来我们需要来创建一个叫 IndexController 的java文件
+
 ![](./static/images/idea_006.png "")
+
 ![](./static/images/idea_007.png "")
 
 IndexController 的代码如下：
@@ -88,6 +93,7 @@ public class IndexController extends JbootController {
     }
 }
 ```
+
 以上代码需要注意以下几点：
 1. IndexController 需要继承 JbootController 或者 Controller
 1. 需要添加 @RequestMapping("/") 请求映射配置
@@ -124,6 +130,7 @@ JbootResourceLoader started, Watched resource path name : webapp
 server started success , url : http://127.0.0.1:8080/
 ```
 此时我们通过浏览器访问：http://127.0.0.1:8080 , 就可以看到如下内容：
+
 ![](./static/images/0008.png "")
 
 
@@ -190,9 +197,11 @@ public class IndexController extends JbootController {
 2. jbootdemo 下要有数据表 user，因为 sql 查询内容是：`select * from user`
 
 例如：作者本地数据库的内容如下：
+
 ![](./static/images/0010.png "")
 
 运行 IndexController 的 `main()` 方法，并访问 `http://127.0.0.1:8080/dbtest`，会看到如下内容所示：
+
 ![](./static/images/0009.png "")
 
 此时，证明 Jboot 已经能够准确访问数据库。
@@ -333,6 +342,7 @@ public class IndexController extends JbootController {
 ```
 
 运行 `main()` 方法后，我们通过浏览访问 `http://127.0.0.1:8080/users` ，此时，页面显示的内容和 访问 `http://127.0.0.1:8080/dbtest` 的效果是一样的：
+
 ![](./static/images/0009.png "")
 
 
@@ -643,6 +653,7 @@ public void doSave() {
 ```
 
 此时，页面内容如下，修改功能正常使用。
+
 ![](./static/images/0015.png "")
 
 ### 删除功能
@@ -686,6 +697,7 @@ public void doSave() {
 ```
 
 页面显示如下：
+
 ![](./static/images/0016.png "")
 
 我们只需要在 UserController 编写一个 del() 方法，接收id、删除数据库数据，并跳转回 /user 即可完成任务，代码如下：
