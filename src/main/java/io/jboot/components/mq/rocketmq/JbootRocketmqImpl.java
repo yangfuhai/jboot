@@ -26,7 +26,6 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -141,7 +140,9 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
             try {
                 Message rocketMessage = new Message(topic, getSerializer().serialize(message));
                 SendResult result = getMQProducer().send(rocketMessage);
-                if (result.getSendStatus() != SendStatus.SEND_OK) {
+                // if (result.getSendStatus() != SendStatus.SEND_OK) {
+                // 只要不等于 null 就是发送成功
+                if (result == null) {
                     trySendMessage(message, topic, tryTimes++);
                 }
             } catch (Exception e) {
