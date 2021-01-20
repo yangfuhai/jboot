@@ -29,7 +29,7 @@ public class JbootRabbitmqConfig {
     private int port = 5672;
     private String virtualHost;
 
-    private String broadcastQueuePrefix;
+    private String broadcastChannelPrefix = "broadcast-";
 
 
     public String getUsername() {
@@ -72,11 +72,11 @@ public class JbootRabbitmqConfig {
         this.virtualHost = virtualHost;
     }
 
-    public String getBroadcastQueuePrefix() {
-        return broadcastQueuePrefix;
+    public String getBroadcastChannelPrefix() {
+        return broadcastChannelPrefix;
     }
 
-    public void setBroadcastQueuePrefix(String broadcastQueuePrefix) {
-        this.broadcastQueuePrefix = broadcastQueuePrefix;
+    public void setBroadcastChannelPrefix(String broadcastChannelPrefix) {
+        this.broadcastChannelPrefix = broadcastChannelPrefix;
     }
 }

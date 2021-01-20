@@ -136,10 +136,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     }
 
     private synchronized String buildBroadcastChannelName(String channel) {
-        String prefix = StrUtil.isNotBlank(rabbitmqConfig.getBroadcastQueuePrefix())
-                ? rabbitmqConfig.getBroadcastQueuePrefix()
-                : appConfig.getName();
-        return prefix + "-" + channel;
+        return rabbitmqConfig.getBroadcastChannelPrefix() + channel;
     }
 
 
