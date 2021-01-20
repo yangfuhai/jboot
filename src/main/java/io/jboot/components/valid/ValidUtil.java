@@ -27,7 +27,8 @@ import java.util.Set;
 public class ValidUtil {
 
     private static Validator validator = Validation.byProvider(HibernateValidator.class)
-            .configure().failFast(true)
+            .configure()
+            .failFast(true)
             .buildValidatorFactory()
             .getValidator();
 
@@ -36,6 +37,9 @@ public class ValidUtil {
         return validator;
     }
 
+    public static void setValidator(Validator validator) {
+        ValidUtil.validator = validator;
+    }
 
     public static Set<ConstraintViolation<Object>> validate(Object object){
         return validator.validate(object);
