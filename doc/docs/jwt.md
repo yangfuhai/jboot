@@ -14,9 +14,9 @@ JWT 是 Json web token 的简称, 是为了在网络应用环境间传递声明�
 
 在使用 JWT 之前，我们需要对 JWT 进行一些必要的配置。
 
-- jboot.web.jwt.httpHeaderName：配置JWT的http头的key，默认为 `Jwt`，可以不配置
-- jboot.web.jwt.secret：配置JWT的密钥，不行配置，否则 jboot 会给出警告
-- jboot.web.jwt.validityPeriod：配置JWT的过期时间，默认不过期
+- jboot.web.jwt.httpHeaderName：配置 JWT 的 http 头的 key，默认为 `Jwt`，可以不配置。
+- jboot.web.jwt.secret：配置 JWT 的密钥，必须配置，否则使用 jwt 会抛出异常
+- jboot.web.jwt.validityPeriod：配置 JWT 的过期时间，默认不过期
 
 
 ## JWT 使用
