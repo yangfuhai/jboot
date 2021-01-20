@@ -27,6 +27,8 @@ public class JbootAliyunmqConfig {
     private String addr;
     private String sendMsgTimeoutMillis = "3000";
 
+    private String broadcastChannelPrefix = "broadcast-";
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -67,4 +69,11 @@ public class JbootAliyunmqConfig {
         this.sendMsgTimeoutMillis = sendMsgTimeoutMillis;
     }
 
+    public String getBroadcastChannelPrefix() {
+        return broadcastChannelPrefix;
+    }
+
+    public void setBroadcastChannelPrefix(String broadcastChannelPrefix) {
+        this.broadcastChannelPrefix = broadcastChannelPrefix;
+    }
 }

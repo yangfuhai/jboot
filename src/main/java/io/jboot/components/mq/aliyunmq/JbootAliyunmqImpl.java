@@ -23,56 +23,89 @@ import io.jboot.components.mq.JbootmqBase;
 import java.util.Properties;
 
 
-public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq, MessageListener {
+public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
 
     private Producer producer;
     private Consumer consumer;
+    private JbootAliyunmqConfig aliyunmqConfig;
 
     public JbootAliyunmqImpl() {
         super();
-
-        Properties properties = createProperties();
-        producer = ONSFactory.createProducer(properties);
-        producer.start();
-
+        aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
     }
 
 
     @Override
     protected void onStartListening() {
+        startQueueConsumer();
+        startBroadCastConsumer();
+    }
 
+
+    private void startQueueConsumer() {
         Properties properties = createProperties();
-
         consumer = ONSFactory.createConsumer(properties);
-        for (String c : channels) {
-            consumer.subscribe(c, "*", this);
+        for (String channel : channels) {
+            consumer.subscribe(aliyunmqConfig.getBroadcastChannelPrefix() + channel, "*", (message, consumeContext) -> {
+                notifyListeners(channel, getSerializer().deserialize(message.getBody()));
+                return Action.CommitMessage;
+            });
         }
         consumer.start();
     }
 
+
+    private void startBroadCastConsumer() {
+        Properties properties = createProperties();
+        properties.put(PropertyKeyConst.MessageModel, PropertyValueConst.BROADCASTING);
+        consumer = ONSFactory.createConsumer(properties);
+        for (String channel : channels) {
+            consumer.subscribe(channel, "*", (message, consumeContext) -> {
+                notifyListeners(channel, getSerializer().deserialize(message.getBody()));
+                return Action.CommitMessage;
+            });
+        }
+        consumer.start();
+    }
+
+
     @Override
     public void enqueue(Object message, String toChannel) {
-        throw new RuntimeException("not finished!");
+        byte[] bytes = getSerializer().serialize(message);
+        Message onsMessage = new Message(toChannel, "*", bytes);
+        getProducer().send(onsMessage);
     }
+
 
     @Override
     public void publish(Object message, String toChannel) {
         byte[] bytes = getSerializer().serialize(message);
-        Message onsMessage = new Message(toChannel, "*", bytes);
-        producer.send(onsMessage);
+        Message onsMessage = new Message(aliyunmqConfig.getBroadcastChannelPrefix() + toChannel, "*", bytes);
+        getProducer().send(onsMessage);
     }
 
-    @Override
-    public Action consume(Message message, ConsumeContext context) {
-        byte[] bytes = message.getBody();
-        Object object = getSerializer().deserialize(bytes);
-        notifyListeners(message.getTopic(), object);
-        return Action.CommitMessage;
+
+    private Producer getProducer() {
+        if (producer == null) {
+            synchronized (this) {
+                if (producer == null) {
+                    createProducer();
+                }
+            }
+        }
+        return producer;
+    }
+
+
+    private void createProducer() {
+        Properties properties = createProperties();
+        producer = ONSFactory.createProducer(properties);
+        producer.start();
     }
 
 
     private Properties createProperties() {
-        JbootAliyunmqConfig aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
+
 
         Properties properties = new Properties();
         properties.put(PropertyKeyConst.AccessKey, aliyunmqConfig.getAccessKey());//AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
