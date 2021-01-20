@@ -26,7 +26,7 @@ class Util {
 
 
 
-    static void throwValidException(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
+    static void renderValidException(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
         String reason = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed!");
         switch (renderType) {
             case ValidateRenderType.DEFAULT:

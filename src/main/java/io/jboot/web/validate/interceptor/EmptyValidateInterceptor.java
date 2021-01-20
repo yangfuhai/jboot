@@ -92,7 +92,7 @@ public class EmptyValidateInterceptor implements Interceptor {
             }
 
             if (value == null || value.trim().length() == 0) {
-                Util.throwValidException(inv.getController()
+                Util.renderValidException(inv.getController()
                         , AnnotationUtil.get(emptyParaValidate.renderType())
                         , formName
                         , AnnotationUtil.get(form.message())

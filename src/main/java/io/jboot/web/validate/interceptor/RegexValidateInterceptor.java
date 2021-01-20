@@ -94,7 +94,7 @@ public class RegexValidateInterceptor implements Interceptor {
             }
 
             if (value == null || !value.trim().matches(form.regex())) {
-                Util.throwValidException(inv.getController()
+                Util.renderValidException(inv.getController()
                         , AnnotationUtil.get(regexValidate.renderType())
                         , formName
                         , AnnotationUtil.get(form.message())

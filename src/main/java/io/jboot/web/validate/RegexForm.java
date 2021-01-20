@@ -35,5 +35,5 @@ public @interface RegexForm {
 
     String type() default FormType.FORM_DATA;
 
-    int errorCode() default 1;
+    int errorCode() default 400;
 }

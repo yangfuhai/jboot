@@ -37,6 +37,6 @@ public @interface CaptchaValidate {
 
     String renderType() default ValidateRenderType.DEFAULT;
 
-    int errorCode() default 1;
+    int errorCode() default 400;
 
 }
