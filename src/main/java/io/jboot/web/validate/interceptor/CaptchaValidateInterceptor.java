@@ -37,7 +37,7 @@ public class CaptchaValidateInterceptor implements Interceptor {
         CaptchaValidate captchaValidate = inv.getMethod().getAnnotation(CaptchaValidate.class);
         if (captchaValidate != null && !validateCaptache(inv, captchaValidate)) {
             if (Jboot.isDevMode()){
-                LOG.error(Util.buildErrorMessage(inv,"@CaptchaValidate"));
+                LOG.error(ValidateInterceptorUtil.buildErrorMessage(inv,"@CaptchaValidate"));
             }
             return;
         }
@@ -65,7 +65,7 @@ public class CaptchaValidateInterceptor implements Interceptor {
             return true;
         }
 
-        Util.renderValidException(inv.getController()
+        ValidateInterceptorUtil.renderValidException(inv.getController()
                 , AnnotationUtil.get(captchaValidate.renderType())
                 , formName
                 , AnnotationUtil.get(captchaValidate.message())

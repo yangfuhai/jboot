@@ -42,7 +42,7 @@ public class EmptyValidateInterceptor implements Interceptor {
         EmptyValidate emptyParaValidate = inv.getMethod().getAnnotation(EmptyValidate.class);
         if (emptyParaValidate != null && !validateEmpty(inv, emptyParaValidate)) {
             if (Jboot.isDevMode()){
-                LOG.error(Util.buildErrorMessage(inv,"@EmptyValidate"));
+                LOG.error(ValidateInterceptorUtil.buildErrorMessage(inv,"@EmptyValidate"));
             }
             return;
         }
@@ -92,7 +92,7 @@ public class EmptyValidateInterceptor implements Interceptor {
             }
 
             if (value == null || value.trim().length() == 0) {
-                Util.renderValidException(inv.getController()
+                ValidateInterceptorUtil.renderValidException(inv.getController()
                         , AnnotationUtil.get(emptyParaValidate.renderType())
                         , formName
                         , AnnotationUtil.get(form.message())

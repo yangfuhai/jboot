@@ -42,7 +42,7 @@ public class RegexValidateInterceptor implements Interceptor {
         RegexValidate regexValidate = inv.getMethod().getAnnotation(RegexValidate.class);
         if (regexValidate != null && !validateRegex(inv, regexValidate)) {
             if (Jboot.isDevMode()){
-                LOG.error(Util.buildErrorMessage(inv,"@RegexValidate"));
+                LOG.error(ValidateInterceptorUtil.buildErrorMessage(inv,"@RegexValidate"));
             }
             return;
         }
@@ -94,7 +94,7 @@ public class RegexValidateInterceptor implements Interceptor {
             }
 
             if (value == null || !value.trim().matches(form.regex())) {
-                Util.renderValidException(inv.getController()
+                ValidateInterceptorUtil.renderValidException(inv.getController()
                         , AnnotationUtil.get(regexValidate.renderType())
                         , formName
                         , AnnotationUtil.get(form.message())

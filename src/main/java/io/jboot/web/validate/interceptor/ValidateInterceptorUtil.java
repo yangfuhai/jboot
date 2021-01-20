@@ -10,7 +10,22 @@ import io.jboot.web.validate.ValidateRenderType;
 /**
  * @author michael yang (fuhai999@gmail.com)
  */
-class Util {
+public class ValidateInterceptorUtil {
+
+
+    /**
+     * 通过自定义的 ValidExceptionRetBuilder，可以自定义验证错误输出的 json 内容
+     */
+    private static ValidExceptionRetBuilder validExceptionRetBuilder = ValidExceptionRetBuilder.DEFAULT_BUILDER;
+
+    public static ValidExceptionRetBuilder getValidExceptionRetBuilder() {
+        return validExceptionRetBuilder;
+    }
+
+    public static void setValidExceptionRetBuilder(ValidExceptionRetBuilder validExceptionRetBuilder) {
+        ValidateInterceptorUtil.validExceptionRetBuilder = validExceptionRetBuilder;
+    }
+
 
 
     static String buildErrorMessage(Invocation inv, String annotation) {
@@ -25,30 +40,31 @@ class Util {
     }
 
 
-
     static void renderValidException(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
         String reason = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed!");
         switch (renderType) {
             case ValidateRenderType.DEFAULT:
                 if (RequestUtil.isAjaxRequest(controller.getRequest())
                         || RequestUtil.isJsonContentType(controller.getRequest())) {
-                    controller.renderJson(
-                            Ret.fail("message", message)
-                                    .set("reason", reason)
-                                    .set("errorCode", errorCode)
-                                    .setIfNotNull("formName", formName)
-                    );
+
+                    Ret baseRet = Ret.fail("message", message)
+                            .set("reason", reason)
+                            .set("errorCode", errorCode)
+                            .setIfNotNull("formName", formName);
+
+                    Ret ret = validExceptionRetBuilder.build(baseRet);
+                    controller.renderJson(ret);
                 } else {
                     controller.renderText(reason);
                 }
                 break;
             case ValidateRenderType.JSON:
-                controller.renderJson(
-                        Ret.fail("message", message)
-                                .set("reason", reason)
-                                .set("errorCode", errorCode)
-                                .setIfNotNull("formName", formName)
-                );
+                Ret baseRet =  Ret.fail("message", message)
+                        .set("reason", reason)
+                        .set("errorCode", errorCode)
+                        .setIfNotNull("formName", formName);
+                Ret ret = validExceptionRetBuilder.build(baseRet);
+                controller.renderJson(ret);
                 break;
             case ValidateRenderType.REDIRECT:
                 controller.redirect(redirectUrl);
@@ -62,6 +78,14 @@ class Util {
             default:
                 throw new IllegalArgumentException("can not process render : " + renderType);
         }
+    }
+
+
+    public static interface ValidExceptionRetBuilder{
+
+        public static final ValidExceptionRetBuilder DEFAULT_BUILDER = ret -> ret;
+
+        public Ret build(Ret baseRet);
     }
 
 
