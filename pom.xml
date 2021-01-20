@@ -442,7 +442,7 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>1.8.5.Final</version>
+            <version>1.8.7.3.Final</version>
             <scope>provided</scope>
         </dependency>
 
