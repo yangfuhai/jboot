@@ -36,13 +36,13 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     private Connection connection;
     private Map<String, Channel> channelMap = new ConcurrentHashMap<>();
 
-    private JbootmqRabbitmqConfig rabbitmqConfig;
+    private JbootRabbitmqConfig rabbitmqConfig;
     private JbootApplicationConfig appConfig;
 
 
     public JbootRabbitmqImpl() {
         super();
-        rabbitmqConfig = Jboot.config(JbootmqRabbitmqConfig.class);
+        rabbitmqConfig = Jboot.config(JbootRabbitmqConfig.class);
         appConfig = Jboot.config(JbootApplicationConfig.class);
 
         try {

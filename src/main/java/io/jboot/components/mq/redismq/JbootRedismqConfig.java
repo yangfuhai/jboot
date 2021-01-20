@@ -20,7 +20,7 @@ import io.jboot.support.redis.JbootRedisConfig;
 
 
 @ConfigModel(prefix = "jboot.mq.redis")
-public class JbootmqRedisConfig extends JbootRedisConfig {
+public class JbootRedismqConfig extends JbootRedisConfig {
 
 
 }

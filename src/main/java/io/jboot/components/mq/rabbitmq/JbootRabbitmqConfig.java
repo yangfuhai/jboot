@@ -19,7 +19,7 @@ import io.jboot.app.config.annotation.ConfigModel;
 
 
 @ConfigModel(prefix = "jboot.mq.rabbitmq")
-public class JbootmqRabbitmqConfig {
+public class JbootRabbitmqConfig {
 
 
     private String username = "guest";
