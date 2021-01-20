@@ -1,4 +1,4 @@
-package io.jboot.web.utils;
+package io.jboot.support.shiro;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
@@ -11,7 +11,7 @@ import java.util.Set;
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  */
-public class ControllerUtil {
+public class JbootShiroUtil {
 
     private static final String SLASH = "/";
 
