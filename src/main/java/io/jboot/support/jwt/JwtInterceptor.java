@@ -50,6 +50,11 @@ public class JwtInterceptor implements Interceptor {
     }
 
 
+    /**
+     * 对 jwt 内容进行刷新
+     * @param controller
+     * @param oldData
+     */
     private void refreshIfNecessary(Controller controller, Map oldData) {
         if (oldData == null || oldData.isEmpty()) {
             return;

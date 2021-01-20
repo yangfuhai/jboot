@@ -55,13 +55,15 @@ public class JwtManager {
 
     /**
      * 通过 Controller 解析 Map
+     *
      * @param controller 控制器
      * @return 所有 JWT 数据
      */
     public Map parseJwtToken(Controller controller) {
 
         if (!getConfig().isConfigOk()) {
-            throw new JbootIllegalConfigException("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
+            LogKit.error("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
+            return EMPTY_MAP;
         }
 
         String token = controller.getHeader(getHttpHeaderName());
@@ -81,6 +83,7 @@ public class JwtManager {
 
     /**
      * 解析 JWT Token 内容
+     *
      * @param token 加密的 token
      * @return 返回 JWT 的 MAP 数据
      */
@@ -109,7 +112,6 @@ public class JwtManager {
 
         return EMPTY_MAP;
     }
-
 
 
     public String createJwtToken(Map map) {
@@ -142,13 +144,11 @@ public class JwtManager {
     }
 
 
-
     private SecretKey generalKey() {
         byte[] encodedKey = DatatypeConverter.parseBase64Binary(getConfig().getSecret());
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return key;
     }
-
 
 
     private JwtConfig config;
