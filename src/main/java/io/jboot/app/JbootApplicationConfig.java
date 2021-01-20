@@ -16,6 +16,7 @@
 package io.jboot.app;
 
 import io.jboot.JbootConsts;
+import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 
 @ConfigModel(prefix = "jboot.app")
@@ -70,6 +71,13 @@ public class JbootApplicationConfig {
     }
 
 
+    private static JbootApplicationConfig instance;
+    public static JbootApplicationConfig get() {
+        if (instance == null) {
+            instance = JbootConfigManager.me().get(JbootApplicationConfig.class);
+        }
+        return instance;
+    }
 
     @Override
     public String toString() {

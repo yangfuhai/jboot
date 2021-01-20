@@ -25,6 +25,7 @@ public class JbootmqConfig {
     public static final String TYPE_ACTIVEMQ = "activemq";
     public static final String TYPE_ALIYUNMQ = "aliyunmq";
     public static final String TYPE_RABBITMQ = "rabbitmq";
+    public static final String TYPE_ROCKETMQ = "rocketmq";
     public static final String TYPE_QPID = "qpid";
     public static final String TYPE_LOCAL= "local";
 
