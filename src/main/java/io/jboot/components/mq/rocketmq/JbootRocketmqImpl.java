@@ -143,10 +143,10 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
                 // if (result.getSendStatus() != SendStatus.SEND_OK) {
                 // 只要不等于 null 就是发送成功
                 if (result == null) {
-                    trySendMessage(message, topic, tryTimes++);
+                    trySendMessage(message, topic, ++tryTimes);
                 }
             } catch (Exception e) {
-                trySendMessage(message, topic, tryTimes++);
+                trySendMessage(message, topic, ++tryTimes);
                 LOG.error(e.toString(), e);
             }
         } else {
@@ -155,7 +155,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private MQProducer getMQProducer() {
+    private MQProducer getMQProducer() throws MQClientException {
         if (mqProducer == null) {
             synchronized (this) {
                 if (mqProducer == null) {
@@ -167,15 +167,11 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private void createMqProducer() {
-        try {
+    private void createMqProducer() throws MQClientException {
             DefaultMQProducer producer = new DefaultMQProducer(rocketmqConfig.getProducerGroup());
             producer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
             producer.start();
             mqProducer = producer;
-        } catch (MQClientException e) {
-            LOG.error(e.toString(), e);
-        }
     }
 }
 

@@ -24,11 +24,11 @@ import java.io.Serializable;
 public class JbootRocketmqConfig implements Serializable {
 
     private String namesrvAddr;
-    private String consumerGroup = "DEFAULT_CONSUMER";
+    private String consumerGroup = "jboot_default_consumer_group";
     private Integer consumeMessageBatchMaxSize;
     private String broadcastChannelPrefix = "broadcast-";
 
-    private String producerGroup;
+    private String producerGroup = "jboot_default_producer_group";
 
     public String getNamesrvAddr() {
         return namesrvAddr;
