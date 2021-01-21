@@ -19,6 +19,7 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
+import io.jboot.db.dialect.JbootClickHouseDialect;
 import io.jboot.db.dialect.JbootDialect;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
@@ -26,9 +27,11 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Array;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
-import java.util.Date;
 
 
 /**
@@ -277,7 +280,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                     conn = config.getConnection();
                     if (dialect.isOracle()) {
                         pst = conn.prepareStatement(sql.toString(), table.getPrimaryKey());
-                    } else {
+                    }
+                    else if (dialect instanceof JbootClickHouseDialect){
+                        pst = conn.prepareStatement(sql.toString());
+                    }
+                    else {
                         pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
                     }
                     dialect.fillStatement(pst, paras);

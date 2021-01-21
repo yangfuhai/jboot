@@ -240,7 +240,7 @@ public class SqlBuilder {
         return sqlBuilder.toString();
     }
 
-    private static void buildJoinSql(StringBuilder sqlBuilder, List<Join> joins, char separator) {
+    public static void buildJoinSql(StringBuilder sqlBuilder, List<Join> joins, char separator) {
         if (joins == null || joins.isEmpty()) {
             return;
         }
@@ -262,7 +262,7 @@ public class SqlBuilder {
     }
 
 
-    private static void buildAlias(StringBuilder sqlBuilder, String alias) {
+    public static void buildAlias(StringBuilder sqlBuilder, String alias) {
         if (StrUtil.isNotBlank(alias)) {
             sqlBuilder.append(" AS ").append(alias);
         }

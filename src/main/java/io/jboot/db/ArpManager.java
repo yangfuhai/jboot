@@ -246,8 +246,11 @@ public class ArpManager {
             case DataSourceConfig.TYPE_POSTGRESQL:
                 activeRecordPlugin.setDialect(new JbootPostgreSqlDialect());
                 break;
+            case DataSourceConfig.TYPE_CLICKHOUSE:
+                activeRecordPlugin.setDialect(new JbootClickHouseDialect());
+                break;
             default:
-                throw new JbootIllegalConfigException("only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql and postgresql, please check your jboot.properties. ");
+                throw new JbootIllegalConfigException("only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql、postgresql and clickhouse, please check your jboot.properties. ");
         }
     }
 

@@ -30,16 +30,18 @@ public class DriverClassNames {
         driverClassNames.put(DataSourceConfig.TYPE_SQLSERVER, new String[]{"com.microsoft.sqlserver.jdbc.SQLServerDriver"});
         driverClassNames.put(DataSourceConfig.TYPE_SQLITE, new String[]{"org.sqlite.JDBC"});
         driverClassNames.put(DataSourceConfig.TYPE_POSTGRESQL, new String[]{"org.postgresql.Driver"});
+        driverClassNames.put(DataSourceConfig.TYPE_CLICKHOUSE, new String[]{"com.github.housepower.jdbc.ClickHouseDriver", "ru.yandex.clickhouse.ClickHouseDriver"});
     }
 
 
     /**
      * 获取 默认的 jdbc 驱动类
+     *
      * @param type
      * @return
      */
     public static String getDefaultDriverClass(String type) {
-        String[] drivers = driverClassNames.get(type);
+        String[] drivers = driverClassNames.get(type.toLowerCase());
         if (drivers == null || drivers.length == 0) {
             return null;
         }

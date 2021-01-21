@@ -28,6 +28,7 @@ public class DataSourceConfig {
     public static final String TYPE_SQLITE = "sqlite";
     public static final String TYPE_ANSISQL = "ansisql";
     public static final String TYPE_POSTGRESQL = "postgresql";
+    public static final String TYPE_CLICKHOUSE = "clickhouse";
 
 
     private String name;
