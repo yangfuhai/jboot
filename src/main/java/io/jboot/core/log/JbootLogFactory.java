@@ -16,6 +16,7 @@
 package io.jboot.core.log;
 
 import com.jfinal.log.Log;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.NOPLoggerFactory;
@@ -24,11 +25,11 @@ import org.slf4j.spi.LocationAwareLogger;
 /**
  * @author michael
  */
-public class Slf4jLogFactory extends com.jfinal.log.Slf4jLogFactory {
+public class JbootLogFactory extends com.jfinal.log.Slf4jLogFactory {
 
-    private boolean useJdkLogger;
+    private boolean useJdkLogger = false;
 
-    public Slf4jLogFactory() {
+    public JbootLogFactory() {
         boolean hasStaticLoggerBinder = false;
         try {
             Class.forName("org.slf4j.impl.StaticLoggerBinder");
@@ -38,7 +39,12 @@ public class Slf4jLogFactory extends com.jfinal.log.Slf4jLogFactory {
         if (!hasStaticLoggerBinder) {
             useJdkLogger = true;
         } else {
-            this.useJdkLogger = LoggerFactory.getILoggerFactory() instanceof NOPLoggerFactory;
+            ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
+            if (loggerFactory.getClass() == NOPLoggerFactory.class){
+                useJdkLogger = true;
+            }else {
+                System.out.println("Jboot loggerFactory: " + loggerFactory.getClass().getName());
+            }
         }
     }
 

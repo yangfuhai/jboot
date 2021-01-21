@@ -39,7 +39,7 @@ import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
 import io.jboot.core.listener.JbootAppListenerManager;
-import io.jboot.core.log.Slf4jLogFactory;
+import io.jboot.core.log.JbootLogFactory;
 import io.jboot.db.ArpManager;
 import io.jboot.support.metric.JbootMetricConfig;
 import io.jboot.support.metric.MetricServletHandler;
@@ -137,7 +137,7 @@ public class JbootCoreConfig extends JFinalConfig {
 //            ApiConfigKit.putApiConfig(apiConfig);
 //        }
 
-        constants.setLogFactory(new Slf4jLogFactory());
+        constants.setLogFactory(new JbootLogFactory());
         constants.setMaxPostSize(1024 * 1024 * 2000);
         constants.setReportAfterInvocation(false);
 
