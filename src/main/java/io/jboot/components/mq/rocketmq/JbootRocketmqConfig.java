@@ -24,6 +24,7 @@ import java.io.Serializable;
 public class JbootRocketmqConfig implements Serializable {
 
     private String namesrvAddr;
+    private String namespace;
     private String consumerGroup = "jboot_default_consumer_group";
     private Integer consumeMessageBatchMaxSize;
     private String broadcastChannelPrefix = "broadcast-";
@@ -36,6 +37,14 @@ public class JbootRocketmqConfig implements Serializable {
 
     public void setNamesrvAddr(String namesrvAddr) {
         this.namesrvAddr = namesrvAddr;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public String getConsumerGroup() {

@@ -19,6 +19,7 @@ import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.utils.StrUtil;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
@@ -62,26 +63,29 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
         consumer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
 
+        if (StrUtil.isNotBlank(rocketmqConfig.getNamespace())) {
+            consumer.setNamespace(rocketmqConfig.getNamespace());
+        }
+
         if (rocketmqConfig.getConsumeMessageBatchMaxSize() != null) {
             consumer.setConsumeMessageBatchMaxSize(rocketmqConfig.getConsumeMessageBatchMaxSize());
         }
 
-        //每个 channel 相当于一个 topic
         for (String channel : channels) {
-            // 开始订阅
             consumer.subscribe(channel, "*");
-            // 注册回调实现类来处理从broker拉取回来的消息
-            consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
-                if (msgs != null) {
-                    for (MessageExt messageExt : msgs) {
-                        notifyListeners(channel, getSerializer().deserialize(messageExt.getBody()));
-                    }
-                }
-                // 标记该消息已经被成功消费
-                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-            });
-
         }
+
+        // 注册回调实现类来处理从broker拉取回来的消息
+        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
+            if (msgs != null) {
+                for (MessageExt messageExt : msgs) {
+                    notifyListeners(messageExt.getTopic(), getSerializer().deserialize(messageExt.getBody()));
+                }
+            }
+            // 标记该消息已经被成功消费
+            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+        });
+
 
         consumer.start();
 
@@ -90,10 +94,14 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
     private void startBroadcastConsumer() throws MQClientException {
         // 实例化消费者
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(rocketmqConfig.getConsumerGroup());
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(rocketmqConfig.getBroadcastChannelPrefix() + rocketmqConfig.getConsumerGroup());
 
         // 设置NameServer的地址
         consumer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
+
+        if (StrUtil.isNotBlank(rocketmqConfig.getNamespace())) {
+            consumer.setNamespace(rocketmqConfig.getNamespace());
+        }
 
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         consumer.setMessageModel(MessageModel.BROADCASTING);
@@ -102,22 +110,21 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
             consumer.setConsumeMessageBatchMaxSize(rocketmqConfig.getConsumeMessageBatchMaxSize());
         }
 
-        //每个 channel 对应一个 topic
         for (String channel : channels) {
-            // 开始订阅
             consumer.subscribe(rocketmqConfig.getBroadcastChannelPrefix() + channel, "*");
-            // 注册回调实现类来处理从broker拉取回来的消息
-            consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
-                if (msgs != null) {
-                    for (MessageExt messageExt : msgs) {
-                        notifyListeners(channel, getSerializer().deserialize(messageExt.getBody()));
-                    }
-                }
-                // 标记该消息已经被成功消费
-                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-            });
-
         }
+
+        final int len = rocketmqConfig.getBroadcastChannelPrefix().length();
+        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
+            if (msgs != null) {
+                for (MessageExt messageExt : msgs) {
+                    String topic = messageExt.getTopic();
+                    notifyListeners(topic.substring(len), getSerializer().deserialize(messageExt.getBody()));
+                }
+            }
+            // 标记该消息已经被成功消费
+            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+        });
 
         consumer.start();
     }
@@ -168,10 +175,15 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
 
     private void createMqProducer() throws MQClientException {
-            DefaultMQProducer producer = new DefaultMQProducer(rocketmqConfig.getProducerGroup());
-            producer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
-            producer.start();
-            mqProducer = producer;
+        DefaultMQProducer producer = new DefaultMQProducer(rocketmqConfig.getProducerGroup());
+        producer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
+
+        if (StrUtil.isNotBlank(rocketmqConfig.getNamespace())) {
+            producer.setNamespace(rocketmqConfig.getNamespace());
+        }
+
+        producer.start();
+        mqProducer = producer;
     }
 }
 
