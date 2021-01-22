@@ -258,6 +258,11 @@ public class ClassScanner {
         excludeJars.add("clickhouse-");
         excludeJars.add("lz4-");
         excludeJars.add("commons-digester-");
+        excludeJars.add("opencc4j-");
+        excludeJars.add("heaven-");
+        excludeJars.add("tinypinyin-");
+        excludeJars.add("jieba-");
+        excludeJars.add("ahocorasick-");
 
     }
 
@@ -287,6 +292,7 @@ public class ClassScanner {
         excludeClasses.add("org.jdom2.");
         excludeClasses.add("org.aspectj.");
         excludeClasses.add("org.hibernate.");
+        excludeClasses.add("org.ahocorasick.");
         excludeClasses.add("aj.org.");
         excludeClasses.add("ch.qos.");
         excludeClasses.add("com.alibaba.csp.");
@@ -301,6 +307,7 @@ public class ClassScanner {
         excludeClasses.add("com.esotericsoftware.");
         excludeClasses.add("com.fasterxml.");
         excludeClasses.add("com.github.");
+        excludeClasses.add("io.github.");
         excludeClasses.add("com.google.");
         excludeClasses.add("google.");
         excludeClasses.add("metrics_influxdb.");
