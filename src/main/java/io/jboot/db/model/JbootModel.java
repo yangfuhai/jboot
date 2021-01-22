@@ -323,10 +323,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     protected M loadByCache(Object... idValues) {
         try {
-            return config.getIdCache().get(_getTableName()
+            M m = config.getIdCache().get(_getTableName()
                     , buildIdCacheKey(idValues)
                     , () -> JbootModel.super.findByIds(idValues)
                     , config.getIdCacheTime());
+            return config.isIdCacheByCopyEnable() ? m.copy() : m;
         } catch (Exception ex) {
             LOG.error("Jboot load model [" + ClassUtil.getUsefulClass(getClass()) + "] by cache is error, safe deleted it in cache.", ex);
             safeDeleteCache(idValues);
