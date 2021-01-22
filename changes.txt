@@ -1,3 +1,17 @@
+jboot v3.9.0:
+新增：Clickhouse 数据源的配置和支持
+新增：Rocketmq 作为 mq 底层通信的支持
+新增：ValidUtil.setValidator() 方法用于自定义自己的 Validator
+新增：ValidateInterceptorUtil.setValidExceptionRetBuilder 用于渲染自定义验证错误信息
+新增：jboot.model.idCacheByCopyEnable 配置用于开启 id 缓存的时候是否返回 copy 的对象
+优化：优化 Rabbitmq 和 阿里云商业 MQ 的支持
+优化：修改 Validate 返回数据的 errorCode 的值为 400
+优化：重命名 ControllerUtil 为 JbootShiroUtil
+优化：JbootController 去获取 Jwt 内容的时候，不配置 secret 只会发出警告而不是抛出异常
+优化：重置 Rabbitmq 的 broadcastQueuePrefix 配置为 broadcastChannelPrefix
+
+
+
 jboot v3.8.1:
 优化：增强 Sentinel 与其控制面板设置的能力，增加数据源配置，并可以通过阿里云 AHAS 进行完全控制
 优化：升级 Undertow 的 devMode 默认值为 false，防止在 devMode 的情况下，不同的 classloader 导致获取不到数据查询实例的问题
