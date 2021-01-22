@@ -254,6 +254,11 @@ public class ClassScanner {
         excludeJars.add("aspectjweaver-");
         excludeJars.add("aspectjrt-");
         excludeJars.add("simpleclient_");
+        excludeJars.add("rocketmq-");
+        excludeJars.add("clickhouse-");
+        excludeJars.add("lz4-");
+        excludeJars.add("commons-digester-");
+
     }
 
 
