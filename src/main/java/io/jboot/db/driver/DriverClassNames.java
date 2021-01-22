@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.db.datasource;
+package io.jboot.db.driver;
 
+import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,17 @@ public class DriverClassNames {
 
 
     /**
+     * Jboot 自己实现的驱动，比如 ClickHouse 为了适配 JFinal 做了一些驱动改动
+     */
+    private static final Map<String, String> jbootDriverMapping = new HashMap<>();
+
+    static {
+        jbootDriverMapping.put("com.github.housepower.jdbc.ClickHouseDriver", "io.jboot.db.driver.NativeClickHouseDriver");
+        jbootDriverMapping.put("ru.yandex.clickhouse.ClickHouseDriver", "io.jboot.db.driver.OfficialClickHouseDriver");
+    }
+
+
+    /**
      * 获取 默认的 jdbc 驱动类
      *
      * @param type
@@ -48,7 +61,8 @@ public class DriverClassNames {
 
         for (String driver : drivers) {
             if (ClassUtil.hasClass(driver)) {
-                return driver;
+                String jbootDriver = jbootDriverMapping.get(driver);
+                return StrUtil.isNotBlank(jbootDriver) ? jbootDriver : driver;
             }
         }
         return null;

@@ -16,6 +16,7 @@
 package io.jboot.db.datasource;
 
 import com.jfinal.plugin.activerecord.DbKit;
+import io.jboot.db.driver.DriverClassNames;
 import io.jboot.utils.StrUtil;
 
 

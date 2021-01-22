@@ -23,7 +23,11 @@ public class ClickHouseController extends JbootController {
         //设置 数据源 的相关信息
         JbootApplication.setBootArg("jboot.datasource.factory", "druid");
         JbootApplication.setBootArg("jboot.datasource.type", "clickhouse");
-        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:clickhouse://localhost:9000/tutorial");
+//        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:clickhouse://localhost:9000/tutorial");
+
+        JbootApplication.setBootArg("jboot.datasource.driverClassName", "io.jboot.db.driver.OfficialClickHouseDriver");
+        JbootApplication.setBootArg("jboot.datasource.url", "jdbc:clickhouse://localhost:8123/tutorial");
+
 //        JbootApplication.setBootArg("jboot.datasource.user", "root");
 //        JbootApplication.setBootArg("jboot.datasource.password", "123456");
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
@@ -154,6 +158,14 @@ public class ClickHouseController extends JbootController {
         user.set("age",20);
         user.set("name","张三");
         user.save();
+        renderJson(Ret.ok());
+    }
+
+    public void update1(){
+        UserInfo user = new UserInfo();
+        user.set("id",100);
+        user.set("name","李四");
+        user.update();
         renderJson(Ret.ok());
     }
 

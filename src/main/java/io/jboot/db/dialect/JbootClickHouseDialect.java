@@ -23,9 +23,7 @@ import io.jboot.db.model.Column;
 import io.jboot.db.model.Join;
 import io.jboot.db.model.SqlBuilder;
 
-import java.math.BigInteger;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -36,29 +34,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
 
     @Override
     public void getModelGeneratedKey(Model<?> model, PreparedStatement pst, Table table) throws SQLException {
-        String[] pKeys = table.getPrimaryKey();
-        ResultSet rs = pst.getGeneratedKeys();
-        for (String pKey : pKeys) {
-            if (model.get(pKey) == null || isOracle()) {
-                if (rs.next()) {
-                    Class<?> colType = table.getColumnType(pKey);
-                    if (colType != null) {	// 支持没有主键的用法，有人将 model 改造成了支持无主键:济南-费小哥
-                        if (colType == Integer.class || colType == int.class) {
-                            model.set(pKey, rs.getInt(1));
-                        } else if (colType == Long.class || colType == long.class) {
-                            model.set(pKey, rs.getLong(1));
-                        } else if (colType == BigInteger.class) {
-                            processGeneratedBigIntegerKey(model, pKey, rs.getObject(1));
-                        } else {
-                            model.set(pKey, rs.getObject(1));	// It returns Long for int colType for mysql
-                        }
-                    }
-                }
-            }
-        }
-
-        // clickhouse 不需要关闭
-//        rs.close();
+        // doNothing() ; clickhouse 不支持生成主键
     }
 
     @Override

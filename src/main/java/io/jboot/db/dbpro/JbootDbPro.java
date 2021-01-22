@@ -15,14 +15,18 @@
  */
 package io.jboot.db.dbpro;
 
-import com.jfinal.plugin.activerecord.*;
+import com.jfinal.plugin.activerecord.Config;
+import com.jfinal.plugin.activerecord.DbPro;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
-import io.jboot.db.dialect.JbootClickHouseDialect;
 import io.jboot.db.dialect.JbootDialect;
 import io.jboot.db.model.Columns;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,11 +78,7 @@ public class JbootDbPro extends DbPro {
             PreparedStatement pst;
             if (dialect.isOracle()) {
                 pst = conn.prepareStatement(sql.toString(), pKeys);
-            }
-            else if (dialect instanceof JbootClickHouseDialect){
-                pst = conn.prepareStatement(sql.toString());
-            }
-            else {
+            } else {
                 pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
             }
             dialect.fillStatement(pst, paras);
