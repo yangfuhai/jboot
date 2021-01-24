@@ -40,9 +40,9 @@ public class Columns implements Serializable {
      * return findFirstByColumns(Columns.create("account_id", accountId));
      * }
      * ```
-     * 根据账户 id 来查询账户的 门店，此时 如果传入 null 值，则返回了 第一个门店，和我们想要的结果集是不同的。
+     * 根据账户 id 来查询该账户对应的 ShopInfo，此时 如果传入 null 值，则返回了 第一个 ShopInfo，这个 ShopInfo 可能并不是该账户的。
      * <p>
-     * 准确的结果，应该是当用户传入 null 值的时候，应该直接 返回 null 。
+     * 在这种场景下，我们就不应该允许用户传入 null 值进行查询，当传入 null 的时候直接抛出异常即可 。
      * <p>
      * 此时，我们可以使用如下代码进行查询。
      * <p>
@@ -51,8 +51,6 @@ public class Columns implements Serializable {
      * return findFirstByColumns(Columns.safeMode().eq("account_id", accountId));
      * }
      * ```
-     * <p>
-     * 使用 safeMode 的时候，默认传入的值必须全部不为空，才能返回结果，否则直接返回 null 。
      */
     private boolean useSafeMode = false;
 
@@ -638,7 +636,7 @@ public class Columns implements Serializable {
             } else {
                 s.append(column.getName())
                         .append(SQL_CACHE_SEPARATOR)
-                        .append(getLogicStr(column.getLogic()))
+                        .append(getLogicString(column.getLogic()))
                         .append(SQL_CACHE_SEPARATOR);
                 Object value = column.getValue();
                 if (value != null) {
@@ -659,7 +657,7 @@ public class Columns implements Serializable {
      * @param logic
      * @return
      */
-    private String getLogicStr(String logic) {
+    private static String getLogicString(String logic) {
         switch (logic) {
             case Column.LOGIC_LIKE:
                 return "lk";
@@ -694,7 +692,7 @@ public class Columns implements Serializable {
 
 
     /**
-     * 输出 where 后面的 sql 部分，风格是 mysql 的风格SQL
+     * 输出 where 后面的 sql 部分，风格是 mysql 的风格 SQL
      * @return
      */
     public String toWherePartSql() {
@@ -704,7 +702,7 @@ public class Columns implements Serializable {
 
 
     /**
-     * 输出 where 后面的 sql 部分，风格是 mysql 的风格SQL
+     * 输出 where 后面的 sql 部分，风格是 mysql 的风格 SQL
      * @param withWhereKeyword 是否带上 where 关键字
      * @return
      */
@@ -726,27 +724,6 @@ public class Columns implements Serializable {
         return sb.toString();
     }
 
-
-
-    /**
-     * 这个只是用于调试
-     *
-     * @return
-     */
-    public String toMysqlSql() {
-        JbootMysqlDialect dialect = new JbootMysqlDialect();
-        return dialect.forFindByColumns(null,null, "table", "*", getList(), null, null);
-    }
-
-
-    /**
-     * 这个只是用于调试
-     * @return
-     */
-    public String toSqlServerSql() {
-        JbootSqlServerDialect dialect = new JbootSqlServerDialect();
-        return dialect.forFindByColumns(null,null, "table", "*", getList(), null, null);
-    }
 
     @Override
     public String toString() {
@@ -799,6 +776,26 @@ public class Columns implements Serializable {
         System.out.println("-----------");
         System.out.println(columns.toWherePartSql('"',true));
 
+    }
+
+    /**
+     * 这个只是用于调试
+     *
+     * @return
+     */
+    private String toMysqlSql() {
+        JbootMysqlDialect dialect = new JbootMysqlDialect();
+        return dialect.forFindByColumns(null,null, "table", "*", getList(), null, null);
+    }
+
+
+    /**
+     * 这个只是用于调试
+     * @return
+     */
+    private String toSqlServerSql() {
+        JbootSqlServerDialect dialect = new JbootSqlServerDialect();
+        return dialect.forFindByColumns(null,null, "table", "*", getList(), null, null);
     }
 
 }
