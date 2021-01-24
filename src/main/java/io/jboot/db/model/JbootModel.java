@@ -327,7 +327,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                     , buildIdCacheKey(idValues)
                     , () -> JbootModel.super.findByIds(idValues)
                     , config.getIdCacheTime());
-            return config.isIdCacheByCopyEnable() ? m.copy() : m;
+            return m != null && config.isIdCacheByCopyEnable() ? m.copy() : m;
         } catch (Exception ex) {
             LOG.error("Jboot load model [" + ClassUtil.getUsefulClass(getClass()) + "] by cache is error, safe deleted it in cache.", ex);
             safeDeleteCache(idValues);
