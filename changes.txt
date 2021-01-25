@@ -1,3 +1,9 @@
+jboot v3.9.1:
+修复：JbootModel.loadCache 在某些情况下出错的问题
+修复：分布式配置启用 Apollo 后可能出现空指针的问题
+
+
+
 jboot v3.9.0:
 新增：Clickhouse 数据源的配置和支持
 新增：Rocketmq 作为 mq 底层通信的支持
