@@ -354,6 +354,13 @@ public class JbootConfigManager {
         remoteProperties.put(key, value);
     }
 
+
+    public void removeRemoteProperties(String key) {
+        if (remoteProperties != null) {
+            remoteProperties.remove(key);
+        }
+    }
+
     public void setRemoteProperties(Map map) {
         if (remoteProperties == null) {
             synchronized (this) {

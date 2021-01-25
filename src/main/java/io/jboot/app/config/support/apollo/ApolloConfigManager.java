@@ -17,6 +17,7 @@ package io.jboot.app.config.support.apollo;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
+import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import io.jboot.app.config.ConfigUtil;
 import io.jboot.app.config.JbootConfigManager;
@@ -66,11 +67,15 @@ public class ApolloConfigManager {
         config.addChangeListener(changeEvent -> {
             for (String key : changeEvent.changedKeys()) {
                 ConfigChange change = changeEvent.getChange(key);
-                configManager.setRemoteProperty(change.getPropertyName(), change.getNewValue());
-
+                if (change.getChangeType() == PropertyChangeType.DELETED) {
+                    configManager.removeRemoteProperties(change.getPropertyName());
+                } else {
+                    configManager.setRemoteProperty(change.getPropertyName(), change.getNewValue());
+                }
                 configManager.notifyChangeListeners(change.getPropertyName(), change.getNewValue(), change.getOldValue());
             }
         });
+
 
     }
 
