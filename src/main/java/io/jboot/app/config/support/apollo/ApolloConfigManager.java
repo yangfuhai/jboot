@@ -68,7 +68,7 @@ public class ApolloConfigManager {
             for (String key : changeEvent.changedKeys()) {
                 ConfigChange change = changeEvent.getChange(key);
                 if (change.getChangeType() == PropertyChangeType.DELETED) {
-                    configManager.removeRemoteProperties(change.getPropertyName());
+                    configManager.removeRemoteProperty(change.getPropertyName());
                 } else {
                     configManager.setRemoteProperty(change.getPropertyName(), change.getNewValue());
                 }
