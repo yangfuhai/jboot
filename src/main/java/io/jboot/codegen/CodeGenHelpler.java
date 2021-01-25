@@ -54,10 +54,19 @@ public class CodeGenHelpler {
 
 
     public static MetaBuilder createMetaBuilder() {
-        MetaBuilder metaBuilder = new MetaBuilder(getDatasource());
+        return createMetaBuilder(getDatasource(), Jboot.config(DataSourceConfig.class, "jboot.datasource").getType());
+    }
+
+
+    public static MetaBuilder createMetaBuilder(DataSource dataSource) {
+        return createMetaBuilder(dataSource, DataSourceConfig.TYPE_MYSQL);
+    }
+
+
+    public static MetaBuilder createMetaBuilder(DataSource dataSource, String type) {
+        MetaBuilder metaBuilder = new MetaBuilder(dataSource);
         metaBuilder.setGenerateRemarks(true);
-        DataSourceConfig datasourceConfig = Jboot.config(DataSourceConfig.class, "jboot.datasource");
-        switch (datasourceConfig.getType()) {
+        switch (type) {
             case DataSourceConfig.TYPE_MYSQL:
                 metaBuilder.setDialect(new MysqlDialect());
                 break;
@@ -81,7 +90,6 @@ public class CodeGenHelpler {
         }
 
         return metaBuilder;
-
     }
 
 
