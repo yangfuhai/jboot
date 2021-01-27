@@ -171,17 +171,68 @@ public class JbootController extends Controller {
 
 
     @NotAction
+    public <T> T getJwtPara(String name, Object defaultValue) {
+        T ret = getJwtPara(name);
+        return ret != null ? ret : (T) defaultValue;
+    }
+
+    @NotAction
     public <T> T getJwtPara(String name) {
         return (T) getJwtParas().get(name);
     }
 
 
     @NotAction
-    public String getJwtParaToString(String name) {
-        Object ret = getJwtParas().get(name);
-        return ret == null ? null : ret.toString();
+    public Integer getJwtParaToInt(String name, Integer defaultValue) {
+        Integer ret = getJwtParaToInt(name);
+        return ret != null ? ret : defaultValue;
     }
 
+    @NotAction
+    public Integer getJwtParaToInt(String name) {
+        Object ret = getJwtParas().get(name);
+        if (ret instanceof Number) {
+            return ((Number) ret).intValue();
+        }
+        return ret != null ? Integer.valueOf(ret.toString()) : null;
+    }
+
+    @NotAction
+    public Long getJwtParaToLong(String name, Long defaultValue) {
+        Long ret = getJwtParaToLong(name);
+        return ret != null ? ret : defaultValue;
+    }
+
+
+    @NotAction
+    public Long getJwtParaToLong(String name) {
+        Object ret = getJwtParas().get(name);
+        if (ret instanceof Number) {
+            return ((Number) ret).longValue();
+        }
+        return ret != null ? Long.valueOf(ret.toString()) : null;
+    }
+
+
+    @NotAction
+    public String getJwtParaToString(String name, String defaultValue) {
+        String ret = getJwtParaToString(name);
+        return StrUtil.isNotBlank(ret) ? ret : defaultValue;
+    }
+
+
+    @NotAction
+    public String getJwtParaToString(String name) {
+        Object ret = getJwtParas().get(name);
+        return ret != null ? ret.toString() : null;
+    }
+
+
+    @NotAction
+    public BigInteger getJwtParaToBigInteger(String name, BigInteger defaultValue) {
+        BigInteger ret = getJwtParaToBigInteger(name);
+        return ret != null ? ret : defaultValue;
+    }
 
     @NotAction
     public BigInteger getJwtParaToBigInteger(String name) {
@@ -191,7 +242,7 @@ public class JbootController extends Controller {
         } else if (ret instanceof Number) {
             return BigInteger.valueOf(((Number) ret).longValue());
         }
-        return toBigInteger(ret.toString(), null);
+        return ret != null ? toBigInteger(ret.toString(), null) : null;
     }
 
 
