@@ -39,9 +39,16 @@ public class JbootController extends Controller {
 
     private Object rawObject;
     private Map jwtParas;
-
     private Map<String, Object> jwtAttrs;
 
+
+    @Override
+    protected void _clear_() {
+        super._clear_();
+        this.rawObject = null;
+        this.jwtParas = null;
+        this.jwtAttrs = null;
+    }
 
     /**
      * 是否是手机浏览器
