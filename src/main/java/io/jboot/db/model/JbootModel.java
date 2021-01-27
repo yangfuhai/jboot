@@ -322,6 +322,16 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     protected M loadByCache(Object... idValues) {
+
+        //临时关闭 id 缓存的情况
+        if (JbootModelHintManager.me().isClosedIdCache(getClass())){
+            try {
+                return JbootModel.super.findByIds(idValues);
+            }finally {
+                JbootModelHintManager.me().clearIdCacheFlag();
+            }
+        }
+
         try {
             M m = config.getIdCache().get(_getTableName()
                     , buildIdCacheKey(idValues)
@@ -335,6 +345,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
         return JbootModel.super.findByIds(idValues);
     }
+
+
+    /**
+     * 临时关闭 id 缓存，关闭后通过 findById 执行后又会开启了
+     * 一般情况下的使用方法是 DAO.closeIdCacheTemporary().findById(...)
+     * @return
+     */
+    public M closeIdCacheTemporary(){
+        JbootModelHintManager.me().closeIdCache(getClass());
+        return (M) this;
+    }
+
 
     protected void safeDeleteCache(Object... idValues) {
         try {
