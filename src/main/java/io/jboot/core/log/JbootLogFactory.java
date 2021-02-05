@@ -43,7 +43,7 @@ public class JbootLogFactory extends com.jfinal.log.Slf4jLogFactory {
             if (loggerFactory.getClass() == NOPLoggerFactory.class){
                 useJdkLogger = true;
             }else {
-                System.out.println("Jboot loggerFactory: " + loggerFactory.getClass().getName());
+                System.out.println("Jboot LoggerFactory: " + loggerFactory.getClass().getName());
             }
         }
     }

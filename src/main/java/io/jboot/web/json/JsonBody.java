@@ -29,7 +29,7 @@ public @interface JsonBody {
     String value() default "";
 
     /**
-     * 是否提过转换异常
+     * 是否跳过转换异常
      * @return
      */
     boolean skipConvertError() default false;
