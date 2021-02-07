@@ -15,6 +15,7 @@
  */
 package io.jboot.db.dialect;
 
+import com.jfinal.plugin.activerecord.CPI;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.Table;
@@ -42,7 +43,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
         tableName = tableName.trim();
         trimPrimaryKeys(pKeys);
         StringBuilder sql = new StringBuilder("ALTER TABLE ").append(tableName).append(" DELETE WHERE ");
-        for (int i=0; i<pKeys.length; i++) {
+        for (int i = 0; i < pKeys.length; i++) {
             if (i > 0) {
                 sql.append(" and ");
             }
@@ -59,7 +60,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
         sql.append("ALTER TABLE ");
         sql.append(table.getName());
         sql.append(" DELETE WHERE ");
-        for (int i=0; i<pKeys.length; i++) {
+        for (int i = 0; i < pKeys.length; i++) {
             if (i > 0) {
                 sql.append(" and ");
             }
@@ -75,7 +76,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
         trimPrimaryKeys(pKeys);
 
         sql.append("ALTER TABLE ").append(tableName).append(" UPDATE ");
-        for (Map.Entry<String, Object> e: record.getColumns().entrySet()) {
+        for (Map.Entry<String, Object> e : record.getColumns().entrySet()) {
             String colName = e.getKey();
             if (!isPrimaryKey(colName, pKeys)) {
                 if (paras.size() > 0) {
@@ -86,7 +87,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
             }
         }
         sql.append(" where ");
-        for (int i=0; i<pKeys.length; i++) {
+        for (int i = 0; i < pKeys.length; i++) {
             if (i > 0) {
                 sql.append(" and ");
             }
@@ -110,7 +111,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
             }
         }
         sql.append(" where ");
-        for (int i=0; i<pKeys.length; i++) {
+        for (int i = 0; i < pKeys.length; i++) {
             if (i > 0) {
                 sql.append(" and ");
             }
@@ -118,9 +119,6 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
             paras.add(attrs.get(pKeys[i]));
         }
     }
-
-
-
 
 
     @Override
@@ -167,5 +165,16 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
         return SqlBuilder.forPaginateFrom(alias, joins, table, columns, orderBy, ' ');
     }
 
+    @Override
+    public String forPaginateTotalRow(String select, String sqlExceptSelect, Object ext) {
+        if (ext instanceof Model) {
+            String[] primaryKeys = CPI.getTable((Model) ext).getPrimaryKey();
+            if (primaryKeys != null && primaryKeys.length == 1) {
+                return "select count(" + primaryKeys[0] + ") " + replaceOrderBy(sqlExceptSelect);
+            }
+        }
 
+        //return "select count(*) " + replaceOrderBy(sqlExceptSelect);
+        return super.forPaginateTotalRow(select, sqlExceptSelect, ext);
+    }
 }

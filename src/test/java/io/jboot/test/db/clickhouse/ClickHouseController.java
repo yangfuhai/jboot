@@ -154,7 +154,7 @@ public class ClickHouseController extends JbootController {
 
     public void save1(){
         UserInfo user = new UserInfo();
-        user.set("id",100);
+        user.set("id",101);
         user.set("age",20);
         user.set("name","张三");
         user.save();
