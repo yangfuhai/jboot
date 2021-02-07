@@ -63,6 +63,7 @@ module.exports = {
             {title: '配置', path: '/docs/config'},
             {title: 'JFinalConfig', path: '/docs/jfinalConfig'},
             {title: 'MVC', path: '/docs/mvc'},
+            {title: 'Validator', path: '/docs/validator'},
             {title: 'WebSocket', path: '/docs/websocket'},
             {title: 'Json', path: '/docs/json'},
             {title: 'Jwt', path: '/docs/jwt'},

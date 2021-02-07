@@ -11,9 +11,7 @@
 - Render ：渲染器
 - Session 
 - Cookie
-- Jwt ： Json Web Token
-- Validate ： 验证器
-- 安全
+
 
 
 ## 描述
@@ -65,65 +63,5 @@ jboot.web.session.cacheType             #Session的缓存类型（不配置的�
 ```
 
 
-# Jwt
-
- Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（RFC 7519).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。
 
 
-**JWT的方法：**
-
-|方法调用 | 描述 |
-| ------------- | -----|
-| setJwtAttr()| 设置 jwt 的 key 和 value |
-| setJwtMap()| 把整个 map的key和value 设置到 jwt |
-| getJwtAttr()| 获取 已经设置进去的 jwt 信息 |
-| getJwtAttrs()| 获取 所有已经设置进去的 jwt 信息|
-| getJwtPara()| 获取客户端传进来的 jwt 信息，若 jwt 超时或者不被信任，那么获取到的内容为null |
-
-
-**JWT的相关配置**
-
-|配置属性 | 描述 |
-| ------------- | -----|
-| jboot.web.jwt.httpHeaderName| 配置JWT的http头的key，默认为JWT |
-| jboot.web.jwt.secret | 配置JWT的密钥 |
-| jboot.web.jwt.validityPeriod | 配置JWT的过期时间，默认不过期 |
-
-
-## Validate ： 验证器
-
-Jboot 提供了一些列的 validate 注解，方便用户对 Controller 进行数据验证。
-
-- CaptchaValidate 对验证码进行验证
-- EmptyValidate  对空内容进行验证
-- UrlParaValidate 对URl参数内容进行验证
-
-使用方法：
-
-```java
-@RequestMapping("/validate")
-public class ValidateController extends Controller {
-
-    public void index(){
-        renderText("index");
-    }
-
-   //  访问 /validate/test1 不通过，必须是 /validate/test1/data 才会通过
-    @UrlParaValidate
-    public void test1(){
-        renderText("test1");
-    }
-
-   //  访问 /validate/test2 不通过，浏览器会显示内容 ：test2 was verification failed
-    @UrlParaValidate(renderType = ValidateRenderType.TEXT,message = "test2 was verification failed")
-    public void test2(){
-        renderText("test2");
-    }
-
-   //  访问 /validate/test3 不通过，必须传入 form 数据
-    @EmptyValidate(value = @Form(name = "form"),renderType = ValidateRenderType.JSON)
-    public void test3(){
-        renderText("test3");
-    }
-}
-```
