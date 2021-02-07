@@ -28,9 +28,9 @@ public class JbootModelHintManager {
         return me;
     }
 
-    public void closeIdCache(Class clazz){
+    public void closeIdCache(Class clazz) {
         Set<Class> flags = ID_CACHE_HOLDER.get();
-        if (flags == null){
+        if (flags == null) {
             flags = new HashSet<>();
         }
         flags.add(clazz);
@@ -38,13 +38,13 @@ public class JbootModelHintManager {
     }
 
 
-    public boolean isClosedIdCache(Class clazz){
+    public boolean isClosedIdCache(Class clazz) {
         Set result = ID_CACHE_HOLDER.get();
         return result != null && result.contains(clazz);
     }
 
 
-    public void clearIdCacheFlag(){
+    public void clearIdCacheFlag() {
         ID_CACHE_HOLDER.remove();
     }
 

@@ -32,9 +32,11 @@ public class SqlDebugger {
 
     private static SqlDebugPrinter defaultPrinter = new SqlDebugPrinter() {
 
+        private boolean printSqlEnable = Jboot.isDevMode();
+
         @Override
         public boolean isPrintEnable(Config config) {
-            return Jboot.isDevMode();
+            return printSqlEnable;
         }
 
         @Override
@@ -69,7 +71,6 @@ public class SqlDebugger {
             }
         }
     }
-
 
 
     private static void doDebug(Long takedTimeMillis, String sql, Object... paras) {
@@ -108,6 +109,7 @@ public class SqlDebugger {
 
     public static interface SqlDebugPrinter {
         public boolean isPrintEnable(Config config);
+
         public void print(String sql, Long takedTimeMillis);
     }
 
