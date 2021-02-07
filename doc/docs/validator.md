@@ -32,7 +32,7 @@ io.jboot.components.valid.ValidException : 不能为null
 ```json
 {
     "throwable": "io.jboot.components.valid.ValidException: 不能为null",
-    "errorMessage": "para is null at method: io.jboot.test.ValidateController.test(java.lang.String)",
+    "errorMessage": "para is null at method: io.jboot.test.MyController.test(java.lang.String)",
     "errorCode": 400,
     "state": "fail",
     "message": "不能为null"
