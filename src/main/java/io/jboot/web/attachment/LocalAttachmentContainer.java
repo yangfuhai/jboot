@@ -73,11 +73,10 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     @Override
     public String saveFile(File file, String toRelativePath) {
         File toFile = new File(getRootPath(), toRelativePath);
-
         try {
 
             //相同的文件，不需要做任何处理
-            if (file.getCanonicalPath().equals(toFile.getCanonicalPath())){
+            if (toFile.equals(file)){
                 return toRelativePath;
             }
 
