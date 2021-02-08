@@ -27,8 +27,8 @@ public interface GatewayLoadBalanceStrategy {
     /**
      * 默认的负载均衡策略，随机返回一个 url
      */
-    public static GatewayLoadBalanceStrategy DEFAULT_STRATEGY = (config, request) -> {
-        String[] urls = config.getUri();
+    GatewayLoadBalanceStrategy DEFAULT_STRATEGY = (config, request) -> {
+        String[] urls = config.getHealthUri();
         if (urls == null || urls.length == 0) {
             return null;
         } else if (urls.length == 1) {
@@ -38,5 +38,5 @@ public interface GatewayLoadBalanceStrategy {
         }
     };
 
-    public String getUrl(JbootGatewayConfig config, HttpServletRequest request);
+    String getUrl(JbootGatewayConfig config, HttpServletRequest request);
 }

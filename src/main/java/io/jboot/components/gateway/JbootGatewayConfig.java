@@ -15,14 +15,14 @@
  */
 package io.jboot.components.gateway;
 
+import com.google.common.collect.Sets;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -34,6 +34,11 @@ public class JbootGatewayConfig implements Serializable {
 
     private String name;
     private String[] uri;
+
+    // URI 健康检查路径，要求服务 statusCode = 200
+    private String uriHealthCheckPath;
+
+    // 是否启用
     private boolean enable = false;
 
     // 是否启用 sentinel 限流
@@ -73,6 +78,9 @@ public class JbootGatewayConfig implements Serializable {
 //    private Map<String, String> cookieEquals;
 //    private String[] cookieContains;
 
+    //不健康的 URI 地址
+    private Set<String> unHealthUris = Collections.synchronizedSet(new HashSet<>());
+
 
     public String getName() {
         return name;
@@ -90,6 +98,33 @@ public class JbootGatewayConfig implements Serializable {
     public void setUri(String[] uri) {
         this.uri = uri;
     }
+
+    public String[] getHealthUri(){
+        Set<String> set = Sets.newHashSet(uri);
+        if (unHealthUris.size() > 0) {
+            set.removeAll(unHealthUris);
+        }
+
+        if (set.size() > 0) {
+            String[] uris = new String[set.size()];
+            int index = 0;
+            for (String uri : set) {
+                uris[index++] = uri;
+            }
+            return uris;
+        }
+
+        return null;
+    }
+
+    public String getUriHealthCheckPath() {
+        return uriHealthCheckPath;
+    }
+
+    public void setUriHealthCheckPath(String uriHealthCheckPath) {
+        this.uriHealthCheckPath = uriHealthCheckPath;
+    }
+
 
     public boolean isEnable() {
         return enable;
@@ -425,6 +460,17 @@ public class JbootGatewayConfig implements Serializable {
 
 
         return false;
+    }
+
+    public void addUnHealthUri(String uri) {
+        unHealthUris.add(uri);
+    }
+
+
+    public void removeUnHealthUri(String uri) {
+        if (unHealthUris.size() > 0 ) {
+            unHealthUris.remove(uri);
+        }
     }
 
 

@@ -15,13 +15,19 @@
  */
 package io.jboot.components.gateway;
 
+import com.jfinal.kit.LogKit;
 import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.components.http.JbootHttpRequest;
+import io.jboot.utils.HttpUtil;
+import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -36,6 +42,8 @@ public class JbootGatewayManager {
     }
 
     private Map<String, JbootGatewayConfig> configMap;
+
+    private ScheduledThreadPoolExecutor fixedScheduler;
 
     public void init() {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
@@ -59,6 +67,55 @@ public class JbootGatewayManager {
             configMap = new ConcurrentHashMap<>();
         }
         configMap.put(config.getName(), config);
+
+        startHealthCheck();
+    }
+
+
+    /**
+     * 开始健康检查
+     * 多次执行，只会启动一次
+     */
+    private void startHealthCheck() {
+        if (fixedScheduler == null) {
+            synchronized (this) {
+                if (fixedScheduler == null) {
+                    fixedScheduler = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("jboot-gateway-health-check"));
+
+                    //每 10s 进行一次健康检查
+                    fixedScheduler.scheduleWithFixedDelay(() -> {
+                        try {
+                            doHealthCheck();
+                        } catch (Exception ex) {
+                            LogKit.error(ex.toString(), ex);
+                        }
+                    }, 10, 10, TimeUnit.SECONDS);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 健康检查
+     */
+    private void doHealthCheck() {
+        for (JbootGatewayConfig config : configMap.values()) {
+            String healthCheckPath = config.getUriHealthCheckPath();
+            if (StrUtil.isNotBlank(healthCheckPath)) {
+                String[] uris = config.getUri();
+                for (String uri : uris) {
+                    String url = uri + healthCheckPath;
+                    JbootHttpRequest req = JbootHttpRequest.create(url);
+                    int respCode = HttpUtil.handle(req).getResponseCode();
+                    if (respCode == 200) {
+                        config.removeUnHealthUri(uri);
+                    } else {
+                        config.addUnHealthUri(uri);
+                    }
+                }
+            }
+        }
     }
 
 
