@@ -1,3 +1,15 @@
+jboot v3.9.2:
+新增：门户网关 Gateway 的健康检查功能
+新增：JbootModel.closeIdCacheTemporary() 通过这个方法可以一次关闭ID缓存
+新增：Controller 新增 getJwtParaToInt 等系列方法
+新增：JbootHttpRequest 新增 readBody 配置，用于在某些情况下不读取 http body
+优化：StrUtil.queryStringToMap 方法
+优化：优化门户网关的若干方法，添加必要的注释
+优化：升级 JFinal、Sentinel、Seata 等到最新版本
+修复：修复 clickhouse 在某些情况下，分页可能出错的问题
+
+
+
 jboot v3.9.1:
 修复：JbootModel.loadCache 在某些情况下出错的问题
 修复：分布式配置启用 Apollo 后可能出现空指针的问题
