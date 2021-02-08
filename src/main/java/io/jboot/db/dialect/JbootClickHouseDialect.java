@@ -38,6 +38,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
         // doNothing() ; clickhouse 不支持生成主键
     }
 
+
     @Override
     public String forDbDeleteById(String tableName, String[] pKeys) {
         tableName = tableName.trim();
@@ -45,7 +46,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
         StringBuilder sql = new StringBuilder("ALTER TABLE ").append(tableName).append(" DELETE WHERE ");
         for (int i = 0; i < pKeys.length; i++) {
             if (i > 0) {
-                sql.append(" and ");
+                sql.append(" AND ");
             }
             sql.append(pKeys[i]).append(" = ?");
         }
@@ -62,7 +63,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
         sql.append(" DELETE WHERE ");
         for (int i = 0; i < pKeys.length; i++) {
             if (i > 0) {
-                sql.append(" and ");
+                sql.append(" AND ");
             }
             sql.append(pKeys[i]).append(" = ?");
         }
@@ -86,10 +87,10 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
                 paras.add(e.getValue());
             }
         }
-        sql.append(" where ");
+        sql.append(" WHERE ");
         for (int i = 0; i < pKeys.length; i++) {
             if (i > 0) {
-                sql.append(" and ");
+                sql.append(" AND ");
             }
             sql.append(pKeys[i]).append(" = ?");
             paras.add(ids[i]);
@@ -110,10 +111,10 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
                 paras.add(e.getValue());
             }
         }
-        sql.append(" where ");
+        sql.append(" WHERE ");
         for (int i = 0; i < pKeys.length; i++) {
             if (i > 0) {
-                sql.append(" and ");
+                sql.append(" AND ");
             }
             sql.append(pKeys[i]).append(" = ?");
             paras.add(attrs.get(pKeys[i]));
