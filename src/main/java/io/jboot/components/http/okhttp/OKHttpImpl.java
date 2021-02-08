@@ -121,7 +121,10 @@ public class OKHttpImpl implements JbootHttp {
         Response okHttpResponse = call.execute();
         response.setResponseCode(okHttpResponse.code());
         response.setContentType(okHttpResponse.body().contentType().type());
-        response.copyStream(okHttpResponse.body().byteStream());
+
+        if (request.isReadBody()) {
+            response.copyStream(okHttpResponse.body().byteStream());
+        }
     }
 
 

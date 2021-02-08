@@ -100,7 +100,10 @@ public class JbootHttpImpl implements JbootHttp {
             response.setResponseCode(connection.getResponseCode());
             response.setHeaders(connection.getHeaderFields());
 
-            response.copyStream(inStream);
+            //是否要读取 body 数据
+            if (request.isReadBody()) {
+                response.copyStream(inStream);
+            }
 
         } catch (Throwable ex) {
             LOG.warn(ex.toString(), ex);

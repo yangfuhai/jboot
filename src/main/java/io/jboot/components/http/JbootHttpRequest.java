@@ -68,6 +68,9 @@ public class JbootHttpRequest {
     private File downloadFile;
     private String postContent;
 
+    // 如果某些时候只是为了去读取 http 头信息，而不需要 http body，可以配置为 false
+    private boolean readBody = true;
+
 
     public static JbootHttpRequest create(String url) {
         return new JbootHttpRequest(url);
@@ -313,29 +316,6 @@ public class JbootHttpRequest {
 
 
     private String buildParams() {
-//        Map<String, Object> params = getParams();
-//        if (params == null || params.isEmpty()) {
-//            return null;
-//        }
-//
-//        StringBuilder builder = new StringBuilder();
-//        for (Map.Entry<String, Object> entry : params.entrySet()) {
-//            if (entry.getKey() != null && StrUtil.isNotBlank(entry.getValue())) {
-//                try {
-//                    builder.append(entry.getKey().trim()).append("=")
-//                            .append(URLEncoder.encode(entry.getValue().toString(), getCharset())).append("&");
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//
-//        if (builder.charAt(builder.length() - 1) == '&') {
-//            builder.deleteCharAt(builder.length() - 1);
-//        }
-
-//        return builder.toString();
-
         return StrUtil.mapToQueryString(getParams());
     }
 
@@ -361,5 +341,13 @@ public class JbootHttpRequest {
 
     public boolean isHttps() {
         return requestUrl != null && requestUrl.toLowerCase().startsWith("https");
+    }
+
+    public boolean isReadBody() {
+        return readBody;
+    }
+
+    public void setReadBody(boolean readBody) {
+        this.readBody = readBody;
     }
 }
