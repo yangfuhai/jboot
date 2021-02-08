@@ -101,11 +101,10 @@ public class JbootGatewayManager {
      */
     private void doHealthCheck() {
         for (JbootGatewayConfig config : configMap.values()) {
-            String healthCheckPath = config.getUriHealthCheckPath();
-            if (StrUtil.isNotBlank(healthCheckPath)) {
+            if (config.isUriHealthCheckEnable() && StrUtil.isNotBlank(config.getUriHealthCheckPath())) {
                 String[] uris = config.getUri();
                 for (String uri : uris) {
-                    String url = uri + healthCheckPath;
+                    String url = uri + config.getUriHealthCheckPath();
                     if (getHttpCode(url) == 200) {
                         config.removeUnHealthUri(uri);
                     } else {

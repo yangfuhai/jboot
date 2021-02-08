@@ -6,6 +6,7 @@ public class App2Stater {
 
     public static void main(String[] args){
         JbootApplication.setBootArg("undertow.port",9902);
+        JbootApplication.setBootArg("jboot.gateway.enable ",false);
         JbootApplication.run(args);
     }
 }

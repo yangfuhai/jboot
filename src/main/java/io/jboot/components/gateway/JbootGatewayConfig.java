@@ -35,7 +35,12 @@ public class JbootGatewayConfig implements Serializable {
     private String name;
     private String[] uri;
 
+
+    // 是否启用健康检查
+    private boolean uriHealthCheckEnable;
+
     // URI 健康检查路径，要求服务 statusCode = 200
+    // 当配置 uriHealthCheckPath 后，健康检查的 url 地址为 uri + uriHealthCheckPath
     private String uriHealthCheckPath;
 
     // 是否启用
@@ -99,7 +104,7 @@ public class JbootGatewayConfig implements Serializable {
         this.uri = uri;
     }
 
-    public String[] getHealthUri(){
+    public String[] getHealthUris() {
         Set<String> set = Sets.newHashSet(uri);
         if (unHealthUris.size() > 0) {
             set.removeAll(unHealthUris);
@@ -115,6 +120,14 @@ public class JbootGatewayConfig implements Serializable {
         }
 
         return null;
+    }
+
+    public boolean isUriHealthCheckEnable() {
+        return uriHealthCheckEnable;
+    }
+
+    public void setUriHealthCheckEnable(boolean uriHealthCheckEnable) {
+        this.uriHealthCheckEnable = uriHealthCheckEnable;
     }
 
     public String getUriHealthCheckPath() {
@@ -468,7 +481,7 @@ public class JbootGatewayConfig implements Serializable {
 
 
     public void removeUnHealthUri(String uri) {
-        if (unHealthUris.size() > 0 ) {
+        if (unHealthUris.size() > 0) {
             unHealthUris.remove(uri);
         }
     }
