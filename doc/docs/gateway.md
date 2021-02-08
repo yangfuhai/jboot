@@ -21,6 +21,10 @@ jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
 
+
+jboot.gateway.uriHealthCheckEnable = true
+jboot.gateway.uriHealthCheckPath = true
+
 jboot.gateway.sentinelEnable = false
 jboot.gateway.sentinelBlockPage = /block
 jboot.gateway.sentinelBlockJsonMap = message:xxxx;code:200
@@ -46,9 +50,13 @@ jboot.gateway.queryEquals = aa:bb,cc:dd
 jboot.gateway.queryContains = aa,bb
 ```
 
+
+
 - name 设置路由的名称
 - uri 设置路由目标网址，可以配置多个 uri，多个 uri 用英文逗号（,） 隔开，当有多个 uri 的时候，系统会 **随机** 使用其中一个去访问
 - enable 是否启用该路由
+- uriHealthCheckEnable 是否启用健康检查功能
+- uriHealthCheckPath URI 健康检查路径，当配置 uriHealthCheckPath 后，健康检查的 url 地址为 uri + uriHealthCheckPath，当健康检查目标网址的 http code 为 200 时，表示健康状态，否则为非健康状态。
 - sentinelEnable 是否启用 sentinel 限流功能
 - sentinelBlockPage 若该路由被限流后，网页自动跳转到哪个网址
 - sentinelBlockJsonMap 若该路由被限流后，自动渲染的 jsonMap，若 sentinelBlockPage 已经配置，则 sentinelBlockJsonMap 配置无效
