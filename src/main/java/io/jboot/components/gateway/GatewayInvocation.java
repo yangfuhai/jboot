@@ -56,9 +56,7 @@ public class GatewayInvocation {
     }
 
     protected void doInvoke(){
-        Runnable runnable = () -> {
-            proxy.sendRequest(buildProxyUrl(config, request), request, response);
-        };
+        Runnable runnable = () -> proxy.sendRequest(buildProxyUrl(config, request), request, response);
         if (config.isSentinelEnable()) {
             new GatewaySentinelProcesser().process(runnable, config, request, response);
         } else {
@@ -68,14 +66,22 @@ public class GatewayInvocation {
 
 
     private static String buildProxyUrl(JbootGatewayConfig config, HttpServletRequest request) {
-        StringBuilder url = new StringBuilder(config.buildLoadBalanceStrategy().getUrl(config, request));
+        //配置负载均衡策略
+        GatewayLoadBalanceStrategy lbs = config.buildLoadBalanceStrategy();
+
+        //通过负载均衡策略获取 URL 地址
+        String url = lbs.getUrl(config,request);
+
+        StringBuilder sb = new StringBuilder(url);
         if (StrUtil.isNotBlank(request.getRequestURI())) {
-            url.append(request.getRequestURI());
+            sb.append(request.getRequestURI());
         }
+
         if (StrUtil.isNotBlank(request.getQueryString())) {
-            url.append("?").append(request.getQueryString());
+            sb.append("?").append(request.getQueryString());
         }
-        return url.toString();
+
+        return sb.toString();
     }
 
 

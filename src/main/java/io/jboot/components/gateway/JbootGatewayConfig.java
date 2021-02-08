@@ -285,14 +285,16 @@ public class JbootGatewayConfig implements Serializable {
 
         if (gatewayLoadBalanceStrategy == null) {
             synchronized (this) {
-                if (StrUtil.isBlank(loadBalanceStrategy)) {
-                    this.gatewayLoadBalanceStrategy = GatewayLoadBalanceStrategy.DEFAULT_STRATEGY;
-                } else {
-                    GatewayLoadBalanceStrategy glbs = ClassUtil.newInstance(loadBalanceStrategy);
-                    if (glbs == null) {
-                        throw new NullPointerException("can not new instance by class:" + loadBalanceStrategy);
+                if (gatewayLoadBalanceStrategy == null) {
+                    if (StrUtil.isBlank(loadBalanceStrategy)) {
+                        this.gatewayLoadBalanceStrategy = GatewayLoadBalanceStrategy.DEFAULT_STRATEGY;
+                    } else {
+                        GatewayLoadBalanceStrategy glbs = ClassUtil.newInstance(loadBalanceStrategy);
+                        if (glbs == null) {
+                            throw new NullPointerException("can not new instance by class:" + loadBalanceStrategy);
+                        }
+                        this.gatewayLoadBalanceStrategy = glbs;
                     }
-                    this.gatewayLoadBalanceStrategy = glbs;
                 }
             }
         }
