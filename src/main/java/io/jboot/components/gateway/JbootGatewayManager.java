@@ -106,9 +106,7 @@ public class JbootGatewayManager {
                 String[] uris = config.getUri();
                 for (String uri : uris) {
                     String url = uri + healthCheckPath;
-                    JbootHttpRequest req = JbootHttpRequest.create(url);
-                    int respCode = HttpUtil.handle(req).getResponseCode();
-                    if (respCode == 200) {
+                    if (getHttpCode(url) == 200) {
                         config.removeUnHealthUri(uri);
                     } else {
                         config.addUnHealthUri(uri);
@@ -116,6 +114,17 @@ public class JbootGatewayManager {
                 }
             }
         }
+    }
+
+    private int getHttpCode(String url) {
+        try {
+            JbootHttpRequest req = JbootHttpRequest.create(url);
+            req.setReadBody(false);
+            return HttpUtil.handle(req).getResponseCode();
+        } catch (Exception ex) {
+            // do nothing
+        }
+        return 0;
     }
 
 

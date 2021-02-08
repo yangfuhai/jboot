@@ -15,7 +15,6 @@
  */
 package io.jboot.components.http.jboot;
 
-import com.jfinal.log.Log;
 import io.jboot.components.http.JbootHttp;
 import io.jboot.components.http.JbootHttpRequest;
 import io.jboot.components.http.JbootHttpResponse;
@@ -36,8 +35,6 @@ import java.util.zip.GZIPInputStream;
 
 
 public class JbootHttpImpl implements JbootHttp {
-
-    private static final Log LOG = Log.getLog(JbootHttpImpl.class);
 
 
     @Override
@@ -106,7 +103,6 @@ public class JbootHttpImpl implements JbootHttp {
             }
 
         } catch (Throwable ex) {
-            LOG.warn(ex.toString(), ex);
             response.setError(ex);
         } finally {
 

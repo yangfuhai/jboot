@@ -15,7 +15,6 @@
  */
 package io.jboot.components.http.okhttp;
 
-import com.jfinal.log.Log;
 import io.jboot.components.http.JbootHttp;
 import io.jboot.components.http.JbootHttpRequest;
 import io.jboot.components.http.JbootHttpResponse;
@@ -33,7 +32,6 @@ import java.util.Map;
  * @version V1.0
  */
 public class OKHttpImpl implements JbootHttp {
-    private static final Log LOG = Log.getLog(OKHttpImpl.class);
 
     public OKHttpImpl() {
 
@@ -66,7 +64,6 @@ public class OKHttpImpl implements JbootHttp {
             }
 
         } catch (Throwable ex) {
-            LOG.error(ex.toString(), ex);
             response.setError(ex);
         }finally {
             response.close();
@@ -178,20 +175,19 @@ public class OKHttpImpl implements JbootHttp {
 
 
     private static X509TrustManager trustAnyTrustManager = new X509TrustManager() {
+        @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) {
         }
 
+        @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType) {
         }
 
+        @Override
         public X509Certificate[] getAcceptedIssuers() {
             return new X509Certificate[0];
         }
     };
 
-    private static HostnameVerifier hnv = new HostnameVerifier() {
-        public boolean verify(String hostname, SSLSession session) {
-            return true;
-        }
-    };
+    private static HostnameVerifier hnv = (hostname, session) -> true;
 }

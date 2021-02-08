@@ -11,6 +11,10 @@ import io.jboot.web.controller.annotation.RequestMapping;
 @RequestMapping("/gateway")
 public class GatewayController extends JbootController {
 
+    public void index(){
+        renderText("index");
+    }
+
 
 
     public void render(){

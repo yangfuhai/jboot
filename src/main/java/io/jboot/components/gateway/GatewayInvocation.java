@@ -15,6 +15,7 @@
  */
 package io.jboot.components.gateway;
 
+import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,7 @@ public class GatewayInvocation {
     private HttpServletRequest request;
     private HttpServletResponse response;
     private GatewayHttpProxy proxy;
+    private boolean devMode = Jboot.isDevMode();
 
     private int index = 0;
 
@@ -62,6 +64,10 @@ public class GatewayInvocation {
     protected void doInvoke() {
         //通过 request 构建代理的 URL 地址
         String proxyUrl = buildProxyUrl(config, request);
+        if (devMode){
+            System.out.println("Jboot Gateway >>> " + proxyUrl);
+        }
+
         Runnable runnable = () -> proxy.sendRequest(proxyUrl, request, response);
 
         //启用 Sentinel 限流

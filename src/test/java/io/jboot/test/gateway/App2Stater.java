@@ -1,0 +1,11 @@
+package io.jboot.test.gateway;
+
+import io.jboot.app.JbootApplication;
+
+public class App2Stater {
+
+    public static void main(String[] args){
+        JbootApplication.setBootArg("undertow.port",9902);
+        JbootApplication.run(args);
+    }
+}
