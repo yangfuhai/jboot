@@ -64,12 +64,14 @@ public class StrUtil extends StrKit {
         return redirect;
     }
 
+    private static final Map<String, String> EMPTY_MAP = new HashMap<>();
+
     public static Map<String, String> queryStringToMap(String queryString) {
-        Map<String, String> map = new HashMap<>();
         if (StrUtil.isBlank(queryString)) {
-            return map;
+            return EMPTY_MAP;
         }
 
+        Map<String, String> map = new HashMap<>();
         String[] params = queryString.split("&");
         for (String paramPair : params) {
             String[] keyAndValue = paramPair.split("=");

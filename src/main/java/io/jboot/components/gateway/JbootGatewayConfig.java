@@ -21,7 +21,6 @@ import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -400,8 +399,8 @@ public class JbootGatewayConfig implements Serializable {
         }
 
         if (queryContains != null || queryEquals != null) {
-            Map<String, String> queryMap = queryStringToMap(request.getQueryString());
-            if (queryMap != null && !queryMap.isEmpty()) {
+            Map<String, String> queryMap = StrUtil.queryStringToMap(request.getQueryString());
+            if (!queryMap.isEmpty()) {
 
                 if (queryContains != null) {
                     for (String q : queryContains) {
@@ -427,23 +426,4 @@ public class JbootGatewayConfig implements Serializable {
     }
 
 
-    private static Map<String, String> queryStringToMap(String queryString) {
-        if (StrUtil.isBlank(queryString)) {
-            return null;
-        }
-        String[] params = queryString.split("&");
-        Map<String, String> resMap = new HashMap<>();
-        for (int i = 0; i < params.length; i++) {
-            String[] param = params[i].split("=");
-            if (param.length >= 2) {
-                String key = param[0];
-                String value = param[1];
-                for (int j = 2; j < param.length; j++) {
-                    value += "=" + param[j];
-                }
-                resMap.put(key, value);
-            }
-        }
-        return resMap;
-    }
 }
