@@ -43,6 +43,8 @@ public class GatewayInvocation {
         this.inters = config.buildInterceptors();
     }
 
+
+
     public void invoke() {
         if (inters == null || inters.length == 0) {
             doInvoke();
@@ -55,11 +57,19 @@ public class GatewayInvocation {
         }
     }
 
-    protected void doInvoke(){
-        Runnable runnable = () -> proxy.sendRequest(buildProxyUrl(config, request), request, response);
+
+
+    protected void doInvoke() {
+        //通过 request 构建代理的 URL 地址
+        String proxyUrl = buildProxyUrl(config, request);
+        Runnable runnable = () -> proxy.sendRequest(proxyUrl, request, response);
+
+        //启用 Sentinel 限流
         if (config.isSentinelEnable()) {
             new GatewaySentinelProcesser().process(runnable, config, request, response);
-        } else {
+        }
+        //未启用 Sentinel 的情况
+        else {
             runnable.run();
         }
     }
@@ -70,7 +80,7 @@ public class GatewayInvocation {
         GatewayLoadBalanceStrategy lbs = config.buildLoadBalanceStrategy();
 
         //通过负载均衡策略获取 URL 地址
-        String url = lbs.getUrl(config,request);
+        String url = lbs.getUrl(config, request);
 
         StringBuilder sb = new StringBuilder(url);
         if (StrUtil.isNotBlank(request.getRequestURI())) {
