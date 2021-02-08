@@ -49,7 +49,7 @@
         <HikariCP.version>3.4.5</HikariCP.version>
         <jackson.version>2.12.1</jackson.version>
         <mysql.version>5.1.49</mysql.version>
-        <undertow.version>2.2.3.Final</undertow.version>
+        <undertow.version>2.2.4.Final</undertow.version>
         <slf4j.version>1.7.30</slf4j.version>
         <fst.version>2.57</fst.version>
         <fastjson.version>1.2.75</fastjson.version>
@@ -65,12 +65,12 @@
         <httpclient.version>4.5.12</httpclient.version>
         <httpcore.version>4.4.13</httpcore.version>
         <netty.version>4.1.52.Final</netty.version>
-        <sentinel.version>1.8.0</sentinel.version>
+        <sentinel.version>1.8.1</sentinel.version>
         <dubbo.version>2.7.8</dubbo.version>
         <resteasy.version>3.13.2.Final</resteasy.version>
-        <seata.version>1.4.0</seata.version>
+        <seata.version>1.4.1</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.1.16</metrics.version>
+        <metrics.version>4.1.17</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -548,14 +548,14 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_dropwizard</artifactId>
-            <version>0.9.0</version>
+            <version>0.10.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_httpserver</artifactId>
-            <version>0.9.0</version>
+            <version>0.10.0</version>
             <scope>provided</scope>
         </dependency>
 
