@@ -74,11 +74,11 @@ jboot.sentinel.e requestBlockPage;
 jboot.sentinel.erequestBlockJsonMap;
 ```
   
-  在项目的 resource 目录下创建 sentinel.properties 文本，并配置相关信息如下：
+在项目的 resource 目录下创建 sentinel.properties 文本，并配置相关信息如下：
 
-  ```
+```
 csp.sentinel.dashboard.server=localhost:8080
-  ```
+```
 这个配置指的是 sentinel 配置服务器的地址
 
 关于更多 sentinel.properties 的配置请参考：
@@ -89,7 +89,7 @@ https://github.com/alibaba/Sentinel/wiki/%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E9
 添加 maven 依赖：
 
 
-  ```xml
+```xml
 <dependency>
     <groupId>com.alibaba.csp</groupId>
     <artifactId>sentinel-core</artifactId>
@@ -110,7 +110,7 @@ https://github.com/alibaba/Sentinel/wiki/%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E9
     <version>${sentinel.version}</version>
     <scope>provided</scope>
 </dependency>
-  ```
+```
 
 如果使用 阿里云 AHAS 替代 sentinel dashboard，需要添加如下依赖（以上依赖不再需要）：
 
@@ -122,6 +122,10 @@ https://github.com/alibaba/Sentinel/wiki/%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E9
     <version>1.8.0</version>
 </dependency>
 ```
+
+阿里云 AHAS 截图：
+
+![](./static/images/ahas.png)
 
 更多关于 阿里云 AHAS 的文档请参考：https://github.com/alibaba/Sentinel/wiki/AHAS-Sentinel-%E6%8E%A7%E5%88%B6%E5%8F%B0
 

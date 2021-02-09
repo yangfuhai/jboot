@@ -457,12 +457,8 @@ Jboot应用的分页功能需要自定义一个分页标签，自定义分页标
 ```java
 @JFinalDirective("myPaginate")
 public class MyPaginateDirective extends JbootPaginateDirective {
-
-    protected String getPageAttrName() {
-        return "pageData"; //这个值要和Controller里setAttr的第一个参数值相同
-    }
+    
 }
-
 ```
 然后再修改 user.html 内容如下：
 
@@ -822,7 +818,7 @@ public class UserServiceImpl extends JbootServiceBase<User> implements UserServi
 
 Jboot 都给与类非常完美的支持。
 
-## 探索Jboot的更多功能...
+## 探索 Jboot 的更多功能...
 
 恭喜你，到目前为止，你已经掌握了使用 Jboot 来开发一个 java web 的基本技能，包含了
 
@@ -837,13 +833,13 @@ Jboot 都给与类非常完美的支持。
 
 但是，Jboot 的功能远远不止这些，以上只是 Jboot 的冰山一角。
 
-Jboot 真正的核心是做微服务的开发，微服务的底层代码是分布式调用RPC，RPC 的框架和实现的方案非常繁杂，不过 Jboot 已经支持了主流 RPC 的实现，其中包含了 Dubbo 、motan、Zbus等， 未来还会添加 gRPC 等更多的支持。
+Jboot 真正的核心是做微服务的开发，微服务的底层代码是分布式调用 RPC，RPC 的框架和实现的方案非常繁杂，不过 Jboot 已经支持了主流 RPC 的实现，其中包含了 Dubbo 、motan、Zbus 等， 未来还会添加 gRPC 等更多的支持。
 
-* 在 RPC 下，Jboot 支持了 RPC 下的 熔断、降级、监控、Opentracing等等功能
-* 在分布式下，Jboot 支持了分布式缓存、分布式Session、分布式锁、分布式任务、统一配置中心
-* 在数据库下，Jboot 支持分库分表、支持 Reids 等nosql数据库的极简调用
-* 在 MQ 下，Jboot 支持 rabbitmq、redismq、zbus 甚至还支持了 阿里云的商业MQ
-* 另外，Jboot还支持了Swagger、Event事件机制、高并发下的限流方案等等更多的惊喜
+* 在 RPC 下，Jboot 支持了 RPC 下的 熔断、降级、监控、Opentracing 等等功能
+* 在分布式下，Jboot 支持了分布式缓存、分布式 Session、分布式锁、分布式任务、统一配置中心
+* 在数据库下，Jboot 支持分库分表、支持 Reids 等 nosql 数据库的极简调用
+* 在 MQ 下，Jboot 支持 rabbitmq、redismq、rocketmq 甚至还支持了 阿里云的商业MQ
+* 另外，Jboot 还支持了 Swagger、Event 事件机制、高并发下的 Sentinel 限流方案等等更多的惊喜
 
 
 希望你用的顺手、开心，如果有什么问题，可以通过 顶部菜单的 提问 链接进行提问，我回在第一时间回复您。

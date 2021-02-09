@@ -23,7 +23,7 @@ jboot.gateway.enable = true
 
 
 jboot.gateway.uriHealthCheckEnable = true
-jboot.gateway.uriHealthCheckPath = true
+jboot.gateway.uriHealthCheckPath = /your-health-check-path
 
 jboot.gateway.sentinelEnable = false
 jboot.gateway.sentinelBlockPage = /block
