@@ -104,7 +104,7 @@ public class JbootGatewayConfig implements Serializable {
         this.uri = uri;
     }
 
-    
+
     //健康的 URI 缓存
     private String[] healthUris;
 
@@ -115,23 +115,11 @@ public class JbootGatewayConfig implements Serializable {
         if (healthUriChanged) {
             synchronized (this) {
                 if (healthUriChanged) {
-                    Set<String> healthUriSet = Sets.newHashSet(uri);
-                    if (unHealthUris.size() > 0) {
+                    HashSet<String> healthUriSet = Sets.newHashSet(uri);
+                    if (!unHealthUris.isEmpty()) {
                         healthUriSet.removeAll(unHealthUris);
                     }
-
-                    if (healthUriSet.size() > 0) {
-                        healthUris = new String[healthUriSet.size()];
-                        int index = 0;
-                        for (String uri : healthUriSet) {
-                            healthUris[index++] = uri;
-                        }
-                        return healthUris;
-                    }
-                    //所有的 URL 都不可用
-                    else {
-                        healthUris = null;
-                    }
+                    healthUris = healthUriSet.isEmpty() ? null : healthUriSet.toArray(new String[healthUriSet.size()]);
                     healthUriChanged = false;
                 }
             }
