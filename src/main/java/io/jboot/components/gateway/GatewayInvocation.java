@@ -32,6 +32,8 @@ public class GatewayInvocation {
     private HttpServletRequest request;
     private HttpServletResponse response;
     private GatewayHttpProxy proxy;
+    private String proxyUrl;
+
     private boolean devMode = Jboot.isDevMode();
 
     private int index = 0;
@@ -41,8 +43,9 @@ public class GatewayInvocation {
         this.config = config;
         this.request = request;
         this.response = response;
-        this.proxy = new GatewayHttpProxy(config);
         this.inters = config.buildInterceptors();
+        this.proxy = new GatewayHttpProxy(config);
+        this.proxyUrl = buildProxyUrl(config,request);
     }
 
 
@@ -60,8 +63,6 @@ public class GatewayInvocation {
 
 
     protected void doInvoke() {
-        //通过 request 构建代理的 URL 地址
-        String proxyUrl = buildProxyUrl(config, request);
         if (StrUtil.isBlank(proxyUrl)) {
             JbootGatewayManager.me().renderNoneHealthUrl(config, request, response);
             return;
@@ -151,7 +152,21 @@ public class GatewayInvocation {
         return proxy;
     }
 
+
+    public void setProxy(GatewayHttpProxy proxy) {
+        this.proxy = proxy;
+    }
+
+
     public boolean hasException() {
         return proxy.getException() != null;
+    }
+
+    public String getProxyUrl() {
+        return proxyUrl;
+    }
+
+    public void setProxyUrl(String proxyUrl) {
+        this.proxyUrl = proxyUrl;
     }
 }

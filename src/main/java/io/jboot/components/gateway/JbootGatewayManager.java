@@ -44,7 +44,7 @@ public class JbootGatewayManager {
         return me;
     }
 
-    private Map<String, JbootGatewayConfig> configMap;
+    private ConcurrentHashMap<String, JbootGatewayConfig> configMap;
 
     private ScheduledThreadPoolExecutor fixedScheduler;
 
@@ -146,6 +146,11 @@ public class JbootGatewayManager {
         return configMap;
     }
 
+    /**
+     * 匹配可用的网关
+     * @param req 请求
+     * @return 返回匹配到的网关配置
+     */
     public JbootGatewayConfig matchingConfig(HttpServletRequest req) {
         if (configMap != null && !configMap.isEmpty()) {
             Iterator<JbootGatewayConfig> iterator = configMap.values().iterator();
