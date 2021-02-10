@@ -104,22 +104,39 @@ public class JbootGatewayConfig implements Serializable {
         this.uri = uri;
     }
 
+    
+    //健康的 URI 缓存
+    private String[] healthUris;
+
+    //健康 URI 是否有变化的标识
+    private boolean healthUriChanged = true;
+
     public String[] getHealthUris() {
-        Set<String> set = Sets.newHashSet(uri);
-        if (unHealthUris.size() > 0) {
-            set.removeAll(unHealthUris);
-        }
+        if (healthUriChanged) {
+            synchronized (this) {
+                if (healthUriChanged) {
+                    Set<String> healthUriSet = Sets.newHashSet(uri);
+                    if (unHealthUris.size() > 0) {
+                        healthUriSet.removeAll(unHealthUris);
+                    }
 
-        if (set.size() > 0) {
-            String[] uris = new String[set.size()];
-            int index = 0;
-            for (String uri : set) {
-                uris[index++] = uri;
+                    if (healthUriSet.size() > 0) {
+                        healthUris = new String[healthUriSet.size()];
+                        int index = 0;
+                        for (String uri : healthUriSet) {
+                            healthUris[index++] = uri;
+                        }
+                        return healthUris;
+                    }
+                    //所有的 URL 都不可用
+                    else {
+                        healthUris = null;
+                    }
+                    healthUriChanged = false;
+                }
             }
-            return uris;
         }
-
-        return null;
+        return healthUris;
     }
 
     public boolean isUriHealthCheckEnable() {
@@ -476,13 +493,17 @@ public class JbootGatewayConfig implements Serializable {
     }
 
     public void addUnHealthUri(String uri) {
-        unHealthUris.add(uri);
+        if (unHealthUris.add(uri)) {
+            healthUriChanged = true;
+        }
     }
 
 
     public void removeUnHealthUri(String uri) {
         if (unHealthUris.size() > 0) {
-            unHealthUris.remove(uri);
+            if (unHealthUris.remove(uri)) {
+                healthUriChanged = true;
+            }
         }
     }
 

@@ -16,13 +16,16 @@
 package io.jboot.components.gateway;
 
 import com.jfinal.kit.LogKit;
+import com.jfinal.kit.Ret;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.http.JbootHttpRequest;
 import io.jboot.utils.HttpUtil;
 import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
+import io.jboot.web.render.JbootJsonRender;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,6 +47,8 @@ public class JbootGatewayManager {
     private Map<String, JbootGatewayConfig> configMap;
 
     private ScheduledThreadPoolExecutor fixedScheduler;
+
+    private NoneHealthUrlErrorRender noneHealthUrlErrorRender;
 
     public void init() {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
@@ -154,5 +159,19 @@ public class JbootGatewayManager {
         return null;
     }
 
+    public NoneHealthUrlErrorRender getNoneHealthUrlErrorRender() {
+        return noneHealthUrlErrorRender;
+    }
 
+    public void setNoneHealthUrlErrorRender(NoneHealthUrlErrorRender noneHealthUrlErrorRender) {
+        this.noneHealthUrlErrorRender = noneHealthUrlErrorRender;
+    }
+
+    public void renderNoneHealthUrl(JbootGatewayConfig config, HttpServletRequest request, HttpServletResponse response) {
+        if (noneHealthUrlErrorRender != null) {
+            noneHealthUrlErrorRender.render(config, request, response);
+        } else {
+            new JbootJsonRender(Ret.fail().set("message", "none health url in gateway.")).setContext(request, response).render();
+        }
+    }
 }

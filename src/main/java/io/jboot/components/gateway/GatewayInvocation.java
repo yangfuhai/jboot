@@ -46,7 +46,6 @@ public class GatewayInvocation {
     }
 
 
-
     public void invoke() {
         if (inters == null || inters.length == 0) {
             doInvoke();
@@ -60,11 +59,15 @@ public class GatewayInvocation {
     }
 
 
-
     protected void doInvoke() {
         //通过 request 构建代理的 URL 地址
         String proxyUrl = buildProxyUrl(config, request);
-        if (devMode){
+        if (StrUtil.isBlank(proxyUrl)) {
+            JbootGatewayManager.me().renderNoneHealthUrl(config, request, response);
+            return;
+        }
+
+        if (devMode) {
             System.out.println("Jboot Gateway >>> " + proxyUrl);
         }
 
@@ -87,6 +90,9 @@ public class GatewayInvocation {
 
         //通过负载均衡策略获取 URL 地址
         String url = lbs.getUrl(config, request);
+        if (StrUtil.isBlank(url)) {
+            return null;
+        }
 
         StringBuilder sb = new StringBuilder(url);
         if (StrUtil.isNotBlank(request.getRequestURI())) {
