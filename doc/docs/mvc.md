@@ -62,6 +62,14 @@ jboot.web.session.cacheName             #Session的缓存名称
 jboot.web.session.cacheType             #Session的缓存类型（不配置的情况使用jboot的默认缓存）
 ```
 
+## Cookie
+
+Jboot 增强了 JFinal 的 Cookie 功能，同时增加了 CookieUtil 工具类，用于对 Cookie 进行加密安全保护 Cookie 信息安全。
+
+```properties
+jboot.web.cookieEncryptKey = cookie安全秘钥
+jboot.web.cookieMaxAge = 60 * 60 * 24 * 2
+```
 
 
 

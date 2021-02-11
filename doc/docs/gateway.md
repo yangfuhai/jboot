@@ -66,6 +66,9 @@ jboot.gateway.queryContains = aa,bb
 - interceptors 网关拦截器，一般用于进行鉴权等功能，配置类名，多个拦截器用英文逗号隔开，拦截器必须实现 GatewayInterceptor 接口
 - loadBalanceStrategy 负载均衡策略，当配置了多个 uri 的时候，可以通过此策略对 uri 进行获取
 
+> 注意：开启健康检查后，当所有的目标地址都不健康的时候，会渲染 "none health url in gateway" 的错误信息。
+> 我们可以通过 `JbootGatewayManager.me().setNoneHealthUrlErrorRender()` 来自定义渲染功能。
+
 ## Path 路由
 
 Path 路由一般是最常用的路由之一，是根据域名之后的路径进行路由的，Jboot 对 Path 路由提供了 4 中方式：
