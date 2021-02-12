@@ -51,10 +51,10 @@ public void test(@Size(min=2,max=10) int value) {
 }
 ```
 
-这个要求 value 的值必须在 2 ~ 10 直接。
+这个要求 value 的值必须在 2 ~ 10 之间。
 
 
-当然，我们还可以使用 @Size 来验证 Map/List/数组的长度，比如配合 @JsonBody 来接收前端传入的值：
+当然，我们还可以使用 @Size 来验证 `Map`、`List`、`数组` 的长度，比如配合 @JsonBody 来接收前端传入的值：
 
 ```java
 public void list(@Size(min=2,max=10) @JsonBody() List<MyBean> list) {        
@@ -63,7 +63,9 @@ public void list(@Size(min=2,max=10) @JsonBody() List<MyBean> list) {
 }
 ```
 
-要求前度传入的 MyBean Json 数组的长度必须是在 2~10 之间。
+要求前度传入的 MyBean Json 数组的数量必须是在 2~10 之间。
+
+> 更多关于 @JsonBody 请参考：[这个链接](./json.md)。
 
 ## @NotEmpty 验证
 
@@ -124,3 +126,32 @@ public void test(@Valid() MyBean bean) {
 | @NotEmpty  | 	验证注解的元素值不为null且不为空（字符串长度不为0、集合大小不为0） |
 | @NotBlank	  | 验证注解的元素值不为空（不为null、去除首位空格后长度为0），不同于@NotEmpty，@NotBlank只应用于字符串且在比较时会去除字符串的空格 |
 | @Email  | 	验证注解的元素值是Email，也可以通过正则表达式和flag指定自定义的email格式 |
+
+##  @EmptyValidate 和 @RegexValidate 
+
+当如果我们的 `Controller` 的方法没有参数的时候，就无法使用如上的注解进行验证了。因为，以上的注解
+是给方法里的参数进行添加。在这个时候，我们可以使用 `@EmptyValidate` 和 `@RegexValidate` 进行验证。
+
+比如：
+
+```java
+@RequestMapping("/")
+public class MyController extends JbootController {
+
+    @EmptyValidate(@Form(name = "mobile", message = "手机号不能为空"))
+    public void action1() {
+        renderText("ok");
+    }
+
+
+    @RegexValidate(@RegexForm(name = "mobile", regex = Regex.MOBILE, message= "您输入的不是手机号"))
+    public void action2() {
+        renderText("ok");
+    }
+
+}
+```
+
+- 当我们访问 `/action1` 的时候，会出现手机号不能为空的错误提示。访问 `/action1?mobile=123` 的时候，正常访问。
+- 当我们访问 `/action2` 或者 `/action2?mobile=123`  的时候，会出现手机号不正确的错误提示。
+  访问 `/action2?mobile=18611223344` 的时候，正常访问。因为 `18611223344` 是一个正确的手机号 。
