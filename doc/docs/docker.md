@@ -8,7 +8,7 @@
 
 ```
 docker run 
--e JBOOT_DATASOURCE_URL="jdbc:mysql://127.0.0.1:3306/jpress3"
+-e JBOOT_DATASOURCE_URL=jdbc:mysql://127.0.0.1:3306/jpress3
 -e JBOOT_DATASOURCE_USER=root 
 -e JBOOT_DATASOURCE_PASSWORD=123456 
 jpress:v2.0.8

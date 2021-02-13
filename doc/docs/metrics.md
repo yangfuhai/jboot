@@ -159,7 +159,9 @@ public class MetricsController extends JbootController {
 ```
 docker run -d -p 3000:3000 grafana/grafana
 ```
+
 - 进入 Grafana 的后台
+  
   通过网址 `http://127.0.0.1:3000` 可以访问到 Grafana，首次访问需要登录，默认账号和密码都是 admin。
 
 - 导入 Jboot JVM 的 Grafana 大盘配置
