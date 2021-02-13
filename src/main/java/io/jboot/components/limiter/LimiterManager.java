@@ -37,7 +37,7 @@ public class LimiterManager {
     private Map<String, Semaphore> semaphoreCache = new ConcurrentHashMap<>();
     private Map<String, RateLimiter> rateLimiterCache = new ConcurrentHashMap<>();
 
-    private Boolean enable;
+    private LimitConfig limitConfig = Jboot.config(LimitConfig.class);
     private LimitFallbackProcesser fallbackProcesser;
 
     private static LimiterManager me = new LimiterManager();
@@ -193,10 +193,7 @@ public class LimiterManager {
     }
 
     public boolean isEnable() {
-        if (enable == null) {
-            enable = Jboot.config(LimitConfig.class).isEnable();
-        }
-        return enable;
+        return limitConfig.isEnable();
     }
 
     public void processFallback(String resource, String fallback, Invocation inv) {
