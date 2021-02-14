@@ -78,7 +78,7 @@ UserService：
 
 ```java
 public interface UserService{
-    public List<User> findAll();
+    List<User> findAll();
 }
 ```
 
@@ -123,7 +123,7 @@ UserService：
 
 ```java
 public interface UserService{
-    public List<User> findAll();
+    List<User> findAll();
 }
 ```
 

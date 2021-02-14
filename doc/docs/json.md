@@ -14,6 +14,7 @@ public class MyBean {
     private String id;    
     private int age;    
     private BigInteger amount;    
+    
     //getter setter
 }
 ```

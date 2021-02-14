@@ -30,6 +30,7 @@ Jboot 的数据库是依赖 JFinal 的 ORM 做基本的数据库操作，同时�
 ## 基本增删改查
 
 JFinal 操作数据库，提供了两种方式对数据库进行操作，他们分别是：
+
 - Db + Record 方式
 - Model 映射方式
 
@@ -41,7 +42,7 @@ JFinal 操作数据库，提供了两种方式对数据库进行操作，他们�
 
 ### Model 映射方式
 
-Model是 MVC 模式中的 M 部分。以下是 Model 定义示例代码：
+Model是 MVC 模式中的 M 部分。以下是 Model 定义示例代码：
 
 ```java
 @Table(tableName = "user", primaryKey = "id")
@@ -69,6 +70,7 @@ public abstract class BaseUser<M extends BaseUser<M>> extends JbootModel<M> impl
 ```
 
 需要注意的是：
+
 - 以上的 `User` 和 `BaseUser` 都是通过代码生成器自动生成的，无需手写。
 - 多次执行代码生成器，`User` 代码不会被覆盖，但是 `BaseUser` 会被重新覆盖，因此，请不要在 `BaseUser` 手写任何代码。
 
@@ -408,6 +410,7 @@ ArticleService 输出的 Json 内容如下：
 
 
 AuthorService 代码如下：
+
 ```java
 public class AuthorService extends JbootServiceBase<Author> {
 
@@ -423,7 +426,6 @@ public class AuthorService extends JbootServiceBase<Author> {
         return authors;
     }
 }
-
 ```
 
 AuthorService 输出的 Json 内容如下：
@@ -475,6 +477,7 @@ AuthorService 输出的 Json 内容如下：
 
 
 CategoryService 代码如下：
+
 ```java
 public class CategoryService extends JbootServiceBase<Category> {
 
@@ -551,7 +554,7 @@ CategoryService 输出的 json 内容如下：
 
 
 
-具体代码参考：[这里](../../src/test/java/io/jboot/test/join)
+具体代码参考：[这个链接](https://gitee.com/JbootProjects/jboot/tree/master/src/test/java/io/jboot/test/join)
 
 
 
@@ -921,4 +924,4 @@ support {
 > 1、jboot.seata.txServiceGroup 配置的值要注意和 file.conf 里的 vgroup_mapping.xxx 保持一致
 > 2、jboot.rpc.filter=seata ##seata在Dubbo中的事务传播过滤器
 
-以上配置完毕后如何使用呢？点击 [这里](../../src/test/java/io/jboot/test/seata) 查看代码实例。
+以上配置完毕后如何使用呢？点击 [这个链接](https://gitee.com/JbootProjects/jboot/tree/master/src/test/java/io/jboot/test/seata) 查看代码实例。

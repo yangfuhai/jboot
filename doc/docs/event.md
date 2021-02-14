@@ -60,6 +60,7 @@ public class MyEventListener implements JbootEventListener {
 此时，当有 `eventName` , `event1` , `event2` 任何一个事件发送的时候，以上的 `MyEventListener.onEvent` 都会被触发执行。
 
 **备注**
+
 事件机制和 MQ（消息队列）很相似，主要区别是在于事件机制只是在 Jvm 应用内执行，解决的业务之间的耦合问题。
 
 MQ（消息队列）解决的是分布式下，多个系统的事件（或者消息）发送和监听，MQ 需要第三方的 **中间件** ，例如：Redis、rabbitMQ、activeMQ...等。

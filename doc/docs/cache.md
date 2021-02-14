@@ -8,6 +8,8 @@
 - EhCache
 - Redis
 - EhRedis
+- caffeine
+- caredis
 - J2Cache
 - NoneCache
 
@@ -18,13 +20,15 @@ Jboot 定位为高性能的微服务框架，然而高性能离不开合理的�
 - ehcache
 - redis
 - ehredis
+- caffeine
+- caredis
 - j2cache
 
 ## 配置
 
-默认情况下，用户无需做任何配置就可以使用 Jboot 的缓存功能，默认情况下 Jboot 是使用 `Ehcache` 作为 Jboot 的缓存方案。
+默认情况下，用户无需做任何配置就可以使用 Jboot 的缓存功能，默认情况下 Jboot 是使用 `caffeine` 作为 Jboot 的缓存方案。
 
-如果需要修改把 `Ehcahce` 方案修改为使用 `redis` ，则可以添加如下的配置：
+如果需要修把 `caffeine` 方案修改为使用 `redis` ，则可以添加如下的配置：
 
 ```
 jboot.cache.type = redis
@@ -132,7 +136,6 @@ CacheUtil.setTtl("cacheName","key")
 当一个系统有多个缓存组件的时候，可能有 redis 或者 ehcache 等，则可以使用如下use("type") 进行操作。
 ```
 CacheUtil.use("redis").put("cacheName","key","value")
-
 
 CacheUtil.use("ehcache").put("cacheName","key","value") 
 ```

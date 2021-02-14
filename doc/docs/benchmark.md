@@ -12,7 +12,7 @@ sidebar: auto
 * JDK信息：
 	* java version "1.8.0_25"
 	* Java(TM) SE Runtime Environment (build 1.8.0_25-b17)
-	*  Java HotSpot(TM) 64-Bit Server VM (build 25.25-b02, mixed mode)
+	* Java HotSpot(TM) 64-Bit Server VM (build 25.25-b02, mixed mode)
 
 * 硬件信息
 	* 处理器：2.3 GHz Intel Core i7
