@@ -18,6 +18,7 @@ package io.jboot.components.valid.interceptor;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.kit.Ret;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 
 import javax.validation.constraints.Size;
@@ -25,7 +26,6 @@ import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.Map;
 
-import static io.jboot.components.valid.ValidUtil.processValidException;
 
 public class SizeInterceptor implements Interceptor {
 
@@ -41,7 +41,7 @@ public class SizeInterceptor implements Interceptor {
                     String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
                             + ", but current value is null at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("max", size.max()).set("min", size.min());
-                    processValidException(size.message(), paras, reason);
+                    ValidUtil.processValidException(size.message(), paras, reason);
                 }
 
                 int len = getObjectLen(validObject);
@@ -49,7 +49,7 @@ public class SizeInterceptor implements Interceptor {
                     String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
                             + ", but current value size (or length) is " + len + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("max", size.max()).set("min", size.min());
-                    processValidException(size.message(), paras, reason);
+                    ValidUtil.processValidException(size.message(), paras, reason);
                 }
             }
         }

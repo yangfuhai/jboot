@@ -55,8 +55,12 @@ public class DecimalMinInterceptor implements Interceptor {
             return ((BigDecimal) validObject).compareTo(new BigDecimal(decimalMax.value())) >= 0;
         } else if (validObject instanceof CharSequence) {
             return (new BigDecimal(validObject.toString())).compareTo(new BigDecimal(decimalMax.value())) >= 0;
+        } else if (validObject instanceof Float) {
+            return ((Float) validObject) >= Float.parseFloat(decimalMax.value());
+        } else if (validObject instanceof Double) {
+            return ((Double) validObject) >= Double.parseDouble(decimalMax.value());
         } else if (validObject instanceof Number) {
-            return ((Number) validObject).longValue() >= new BigInteger(decimalMax.value()).longValue();
+            return ((Number) validObject).longValue() >= Long.parseLong(decimalMax.value());
         }
         return false;
     }
