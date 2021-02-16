@@ -48,9 +48,32 @@ Render 请参加 JFinal 的文档 [https://www.jfinal.com/doc/3-7](https://www.j
 
 ## Session
 
-Jboot 增强了 JFinal 的 Session 功能，同时 Session 默认使用了 Jboot 自带的缓存实现，当 Jboot 的缓存使用分布式缓存之后（比如 redis ）。Session 就会自动有了分布式 Session 的功能。
+Jboot 增强了 JFinal 的 Session 功能，同时 Session 默认使用了 Jboot 自带的缓存实现，当 Jboot 开启分布式缓存之后（比如 redis ）。Session 就会自动有了分布式 Session 的功能。
 
-当然，也可以通过如下来配置 Session 特殊功能：
+开启分布式缓存，值需要添加如下配置：
+
+```properties
+jboot.cache.type=redis
+jboot.cache.redis.host=127.0.0.1
+```
+
+添加以上配置后，我们在 Controller 中就可以使用如下代码操作 Session 了。
+
+```java
+@RequestMapping("/")
+public class MyController extends JbootController {
+
+    public void index() {
+        
+        //设置 session 内容
+        setSessionAttr("attr", "your session value");
+
+        renderText("hello world");
+    }
+}
+```
+
+当然，也可以通过如下来对 Session 进行更多的配置：
 
 ```
 jboot.web.session.cookieName            #cookie 的名称
@@ -64,7 +87,16 @@ jboot.web.session.cacheType             #Session的缓存类型（不配置的�
 
 ## Cookie
 
-Jboot 增强了 JFinal 的 Cookie 功能，同时增加了 CookieUtil 工具类，用于对 Cookie 进行加密安全保护 Cookie 信息安全。
+Jboot 增强了 JFinal 的 Cookie 功能，同时提供了 CookieUtil 工具类，用于对 Cookie 进行加密安全保护 Cookie 信息安全。
+
+```java
+
+//设置 Cookie 数据
+CookieUtil.put(controller,"key","value");
+
+//读取 Cookie 数据
+CookieUtil.get(controller,"key")
+```
 
 ```properties
 jboot.web.cookieEncryptKey = cookie安全秘钥
