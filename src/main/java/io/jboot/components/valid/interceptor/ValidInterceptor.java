@@ -47,7 +47,7 @@ public class ValidInterceptor implements Interceptor {
                                     .append(cv.getMessage());
                         }
                         String reason = parameters[index].getName() + " is valid failed at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                        ValidUtil.processValidException(msg.toString(), reason);
+                        ValidUtil.throwValidException(msg.toString(), reason);
                     }
                 }
             }

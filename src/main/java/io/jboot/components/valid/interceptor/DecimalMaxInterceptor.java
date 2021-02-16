@@ -40,7 +40,7 @@ public class DecimalMaxInterceptor implements Interceptor {
                     String reason = parameters[index].getName() + " max value is " + decimalMax.value()
                             + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("value", decimalMax.value());
-                    ValidUtil.processValidException(decimalMax.message(), paras, reason);
+                    ValidUtil.throwValidException(decimalMax.message(), paras, reason);
                 }
             }
         }

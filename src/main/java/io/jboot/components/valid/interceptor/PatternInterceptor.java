@@ -36,7 +36,7 @@ public class PatternInterceptor implements Interceptor {
                 if (validObject == null || !matches(pattern, validObject.toString())) {
                     String reason = parameters[index].getName() + " is null or not matches the regex at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("regexp", pattern.regexp());
-                    ValidUtil.processValidException(pattern.message(), paras, reason);
+                    ValidUtil.throwValidException(pattern.message(), paras, reason);
                 }
             }
         }

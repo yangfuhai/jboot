@@ -36,14 +36,6 @@ public class ValidUtil {
             .getValidator();
 
 
-    /**
-     * 验证异常时的处理器
-     */
-    private static ValidExceptionProcessor validExceptionProcessor = (message, reason) -> {
-        throw new ValidException(message, reason);
-    };
-
-
     public static Validator getValidator() {
         return validator;
     }
@@ -52,29 +44,21 @@ public class ValidUtil {
         ValidUtil.validator = validator;
     }
 
-    public static ValidExceptionProcessor getValidExceptionProcessor() {
-        return validExceptionProcessor;
-    }
-
-    public static void setValidExceptionProcessor(ValidExceptionProcessor validExceptionProcessor) {
-        ValidUtil.validExceptionProcessor = validExceptionProcessor;
-    }
-
     public static Set<ConstraintViolation<Object>> validate(Object object) {
         return validator.validate(object);
     }
 
 
-    public static void processValidException(String message, String reason) {
-        processValidException(message, null, reason);
+    public static void throwValidException(String message, String reason) {
+        throwValidException(message, null, reason);
     }
 
 
-    public static void processValidException(String message, Ret paras, String reason) {
+    public static void throwValidException(String message, Ret paras, String reason) {
         if (message != null) {
             message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleContext(paras));
         }
 
-        validExceptionProcessor.process(message, reason);
+        throw new ValidException(message, reason);
     }
 }

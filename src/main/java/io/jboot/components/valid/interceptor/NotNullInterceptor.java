@@ -33,7 +33,7 @@ public class NotNullInterceptor implements Interceptor {
             NotNull notNull = parameters[index].getAnnotation(NotNull.class);
             if (notNull != null && inv.getArg(index) == null) {
                 String reason = parameters[index].getName() + " is null at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                ValidUtil.processValidException(notNull.message(), reason);
+                ValidUtil.throwValidException(notNull.message(), reason);
             }
         }
 

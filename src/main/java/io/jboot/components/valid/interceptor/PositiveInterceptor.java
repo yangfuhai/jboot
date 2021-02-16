@@ -34,7 +34,7 @@ public class PositiveInterceptor implements Interceptor {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || ((Number) validObject).longValue() <= 0) {
                     String reason = parameters[index].getName() + " is null or not positive at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.processValidException(positive.message(), reason);
+                    ValidUtil.throwValidException(positive.message(), reason);
                 }
             }
         }

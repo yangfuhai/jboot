@@ -39,7 +39,7 @@ public class DecimalMinInterceptor implements Interceptor {
                 if (validObject != null && !matches(decimalMin, validObject)) {
                     String reason = parameters[index].getName() + " min value is " + decimalMin.value() + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("value", decimalMin.value());
-                    ValidUtil.processValidException(decimalMin.message(), paras, reason);
+                    ValidUtil.throwValidException(decimalMin.message(), paras, reason);
                 }
             }
         }

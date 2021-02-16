@@ -34,7 +34,7 @@ public class NegativeInterceptor implements Interceptor {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || ((Number) validObject).longValue() >= 0) {
                     String reason = parameters[index].getName() + " is null or not negative at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.processValidException(negative.message(), reason);
+                    ValidUtil.throwValidException(negative.message(), reason);
                 }
             }
         }
