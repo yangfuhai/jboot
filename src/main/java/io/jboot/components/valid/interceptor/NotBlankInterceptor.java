@@ -35,7 +35,7 @@ public class NotBlankInterceptor implements Interceptor {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || (validObject instanceof String && StrUtil.isBlank((String) validObject))) {
                     String msg = parameters[index].getName() + " is blank at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.throwValidException(notBlank.message(), msg);
+                    ValidUtil.processValidException(notBlank.message(), msg);
                 }
             }
         }

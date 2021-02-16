@@ -98,9 +98,9 @@ public class ValidateInterceptorUtil {
 
     public static interface ValidExceptionRetBuilder{
 
-        public static final ValidExceptionRetBuilder DEFAULT_BUILDER = ret -> ret;
+        ValidExceptionRetBuilder DEFAULT_BUILDER = ret -> ret;
 
-        public Ret build(Ret baseRet);
+        Ret build(Ret baseRet);
     }
 
 

@@ -34,7 +34,7 @@ public class NegativeOrZeroInterceptor implements Interceptor {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || ((Number) validObject).longValue() > 0) {
                     String reason = parameters[index].getName() + " is null or greater than 0 at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.throwValidException(negativeOrZero.message(), reason);
+                    ValidUtil.processValidException(negativeOrZero.message(), reason);
                 }
             }
         }

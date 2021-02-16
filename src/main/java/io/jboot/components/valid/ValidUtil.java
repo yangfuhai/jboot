@@ -26,11 +26,22 @@ import java.util.Set;
 
 public class ValidUtil {
 
+    /**
+     * 验证器：用于数据验证
+     */
     private static Validator validator = Validation.byProvider(HibernateValidator.class)
             .configure()
             .failFast(true)
             .buildValidatorFactory()
             .getValidator();
+
+
+    /**
+     * 验证异常时的处理器
+     */
+    private static ValidExceptionProcessor validExceptionProcessor = (message, reason) -> {
+        throw new ValidException(message, reason);
+    };
 
 
     public static Validator getValidator() {
@@ -41,21 +52,29 @@ public class ValidUtil {
         ValidUtil.validator = validator;
     }
 
-    public static Set<ConstraintViolation<Object>> validate(Object object){
+    public static ValidExceptionProcessor getValidExceptionProcessor() {
+        return validExceptionProcessor;
+    }
+
+    public static void setValidExceptionProcessor(ValidExceptionProcessor validExceptionProcessor) {
+        ValidUtil.validExceptionProcessor = validExceptionProcessor;
+    }
+
+    public static Set<ConstraintViolation<Object>> validate(Object object) {
         return validator.validate(object);
     }
 
 
-    public static void throwValidException(String message, String reason) {
-        throwValidException(message, null, reason);
+    public static void processValidException(String message, String reason) {
+        processValidException(message, null, reason);
     }
 
 
-    public static void throwValidException(String message, Ret paras, String reason) {
+    public static void processValidException(String message, Ret paras, String reason) {
         if (message != null) {
             message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleContext(paras));
         }
 
-        throw new ValidException(message, reason);
+        validExceptionProcessor.process(message, reason);
     }
 }

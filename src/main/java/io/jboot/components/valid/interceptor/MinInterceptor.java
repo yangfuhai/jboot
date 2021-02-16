@@ -37,7 +37,7 @@ public class MinInterceptor implements Interceptor {
                 if (validObject != null && min.value() > ((Number) validObject).longValue()) {
                     String reason = parameters[index].getName() + " min value is " + min.value() + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("value", min.value());
-                    ValidUtil.throwValidException(min.message(), paras, reason);
+                    ValidUtil.processValidException(min.message(), paras, reason);
                 }
             }
         }
