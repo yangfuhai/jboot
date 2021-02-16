@@ -1,3 +1,12 @@
+jboot v3.9.3:
+新增：门户网关没有健康网关时可以自定义渲染器的功能
+优化：Gateway 门户网关的性能
+优化：GatewayInterceptpor 拦截器可以获得当前的代理目标 URL 地址功能
+修复：@DecimalMax 和 @DecimalMin 在某些极端情况下可能验证错误的问题
+文档：更新 MQ、Sentinel、Gateway、Validator 等文档
+
+
+
 jboot v3.9.2:
 新增：门户网关 Gateway 的健康检查功能
 新增：JbootModel.closeIdCacheTemporary() 通过这个方法可以一次关闭ID缓存
