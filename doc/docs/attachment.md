@@ -15,9 +15,8 @@ Jboot 定位是分布式的开发系统，在项目进行分布式部署的时�
 
 在使用 AttachmentContainer 之前，我们需要需要编写自己的一个类，来实现 AttachmentContainer 接口，并添加到 AttachmentManager 里去。
 
-```
+```java
 AliyunOssAttachmentContainer aliyunOss = new AliyunOssAttachmentContainer();
-
 AttachmentManager.me().addContainer(aliyunOss);
 ```
 
@@ -25,7 +24,7 @@ AttachmentManager.me().addContainer(aliyunOss);
 
 例如：
 
-```
+```java
 public void upload() {
     if (!isMultipartRequest()) {
         renderError(404);
@@ -50,7 +49,7 @@ public void upload() {
 
 当需要读取文件的时候，我们也可以通过 AttachmentManger 去读文件。
 
-```
+```java
 File attachment = AttachmentManager.me().getFile(relativePath);
 ```
 
@@ -59,7 +58,7 @@ File attachment = AttachmentManager.me().getFile(relativePath);
 
 以下是 `AttachmentManager.me().getFile()` 代码的实现逻辑：
 
-```
+```java
 public File getFile(String relativePath) {
 
     AttachmentContainer defaultContainer = getDefaultContainer();
@@ -89,7 +88,7 @@ public File getFile(String relativePath) {
 
 以下是阿里云 Oss 的代码实现逻辑，可供参考：
 
-```
+```java
 public class AliyunOssAttachmenetContainer implements AttachmentContainer {
 
     private String basePath = PathKit.getWebRootPath();
@@ -243,7 +242,7 @@ public class AliyunOssAttachmenetContainer implements AttachmentContainer {
 }
 ```
 
-```
+```java
 @ConfigModel(prefix = "aliyunoss")
 public class AliyunOssAttachmentConfig {
 
