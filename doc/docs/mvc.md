@@ -53,9 +53,18 @@ Jboot 增强了 JFinal 的 Session 功能，同时 Session 默认使用了 Jboot
 开启分布式缓存，值需要添加如下配置：
 
 ```properties
-jboot.cache.type=redis
-jboot.cache.redis.host=127.0.0.1
+jboot.cache.type = redis
+
+jboot.cache.redis.host = 127.0.0.1
+jboot.cache.redis.port = 3306
+jboot.cache.redis.password
+jboot.cache.redis.database
+jboot.cache.redis.timeout
 ```
+
+> 更多关于缓存的配置请参考【缓存】章节
+
+
 
 添加以上配置后，我们在 Controller 中就可以使用如下代码操作 Session 了。
 
