@@ -4,7 +4,7 @@
 
 例如，在 redis 中，我们可以为 redis 组件自定义自己的序列化方式，只需要进入如下配置即可：
 
-```
+```properties
 jboot.redis.serializer = xxxx
 ```
 

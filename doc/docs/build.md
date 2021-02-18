@@ -108,7 +108,7 @@ package.xml
 
 在 项目的根目录下，创建 `jboot.sh` 文件，内容如下：
 
-```
+```shell
 #!/bin/bash
 # ----------------------------------------------------------------------
 # name:         jboot.sh
@@ -312,7 +312,8 @@ fatjar 打包第一步，在 pom.xml 添加如下配置
 到服务器上，执行 `java -jar xxx-with-dependencies.jar` 即可启动项目。
 
 注意：如果您使用了motan，那么在打包fatjar时需要将spi扩展声明文件需要使用追加模式，可参考  
-```
+
+```xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-shade-plugin</artifactId>

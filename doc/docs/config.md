@@ -185,7 +185,7 @@ public class Component1Config{
     private String password;
     private long timeout;
 
-    // 下方应该还有 getter setter， 略
+    // 下方应还有 getter setter， 此处略
 }
 ```
 
@@ -199,7 +199,17 @@ Component1Config config = Jboot.config(Component1Config.class);
 
 ```
 
-> 备注：`@ConfigModel(prefix="component1")` 注解的含义是 `Component1Config` 的前缀是 `component1` ，因此，其属性 `host` 是来至配置文件的 `component1.host` 的值。
+配置内如如下：
+
+```properties
+component1.host = xxx
+component1.port = xxx
+component1.accout = xxx
+component1.password = xxx
+component1.timeout = xxx
+```
+
+> 备注：`@ConfigModel(prefix="component1")` 注解的含义是 `Component1Config` 的前缀是 `component1` ，因此，其属性 `host` 是来至配置文件的 `component1.host` 的值。
 
 
 
@@ -264,7 +274,7 @@ jboot.config.nacos.dataId = jboot
 jboot.config.nacos.group = jboot
 ```
 
-支持如下更多配置，但是最简单的只需要以上配置就可以正常运行
+nacos 支持如下更多配置，但是只需要以上配置就可以正常运行。
     
 
 ```
@@ -315,11 +325,11 @@ jboot.config.apollo.meta = http://106.54.227.205:8080
 
 ## 配置内容加密解密
 
-为了安全起见，很多时候我们需要对配置里的一些安全和隐私内容进行加密，比如数据库的账号密码等，防止web服务器被黑客入侵时保证数据库的安全。
+为了安全起见，我们需要对配置里的一些内容进行加密，比如数据库的账号、密码等，防止 web 服务器被黑客入侵时保证数据库的安全。
 
 配置的内容加密是由用户自己编写加密算法。此时，Jboot 读取的只是加密的内容，为了能正常还原解密之后的内容，用户需要给 `JbootConfigManager` 配置上解密的实现 JbootConfigDecryptor。
 
-一般情况下，我们需要在 JbootAppListener 的 onInit() 里去配置。例如：
+一般情况下，我们需要在 JbootAppListener 的 `onInit()` 里去配置。例如：
 
 ```java
 public MyApplicationListener implements JbootAppListener {

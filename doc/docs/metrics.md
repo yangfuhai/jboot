@@ -17,7 +17,7 @@ Jboot 内置了一套监控机制，可以用来监控 Controller、Service 等�
 
 这是最简单的一种方法，我们只需要在 jboot.properties 添加如下配置:
 
-```
+```properties
 jboot.metric.enable=true
 jboot.metric.reporter=slf4j
 ```
@@ -40,8 +40,8 @@ public class MetricsController extends JbootController {
 
 如果我们需要通过网页来查看监控的 json 数据，可以添加配置
 
-```
-boot.metric.adminServletMapping=metrics.admin"
+```properties
+boot.metric.adminServletMapping = metrics.admin
 ```
 
 此时，我们可以通过 `http://127.0.0.1:8888/metrics.admin` 来查看 `index()` 这个方法的访问次数和并发量。
@@ -129,7 +129,7 @@ scrape_configs:
 
 和 在 jboot.properties 添加如下配置：
 
-```
+```properties
 jboot.metric.enable=true
 jboot.metric.reporter=prometheus
 ```
@@ -156,7 +156,7 @@ public class MetricsController extends JbootController {
 **配置 Grafana 读取 Prometheus 的数据**
 - 启动 Grafana 
 
-```
+```shell
 docker run -d -p 3000:3000 grafana/grafana
 ```
 
@@ -197,7 +197,7 @@ Graphite 有三个主要组件组成：
 
 在开始之前，我们需要启动 Graphite
 
-```
+```shell
 docker run -d\
  --name graphite\
  --restart=always\
@@ -222,7 +222,7 @@ docker run -d\
 
 最后在 jboot.properties 添加如下配置：
 
-```
+```properties
 jboot.metric.enable=true
 jboot.metric.reporter=graphite
 jboot.metric.reporter.graphite.host=127.0.0.1

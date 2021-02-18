@@ -4,7 +4,7 @@ Jboot 内置了对MQ消息队列的功能支持，使用MQ需要以下几步步�
 
 **第一步：配置jboot.properties文件，内容如下：**
 
-```
+```properties
 # 默认为redis (支持: redis,activemq,rabbitmq,hornetq,aliyunmq等 )
 jboot.mq.type = redis
 jboot.mq.channel = channel1,channel2,channel3
@@ -32,7 +32,7 @@ Jboot.getMq().startListening();
 
 配置完毕后，我们在其他服务器，就可以通过如下代码发送消息：
 
-```
+```java
  Jboot.getMq().publish(yourObject, "channel1");
 ```
 

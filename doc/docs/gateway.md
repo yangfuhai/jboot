@@ -16,7 +16,7 @@ Jboot 已经内置基础的网关，网关功能目前暂时只能通过在 jboo
 
 如下是一个正常的 gateway 配置。
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -75,7 +75,7 @@ Path 路由一般是最常用的路由之一，是根据域名之后的路径进
 
 **1、pathEquals**
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -87,7 +87,7 @@ jboot.gateway.pathEquals = /user
 
 **2、pathContains**
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -100,7 +100,7 @@ jboot.gateway.pathContains = /user
 
 **3、pathStartsWith**
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -112,7 +112,7 @@ jboot.gateway.pathStartsWith = /user
 
 **4、pathEndsWith**
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -129,7 +129,7 @@ Host 路由是根据域名进行路由的，Jboot 对 Host 路由提供了 4 中
 
 **1、hostEquals**
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -141,7 +141,7 @@ jboot.gateway.hostEquals = xxx.xxx.com
 
 **2、hostContains**
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -154,7 +154,7 @@ jboot.gateway.hostContains = xxx.xxx.com
 
 **3、hostStartsWith**
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -166,7 +166,7 @@ jboot.gateway.hostStartsWith = xxx
 
 **4、hostEndsWith**
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -182,7 +182,8 @@ jboot.gateway.hostEndsWith = com
 
 
 **1、queryEquals**
-```
+
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -193,7 +194,8 @@ jboot.gateway.queryEquals = aaa:bbb
 以上配置中，如果用户访问 `www.xxx.com/controller?aaa=bbb` 会自动路由到 `http://youdomain:8080/controller?aaa=bbb` ，但是如果用户访问 `www.xxx.com/controller?aaa=ccc`不会路由。
 
 **2、queryContains**
-```
+
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true
@@ -207,7 +209,7 @@ jboot.gateway.queryContains = aaa
 
 ## 多个 Gateway 配置
 
-```
+```properties
 jboot.gateway.aaa.name = name
 jboot.gateway.aaa.uri = http://youdomain:8080
 jboot.gateway.aaa.enable = true
@@ -276,7 +278,7 @@ jboot.gateway.xxx.queryContains = aa,bb
 
 比如:
 
-```
+```properties
 jboot.gateway.name = name
 jboot.gateway.uri = http://youdomain:8080
 jboot.gateway.enable = true

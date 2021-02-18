@@ -29,14 +29,14 @@ Redis 优势:
 ## Redis的配置
 在使用 Redis 之前，先进行 Redis 配置，配置内容如下：
 
-```
+```properties
 jboot.redis.host=127.0.0.1
 jboot.redis.password=xxxx
 ```
 
 Redis 还支持如下的更多功能的配置：
 
-```
+```properties
 jboot.redis.port = 6379
 jboot.redis.timeout = 2000
 jboot.redis.database
@@ -62,7 +62,7 @@ jboot.redis.serializer
 
 配置后，就可以通过如下代码获取 JbootRedis 对redis进行操作：
 
-```
+```java
 JbootRedis redis = Jboot.getRedis();
 redis.set("key1","value1");
 
@@ -186,7 +186,7 @@ JedisCluster jedis = redisImpl.getJedisCluster();
 ## Redis集群
 在单机模式下，配置文件如下：
 
-```
+```properties
 jboot.redis.host=127.0.0.1
 jboot.redis.password=xxxx
 ```
@@ -194,7 +194,7 @@ jboot.redis.password=xxxx
 在集群模式下，只需要在 jboot.redis.host 配置为多个主机即可，例如：
 
 
-```
+```properties
 ## 多个IP用英文逗号隔开，端口号用英文冒号（:）。
 Jboot.redis.host=192.168.1.33,192.168.1.34:3307,192.168.1.35
 jboot.redis.password=xxxx

@@ -34,7 +34,7 @@ https://github.com/alibaba/Sentinel/wiki/%E4%BB%8B%E7%BB%8D
 
 下载 Sentinel 的 jar 到本地，并通过如下方式启动 启动 sentinel dashboard
 
-```
+```shell
 java -jar sentinel-dashboard-1.8.0.jar
 ```
 
@@ -44,7 +44,7 @@ java -jar sentinel-dashboard-1.8.0.jar
 
 例如：
 
-```
+```shell
 java -Dserver.port=8888 -jar sentinel-dashboard-1.8.0.jar
 ```
 
@@ -61,7 +61,7 @@ https://github.com/alibaba/Sentinel/wiki/%E6%8E%A7%E5%88%B6%E5%8F%B0#%E6%8E%A7%E
 
 在 jboot.properties 添加如下配置
 
-```
+```properties
 jboot.sentinel.enable = true;
 
 // 是否对 http 请求启用限流，默认值为 true，启用后还需要去 sentinel 后台配置

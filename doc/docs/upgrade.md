@@ -21,6 +21,7 @@
 JbootCache cache = Jboot.me().getCache();
 ```
 修改为：
+
 ```java
 JbootCache cache = Jboot.getCache();
 ```

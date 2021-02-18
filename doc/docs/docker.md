@@ -6,7 +6,7 @@
 
 例如，我们需要给应用配置数据库信息：
 
-```
+```shell
 docker run 
 -e JBOOT_DATASOURCE_URL=jdbc:mysql://127.0.0.1:3306/jpress3
 -e JBOOT_DATASOURCE_USER=root 
@@ -16,7 +16,7 @@ jpress:v2.0.8
 
 这个启动命令，等同于在 jboot.properties 添加如下的配置
 
-```
+```properties
 jboot.datasource.url=jdbc:mysql://127.0.0.1:3306/jpress3
 jboot.datasource.user=root
 jboot.datasource.password=123456

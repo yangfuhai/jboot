@@ -11,7 +11,7 @@
 ## 其他扩展
 
 ### 扩展1：配置位置
-在 Jboot 应用中，除了可以在 resource 目录下的 `undertow.txt` 文件进行配置以外，也可以在 `jboot.properties` 文件里配置。
+在 Jboot 应用中，除了可以在 resource 目录下的 `undertow.txt` 文件进行配置以外，也可以在 `jboot.properties` 文件里配置。
 
 同时可以通过启动参数 和 环境变量等进行配置，Undertow 启动的时候读取配置内容的优先顺序是：
 

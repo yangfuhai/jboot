@@ -2,7 +2,7 @@
 
 Jboot 内置了一个简易的代码生成器，可以用来生成model层和Service层的基础代码，在生成代码之前，请先配置jboot.properties关于数据库相关的配置信息，Jboot 代码生成器会通过该配置去链接数据库。
 
-```
+```properties
 jboot.datasource.type=mysql
 jboot.datasource.url=jdbc:mysql://127.0.0.1:3306/jbootdemo
 jboot.datasource.user=root

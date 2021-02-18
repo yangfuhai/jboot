@@ -16,7 +16,7 @@
 
 Jboot 支持 dubbo 和 motan，假设我们需要使用 dubbo 作为底层的 RPC 框架，需要添加如下依赖：
 
-```
+```xml
 <dependency>
     <groupId>org.apache.dubbo</groupId>
     <artifactId>dubbo</artifactId>
@@ -43,7 +43,7 @@ Jboot 支持 dubbo 和 motan，假设我们需要使用 dubbo 作为底层的 RP
 
 如果使用 motan，需要添加如下依赖：
 
-```
+```xml
 <dependency>
     <groupId>com.weibo</groupId>
     <artifactId>motan-core</artifactId>
@@ -75,7 +75,8 @@ Jboot 支持 dubbo 和 motan，假设我们需要使用 dubbo 作为底层的 RP
 
 
 例如 ：
-```
+
+```properties
 jboot.rpc.type = dubbo
 jboot.rpc.urls = com.yourdomain.AAAService:127.0.0.1:8080,com.yourdomain.XXXService:127.0.0.1:8080
 jboot.rpc.providers = com.yourdomain.AAAService:providerName,com.yourdomain.XXXService:providerName
@@ -99,7 +100,7 @@ jboot.rpc.autoExportEnable = true
 
 在 以上 示例中，`jboot.rpc.providers` 配置中，可以对每个 Service 进行配置，但是，在绝大多数的情况下，我们可能只需要一个配置，这个配置应用于所有的 Service 服务，此时我们需要做如下配置：
 
-```
+```properties
 # 名称为 default 的 provider 配置（当不配置其名称的时候，名称默认为 default）
 jboot.rpc.dubbo.provider.timeout = xx.xx.xx
 jboot.rpc.dubbo.provider.loadbalance = xx.xx.xx
@@ -211,8 +212,8 @@ public class DubboServer {
 
 
 **启动 dubbo 客户端、通过 RPC 调用 Server 提供的服务**
-```java
 
+```java
 @RequestMapping("/dubbo")
 public class DubboClient extends JbootController{
 
@@ -406,7 +407,7 @@ public interface UserService {
 
 第三步，在 jboot.properties 添加 restful 协议：
 
-```
+```properties
 jboot.rpc.dubbo.protocol.name = dubbo
 jboot.rpc.dubbo.protocol.host = 127.0.0.1
 jboot.rpc.dubbo.protocol.port = 28080
@@ -420,7 +421,7 @@ jboot.rpc.dubbo.protocol.rest.server = netty
 第四步：给 Service 配置暴露协议
 
 
-```
+```properties
 jboot.rpc.dubbo.provider.protocal = default,rest //使用 dubbo 和 rest 两种协议同时暴露
 jboot.rpc.dubbo.provider.default = true // 给应用配置默认的 provider
 ```
@@ -443,7 +444,7 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-application.html
 
 例如：
 
-```
+```properties
 jboot.rpc.dubbo.application.name = xx.xx.xx
 jboot.rpc.dubbo.application.version = xx.xx.xx
 ```
@@ -458,7 +459,7 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-registry.html
 
 例如：
 
-```
+```properties
 jboot.rpc.dubbo.registry.address = xx.xx.xx
 ```
 
@@ -468,7 +469,7 @@ jboot.rpc.dubbo.registry.address = xx.xx.xx
 
 默认的注册中心配置内容如下：
 
-```
+```properties
 jboot.rpc.dubbo.registry.address = xx.xx.xx
 jboot.rpc.dubbo.registry.port = xx.xx.xx
 jboot.rpc.dubbo.registry.username = xx.xx.xx
@@ -478,7 +479,7 @@ jboot.rpc.dubbo.registry.password = xx.xx.xx
 多注册中心可以配置如下（多 protocol 、多 consumer、多provider 都是同理）：
 
 
-```
+```properties
 jboot.rpc.dubbo.registry.address = xx.xx.xx
 jboot.rpc.dubbo.registry.port = xx.xx.xx
 jboot.rpc.dubbo.registry.username = xx.xx.xx
@@ -502,7 +503,7 @@ jboot.rpc.dubbo.registry.other2.password = xx.xx.xx
 
 例如：
 
-```
+```properties
 jboot.rpc.dubbo.provider.address = default,other1
 ```
 
@@ -518,7 +519,7 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-protocol.html
 
 例如：
 
-```
+```properties
 jboot.rpc.dubbo.protocol.host = 127.0.0.1
 jboot.rpc.dubbo.protocol.port = 28080
 ```
