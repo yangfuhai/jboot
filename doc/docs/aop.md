@@ -11,6 +11,8 @@
 - @Configuration
 - @ConfigValue
 - @StaticConstruct
+- @PostConstruct
+- InterceptorBuilder
 
 ## JFinal AOP
 
@@ -18,7 +20,7 @@
 
 ## JBoot AOP
 
-JBoot AOP 在 JFinal AOP 的基础上，新增了我们在分布式下常用的功能，同时借鉴了 Spring AOP 的一些特征，对 JFinal AOP 做了功能的强制，但是又没有 Spring AOP 体系的复杂度。
+JBoot AOP 在 JFinal AOP 的基础上，新增了我们在分布式下常用的功能，同时借鉴了 Spring AOP 的一些特征，对 JFinal AOP 做了增强，但是又没有 Spring AOP 体系的复杂度。
 
 ## @Inject
 
@@ -329,32 +331,103 @@ public class JbootManager {
 }
 ```
 
+## @PostConstruct
+
+`@PostConstruct` 是 Java 自带的注解，用于在对 Java 对象初始化、并进行注入成功之后，进行初始化的工作。
+
+比如：
+
+```java
+@Bean
+public class YourServiceImpl implements YourService{
+
+    @Inject
+    private OtherService1 otherService1;
+
+    @Inject
+    private OtherService2 otherService2;
+    
+    
+    private Service3 service3;
+    
+    public YourServiceImpl(){
+        // 构造方法运行的时候， otherService1 和 otherService2 都为 null，
+        // 因为还没有开始注入
+    }
+
+    @PostConstruct
+    private void initService3() {
+        // 构造函数执行完毕后，Jboot 会自动立即执行此方法
+        // 此时 otherService1 和 otherService2 已经有值了
+        
+        otherService1.doSth();
+        otherService2.doSth();
+        
+        service3 = createService3(otherService1,otherService2);
+    }
+    
+    public void doSomething(){
+        service3.xxx();
+    }
+}
+```
+
+此时，我们就可以通过如下方法使用 YourService 了
+
+```java
+YourService service = Aop.get(YourService.class);
+service.doSomething();
+```
+
+`@PostConstruct` 的特点：
+
+- 必须是 `非静态` 方法
+- 必须是 `无参数` 方法
+- 在同一个类中，只能存在一个方法被 `@PostConstruct` 修饰。
+- 如果子类和父类都存在 `@PostConstruct` 修饰的方法，子类优先执行，父类后执行。
+
+
+
 ## InterceptorBuilder
 
-InterceptorBuilder 能够根据当前 Controller、Service 的方法，来对当前方法应该使用哪些拦截器进行构建，在之前 JFinal 的体系里，给某个方法添加拦截器只能通过 @Before({MyInterceptor.class}) 或者 configInterceptor() 配置方法里添加全局拦截器。
+InterceptorBuilder : 拦截器构建器。他能够根据当前 Controller、Service 等的方法信息（比如方法注解、方法名称、方法参数），来对当前方法动态 添加 或者 删除 拦截器，
+在之前 JFinal 的体系里，给某个方法添加拦截器只能通过 @Before({MyInterceptor.class}) 或者 configInterceptor() 配置方法里添加全局拦截器。
 
-这样带来一个不够优雅的地方是，如果我们想给某个方法 ”增强“，只能以添加全局拦截器的方式来做，这样所有方法都会被该拦截器拦截，然后再通过其判断进行 ”放行“ 。这样就带来了性能效率的下降，因为在我们整个系统中，有非常多的方法是没有必要走拦截器的。
+这样带来一个不够优雅的地方是，如果我们想给某个方法 ”增强“，只能以添加全局拦截器的方式来做，这样所有方法都会被该拦截器拦截，
+然后再通过其判断进行 ”放行“ 。这样就带来了性能效率的下降，因为在我们整个系统中，有非常多的方法是没有必要走拦截器的。
 
-有了 InterceptorBuilder 之后，我们可以通过 InterceptBuilder 给某个方法来构建其特定的拦截器，而不是全局拦截器，这样，极大的提高了性能，同时减少了不必要的调用堆栈。
+有了 InterceptorBuilder 之后，我们可以通过 InterceptBuilder 给某个方法来构建其特定的拦截器，而不是全局拦截器，
+这样，极大的提高了性能，同时减少了不必要的调用堆栈。
+
 
 如何使用 InterceptorBuilder 呢？如下代码：
 
 ```java
-public void onInit() {
-   InterceptorBuilderManager.me().addInterceptorBuilder(new MyInterceptorBuilder());
+public class YourAppListener extends JbootAppListenerBase{
+
+        public void onInit() {
+            InterceptorBuilderManager.me().addInterceptorBuilder(new MyInterceptorBuilder());
+        }
 }
 ```
 
 或者 `CacheInterceptorBuilder` 添加主键 `@AutoLoad`
 
-> 注意：使用注解 `@Autoload` 之后就不要通过 `InterceptorBuilderManager` 来添加了，`@Autoload` 的作用就是在其启动的时候自动添加过去
 
-比如 @Cacheable 的拦截器构建 CacheInterceptorBuilder 代码如下：
+> 注意：使用注解 `@Autoload` 之后，就不要通过 `InterceptorBuilderManager` 来添加了，`@Autoload` 的作用就是在其启动的时候自动添加进去。
+
+比如 `@Cacheable` 的拦截器构建 CacheInterceptorBuilder 代码如下：
 
 ```java
 @AutoLoad //自动把当前的 CacheInterceptorBuilder 添加到 InterceptorBuilderManager 里去。
 public class CacheInterceptorBuilder implements InterceptorBuilder {
 
+    /**
+     * 开始都某个方法进行构建
+     * @param serviceClass 方法所在的类
+     * @param method 方法信息
+     * @param interceptors 该方法已经有的拦截器
+     */
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
        
@@ -365,7 +438,9 @@ public class CacheInterceptorBuilder implements InterceptorBuilder {
             // 或者使用如下的方式添加，这样，所有的方法都会被同一个 "实例" 拦截
             // interceptors.add(CacheableInterceptor.class)
         }
+        
     }
 }
 ```
-在 `build()` 方法中的 Interceptors，我们不仅仅可以通过 Interceptors 来添加拦截器，我们还可以通过其来删除拦截器、或者移动拦截器位置等等操作。
+
+在 `build()` 方法中的 Interceptors，我们不仅仅可以通过 Interceptors 来添加拦截器，我们还可以通过其来删除拦截器、或者修改拦截器的顺序等等操作。
