@@ -19,8 +19,10 @@ import com.jfinal.aop.Aop;
 import com.jfinal.config.Plugins;
 import com.jfinal.plugin.IPlugin;
 
+import java.util.List;
+
 /**
- * Jfinal Plugins 的代理类，方便为Plugin插件的自动注入功能
+ * Jfinal Plugins 的代理类，方便为 Plugin 插件的自动注入功能
  */
 public class JfinalPlugins {
 
@@ -38,5 +40,9 @@ public class JfinalPlugins {
 
     public Plugins getPlugins() {
         return plugins;
+    }
+
+    public List<IPlugin> getPluginList() {
+        return plugins.getPluginList();
     }
 }
