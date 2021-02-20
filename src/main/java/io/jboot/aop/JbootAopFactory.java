@@ -96,7 +96,8 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
-        doInjectOnly(targetClass,targetObject);
+        targetClass = getUsefulClass(targetClass);
+        doInjectTargetClass(targetClass,targetObject);
         doInvokePostConstructMethod(targetClass,targetObject);
     }
 
@@ -133,14 +134,11 @@ public class JbootAopFactory extends AopFactory {
      * @param targetObject
      * @throws ReflectiveOperationException
      */
-    protected void doInjectOnly(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
-        targetClass = getUsefulClass(targetClass);
+    protected void doInjectTargetClass(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
         Field[] fields = targetClass.getDeclaredFields();
 
         if (fields.length != 0) {
-
             for (Field field : fields) {
-
                 Inject inject = field.getAnnotation(Inject.class);
                 if (inject != null) {
                     Bean bean = field.getAnnotation(Bean.class);
@@ -172,7 +170,7 @@ public class JbootAopFactory extends AopFactory {
         if (injectSuperClass) {
             Class<?> superClass = targetClass.getSuperclass();
             if (notSystemClass(superClass)) {
-                doInjectOnly(superClass, targetObject);
+                doInjectTargetClass(superClass, targetObject);
             }
         }
     }
