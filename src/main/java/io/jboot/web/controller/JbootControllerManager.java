@@ -35,11 +35,6 @@ public class JbootControllerManager extends ControllerFactory {
     private JbootControllerManager() {
     }
 
-//    public Controller getController(Class<? extends Controller> controllerClass) throws InstantiationException, IllegalAccessException {
-//        Controller controller = controllerClass.newInstance();
-//        return Aop.inject(controller);
-//    }
-
 
     private BiMap<String, Class<? extends Controller>> controllerMapping = HashBiMap.create();
 

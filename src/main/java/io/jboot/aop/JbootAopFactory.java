@@ -40,6 +40,7 @@ import io.jboot.service.JbootServiceBase;
 import io.jboot.utils.*;
 import io.jboot.web.controller.JbootController;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -95,6 +96,44 @@ public class JbootAopFactory extends AopFactory {
 
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
+        doInjectOnly(targetClass,targetObject);
+        doInvokePostConstructMethod(targetClass,targetObject);
+    }
+
+
+    /**
+     * 执行  @PostConstruct 注解方法
+     * @param targetClass
+     * @param targetObject
+     * @throws ReflectiveOperationException
+     */
+    protected void doInvokePostConstructMethod(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
+        Method[] methods = targetClass.getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.getParameterCount() == 0) {
+                PostConstruct postConstruct = method.getAnnotation(PostConstruct.class);
+                if (postConstruct != null) {
+                    method.setAccessible(true);
+                    method.invoke(targetObject);
+                    break;
+                }
+            }
+        }
+
+        Class<?> superClass = targetClass.getSuperclass();
+        if (notSystemClass(superClass)) {
+            doInvokePostConstructMethod(superClass, targetObject);
+        }
+    }
+
+
+    /**
+     * 执行注入操作
+     * @param targetClass
+     * @param targetObject
+     * @throws ReflectiveOperationException
+     */
+    protected void doInjectOnly(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
         targetClass = getUsefulClass(targetClass);
         Field[] fields = targetClass.getDeclaredFields();
 
@@ -131,18 +170,22 @@ public class JbootAopFactory extends AopFactory {
 
         // 是否对超类进行注入
         if (injectSuperClass) {
-            Class<?> c = targetClass.getSuperclass();
-            if (c != JbootController.class
-                    && c != Controller.class
-                    && c != JbootServiceBase.class
-                    && c != Object.class
-                    && c != JbootModel.class
-                    && c != Model.class
-                    && c != null
-            ) {
-                doInject(c, targetObject);
+            Class<?> superClass = targetClass.getSuperclass();
+            if (notSystemClass(superClass)) {
+                doInjectOnly(superClass, targetObject);
             }
         }
+    }
+
+
+    protected boolean notSystemClass(Class clazz){
+        return clazz != JbootController.class
+                && clazz != Controller.class
+                && clazz != JbootServiceBase.class
+                && clazz != Object.class
+                && clazz != JbootModel.class
+                && clazz != Model.class
+                && clazz != null;
     }
 
 

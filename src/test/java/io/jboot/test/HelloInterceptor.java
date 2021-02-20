@@ -18,11 +18,18 @@ package io.jboot.test;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2019/12/12
  */
 public class HelloInterceptor implements Interceptor {
+
+    @PostConstruct
+    public void aaa(){
+        System.out.println("HelloInterceptor --->>> aaaa() invoked!");
+    }
 
     @Override
     public void intercept(Invocation inv) {

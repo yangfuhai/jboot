@@ -10,6 +10,8 @@ import io.jboot.core.listener.JbootAppListener;
 import io.jboot.web.render.JbootCaptchaRender;
 
 public class TestAppListener implements JbootAppListener {
+
+
     @Override
     public void onInit() {
         System.out.println("TestAppListener.onInit");
