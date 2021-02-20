@@ -40,9 +40,10 @@ public class ApplicationUtil {
         System.out.println(appConfig.toString());
     }
 
-    public static boolean runInFatjar(){
-        URL url =  Thread.currentThread().getContextClassLoader().getResource("");
-        return url == null || url.toString().toLowerCase().endsWith(".jar!/");
+    public static boolean runInFatjar() {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("");
+//        return url == null || url.toString().toLowerCase().endsWith(".jar!/");
+        return url == null || "file".equalsIgnoreCase(url.getProtocol());
     }
 
     static void printClassPath() {
@@ -65,7 +66,6 @@ public class ApplicationUtil {
     static String getConfigValue(String key) {
         return JbootConfigManager.me().getConfigValue(key);
     }
-
 
 
     static boolean isDevMode() {
