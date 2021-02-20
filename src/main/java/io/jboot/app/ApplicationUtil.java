@@ -42,8 +42,12 @@ public class ApplicationUtil {
 
     public static boolean runInFatjar() {
         URL url = Thread.currentThread().getContextClassLoader().getResource("");
-//        return url == null || url.toString().toLowerCase().endsWith(".jar!/");
-        return url == null || "file".equalsIgnoreCase(url.getProtocol());
+        if (url == null){
+            return true;
+        }
+
+        String urlStr = url.toString().toLowerCase();
+        return urlStr.endsWith(".jar!/") || urlStr.endsWith("/config/");
     }
 
     static void printClassPath() {
