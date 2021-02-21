@@ -17,6 +17,7 @@ package io.jboot.app;
 
 import io.jboot.app.config.JbootConfigManager;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -42,12 +43,26 @@ public class ApplicationUtil {
 
     public static boolean runInFatjar() {
         URL url = Thread.currentThread().getContextClassLoader().getResource("");
-        if (url == null){
+        if (url == null) {
+            return true;
+        }
+
+        if ("jar".equalsIgnoreCase(url.getProtocol())) {
             return true;
         }
 
         String urlStr = url.toString().toLowerCase();
-        return urlStr.endsWith(".jar!/") || urlStr.endsWith("/config/");
+        if (urlStr.endsWith(".jar!/")) {
+            return true;
+        }
+
+        // 在某些情况下 通过 java -jar 运行时，会以 /config/ 结束
+        if (urlStr.endsWith("/config/")) {
+            File urlPath = new File(url.getPath());
+            return !urlPath.exists() || !urlPath.isDirectory();
+        }
+
+        return false;
     }
 
     static void printClassPath() {
