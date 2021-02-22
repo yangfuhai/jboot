@@ -6,7 +6,17 @@ import io.jboot.app.config.ConfigUtil;
 public class AnnotationUtil {
 
     public static String get(String value) {
-        return StrUtil.isNotBlank(value) ? ConfigUtil.parseValue(value.trim()) : StrUtil.EMPTY;
+        return get(value, StrUtil.EMPTY);
+    }
+
+    public static String get(String value, String defaultValue) {
+        if (StrUtil.isNotBlank(value)) {
+            String ret = ConfigUtil.parseValue(value.trim());
+            if (StrUtil.isNotBlank(ret)) {
+                return ret;
+            }
+        }
+        return defaultValue;
     }
 
 

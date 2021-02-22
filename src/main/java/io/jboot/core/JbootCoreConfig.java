@@ -25,6 +25,7 @@ import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
 import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
@@ -57,10 +58,8 @@ import io.jboot.web.attachment.AttachmentHandler;
 import io.jboot.web.attachment.LocalAttachmentContainerConfig;
 import io.jboot.web.controller.JbootControllerManager;
 import io.jboot.web.controller.annotation.RequestMapping;
-import io.jboot.web.directive.annotation.JFinalDirective;
-import io.jboot.web.directive.annotation.JFinalSharedMethod;
-import io.jboot.web.directive.annotation.JFinalSharedObject;
-import io.jboot.web.directive.annotation.JFinalSharedStaticMethod;
+import io.jboot.web.directive.JFinalEnumObject;
+import io.jboot.web.directive.annotation.*;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.json.JbootJson;
@@ -217,30 +216,45 @@ public class JbootCoreConfig extends JFinalConfig {
         }
 
         List<Class> directiveClasses = ClassScanner.scanClass();
-        for (Class clazz : directiveClasses) {
-            JFinalDirective directive = (JFinalDirective) clazz.getAnnotation(JFinalDirective.class);
-            if (directive != null) {
-                if (directive.override()) {
-                    //remove old directive
-                    engine.removeDirective(directive.value());
+        for (Class<?> clazz : directiveClasses) {
+
+            if (clazz.isAssignableFrom(Directive.class)) {
+                JFinalDirective directive = clazz.getAnnotation(JFinalDirective.class);
+                if (directive != null) {
+                    String name = AnnotationUtil.get(directive.value());
+                    if (directive.override()) {
+                        //remove old directive
+                        engine.removeDirective(name);
+                    }
+                    engine.addDirective(name, (Class<? extends Directive>) clazz);
                 }
-                engine.addDirective(AnnotationUtil.get(directive.value()), clazz);
+            } else if (clazz.isEnum()) {
+                JFinalSharedEnum sharedEnum = clazz.getAnnotation(JFinalSharedEnum.class);
+                if (sharedEnum != null) {
+                    String name = AnnotationUtil.get(sharedEnum.value(), clazz.getSimpleName());
+                    if (sharedEnum.override()) {
+                        engine.removeSharedObject(name);
+                    }
+                    engine.addSharedObject(name, JFinalEnumObject.create((Class<? extends Enum<?>>) clazz));
+                }
             }
 
-            JFinalSharedMethod sharedMethod = (JFinalSharedMethod) clazz.getAnnotation(JFinalSharedMethod.class);
+            JFinalSharedMethod sharedMethod = clazz.getAnnotation(JFinalSharedMethod.class);
             if (sharedMethod != null) {
                 engine.addSharedMethod(ClassUtil.newInstance(clazz));
             }
 
-            JFinalSharedStaticMethod sharedStaticMethod = (JFinalSharedStaticMethod) clazz.getAnnotation(JFinalSharedStaticMethod.class);
+            JFinalSharedStaticMethod sharedStaticMethod = clazz.getAnnotation(JFinalSharedStaticMethod.class);
             if (sharedStaticMethod != null) {
                 engine.addSharedStaticMethod(clazz);
             }
 
-            JFinalSharedObject sharedObject = (JFinalSharedObject) clazz.getAnnotation(JFinalSharedObject.class);
+            JFinalSharedObject sharedObject = clazz.getAnnotation(JFinalSharedObject.class);
             if (sharedObject != null) {
                 engine.addSharedObject(AnnotationUtil.get(sharedObject.value()), ClassUtil.newInstance(clazz));
             }
+
+
         }
 
         JbootAppListenerManager.me().onEngineConfig(engine);
@@ -278,7 +292,7 @@ public class JbootCoreConfig extends JFinalConfig {
         handlers.add(new AttachmentHandler());
 
         SentinelConfig sentinelConfig = SentinelConfig.get();
-        if (sentinelConfig.isEnable() && sentinelConfig.isReqeustEnable()){
+        if (sentinelConfig.isEnable() && sentinelConfig.isReqeustEnable()) {
             handlers.add(new SentinelHandler());
         }
 
