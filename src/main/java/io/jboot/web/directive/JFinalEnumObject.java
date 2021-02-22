@@ -16,6 +16,7 @@
 package io.jboot.web.directive;
 
 import com.jfinal.kit.LogKit;
+import com.jfinal.template.expr.ast.MethodKeyBuilder;
 import javassist.*;
 
 import java.lang.reflect.Method;
@@ -80,10 +81,12 @@ import java.util.Map;
 public class JFinalEnumObject extends LinkedHashMap<String, Object> {
 
 
-    private Map<String, Method> staticMethods;
+    private Class<? extends Enum<?>> enumClass;
+    private Map<Long, Method> staticMethods;
 
 
-    void init(Class<? extends Enum<?>> enumClass, Map<String, Method> staticMethods) {
+    void init(Class<? extends Enum<?>> enumClass, Map<Long, Method> staticMethods) {
+        this.enumClass = enumClass;
         this.staticMethods = staticMethods;
         for (Enum<?> e : enumClass.getEnumConstants()) {
             put(e.name(), e);
@@ -92,28 +95,34 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
 
 
     protected Object invokeEnumMethod(String methodName) {
-        try {
-            return staticMethods.get(methodName)
-                    .invoke(null);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.toString(), ex);
-        }
+        return doInvokeEnumMethod(methodName);
     }
 
-    protected Object invokeEnumMethod(String methodName, Object paras) {
-        try {
-            return staticMethods.get(methodName)
-                    .invoke(null, paras);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.toString(), ex);
-        }
+    protected Object invokeEnumMethod(String methodName, Object para1) {
+        return doInvokeEnumMethod(methodName, para1);
     }
 
 
-    protected Object invokeEnumMethod(String methodName, Object... paras) {
+    protected Object invokeEnumMethod(String methodName, Object para1, Object para2) {
+        return doInvokeEnumMethod(methodName, para1, para2);
+    }
+
+    protected Object invokeEnumMethod(String methodName, Object para1, Object para2, Object para3) {
+        return doInvokeEnumMethod(methodName, para1, para2, para3);
+    }
+
+    protected Object invokeEnumMethod(String methodName, Object para1, Object para2, Object para3, Object para4) {
+        return doInvokeEnumMethod(methodName, para1, para2, para3, para4);
+    }
+
+    protected Object invokeEnumMethod(String methodName, Object para1, Object para2, Object para3, Object para4, Object para5) {
+        return doInvokeEnumMethod(methodName, para1, para2, para3, para4, para5);
+    }
+
+    private Object doInvokeEnumMethod(String methodName, Object... paras) {
         try {
-            return staticMethods.get(methodName)
-                    .invoke(null, paras);
+            Long key = getMethodKey(enumClass, methodName, paras);
+            return staticMethods.get(key).invoke(null, paras);
         } catch (Exception ex) {
             throw new RuntimeException(ex.toString(), ex);
         }
@@ -135,7 +144,7 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
             newClass.setSuperclass(supperClass);
             newClass.setModifiers(Modifier.PUBLIC);
 
-            Map<String, Method> enumStaticMethods = findEnumStaticMethods(enumClass);
+            Map<Long, Method> enumStaticMethods = findEnumStaticMethods(enumClass);
 
             if (enumStaticMethods != null) {
                 for (Method originalMethod : enumStaticMethods.values()) {
@@ -180,8 +189,8 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
     }
 
 
-    private static Map<String, Method> findEnumStaticMethods(Class<? extends Enum<?>> enumClass) {
-        Map<String, Method> retMap = null;
+    private static Map<Long, Method> findEnumStaticMethods(Class<? extends Enum<?>> enumClass) {
+        Map<Long, Method> retMap = null;
         try {
             Method[] methods = enumClass.getDeclaredMethods();
             for (Method method : methods) {
@@ -190,13 +199,32 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
                     if (retMap == null) {
                         retMap = new HashMap<>();
                     }
-                    retMap.put(method.getName(), method);
+                    retMap.put(getMethodKey(enumClass, method.getName(), method.getParameterTypes()), method);
                 }
             }
         } catch (Exception ex) {
             LogKit.logNothing(ex);
         }
         return retMap;
+    }
+
+
+    private static Long getMethodKey(Class<?> targetClass, String methodName, Object... args) {
+        Class<?>[] argTypes = null;
+        if (args != null && args.length > 0) {
+            argTypes = new Class[args.length];
+            int index = 0;
+            for (Object arg : args) {
+                argTypes[index++] = arg.getClass();
+            }
+        }
+
+        return getMethodKey(targetClass, methodName, argTypes);
+    }
+
+
+    private static Long getMethodKey(Class<?> targetClass, String methodName, Class<?>[] argTypes) {
+        return MethodKeyBuilder.getInstance().getMethodKey(targetClass, methodName, argTypes);
     }
 
 

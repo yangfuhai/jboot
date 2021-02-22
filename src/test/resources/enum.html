@@ -11,8 +11,15 @@ test enum.html... </br>
 1 isMaster -----> #(JfinalEnum.isMaster(1)) </br>
 2 isMaster-----> #(JfinalEnum.isMaster(2))</br>
 
-1 isMaster -----> #(JfinalEnum.isClient(1)) </br>
-20 isMaster-----> #(JfinalEnum.isClient(20))</br>
+1 isClient -----> #(JfinalEnum.isClient(1)) </br>
+20 isClient-----> #(JfinalEnum.isClient(20))</br>
+
+
+
+1 isDev(1) -----> #(JfinalEnum.isDev(1)) </br>
+1 isDev(1,"1") -----> #(JfinalEnum.isDev(1,"1")) </br>
+
+
 
 </br></br></br>
 #for(v : JfinalEnum.values())
