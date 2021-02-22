@@ -25,8 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- *  JFinalEnumObject 的主要目的是为了动态创建一个包装 Enum 枚举的类，方便模板引擎直接调用。
- *
+ * JFinalEnumObject 的主要目的是为了动态创建一个包装 Enum 枚举的类，方便模板引擎直接调用。
+ * <p>
  * 添加枚举类型，便于在模板中使用
  *
  * <pre>
@@ -130,30 +130,33 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
             ClassPool pool = ClassPool.getDefault();
             CtClass objectCtClass = pool.getCtClass(Object.class.getName());
             CtClass supperClass = pool.get(JFinalEnumObject.class.getName());
-            CtClass ctClass = pool.makeClass(JFinalEnumObject.class.getName() + "." + enumClass.getSimpleName());
-            ctClass.setSuperclass(supperClass);
-            ctClass.setModifiers(Modifier.PUBLIC);
+
+            CtClass newClass = pool.makeClass(JFinalEnumObject.class.getName() + "." + enumClass.getSimpleName());
+            newClass.setSuperclass(supperClass);
+            newClass.setModifiers(Modifier.PUBLIC);
 
             Map<String, Method> enumStaticMethods = findEnumStaticMethods(enumClass);
 
             if (enumStaticMethods != null) {
                 for (Method originalMethod : enumStaticMethods.values()) {
+                    boolean isReturnVoid = (void.class == originalMethod.getReturnType());
+                    CtClass returnClass = isReturnVoid ? CtClass.voidType : objectCtClass;
 
-                    CtClass[] parametersClass = createParameterClassArray(originalMethod, pool);
-                    CtMethod ctMethod = new CtMethod(objectCtClass, originalMethod.getName(), parametersClass, ctClass);
+                    CtClass[] parameterClassArray = createParameterClassArray(originalMethod, pool);
+                    CtMethod ctMethod = new CtMethod(returnClass, originalMethod.getName(), parameterClassArray, newClass);
                     ctMethod.setModifiers(Modifier.PUBLIC);
 
-                    if (void.class == originalMethod.getReturnType()) {
+                    if (isReturnVoid) {
                         ctMethod.setBody("{invokeEnumMethod(\"" + originalMethod.getName() + "\",$$);}");
                     } else {
                         ctMethod.setBody("{return invokeEnumMethod(\"" + originalMethod.getName() + "\",$$);}");
                     }
 
-                    ctClass.addMethod(ctMethod);
+                    newClass.addMethod(ctMethod);
                 }
             }
 
-            JFinalEnumObject ret = (JFinalEnumObject) ctClass.toClass().newInstance();
+            JFinalEnumObject ret = (JFinalEnumObject) newClass.toClass().newInstance();
             ret.init(enumClass, enumStaticMethods);
             return ret;
         } catch (Exception e) {
@@ -170,7 +173,7 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
         }
         CtClass[] ret = new CtClass[originalMethod.getParameterCount()];
         int index = 0;
-        for (Class clazz : originalMethod.getParameterTypes()) {
+        for (Class<?> clazz : originalMethod.getParameterTypes()) {
             ret[index++] = pool.getCtClass(clazz.getName());
         }
         return ret;
@@ -178,23 +181,23 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
 
 
     private static Map<String, Method> findEnumStaticMethods(Class<? extends Enum<?>> enumClass) {
-        Map<String, Method> staticMethods = null;
+        Map<String, Method> retMap = null;
         try {
             Method[] methods = enumClass.getDeclaredMethods();
             for (Method method : methods) {
                 int methodModifiers = method.getModifiers();
                 if (Modifier.isPublic(methodModifiers) && Modifier.isStatic(methodModifiers)) {
-                    if (staticMethods == null) {
-                        staticMethods = new HashMap<>();
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
                     }
-                    staticMethods.put(method.getName(), method);
+                    retMap.put(method.getName(), method);
                 }
             }
         } catch (Exception ex) {
             LogKit.logNothing(ex);
         }
-
-        return staticMethods;
+        return retMap;
     }
+
 
 }
