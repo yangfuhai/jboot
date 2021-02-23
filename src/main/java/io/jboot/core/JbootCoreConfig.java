@@ -218,7 +218,7 @@ public class JbootCoreConfig extends JFinalConfig {
         List<Class> directiveClasses = ClassScanner.scanClass();
         for (Class<?> clazz : directiveClasses) {
 
-            if (clazz.isAssignableFrom(Directive.class)) {
+            if (Directive.class.isAssignableFrom(clazz)) {
                 JFinalDirective directive = clazz.getAnnotation(JFinalDirective.class);
                 if (directive != null) {
                     String name = AnnotationUtil.get(directive.value());
