@@ -1,3 +1,11 @@
+jboot v3.9.4:
+新增：@JfinalSharedEnum 注解的支持，方便把枚举添加到模板引擎里使用
+新增：@PostConstruct 注解的支持，方便 Bean 在被创建的时候进行初始化
+优化：ApplicationUtil.runInFatjar 的判断
+文档：更新 MVC、MQ、Gateway 等文档
+
+
+
 jboot v3.9.3:
 新增：门户网关没有健康网关时可以自定义渲染器的功能
 优化：Gateway 门户网关的性能
