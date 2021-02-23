@@ -263,6 +263,11 @@ public class ClassScanner {
         excludeJars.add("tinypinyin-");
         excludeJars.add("jieba-");
         excludeJars.add("ahocorasick-");
+        excludeJars.add("kotlin-");
+        excludeJars.add("xml-apis-");
+        excludeJars.add("dom4j-");
+        excludeJars.add("ini4j-");
+        excludeJars.add("org.jacoco");
 
     }
 
@@ -293,6 +298,9 @@ public class ClassScanner {
         excludeClasses.add("org.aspectj.");
         excludeClasses.add("org.hibernate.");
         excludeClasses.add("org.ahocorasick.");
+        excludeClasses.add("org.ini4j.");
+        excludeClasses.add("org.jetbrains.");
+        excludeClasses.add("org.jacoco.");
         excludeClasses.add("aj.org.");
         excludeClasses.add("ch.qos.");
         excludeClasses.add("com.alibaba.csp.");
