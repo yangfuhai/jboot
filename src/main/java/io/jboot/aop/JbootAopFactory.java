@@ -139,6 +139,7 @@ public class JbootAopFactory extends AopFactory {
 
         if (fields.length != 0) {
             for (Field field : fields) {
+
                 Inject inject = field.getAnnotation(Inject.class);
                 if (inject != null) {
                     Bean bean = field.getAnnotation(Bean.class);
@@ -151,15 +152,16 @@ public class JbootAopFactory extends AopFactory {
                     continue;
                 }
 
-                ConfigValue configValue = field.getAnnotation(ConfigValue.class);
-                if (configValue != null) {
-                    doInjectConfigValue(targetObject, field, configValue);
-                    continue;
-                }
 
                 RPCInject rpcInject = field.getAnnotation(RPCInject.class);
                 if (rpcInject != null) {
                     doInjectRPC(targetObject, field, rpcInject);
+                    continue;
+                }
+
+                ConfigValue configValue = field.getAnnotation(ConfigValue.class);
+                if (configValue != null) {
+                    doInjectConfigValue(targetObject, field, configValue);
                     continue;
                 }
             }
