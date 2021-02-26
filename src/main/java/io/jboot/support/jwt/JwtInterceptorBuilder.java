@@ -18,7 +18,6 @@ package io.jboot.support.jwt;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
-import io.jboot.web.controller.JbootController;
 
 import java.lang.reflect.Method;
 
@@ -30,14 +29,9 @@ public class JwtInterceptorBuilder implements InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (JbootController.class.isAssignableFrom(serviceClass) && getAnnotation(serviceClass, method) != null) {
+        if (Util.isJbootController(serviceClass) && Util.hasAnnotation(serviceClass, method, EnableJwt.class)) {
             interceptors.add(JwtInterceptor.class);
         }
-    }
-
-    private EnableJwt getAnnotation(Class<?> serviceClass, Method method) {
-        EnableJwt enableAnnotation = serviceClass.getAnnotation(EnableJwt.class);
-        return enableAnnotation != null ? enableAnnotation : method.getAnnotation(EnableJwt.class);
     }
 
 }

@@ -15,6 +15,10 @@
  */
 package io.jboot.aop;
 
+import com.jfinal.core.Controller;
+import io.jboot.web.controller.JbootController;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
@@ -32,5 +36,31 @@ import java.lang.reflect.Method;
  * </pre>
  */
 public interface InterceptorBuilder {
+
     void build(Class<?> serviceClass, Method method, Interceptors interceptors);
+
+    class Util {
+
+        public static boolean isController(Class<?> serviceClass) {
+            return Controller.class.isAssignableFrom(serviceClass);
+        }
+
+        public static boolean isJbootController(Class<?> serviceClass) {
+            return JbootController.class.isAssignableFrom(serviceClass);
+        }
+
+        public static <A extends Annotation> boolean hasAnnotation(Class<?> targetClass, Class<A> annotationClass) {
+            return targetClass.getAnnotation(annotationClass) != null;
+        }
+
+
+        public static <A extends Annotation> boolean hasAnnotation(Method method, Class<A> annotationClass) {
+            return method.getAnnotation(annotationClass) != null;
+        }
+
+
+        public static <A extends Annotation> boolean hasAnnotation(Class<?> targetClass, Method method, Class<A> annotationClass) {
+            return hasAnnotation(targetClass, annotationClass) || hasAnnotation(method, annotationClass);
+        }
+    }
 }

@@ -33,11 +33,8 @@ public class TccInterceptorBuilder implements InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (hasSeataTccDependency){
-            TwoPhaseBusinessAction businessAction = method.getAnnotation(TwoPhaseBusinessAction.class);
-            if (businessAction != null ){
-                interceptors.add(new TccActionInterceptor());
-            }
+        if (hasSeataTccDependency && Util.hasAnnotation(method, TwoPhaseBusinessAction.class)) {
+            interceptors.add(new TccActionInterceptor());
         }
     }
 

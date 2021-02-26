@@ -15,7 +15,6 @@
  */
 package io.jboot.support.shiro;
 
-import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
@@ -34,7 +33,7 @@ public class ShiroInterceptorBuilder implements InterceptorBuilder {
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
-        if (Controller.class.isAssignableFrom(serviceClass) && config.isConfigOK()) {
+        if (Util.isController(serviceClass) && config.isConfigOK()) {
             interceptors.add(JbootShiroInterceptor.class);
         }
     }

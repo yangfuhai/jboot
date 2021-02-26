@@ -38,28 +38,23 @@ public class MetricInterceptorBuilder implements InterceptorBuilder {
             return;
         }
 
-        EnableMetricConcurrency concurrencyAnnotation = method.getAnnotation(EnableMetricConcurrency.class);
-        if (concurrencyAnnotation != null) {
+        if (Util.hasAnnotation(method, EnableMetricConcurrency.class)) {
             interceptors.add(MetricConcurrencyInterceptor.class);
         }
 
-        EnableMetricHistogram histogramAnnotation = method.getAnnotation(EnableMetricHistogram.class);
-        if (histogramAnnotation != null) {
+        if (Util.hasAnnotation(method, EnableMetricHistogram.class)) {
             interceptors.add(MetricHistogramInterceptor.class);
         }
 
-        EnableMetricCounter counterAnnotation = method.getAnnotation(EnableMetricCounter.class);
-        if (counterAnnotation != null) {
+        if (Util.hasAnnotation(method, EnableMetricCounter.class)) {
             interceptors.add(MetricCounterInterceptor.class);
         }
 
-        EnableMetricMeter meterAnnotation = method.getAnnotation(EnableMetricMeter.class);
-        if (meterAnnotation != null) {
+        if (Util.hasAnnotation(method, EnableMetricMeter.class)) {
             interceptors.add(MetricMeterInterceptor.class);
         }
 
-        EnableMetricTimer timerAnnotation = method.getAnnotation(EnableMetricTimer.class);
-        if (timerAnnotation != null) {
+        if (Util.hasAnnotation(method, EnableMetricTimer.class)) {
             interceptors.add(MetricTimerInterceptor.class);
         }
 

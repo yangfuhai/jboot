@@ -34,23 +34,19 @@ public class CacheInterceptorBuilder implements InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        CacheEvict cacheEvict = method.getAnnotation(CacheEvict.class);
-        if (cacheEvict != null) {
+        if (Util.hasAnnotation(method,CacheEvict.class)) {
             interceptors.add(CacheEvictInterceptor.class);
         }
 
-        Cacheable cacheable = method.getAnnotation(Cacheable.class);
-        if (cacheable != null) {
+        if (Util.hasAnnotation(method,Cacheable.class)) {
             interceptors.add(CacheableInterceptor.class);
         }
 
-        CachePut cachePut = method.getAnnotation(CachePut.class);
-        if (cachePut != null) {
+        if (Util.hasAnnotation(method,CachePut.class)) {
             interceptors.add(CachePutInterceptor.class);
         }
 
-        CachesEvict cachesEvict = method.getAnnotation(CachesEvict.class);
-        if (cachesEvict != null) {
+        if (Util.hasAnnotation(method,CachesEvict.class)) {
             interceptors.add(CachesEvictInterceptor.class);
         }
     }

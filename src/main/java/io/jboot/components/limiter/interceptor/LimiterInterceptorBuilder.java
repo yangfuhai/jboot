@@ -39,8 +39,7 @@ public class LimiterInterceptorBuilder implements InterceptorBuilder {
             return;
         }
 
-        EnableLimit enableLimit = method.getAnnotation(EnableLimit.class);
-        if (enableLimit != null) {
+        if (Util.hasAnnotation(method, EnableLimit.class)) {
             interceptors.add(LimiterInterceptor.class);
         }
 

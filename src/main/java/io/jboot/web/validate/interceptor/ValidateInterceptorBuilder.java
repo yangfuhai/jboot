@@ -15,7 +15,6 @@
  */
 package io.jboot.web.validate.interceptor;
 
-import com.jfinal.core.Controller;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
@@ -33,25 +32,16 @@ public class ValidateInterceptorBuilder implements InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (isControllerClass(serviceClass) && hasAnnotation(method, EmptyValidate.class)) {
+        if (Util.isController(serviceClass) && Util.hasAnnotation(method, EmptyValidate.class)) {
             interceptors.add(EmptyValidateInterceptor.class);
         }
 
-        if (isControllerClass(serviceClass) && hasAnnotation(method, RegexValidate.class)) {
+        if (Util.isController(serviceClass) && Util.hasAnnotation(method, RegexValidate.class)) {
             interceptors.add(RegexValidateInterceptor.class);
         }
 
-        if (isControllerClass(serviceClass) && hasAnnotation(method, CaptchaValidate.class)) {
+        if (Util.isController(serviceClass) && Util.hasAnnotation(method, CaptchaValidate.class)) {
             interceptors.add(CaptchaValidateInterceptor.class);
         }
     }
-
-    private boolean isControllerClass(Class<?> serviceClass) {
-        return Controller.class.isAssignableFrom(serviceClass);
-    }
-
-    private boolean hasAnnotation(Method method, Class annotationClass) {
-        return method.getAnnotation(annotationClass) != null;
-    }
-
 }

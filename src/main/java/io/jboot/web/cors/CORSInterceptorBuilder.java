@@ -15,7 +15,6 @@
  */
 package io.jboot.web.cors;
 
-import com.jfinal.core.Controller;
 import com.jfinal.ext.cors.EnableCORS;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
@@ -31,14 +30,9 @@ public class CORSInterceptorBuilder implements InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Controller.class.isAssignableFrom(serviceClass) && getAnnotation(serviceClass,method) != null) {
+        if (Util.isController(serviceClass) && Util.hasAnnotation(serviceClass, method, EnableCORS.class)) {
             interceptors.add(CORSInterceptor.class);
         }
-    }
-
-    private EnableCORS getAnnotation(Class<?> serviceClass, Method method) {
-        EnableCORS enableCORS = serviceClass.getAnnotation(EnableCORS.class);
-        return enableCORS != null ? enableCORS : method.getAnnotation(EnableCORS.class);
     }
 
 

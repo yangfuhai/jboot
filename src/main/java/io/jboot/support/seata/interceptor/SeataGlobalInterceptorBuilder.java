@@ -33,10 +33,8 @@ public class SeataGlobalInterceptorBuilder implements InterceptorBuilder {
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
 
-        final SeataGlobalTransactional globalTrxAnno = method.getAnnotation(SeataGlobalTransactional.class);
-        final SeataGlobalLock globalLockAnno = method.getAnnotation(SeataGlobalLock.class);
-
-        if (globalTrxAnno != null || globalLockAnno != null){
+        if (Util.hasAnnotation(method, SeataGlobalTransactional.class)
+                || Util.hasAnnotation(method, SeataGlobalLock.class)) {
             interceptors.add(SeataGlobalTransactionalInterceptor.class, 0);
         }
     }
