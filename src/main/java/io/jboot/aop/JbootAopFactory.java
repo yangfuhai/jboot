@@ -37,6 +37,7 @@ import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.service.JbootServiceBase;
+import io.jboot.service.JbootServiceJoiner;
 import io.jboot.utils.*;
 import io.jboot.web.controller.JbootController;
 
@@ -54,8 +55,9 @@ public class JbootAopFactory extends AopFactory {
     private static final Log LOG = Log.getLog(JbootAopFactory.class);
 
     //排除默认的映射
-    private final static Class[] DEFAULT_EXCLUDES_MAPPING_CLASSES = new Class[]{
+    private final static Class<?>[] DEFAULT_EXCLUDES_MAPPING_CLASSES = new Class[]{
             JbootEventListener.class
+            , JbootServiceJoiner.class
             , JbootmqMessageListener.class
             , Serializable.class
     };
@@ -97,13 +99,14 @@ public class JbootAopFactory extends AopFactory {
     @Override
     protected void doInject(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
         targetClass = getUsefulClass(targetClass);
-        doInjectTargetClass(targetClass,targetObject);
-        doInvokePostConstructMethod(targetClass,targetObject);
+        doInjectTargetClass(targetClass, targetObject);
+        doInvokePostConstructMethod(targetClass, targetObject);
     }
 
 
     /**
      * 执行  @PostConstruct 注解方法
+     *
      * @param targetClass
      * @param targetObject
      * @throws ReflectiveOperationException
@@ -130,6 +133,7 @@ public class JbootAopFactory extends AopFactory {
 
     /**
      * 执行注入操作
+     *
      * @param targetClass
      * @param targetObject
      * @throws ReflectiveOperationException
@@ -178,7 +182,7 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    protected boolean notSystemClass(Class clazz){
+    protected boolean notSystemClass(Class clazz) {
         return clazz != JbootController.class
                 && clazz != Controller.class
                 && clazz != JbootServiceBase.class
@@ -335,16 +339,13 @@ public class JbootAopFactory extends AopFactory {
                 beanNameClassesMapping.put(beanName, implClass);
             } else {
                 Class<?>[] interfaceClasses = implClass.getInterfaces();
-                if (interfaceClasses == null || interfaceClasses.length == 0) {
-                    //add self
-                    this.addMapping(implClass, implClass);
+                //add self
+                this.addMapping(implClass, implClass);
 
-                } else {
-                    Class[] excludes = buildExcludeClasses(implClass);
-                    for (Class interfaceClass : interfaceClasses) {
-                        if (!inExcludes(interfaceClass, excludes)) {
-                            this.addMapping(interfaceClass, implClass);
-                        }
+                Class<?>[] excludes = buildExcludeClasses(implClass);
+                for (Class<?> interfaceClass : interfaceClasses) {
+                    if (!inExcludes(interfaceClass, excludes)) {
+                        this.addMapping(interfaceClass, implClass);
                     }
                 }
             }
@@ -359,7 +360,7 @@ public class JbootAopFactory extends AopFactory {
      */
     private void initConfigurationBeansObject() {
         List<Class> configurationClasses = ClassScanner.scanClassByAnnotation(Configuration.class, true);
-        for (Class configurationClass : configurationClasses) {
+        for (Class<?> configurationClass : configurationClasses) {
             Object configurationObj = ClassUtil.newInstance(configurationClass, false);
             if (configurationObj == null) {
                 throw new NullPointerException("can not newInstance for class : " + configurationClass);
@@ -388,20 +389,19 @@ public class JbootAopFactory extends AopFactory {
 
                         //空注解
                         if (StrUtil.isBlank(bean.name())) {
-                            Class implClass = ClassUtil.getUsefulClass(methodObj.getClass());
-                            Class<?>[] interfaceClasses = implClass.getInterfaces();
-                            if (interfaceClasses == null || interfaceClasses.length == 0) {
-                                //add self
-                                this.addMapping(implClass, implClass);
-
-                            } else {
-                                Class[] excludes = buildExcludeClasses(implClass);
-                                for (Class interfaceClass : interfaceClasses) {
-                                    if (!inExcludes(interfaceClass, excludes)) {
-                                        this.addMapping(interfaceClass, implClass);
-                                    }
-                                }
-                            }
+                            singletonCache.put(method.getReturnType(), methodObj);
+//                            Class implClass = ClassUtil.getUsefulClass(methodObj.getClass());
+////                            Class<?>[] interfaceClasses = implClass.getInterfaces();
+//                            Class<?>[] interfaceClasses = ClassUtil.getInterfaces(implClass);
+//                            //add self
+//                            this.addMapping(implClass, implClass);
+//
+//                            Class<?>[] excludes = buildExcludeClasses(implClass);
+//                            for (Class<?> interfaceClass : interfaceClasses) {
+//                                if (!inExcludes(interfaceClass, excludes)) {
+//                                    this.addMapping(interfaceClass, implClass);
+//                                }
+//                            }
                         }
                     }
                 }
@@ -410,8 +410,8 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    private Class[] buildExcludeClasses(Class implClass) {
-        BeanExclude beanExclude = (BeanExclude) implClass.getAnnotation(BeanExclude.class);
+    private Class<?>[] buildExcludeClasses(Class<?> implClass) {
+        BeanExclude beanExclude = implClass.getAnnotation(BeanExclude.class);
 
         //对某些系统的类 进行排除，例如：Serializable 等
         return beanExclude == null

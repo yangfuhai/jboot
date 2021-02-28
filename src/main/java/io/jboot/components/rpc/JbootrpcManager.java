@@ -26,6 +26,7 @@ import io.jboot.components.rpc.motan.JbootMotanrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootRpcException;
+import io.jboot.service.JbootServiceJoiner;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 
@@ -57,6 +58,7 @@ public class JbootrpcManager {
 
     private static Class[] default_excludes = new Class[]{
             JbootEventListener.class,
+            JbootServiceJoiner.class,
             JbootmqMessageListener.class,
             Serializable.class
     };
@@ -89,18 +91,19 @@ public class JbootrpcManager {
             return;
         }
 
-        for (Class clazz : classes) {
-            RPCBean rpcBean = (RPCBean) clazz.getAnnotation(RPCBean.class);
-            Class[] inters = clazz.getInterfaces();
+        for (Class<?> clazz : classes) {
+            RPCBean rpcBean = clazz.getAnnotation(RPCBean.class);
+            Class<?>[] inters = clazz.getInterfaces();
+//            Class<?>[] inters = ClassUtil.getInterfaces(clazz);
             if (inters == null || inters.length == 0) {
                 throw new JbootException(String.format("class[%s] has no interface, can not use @RPCBean", clazz));
             }
 
             //对某些系统的类 进行排除，例如：Serializable 等
-            Class[] excludes = ArrayUtil.concat(default_excludes, rpcBean.exclude());
-            for (Class inter : inters) {
+            Class<?>[] excludes = ArrayUtil.concat(default_excludes, rpcBean.exclude());
+            for (Class<?> inter : inters) {
                 boolean isContinue = false;
-                for (Class ex : excludes) {
+                for (Class<?> ex : excludes) {
                     if (ex.isAssignableFrom(inter)) {
                         isContinue = true;
                         break;
