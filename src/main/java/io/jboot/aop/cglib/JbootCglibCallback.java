@@ -26,7 +26,6 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 
@@ -59,12 +58,14 @@ class JbootCglibCallback implements MethodInterceptor {
             }
         }
 
-
-        Invocation invocation = new Invocation(target, method, inters,
-                x -> methodProxy.invokeSuper(target, x), args);
-
-        invocation.invoke();
-        return invocation.getReturnValue();
+        if (inters.length == 0) {
+            return methodProxy.invokeSuper(target, args);
+        } else {
+            Invocation invocation = new Invocation(target, method, inters,
+                    x -> methodProxy.invokeSuper(target, x), args);
+            invocation.invoke();
+            return invocation.getReturnValue();
+        }
     }
 
 
