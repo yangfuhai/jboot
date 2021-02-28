@@ -26,7 +26,6 @@ import io.jboot.components.rpc.motan.JbootMotanrpc;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootRpcException;
-import io.jboot.service.JbootServiceJoiner;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 
@@ -58,7 +57,6 @@ public class JbootrpcManager {
 
     private static Class[] default_excludes = new Class[]{
             JbootEventListener.class,
-            JbootServiceJoiner.class,
             JbootmqMessageListener.class,
             Serializable.class
     };

@@ -37,7 +37,6 @@ import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
 import io.jboot.service.JbootServiceBase;
-import io.jboot.service.JbootServiceJoiner;
 import io.jboot.utils.*;
 import io.jboot.web.controller.JbootController;
 
@@ -57,7 +56,6 @@ public class JbootAopFactory extends AopFactory {
     //排除默认的映射
     private final static Class<?>[] DEFAULT_EXCLUDES_MAPPING_CLASSES = new Class[]{
             JbootEventListener.class
-            , JbootServiceJoiner.class
             , JbootmqMessageListener.class
             , Serializable.class
     };
@@ -339,13 +337,16 @@ public class JbootAopFactory extends AopFactory {
                 beanNameClassesMapping.put(beanName, implClass);
             } else {
                 Class<?>[] interfaceClasses = implClass.getInterfaces();
-                //add self
-                this.addMapping(implClass, implClass);
 
-                Class<?>[] excludes = buildExcludeClasses(implClass);
-                for (Class<?> interfaceClass : interfaceClasses) {
-                    if (!inExcludes(interfaceClass, excludes)) {
-                        this.addMapping(interfaceClass, implClass);
+                if (interfaceClasses.length == 0) {
+                    //add self
+                    this.addMapping(implClass, implClass);
+                } else {
+                    Class<?>[] excludes = buildExcludeClasses(implClass);
+                    for (Class<?> interfaceClass : interfaceClasses) {
+                        if (!inExcludes(interfaceClass, excludes)) {
+                            this.addMapping(interfaceClass, implClass);
+                        }
                     }
                 }
             }
