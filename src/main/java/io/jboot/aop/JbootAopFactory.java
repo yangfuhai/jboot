@@ -312,12 +312,53 @@ public class JbootAopFactory extends AopFactory {
      */
     private void initBeanMapping() {
 
-        // 添加映射
-        initBeansMapping();
-
         // 初始化 @Configuration 里的 beans
         initConfigurationBeansObject();
 
+        // 添加映射
+        initBeansMapping();
+    }
+
+
+
+
+    /**
+     * 初始化 @Configuration 里的 bean 配置
+     */
+    private void initConfigurationBeansObject() {
+        List<Class> configurationClasses = ClassScanner.scanClassByAnnotation(Configuration.class, true);
+        for (Class<?> configurationClass : configurationClasses) {
+            Object configurationObj = ClassUtil.newInstance(configurationClass, false);
+            if (configurationObj == null) {
+                throw new NullPointerException("can not newInstance for class : " + configurationClass);
+            }
+            Method[] methods = configurationClass.getDeclaredMethods();
+            for (Method method : methods) {
+                Bean beanAnnotation = method.getAnnotation(Bean.class);
+                if (beanAnnotation != null) {
+                    Class<?> returnType = method.getReturnType();
+                    if (returnType == void.class){
+                        throw new JbootException("@Bean annotation can not use for void method: " + ClassUtil.buildMethodString(method));
+                    }
+
+                    String beanName = StrUtil.obtainDefault(AnnotationUtil.get(beanAnnotation.name()), method.getName());
+                    if (beansCache.containsKey(beanName)) {
+                        throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
+                                + ", can not add again by method: " + ClassUtil.buildMethodString(method));
+                    }
+
+                    try {
+                        Object methodObj  = method.invoke(configurationObj);
+                        if (methodObj != null){
+                            beansCache.put(beanName, methodObj);
+                            singletonCache.put(returnType, methodObj);
+                        }
+                    }catch (Exception ex){
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -346,63 +387,6 @@ public class JbootAopFactory extends AopFactory {
                     for (Class<?> interfaceClass : interfaceClasses) {
                         if (!inExcludes(interfaceClass, excludes)) {
                             this.addMapping(interfaceClass, implClass);
-                        }
-                    }
-                }
-            }
-        }
-
-
-    }
-
-
-    /**
-     * 初始化 @Configuration 里的 bean 配置
-     */
-    private void initConfigurationBeansObject() {
-        List<Class> configurationClasses = ClassScanner.scanClassByAnnotation(Configuration.class, true);
-        for (Class<?> configurationClass : configurationClasses) {
-            Object configurationObj = ClassUtil.newInstance(configurationClass, false);
-            if (configurationObj == null) {
-                throw new NullPointerException("can not newInstance for class : " + configurationClass);
-            }
-            Method[] methods = configurationClass.getDeclaredMethods();
-            for (Method method : methods) {
-                Bean bean = method.getAnnotation(Bean.class);
-                if (bean != null) {
-                    String beanName = StrUtil.obtainDefault(AnnotationUtil.get(bean.name()), method.getName());
-                    if (beansCache.containsKey(beanName)) {
-                        throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
-                                + ", can not add again by method:" + ClassUtil.buildMethodString(method));
-                    }
-
-                    Object methodObj = null;
-                    try {
-                        methodObj = method.invoke(configurationObj);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    if (methodObj != null) {
-
-                        inject(methodObj);
-                        beansCache.put(beanName, methodObj);
-
-                        //空注解
-                        if (StrUtil.isBlank(bean.name())) {
-                            singletonCache.put(method.getReturnType(), methodObj);
-//                            Class implClass = ClassUtil.getUsefulClass(methodObj.getClass());
-////                            Class<?>[] interfaceClasses = implClass.getInterfaces();
-//                            Class<?>[] interfaceClasses = ClassUtil.getInterfaces(implClass);
-//                            //add self
-//                            this.addMapping(implClass, implClass);
-//
-//                            Class<?>[] excludes = buildExcludeClasses(implClass);
-//                            for (Class<?> interfaceClass : interfaceClasses) {
-//                                if (!inExcludes(interfaceClass, excludes)) {
-//                                    this.addMapping(interfaceClass, implClass);
-//                                }
-//                            }
                         }
                     }
                 }
