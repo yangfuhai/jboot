@@ -1,3 +1,11 @@
+jboot v3.9.5:
+新增：CacheInterceptorBuilder.Util 工具类，用于对拦截器的判断
+优化：重构 @Configuration 对 @Bean 的初始化工作
+优化：JbootCglibCallback 对没有拦截器的方法的调用
+修复：在热加载的情况下，JbootCoreConfig 无法转换为 JFinalConfig 的问题
+
+
+
 jboot v3.9.4:
 新增：@JfinalSharedEnum 注解的支持，方便把枚举添加到模板引擎里使用
 新增：@PostConstruct 注解的支持，方便 Bean 在被创建的时候进行初始化
