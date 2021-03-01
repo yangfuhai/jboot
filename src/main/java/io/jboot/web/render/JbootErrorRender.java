@@ -94,7 +94,6 @@ public class JbootErrorRender extends Render {
     public void render() {
         response.setStatus(getErrorCode());
 
-
         //render with view
         String view = getView();
         if (view != null) {
@@ -119,43 +118,25 @@ public class JbootErrorRender extends Render {
 
     public String getErrorHtml() {
         int errorCode = getErrorCode();
-        if (errorCode == 404) {
+        if (throwable instanceof ValidException) {
+            return buildErrorInfo(html400_header);
+        } else if (errorCode == 404) {
             return html404;
-        }
-        if (errorCode == 401) {
+        } else if (errorCode == 401) {
             return html401;
-        }
-        if (errorCode == 403) {
+        } else if (errorCode == 403) {
             return html403;
-        }
-        if (errorCode == 500 || errorCode == 400) {
-            return buildErrorInfo(errorCode);
+        } else if (errorCode == 400) {
+            return buildErrorInfo(html400_header);
+        } else if (errorCode == 500) {
+            return buildErrorInfo(html500_header);
         }
         return "<html><head><title>" + errorCode + " Error</title></head><body bgcolor='white'><center><h1>" + errorCode + " Error</h1></center><hr>" + poweredBy + "</body></html>";
     }
 
 
-    public String getErrorJson() {
-        int errorCode = getErrorCode();
-        if (errorCode == 404) {
-            return json404;
-        }
-        if (errorCode == 401) {
-            return json401;
-        }
-        if (errorCode == 403) {
-            return json403;
-        }
-        if (errorCode == 500 || errorCode == 400) {
-            return buildErrorJson();
-        }
-
-        return JsonKit.toJson(Ret.fail().set("errorCode", errorCode).set("message", errorCode + " Error"));
-    }
-
-
-    public String buildErrorInfo(int code) {
-        StringBuilder stringBuilder = new StringBuilder(code == 400 ? html400_header : html500_header);
+    public String buildErrorInfo(String headerHtml) {
+        StringBuilder stringBuilder = new StringBuilder(headerHtml);
 
         List<String> messages = JbootExceptionHolder.getMessages();
         for (String message : messages) {
@@ -174,6 +155,21 @@ public class JbootErrorRender extends Render {
         }
 
         return stringBuilder.append(html500_footer).toString();
+    }
+
+
+    public String getErrorJson() {
+        int errorCode = getErrorCode();
+        if (throwable instanceof ValidException || errorCode == 500 || errorCode == 400) {
+            return buildErrorJson();
+        } else if (errorCode == 404) {
+            return json404;
+        } else if (errorCode == 401) {
+            return json401;
+        } else if (errorCode == 403) {
+            return json403;
+        }
+        return JsonKit.toJson(Ret.fail().set("errorCode", errorCode).set("message", errorCode + " Error"));
     }
 
 

@@ -20,6 +20,7 @@ import com.jfinal.core.*;
 import com.jfinal.log.Log;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.render.JbootErrorRender;
@@ -156,7 +157,7 @@ public class JbootActionHandler extends ActionHandler {
                 String targetInfo = qs == null ? target : target + "?" + qs;
                 LOG.error(e.getReason() + " : " + targetInfo, e);
             }
-            Render render = renderManager.getRenderFactory().getErrorRender(400);
+            Render render = renderManager.getRenderFactory().getErrorRender(ValidUtil.getErrorCode());
             if (render instanceof JbootErrorRender) {
                 ((JbootErrorRender) render).setThrowable(e);
             }

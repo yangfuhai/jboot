@@ -35,6 +35,8 @@ public class ValidUtil {
             .buildValidatorFactory()
             .getValidator();
 
+    private static int errorCode = 400;
+
 
     public static Validator getValidator() {
         return validator;
@@ -42,6 +44,15 @@ public class ValidUtil {
 
     public static void setValidator(Validator validator) {
         ValidUtil.validator = validator;
+    }
+
+
+    public static int getErrorCode() {
+        return errorCode;
+    }
+
+    public static void setErrorCode(int errorCode) {
+        ValidUtil.errorCode = errorCode;
     }
 
     public static Set<ConstraintViolation<Object>> validate(Object object) {

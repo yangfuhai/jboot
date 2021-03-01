@@ -99,8 +99,8 @@ public class JbootApplication {
 
     public static UndertowConfig createUndertowConfig(JbootApplicationConfig appConfig) {
         UndertowConfig undertowConfig = new JbootUndertowConfig(appConfig.getJfinalConfig());
-//        undertowConfig.addSystemClassPrefix("io.jboot.app");
-        undertowConfig.addSystemClassPrefix("io.jboot");
+        undertowConfig.addSystemClassPrefix("io.jboot.app");
+        undertowConfig.addHotSwapClassPrefix("io.jboot");
         return undertowConfig;
     }
 
