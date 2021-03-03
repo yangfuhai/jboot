@@ -320,8 +320,6 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-
-
     /**
      * 初始化 @Configuration 里的 bean 配置
      */
@@ -337,7 +335,7 @@ public class JbootAopFactory extends AopFactory {
                 Bean beanAnnotation = method.getAnnotation(Bean.class);
                 if (beanAnnotation != null) {
                     Class<?> returnType = method.getReturnType();
-                    if (returnType == void.class){
+                    if (returnType == void.class) {
                         throw new JbootException("@Bean annotation can not use for void method: " + ClassUtil.buildMethodString(method));
                     }
 
@@ -348,12 +346,12 @@ public class JbootAopFactory extends AopFactory {
                     }
 
                     try {
-                        Object methodObj  = method.invoke(configurationObj);
-                        if (methodObj != null){
+                        Object methodObj = method.invoke(configurationObj);
+                        if (methodObj != null) {
                             beansCache.put(beanName, methodObj);
                             singletonCache.put(returnType, methodObj);
                         }
-                    }catch (Exception ex){
+                    } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
                 }
@@ -416,7 +414,19 @@ public class JbootAopFactory extends AopFactory {
 
 
     public <T> T getBean(String name) {
-        return (T) beansCache.get(name);
+        T ret = (T) beansCache.get(name);
+        if (ret == null) {
+            if (beanNameClassesMapping.containsKey(name)) {
+                try {
+                    ret = (T) doGet(beanNameClassesMapping.get(name));
+                    beansCache.put(name, ret);
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return ret;
     }
 
     public void setBean(String name, Object obj) {
