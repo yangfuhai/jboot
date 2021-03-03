@@ -50,14 +50,7 @@ public class JbootJson extends JFinalJson {
             setModelAndRecordFieldNameConverter((fieldName) -> StrKit.toCamelCase(fieldName, config.isCamelCaseToLowerCaseAnyway()));
         }
 
-
-        setToJsonFactory(o -> {
-            if (o instanceof Model) {
-                return jbootModelToJson;
-            } else {
-                return null;
-            }
-        });
+        setToJsonFactory(o -> o instanceof Model ? jbootModelToJson : null);
 
         if (StrUtil.isNotBlank(config.getTimestampPattern())) {
             setTimestampPattern(config.getTimestampPattern());
