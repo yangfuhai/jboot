@@ -43,14 +43,14 @@ public class GatewayInvocation {
         this.config = config;
         this.request = request;
         this.response = response;
-        this.inters = config.buildInterceptors();
+        this.inters = config.getGatewayInterceptors();
         this.proxy = new GatewayHttpProxy(config);
         this.proxyUrl = buildProxyUrl(config,request);
     }
 
 
     public void invoke() {
-        if (inters == null || inters.length == 0) {
+        if (inters.length == 0) {
             doInvoke();
             return;
         }

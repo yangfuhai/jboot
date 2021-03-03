@@ -31,6 +31,7 @@ import java.util.*;
 public class JbootGatewayConfig implements Serializable {
 
     public static final String DEFAULT_PROXY_CONTENT_TYPE = "text/html;charset=utf-8";
+    public static final GatewayInterceptor[] EMPTY_GATEWAY_INTERCEPTOR_ARRAY = new GatewayInterceptor[0];
 
     private String name;
     private String[] uri;
@@ -297,27 +298,33 @@ public class JbootGatewayConfig implements Serializable {
     }
 
 
-    private GatewayInterceptor[] inters;
+    private GatewayInterceptor[] gatewayInterceptors;
 
-    public GatewayInterceptor[] buildInterceptors() {
-        if (interceptors == null || interceptors.length == 0) {
-            return null;
-        }
-        if (inters == null) {
+    public GatewayInterceptor[] getGatewayInterceptors() {
+        if (gatewayInterceptors == null) {
             synchronized (this) {
-                if (inters == null) {
-                    inters = new GatewayInterceptor[interceptors.length];
-                    for (int i = 0; i < interceptors.length; i++) {
-                        GatewayInterceptor interceptor = ClassUtil.newInstance(interceptors[i]);
-                        if (interceptor == null) {
-                            throw new NullPointerException("can not new instance by class:" + interceptors[i]);
+                if (gatewayInterceptors == null) {
+                    if (interceptors == null || interceptors.length == 0) {
+                        gatewayInterceptors = EMPTY_GATEWAY_INTERCEPTOR_ARRAY;
+                    } else {
+                        gatewayInterceptors = new GatewayInterceptor[interceptors.length];
+                        for (int i = 0; i < interceptors.length; i++) {
+                            GatewayInterceptor interceptor = ClassUtil.newInstance(interceptors[i]);
+                            if (interceptor == null) {
+                                throw new NullPointerException("can not new instance by class:" + interceptors[i]);
+                            }
+                            gatewayInterceptors[i] = interceptor;
                         }
-                        inters[i] = interceptor;
                     }
                 }
             }
         }
-        return inters;
+        return gatewayInterceptors;
+    }
+
+
+    public void setGatewayInterceptors(GatewayInterceptor[] gatewayInterceptors) {
+        this.gatewayInterceptors = gatewayInterceptors;
     }
 
 
