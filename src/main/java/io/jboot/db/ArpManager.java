@@ -40,21 +40,20 @@ import java.util.*;
  */
 public class ArpManager {
 
-    private static ArpManager manager;
+    private static ArpManager instance;
 
 
     private List<ActiveRecordPlugin> activeRecordPlugins = new ArrayList<>();
 
 
     public static ArpManager me() {
-        if (manager == null) {
-            manager = new ArpManager();
+        if (instance == null) {
+            instance = new ArpManager();
         }
-        return manager;
+        return instance;
     }
 
-    public ArpManager() {
-
+    private ArpManager() {
 
         Map<String, DataSourceConfig> allDatasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
 
