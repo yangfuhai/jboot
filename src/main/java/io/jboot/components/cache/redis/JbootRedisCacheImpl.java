@@ -91,18 +91,15 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         boolean continueState = true;
         do {
             RedisScanResult redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
-            if (redisScanResult != null) {
-                List<String> scanKeys = redisScanResult.getResults();
-                cursor = redisScanResult.getCursor();
+            List<String> scanKeys = redisScanResult.getResults();
+            cursor = redisScanResult.getCursor();
 
-                if (scanKeys != null && scanKeys.size() > 0){
-                    redis.del(scanKeys.toArray(new String[0]));
-                }
+            if (scanKeys != null && scanKeys.size() > 0) {
+                redis.del(scanKeys.toArray(new String[0]));
+            }
 
-                if (redisScanResult.isCompleteIteration()) {
-                    //终止循环
-                    continueState = false;
-                }
+            if (redisScanResult.isCompleteIteration()) {
+                continueState = false;
             }
         } while (continueState);
 
@@ -179,20 +176,18 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         boolean continueState = true;
         do {
             RedisScanResult redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
-            if (redisScanResult != null) {
-                List<String> scanKeys = redisScanResult.getResults();
-                cursor = redisScanResult.getCursor();
+            List<String> scanKeys = redisScanResult.getResults();
+            cursor = redisScanResult.getCursor();
 
-                if (scanKeys != null && scanKeys.size() > 0) {
-                    for (String key : scanKeys) {
-                        keys.add(key.substring(cacheName.length() + 3));
-                    }
+            if (scanKeys != null && scanKeys.size() > 0) {
+                for (String key : scanKeys) {
+                    keys.add(key.substring(cacheName.length() + 3));
                 }
+            }
 
-                if (redisScanResult.isCompleteIteration()) {
-                    //终止循环
-                    continueState = false;
-                }
+            if (redisScanResult.isCompleteIteration()) {
+                //终止循环
+                continueState = false;
             }
         } while (continueState);
 
