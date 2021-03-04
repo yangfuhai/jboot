@@ -361,6 +361,10 @@ public class JbootGatewayConfig implements Serializable {
         return gatewayLoadBalanceStrategy;
     }
 
+    public void setGatewayLoadBalanceStrategy(GatewayLoadBalanceStrategy strategy){
+        this.gatewayLoadBalanceStrategy = strategy;
+    }
+
 
     private Boolean configOk = null;
 
