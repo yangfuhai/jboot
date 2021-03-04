@@ -88,11 +88,11 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
     public void removeAll(String cacheName) {
         String cursor = "0";
         int scanCount = 1000;
-        List<String> scanKeys = null;
+        boolean continueState = true;
         do {
             RedisScanResult redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
             if (redisScanResult != null) {
-                scanKeys = redisScanResult.getResults();
+                List<String> scanKeys = redisScanResult.getResults();
                 cursor = redisScanResult.getCursor();
 
                 if (scanKeys != null && scanKeys.size() > 0){
@@ -101,10 +101,10 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
                 if (redisScanResult.isCompleteIteration()) {
                     //终止循环
-                    scanKeys = null;
+                    continueState = false;
                 }
             }
-        } while (scanKeys != null && scanKeys.size() != 0);
+        } while (continueState);
 
         redis.srem(redisCacheNamesKey, cacheName);
     }
@@ -176,11 +176,11 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         List<String> keys = new ArrayList<>();
         String cursor = "0";
         int scanCount = 1000;
-        List<String> scanKeys = null;
+        boolean continueState = true;
         do {
             RedisScanResult redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
             if (redisScanResult != null) {
-                scanKeys = redisScanResult.getResults();
+                List<String> scanKeys = redisScanResult.getResults();
                 cursor = redisScanResult.getCursor();
 
                 if (scanKeys != null && scanKeys.size() > 0) {
@@ -191,10 +191,10 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
                 if (redisScanResult.isCompleteIteration()) {
                     //终止循环
-                    scanKeys = null;
+                    continueState = false;
                 }
             }
-        } while (scanKeys != null && scanKeys.size() != 0);
+        } while (continueState);
 
         return keys;
     }
