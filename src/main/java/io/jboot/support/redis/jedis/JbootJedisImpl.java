@@ -1554,12 +1554,12 @@ public class JbootJedisImpl extends JbootRedisBase {
     }
 
     @Override
-    public RedisScanResult scan(String pattern, String cursor, int scanCount) {
+    public RedisScanResult<String> scan(String pattern, String cursor, int scanCount) {
         ScanParams params = new ScanParams();
         params.match(pattern).count(scanCount);
         try (Jedis jedis = getJedis()) {
             ScanResult<String> scanResult = jedis.scan(cursor, params);
-            return new RedisScanResult(scanResult.getStringCursor(), scanResult.getResult());
+            return new RedisScanResult<>(scanResult.getStringCursor(), scanResult.getResult());
         }
     }
 

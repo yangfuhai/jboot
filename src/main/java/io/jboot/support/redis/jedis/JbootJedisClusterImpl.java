@@ -1185,6 +1185,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
      * @param binaryListener
      * @param channels
      */
+    @Override
     public void subscribe(BinaryJedisPubSub binaryListener, final byte[]... channels) {
         /**
          * https://github.com/xetorthio/jedis/wiki/AdvancedUsage
@@ -1216,11 +1217,11 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 
 
     @Override
-    public RedisScanResult scan(String pattern, String cursor, int scanCount) {
+    public RedisScanResult<String> scan(String pattern, String cursor, int scanCount) {
         ScanParams params = new ScanParams();
         params.match(pattern).count(scanCount);
         ScanResult<String> scanResult = jedisCluster.scan(cursor, params);
-        return scanResult == null ? null : new RedisScanResult(scanResult.getStringCursor(),scanResult.getResult());
+        return new RedisScanResult<>(scanResult.getStringCursor(), scanResult.getResult());
     }
 
 

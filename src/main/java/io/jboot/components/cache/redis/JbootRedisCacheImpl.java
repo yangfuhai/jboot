@@ -90,12 +90,12 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         int scanCount = 1000;
         boolean continueState = true;
         do {
-            RedisScanResult redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
+            RedisScanResult<String> redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
             List<String> scanKeys = redisScanResult.getResults();
             cursor = redisScanResult.getCursor();
 
             if (scanKeys != null && scanKeys.size() > 0) {
-                redis.del(scanKeys.toArray(new String[0]));
+                redis.del(scanKeys.toArray(new String[scanKeys.size()]));
             }
 
             if (redisScanResult.isCompleteIteration()) {
@@ -175,7 +175,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         int scanCount = 1000;
         boolean continueState = true;
         do {
-            RedisScanResult redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
+            RedisScanResult<String> redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
             List<String> scanKeys = redisScanResult.getResults();
             cursor = redisScanResult.getCursor();
 
@@ -186,7 +186,6 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             }
 
             if (redisScanResult.isCompleteIteration()) {
-                //终止循环
                 continueState = false;
             }
         } while (continueState);

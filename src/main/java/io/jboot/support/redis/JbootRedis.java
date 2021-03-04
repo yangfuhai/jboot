@@ -637,7 +637,7 @@ public interface JbootRedis {
      * @param scanCount
      * @return
      */
-    public RedisScanResult scan(String pattern, String cursor, int scanCount);
+    public RedisScanResult<String> scan(String pattern, String cursor, int scanCount);
 
 
     public byte[] keyToBytes(Object key);
