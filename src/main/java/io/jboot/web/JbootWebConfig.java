@@ -53,4 +53,5 @@ public class JbootWebConfig {
     public void setWebSocketEndpoint(String webSocketEndpoint) {
         this.webSocketEndpoint = webSocketEndpoint;
     }
+
 }
