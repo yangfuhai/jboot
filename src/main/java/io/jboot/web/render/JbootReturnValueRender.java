@@ -18,6 +18,7 @@ package io.jboot.web.render;
 import com.jfinal.core.Action;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.render.*;
+import io.jboot.utils.DateUtil;
 import io.jboot.web.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -57,7 +57,7 @@ public class JbootReturnValueRender extends Render {
         } else if (this.value instanceof String) {
             this.render = new TextRender((String) value);
         } else if (this.value instanceof Date) {
-            this.render = new TextRender(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) value));
+            this.render = new TextRender(DateUtil.toDateTimeString((Date) value));
         } else if (this.value instanceof File) {
             this.render = new FileRender((File) value);
         } else if (this.value instanceof Render) {

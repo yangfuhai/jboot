@@ -27,6 +27,8 @@ import io.jboot.utils.StrUtil;
 import io.jboot.utils.TypeDef;
 import io.jboot.web.json.JsonBodyParseInterceptor;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -500,7 +502,7 @@ public class JbootController extends Controller {
     @NotAction
     public String getEscapePara(String name) {
         String value = getTrimPara(name);
-        if (value == null || "".equals(value)) {
+        if (value == null || value.length() == 0) {
             return null;
         }
         return StrUtil.escapeHtml(value);
@@ -510,10 +512,32 @@ public class JbootController extends Controller {
     @NotAction
     public String getEscapePara(String name, String defaultValue) {
         String value = getTrimPara(name);
-        if (value == null || "".equals(value)) {
+        if (value == null || value.length() == 0) {
             return defaultValue;
         }
         return StrUtil.escapeHtml(value);
+    }
+
+
+    @NotAction
+    public String getOriginalPara(String name) {
+        HttpServletRequest req = getRequest();
+        if (req instanceof HttpServletRequestWrapper) {
+            HttpServletRequestWrapper wrapper = (HttpServletRequestWrapper) req;
+            req = (HttpServletRequest) wrapper.getRequest();
+        }
+        String value = req.getParameter(name);
+        if (value == null || value.length() == 0) {
+            return null;
+        }
+        return value;
+    }
+
+
+    @NotAction
+    public String getOriginalPara(String name, String defaultValue) {
+        String value = getOriginalPara(name);
+        return value != null ? value : defaultValue;
     }
 
 
