@@ -80,7 +80,7 @@ public class SqlBuilder {
             }
             // sqlPart
             else if (curent instanceof SqlPart) {
-                appendSqlPartLogic(sqlBuilder, before, (SqlPart) curent);
+                appendSqlPartLogic(sqlBuilder, before, (SqlPart) curent, separator);
             }
             // group
             else if (curent instanceof Group) {
@@ -109,10 +109,11 @@ public class SqlBuilder {
     }
 
 
-    private static void appendSqlPartLogic(StringBuilder sqlBuilder, Column before, SqlPart sqlPart) {
+    private static void appendSqlPartLogic(StringBuilder sqlBuilder, Column before, SqlPart sqlPart, char separator) {
         if (!sqlPart.isWithoutLink()) {
             appendLinkString(sqlBuilder, before);
         }
+        sqlPart.build(separator);
         sqlBuilder.append(' ').append(sqlPart.getSql()).append(' ');
     }
 

@@ -389,6 +389,44 @@ public class Columns implements Serializable {
         return this;
     }
 
+    /**
+     * @param name
+     * @return
+     */
+    public Columns groupBy(String name){
+        add(new GroupBy(name));
+        return this;
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    public Columns having(String name){
+        add(new Having(name));
+        return this;
+    }
+
+
+    /**
+     * @param sql
+     * @return
+     */
+    public Columns having(String sql,Object ... paras){
+        add(new Having(sql,paras));
+        return this;
+    }
+
+
+    /**
+     * @param columns
+     * @return
+     */
+    public Columns having(Columns columns){
+        add(new Having(columns));
+        return this;
+    }
+
 
     /**
      * customize string sql
@@ -765,10 +803,11 @@ public class Columns implements Serializable {
         columns.between("name", "123", "1233");
         columns.or();
 
-        columns.sqlPartWithoutLink("group by xxx");
-        columns.or();
-        columns.or();
-        columns.or();
+//        columns.sqlPartWithoutLink("group by xxx");
+        columns.groupBy("aaa").having(Columns.create("aaa","bbb").ge("ccc",111));
+//        columns.or();
+//        columns.or();
+//        columns.or();
 
         System.out.println(columns.getCacheKey());
         System.out.println(Arrays.toString(columns.getValueArray()));

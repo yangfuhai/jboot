@@ -75,4 +75,8 @@ class SqlPart extends Column {
     public Object getValue() {
         return para;
     }
+
+    //构建 sql
+    public void build(char separator) {
+    }
 }
