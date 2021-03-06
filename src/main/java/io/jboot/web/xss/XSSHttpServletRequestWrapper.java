@@ -21,9 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class XssHttpServletRequestWrapper extends javax.servlet.http.HttpServletRequestWrapper {
+public class XSSHttpServletRequestWrapper extends javax.servlet.http.HttpServletRequestWrapper {
 
-    public XssHttpServletRequestWrapper(HttpServletRequest request) {
+    public XSSHttpServletRequestWrapper(HttpServletRequest request) {
         super(request);
     }
 
@@ -59,21 +59,20 @@ public class XssHttpServletRequestWrapper extends javax.servlet.http.HttpServlet
             return paraMap;
         }
 
-        Map<String, String[]> newParaMap = new HashMap<>();
-        newParaMap.putAll(paraMap);
-
-        for (Map.Entry<String, String[]> entry : newParaMap.entrySet()) {
+        Map<String, String[]> ret = new HashMap<>(paraMap.size());
+        for (Map.Entry<String, String[]> entry : paraMap.entrySet()) {
             String[] values = entry.getValue();
             if (null == values || values.length == 0) {
-                continue;
+                ret.put(entry.getKey(),values);
+            }else {
+                String[] newValues = new String[values.length];
+                for (int i = 0; i < values.length; i++) {
+                    newValues[i] = cleanXss(values[i]);
+                }
+                ret.put(entry.getKey(),newValues);
             }
-            String[] newValues = new String[values.length];
-            for (int i = 0; i < values.length; i++) {
-                newValues[i] = cleanXss(values[i]);
-            }
-            entry.setValue(newValues);
         }
-        return newParaMap;
+        return ret;
     }
 
     private static String cleanXss(String para) {

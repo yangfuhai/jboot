@@ -65,7 +65,7 @@ import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
 import io.jboot.web.json.JbootJson;
 import io.jboot.web.render.JbootRenderFactory;
-import io.jboot.web.xss.XssHandler;
+import io.jboot.web.xss.XSSHandler;
 
 import java.io.File;
 import java.sql.Driver;
@@ -313,7 +313,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
         boolean escapeParas = Jboot.config(JbootWebConfig.class).isEscapeParas();
         if (escapeParas){
-            handlers.add(new XssHandler());
+            handlers.add(new XSSHandler());
         }
 
         handlers.add(new JbootHandler());

@@ -20,11 +20,11 @@ import com.jfinal.handler.Handler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class XssHandler extends Handler {
+public class XSSHandler extends Handler {
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        next.handle(target, new XssHttpServletRequestWrapper(request), response, isHandled);
+        next.handle(target, new XSSHttpServletRequestWrapper(request), response, isHandled);
     }
 
 }
