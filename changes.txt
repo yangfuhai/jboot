@@ -1,3 +1,14 @@
+jboot v3.9.6:
+新增：门户网关动态配置拦截器的功能（之前只能通过配置文件进行配置）
+新增：门户网关动态配置负载均衡策略的功能（之前只能通过配置文件进行配置）
+新增：columns 新增 groupBy() 和 having() 的方法，方便构建 group by 的 SQL
+新增：新增 jboot.web.escapeParas 配置，方便全局对 xss 进行防护
+优化：升级 JFinal、HikariCP、metrics、Shiro 等到最新版本
+修复：使用 @Bean 注解，然后 Jboot.getBean() 通过 Bean Name 获取不到对象的问题
+修复：Redis 缓存的 removeAll() 和 getKeys() 在某些情况返回数据不正确的问题
+
+
+
 jboot v3.9.5:
 新增：CacheInterceptorBuilder.Util 工具类，用于对拦截器的判断
 优化：重构 @Configuration 对 @Bean 的初始化工作
