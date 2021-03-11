@@ -521,20 +521,27 @@ public class JbootController extends Controller {
 
     @NotAction
     public String getOriginalPara(String name) {
-        HttpServletRequest req = getRequest();
-        if (req instanceof HttpServletRequestWrapper) {
-            req = getOrginalRequest((HttpServletRequestWrapper) req);
-        }
-        String value = req.getParameter(name);
+        String value = getOrginalRequest().getParameter(name);
         if (value == null || value.length() == 0) {
             return null;
         }
         return value;
     }
 
-    private HttpServletRequest getOrginalRequest(HttpServletRequestWrapper wrapper){
+
+    @NotAction
+    public HttpServletRequest getOrginalRequest() {
+        HttpServletRequest req = getRequest();
+        if (req instanceof HttpServletRequestWrapper) {
+            req = getOrginalRequest((HttpServletRequestWrapper) req);
+        }
+        return req;
+    }
+
+
+    private HttpServletRequest getOrginalRequest(HttpServletRequestWrapper wrapper) {
         HttpServletRequest req = (HttpServletRequest) wrapper.getRequest();
-        if (req instanceof HttpServletRequestWrapper){
+        if (req instanceof HttpServletRequestWrapper) {
             return getOrginalRequest((HttpServletRequestWrapper) req);
         }
         return req;
