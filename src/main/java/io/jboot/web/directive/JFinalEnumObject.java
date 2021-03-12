@@ -21,6 +21,7 @@ import javassist.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -120,9 +121,13 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
     }
 
     private Object doInvokeEnumMethod(String methodName, Object... paras) {
+
+        Method method = findMethod(methodName, paras);
+        if (method == null) {
+            throw new RuntimeException("Can not find the method: " + methodName + " with paras: " + Arrays.toString(paras) + " in enum: " + this.enumClass);
+        }
         try {
-            Long key = getMethodKey(enumClass, methodName, paras);
-            return staticMethods.get(key).invoke(null, paras);
+            return method.invoke(null, paras);
         } catch (Exception ex) {
             throw new RuntimeException(ex.toString(), ex);
         }
@@ -209,7 +214,7 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
     }
 
 
-    private static Long getMethodKey(Class<?> targetClass, String methodName, Object... args) {
+    private Method findMethod(String methodName, Object... args) {
         Class<?>[] argTypes = null;
         if (args != null && args.length > 0) {
             argTypes = new Class[args.length];
@@ -219,7 +224,37 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
             }
         }
 
-        return getMethodKey(targetClass, methodName, argTypes);
+        long key = getMethodKey(this.enumClass, methodName, argTypes);
+        Method method = this.staticMethods.get(key);
+        if (method != null) {
+            return method;
+        }
+
+        for (Method m : this.staticMethods.values()) {
+            if (m.getName().equals(methodName) && isMatchParas(m.getParameterTypes(), args)) {
+                this.staticMethods.put(key, m);
+                return m;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isMatchParas(Class<?>[] parameterTypes, Object[] args) {
+        if (args == null || args.length == 0) {
+            return parameterTypes.length == 0;
+        }
+
+        if (parameterTypes.length != args.length) {
+            return false;
+        }
+
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (!parameterTypes[i].isAssignableFrom(args[i].getClass())) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

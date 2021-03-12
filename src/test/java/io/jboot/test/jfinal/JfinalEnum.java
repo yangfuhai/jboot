@@ -52,7 +52,7 @@ public enum JfinalEnum {
     }
 
 
-    public static boolean isDev(Integer value, String r) {
+    public static boolean isDev(Integer value, Object r) {
         return true;
     }
 
