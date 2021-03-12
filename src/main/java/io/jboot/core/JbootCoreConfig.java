@@ -87,7 +87,6 @@ public class JbootCoreConfig extends JFinalConfig {
 
         // 自动为 Interceptor 和 Controller 等添加依赖注入
         AopManager.me().setInjectDependency(true);
-
         AopManager.me().setAopFactory(JbootAopFactory.me());
 
         Aop.inject(this);

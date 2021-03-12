@@ -39,6 +39,7 @@ import io.jboot.exception.JbootException;
 import io.jboot.service.JbootServiceBase;
 import io.jboot.utils.*;
 import io.jboot.web.controller.JbootController;
+import net.sf.cglib.proxy.Enhancer;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
@@ -67,6 +68,15 @@ public class JbootAopFactory extends AopFactory {
         return me;
     }
 
+    private boolean defaultLazyInit = false;
+
+    public boolean isDefaultLazyInit() {
+        return defaultLazyInit;
+    }
+
+    public void setDefaultLazyInit(boolean defaultLazyInit) {
+        this.defaultLazyInit = defaultLazyInit;
+    }
 
     private Map<String, Object> beansCache = new ConcurrentHashMap<>();
     private Map<String, Class<?>> beanNameClassesMapping = new ConcurrentHashMap<>();
@@ -112,13 +122,10 @@ public class JbootAopFactory extends AopFactory {
     protected void doInvokePostConstructMethod(Class<?> targetClass, Object targetObject) throws ReflectiveOperationException {
         Method[] methods = targetClass.getDeclaredMethods();
         for (Method method : methods) {
-            if (method.getParameterCount() == 0) {
-                PostConstruct postConstruct = method.getAnnotation(PostConstruct.class);
-                if (postConstruct != null) {
-                    method.setAccessible(true);
-                    method.invoke(targetObject);
-                    break;
-                }
+            if (method.getParameterCount() == 0 && method.getAnnotation(PostConstruct.class) != null) {
+                method.setAccessible(true);
+                method.invoke(targetObject);
+                break;
             }
         }
 
@@ -141,30 +148,21 @@ public class JbootAopFactory extends AopFactory {
 
         if (fields.length != 0) {
             for (Field field : fields) {
-
-                Inject inject = field.getAnnotation(Inject.class);
-                if (inject != null) {
-                    Bean bean = field.getAnnotation(Bean.class);
-                    String beanName = bean != null ? AnnotationUtil.get(bean.name()) : null;
-                    if (StrUtil.isNotBlank(beanName)) {
-                        doInjectByName(targetObject, field, beanName);
+                Object fieldValue = null;
+                if (defaultLazyInit) {
+                    fieldValue = createFieldObjectLazy(targetObject, field);
+                } else {
+                    Lazy Lazy = field.getAnnotation(Lazy.class);
+                    if (Lazy != null) {
+                        fieldValue = createFieldObjectLazy(targetObject, field);
                     } else {
-                        doInjectJFinalOrginal(targetObject, field, inject);
+                        fieldValue = createFieldObjectNormal(targetObject, field);
                     }
-                    continue;
                 }
 
-
-                RPCInject rpcInject = field.getAnnotation(RPCInject.class);
-                if (rpcInject != null) {
-                    doInjectRPC(targetObject, field, rpcInject);
-                    continue;
-                }
-
-                ConfigValue configValue = field.getAnnotation(ConfigValue.class);
-                if (configValue != null) {
-                    doInjectConfigValue(targetObject, field, configValue);
-                    continue;
+                if (fieldValue != null) {
+                    field.setAccessible(true);
+                    field.set(targetObject, fieldValue);
                 }
             }
         }
@@ -180,6 +178,37 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
+    protected Object createFieldObjectLazy(Object targetObject, Field field) {
+        return Enhancer.create(field.getType(), new JbootLazyLoader(targetObject, field));
+    }
+
+
+    protected Object createFieldObjectNormal(Object targetObject, Field field) throws ReflectiveOperationException {
+        Inject inject = field.getAnnotation(Inject.class);
+        if (inject != null) {
+            Bean bean = field.getAnnotation(Bean.class);
+            String beanName = bean != null ? AnnotationUtil.get(bean.name()) : null;
+            if (StrUtil.isNotBlank(beanName)) {
+                return createFieldObjectByBeanName(targetObject, field, beanName);
+            } else {
+                return createFieldObjectByJfinalOriginal(targetObject, field, inject);
+            }
+        }
+
+        RPCInject rpcInject = field.getAnnotation(RPCInject.class);
+        if (rpcInject != null) {
+            return createFieldObjectByRPCComponent(targetObject, field, rpcInject);
+        }
+
+        ConfigValue configValue = field.getAnnotation(ConfigValue.class);
+        if (configValue != null) {
+            return createFieldObjectByConfigValue(targetObject, field, configValue);
+        }
+
+        return null;
+    }
+
+
     protected boolean notSystemClass(Class clazz) {
         return clazz != JbootController.class
                 && clazz != Controller.class
@@ -191,7 +220,7 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    private void doInjectByName(Object targetObject, Field field, String beanName) throws ReflectiveOperationException {
+    private Object createFieldObjectByBeanName(Object targetObject, Field field, String beanName) throws ReflectiveOperationException {
         Object fieldInjectedObject = beansCache.get(beanName);
         if (fieldInjectedObject == null) {
             Class<?> fieldInjectedClass = beanNameClassesMapping.get(beanName);
@@ -203,7 +232,7 @@ public class JbootAopFactory extends AopFactory {
             beansCache.put(beanName, fieldInjectedObject);
         }
 
-        setFieldValue(field, targetObject, fieldInjectedObject);
+        return fieldInjectedObject;
     }
 
     /**
@@ -214,15 +243,13 @@ public class JbootAopFactory extends AopFactory {
      * @param inject
      * @throws ReflectiveOperationException
      */
-    private void doInjectJFinalOrginal(Object targetObject, Field field, Inject inject) throws ReflectiveOperationException {
+    private Object createFieldObjectByJfinalOriginal(Object targetObject, Field field, Inject inject) throws ReflectiveOperationException {
         Class<?> fieldInjectedClass = inject.value();
         if (fieldInjectedClass == Void.class) {
             fieldInjectedClass = field.getType();
         }
 
-        Object fieldInjectedObject = doGet(fieldInjectedClass);
-
-        setFieldValue(field, targetObject, fieldInjectedObject);
+        return doGet(fieldInjectedClass);
     }
 
     /**
@@ -232,18 +259,17 @@ public class JbootAopFactory extends AopFactory {
      * @param field
      * @param rpcInject
      */
-    private void doInjectRPC(Object targetObject, Field field, RPCInject rpcInject) {
+    private Object createFieldObjectByRPCComponent(Object targetObject, Field field, RPCInject rpcInject) {
         try {
             Class<?> fieldInjectedClass = field.getType();
             JbootrpcReferenceConfig referenceConfig = new JbootrpcReferenceConfig(rpcInject);
 
             Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
-            Object fieldInjectedObject = jbootrpc.serviceObtain(fieldInjectedClass, referenceConfig);
-
-            setFieldValue(field, targetObject, fieldInjectedObject);
+            return jbootrpc.serviceObtain(fieldInjectedClass, referenceConfig);
         } catch (Exception ex) {
             LOG.error("Can not inject rpc service in " + targetObject.getClass() + " by config " + rpcInject, ex);
         }
+        return null;
     }
 
     /**
@@ -254,17 +280,21 @@ public class JbootAopFactory extends AopFactory {
      * @param configValue
      * @throws IllegalAccessException
      */
-    private void doInjectConfigValue(Object targetObject, Field field, ConfigValue configValue) throws IllegalAccessException {
+    private Object createFieldObjectByConfigValue(Object targetObject, Field field, ConfigValue configValue) throws IllegalAccessException {
         String key = AnnotationUtil.get(configValue.value());
         Class<?> fieldInjectedClass = field.getType();
         String value = JbootConfigManager.me().getConfigValue(key);
 
+        Object fieldObject = null;
         if (StrUtil.isNotBlank(value)) {
-            Object fieldInjectedObject = ConfigUtil.convert(fieldInjectedClass, value, field.getGenericType());
-            if (fieldInjectedObject != null) {
-                setFieldValue(field, targetObject, fieldInjectedObject);
-            }
+            fieldObject = ConfigUtil.convert(fieldInjectedClass, value, field.getGenericType());
         }
+
+        if (fieldObject == null) {
+            field.setAccessible(true);
+            fieldObject = field.get(targetObject);
+        }
+        return fieldObject;
     }
 
 
