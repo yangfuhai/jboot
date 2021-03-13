@@ -25,7 +25,9 @@ import com.jfinal.template.stat.Scope;
 import io.jboot.utils.StrUtil;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Map;
 
 /**
  * Jfinal 指令的基类
@@ -200,6 +202,45 @@ public abstract class JbootDirectiveBase extends Directive {
     public BigInteger getParaToBigInteger(int index, Scope scope, BigInteger defaultValue) {
         BigInteger v = getParaToBigInteger(index, scope);
         return v == null ? defaultValue : v;
+    }
+
+
+    public BigDecimal getParaToBigDecimal(String key, Scope scope) {
+        Object object = getPara(key, scope, null);
+        if (object == null || object instanceof BigDecimal) {
+            return (BigDecimal) object;
+        }
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : new BigDecimal(objStr);
+    }
+
+    public BigDecimal getParaToBigDecimal(String key, Scope scope, BigDecimal defaultValue) {
+        BigDecimal v = getParaToBigDecimal(key, scope);
+        return v == null ? defaultValue : v;
+    }
+
+    public BigDecimal getParaToBigDecimal(int index, Scope scope) {
+        Object object = getPara(index, scope, null);
+        if (object == null || object instanceof BigDecimal) {
+            return (BigDecimal) object;
+        }
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : new BigDecimal(objStr);
+    }
+
+
+    public BigDecimal getParaToBigDecimal(int index, Scope scope, BigDecimal defaultValue) {
+        BigDecimal v = getParaToBigDecimal(index, scope);
+        return v == null ? defaultValue : v;
+    }
+
+
+    public Map getParas(Scope scope) {
+        return scope.getData();
+    }
+
+    public Map getRootParas(Scope scope) {
+        return scope.getRootData();
     }
 
 
