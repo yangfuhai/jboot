@@ -138,6 +138,10 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
 //        return invokeEnumMethod("value",text);
 //    }
 
+    public Object invoke(String method, Object... paras) {
+        return doInvokeEnumMethod(method, paras);
+    }
+
 
     public static JFinalEnumObject create(Class<? extends Enum<?>> enumClass) {
         try {

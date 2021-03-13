@@ -133,4 +133,6 @@ public class JbootRenderFactory extends RenderFactory {
     public Render getReturnValueRender(Action action, Object returnValue) {
         return new JbootReturnValueRender(action, returnValue);
     }
+
+
 }
