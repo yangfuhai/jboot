@@ -15,14 +15,12 @@
  */
 package io.jboot.aop;
 
-import com.jfinal.aop.Aop;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
 import io.jboot.utils.ClassUtil;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -63,6 +61,20 @@ public class Interceptors {
     public void add(Class<? extends Interceptor> interceptorClass, int weight) {
         add(singleton(interceptorClass), weight);
     }
+
+
+    public void addIfNotExist(Interceptor interceptor) {
+        if (!hasInterceptor(interceptor)) {
+            add(interceptor);
+        }
+    }
+
+    public void addIfNotExist(Class<? extends Interceptor> interceptorClass) {
+        if (!hasInterceptor(interceptorClass)) {
+            add(singleton(interceptorClass));
+        }
+    }
+
 
     public void addToFirst(Interceptor interceptor) {
         warppers.add(new InterceptorWarpper(interceptor, --minimalWeight));

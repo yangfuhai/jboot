@@ -36,67 +36,67 @@ public class ValidInterceptorBuilder implements InterceptorBuilder {
             for (Parameter p : parameters) {
 
                 if (p.getAnnotation(DecimalMax.class) != null) {
-                    interceptors.add(DecimalMaxInterceptor.class);
+                    interceptors.addIfNotExist(DecimalMaxInterceptor.class);
                 }
 
                 if (p.getAnnotation(DecimalMin.class) != null) {
-                    interceptors.add(DecimalMinInterceptor.class);
+                    interceptors.addIfNotExist(DecimalMinInterceptor.class);
                 }
 
                 if (p.getAnnotation(Digits.class) != null) {
-                    interceptors.add(DigitsInterceptor.class);
+                    interceptors.addIfNotExist(DigitsInterceptor.class);
                 }
 
                 if (p.getAnnotation(Email.class) != null) {
-                    interceptors.add(EmailInterceptor.class);
+                    interceptors.addIfNotExist(EmailInterceptor.class);
                 }
 
                 if (p.getAnnotation(Max.class) != null) {
-                    interceptors.add(MaxInterceptor.class);
+                    interceptors.addIfNotExist(MaxInterceptor.class);
                 }
 
                 if (p.getAnnotation(Min.class) != null) {
-                    interceptors.add(MinInterceptor.class);
+                    interceptors.addIfNotExist(MinInterceptor.class);
                 }
 
                 if (p.getAnnotation(Negative.class) != null) {
-                    interceptors.add(NegativeInterceptor.class);
+                    interceptors.addIfNotExist(NegativeInterceptor.class);
                 }
 
                 if (p.getAnnotation(NegativeOrZero.class) != null) {
-                    interceptors.add(NegativeOrZeroInterceptor.class);
+                    interceptors.addIfNotExist(NegativeOrZeroInterceptor.class);
                 }
 
                 if (p.getAnnotation(NotBlank.class) != null) {
-                    interceptors.add(NotBlankInterceptor.class);
+                    interceptors.addIfNotExist(NotBlankInterceptor.class);
                 }
 
                 if (p.getAnnotation(NotEmpty.class) != null) {
-                    interceptors.add(NotEmptyInterceptor.class);
+                    interceptors.addIfNotExist(NotEmptyInterceptor.class);
                 }
 
                 if (p.getAnnotation(NotNull.class) != null) {
-                    interceptors.add(NotNullInterceptor.class);
+                    interceptors.addIfNotExist(NotNullInterceptor.class);
                 }
 
                 if (p.getAnnotation(Pattern.class) != null) {
-                    interceptors.add(PatternInterceptor.class);
+                    interceptors.addIfNotExist(PatternInterceptor.class);
                 }
 
                 if (p.getAnnotation(Positive.class) != null) {
-                    interceptors.add(PositiveInterceptor.class);
+                    interceptors.addIfNotExist(PositiveInterceptor.class);
                 }
 
                 if (p.getAnnotation(PositiveOrZero.class) != null) {
-                    interceptors.add(PositiveOrZeroInterceptor.class);
+                    interceptors.addIfNotExist(PositiveOrZeroInterceptor.class);
                 }
 
                 if (p.getAnnotation(Size.class) != null) {
-                    interceptors.add(SizeInterceptor.class);
+                    interceptors.addIfNotExist(SizeInterceptor.class);
                 }
 
                 if (p.getAnnotation(Valid.class) != null) {
-                    interceptors.add(ValidInterceptor.class);
+                    interceptors.addIfNotExist(ValidInterceptor.class);
                 }
             }
         }

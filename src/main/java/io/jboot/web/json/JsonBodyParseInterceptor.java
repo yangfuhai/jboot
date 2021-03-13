@@ -339,7 +339,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                             throw new IllegalArgumentException("Can not use @JsonBody for Map/List(Collection)/Array type if your controller not extends JbootController, method: " + ClassUtil.buildMethodString(method));
                         }
 
-                        interceptors.add(this);
+                        interceptors.addIfNotExist(this);
                         return;
                     }
                 }

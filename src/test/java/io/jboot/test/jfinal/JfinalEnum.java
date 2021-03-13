@@ -3,13 +3,14 @@ package io.jboot.test.jfinal;
 import io.jboot.Jboot;
 import io.jboot.web.directive.annotation.JFinalSharedEnum;
 
+import java.util.Arrays;
+
 @JFinalSharedEnum
 public enum JfinalEnum {
 
     MASTER(1, "总部"),
 
     AGENT(10, "代理商"),
-
 
     CLIENT(20, "SaaS租户"),
 
@@ -74,6 +75,11 @@ public enum JfinalEnum {
 
     public static boolean isClient(Integer value) {
         return value != null && value == CLIENT.value;
+    }
+
+    public static void main(String[] args) {
+        Object[] xxxs= values();
+        System.out.println(Arrays.toString(xxxs));
     }
 
 
