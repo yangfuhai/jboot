@@ -32,8 +32,6 @@ import io.jboot.utils.DateUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -45,7 +43,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     private static final String startOfArray = "[";
     private static final String endOfArray = "]";
-    private static Validator validator;
 
     @Override
     public void intercept(Invocation inv) {
@@ -85,15 +82,8 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private static Validator getValidator() {
-        if (validator == null) {
-            validator = Validation.buildDefaultValidatorFactory().getValidator();
-        }
-        return validator;
-    }
 
-
-    public static Object parseJsonBody(Object jsonObjectOrArray, Class typeClass, Type type, String jsonKey) throws InstantiationException, IllegalAccessException {
+    public static Object parseJsonBody(Object jsonObjectOrArray, Class<?> typeClass, Type type, String jsonKey) throws InstantiationException, IllegalAccessException {
         if (jsonObjectOrArray == null) {
             return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
         }
@@ -105,7 +95,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private static Object parseObject(JSONObject rawObject, Class typeClass, Type type, String jsonKey) throws IllegalAccessException, InstantiationException {
+    private static Object parseObject(JSONObject rawObject, Class<?> typeClass, Type type, String jsonKey) throws IllegalAccessException, InstantiationException {
         if (StrUtil.isBlank(jsonKey)) {
             return toJavaObject(rawObject, typeClass, type);
         }
@@ -150,7 +140,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private static Object parseArray(Object rawJsonObjectOrArray, Class typeClass, Type type, String jsonKey) {
+    private static Object parseArray(Object rawJsonObjectOrArray, Class<?> typeClass, Type type, String jsonKey) {
         JSONArray jsonArray = null;
         if (StrUtil.isBlank(jsonKey)) {
             jsonArray = (JSONArray) rawJsonObjectOrArray;
@@ -225,7 +215,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private static Object toJavaObject(JSONObject rawObject, Class typeClass, Type type) throws IllegalAccessException, InstantiationException {
+    private static Object toJavaObject(JSONObject rawObject, Class<?> typeClass, Type type) throws IllegalAccessException, InstantiationException {
         if (rawObject.isEmpty()) {
             return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
         }
@@ -246,13 +236,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private static boolean canNewInstance(Class clazz) {
+    private static boolean canNewInstance(Class<?> clazz) {
         int modifiers = clazz.getModifiers();
         return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
 
 
-    private static Object convert(Object value, Class targetClass) {
+    private static Object convert(Object value, Class<?> targetClass) {
 
         if (value.getClass().isAssignableFrom(targetClass)) {
             return value;
@@ -308,7 +298,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         throw new RuntimeException(targetClass.getName() + " can not be parsed in json.");
     }
 
-    private static Object getPrimitiveDefaultValue(Class typeClass) {
+    private static Object getPrimitiveDefaultValue(Class<?> typeClass) {
         if (typeClass == int.class || typeClass == long.class || typeClass == float.class || typeClass == double.class) {
             return 0;
         } else if (typeClass == boolean.class) {
@@ -333,7 +323,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             if (parameters != null && parameters.length > 0) {
                 for (Parameter p : parameters) {
                     if (p.getAnnotation(JsonBody.class) != null) {
-                        Class typeClass = p.getType();
+                        Class<?> typeClass = p.getType();
                         if ((Map.class.isAssignableFrom(typeClass) || Collection.class.isAssignableFrom(typeClass) || typeClass.isArray())
                                 && !JbootController.class.isAssignableFrom(serviceClass)) {
                             throw new IllegalArgumentException("Can not use @JsonBody for Map/List(Collection)/Array type if your controller not extends JbootController, method: " + ClassUtil.buildMethodString(method));

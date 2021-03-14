@@ -64,13 +64,13 @@ public class Interceptors {
 
 
     public void addIfNotExist(Interceptor interceptor) {
-        if (!hasInterceptor(interceptor)) {
+        if (!contains(interceptor)) {
             add(interceptor);
         }
     }
 
     public void addIfNotExist(Class<? extends Interceptor> interceptorClass) {
-        if (!hasInterceptor(interceptorClass)) {
+        if (!contains(interceptorClass)) {
             add(singleton(interceptorClass));
         }
     }
@@ -215,7 +215,7 @@ public class Interceptors {
     }
 
 
-    public boolean hasInterceptor(Interceptor interceptor) {
+    public boolean contains(Interceptor interceptor) {
         for (InterceptorWarpper warpper : warppers) {
             if (warpper.interceptor == interceptor) {
                 return true;
@@ -225,7 +225,7 @@ public class Interceptors {
     }
 
 
-    public boolean hasInterceptor(Class<? extends Interceptor> clazz) {
+    public boolean contains(Class<? extends Interceptor> clazz) {
         for (InterceptorWarpper warpper : warppers) {
             if (warpper.interceptor.getClass() == clazz) {
                 return true;
