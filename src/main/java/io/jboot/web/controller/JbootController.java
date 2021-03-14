@@ -573,6 +573,16 @@ public class JbootController extends Controller {
     /**
      * Returns the value of a request parameter and convert to BigInteger.
      *
+     * @return a BigInteger representing the single value of the parameter
+     */
+    @NotAction
+    public BigInteger getParaToBigInteger() {
+        return toBigInteger(getPara(), null);
+    }
+
+    /**
+     * Returns the value of a request parameter and convert to BigInteger.
+     *
      * @param name a String specifying the name of the parameter
      * @return a BigInteger representing the single value of the parameter
      */
@@ -592,6 +602,16 @@ public class JbootController extends Controller {
         return toBigInteger(getTrimPara(name), defaultValue);
     }
 
+
+    /**
+     * Returns the value of a request parameter and convert to BigInteger.
+     *
+     * @return a BigInteger representing the single value of the parameter
+     */
+    @NotAction
+    public BigInteger getBigInteger() {
+        return toBigInteger(getPara(), null);
+    }
 
     /**
      * Returns the value of a request parameter and convert to BigInteger.
@@ -631,6 +651,18 @@ public class JbootController extends Controller {
         }
     }
 
+
+    /**
+     * Returns the value of a request parameter and convert to BigDecimal.
+     *
+     * @return a BigDecimal representing the single value of the parameter
+     */
+    @NotAction
+    public BigDecimal getParaToBigDecimal() {
+        return toBigDecimal(getPara(), null);
+    }
+
+
     /**
      * Returns the value of a request parameter and convert to BigDecimal.
      *
@@ -653,6 +685,16 @@ public class JbootController extends Controller {
         return toBigDecimal(getTrimPara(name), defaultValue);
     }
 
+
+    /**
+     * Returns the value of a request parameter and convert to BigDecimal.
+     *
+     * @return a BigDecimal representing the single value of the parameter
+     */
+    @NotAction
+    public BigDecimal getBigDecimal() {
+        return toBigDecimal(getPara(), null);
+    }
 
     /**
      * Returns the value of a request parameter and convert to BigDecimal.
