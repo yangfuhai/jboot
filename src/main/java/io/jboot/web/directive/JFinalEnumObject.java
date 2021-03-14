@@ -224,7 +224,7 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
             argTypes = new Class[args.length];
             int index = 0;
             for (Object arg : args) {
-                argTypes[index++] = arg.getClass();
+                argTypes[index++] = arg == null ? null :arg.getClass();
             }
         }
 
@@ -254,7 +254,7 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
         }
 
         for (int i = 0; i < parameterTypes.length; i++) {
-            if (!parameterTypes[i].isAssignableFrom(args[i].getClass())) {
+            if (args[i] != null && !parameterTypes[i].isAssignableFrom(args[i].getClass())) {
                 return false;
             }
         }
