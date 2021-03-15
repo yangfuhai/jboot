@@ -60,14 +60,18 @@ public class ValidUtil {
     }
 
 
-    public static void throwValidException(String message, String reason) {
-        throwValidException(message, null, reason);
+    public static void throwValidException(String fieldName, String message, String reason) {
+        throwValidException(fieldName, message, null, reason);
     }
 
 
-    public static void throwValidException(String message, Ret paras, String reason) {
+    public static void throwValidException(String fieldName, String message, Ret paras, String reason) {
         if (message != null) {
             message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleContext(paras));
+        }
+
+        if (fieldName != null) {
+            message = fieldName + message;
         }
 
         throw new ValidException(message, reason);

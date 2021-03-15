@@ -36,7 +36,7 @@ public class DigitsInterceptor implements Interceptor {
                 if (validObject != null && !matchesDigits(digits, validObject)) {
                     String reason = parameters[index].getName() + " not matches @Digits at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("integer", digits.integer()).set("fraction", digits.fraction());
-                    ValidUtil.throwValidException(digits.message(), paras, reason);
+                    ValidUtil.throwValidException(parameters[index].getName(), digits.message(), paras, reason);
                 }
             }
         }

@@ -36,7 +36,7 @@ public class EmailInterceptor implements Interceptor {
                 Object validObject = inv.getArg(index);
                 if (validObject == null || !matches(email, validObject.toString())) {
                     String reason = parameters[index].getName() + " is not email at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.throwValidException(email.message(), reason);
+                    ValidUtil.throwValidException(parameters[index].getName(), email.message(), reason);
                 }
             }
         }

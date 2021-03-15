@@ -40,7 +40,7 @@ public class DecimalMaxInterceptor implements Interceptor {
                     String reason = parameters[index].getName() + " max value is " + decimalMax.value()
                             + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("value", decimalMax.value());
-                    ValidUtil.throwValidException(decimalMax.message(), paras, reason);
+                    ValidUtil.throwValidException(parameters[index].getName(), decimalMax.message(), paras, reason);
                 }
             }
         }
@@ -55,11 +55,11 @@ public class DecimalMaxInterceptor implements Interceptor {
             return ((BigDecimal) validObject).compareTo(new BigDecimal(decimalMax.value())) <= 0;
         } else if (validObject instanceof CharSequence) {
             return (new BigDecimal(validObject.toString())).compareTo(new BigDecimal(decimalMax.value())) <= 0;
-        } else if (validObject instanceof Float){
-            return ((Float)validObject) <= Float.parseFloat(decimalMax.value());
-        }else if (validObject instanceof Double){
-            return ((Double)validObject) <= Double.parseDouble(decimalMax.value());
-        }else if (validObject instanceof Number) {
+        } else if (validObject instanceof Float) {
+            return ((Float) validObject) <= Float.parseFloat(decimalMax.value());
+        } else if (validObject instanceof Double) {
+            return ((Double) validObject) <= Double.parseDouble(decimalMax.value());
+        } else if (validObject instanceof Number) {
             return ((Number) validObject).longValue() <= Long.parseLong(decimalMax.value());
         }
         return false;
