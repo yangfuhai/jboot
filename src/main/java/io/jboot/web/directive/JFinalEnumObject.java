@@ -121,7 +121,6 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
     }
 
     private Object doInvokeEnumMethod(String methodName, Object... paras) {
-
         Method method = findMethod(methodName, paras);
         if (method == null) {
             throw new RuntimeException("Can not find the method: " + methodName + " with paras: " + Arrays.toString(paras) + " in enum: " + this.enumClass);
@@ -224,7 +223,7 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
             argTypes = new Class[args.length];
             int index = 0;
             for (Object arg : args) {
-                argTypes[index++] = arg == null ? null :arg.getClass();
+                argTypes[index++] = arg != null ? arg.getClass() : null;
             }
         }
 

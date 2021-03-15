@@ -82,5 +82,9 @@ public enum JfinalEnum {
         System.out.println(Arrays.toString(xxxs));
     }
 
+    public static String str(){
+        return "hello";
+    }
+
 
 }
