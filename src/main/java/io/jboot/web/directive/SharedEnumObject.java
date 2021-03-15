@@ -79,7 +79,7 @@ import java.util.Map;
  *
  * </pre>
  */
-public class JFinalEnumObject extends LinkedHashMap<String, Object> {
+public class SharedEnumObject extends LinkedHashMap<String, Object> {
 
 
     private Class<? extends Enum<?>> enumClass;
@@ -142,13 +142,13 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
     }
 
 
-    public static JFinalEnumObject create(Class<? extends Enum<?>> enumClass) {
+    public static SharedEnumObject create(Class<? extends Enum<?>> enumClass) {
         try {
             ClassPool pool = ClassPool.getDefault();
             CtClass objectCtClass = pool.getCtClass(Object.class.getName());
-            CtClass supperClass = pool.get(JFinalEnumObject.class.getName());
+            CtClass supperClass = pool.get(SharedEnumObject.class.getName());
 
-            CtClass newClass = pool.makeClass(JFinalEnumObject.class.getName() + "." + enumClass.getSimpleName());
+            CtClass newClass = pool.makeClass(SharedEnumObject.class.getName() + "." + enumClass.getSimpleName());
             newClass.setSuperclass(supperClass);
             newClass.setModifiers(Modifier.PUBLIC);
 
@@ -173,7 +173,7 @@ public class JFinalEnumObject extends LinkedHashMap<String, Object> {
                 }
             }
 
-            JFinalEnumObject ret = (JFinalEnumObject) newClass.toClass().newInstance();
+            SharedEnumObject ret = (SharedEnumObject) newClass.toClass().newInstance();
             ret.init(enumClass, enumStaticMethods);
             return ret;
         } catch (Exception e) {

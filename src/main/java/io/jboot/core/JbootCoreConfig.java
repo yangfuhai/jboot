@@ -59,7 +59,7 @@ import io.jboot.web.attachment.AttachmentHandler;
 import io.jboot.web.attachment.LocalAttachmentContainerConfig;
 import io.jboot.web.controller.JbootControllerManager;
 import io.jboot.web.controller.annotation.RequestMapping;
-import io.jboot.web.directive.JFinalEnumObject;
+import io.jboot.web.directive.SharedEnumObject;
 import io.jboot.web.directive.annotation.*;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
@@ -236,7 +236,7 @@ public class JbootCoreConfig extends JFinalConfig {
                     if (sharedEnum.override()) {
                         engine.removeSharedObject(name);
                     }
-                    engine.addSharedObject(name, JFinalEnumObject.create((Class<? extends Enum<?>>) clazz));
+                    engine.addSharedObject(name, SharedEnumObject.create((Class<? extends Enum<?>>) clazz));
                 }
             }
 
