@@ -1,4 +1,13 @@
 jboot v3.9.7:
+新增：@Lazy 懒加载注入的功能
+新增：JbootController.getOrginalRequest() 方法，用于获取进过 Xss 处理后的原始 Request
+新增：JbootDirectiveBase.getParaToBigDecimal() 的系列方法
+新增：Interceptors.addIfNotExist() 方法，用于对某些注解进行单次添加
+新增：JbootController.getParaToBigDecimal() 和 getParaToBigInteger() 方法
+优化：重命名 JFinalEnumObject 为 SharedEnumObject
+优化：Validator 验证错误的时候，错误信息给出错误的相关字段
+修复：通过 @JFinalShareEnum 添加枚举，在某些极端情况下无法调用枚举静态方法的问题
+
 
 
 jboot v3.9.6:
