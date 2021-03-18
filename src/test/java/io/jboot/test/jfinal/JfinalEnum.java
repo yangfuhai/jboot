@@ -53,7 +53,8 @@ public enum JfinalEnum {
     }
 
 
-    public static boolean isDev(Integer value, Object r) {
+    public static boolean isDev(Integer value, Object r) throws InterruptedException {
+        Thread.sleep(2000);
         return true;
     }
 

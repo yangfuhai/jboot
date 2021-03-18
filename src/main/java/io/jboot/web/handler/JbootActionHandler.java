@@ -105,44 +105,24 @@ public class JbootActionHandler extends ActionHandler {
         Controller controller = null;
         try {
             controller = controllerFactory.getController(action.getControllerClass());
-            JbootControllerContext.hold(controller);
-//            controller.init(request, response, urlPara[0]);
+            //controller.init(request, response, urlPara[0]);
             CPI._init_(controller, action, request, response, urlPara[0]);
 
-//            Invocation invocation = new Invocation(action, controller);
+            JbootControllerContext.hold(controller);
+
+            //Invocation invocation = new Invocation(action, controller);
             Invocation invocation = getInvocation(action, controller);
+
             if (devMode) {
                 long time = System.currentTimeMillis();
                 try {
-                    invocation.invoke();
+                    doStartRender(target, request, response, isHandled, action, controller, invocation);
                 } finally {
                     JbootActionReporter.report(target, controller, action, invocation, time);
                 }
             } else {
-                invocation.invoke();
+                doStartRender(target, request, response, isHandled, action, controller, invocation);
             }
-
-            Render render = controller.getRender();
-            if (render instanceof ForwardActionRender) {
-                String actionUrl = ((ForwardActionRender) render).getActionUrl();
-                if (target.equals(actionUrl)) {
-                    throw new RuntimeException("The forward action url is the same as before.");
-                } else {
-                    handle(actionUrl, request, response, isHandled);
-                }
-                return;
-            }
-
-            if (render == null && void.class != action.getMethod().getReturnType() && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
-                JbootRenderFactory jrf = (JbootRenderFactory) renderManager.getRenderFactory();
-                render = jrf.getReturnValueRender(action, invocation.getReturnValue());
-            }
-
-            if (render == null) {
-                render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
-            }
-
-            render.setContext(request, response, action.getViewPath()).render();
 
         } catch (RenderException e) {
             if (LOG.isErrorEnabled()) {
@@ -173,6 +153,32 @@ public class JbootActionHandler extends ActionHandler {
         } finally {
             JbootControllerContext.release();
             controllerFactory.recycle(controller);
+        }
+    }
+
+    private void doStartRender(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, Controller controller, Invocation invocation) {
+
+        invocation.invoke();
+
+        Render render = controller.getRender();
+        if (render instanceof ForwardActionRender) {
+            String actionUrl = ((ForwardActionRender) render).getActionUrl();
+            if (target.equals(actionUrl)) {
+                throw new RuntimeException("The forward action url is the same as before.");
+            } else {
+                handle(actionUrl, request, response, isHandled);
+            }
+        } else {
+            if (render == null && void.class != action.getMethod().getReturnType() && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
+                JbootRenderFactory jbootRenderFactory = (JbootRenderFactory) renderManager.getRenderFactory();
+                render = jbootRenderFactory.getReturnValueRender(action, invocation.getReturnValue());
+            }
+
+            if (render == null) {
+                render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
+            }
+
+            render.setContext(request, response, action.getViewPath()).render();
         }
     }
 
