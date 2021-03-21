@@ -286,12 +286,12 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return value.toString().getBytes();
         } else if (targetClass == Date.class) {
             return parseDate(value);
+        } else if (targetClass == LocalDateTime.class) {
+            return DateUtil.toLocalDateTime(parseDate(value));
         } else if (targetClass == LocalDate.class) {
             return DateUtil.toLocalDate(parseDate(value));
         } else if (targetClass == LocalTime.class) {
             return DateUtil.toLocalTime(parseDate(value));
-        } else if (targetClass == LocalDateTime.class) {
-            return DateUtil.toLocalDateTime(parseDate(value));
         } else if (targetClass == Short.class || targetClass == short.class) {
             if (value instanceof Number) {
                 return ((Number) value).shortValue();
