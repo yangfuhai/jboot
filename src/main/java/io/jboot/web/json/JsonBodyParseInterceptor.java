@@ -36,6 +36,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @AutoLoad
@@ -60,7 +63,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         for (int index = 0; index < parameters.length; index++) {
             JsonBody jsonBody = parameters[index].getAnnotation(JsonBody.class);
             if (jsonBody != null) {
-                Class typeClass = parameters[index].getType();
+                Class<?> typeClass = parameters[index].getType();
                 Object result = null;
                 try {
                     result = parseJsonBody(jsonObjectOrArray, typeClass, paraTypes[index], jsonBody.value());
@@ -80,7 +83,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
         inv.invoke();
     }
-
 
 
     public static Object parseJsonBody(Object jsonObjectOrArray, Class<?> typeClass, Type type, String jsonKey) throws InstantiationException, IllegalAccessException {
@@ -128,7 +130,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             }
         }
 
-        if (result == null) {
+        if (result == null || StrUtil.EMPTY.equals(result)) {
             return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
         }
 
@@ -243,7 +245,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
 
     private static Object convert(Object value, Class<?> targetClass) {
-
         if (value.getClass().isAssignableFrom(targetClass)) {
             return value;
         }
@@ -284,10 +285,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         } else if (targetClass == byte[].class) {
             return value.toString().getBytes();
         } else if (targetClass == Date.class) {
-            if (value instanceof Number) {
-                return new Date(((Number) value).longValue());
-            }
-            return DateUtil.parseDate(value.toString());
+            return parseDate(value);
+        } else if (targetClass == LocalDate.class) {
+            return DateUtil.toLocalDate(parseDate(value));
+        } else if (targetClass == LocalTime.class) {
+            return DateUtil.toLocalTime(parseDate(value));
+        } else if (targetClass == LocalDateTime.class) {
+            return DateUtil.toLocalDateTime(parseDate(value));
         } else if (targetClass == Short.class || targetClass == short.class) {
             if (value instanceof Number) {
                 return ((Number) value).shortValue();
@@ -296,6 +300,14 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         throw new RuntimeException(targetClass.getName() + " can not be parsed in json.");
+    }
+
+
+    private static Date parseDate(Object value) {
+        if (value instanceof Number) {
+            return new Date(((Number) value).longValue());
+        }
+        return DateUtil.parseDate(value.toString());
     }
 
     private static Object getPrimitiveDefaultValue(Class<?> typeClass) {

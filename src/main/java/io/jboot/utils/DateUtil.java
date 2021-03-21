@@ -15,8 +15,12 @@
  */
 package io.jboot.utils;
 
+import com.jfinal.kit.SyncWriteMap;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -37,6 +41,17 @@ public class DateUtil {
     private static final String[] WEEKS = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
 
     private static final ThreadLocal<HashMap<String, SimpleDateFormat>> TL = ThreadLocal.withInitial(() -> new HashMap<>());
+
+    private static final Map<String, DateTimeFormatter> datetimeFormaters = new SyncWriteMap<>();
+
+    public static DateTimeFormatter getDateTimeFormatter(String pattern) {
+        DateTimeFormatter ret = datetimeFormaters.get(pattern);
+        if (ret == null) {
+            ret = DateTimeFormatter.ofPattern(pattern);
+            datetimeFormaters.put(pattern, ret);
+        }
+        return ret;
+    }
 
     public static SimpleDateFormat getSimpleDateFormat(String pattern) {
         SimpleDateFormat ret = TL.get().get(pattern);
@@ -73,6 +88,19 @@ public class DateUtil {
 
     public static String toString(Date date, String pattern) {
         return date == null ? null : getSimpleDateFormat(pattern).format(date);
+    }
+
+
+    public static String toString(LocalDateTime localDateTime, String pattern) {
+        return localDateTime.format(getDateTimeFormatter(pattern));
+    }
+
+    public static String toString(LocalDate localDate, String pattern) {
+        return localDate.format(getDateTimeFormatter(pattern));
+    }
+
+    public static String toString(LocalTime localTime, String pattern) {
+        return localTime.format(getDateTimeFormatter(pattern));
     }
 
 
@@ -128,6 +156,130 @@ public class DateUtil {
         } catch (ParseException e) {
             throw new IllegalArgumentException("The date format is not supported for the date string: " + dateString);
         }
+    }
+
+
+    public static LocalDateTime parseLocalDateTime(String localDateTimeString, String pattern) {
+        return LocalDateTime.parse(localDateTimeString, getDateTimeFormatter(pattern));
+    }
+
+    public static LocalDate parseLocalDate(String localDateString, String pattern) {
+        return LocalDate.parse(localDateString, getDateTimeFormatter(pattern));
+    }
+
+
+    public static LocalTime parseLocalTime(String localTimeString, String pattern) {
+        return LocalTime.parse(localTimeString, getDateTimeFormatter(pattern));
+    }
+
+
+    /**
+     * java.util.Date --> java.time.LocalDateTime
+     */
+    public static LocalDateTime toLocalDateTime(Date date) {
+        if (date == null) {
+            return null;
+        }
+        // java.sql.Date 不支持 toInstant()，需要先转换成 java.util.Date
+        if (date instanceof java.sql.Date) {
+            date = new Date(date.getTime());
+        }
+
+        Instant instant = date.toInstant();
+        ZoneId zone = ZoneId.systemDefault();
+        return LocalDateTime.ofInstant(instant, zone);
+    }
+
+    /**
+     * java.util.Date --> java.time.LocalDate
+     */
+    public static LocalDate toLocalDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+        // java.sql.Date 不支持 toInstant()，需要先转换成 java.util.Date
+        if (date instanceof java.sql.Date) {
+            date = new Date(date.getTime());
+        }
+
+        Instant instant = date.toInstant();
+        ZoneId zone = ZoneId.systemDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
+        return localDateTime.toLocalDate();
+    }
+
+    /**
+     * java.util.Date --> java.time.LocalTime
+     */
+    public static LocalTime toLocalTime(Date date) {
+        if (date == null) {
+            return null;
+        }
+        // java.sql.Date 不支持 toInstant()，需要先转换成 java.util.Date
+        if (date instanceof java.sql.Date) {
+            date = new Date(date.getTime());
+        }
+
+        Instant instant = date.toInstant();
+        ZoneId zone = ZoneId.systemDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
+        return localDateTime.toLocalTime();
+    }
+
+    /**
+     * java.time.LocalDateTime --> java.util.Date
+     */
+    public static Date toDate(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = localDateTime.atZone(zone).toInstant();
+        return Date.from(instant);
+    }
+
+    /**
+     * java.time.LocalDate --> java.util.Date
+     */
+    public static Date toDate(LocalDate localDate) {
+        if (localDate == null) {
+            return null;
+        }
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = localDate.atStartOfDay().atZone(zone).toInstant();
+        return Date.from(instant);
+    }
+
+    /**
+     * java.time.LocalTime --> java.util.Date
+     */
+    public static Date toDate(LocalTime localTime) {
+        if (localTime == null) {
+            return null;
+        }
+        LocalDate localDate = LocalDate.now();
+        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = localDateTime.atZone(zone).toInstant();
+        return Date.from(instant);
+    }
+
+    /**
+     * java.time.LocalTime --> java.util.Date
+     */
+    public static Date toDate(LocalDate localDate, LocalTime localTime) {
+        if (localDate == null) {
+            return null;
+        }
+
+        if (localTime == null) {
+            localTime = LocalTime.of(0, 0, 0);
+        }
+
+        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = localDateTime.atZone(zone).toInstant();
+        return Date.from(instant);
     }
 
 
