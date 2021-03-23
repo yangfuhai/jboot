@@ -169,6 +169,10 @@ public class GatewayHttpProxy {
 
     private void configResponse(HttpServletResponse resp, HttpURLConnection conn) throws IOException {
 
+        if (resp.isCommitted()){
+            return;
+        }
+
         resp.setStatus(conn.getResponseCode());
 
         //conn 是否已经指定了 contentType，如果指定了，就用 conn 的，否则就用自己配置的
