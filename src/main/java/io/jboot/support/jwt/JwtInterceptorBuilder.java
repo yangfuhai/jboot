@@ -30,7 +30,7 @@ public class JwtInterceptorBuilder implements InterceptorBuilder {
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
         if (Util.isJbootController(serviceClass) && Util.hasAnnotation(serviceClass, method, EnableJwt.class)) {
-            interceptors.add(JwtInterceptor.class);
+            interceptors.addToFirst(JwtInterceptor.class);
         }
     }
 
