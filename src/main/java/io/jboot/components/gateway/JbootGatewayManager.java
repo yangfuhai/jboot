@@ -50,10 +50,9 @@ public class JbootGatewayManager {
 
     private NoneHealthUrlErrorRender noneHealthUrlErrorRender;
 
-    public void init() {
+    private JbootGatewayManager() {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
-        if (configMap != null && !configMap.isEmpty()) {
-
+        if (!configMap.isEmpty()) {
             for (Map.Entry<String, JbootGatewayConfig> e : configMap.entrySet()) {
                 JbootGatewayConfig config = e.getValue();
                 if (config.isConfigOk() && config.isEnable()) {
@@ -73,7 +72,13 @@ public class JbootGatewayManager {
         }
         configMap.put(config.getName(), config);
 
-        startHealthCheck();
+        // 启动定时健康检查
+        startHealthCheckIfNecessary();
+    }
+
+
+    public boolean isEnableAndConfigOk() {
+        return configMap != null && !configMap.isEmpty();
     }
 
 
@@ -81,12 +86,11 @@ public class JbootGatewayManager {
      * 开始健康检查
      * 多次执行，只会启动一次
      */
-    private void startHealthCheck() {
+    private void startHealthCheckIfNecessary() {
         if (fixedScheduler == null) {
             synchronized (this) {
                 if (fixedScheduler == null) {
                     fixedScheduler = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("jboot-gateway-health-check"));
-
                     //每 10s 进行一次健康检查
                     fixedScheduler.scheduleWithFixedDelay(() -> {
                         try {
@@ -127,8 +131,8 @@ public class JbootGatewayManager {
             return HttpUtil.handle(req).getResponseCode();
         } catch (Exception ex) {
             // do nothing
+            return 0;
         }
-        return 0;
     }
 
 
@@ -148,6 +152,7 @@ public class JbootGatewayManager {
 
     /**
      * 匹配可用的网关
+     *
      * @param req 请求
      * @return 返回匹配到的网关配置
      */

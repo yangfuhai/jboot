@@ -288,8 +288,10 @@ public class JbootCoreConfig extends JFinalConfig {
         //用户的 handler 优先于 jboot 的 handler 执行
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
 
+        if (JbootGatewayManager.me().isEnableAndConfigOk()) {
+            handlers.add(new JbootGatewayHandler());
+        }
 
-        handlers.add(new JbootGatewayHandler());
         handlers.add(new AttachmentHandler());
 
         SentinelConfig sentinelConfig = SentinelConfig.get();
@@ -311,7 +313,7 @@ public class JbootCoreConfig extends JFinalConfig {
         }
 
         boolean escapeParas = Jboot.config(JbootWebConfig.class).isEscapeParas();
-        if (escapeParas){
+        if (escapeParas) {
             handlers.add(new XSSHandler());
         }
 
@@ -340,7 +342,7 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootSwaggerManager.me().init();
         LimiterManager.me().init();
         JbootSeataManager.me().init();
-        JbootGatewayManager.me().init();
+//        JbootGatewayManager.me().init();
         JbootSentinelManager.me().init();
 
         JbootAppListenerManager.me().onStart();
