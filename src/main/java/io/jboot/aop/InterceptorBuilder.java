@@ -59,6 +59,48 @@ public interface InterceptorBuilder {
         }
 
 
+        public static boolean hasAnyAnnotation(Class<?> targetClass, Class<? extends Annotation>... annotationClass) {
+            for (Class<? extends Annotation> clazz : annotationClass) {
+                if (hasAnnotation(targetClass, clazz)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        public static boolean hasAnyAnnotation(Method method, Class<? extends Annotation>... annotationClass) {
+            for (Class<? extends Annotation> clazz : annotationClass) {
+                if (hasAnnotation(method, clazz)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        public static Annotation getAnyAnnotation(Class<?> targetClass, Class<? extends Annotation>... annotationClass) {
+            for (Class<? extends Annotation> clazz : annotationClass) {
+                Annotation a = targetClass.getAnnotation(clazz);
+                if (a != null) {
+                    return a;
+                }
+            }
+            return null;
+        }
+
+
+        public static Annotation getAnyAnnotation(Method method, Class<? extends Annotation>... annotationClass) {
+            for (Class<? extends Annotation> clazz : annotationClass) {
+                Annotation a = method.getAnnotation(clazz);
+                if (a != null) {
+                    return a;
+                }
+            }
+            return null;
+        }
+
+
         public static <A extends Annotation> boolean hasAnnotation(Class<?> targetClass, Method method, Class<A> annotationClass) {
             return hasAnnotation(targetClass, annotationClass) || hasAnnotation(method, annotationClass);
         }

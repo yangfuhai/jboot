@@ -58,6 +58,8 @@ import io.jboot.web.JbootWebConfig;
 import io.jboot.web.attachment.AttachmentHandler;
 import io.jboot.web.attachment.LocalAttachmentContainerConfig;
 import io.jboot.web.controller.JbootControllerManager;
+import io.jboot.web.controller.annotation.GetMapping;
+import io.jboot.web.controller.annotation.PostMapping;
 import io.jboot.web.controller.annotation.RequestMapping;
 import io.jboot.web.directive.SharedEnumObject;
 import io.jboot.web.directive.annotation.*;
@@ -163,14 +165,18 @@ public class JbootCoreConfig extends JFinalConfig {
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
-                RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
-                if (mapping != null) {
-                    initRoutes(routes, clazz, mapping.value(), mapping.viewPath());
-                } else {
-                    Path path = clazz.getAnnotation(Path.class);
-                    if (path != null) {
-                        initRoutes(routes, clazz, path.value(), path.viewPath());
-                    }
+//                RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
+//                if (mapping != null) {
+//                    initRoutes(routes, clazz, mapping.value(), mapping.viewPath());
+//                } else {
+//                    Path path = clazz.getAnnotation(Path.class);
+//                    if (path != null) {
+//                        initRoutes(routes, clazz, path.value(), path.viewPath());
+//                    }
+//                }
+                String[] valueAndViewPath = getMappingValueAndViewPath(clazz);
+                if (valueAndViewPath != null) {
+                    initRoutes(routes, clazz, valueAndViewPath[0], valueAndViewPath[1]);
                 }
             }
         }
@@ -187,6 +193,30 @@ public class JbootCoreConfig extends JFinalConfig {
         }
 
         routeList.addAll(routes.getRouteItemList());
+    }
+
+    private String[] getMappingValueAndViewPath(Class<? extends Controller> clazz) {
+        RequestMapping rm = clazz.getAnnotation(RequestMapping.class);
+        if (rm != null) {
+            return new String[]{rm.value(), rm.viewPath()};
+        }
+
+        Path path = clazz.getAnnotation(Path.class);
+        if (path != null) {
+            return new String[]{path.value(), path.viewPath()};
+        }
+
+        GetMapping gp = clazz.getAnnotation(GetMapping.class);
+        if (gp != null) {
+            return new String[]{gp.value(), gp.viewPath()};
+        }
+
+        PostMapping pp = clazz.getAnnotation(PostMapping.class);
+        if (pp != null) {
+            return new String[]{pp.value(), pp.viewPath()};
+        }
+
+        return null;
     }
 
 
