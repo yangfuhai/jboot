@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @AutoLoad
-public class ReqeustMethodLimitInterceptorBuilder implements InterceptorBuilder {
+public class RequestMethodLimitInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
@@ -35,23 +35,23 @@ public class ReqeustMethodLimitInterceptorBuilder implements InterceptorBuilder 
             Set<String> supportMethods = new HashSet<>();
 
             if (Util.hasAnnotation(method, GetRequest.class)) {
-                supportMethods.add("get");
+                supportMethods.add("GET");
             }
             if (Util.hasAnnotation(method, PostRequest.class)) {
-                supportMethods.add("post");
+                supportMethods.add("POST");
             }
             if (Util.hasAnnotation(method, PutRequest.class)) {
-                supportMethods.add("put");
+                supportMethods.add("PUT");
             }
             if (Util.hasAnnotation(method, DeleteRequest.class)) {
-                supportMethods.add("delete");
+                supportMethods.add("DELETE");
             }
             if (Util.hasAnnotation(method, PatchRequest.class)) {
-                supportMethods.add("patch");
+                supportMethods.add("PATCH");
             }
 
             if (!supportMethods.isEmpty()) {
-                interceptors.add(new ReqeustMethodLimitInterceptor(supportMethods));
+                interceptors.add(new RequestMethodLimitInterceptor(supportMethods));
             }
         }
     }

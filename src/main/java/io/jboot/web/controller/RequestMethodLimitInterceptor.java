@@ -21,19 +21,19 @@ import com.jfinal.core.Controller;
 
 import java.util.Set;
 
-public class ReqeustMethodLimitInterceptor implements Interceptor {
+public class RequestMethodLimitInterceptor implements Interceptor {
 
 
     private final Set<String> supportMethods;
 
-    public ReqeustMethodLimitInterceptor(Set<String> supportMethods) {
+    public RequestMethodLimitInterceptor(Set<String> supportMethods) {
         this.supportMethods = supportMethods;
     }
 
     @Override
     public void intercept(Invocation inv) {
         Controller controller = inv.getController();
-        if (supportMethods.contains(controller.getRequest().getMethod().toLowerCase())) {
+        if (supportMethods.contains(controller.getRequest().getMethod().toUpperCase())) {
             inv.invoke();
         } else {
             controller.renderError(405);
