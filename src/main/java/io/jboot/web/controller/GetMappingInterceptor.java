@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 public class GetMappingInterceptor implements Interceptor, InterceptorBuilder {
 
 
-    private static final String GET = "get";
+    private static final String GET = "GET";
 
     @Override
     public void intercept(Invocation inv) {
@@ -44,11 +44,10 @@ public class GetMappingInterceptor implements Interceptor, InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Util.isController(serviceClass)) {
-            if (Util.hasAnnotation(serviceClass, GetMapping.class)
-                    && !Util.hasAnyAnnotation(method, GetRequest.class, PostRequest.class, PutRequest.class, DeleteRequest.class, PatchRequest.class)) {
-                interceptors.addIfNotExist(this);
-            }
+        if (Util.isController(serviceClass)
+                && Util.hasAnnotation(serviceClass, GetMapping.class)
+                && !Util.hasAnyAnnotation(method, GetRequest.class, PostRequest.class, PutRequest.class, DeleteRequest.class, PatchRequest.class)) {
+            interceptors.addIfNotExist(this);
         }
     }
 }

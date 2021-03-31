@@ -28,14 +28,14 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class PostMappingInterceptor implements Interceptor, InterceptorBuilder {
 
-    private static final String POST = "post";
+    private static final String POST = "POST";
 
     @Override
     public void intercept(Invocation inv) {
         Controller controller = inv.getController();
-        if (POST.equalsIgnoreCase(controller.getRequest().getMethod())){
+        if (POST.equalsIgnoreCase(controller.getRequest().getMethod())) {
             inv.invoke();
-        }else {
+        } else {
             controller.renderError(405);
         }
     }
@@ -43,11 +43,10 @@ public class PostMappingInterceptor implements Interceptor, InterceptorBuilder {
 
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Util.isController(serviceClass)) {
-            if (Util.hasAnnotation(serviceClass, PostMapping.class)
-                    && !Util.hasAnyAnnotation(method, GetRequest.class,PostRequest.class, PutRequest.class, DeleteRequest.class,PatchRequest.class)) {
-                interceptors.addIfNotExist(this);
-            }
+        if (Util.isController(serviceClass)
+                && Util.hasAnnotation(serviceClass, PostMapping.class)
+                && !Util.hasAnyAnnotation(method, GetRequest.class, PostRequest.class, PutRequest.class, DeleteRequest.class, PatchRequest.class)) {
+            interceptors.addIfNotExist(this);
         }
     }
 }
