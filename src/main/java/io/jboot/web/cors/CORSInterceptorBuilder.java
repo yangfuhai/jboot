@@ -31,7 +31,7 @@ public class CORSInterceptorBuilder implements InterceptorBuilder {
     @Override
     public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
         if (Util.isController(serviceClass) && Util.hasAnnotation(serviceClass, method, EnableCORS.class)) {
-            interceptors.add(CORSInterceptor.class);
+            interceptors.addToFirst(CORSInterceptor.class);
         }
     }
 

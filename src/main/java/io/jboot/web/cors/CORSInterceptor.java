@@ -47,7 +47,7 @@ public class CORSInterceptor implements Interceptor {
 
 
         String method = inv.getController().getRequest().getMethod();
-        if (METHOD_OPTIONS.equals(method)) {
+        if (METHOD_OPTIONS.equalsIgnoreCase(method)) {
             inv.getController().renderText("");
         } else {
             inv.invoke();
@@ -59,6 +59,7 @@ public class CORSInterceptor implements Interceptor {
         EnableCORS enableCORS = inv.getController().getClass().getAnnotation(EnableCORS.class);
         return enableCORS != null ? enableCORS : inv.getMethod().getAnnotation(EnableCORS.class);
     }
+
 
     private void doConfigCORS(Invocation inv, EnableCORS enableCORS) {
 
