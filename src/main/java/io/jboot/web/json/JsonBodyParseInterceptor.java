@@ -105,7 +105,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
             if (typeArguments.length == 1) {
                 return typeArguments[0];
-            } else if (typeArguments.length > 0) {
+            } else if (typeArguments.length > 1) {
                 TypeVariable<?>[] typeVariables = typeVariable.getGenericDeclaration().getTypeParameters();
                 for (int i = 0; i < typeVariables.length; i++) {
                     if (typeVariable.getName().equals(typeVariables[i].getName())) {
