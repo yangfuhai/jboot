@@ -31,11 +31,9 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.DateUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -55,21 +53,30 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return;
         }
 
-        Parameter[] parameters = inv.getMethod().getParameters();
-        Type[] paraTypes = inv.getMethod().getGenericParameterTypes();
+        Method method = inv.getMethod();
+        Parameter[] parameters = method.getParameters();
+        Type[] paraTypes = method.getGenericParameterTypes();
 
         Object jsonObjectOrArray = JSON.parse(rawData);
 
         for (int index = 0; index < parameters.length; index++) {
             JsonBody jsonBody = parameters[index].getAnnotation(JsonBody.class);
             if (jsonBody != null) {
-                Class<?> typeClass = parameters[index].getType();
+                Class<?> paraClass = parameters[index].getType();
                 Object result = null;
                 try {
-                    result = parseJsonBody(jsonObjectOrArray, typeClass, paraTypes[index], jsonBody.value());
+                    Type paraType = paraTypes[index];
+                    if (paraType instanceof TypeVariable) {
+                        Type variableRawType = getVariableRawType(inv.getController().getClass(), ((TypeVariableImpl<?>) paraType));
+                        if (variableRawType != null) {
+                            paraClass = (Class<?>) variableRawType;
+                            paraType = variableRawType;
+                        }
+                    }
+                    result = parseJsonBody(jsonObjectOrArray, paraClass, paraType, jsonBody.value());
                 } catch (Exception e) {
                     String message = "Can not parse \"" + parameters[index].getType()
-                            + "\" in method " + ClassUtil.buildMethodString(inv.getMethod()) + ", Cause: " + e.getMessage();
+                            + "\" in method " + ClassUtil.buildMethodString(method) + ", Cause: " + e.getMessage();
                     if (jsonBody.skipConvertError()) {
                         LogKit.error(message);
                     } else {
@@ -85,21 +92,47 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    public static Object parseJsonBody(Object jsonObjectOrArray, Class<?> typeClass, Type type, String jsonKey) throws InstantiationException, IllegalAccessException {
-        if (jsonObjectOrArray == null) {
-            return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
+    /**
+     * 获取方法里的泛型参数 T 对于的真实的 Class 类
+     *
+     * @param defClass
+     * @param typeVariable
+     * @return
+     */
+    private static Type getVariableRawType(Class<?> defClass, TypeVariable typeVariable) {
+        Type type = defClass.getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
+            if (typeArguments.length == 1) {
+                return typeArguments[0];
+            } else if (typeArguments.length > 0) {
+                TypeVariable<?>[] typeVariables = typeVariable.getGenericDeclaration().getTypeParameters();
+                for (int i = 0; i < typeVariables.length; i++) {
+                    if (typeVariable.getName().equals(typeVariables[i].getName())) {
+                        return typeArguments[i];
+                    }
+                }
+            }
         }
-        if (Collection.class.isAssignableFrom(typeClass) || typeClass.isArray()) {
-            return parseArray(jsonObjectOrArray, typeClass, type, jsonKey);
+        return null;
+    }
+
+
+    public static Object parseJsonBody(Object jsonObjectOrArray, Class<?> paraClass, Type paraType, String jsonKey) throws InstantiationException, IllegalAccessException {
+        if (jsonObjectOrArray == null) {
+            return paraClass.isPrimitive() ? getPrimitiveDefaultValue(paraClass) : null;
+        }
+        if (Collection.class.isAssignableFrom(paraClass) || paraClass.isArray()) {
+            return parseArray(jsonObjectOrArray, paraClass, paraType, jsonKey);
         } else {
-            return parseObject((JSONObject) jsonObjectOrArray, typeClass, type, jsonKey);
+            return parseObject((JSONObject) jsonObjectOrArray, paraClass, paraType, jsonKey);
         }
     }
 
 
-    private static Object parseObject(JSONObject rawObject, Class<?> typeClass, Type type, String jsonKey) throws IllegalAccessException, InstantiationException {
+    private static Object parseObject(JSONObject rawObject, Class<?> paraClass, Type paraType, String jsonKey) throws IllegalAccessException, InstantiationException {
         if (StrUtil.isBlank(jsonKey)) {
-            return toJavaObject(rawObject, typeClass, type);
+            return toJavaObject(rawObject, paraClass, paraType);
         }
 
         Object result = null;
@@ -131,13 +164,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         if (result == null || StrUtil.EMPTY.equals(result)) {
-            return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
+            return paraClass.isPrimitive() ? getPrimitiveDefaultValue(paraClass) : null;
         }
 
         if (result instanceof JSONObject) {
-            return toJavaObject((JSONObject) result, typeClass, type);
+            return toJavaObject((JSONObject) result, paraClass, paraType);
         } else {
-            return convert(result, typeClass);
+            return convert(result, paraClass);
         }
     }
 
@@ -217,24 +250,24 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     }
 
 
-    private static Object toJavaObject(JSONObject rawObject, Class<?> typeClass, Type type) throws IllegalAccessException, InstantiationException {
+    private static Object toJavaObject(JSONObject rawObject, Class<?> paraClass, Type paraType) throws IllegalAccessException, InstantiationException {
         if (rawObject.isEmpty()) {
-            return typeClass.isPrimitive() ? getPrimitiveDefaultValue(typeClass) : null;
+            return paraClass.isPrimitive() ? getPrimitiveDefaultValue(paraClass) : null;
         }
 
         //非泛型 的 map
-        if ((typeClass == Map.class || typeClass == JSONObject.class) && typeClass == type) {
+        if ((paraClass == Map.class || paraClass == JSONObject.class) && paraClass == paraType) {
             return rawObject;
         }
 
         //非泛型 的 map
-        if (Map.class.isAssignableFrom(typeClass) && typeClass == type && canNewInstance(typeClass)) {
-            Map map = (Map) typeClass.newInstance();
+        if (Map.class.isAssignableFrom(paraClass) && paraClass == paraType && canNewInstance(paraClass)) {
+            Map map = (Map) paraClass.newInstance();
             map.putAll(rawObject);
             return map;
         }
 
-        return rawObject.toJavaObject(type);
+        return rawObject.toJavaObject(paraType);
     }
 
 
@@ -310,16 +343,16 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         return DateUtil.parseDate(value.toString());
     }
 
-    private static Object getPrimitiveDefaultValue(Class<?> typeClass) {
-        if (typeClass == int.class || typeClass == long.class || typeClass == float.class || typeClass == double.class) {
+    private static Object getPrimitiveDefaultValue(Class<?> paraClass) {
+        if (paraClass == int.class || paraClass == long.class || paraClass == float.class || paraClass == double.class) {
             return 0;
-        } else if (typeClass == boolean.class) {
+        } else if (paraClass == boolean.class) {
             return Boolean.FALSE;
-        } else if (typeClass == short.class) {
+        } else if (paraClass == short.class) {
             return (short) 0;
-        } else if (typeClass == byte.class) {
+        } else if (paraClass == byte.class) {
             return (byte) 0;
-        } else if (typeClass == char.class) {
+        } else if (paraClass == char.class) {
             return '\u0000';
         } else {
             //不存在这种类型
