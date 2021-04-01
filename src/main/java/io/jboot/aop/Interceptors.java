@@ -84,6 +84,19 @@ public class Interceptors {
         addToFirst(singleton(interceptorClass));
     }
 
+
+    public void addToFirstIfNotExist(Interceptor interceptor) {
+        if (!contains(interceptor)) {
+            warppers.add(new InterceptorWarpper(interceptor, --minimalWeight));
+        }
+    }
+
+    public void addToFirstIfNotExist(Class<? extends Interceptor> interceptorClass) {
+        if (!contains(interceptorClass)) {
+            addToFirst(singleton(interceptorClass));
+        }
+    }
+
     public boolean addBefore(Interceptor interceptor, Predicate<? super Interceptor> filter) {
         Integer weight = null;
         for (InterceptorWarpper warpper : warppers) {
