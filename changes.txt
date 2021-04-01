@@ -1,3 +1,14 @@
+jboot v3.9.8:
+新增：@GetMapping() 和 @PostMapping() 的支持
+新增：@JsonBody() 注解支持 LocalDate 和 LocalDateTime
+新增：@JsonBody() 注解支持在 Class 定义泛型的功能
+优化：控制输出的 Action 时间执行时间，包含了模板引擎的渲染时间。
+优化：Jwt 拦截器构建器的代码
+优化：门户网关的 Http 代理代码
+优化：升级 Nacos 等依赖到最新版本
+
+
+
 jboot v3.9.7:
 新增：@Lazy 懒加载注入的功能
 新增：JbootController.getOrginalRequest() 方法，用于获取进过 Xss 处理后的原始 Request
