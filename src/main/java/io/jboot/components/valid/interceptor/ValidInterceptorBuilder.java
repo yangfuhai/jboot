@@ -30,7 +30,7 @@ import java.lang.reflect.Parameter;
 public class ValidInterceptorBuilder implements InterceptorBuilder {
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
         Parameter[] parameters = method.getParameters();
         if (parameters != null && parameters.length > 0) {
             for (Parameter p : parameters) {

@@ -43,9 +43,9 @@ public class GetMappingInterceptor implements Interceptor, InterceptorBuilder {
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Util.isController(serviceClass)
-                && Util.hasAnnotation(serviceClass, GetMapping.class)
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
+        if (Util.isController(targetClass)
+                && Util.hasAnnotation(targetClass, GetMapping.class)
                 && !Util.hasAnyAnnotation(method, GetRequest.class, PostRequest.class, PutRequest.class, DeleteRequest.class, PatchRequest.class)) {
             interceptors.addIfNotExist(this);
         }

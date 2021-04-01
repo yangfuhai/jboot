@@ -28,8 +28,8 @@ import java.lang.reflect.Method;
 public class JwtInterceptorBuilder implements InterceptorBuilder {
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Util.isJbootController(serviceClass) && Util.hasAnnotation(serviceClass, method, EnableJwt.class)) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
+        if (Util.isJbootController(targetClass) && Util.hasAnnotation(targetClass, method, EnableJwt.class)) {
             interceptors.addToFirst(JwtInterceptor.class);
         }
     }

@@ -32,7 +32,7 @@ public class TccInterceptorBuilder implements InterceptorBuilder {
     private static Boolean hasSeataTccDependency = ClassUtil.hasClass("io.seata.rm.tcc.api.TwoPhaseBusinessAction");
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
         if (hasSeataTccDependency && Util.hasAnnotation(method, TwoPhaseBusinessAction.class)) {
             interceptors.add(new TccActionInterceptor());
         }

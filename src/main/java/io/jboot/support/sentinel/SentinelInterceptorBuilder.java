@@ -33,7 +33,7 @@ public class SentinelInterceptorBuilder implements InterceptorBuilder {
     private static Boolean isEnable = SentinelConfig.get().isEnable();
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
         if (hasSentinelDependency && isEnable && Util.hasAnnotation(method, SentinelResource.class)) {
             interceptors.add(SentinelInterceptor.class);
         }

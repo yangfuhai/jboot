@@ -32,7 +32,7 @@ public class LimiterInterceptorBuilder implements InterceptorBuilder {
     private LimiterManager manager = LimiterManager.me();
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
 
         if (manager.isEnable() && !manager.getConfigPackageOrTargets().isEmpty()) {
             interceptors.add(LimiterGlobalInterceptor.class);

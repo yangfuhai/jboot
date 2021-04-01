@@ -362,15 +362,15 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Controller.class.isAssignableFrom(serviceClass)) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
+        if (Controller.class.isAssignableFrom(targetClass)) {
             Parameter[] parameters = method.getParameters();
             if (parameters != null && parameters.length > 0) {
                 for (Parameter p : parameters) {
                     if (p.getAnnotation(JsonBody.class) != null) {
                         Class<?> typeClass = p.getType();
                         if ((Map.class.isAssignableFrom(typeClass) || Collection.class.isAssignableFrom(typeClass) || typeClass.isArray())
-                                && !JbootController.class.isAssignableFrom(serviceClass)) {
+                                && !JbootController.class.isAssignableFrom(targetClass)) {
                             throw new IllegalArgumentException("Can not use @JsonBody for Map/List(Collection)/Array type if your controller not extends JbootController, method: " + ClassUtil.buildMethodString(method));
                         }
 

@@ -33,7 +33,7 @@ public class MetricInterceptorBuilder implements InterceptorBuilder {
     private static JbootMetricConfig config = Jboot.config(JbootMetricConfig.class);
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
         if (!config.isConfigOk() || !config.isEnable()) {
             return;
         }

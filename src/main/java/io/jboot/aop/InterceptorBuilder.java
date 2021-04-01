@@ -37,7 +37,7 @@ import java.lang.reflect.Method;
  */
 public interface InterceptorBuilder {
 
-    void build(Class<?> serviceClass, Method method, Interceptors interceptors);
+    void build(Class<?> targetClass, Method method, Interceptors interceptors);
 
     class Util {
 

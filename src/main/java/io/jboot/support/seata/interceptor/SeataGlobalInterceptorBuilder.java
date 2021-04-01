@@ -31,7 +31,7 @@ public class SeataGlobalInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
 
         if (Util.hasAnnotation(method, SeataGlobalTransactional.class)
                 || Util.hasAnnotation(method, SeataGlobalLock.class)) {

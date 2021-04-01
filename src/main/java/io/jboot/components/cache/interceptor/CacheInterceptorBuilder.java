@@ -33,7 +33,7 @@ public class CacheInterceptorBuilder implements InterceptorBuilder {
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
         if (Util.hasAnnotation(method,CacheEvict.class)) {
             interceptors.add(CacheEvictInterceptor.class);
         }

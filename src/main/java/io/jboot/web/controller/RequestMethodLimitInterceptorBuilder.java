@@ -29,8 +29,8 @@ public class RequestMethodLimitInterceptorBuilder implements InterceptorBuilder 
 
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Util.isController(serviceClass)) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
+        if (Util.isController(targetClass)) {
 
             Set<String> supportMethods = new HashSet<>();
 

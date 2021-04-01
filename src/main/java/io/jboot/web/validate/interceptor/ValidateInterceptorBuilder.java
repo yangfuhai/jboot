@@ -31,16 +31,16 @@ import java.lang.reflect.Method;
 public class ValidateInterceptorBuilder implements InterceptorBuilder {
 
     @Override
-    public void build(Class<?> serviceClass, Method method, Interceptors interceptors) {
-        if (Util.isController(serviceClass) && Util.hasAnnotation(method, EmptyValidate.class)) {
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
+        if (Util.isController(targetClass) && Util.hasAnnotation(method, EmptyValidate.class)) {
             interceptors.add(EmptyValidateInterceptor.class);
         }
 
-        if (Util.isController(serviceClass) && Util.hasAnnotation(method, RegexValidate.class)) {
+        if (Util.isController(targetClass) && Util.hasAnnotation(method, RegexValidate.class)) {
             interceptors.add(RegexValidateInterceptor.class);
         }
 
-        if (Util.isController(serviceClass) && Util.hasAnnotation(method, CaptchaValidate.class)) {
+        if (Util.isController(targetClass) && Util.hasAnnotation(method, CaptchaValidate.class)) {
             interceptors.add(CaptchaValidateInterceptor.class);
         }
     }
