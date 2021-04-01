@@ -21,7 +21,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.ActionException;
-import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
 import com.jfinal.render.RenderManager;
 import io.jboot.aop.InterceptorBuilder;
@@ -363,7 +362,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     @Override
     public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
-        if (Controller.class.isAssignableFrom(targetClass)) {
+        if (Util.isController(targetClass)) {
             Parameter[] parameters = method.getParameters();
             if (parameters != null && parameters.length > 0) {
                 for (Parameter p : parameters) {
