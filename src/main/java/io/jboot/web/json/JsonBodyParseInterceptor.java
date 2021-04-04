@@ -30,7 +30,6 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.DateUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.lang.reflect.*;
 import java.time.LocalDate;
@@ -66,7 +65,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 try {
                     Type paraType = paraTypes[index];
                     if (paraType instanceof TypeVariable) {
-                        Type variableRawType = getVariableRawType(inv.getController().getClass(), ((TypeVariableImpl<?>) paraType));
+                        Type variableRawType = getTypeVariableRawType(inv.getController().getClass(), ((TypeVariable<?>) paraType));
                         if (variableRawType != null) {
                             paraClass = (Class<?>) variableRawType;
                             paraType = variableRawType;
@@ -98,7 +97,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
      * @param typeVariable
      * @return
      */
-    private static Type getVariableRawType(Class<?> defClass, TypeVariable typeVariable) {
+    private static Type getTypeVariableRawType(Class<?> defClass, TypeVariable<?> typeVariable) {
         Type type = defClass.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
