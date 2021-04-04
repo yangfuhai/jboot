@@ -129,7 +129,7 @@ jboot.rpc.dubbo.provider.name2.host = xx.xx.xx
 jboot.rpc.providers = com.yourdomain.AAAService:name1,com.yourdomain.XXXService:name2
 ```
 
-provider 的更多配置情况参考：http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-provider.html
+provider 的更多配置情况参考：https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-provider/
 
 
 ## 开始使用
@@ -438,7 +438,7 @@ jboot.rpc.dubbo.provider.default = true // 给应用配置默认的 provider
 
 #### application
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-application.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-application/
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.application`
 
@@ -452,7 +452,7 @@ jboot.rpc.dubbo.application.version = xx.xx.xx
 
 #### registry
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-registry.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-registry/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.registry`
@@ -512,7 +512,7 @@ jboot.rpc.dubbo.provider.address = default,other1
 
 #### protocol
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-protocol.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-protocol/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.protocol`
@@ -528,7 +528,7 @@ jboot.rpc.dubbo.protocol.port = 28080
 
 #### provider
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-provider.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-provider/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.provider`
@@ -543,7 +543,7 @@ jboot.rpc.dubbo.provider.host = 127.0.0.1
 
 #### consumer
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-consumer.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-consumer/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.consumer`
@@ -554,23 +554,11 @@ http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-consumer.html
 jboot.rpc.dubbo.consumer.timeout = 127.0.0.1
 ```
 
-#### SSL
-
-对应的配置类： org.apache.dubbo.config.SslConfig
-
-
-对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.ssl`
-
-例如：
-
-```
-jboot.rpc.dubbo.ssl.serverKeyCertChainPath = xxx
-```
 
 
 #### monitor
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-monitor.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-monitor/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.monitor`
@@ -600,7 +588,7 @@ jboot.rpc.dubbo.metrics.protocol = xxx
 #### module
 
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-module.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-module/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.module`
@@ -630,7 +618,7 @@ jboot.rpc.dubbo.metadata-report.group = xxx
 #### ConfigCenter
 
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-config-center.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-config-center/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.config-center`
@@ -644,7 +632,7 @@ jboot.rpc.dubbo.config-center.group = xxx
 #### method
 
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-method.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-method/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.method`
@@ -658,7 +646,7 @@ jboot.rpc.dubbo.method.name = xxx
 #### argument
 
 
-http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-argument.html
+https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-argument/
 
 
 对应的 jboot 的配置前缀为： `jboot.rpc.dubbo.argument`
