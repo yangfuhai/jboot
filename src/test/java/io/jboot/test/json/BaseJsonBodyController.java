@@ -6,11 +6,15 @@ import io.jboot.web.json.JsonBody;
 
 public class BaseJsonBodyController<K,T> extends JbootController {
 
+
     public void update(@JsonBody() T t) {
-        renderJson("update--->" + t.getClass().toString());
+        renderJson("update--->" + t);
     }
 
-    public void update2(@JsonBody() K k) {
-        renderJson("update2--->" + k.getClass().toString());
-    }
+//    public void update(@JsonBody() K t) {
+//        renderJson("update--->" + t.getClass().toString());
+//    }
+//
+//    public void test33(Map map){}
+
 }

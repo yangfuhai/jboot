@@ -18,6 +18,7 @@ package io.jboot.utils;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class ArrayUtil {
@@ -58,6 +59,19 @@ public class ArrayUtil {
             offset += array.length;
         }
         return result;
+    }
+
+    public static <T> boolean contains(T[] array, T element) {
+        if (array == null || array.length == 0) {
+            return false;
+        }
+
+        for (T t : array) {
+            if (Objects.equals(t, element)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
