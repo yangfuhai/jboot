@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.ActionException;
+import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
 import com.jfinal.render.RenderManager;
 import io.jboot.aop.InterceptorBuilder;
@@ -45,17 +46,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     @Override
     public void intercept(Invocation inv) {
-        String rawData = inv.getController().getRawData();
-        if (StrUtil.isBlank(rawData)) {
-            inv.invoke();
-            return;
-        }
 
+        Controller controller = inv.getController();
         Method method = inv.getMethod();
         Parameter[] parameters = method.getParameters();
         Type[] paraTypes = method.getGenericParameterTypes();
 
-        Object jsonObjectOrArray = JSON.parse(rawData);
+        Object jsonObjectOrArray = JSON.parse(controller.getRawData());
 
         for (int index = 0; index < parameters.length; index++) {
             JsonBody jsonBody = parameters[index].getAnnotation(JsonBody.class);
@@ -65,7 +62,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
                 try {
                     Type paraType = paraTypes[index];
                     if (paraType instanceof TypeVariable) {
-                        Type variableRawType = getTypeVariableRawType(inv.getController().getClass(), ((TypeVariable<?>) paraType));
+                        Type variableRawType = getTypeVariableRawType(controller.getClass(), ((TypeVariable<?>) paraType));
                         if (variableRawType != null) {
                             paraClass = (Class<?>) variableRawType;
                             paraType = variableRawType;
