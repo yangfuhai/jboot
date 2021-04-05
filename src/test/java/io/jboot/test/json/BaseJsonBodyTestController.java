@@ -6,9 +6,9 @@ import io.jboot.web.controller.annotation.RequestMapping;
 public class BaseJsonBodyTestController extends BaseJsonBodyController<MyBean,JsonMap>{
 
 
-    public void update(Object object,String aa) {
-
-    }
+//    public void update(Object object,String aa) {
+//
+//    }
 
 //    @Override
 //    public void update(Map jsonMap) {
