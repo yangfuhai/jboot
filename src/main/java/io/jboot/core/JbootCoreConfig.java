@@ -132,13 +132,6 @@ public class JbootCoreConfig extends JFinalConfig {
 
         constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.isDevMode());
-//        ApiConfigKit.setDevMode(Jboot.isDevMode());
-//
-//        JbootWechatConfig config = Jboot.config(JbootWechatConfig.class);
-//        ApiConfig apiConfig = config.getApiConfig();
-//        if (apiConfig != null) {
-//            ApiConfigKit.putApiConfig(apiConfig);
-//        }
 
         constants.setLogFactory(new JbootLogFactory());
         constants.setMaxPostSize(1024 * 1024 * 2000);
@@ -168,15 +161,6 @@ public class JbootCoreConfig extends JFinalConfig {
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
-//                RequestMapping mapping = clazz.getAnnotation(RequestMapping.class);
-//                if (mapping != null) {
-//                    initRoutes(routes, clazz, mapping.value(), mapping.viewPath());
-//                } else {
-//                    Path path = clazz.getAnnotation(Path.class);
-//                    if (path != null) {
-//                        initRoutes(routes, clazz, path.value(), path.viewPath());
-//                    }
-//                }
                 String[] valueAndViewPath = getMappingValueAndViewPath(clazz);
                 if (valueAndViewPath != null) {
                     initRoutes(routes, clazz, valueAndViewPath[0], valueAndViewPath[1]);
@@ -375,7 +359,6 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootSwaggerManager.me().init();
         LimiterManager.me().init();
         JbootSeataManager.me().init();
-//        JbootGatewayManager.me().init();
         JbootSentinelManager.me().init();
 
         JbootAppListenerManager.me().onStart();
