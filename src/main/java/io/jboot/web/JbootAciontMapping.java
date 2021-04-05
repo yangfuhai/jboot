@@ -85,7 +85,6 @@ public class JbootAciontMapping extends ActionMapping {
                         }
 
                         if (method.getParameterCount() == 0
-                                || existActionMethod.getParameterCount() == 0
                                 || method.getParameterCount() != existActionMethod.getParameterCount()
                                 || method.getDeclaringClass() != existActionMethod.getDeclaringClass()) {
                             throw new RuntimeException(buildMsg(actionKey, method, existActionMethod));
@@ -103,21 +102,15 @@ public class JbootAciontMapping extends ActionMapping {
                                 continue;
                             }
                             // newType 是父类
-                            if (newType.isAssignableFrom(existType)) {
-                                if (newType == Object.class && ArrayUtil.contains(argumentTypes, existType)) {
-                                    break;
-                                } else {
-                                    throw new RuntimeException(buildMsg(actionKey, method, existActionMethod));
-                                }
+                            else if (newType.isAssignableFrom(existType) && ArrayUtil.contains(argumentTypes, existType)) {
+                                break;
                             }
                             // newType 是子类
-                            else if (existType.isAssignableFrom(newType)) {
-                                if (existType == Object.class && ArrayUtil.contains(argumentTypes, newType)) {
-                                    mapping.put(actionKey, newAction);
-                                    break;
-                                } else {
-                                    throw new RuntimeException(buildMsg(actionKey, method, existActionMethod));
-                                }
+                            else if (existType.isAssignableFrom(newType) && ArrayUtil.contains(argumentTypes, newType)) {
+                                mapping.put(actionKey, newAction);
+                                break;
+                            } else {
+                                throw new RuntimeException(buildMsg(actionKey, method, existActionMethod));
                             }
                         }
 

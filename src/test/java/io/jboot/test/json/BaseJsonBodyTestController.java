@@ -15,10 +15,13 @@ public class BaseJsonBodyTestController extends BaseJsonBodyController<MyBean,Js
 //        renderText("JsonMap ok");
 //    }
 
-    @Override
-    public void update(JsonMap map) {
-        super.update(map);
-    }
+//    @Override
+//    public void update(@JsonBody JsonMap map) {
+//        super.update(map);
+//    }
+//    public void update(HashMap map) {
+////        super.update(map);
+//    }
 
     //    @Override
 //    public void test33(HashMap map) {
