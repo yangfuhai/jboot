@@ -52,7 +52,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         Parameter[] parameters = method.getParameters();
         Type[] paraTypes = method.getGenericParameterTypes();
 
-        Object jsonObjectOrArray = JSON.parse(controller.getRawData());
+        Object jsonObjectOrArray = StrUtil.isBlank(controller.getRawData()) ? null : JSON.parse(controller.getRawData());
 
         for (int index = 0; index < parameters.length; index++) {
             JsonBody jsonBody = parameters[index].getAnnotation(JsonBody.class);
