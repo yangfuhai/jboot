@@ -16,7 +16,6 @@
 package io.jboot.app.config;
 
 
-import io.jboot.utils.StrUtil;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -29,9 +28,9 @@ public class ConfigUtil {
 
     public static <T> T newInstance(Class<T> clazz) {
         try {
-            Constructor constructor = clazz.getDeclaredConstructor();
+            Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
-            return (T) constructor.newInstance();
+            return constructor.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,7 +38,7 @@ public class ConfigUtil {
     }
 
     public static List<ConfigPara> parseParas(String string) {
-        if (StrUtil.isBlank(string)) {
+        if (isBlank(string)) {
             return null;
         }
         List<ConfigPara> paras = new LinkedList<>();
@@ -77,7 +76,7 @@ public class ConfigUtil {
         if (paras == null || paras.size() == 0) {
             return value;
         }
-
+        JbootConfigManager manager = JbootConfigManager.me();
         StringBuilder newStringBuilder = new StringBuilder(value.length());
         int index = 0;
         for (ConfigPara para : paras) {
@@ -85,8 +84,8 @@ public class ConfigUtil {
                 newStringBuilder.append(value, index, para.getStart());
             }
 
-            String configValue = JbootConfigManager.me().getConfigValue(para.getKey());
-            configValue = StrUtil.isNotBlank(configValue) ? configValue : para.getDefaultValue();
+            String configValue = manager.getConfigValue(para.getKey());
+            configValue = isNotBlank(configValue) ? configValue : para.getDefaultValue();
             newStringBuilder.append(configValue);
             index = para.getEnd() + 1;
         }
@@ -99,7 +98,7 @@ public class ConfigUtil {
     }
 
 
-    public static List<Method> getClassSetMethods(Class clazz) {
+    public static List<Method> getClassSetMethods(Class<?> clazz) {
         List<Method> setMethods = new ArrayList<>();
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
@@ -140,7 +139,7 @@ public class ConfigUtil {
     }
 
     public static boolean isNotBlank(Object str) {
-        return str == null ? false : !isBlank(str.toString());
+        return str != null && !isBlank(str.toString());
     }
 
     public static boolean areNotBlank(String... strs) {
@@ -168,7 +167,7 @@ public class ConfigUtil {
         return joiner.toString();
     }
 
-    
+
     static Properties readExternalProperties() {
         String currentJarFilePath = ConfigUtil.class.getProtectionDomain().getCodeSource().getLocation().getFile();
         File fileDir = new File(currentJarFilePath).getParentFile();

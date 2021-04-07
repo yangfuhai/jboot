@@ -17,7 +17,6 @@ package io.jboot.app.config;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.jfinal.kit.LogKit;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.app.config.support.apollo.ApolloConfigManager;
 import io.jboot.app.config.support.nacos.NacosConfigManager;
@@ -191,36 +190,32 @@ public class JbootConfigManager {
      * @return
      */
     public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
-        Object configObject = ConfigUtil.newInstance(clazz);
-        List<Method> setterMethods = ConfigUtil.getClassSetMethods(clazz);
-        if (setterMethods != null) {
-            for (Method setterMethod : setterMethods) {
+        T configObject = ConfigUtil.newInstance(clazz);
+        for (Method setterMethod : ConfigUtil.getClassSetMethods(clazz)) {
+            String key = buildKey(prefix, setterMethod);
+            String value = getConfigValue(key);
 
-                String key = buildKey(prefix, setterMethod);
-                String value = getConfigValue(key);
-
-                if (ConfigUtil.isNotBlank(file)) {
-                    JbootProp prop = new JbootProp(file);
-                    String filePropValue = getConfigValue(prop.getProperties(), key);
-                    if (ConfigUtil.isNotBlank(filePropValue)) {
-                        value = filePropValue;
-                    }
+            if (ConfigUtil.isNotBlank(file)) {
+                JbootProp prop = new JbootProp(file);
+                String filePropValue = getConfigValue(prop.getProperties(), key);
+                if (ConfigUtil.isNotBlank(filePropValue)) {
+                    value = filePropValue;
                 }
+            }
 
-                if (ConfigUtil.isNotBlank(value)) {
-                    Object val = ConfigUtil.convert(setterMethod.getParameterTypes()[0], value, setterMethod.getGenericParameterTypes()[0]);
-                    if (val != null) {
-                        try {
-                            setterMethod.invoke(configObject, val);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+            if (ConfigUtil.isNotBlank(value)) {
+                Object val = ConfigUtil.convert(setterMethod.getParameterTypes()[0], value, setterMethod.getGenericParameterTypes()[0]);
+                if (val != null) {
+                    try {
+                        setterMethod.invoke(configObject, val);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
 
-        return (T) configObject;
+        return configObject;
     }
 
 
@@ -426,7 +421,7 @@ public class JbootConfigManager {
             try {
                 listener.onChange(key, newValue, oldValue);
             } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
+                com.jfinal.kit.LogKit.error(ex.toString(), ex);
             }
         }
     }
