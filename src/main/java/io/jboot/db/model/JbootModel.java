@@ -710,9 +710,27 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         String selectPartSql = _getDialect().forPaginateSelect(loadColumns);
         String fromPartSql = _getDialect().forPaginateFrom(alias, joins, _getTableName(), columns.getList(), orderBy);
 
-        return columns.isEmpty()
-                ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)
-                : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
+//        return columns.isEmpty()
+//                ? paginate(pageNumber, pageSize, selectPartSql, fromPartSql)
+//                : paginate(pageNumber, pageSize, selectPartSql, fromPartSql, columns.getValueArray());
+
+        Config config = _getConfig();
+        Connection conn = null;
+        try {
+            conn = config.getConnection();
+//            String totalRowSql = config.dialect.forPaginateTotalRow(select, sqlExceptSelect, this);
+            String totalRowSqlExceptSelect = _getDialect().forPaginateFrom(alias, joins, _getTableName(), columns.getList(), null);
+            String totalRowSql = config.getDialect().forPaginateTotalRow(selectPartSql, totalRowSqlExceptSelect,this);
+
+            StringBuilder findSql = new StringBuilder();
+            findSql.append(selectPartSql).append(' ').append(fromPartSql);
+
+            return doPaginateByFullSql(config, conn, pageNumber, pageSize, null, totalRowSql, findSql,  columns.getValueArray());
+        } catch (Exception e) {
+            throw new ActiveRecordException(e);
+        } finally {
+            config.close(conn);
+        }
     }
 
 
