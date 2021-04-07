@@ -18,6 +18,7 @@ package io.jboot.db.tx;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.*;
 import io.jboot.aop.InterceptorBuilder;
@@ -55,6 +56,11 @@ public class TxEnableInterceptor implements Interceptor, InterceptorBuilder {
 
             inv.invoke();
 
+            //没有返回值的方法，只要没有异常就是提交事务
+            if (inv.getMethod().getReturnType() == void.class) {
+                return true;
+            }
+
             Object result = inv.getReturnValue();
 
             if (result == null) {
@@ -76,7 +82,7 @@ public class TxEnableInterceptor implements Interceptor, InterceptorBuilder {
             try {
                 dbPro.txInNewThread(transactionLevel, runnable).get();
             } catch (Exception e) {
-                e.printStackTrace();
+                LogKit.error(e.toString(), e);
             }
         } else {
             dbPro.tx(transactionLevel, runnable);
