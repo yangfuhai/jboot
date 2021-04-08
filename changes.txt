@@ -1,3 +1,14 @@
+jboot v3.9.9:
+新增：@TxEnable() 注解的支持，方便在 Service 进行事务处理
+优化：优化 JsonBodyParseInterceptor.java 代码
+优化：升级 JFinal、FastJson 等到最新版本
+修复：泛型的 Controller 无法覆盖子类 Action 的问题 [#I3FG0B](https://gitee.com/JbootProjects/jboot/issues/I3FG0B)
+修复：使用 @JsonBody 注解，同时使用 泛型 的 Controller 在 openJdk 下可能出错的问题
+修复：paginateByColumns 传入复杂的 Order By 可能产生错误的问题
+文档：修复 Dubbo 文档 url 路径错误的问题
+
+
+
 jboot v3.9.8:
 新增：@GetMapping() 和 @PostMapping() 的支持
 新增：@JsonBody() 注解支持 LocalDate 和 LocalDateTime
