@@ -16,6 +16,7 @@
 package io.jboot.components.rpc.dubbo;
 
 
+import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
@@ -122,6 +123,29 @@ class DubboUtil {
 
         //方法配置 配置
         Map<String, MethodConfig> methodConfigs = configs(MethodConfig.class, "jboot.rpc.dubbo.method");
+        for (MethodConfig methodConfig : methodConfigs.values()) {
+            Object onreturn = methodConfig.getOnreturn();
+            if (onreturn instanceof String && ((String) onreturn).contains(".")) {
+                String[] objectAndMethod = ((String) onreturn).split("\\.");
+                methodConfig.setOnreturn(Jboot.getBean(objectAndMethod[0]));
+                methodConfig.setOnreturnMethod(objectAndMethod[1]);
+            }
+
+            Object oninvoke = methodConfig.getOninvoke();
+            if (oninvoke instanceof String && ((String) oninvoke).contains(".")) {
+                String[] objectAndMethod = ((String) oninvoke).split("\\.");
+                methodConfig.setOninvoke(Jboot.getBean(objectAndMethod[0]));
+                methodConfig.setOninvokeMethod(objectAndMethod[1]);
+            }
+
+            Object onthrow = methodConfig.getOnthrow();
+            if (onthrow instanceof String && ((String) onthrow).contains(".")) {
+                String[] objectAndMethod = ((String) onthrow).split("\\.");
+                methodConfig.setOnthrow(Jboot.getBean(objectAndMethod[0]));
+                methodConfig.setOnthrowMethod(objectAndMethod[1]);
+            }
+        }
+
         RPCUtil.setChildConfig(methodConfigs, argumentConfigs, "jboot.rpc.dubbo.method", "argument");
 
 
