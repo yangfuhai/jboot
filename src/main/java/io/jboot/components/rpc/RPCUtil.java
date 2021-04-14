@@ -148,28 +148,26 @@ public class RPCUtil {
                         ? prefix + "." + arrName //"jboot.rpc.dubbo.method.argument"
                         : prefix + "." + entry.getKey() + "." + arrName;//"jboot.rpc.dubbo.method."+entry.getKey()+".argument";
 
-                String configValue = Jboot.configValue(configKey);
-                if (StrUtil.isNotBlank(configValue)) {
-                    List<F> argCfgList = new ArrayList<>();
-                    Set<String> arguments = StrUtil.splitToSetByComma(configValue);
-                    for (String arg : arguments) {
-                        F fillObj = dataSource.get(arg);
-                        if (fillObj != null) {
-                            argCfgList.add(fillObj);
-                        }
+                String configValue = Jboot.configValue(configKey, "default");
+                List<F> argCfgList = new ArrayList<>();
+                Set<String> arguments = StrUtil.splitToSetByComma(configValue);
+                for (String arg : arguments) {
+                    F fillObj = dataSource.get(arg);
+                    if (fillObj != null) {
+                        argCfgList.add(fillObj);
                     }
-                    if (!argCfgList.isEmpty()) {
-                        try {
-                            //setArguments/setMethods/setRegistries
-                            String setterMethodName = arrName.equals("registry")
-                                    ? "setRegistries"
-                                    : "set" + StrUtil.firstCharToUpperCase(arrName) + "s";
+                }
+                if (!argCfgList.isEmpty()) {
+                    try {
+                        //setArguments/setMethods/setRegistries
+                        String setterMethodName = arrName.equals("registry")
+                                ? "setRegistries"
+                                : "set" + StrUtil.firstCharToUpperCase(arrName) + "s";
 
-                            Method method = entry.getValue().getClass().getMethod(setterMethodName, List.class);
-                            method.invoke(entry.getValue(), argCfgList);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        Method method = entry.getValue().getClass().getMethod(setterMethodName, List.class);
+                        method.invoke(entry.getValue(), argCfgList);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
