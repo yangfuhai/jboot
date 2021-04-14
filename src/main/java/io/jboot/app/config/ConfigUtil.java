@@ -219,7 +219,7 @@ public class ConfigUtil {
 
     public static final Object convert(Class<?> convertClass, String s, Type genericType) {
 
-        if (convertClass == String.class || s == null) {
+        if (convertClass == String.class || s == null || convertClass == Object.class) {
             return s;
         }
 
