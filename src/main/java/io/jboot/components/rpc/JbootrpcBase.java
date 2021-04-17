@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class JbootrpcBase implements Jbootrpc {
 
-    protected static final Map<String, Object> objectCache = new ConcurrentHashMap<>();
+    protected static final Map<JbootrpcReferenceConfig, Object> objectCache = new ConcurrentHashMap<>();
     protected static JbootrpcConfig rpcConfig = Jboot.config(JbootrpcConfig.class);
     private boolean started = false;
 
@@ -31,11 +31,10 @@ public abstract class JbootrpcBase implements Jbootrpc {
     @Override
     public <T> T serviceObtain(Class<T> interfaceClass, JbootrpcReferenceConfig config) {
 
-        String key = buildCacheKey(interfaceClass, config);
-        T object = (T) objectCache.get(key);
+        T object = (T) objectCache.get(config);
         if (object == null) {
             synchronized (this) {
-                object = (T) objectCache.get(key);
+                object = (T) objectCache.get(config);
                 if (object == null) {
 
                     // onStart 方法是在 app 启动完成后，Jboot 主动去调用的
@@ -45,7 +44,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
 
                     object = onServiceCreate(interfaceClass, config);
                     if (object != null) {
-                        objectCache.put(key, object);
+                        objectCache.put(config, object);
                     }
                 }
             }
@@ -53,7 +52,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
         return object;
     }
 
-    protected void invokeOnStartIfNecessary() {
+    protected synchronized void invokeOnStartIfNecessary() {
         if (!started) {
             synchronized (this) {
                 if (!started) {
@@ -76,13 +75,6 @@ public abstract class JbootrpcBase implements Jbootrpc {
     @Override
     public void onStop() {
 
-    }
-
-    protected String buildCacheKey(Class interfaceClass, JbootrpcReferenceConfig config) {
-        StringBuilder sb = new StringBuilder(interfaceClass.getName());
-        return sb.append(":").append(config.getGroup())
-                .append(":").append(config.getVersion())
-                .toString();
     }
 
     public boolean isStarted() {

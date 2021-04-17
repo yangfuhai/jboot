@@ -15,9 +15,8 @@
  */
 package io.jboot.components.rpc;
 
-import io.jboot.components.rpc.annotation.RPCInject;
-
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -129,10 +128,6 @@ public class JbootrpcReferenceConfig implements Serializable {
 
 
     public JbootrpcReferenceConfig() {
-    }
-
-    public JbootrpcReferenceConfig(RPCInject inject) {
-        RPCUtil.appendAnnotation(RPCInject.class, inject, this);
     }
 
     public String getVersion() {
@@ -277,5 +272,23 @@ public class JbootrpcReferenceConfig implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        JbootrpcReferenceConfig that = (JbootrpcReferenceConfig) o;
+        return Objects.equals(version, that.version) && Objects.equals(group, that.group) && Objects.equals(url, that.url) && Objects.equals(generic, that.generic) && Objects.equals(check, that.check) && Objects.equals(retries, that.retries) && Objects.equals(loadbalance, that.loadbalance) && Objects.equals(async, that.async) && Objects.equals(actives, that.actives) && Objects.equals(timeout, that.timeout) && Objects.equals(application, that.application) && Objects.equals(module, that.module) && Objects.equals(consumer, that.consumer) && Objects.equals(monitor, that.monitor) && Objects.equals(registry, that.registry) && Objects.equals(protocol, that.protocol) && Objects.equals(tag, that.tag) && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(version, group, url, generic, check, retries, loadbalance, async, actives, timeout, application, module, consumer, monitor, registry, protocol, tag, id);
     }
 }

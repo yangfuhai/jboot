@@ -19,8 +19,11 @@ import io.jboot.components.rpc.JbootrpcBase;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.utils.StrUtil;
+import org.apache.dubbo.config.ConsumerConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.ServiceConfig;
+
+import java.lang.reflect.Method;
 
 public class JbootDubborpc extends JbootrpcBase {
 
@@ -49,6 +52,10 @@ public class JbootDubborpc extends JbootrpcBase {
             reference.setConsumer(DubboUtil.getConsumer(consumer));
         }
 
+        //copy consumer config to Refercence Config
+        copyDefaultConsumerConfig(reference);
+
+
         if (reference.getGroup() == null) {
             reference.setGroup(rpcConfig.getGroup(interfaceClass.getName()));
         }
@@ -57,7 +64,30 @@ public class JbootDubborpc extends JbootrpcBase {
             reference.setVersion(rpcConfig.getVersion(interfaceClass.getName()));
         }
 
+
         return reference.get();
+    }
+
+    private <T> void copyDefaultConsumerConfig(ReferenceConfig<T> reference) {
+        ConsumerConfig defaultConfig = reference.getConsumer();
+        if (defaultConfig == null){
+            return;
+        }
+
+        Method[] consumeMethods =  ConsumerConfig.class.getMethods();
+        for (Method method: consumeMethods){
+            if (method.getName().startsWith("get")){
+                Class<?> returnType = method.getReturnType();
+                try {
+                    String settterMethodName = "set"+method.getName().substring(3);
+                    Method referSetterMethod = ReferenceConfig.class.getMethod(settterMethodName,returnType);
+                    Object data = method.invoke(defaultConfig);
+                    referSetterMethod.invoke(reference,data);
+                } catch (Exception e) {
+                    // doNothing
+                }
+            }
+        }
     }
 
 
