@@ -21,18 +21,20 @@ public class DubboClientZookeeperDemo extends JbootController {
         //注册中心地址，即zookeeper的地址
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.address", "127.0.0.1:2181");
 
+        JbootApplication.setBootArg("jboot.rpc.dubbo.consumer.mock", "true");
+
         JbootApplication.run(args);
     }
 
 
-    @RPCInject
+    @RPCInject(check = false)
     private BlogService blogService;
 
     public void index() {
 
         System.out.println("DubboClientZookeeperDemo.index()");
 
-        System.out.println(blogService);
+        System.out.println("blogService>>>>" + blogService);
 
         renderText(blogService.findById());
     }
