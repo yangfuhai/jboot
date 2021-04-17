@@ -70,19 +70,21 @@ public class JbootDubborpc extends JbootrpcBase {
 
     private <T> void copyDefaultConsumerConfig(ReferenceConfig<T> reference) {
         ConsumerConfig defaultConfig = reference.getConsumer();
-        if (defaultConfig == null){
+        if (defaultConfig == null) {
             return;
         }
 
-        Method[] consumeMethods =  ConsumerConfig.class.getMethods();
-        for (Method method: consumeMethods){
-            if (method.getName().startsWith("get")){
+        Method[] consumeMethods = ConsumerConfig.class.getMethods();
+        for (Method method : consumeMethods) {
+            if (method.getName().startsWith("get")) {
                 Class<?> returnType = method.getReturnType();
                 try {
-                    String settterMethodName = "set"+method.getName().substring(3);
-                    Method referSetterMethod = ReferenceConfig.class.getMethod(settterMethodName,returnType);
+                    String settterMethodName = "set" + method.getName().substring(3);
+                    Method referSetterMethod = ReferenceConfig.class.getMethod(settterMethodName, returnType);
                     Object data = method.invoke(defaultConfig);
-                    referSetterMethod.invoke(reference,data);
+                    if (data != null) {
+                        referSetterMethod.invoke(reference, data);
+                    }
                 } catch (Exception e) {
                     // doNothing
                 }
