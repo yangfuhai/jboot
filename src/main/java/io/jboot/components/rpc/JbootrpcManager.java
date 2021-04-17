@@ -121,12 +121,12 @@ public class JbootrpcManager {
     public Jbootrpc createJbootrpc(String type) {
 
         switch (type) {
+            case JbootrpcConfig.TYPE_DUBBO:
+                return new JbootDubborpc();
             case JbootrpcConfig.TYPE_MOTAN:
                 return new JbootMotanrpc();
             case JbootrpcConfig.TYPE_LOCAL:
                 return new JbootLocalrpc();
-            case JbootrpcConfig.TYPE_DUBBO:
-                return new JbootDubborpc();
             default:
                 return JbootSpiLoader.load(Jbootrpc.class, type);
         }
