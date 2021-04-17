@@ -152,7 +152,7 @@ class DubboUtil {
         //消费者 配置
         Map<String, ConsumerConfig> consumerConfigs = configs(ConsumerConfig.class, "jboot.rpc.dubbo.consumer");
         RPCUtil.setChildConfig(consumerConfigs, methodConfigs, "jboot.rpc.dubbo.consumer", "method");
-        RPCUtil.setChildConfig(consumerConfigs, protocolConfigs, "jboot.rpc.dubbo.consumer", "protocol");
+//        RPCUtil.setChildConfig(consumerConfigs, protocolConfigs, "jboot.rpc.dubbo.consumer", "protocol");
         RPCUtil.setChildConfig(consumerConfigs, registryConfigs, "jboot.rpc.dubbo.consumer", "registry");
 
 
