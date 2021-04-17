@@ -33,6 +33,7 @@ import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.components.rpc.Jbootrpc;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
+import io.jboot.components.rpc.ReferenceConfigCache;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
@@ -262,12 +263,11 @@ public class JbootAopFactory extends AopFactory {
     private Object createFieldObjectByRPCComponent(Object targetObject, Field field, RPCInject rpcInject) {
         try {
             Class<?> fieldInjectedClass = field.getType();
-            JbootrpcReferenceConfig referenceConfig = new JbootrpcReferenceConfig(rpcInject);
-
+            JbootrpcReferenceConfig referenceConfig = ReferenceConfigCache.getReferenceConfig(rpcInject);
             Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
             return jbootrpc.serviceObtain(fieldInjectedClass, referenceConfig);
         } catch (Exception ex) {
-            LOG.error("Can not inject rpc service in " + targetObject.getClass() + " by config " + rpcInject, ex);
+            LOG.error("Can not inject rpc service for \"" + field.getName() + "\" in " + ClassUtil.getUsefulClass(targetObject.getClass()) + ", because @RPCInject.check ==\"true\" and target is not available. \n" + rpcInject, ex);
         }
         return null;
     }
