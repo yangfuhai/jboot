@@ -28,6 +28,7 @@ import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootRpcException;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
+import io.jboot.utils.ClassUtil;
 
 import java.io.Serializable;
 import java.util.List;
@@ -55,7 +56,7 @@ public class JbootrpcManager {
     }
 
 
-    private static Class[] default_excludes = new Class[]{
+    private static Class<?>[] default_excludes = new Class[]{
             JbootEventListener.class,
             JbootmqMessageListener.class,
             Serializable.class
@@ -92,9 +93,8 @@ public class JbootrpcManager {
         for (Class<?> clazz : classes) {
             RPCBean rpcBean = clazz.getAnnotation(RPCBean.class);
             Class<?>[] inters = clazz.getInterfaces();
-//            Class<?>[] inters = ClassUtil.getInterfaces(clazz);
-            if (inters == null || inters.length == 0) {
-                throw new JbootException(String.format("class[%s] has no interface, can not use @RPCBean", clazz));
+            if (inters.length == 0) {
+                throw new JbootException("@RPCBean can not use for class \""+ ClassUtil.getUsefulClass(clazz).getName() +"\", because it has no interface.");
             }
 
             //对某些系统的类 进行排除，例如：Serializable 等

@@ -47,6 +47,8 @@ public class JbootGatewayManager {
     private ConcurrentHashMap<String, JbootGatewayConfig> configMap;
 
     private ScheduledThreadPoolExecutor fixedScheduler;
+    private long fixedSchedulerInitialDelay = 10;
+    private long fixedSchedulerDelay = 10;
 
     private NoneHealthUrlErrorRender noneHealthUrlErrorRender;
 
@@ -71,9 +73,6 @@ public class JbootGatewayManager {
             configMap = new ConcurrentHashMap<>();
         }
         configMap.put(config.getName(), config);
-
-        // 启动定时健康检查
-        startHealthCheckIfNecessary();
     }
 
 
@@ -81,6 +80,13 @@ public class JbootGatewayManager {
         return configMap != null && !configMap.isEmpty();
     }
 
+
+    public void init() {
+        // 启动定时健康检查
+        if (isEnableAndConfigOk()) {
+            startHealthCheckIfNecessary();
+        }
+    }
 
     /**
      * 开始健康检查
@@ -98,7 +104,7 @@ public class JbootGatewayManager {
                         } catch (Exception ex) {
                             LogKit.error(ex.toString(), ex);
                         }
-                    }, 10, 10, TimeUnit.SECONDS);
+                    }, fixedSchedulerInitialDelay, fixedSchedulerDelay, TimeUnit.SECONDS);
                 }
             }
         }
@@ -148,6 +154,26 @@ public class JbootGatewayManager {
 
     public Map<String, JbootGatewayConfig> getConfigMap() {
         return configMap;
+    }
+
+    public ScheduledThreadPoolExecutor getFixedScheduler() {
+        return fixedScheduler;
+    }
+
+    public long getFixedSchedulerInitialDelay() {
+        return fixedSchedulerInitialDelay;
+    }
+
+    public void setFixedSchedulerInitialDelay(long fixedSchedulerInitialDelay) {
+        this.fixedSchedulerInitialDelay = fixedSchedulerInitialDelay;
+    }
+
+    public long getFixedSchedulerDelay() {
+        return fixedSchedulerDelay;
+    }
+
+    public void setFixedSchedulerDelay(long fixedSchedulerDelay) {
+        this.fixedSchedulerDelay = fixedSchedulerDelay;
     }
 
     /**

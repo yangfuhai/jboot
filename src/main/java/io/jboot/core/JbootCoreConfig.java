@@ -348,11 +348,9 @@ public class JbootCoreConfig extends JFinalConfig {
 
         JbootAppListenerManager.me().onStartBefore();
 
-        JsonManager.me().setDefaultDatePattern("yyyy-MM-dd HH:mm:ss");
+        JsonManager.me().setDefaultDatePattern(DateUtil.dateMillisecondPattern);
 
-        /**
-         * 初始化
-         */
+        // 初始化 Jboot 内置组件
         JbootrpcManager.me().init();
         JbootShiroManager.me().init(routeList);
         JbootScheduleManager.me().init();
@@ -360,8 +358,10 @@ public class JbootCoreConfig extends JFinalConfig {
         LimiterManager.me().init();
         JbootSeataManager.me().init();
         JbootSentinelManager.me().init();
+        JbootGatewayManager.me().init();
 
         JbootAppListenerManager.me().onStart();
+
 
         //使用场景：需要等所有组件 onStart() 完成之后，再去执行某些工作的时候
         JbootAppListenerManager.me().onStartFinish();

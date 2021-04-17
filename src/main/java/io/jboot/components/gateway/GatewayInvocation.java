@@ -34,7 +34,7 @@ public class GatewayInvocation {
     private GatewayHttpProxy proxy;
     private String proxyUrl;
 
-    private boolean devMode = Jboot.isDevMode();
+    private static boolean devMode = Jboot.isDevMode();
 
     private int index = 0;
 
