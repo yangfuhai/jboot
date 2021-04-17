@@ -8,7 +8,7 @@ public class CallBack {
 
     }
 
-    public void onthrow(Throwable ex, Integer id) {
+    public void onthrow(Throwable ex) {
 //            errors.put(id, ex);
         System.out.println(">>>>>onthrow>>>>");
     }
