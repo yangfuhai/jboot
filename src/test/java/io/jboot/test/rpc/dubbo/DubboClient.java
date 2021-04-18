@@ -39,7 +39,6 @@ public class DubboClient extends JbootController {
         JbootApplication.setBootArg("jboot.rpc.dubbo.method.oninvoke", "callback.oninvoke");
         JbootApplication.setBootArg("jboot.rpc.dubbo.method.onthrow", "callback.onthrow");
 
-        JbootApplication.setBootArg("jboot.rpc.dubbo.consumer.mock", "return null");
 
         //设置直连模式，方便调试，默认为注册中心
         JbootApplication.setBootArg("jboot.rpc.urls", "io.jboot.test.rpc.commons.BlogService:127.0.0.1:28080");

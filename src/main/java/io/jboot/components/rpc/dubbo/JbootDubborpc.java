@@ -20,8 +20,10 @@ import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.rpc.RPCUtil;
 import io.jboot.utils.StrUtil;
+import org.apache.dubbo.common.URL;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.ServiceConfig;
+
 
 public class JbootDubborpc extends JbootrpcBase {
 
@@ -42,6 +44,9 @@ public class JbootDubborpc extends JbootrpcBase {
 
         String directUrl = rpcConfig.getUrl(interfaceClass.getName());
         if (StrUtil.isNotBlank(directUrl)) {
+            if (URL.valueOf(directUrl).getProtocol() == null) {
+                directUrl = "dubbo://" + directUrl;
+            }
             reference.setUrl(directUrl);
         }
 
@@ -79,7 +84,7 @@ public class JbootDubborpc extends JbootrpcBase {
         }
 
         //copy provider config to Service
-        RPCUtil.copyNotNullFields(service.getProvider(), service, false);
+        RPCUtil.copyNotNullFields(service.getProvider(), service, true);
 
 
         if (service.getGroup() == null) {

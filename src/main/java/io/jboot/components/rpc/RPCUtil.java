@@ -137,7 +137,10 @@ public class RPCUtil {
         Method[] fromObjGetters = copyFrom.getClass().getMethods();
         for (Method getter : fromObjGetters) {
             String getterMethodName = getter.getName();
-            if (getterMethodName.length() > 3 && getterMethodName.startsWith("get") && Modifier.isPublic(getter.getModifiers())) {
+            if (getterMethodName.length() > 3
+                    && getterMethodName.startsWith("get")
+                    && Modifier.isPublic(getter.getModifiers())
+                    && getter.getParameterCount() == 0) {
                 try {
                     Class<?> returnType = getter.getReturnType();
                     if (override) {
@@ -147,7 +150,7 @@ public class RPCUtil {
                             setter.invoke(copyTo, newData);
                         }
                     } else {
-                        Object oldData = copyTo.getClass().getMethod(getterMethodName, returnType).invoke(copyTo);
+                        Object oldData = copyTo.getClass().getMethod(getterMethodName).invoke(copyTo);
                         if (oldData == null) {
                             Object newData = getter.invoke(copyFrom);
                             if (newData != null) {
