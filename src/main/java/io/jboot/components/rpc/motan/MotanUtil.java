@@ -90,7 +90,7 @@ public class MotanUtil {
 
     public static RefererConfig toRefererConfig(JbootrpcReferenceConfig rc) {
         RefererConfig refererConfig = new RefererConfig();
-        RPCUtil.copyFields(rc, refererConfig);
+        RPCUtil.copyDeclaredFields(rc, refererConfig);
 
 
         //referer protocol
@@ -135,7 +135,7 @@ public class MotanUtil {
 
     public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc) {
         ServiceConfig serviceConfig = new ServiceConfig();
-        RPCUtil.copyFields(sc, serviceConfig);
+        RPCUtil.copyDeclaredFields(sc, serviceConfig);
 
 
         //service protocol

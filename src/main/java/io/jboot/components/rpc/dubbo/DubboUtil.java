@@ -176,7 +176,7 @@ class DubboUtil {
 
     public static ReferenceConfig toReferenceConfig(JbootrpcReferenceConfig jbootReferenceConfig) {
         ReferenceConfig referenceConfig = new ReferenceConfig();
-        RPCUtil.copyFields(jbootReferenceConfig, referenceConfig);
+        RPCUtil.copyDeclaredFields(jbootReferenceConfig, referenceConfig);
 
         // reference consumer
         if (jbootReferenceConfig.getConsumer() != null) {
@@ -211,7 +211,7 @@ class DubboUtil {
 
     public static ServiceConfig toServiceConfig(JbootrpcServiceConfig jbootServiceConfig) {
         ServiceConfig serviceConfig = new ServiceConfig();
-        RPCUtil.copyFields(jbootServiceConfig, serviceConfig);
+        RPCUtil.copyDeclaredFields(jbootServiceConfig, serviceConfig);
 
         // service provider
         if (StrUtil.isNotBlank(jbootServiceConfig.getProvider())) {

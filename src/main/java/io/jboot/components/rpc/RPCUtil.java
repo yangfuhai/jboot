@@ -95,7 +95,7 @@ public class RPCUtil {
      * @param copyFrom
      * @param copyTo
      */
-    public static void copyFields(Object copyFrom, Object copyTo) {
+    public static void copyDeclaredFields(Object copyFrom, Object copyTo) {
         Field[] fields = copyFrom.getClass().getDeclaredFields();
         for (Field field : fields) {
             try {
@@ -116,7 +116,7 @@ public class RPCUtil {
     }
 
 
-    private static Method getMethod(Class clazz, String methodName, Class type) {
+    private static Method getMethod(Class<?> clazz, String methodName, Class<?> type) {
         try {
             return clazz.getMethod(methodName, getBoxedClass(type));
         } catch (NoSuchMethodException e) {
@@ -125,8 +125,42 @@ public class RPCUtil {
             } catch (NoSuchMethodException ex) {
             }
         }
-
         return null;
+    }
+
+
+    public static void copyNotNullFields(Object copyFrom, Object copyTo, boolean override) {
+        if (copyFrom == null || copyTo == null) {
+            return;
+        }
+
+        Method[] fromObjGetters = copyFrom.getClass().getMethods();
+        for (Method getter : fromObjGetters) {
+            String getterMethodName = getter.getName();
+            if (getterMethodName.length() > 3 && getterMethodName.startsWith("get") && Modifier.isPublic(getter.getModifiers())) {
+                try {
+                    Class<?> returnType = getter.getReturnType();
+                    if (override) {
+                        Object newData = getter.invoke(copyFrom);
+                        if (newData != null) {
+                            Method setter = copyTo.getClass().getMethod("set" + getterMethodName.substring(3), returnType);
+                            setter.invoke(copyTo, newData);
+                        }
+                    } else {
+                        Object oldData = copyTo.getClass().getMethod(getterMethodName, returnType).invoke(copyTo);
+                        if (oldData == null) {
+                            Object newData = getter.invoke(copyFrom);
+                            if (newData != null) {
+                                Method setter = copyTo.getClass().getMethod("set" + getterMethodName.substring(3), returnType);
+                                setter.invoke(copyTo, newData);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // doNothing
+                }
+            }
+        }
     }
 
 
