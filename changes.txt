@@ -1,3 +1,15 @@
+jboot v3.9.10:
+新增：Dubbo Method 的 oninvoke/onreturn/onthrow 配置的支持
+新增：不同的 @RPCIject 持有不同 RPC 对象的支持
+优化：当 provider 未启动，但是开启 check 后无法注入，但提示信息不明确的问题
+优化：升级 jackson、dubbo 等到最新版本
+修复：ConfigUtil 在读取 Object 时可能出错的问题
+修复：RPCUtil 在配置 default 有时可能无效的问题
+修复：Dubbo 版本升级后，不再支持对 consumer 的 protocol 配置
+修复：Dubbo 升级到 2.7.10 后，若不配置直连协议，启动出错的问题
+
+
+
 jboot v3.9.9:
 新增：@TxEnable() 注解的支持，方便在 Service 进行事务处理
 优化：优化 JsonBodyParseInterceptor.java 代码
