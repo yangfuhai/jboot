@@ -272,16 +272,19 @@ class DubboUtil {
 
     private static <T> Map<String, T> configs(Class<T> clazz, String prefix) {
         Map<String, T> ret = JbootConfigUtil.getConfigModels(clazz, prefix);
-        for (Map.Entry<String, T> entry : ret.entrySet()) {
-            if ("default".equals(entry.getKey())) {
-                if (entry.getValue() instanceof ProviderConfig) {
-                    ((ProviderConfig) entry).setDefault(true);
-                } else if (entry.getValue() instanceof ConsumerConfig) {
-                    ((ConsumerConfig) entry).setDefault(true);
-                } else if (entry.getValue() instanceof ProtocolConfig) {
-                    ((ProtocolConfig) entry).setDefault(true);
-                } else if (entry.getValue() instanceof RegistryConfig) {
-                    ((RegistryConfig) entry).setDefault(true);
+
+        if (ret.size() > 0 && !RPCUtil.isDefaultConfigExist(clazz, ret)) {
+            for (Map.Entry<String, T> entry : ret.entrySet()) {
+                if ("default".equals(entry.getKey())) {
+                    if (entry.getValue() instanceof ProviderConfig) {
+                        ((ProviderConfig) entry).setDefault(true);
+                    } else if (entry.getValue() instanceof ConsumerConfig) {
+                        ((ConsumerConfig) entry).setDefault(true);
+                    } else if (entry.getValue() instanceof ProtocolConfig) {
+                        ((ProtocolConfig) entry).setDefault(true);
+                    } else if (entry.getValue() instanceof RegistryConfig) {
+                        ((RegistryConfig) entry).setDefault(true);
+                    }
                 }
             }
         }

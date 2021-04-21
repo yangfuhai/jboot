@@ -217,12 +217,18 @@ public class MotanUtil {
 
     private static <T> Map<String, T> configs(Class<T> clazz, String prefix) {
         Map<String, T> ret = JbootConfigUtil.getConfigModels(clazz, prefix);
-        for (Map.Entry<String, T> entry : ret.entrySet()) {
-            if ("default".equals(entry.getKey())) {
-                if (entry.getValue() instanceof BasicServiceInterfaceConfig) {
-                    ((BasicServiceInterfaceConfig) entry).setDefault(true);
-                } else if (entry.getValue() instanceof BasicRefererInterfaceConfig) {
-                    ((BasicRefererInterfaceConfig) entry).setDefault(true);
+
+        if (ret.size() > 0
+                && (clazz == BasicServiceInterfaceConfig.class || clazz == BasicRefererInterfaceConfig.class)
+                && !RPCUtil.isDefaultConfigExist(clazz, ret)) {
+
+            for (Map.Entry<String, T> entry : ret.entrySet()) {
+                if ("default".equals(entry.getKey())) {
+                    if (entry.getValue() instanceof BasicServiceInterfaceConfig) {
+                        ((BasicServiceInterfaceConfig) entry).setDefault(true);
+                    } else if (entry.getValue() instanceof BasicRefererInterfaceConfig) {
+                        ((BasicRefererInterfaceConfig) entry).setDefault(true);
+                    }
                 }
             }
         }

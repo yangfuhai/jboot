@@ -167,6 +167,24 @@ public class RPCUtil {
     }
 
 
+    public static <T> boolean isDefaultConfigExist(Class<T> clazz, Map<String, T> ret) {
+        try {
+            Field field = clazz.getField("isDefault");
+            field.setAccessible(true);
+            for (Object obj : ret.values()) {
+                Boolean fieldValue = (Boolean) field.get(obj);
+                if (fieldValue != null && fieldValue) {
+                    return true;
+                }
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            // do nothing
+        }
+        return false;
+    }
+
+
+
     /**
      * 设置子节点配置，比如 ProviderConfig 下的 MethodsConfig ，或者 MethodConfig 下的 ArgumentConfig 等
      *
