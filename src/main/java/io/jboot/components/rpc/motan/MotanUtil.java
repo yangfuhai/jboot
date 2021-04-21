@@ -88,15 +88,29 @@ public class MotanUtil {
     }
 
 
-    public static RefererConfig toRefererConfig(JbootrpcReferenceConfig rc) {
+    public static RefererConfig toRefererConfig(JbootrpcReferenceConfig jbootrpcReferenceConfig) {
         RefererConfig refererConfig = new RefererConfig();
-        RPCUtil.copyDeclaredFields(rc, refererConfig);
+        RPCUtil.copyDeclaredFields(jbootrpcReferenceConfig, refererConfig);
+
+
+        // reference consumer
+        if (jbootrpcReferenceConfig.getConsumer() != null) {
+            refererConfig.setBasicReferer(baseRefererConfigMap.get(jbootrpcReferenceConfig.getConsumer()));
+        }
+        // set default consumer
+        else {
+            for (BasicRefererInterfaceConfig baseConfig : baseRefererConfigMap.values()) {
+                if (baseConfig.isDefault() != null && baseConfig.isDefault()) {
+                    refererConfig.setBasicReferer(baseConfig);
+                }
+            }
+        }
 
 
         //referer protocol
-        if (StrUtil.isNotBlank(rc.getProtocol())) {
+        if (StrUtil.isNotBlank(jbootrpcReferenceConfig.getProtocol())) {
             List<ProtocolConfig> protocolConfigs = new ArrayList<>();
-            Set<String> protocolNames = StrUtil.splitToSetByComma(rc.getRegistry());
+            Set<String> protocolNames = StrUtil.splitToSetByComma(jbootrpcReferenceConfig.getRegistry());
             for (String protocalName : protocolNames) {
                 ProtocolConfig registryConfig = protocolConfigMap.get(protocalName);
                 if (registryConfig != null) {
@@ -112,9 +126,9 @@ public class MotanUtil {
 
 
         //referer registry
-        if (StrUtil.isNotBlank(rc.getRegistry())) {
+        if (StrUtil.isNotBlank(jbootrpcReferenceConfig.getRegistry())) {
             List<RegistryConfig> registryConfigs = new ArrayList<>();
-            Set<String> registryNames = StrUtil.splitToSetByComma(rc.getRegistry());
+            Set<String> registryNames = StrUtil.splitToSetByComma(jbootrpcReferenceConfig.getRegistry());
             for (String registryName : registryNames) {
                 RegistryConfig registryConfig = registryConfigMap.get(registryName);
                 if (registryConfig != null) {
@@ -133,15 +147,29 @@ public class MotanUtil {
     }
 
 
-    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig sc) {
+    public static ServiceConfig toServiceConfig(JbootrpcServiceConfig jbootrpcServiceConfig) {
         ServiceConfig serviceConfig = new ServiceConfig();
-        RPCUtil.copyDeclaredFields(sc, serviceConfig);
+        RPCUtil.copyDeclaredFields(jbootrpcServiceConfig, serviceConfig);
+
+
+        // reference consumer
+        if (jbootrpcServiceConfig.getProvider() != null) {
+            serviceConfig.setBasicService(baseServiceConfigMap.get(jbootrpcServiceConfig.getProvider()));
+        }
+        // set default consumer
+        else {
+            for (BasicServiceInterfaceConfig baseConfig : baseServiceConfigMap.values()) {
+                if (baseConfig.isDefault() != null && baseConfig.isDefault()) {
+                    serviceConfig.setBasicService(baseConfig);
+                }
+            }
+        }
 
 
         //service protocol
-        if (StrUtil.isNotBlank(sc.getProtocol())) {
+        if (StrUtil.isNotBlank(jbootrpcServiceConfig.getProtocol())) {
             List<ProtocolConfig> protocolConfigs = new ArrayList<>();
-            Set<String> protocolNames = StrUtil.splitToSetByComma(sc.getRegistry());
+            Set<String> protocolNames = StrUtil.splitToSetByComma(jbootrpcServiceConfig.getRegistry());
             for (String protocalName : protocolNames) {
                 ProtocolConfig registryConfig = protocolConfigMap.get(protocalName);
                 if (registryConfig != null) {
@@ -157,9 +185,9 @@ public class MotanUtil {
 
 
         //service registry
-        if (StrUtil.isNotBlank(sc.getRegistry())) {
+        if (StrUtil.isNotBlank(jbootrpcServiceConfig.getRegistry())) {
             List<RegistryConfig> registryConfigs = new ArrayList<>();
-            Set<String> registryNames = StrUtil.splitToSetByComma(sc.getRegistry());
+            Set<String> registryNames = StrUtil.splitToSetByComma(jbootrpcServiceConfig.getRegistry());
             for (String registryName : registryNames) {
                 RegistryConfig registryConfig = registryConfigMap.get(registryName);
                 if (registryConfig != null) {
@@ -188,7 +216,17 @@ public class MotanUtil {
     }
 
     private static <T> Map<String, T> configs(Class<T> clazz, String prefix) {
-        return JbootConfigUtil.getConfigModels(clazz, prefix);
+        Map<String, T> ret = JbootConfigUtil.getConfigModels(clazz, prefix);
+        for (Map.Entry<String, T> entry : ret.entrySet()) {
+            if ("default".equals(entry.getKey())) {
+                if (entry.getValue() instanceof BasicServiceInterfaceConfig) {
+                    ((BasicServiceInterfaceConfig) entry).setDefault(true);
+                } else if (entry.getValue() instanceof BasicRefererInterfaceConfig) {
+                    ((BasicRefererInterfaceConfig) entry).setDefault(true);
+                }
+            }
+        }
+        return ret;
     }
 
     private static <T> List<T> toList(Map<String, T> map) {
