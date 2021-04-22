@@ -277,13 +277,13 @@ class DubboUtil {
             for (Map.Entry<String, T> entry : ret.entrySet()) {
                 if ("default".equals(entry.getKey())) {
                     if (entry.getValue() instanceof ProviderConfig) {
-                        ((ProviderConfig) entry).setDefault(true);
+                        ((ProviderConfig) entry.getValue()).setDefault(true);
                     } else if (entry.getValue() instanceof ConsumerConfig) {
-                        ((ConsumerConfig) entry).setDefault(true);
+                        ((ConsumerConfig) entry.getValue()).setDefault(true);
                     } else if (entry.getValue() instanceof ProtocolConfig) {
-                        ((ProtocolConfig) entry).setDefault(true);
+                        ((ProtocolConfig) entry.getValue()).setDefault(true);
                     } else if (entry.getValue() instanceof RegistryConfig) {
-                        ((RegistryConfig) entry).setDefault(true);
+                        ((RegistryConfig) entry.getValue()).setDefault(true);
                     }
                 }
             }

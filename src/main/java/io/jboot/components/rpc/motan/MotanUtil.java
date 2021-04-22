@@ -225,9 +225,9 @@ public class MotanUtil {
             for (Map.Entry<String, T> entry : ret.entrySet()) {
                 if ("default".equals(entry.getKey())) {
                     if (entry.getValue() instanceof BasicServiceInterfaceConfig) {
-                        ((BasicServiceInterfaceConfig) entry).setDefault(true);
+                        ((BasicServiceInterfaceConfig) entry.getValue()).setDefault(true);
                     } else if (entry.getValue() instanceof BasicRefererInterfaceConfig) {
-                        ((BasicRefererInterfaceConfig) entry).setDefault(true);
+                        ((BasicRefererInterfaceConfig) entry.getValue()).setDefault(true);
                     }
                 }
             }
