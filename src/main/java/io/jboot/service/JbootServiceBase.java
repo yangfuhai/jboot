@@ -188,8 +188,11 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     public boolean deleteById(Object id) {
-        shouldUpdateCache(ACTION_DEL, null, id);
-        return DAO.deleteById(id);
+        boolean result = DAO.deleteById(id);
+        if (result) {
+            shouldUpdateCache(ACTION_DEL, null, id);
+        }
+        return result;
     }
 
 
@@ -200,8 +203,11 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     public boolean delete(M model) {
-        shouldUpdateCache(ACTION_DEL, model, model._getIdValue());
-        return model.delete();
+        boolean result = model.delete();
+        if (result) {
+            shouldUpdateCache(ACTION_DEL, model, model._getIdValue());
+        }
+        return result;
     }
 
 
@@ -212,10 +218,13 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     public boolean batchDeleteByIds(Object... ids) {
-        for (Object id : ids) {
-            shouldUpdateCache(ACTION_DEL, null, id);
+        boolean result = DAO.batchDeleteByIds(ids);
+        if (result) {
+            for (Object id : ids) {
+                shouldUpdateCache(ACTION_DEL, null, id);
+            }
         }
-        return DAO.batchDeleteByIds(ids);
+        return result;
     }
 
 
@@ -226,8 +235,12 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return id if success
      */
     public Object save(M model) {
-        shouldUpdateCache(ACTION_ADD, model, model._getIdValue());
-        return model.save() ? model._getIdValue() : null;
+        boolean result = model.save();
+        if (result) {
+            shouldUpdateCache(ACTION_ADD, model, model._getIdValue());
+            return model._getIdValue();
+        }
+        return null;
     }
 
 
@@ -253,8 +266,11 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     public boolean update(M model) {
-        shouldUpdateCache(ACTION_UPDATE, model, model._getIdValue());
-        return model.update();
+        boolean result = model.update();
+        if (result) {
+            shouldUpdateCache(ACTION_UPDATE, model, model._getIdValue());
+        }
+        return result;
     }
 
 
