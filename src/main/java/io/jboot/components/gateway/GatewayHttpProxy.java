@@ -27,10 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -47,13 +44,15 @@ public class GatewayHttpProxy {
     private String contentType;
     private Exception exception;
 
+    private Map<String, String> headers;
+
     public GatewayHttpProxy(JbootGatewayConfig config) {
         this.readTimeOut = config.getProxyReadTimeout();
         this.connectTimeOut = config.getProxyConnectTimeout();
         this.retries = config.getProxyRetries();
         this.contentType = config.getProxyContentType();
-
     }
+
 
     public void sendRequest(String url, HttpServletRequest req, HttpServletResponse resp) {
         int triesCount = retries < 0 ? 0 : retries;
@@ -75,7 +74,7 @@ public class GatewayHttpProxy {
     }
 
 
-    public void doSendRequest(String url, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    protected void doSendRequest(String url, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         HttpURLConnection conn = null;
         try {
@@ -117,7 +116,7 @@ public class GatewayHttpProxy {
     }
 
 
-    private void copyRequestStreamToConnection(HttpServletRequest req, HttpURLConnection conn) throws IOException {
+    protected void copyRequestStreamToConnection(HttpServletRequest req, HttpURLConnection conn) throws IOException {
         OutputStream outStream = null;
         InputStream inStream = null;
         try {
@@ -134,7 +133,7 @@ public class GatewayHttpProxy {
     }
 
 
-    private void copyConnStreamToResponse(HttpURLConnection conn, HttpServletResponse resp) throws IOException {
+    protected void copyConnStreamToResponse(HttpURLConnection conn, HttpServletResponse resp) throws IOException {
         if (resp.isCommitted()) {
             return;
         }
@@ -145,7 +144,7 @@ public class GatewayHttpProxy {
             inStream = getInputStream(conn);
             outStream = resp.getOutputStream();
             byte[] buffer = new byte[1024];
-            for (int len = -1; (len = inStream.read(buffer)) != -1; ) {
+            for (int len; (len = inStream.read(buffer)) != -1; ) {
                 outStream.write(buffer, 0, len);
             }
             outStream.flush();
@@ -155,7 +154,7 @@ public class GatewayHttpProxy {
     }
 
 
-    private static void quetlyClose(Closeable... closeables) {
+    protected static void quetlyClose(Closeable... closeables) {
         for (Closeable closeable : closeables) {
             if (closeable != null) {
                 try {
@@ -167,9 +166,9 @@ public class GatewayHttpProxy {
     }
 
 
-    private void configResponse(HttpServletResponse resp, HttpURLConnection conn) throws IOException {
+    protected void configResponse(HttpServletResponse resp, HttpURLConnection conn) throws IOException {
 
-        if (resp.isCommitted()){
+        if (resp.isCommitted()) {
             return;
         }
 
@@ -203,7 +202,7 @@ public class GatewayHttpProxy {
         }
     }
 
-    private static InputStream getInputStream(HttpURLConnection conn) throws IOException {
+    protected InputStream getInputStream(HttpURLConnection conn) throws IOException {
         InputStream stream = conn.getResponseCode() >= 400
                 ? conn.getErrorStream()
                 : conn.getInputStream();
@@ -216,7 +215,7 @@ public class GatewayHttpProxy {
     }
 
 
-    private void configConnection(HttpURLConnection conn, HttpServletRequest req) throws ProtocolException {
+    protected void configConnection(HttpURLConnection conn, HttpServletRequest req) throws ProtocolException {
 
         conn.setReadTimeout(readTimeOut);
         conn.setConnectTimeout(connectTimeOut);
@@ -235,9 +234,15 @@ public class GatewayHttpProxy {
                 }
             }
         }
+
+        if (this.headers != null) {
+            for (Map.Entry<String, String> entry : this.headers.entrySet()) {
+                conn.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
-    private static HttpURLConnection getConnection(String urlString) {
+    protected HttpURLConnection getConnection(String urlString) {
         try {
             if (urlString.toLowerCase().startsWith("https")) {
                 return getHttpsConnection(urlString);
@@ -249,13 +254,13 @@ public class GatewayHttpProxy {
         }
     }
 
-    private static HttpURLConnection getHttpConnection(String urlString) throws Exception {
+    protected HttpURLConnection getHttpConnection(String urlString) throws Exception {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         return conn;
     }
 
-    private static HttpsURLConnection getHttpsConnection(String urlString) throws Exception {
+    protected HttpsURLConnection getHttpsConnection(String urlString) throws Exception {
         URL url = new URL(urlString);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         conn.setHostnameVerifier(hnv);
@@ -269,7 +274,7 @@ public class GatewayHttpProxy {
         return conn;
     }
 
-    private static X509TrustManager trustAnyTrustManager = new X509TrustManager() {
+    protected static X509TrustManager trustAnyTrustManager = new X509TrustManager() {
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) {
         }
@@ -284,11 +289,34 @@ public class GatewayHttpProxy {
         }
     };
 
-    private static HostnameVerifier hnv = (hostname, session) -> true;
+    protected static HostnameVerifier hnv = (hostname, session) -> true;
 
 
     public Exception getException() {
         return exception;
     }
 
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public GatewayHttpProxy addHeader(String key, String value) {
+        if (this.headers == null) {
+            this.headers = new HashMap<>();
+        }
+        this.headers.put(key, value);
+        return this;
+    }
+
+    public GatewayHttpProxy addHeaders(Map<String, String> headers) {
+        if (this.headers == null) {
+            this.headers = new HashMap<>();
+        }
+        this.headers.putAll(headers);
+        return this;
+    }
 }
