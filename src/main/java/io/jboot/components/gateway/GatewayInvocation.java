@@ -157,7 +157,6 @@ public class GatewayInvocation {
         this.proxy = proxy;
     }
 
-
     public boolean hasException() {
         return proxy.getException() != null;
     }

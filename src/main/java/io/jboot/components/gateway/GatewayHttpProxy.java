@@ -38,13 +38,23 @@ public class GatewayHttpProxy {
 
     private static final Log LOG = Log.getLog(GatewayHttpProxy.class);
 
-    private int readTimeOut;
-    private int connectTimeOut;
-    private int retries;
-    private String contentType;
-    private Exception exception;
+    private int readTimeOut = 10000; //10s
+    private int connectTimeOut = 5000; //5s
+    private int retries = 2;
+    private String contentType = JbootGatewayConfig.DEFAULT_PROXY_CONTENT_TYPE;
+
+
+    private boolean instanceFollowRedirects = false;
+    private boolean useCaches = false;
 
     private Map<String, String> headers;
+
+    private Exception exception;
+
+
+    public GatewayHttpProxy() {
+    }
+
 
     public GatewayHttpProxy(JbootGatewayConfig config) {
         this.readTimeOut = config.getProxyReadTimeout();
@@ -55,7 +65,7 @@ public class GatewayHttpProxy {
 
 
     public void sendRequest(String url, HttpServletRequest req, HttpServletResponse resp) {
-        int triesCount = retries < 0 ? 0 : retries;
+        int triesCount = Math.max(retries, 0);
         Exception exception = null;
 
         do {
@@ -219,8 +229,8 @@ public class GatewayHttpProxy {
 
         conn.setReadTimeout(readTimeOut);
         conn.setConnectTimeout(connectTimeOut);
-        conn.setInstanceFollowRedirects(false);
-        conn.setUseCaches(false);
+        conn.setInstanceFollowRedirects(instanceFollowRedirects);
+        conn.setUseCaches(useCaches);
 
         conn.setRequestMethod(req.getMethod());
 
@@ -296,6 +306,55 @@ public class GatewayHttpProxy {
         return exception;
     }
 
+
+    public int getReadTimeOut() {
+        return readTimeOut;
+    }
+
+    public void setReadTimeOut(int readTimeOut) {
+        this.readTimeOut = readTimeOut;
+    }
+
+    public int getConnectTimeOut() {
+        return connectTimeOut;
+    }
+
+    public void setConnectTimeOut(int connectTimeOut) {
+        this.connectTimeOut = connectTimeOut;
+    }
+
+    public int getRetries() {
+        return retries;
+    }
+
+    public void setRetries(int retries) {
+        this.retries = retries;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public boolean isInstanceFollowRedirects() {
+        return instanceFollowRedirects;
+    }
+
+    public void setInstanceFollowRedirects(boolean instanceFollowRedirects) {
+        this.instanceFollowRedirects = instanceFollowRedirects;
+    }
+
+    public boolean isUseCaches() {
+        return useCaches;
+    }
+
+    public void setUseCaches(boolean useCaches) {
+        this.useCaches = useCaches;
+    }
+
     public Map<String, String> getHeaders() {
         return headers;
     }
@@ -319,4 +378,6 @@ public class GatewayHttpProxy {
         this.headers.putAll(headers);
         return this;
     }
+
+
 }
