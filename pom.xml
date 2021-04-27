@@ -41,7 +41,7 @@
 
 
     <properties>
-        <jfinal.version>4.9.09</jfinal.version>
+        <jfinal.version>4.9.10</jfinal.version>
         <jfinal-cos.version>2020.4</jfinal-cos.version>
         <jfinal-undertow.version>2.5</jfinal-undertow.version>
         <jfinal-weixin.version>3.1</jfinal-weixin.version>
@@ -68,9 +68,9 @@
         <sentinel.version>1.8.1</sentinel.version>
         <dubbo.version>2.7.10</dubbo.version>
         <resteasy.version>3.13.2.Final</resteasy.version>
-        <seata.version>1.4.1</seata.version>
+        <seata.version>1.4.2</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.1.18</metrics.version>
+        <metrics.version>4.1.20</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
