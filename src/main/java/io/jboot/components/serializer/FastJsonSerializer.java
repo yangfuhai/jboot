@@ -42,11 +42,12 @@ public class FastJsonSerializer implements JbootSerializer {
             return null;
         }
         String json = new String(bytes);
-        JSONObject jsonObject = JSON.parseObject(json);
-        Class clazz = null;
+        JSONObject jsonObject = null;
+        Class<?> clazz = null;
         try {
+            jsonObject = JSON.parseObject(json);
             clazz = Class.forName(jsonObject.getString("clazz"));
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             LOG.error(e.toString(), e);
             return null;
         }
@@ -55,22 +56,22 @@ public class FastJsonSerializer implements JbootSerializer {
 
 
     public static class FastJsonCacheObject implements Serializable {
-        private Class clazz;
+        private Class<?> clazz;
         private Object object;
 
         public FastJsonCacheObject() {
         }
 
-        public FastJsonCacheObject(Class clazz, Object object) {
+        public FastJsonCacheObject(Class<?> clazz, Object object) {
             this.clazz = clazz;
             this.object = object;
         }
 
-        public Class getClazz() {
+        public Class<?> getClazz() {
             return clazz;
         }
 
-        public void setClazz(Class clazz) {
+        public void setClazz(Class<?> clazz) {
             this.clazz = clazz;
         }
 
