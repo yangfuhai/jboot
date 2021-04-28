@@ -41,11 +41,12 @@ public class ConfigUtil {
         if (isBlank(string)) {
             return null;
         }
-        List<ConfigPara> paras = new LinkedList<>();
-        char[] chars = string.toCharArray();
+
+        List<ConfigPara> paras = null;
         ConfigPara para = null;
         int index = 0;
         boolean hasDefaultValue = false;
+        char[] chars = string.toCharArray();
         for (char c : chars) {
             //第一个字符是 '{' 会出现 ArrayIndexOutOfBoundsException 错误
             if (c == '{' && index > 0 && chars[index - 1] == '$' && para == null) {
@@ -54,6 +55,9 @@ public class ConfigUtil {
                 para.setStart(index - 1);
             } else if (c == '}' && para != null) {
                 para.setEnd(index);
+                if (paras == null){
+                    paras = new LinkedList<>();
+                }
                 paras.add(para);
                 para = null;
             } else if (para != null) {
@@ -77,24 +81,24 @@ public class ConfigUtil {
             return value;
         }
         JbootConfigManager manager = JbootConfigManager.me();
-        StringBuilder newStringBuilder = new StringBuilder(value.length());
+        StringBuilder retBuilder = new StringBuilder(value.length());
         int index = 0;
         for (ConfigPara para : paras) {
             if (para.getStart() > index) {
-                newStringBuilder.append(value, index, para.getStart());
+                retBuilder.append(value, index, para.getStart());
             }
 
             String configValue = manager.getConfigValue(para.getKey());
             configValue = isNotBlank(configValue) ? configValue : para.getDefaultValue();
-            newStringBuilder.append(configValue);
+            retBuilder.append(configValue);
             index = para.getEnd() + 1;
         }
 
         if (index < value.length()) {
-            newStringBuilder.append(value, index, value.length());
+            retBuilder.append(value, index, value.length());
         }
 
-        return newStringBuilder.toString();
+        return retBuilder.toString();
     }
 
 
