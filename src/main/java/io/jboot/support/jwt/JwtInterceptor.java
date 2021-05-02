@@ -64,7 +64,7 @@ public class JwtInterceptor implements Interceptor {
         Long isuuedAtMillis = (Long) oldData.get(ISUUED_AT);
 
         // 有效期
-        long validityPeriod = JwtManager.me().getConfig().getValidityPeriod();
+        long validityPeriod = JwtManager.getConfig().getValidityPeriod();
 
         // 永久有效，没必要刷新 Jwt
         if (isuuedAtMillis == null || validityPeriod <= 0) {

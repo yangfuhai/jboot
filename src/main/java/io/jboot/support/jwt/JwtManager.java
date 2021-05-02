@@ -40,17 +40,19 @@ public class JwtManager {
     private static final JwtManager me = new JwtManager();
     private static final Log LOG = Log.getLog(JwtManager.class);
     public static final Map EMPTY_MAP = new HashMap();
+    private static JwtConfig config = Jboot.config(JwtConfig.class);
+
 
     public static JwtManager me() {
         return me;
     }
 
     public String getHttpHeaderName() {
-        return getConfig().getHttpHeaderName();
+        return config.getHttpHeaderName();
     }
 
     public String getHttpParameterKey() {
-        return getConfig().getHttpParameterKey();
+        return config.getHttpParameterKey();
     }
 
     /**
@@ -61,8 +63,8 @@ public class JwtManager {
      */
     public Map parseJwtToken(Controller controller) {
 
-        if (!getConfig().isConfigOk()) {
-            LogKit.error("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
+        if (!config.isConfigOk()) {
+            LogKit.debug("Jwt secret not config well, please config jboot.web.jwt.secret in jboot.properties.");
             return EMPTY_MAP;
         }
 
@@ -73,7 +75,7 @@ public class JwtManager {
         }
 
         if (StrUtil.isBlank(token)) {
-            LogKit.error("Can not get jwt token form http header or parameter!!");
+            LogKit.debug("Can not get jwt token form http header or parameter!!");
             return EMPTY_MAP;
         }
 
@@ -88,7 +90,7 @@ public class JwtManager {
      * @return 返回 JWT 的 MAP 数据
      */
     public Map parseJwtToken(String token) {
-        SecretKey secretKey = generalKey();
+        SecretKey secretKey = createSecretKey();
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(secretKey)
@@ -116,11 +118,11 @@ public class JwtManager {
 
     public String createJwtToken(Map map) {
 
-        if (!getConfig().isConfigOk()) {
+        if (!config.isConfigOk()) {
             throw new JbootIllegalConfigException("Can not create jwt, please config jboot.web.jwt.secret in jboot.properties.");
         }
 
-        SecretKey secretKey = generalKey();
+        SecretKey secretKey = createSecretKey();
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         long nowMillis = System.currentTimeMillis();
@@ -135,8 +137,8 @@ public class JwtManager {
                 .setSubject(subject)
                 .signWith(signatureAlgorithm, secretKey);
 
-        if (getConfig().getValidityPeriod() > 0) {
-            long expMillis = nowMillis + getConfig().getValidityPeriod();
+        if (config.getValidityPeriod() > 0) {
+            long expMillis = nowMillis + config.getValidityPeriod();
             builder.setExpiration(new Date(expMillis));
         }
 
@@ -144,21 +146,16 @@ public class JwtManager {
     }
 
 
-    private SecretKey generalKey() {
-        byte[] encodedKey = DatatypeConverter.parseBase64Binary(getConfig().getSecret());
-        SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-        return key;
+    private SecretKey createSecretKey() {
+        byte[] encodedKey = DatatypeConverter.parseBase64Binary(config.getSecret());
+        return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
     }
 
-
-    private JwtConfig config;
-
-    public JwtConfig getConfig() {
-        if (config == null) {
-            config = Jboot.config(JwtConfig.class);
-        }
+    public static JwtConfig getConfig() {
         return config;
     }
 
-
+    public static void setConfig(JwtConfig config) {
+        JwtManager.config = config;
+    }
 }
