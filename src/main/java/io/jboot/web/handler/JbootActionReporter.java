@@ -22,6 +22,7 @@ import com.jfinal.core.ActionReporter;
 import com.jfinal.core.Controller;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.JsonKit;
+import io.jboot.Jboot;
 import io.jboot.JbootConsts;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.utils.RequestUtil;
@@ -49,6 +50,7 @@ public class JbootActionReporter {
     private static int maxOutputLengthOfParaValue = 512;
     private static Writer writer = new SystemOutWriter();
     private static ActionReporter actionReporter = JFinal.me().getConstants().getActionReporter();
+    private static boolean reportEnable = Jboot.isDevMode();
 
     private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
@@ -67,6 +69,13 @@ public class JbootActionReporter {
         JbootActionReporter.writer = writer;
     }
 
+    public static boolean isReportEnable() {
+        return reportEnable;
+    }
+
+    public static void setReportEnable(boolean reportEnable) {
+        JbootActionReporter.reportEnable = reportEnable;
+    }
 
     /**
      * Report the action

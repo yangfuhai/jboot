@@ -113,7 +113,7 @@ public class JbootActionHandler extends ActionHandler {
             //Invocation invocation = new Invocation(action, controller);
             Invocation invocation = getInvocation(action, controller);
 
-            if (devMode) {
+            if (JbootActionReporter.isReportEnable()) {
                 long time = System.currentTimeMillis();
                 try {
                     doStartRender(target, request, response, isHandled, action, controller, invocation);
