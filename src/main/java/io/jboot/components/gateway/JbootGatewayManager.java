@@ -15,22 +15,13 @@
  */
 package io.jboot.components.gateway;
 
-import com.jfinal.kit.LogKit;
-import com.jfinal.kit.Ret;
 import io.jboot.app.config.JbootConfigUtil;
-import io.jboot.components.http.JbootHttpRequest;
-import io.jboot.utils.HttpUtil;
-import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.render.JbootJsonRender;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -46,18 +37,14 @@ public class JbootGatewayManager {
 
     private ConcurrentHashMap<String, JbootGatewayConfig> configMap;
 
-    private ScheduledThreadPoolExecutor fixedScheduler;
-    private long fixedSchedulerInitialDelay = 10;
-    private long fixedSchedulerDelay = 10;
-
-    private NoneHealthUrlErrorRender noneHealthUrlErrorRender;
+    private GatewayErrorRender gatewayErrorRender;
 
     private JbootGatewayManager() {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
         if (!configMap.isEmpty()) {
             for (Map.Entry<String, JbootGatewayConfig> e : configMap.entrySet()) {
                 JbootGatewayConfig config = e.getValue();
-                if (config.isConfigOk() && config.isEnable()) {
+                if (config.isConfigOk()) {
                     if (StrUtil.isBlank(config.getName())) {
                         config.setName(e.getKey());
                     }
@@ -76,68 +63,25 @@ public class JbootGatewayManager {
     }
 
 
-    public boolean isEnableAndConfigOk() {
-        return configMap != null && !configMap.isEmpty();
+    public boolean isConfigOkAndEnable() {
+        if (configMap == null || configMap.isEmpty()) {
+            return false;
+        }
+
+        for (JbootGatewayConfig config : configMap.values()) {
+            if (config.isEnable()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
     public void init() {
         // 启动定时健康检查
-        if (isEnableAndConfigOk()) {
-            startHealthCheckIfNecessary();
-        }
-    }
-
-    /**
-     * 开始健康检查
-     * 多次执行，只会启动一次
-     */
-    private void startHealthCheckIfNecessary() {
-        if (fixedScheduler == null) {
-            synchronized (this) {
-                if (fixedScheduler == null) {
-                    fixedScheduler = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("jboot-gateway-health-check"));
-                    //每 10s 进行一次健康检查
-                    fixedScheduler.scheduleWithFixedDelay(() -> {
-                        try {
-                            doHealthCheck();
-                        } catch (Exception ex) {
-                            LogKit.error(ex.toString(), ex);
-                        }
-                    }, fixedSchedulerInitialDelay, fixedSchedulerDelay, TimeUnit.SECONDS);
-                }
-            }
-        }
-    }
-
-
-    /**
-     * 健康检查
-     */
-    private void doHealthCheck() {
-        for (JbootGatewayConfig config : configMap.values()) {
-            if (config.isUriHealthCheckEnable() && StrUtil.isNotBlank(config.getUriHealthCheckPath())) {
-                String[] uris = config.getUri();
-                for (String uri : uris) {
-                    String url = uri + config.getUriHealthCheckPath();
-                    if (getHttpCode(url) == 200) {
-                        config.removeUnHealthUri(uri);
-                    } else {
-                        config.addUnHealthUri(uri);
-                    }
-                }
-            }
-        }
-    }
-
-    private int getHttpCode(String url) {
-        try {
-            JbootHttpRequest req = JbootHttpRequest.create(url);
-            req.setReadBody(false);
-            return HttpUtil.handle(req).getResponseCode();
-        } catch (Exception ex) {
-            // do nothing
-            return 0;
+        if (isConfigOkAndEnable()) {
+            JbootGatewayHealthChecker.me().start();
         }
     }
 
@@ -154,26 +98,6 @@ public class JbootGatewayManager {
 
     public Map<String, JbootGatewayConfig> getConfigMap() {
         return configMap;
-    }
-
-    public ScheduledThreadPoolExecutor getFixedScheduler() {
-        return fixedScheduler;
-    }
-
-    public long getFixedSchedulerInitialDelay() {
-        return fixedSchedulerInitialDelay;
-    }
-
-    public void setFixedSchedulerInitialDelay(long fixedSchedulerInitialDelay) {
-        this.fixedSchedulerInitialDelay = fixedSchedulerInitialDelay;
-    }
-
-    public long getFixedSchedulerDelay() {
-        return fixedSchedulerDelay;
-    }
-
-    public void setFixedSchedulerDelay(long fixedSchedulerDelay) {
-        this.fixedSchedulerDelay = fixedSchedulerDelay;
     }
 
     /**
@@ -195,19 +119,14 @@ public class JbootGatewayManager {
         return null;
     }
 
-    public NoneHealthUrlErrorRender getNoneHealthUrlErrorRender() {
-        return noneHealthUrlErrorRender;
+    public GatewayErrorRender getGatewayErrorRender() {
+        return gatewayErrorRender;
     }
 
-    public void setNoneHealthUrlErrorRender(NoneHealthUrlErrorRender noneHealthUrlErrorRender) {
-        this.noneHealthUrlErrorRender = noneHealthUrlErrorRender;
+    public void setGatewayErrorRender(GatewayErrorRender gatewayErrorRender) {
+        this.gatewayErrorRender = gatewayErrorRender;
     }
 
-    public void renderNoneHealthUrl(JbootGatewayConfig config, HttpServletRequest request, HttpServletResponse response) {
-        if (noneHealthUrlErrorRender != null) {
-            noneHealthUrlErrorRender.render(config, request, response);
-        } else {
-            new JbootJsonRender(Ret.fail().set("message", "none health url in gateway.")).setContext(request, response).render();
-        }
-    }
+
+
 }

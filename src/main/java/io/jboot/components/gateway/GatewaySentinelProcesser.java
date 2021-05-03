@@ -70,7 +70,6 @@ public class GatewaySentinelProcesser {
         } catch (IOException ex) {
             LogKit.error(ex.toString(), ex);
         }
-
     }
 
 

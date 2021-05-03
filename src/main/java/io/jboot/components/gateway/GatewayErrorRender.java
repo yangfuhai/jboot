@@ -15,10 +15,16 @@
  */
 package io.jboot.components.gateway;
 
+import com.jfinal.kit.Ret;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface NoneHealthUrlErrorRender {
+public interface GatewayErrorRender {
 
-    void render(JbootGatewayConfig config, HttpServletRequest request, HttpServletResponse response);
+    Ret noneHealthUrl = Ret.fail().set("errorCode",1).set("message","None health url in gateway.");
+    Ret connectionError = Ret.fail().set("errorCode",2).set("message","Can not connect to target server.");
+
+
+    void render(JbootGatewayConfig config, Ret errorMessage, HttpServletRequest request, HttpServletResponse response);
 }

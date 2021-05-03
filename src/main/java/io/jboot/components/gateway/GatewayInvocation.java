@@ -15,11 +15,14 @@
  */
 package io.jboot.components.gateway;
 
+import com.jfinal.kit.Ret;
 import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
+import io.jboot.web.render.JbootJsonRender;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.ConnectException;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -33,6 +36,7 @@ public class GatewayInvocation {
     private HttpServletResponse response;
     private GatewayHttpProxy proxy;
     private String proxyUrl;
+    private boolean skipExceptionRender = false;
 
     private static boolean devMode = Jboot.isDevMode();
 
@@ -45,7 +49,7 @@ public class GatewayInvocation {
         this.response = response;
         this.inters = config.getGatewayInterceptors();
         this.proxy = new GatewayHttpProxy(config);
-        this.proxyUrl = buildProxyUrl(config,request);
+        this.proxyUrl = buildProxyUrl(config, request);
     }
 
 
@@ -64,7 +68,7 @@ public class GatewayInvocation {
 
     protected void doInvoke() {
         if (StrUtil.isBlank(proxyUrl)) {
-            JbootGatewayManager.me().renderNoneHealthUrl(config, request, response);
+            renderError(config, GatewayErrorRender.noneHealthUrl, request, response);
             return;
         }
 
@@ -81,6 +85,27 @@ public class GatewayInvocation {
         //未启用 Sentinel 的情况
         else {
             runnable.run();
+        }
+
+        Exception exception = proxy.getException();
+        if (exception != null && !skipExceptionRender) {
+            if (exception instanceof ConnectException) {
+                renderError(config, GatewayErrorRender.connectionError, request, response);
+            } else {
+                Ret ret = Ret.fail().set("errorCode", 9).set("message", exception.getMessage());
+                renderError(config, ret, request, response);
+            }
+        }
+
+    }
+
+
+    private static void renderError(JbootGatewayConfig config, Ret errorMessage, HttpServletRequest request, HttpServletResponse response) {
+        GatewayErrorRender errorRender = JbootGatewayManager.me().getGatewayErrorRender();
+        if (errorRender != null) {
+            errorRender.render(config, errorMessage, request, response);
+        } else {
+            new JbootJsonRender(errorMessage).setContext(request, response).render();
         }
     }
 
@@ -167,5 +192,13 @@ public class GatewayInvocation {
 
     public void setProxyUrl(String proxyUrl) {
         this.proxyUrl = proxyUrl;
+    }
+
+    public boolean isSkipExceptionRender() {
+        return skipExceptionRender;
+    }
+
+    public void setSkipExceptionRender(boolean skipExceptionRender) {
+        this.skipExceptionRender = skipExceptionRender;
     }
 }

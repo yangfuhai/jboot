@@ -39,7 +39,7 @@ public class JbootGatewayHealthChecker implements Runnable{
 
     private ScheduledThreadPoolExecutor fixedScheduler;
     private long fixedSchedulerInitialDelay = 10;
-    private long fixedSchedulerDelay = 10;
+    private long fixedSchedulerDelay = 30;
 
 
 
@@ -73,7 +73,10 @@ public class JbootGatewayHealthChecker implements Runnable{
      */
     private void doHealthCheck() {
         for (JbootGatewayConfig config : JbootGatewayManager.me().getConfigMap().values()) {
-            if (config.isUriHealthCheckEnable() && StrUtil.isNotBlank(config.getUriHealthCheckPath())) {
+            if (config.isEnable()
+                    && config.isUriHealthCheckEnable()
+                    && StrUtil.isNotBlank(config.getUriHealthCheckPath())) {
+
                 String[] uris = config.getUri();
                 for (String uri : uris) {
                     String url = uri + config.getUriHealthCheckPath();

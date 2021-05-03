@@ -347,13 +347,13 @@ public class JbootGatewayConfig implements Serializable {
             synchronized (this) {
                 if (gatewayLoadBalanceStrategy == null) {
                     if (StrUtil.isBlank(loadBalanceStrategy)) {
-                        this.gatewayLoadBalanceStrategy = GatewayLoadBalanceStrategy.DEFAULT_STRATEGY;
+                        gatewayLoadBalanceStrategy = GatewayLoadBalanceStrategy.DEFAULT_STRATEGY;
                     } else {
                         GatewayLoadBalanceStrategy glbs = ClassUtil.newInstance(loadBalanceStrategy);
                         if (glbs == null) {
-                            throw new NullPointerException("can not new instance by class:" + loadBalanceStrategy);
+                            throw new NullPointerException("Can not new instance by class: " + loadBalanceStrategy);
                         }
-                        this.gatewayLoadBalanceStrategy = glbs;
+                        gatewayLoadBalanceStrategy = glbs;
                     }
                 }
             }
@@ -361,7 +361,7 @@ public class JbootGatewayConfig implements Serializable {
         return gatewayLoadBalanceStrategy;
     }
 
-    public void setGatewayLoadBalanceStrategy(GatewayLoadBalanceStrategy strategy){
+    public void setGatewayLoadBalanceStrategy(GatewayLoadBalanceStrategy strategy) {
         this.gatewayLoadBalanceStrategy = strategy;
     }
 
@@ -387,7 +387,7 @@ public class JbootGatewayConfig implements Serializable {
         for (String u : uri) {
             if (!u.toLowerCase().startsWith("http://")
                     && !u.toLowerCase().startsWith("https://")) {
-                throw new JbootIllegalConfigException("gateway uri must start with http:// or https://");
+                throw new JbootIllegalConfigException("Gateway uri must start with http:// or https://");
             }
         }
     }

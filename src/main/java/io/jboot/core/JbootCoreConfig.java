@@ -305,7 +305,7 @@ public class JbootCoreConfig extends JFinalConfig {
         //用户的 handler 优先于 jboot 的 handler 执行
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
 
-        if (JbootGatewayManager.me().isEnableAndConfigOk()) {
+        if (JbootGatewayManager.me().isConfigOkAndEnable()) {
             handlers.add(new JbootGatewayHandler());
         }
 
