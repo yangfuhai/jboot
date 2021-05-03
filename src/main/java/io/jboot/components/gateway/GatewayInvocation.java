@@ -36,6 +36,8 @@ public class GatewayInvocation {
     private HttpServletResponse response;
     private GatewayHttpProxy proxy;
     private String proxyUrl;
+
+    //是否跳过错误渲染，如果跳过，那么则由拦截器通过 getResponse() 自行渲染
     private boolean skipExceptionRender = false;
 
     private static boolean devMode = Jboot.isDevMode();
@@ -68,7 +70,7 @@ public class GatewayInvocation {
 
     protected void doInvoke() {
         if (StrUtil.isBlank(proxyUrl)) {
-            renderError(config, GatewayErrorRender.noneHealthUrl, request, response);
+            renderError(null, GatewayErrorRender.noneHealthUrl, config, request, response);
             return;
         }
 
@@ -76,34 +78,34 @@ public class GatewayInvocation {
             System.out.println("Jboot Gateway >>> " + proxyUrl);
         }
 
-        Runnable runnable = () -> proxy.sendRequest(proxyUrl, request, response);
-
         //启用 Sentinel 限流
         if (config.isSentinelEnable()) {
-            new GatewaySentinelProcesser().process(runnable, config, request, response);
+            new GatewaySentinelProcesser().process(proxy, proxyUrl, config, request, response, skipExceptionRender);
+            return;
         }
+
+
         //未启用 Sentinel 的情况
-        else {
-            runnable.run();
-        }
+        proxy.sendRequest(proxyUrl, request, response);
+
 
         Exception exception = proxy.getException();
         if (exception != null && !skipExceptionRender) {
             if (exception instanceof ConnectException) {
-                renderError(config, GatewayErrorRender.connectionError, request, response);
+                renderError(exception, GatewayErrorRender.connectionError, config, request, response);
             } else {
                 Ret ret = Ret.fail().set("errorCode", 9).set("message", exception.getMessage());
-                renderError(config, ret, request, response);
+                renderError(exception, ret, config, request, response);
             }
         }
 
     }
 
 
-    private static void renderError(JbootGatewayConfig config, Ret errorMessage, HttpServletRequest request, HttpServletResponse response) {
+    private static void renderError(Exception error, Ret errorMessage, JbootGatewayConfig config, HttpServletRequest request, HttpServletResponse response) {
         GatewayErrorRender errorRender = JbootGatewayManager.me().getGatewayErrorRender();
         if (errorRender != null) {
-            errorRender.render(config, errorMessage, request, response);
+            errorRender.renderError(error, errorMessage, config, request, response);
         } else {
             new JbootJsonRender(errorMessage).setContext(request, response).render();
         }

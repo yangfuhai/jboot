@@ -33,25 +33,35 @@ import java.io.IOException;
 public class GatewaySentinelProcesser {
 
 
-    public void process(Runnable runnable, JbootGatewayConfig config, HttpServletRequest req, HttpServletResponse resp) {
+    public void process(GatewayHttpProxy proxy, String proxyUrl, JbootGatewayConfig config, HttpServletRequest req, HttpServletResponse resp, boolean skipExceptionRender) {
         Entry entry = null;
         String resourceName = SentinelUtil.buildResource(req);
         try {
             entry = SphU.entry(resourceName, ResourceTypeConstants.COMMON_API_GATEWAY, EntryType.IN);
-            runnable.run();
+            proxy.sendRequest(proxyUrl, req, resp);
         } catch (BlockException ex) {
-            processBlocked(config, req, resp);
-        } catch (Exception ex) {
-            Tracer.traceEntry(ex, entry);
-            throw ex;
+            if (skipExceptionRender) {
+                GatewayErrorRender errorRender = JbootGatewayManager.me().getGatewayErrorRender();
+                if (errorRender != null) {
+                    errorRender.renderError(ex, GatewayErrorRender.sentinelBlockedError, config, req, resp);
+                } else {
+                    processBlocked(config, req, resp);
+                }
+            } else {
+                proxy.setException(ex);
+            }
         } finally {
+            if (proxy.getException() != null) {
+                Tracer.traceEntry(proxy.getException(), entry);
+            }
             if (entry != null) {
                 entry.exit();
             }
         }
     }
 
-    private static void processBlocked(JbootGatewayConfig config, HttpServletRequest req, HttpServletResponse resp) {
+
+    private void processBlocked(JbootGatewayConfig config, HttpServletRequest req, HttpServletResponse resp) {
         StringBuffer url = req.getRequestURL();
 
         if ("GET".equalsIgnoreCase(req.getMethod()) && StrUtil.isNotBlank(req.getQueryString())) {
@@ -71,8 +81,6 @@ public class GatewaySentinelProcesser {
             LogKit.error(ex.toString(), ex);
         }
     }
-
-
 
 
 }

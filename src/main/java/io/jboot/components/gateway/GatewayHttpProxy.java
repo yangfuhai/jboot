@@ -305,6 +305,9 @@ public class GatewayHttpProxy {
         return exception;
     }
 
+    public void setException(Exception exception) {
+        this.exception = exception;
+    }
 
     public int getReadTimeOut() {
         return readTimeOut;
