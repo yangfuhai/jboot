@@ -157,9 +157,9 @@ public class GatewayHttpProxy {
             for (int len; (len = inStream.read(buffer)) != -1; ) {
                 outStream.write(buffer, 0, len);
             }
-            outStream.flush();
+//            outStream.flush();
         } finally {
-            quetlyClose(inStream, outStream);
+            quetlyClose(inStream);
         }
     }
 
@@ -266,21 +266,20 @@ public class GatewayHttpProxy {
 
     protected HttpURLConnection getHttpConnection(String urlString) throws Exception {
         URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        return conn;
+        return (HttpURLConnection) url.openConnection();
     }
 
     protected HttpsURLConnection getHttpsConnection(String urlString) throws Exception {
+
+        SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
+        TrustManager[] tm = {trustAnyTrustManager};
+        sslContext.init(null, tm, null);
+        SSLSocketFactory ssf = sslContext.getSocketFactory();
+
         URL url = new URL(urlString);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         conn.setHostnameVerifier(hnv);
-        SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
-        if (sslContext != null) {
-            TrustManager[] tm = {trustAnyTrustManager};
-            sslContext.init(null, tm, null);
-            SSLSocketFactory ssf = sslContext.getSocketFactory();
-            conn.setSSLSocketFactory(ssf);
-        }
+        conn.setSSLSocketFactory(ssf);
         return conn;
     }
 
