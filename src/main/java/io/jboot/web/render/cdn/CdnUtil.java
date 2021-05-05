@@ -16,17 +16,14 @@
 package io.jboot.web.render.cdn;
 
 import com.jfinal.core.JFinal;
-import com.jfinal.render.RenderException;
 import io.jboot.utils.StrUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.Iterator;
 
 /**
