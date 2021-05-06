@@ -97,7 +97,7 @@ public class AttachmentManager {
                     container.saveFile(defaultContainerFile);
                 }
             } catch (Exception ex) {
-                LOG.error("get file error in container :" + container, ex);
+                LOG.error("Save file error in container :" + container, ex);
             }
         }
         return relativePath.replace("\\", "/");
@@ -121,7 +121,7 @@ public class AttachmentManager {
                     container.saveFile(defaultContainerFile, toRelativePath);
                 }
             } catch (Exception ex) {
-                LOG.error("get file error in container :" + container, ex);
+                LOG.error("Save file error in container :" + container, ex);
             }
         }
         return relativePath.replace("\\", "/");
@@ -144,7 +144,7 @@ public class AttachmentManager {
                     container.saveFile(defaultContainerFile, toRelativePath);
                 }
             } catch (Exception ex) {
-                LOG.error("get file error in container :" + container, ex);
+                LOG.error("Save file error in container :" + container, ex);
             }
         }
         return relativePath.replace("\\", "/");
@@ -162,7 +162,7 @@ public class AttachmentManager {
             try {
                 container.deleteFile(relativePath);
             } catch (Exception ex) {
-                LOG.error("delete file error in container :" + container, ex);
+                LOG.error("Delete file error in container :" + container, ex);
             }
         }
         return defaultContainer.deleteFile(relativePath);
@@ -189,7 +189,7 @@ public class AttachmentManager {
                     return file;
                 }
             } catch (Exception ex) {
-                LOG.error("get file error in container :" + container, ex);
+                LOG.error("Get file error in container :" + container, ex);
             }
         }
         return null;
