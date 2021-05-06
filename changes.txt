@@ -1,3 +1,19 @@
+jboot v3.9.11:
+新增：注解 @ActionKey() 支持 ./ 相对路径的配置
+新增：门户网关拦截器新增对 Header 的配置
+新增：JbootActionReporter 的开关配置，而不是由 devMode 决定
+优化：门户网关的健康检查代码抽离为独立的类 JbootGatewayHealthChecker
+优化：门户网关 NoneHealthUrlErrorRender 重构为 GatewayErrorRender，支持更多的错误渲染
+优化：门户网关可以通过拦截器自定义前端渲染功能
+优化：简化 RPC 的默认配置
+优化：优化 JWT 的代码逻辑
+优化：升级 JFinal、Seata 等到最新版本
+优化：优化 ConfigUtil 的参数解析方法
+优化：优化 FastJsonSerializer 的逻辑代码
+文档：优化序列化的相关文档
+
+
+
 jboot v3.9.10:
 新增：Dubbo Method 的 oninvoke/onreturn/onthrow 配置的支持
 新增：不同的 @RPCIject 持有不同 RPC 对象的支持
