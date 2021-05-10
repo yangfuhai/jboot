@@ -235,7 +235,7 @@ public class JbootCoreConfig extends JFinalConfig {
         } else {
             //fixed baseTemplatePath error
             if (JFinal.me().getServletContext().getRealPath("/") == null) {
-                engine.setBaseTemplatePath(PathKit.getRootClassPath() + "/webapp");
+                engine.setBaseTemplatePath(PathKit.getRootClassPath());
             }
         }
 
