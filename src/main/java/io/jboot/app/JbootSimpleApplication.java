@@ -70,12 +70,12 @@ public class JbootSimpleApplication {
             this.coreConfig = coreConfig;
             this.startTimeMillis = startTimeMillis;
 
-            doConfigJFinalPathKit();
+            doInitJFinalPathKit();
             doInitCoreConfig();
         }
 
 
-        private void doConfigJFinalPathKit() {
+        private void doInitJFinalPathKit() {
             try {
                 Class<?> c = JbootSimpleApplication.class.getClassLoader().loadClass("com.jfinal.kit.PathKit");
                 Method setWebRootPath = c.getMethod("setWebRootPath", String.class);

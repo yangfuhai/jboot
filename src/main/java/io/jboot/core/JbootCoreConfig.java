@@ -19,6 +19,7 @@ import com.jfinal.aop.Aop;
 import com.jfinal.aop.AopManager;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
+import com.jfinal.core.JFinal;
 import com.jfinal.core.Path;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.LogKit;
@@ -231,6 +232,11 @@ public class JbootCoreConfig extends JFinalConfig {
         if (ApplicationUtil.runInFatjar()) {
             engine.setToClassPathSourceFactory();
             engine.setBaseTemplatePath("webapp");
+        } else {
+            //fixed baseTemplatePath error
+            if (JFinal.me().getServletContext().getRealPath("/") == null) {
+                engine.setBaseTemplatePath(PathKit.getRootClassPath() + "/webapp");
+            }
         }
 
         List<Class> directiveClasses = ClassScanner.scanClass();
