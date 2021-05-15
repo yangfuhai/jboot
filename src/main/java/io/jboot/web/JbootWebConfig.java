@@ -15,6 +15,7 @@
  */
 package io.jboot.web;
 
+import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 
 /**
@@ -61,5 +62,9 @@ public class JbootWebConfig {
 
     public void setEscapeParas(boolean escapeParas) {
         this.escapeParas = escapeParas;
+    }
+
+    public static JbootWebConfig getInstance(){
+        return JbootConfigManager.me().get(JbootWebConfig.class);
     }
 }

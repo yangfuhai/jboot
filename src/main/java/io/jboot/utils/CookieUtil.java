@@ -20,7 +20,6 @@ import com.jfinal.kit.Base64Kit;
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
-import io.jboot.Jboot;
 import io.jboot.web.JbootWebConfig;
 
 import java.math.BigInteger;
@@ -40,10 +39,10 @@ public class CookieUtil {
     private final static String COOKIE_SEPARATOR = "#";
 
     // cookie 加密秘钥
-    private static String COOKIE_ENCRYPT_KEY = Jboot.config(JbootWebConfig.class).getCookieEncryptKey();
+    private static String COOKIE_ENCRYPT_KEY = JbootWebConfig.getInstance().getCookieEncryptKey();
 
     // 2 days（单位：秒）
-    private static int COOKIE_MAX_AGE =  Jboot.config(JbootWebConfig.class).getCookieMaxAge();
+    private static int COOKIE_MAX_AGE =  JbootWebConfig.getInstance().getCookieMaxAge();
 
 
     /**

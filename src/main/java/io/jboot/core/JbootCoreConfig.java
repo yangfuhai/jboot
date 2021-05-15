@@ -334,8 +334,7 @@ public class JbootCoreConfig extends JFinalConfig {
             }
         }
 
-        boolean escapeParas = Jboot.config(JbootWebConfig.class).isEscapeParas();
-        if (escapeParas) {
+        if (JbootWebConfig.getInstance().isEscapeParas()) {
             handlers.add(new XSSHandler());
         }
 
