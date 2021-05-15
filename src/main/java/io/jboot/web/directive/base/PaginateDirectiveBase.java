@@ -95,48 +95,48 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
 
         Page<?> page = getPage(env, scope, writer);
 
-        int currentPage = page == null ? 1 : page.getPageNumber();
-        int totalPage = page == null ? 1 : page.getTotalPage();
+        int currentPageNumber = page == null ? 1 : page.getPageNumber();
+        int totalPage = page == null ? 0 : page.getTotalPage();
 
-        if ((totalPage <= 0) || (currentPage > totalPage)) {
+        if ((totalPage <= 0) || (currentPageNumber > totalPage)) {
             return;
         }
 
-        int startPage = currentPage - siblingsItemCount;
+        int startPage = currentPageNumber - siblingsItemCount;
         if (startPage < 1) {
             startPage = 1;
         }
 
-        int endPage = currentPage + siblingsItemCount;
+        int endPage = currentPageNumber + siblingsItemCount;
         if (endPage > totalPage) {
             endPage = totalPage;
         }
 
         List<PaginateItem> pages = new ArrayList<PaginateItem>();
-        if (currentPage == 1) {
+        if (currentPageNumber == 1) {
             pages.add(new PaginateDirectiveBase.PaginateItem(previousClass + StrUtil.SPACE + disabledClass, JAVASCRIPT_TEXT, previousText));
         } else {
-            pages.add(new PaginateDirectiveBase.PaginateItem(previousClass, getUrl(currentPage - 1, env, scope, writer), previousText));
+            pages.add(new PaginateDirectiveBase.PaginateItem(previousClass, getUrl(currentPageNumber - 1, env, scope, writer), previousText));
         }
 
         if (!onlyShowPreviousAndNext) {
 
             //开始页码
             for (int i = 1; i <= startItemCount; i++) {
-                if (i < currentPage - siblingsItemCount) {
+                if (i < currentPageNumber - siblingsItemCount) {
                     pages.add(new PaginateDirectiveBase.PaginateItem(StrUtil.EMPTY, getUrl(i, env, scope, writer), i));
                 }
             }
 
             //省略号
-            if (currentPage > startItemCount + siblingsItemCount + 1) {
+            if (currentPageNumber > startItemCount + siblingsItemCount + 1) {
                 pages.add(new PaginateDirectiveBase.PaginateItem(disabledClass, JAVASCRIPT_TEXT, ELLIPSIS_TEXT));
             }
 
 
             //中间页码
             for (int i = startPage; i <= endPage; i++) {
-                if (currentPage == i) {
+                if (currentPageNumber == i) {
                     pages.add(new PaginateDirectiveBase.PaginateItem(activeClass, JAVASCRIPT_TEXT, i));
                 } else {
                     pages.add(new PaginateDirectiveBase.PaginateItem(StrUtil.EMPTY, getUrl(i, env, scope, writer), i));
@@ -145,13 +145,13 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
 
 
             //省略号
-            if (currentPage < totalPage - siblingsItemCount - endItemCount) {
+            if (currentPageNumber < totalPage - siblingsItemCount - endItemCount) {
                 pages.add(new PaginateDirectiveBase.PaginateItem(disabledClass, JAVASCRIPT_TEXT, ELLIPSIS_TEXT));
             }
 
             //后边页码
             for (int i = (endItemCount - 1); i >= 0; i--) {
-                if (i < totalPage - (currentPage + siblingsItemCount)) {
+                if (i < totalPage - (currentPageNumber + siblingsItemCount)) {
                     pages.add(new PaginateDirectiveBase.PaginateItem(StrUtil.EMPTY, getUrl(totalPage - i, env, scope, writer), totalPage - i));
                 }
 
@@ -159,10 +159,10 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         }
 
 
-        if (currentPage == totalPage) {
+        if (currentPageNumber == totalPage) {
             pages.add(new PaginateDirectiveBase.PaginateItem(nextClass + StrUtil.SPACE + disabledClass, JAVASCRIPT_TEXT, nextText));
         } else {
-            pages.add(new PaginateDirectiveBase.PaginateItem(nextClass, getUrl(currentPage + 1, env, scope, writer), nextText));
+            pages.add(new PaginateDirectiveBase.PaginateItem(nextClass, getUrl(currentPageNumber + 1, env, scope, writer), nextText));
         }
 
         scope.setLocal(pageItemsName, pages);
