@@ -97,7 +97,7 @@ public class JbootCoreConfig extends JFinalConfig {
         //配置默认的 WebRootPath
         //在某些情况下，通过 JFinal.initPathKit() 设置 webrootpath 会为 null
         //可以提前配置，防止 PathKit.detectWebRootPath 调用而得到错误的路径
-        PathKit.setWebRootPath(PathKit.getRootClassPath() + "/webapp");
+        PathKit.setWebRootPath(PathKit.getRootClassPath());
 
         JbootAppListenerManager.me().onInit();
     }
