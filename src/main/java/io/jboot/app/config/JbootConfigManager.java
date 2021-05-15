@@ -486,5 +486,7 @@ public class JbootConfigManager {
         return devMode;
     }
 
-
+    public void setDevMode(Boolean devMode) {
+        this.devMode = devMode;
+    }
 }
