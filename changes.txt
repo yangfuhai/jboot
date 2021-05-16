@@ -1,3 +1,10 @@
+jboot v3.9.12:
+新增：devModel 可以动态配置，方便在某些场景下切换 devMode
+修复：在某些极端场景下，PathKit.getWebRootPath() 可能出错的问题
+修复：当查询的 Page 为 null 时，分页的总页数数据错误的问题
+
+
+
 jboot v3.9.11:
 新增：注解 @ActionKey() 支持 ./ 相对路径的配置
 新增：门户网关拦截器新增对 Header 的配置
