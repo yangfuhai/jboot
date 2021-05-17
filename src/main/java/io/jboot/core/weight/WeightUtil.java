@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class WeightUtil {
 
-    public static void sort(List list) {
-        if (list == null && list.isEmpty()) {
+    public static void sort(List<?> list) {
+        if (list == null || list.isEmpty()) {
             return;
         }
         list.sort((o1, o2) -> {
