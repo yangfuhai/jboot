@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/21
  */
-public class JbootGatewayHealthChecker implements Runnable{
+public class JbootGatewayHealthChecker implements Runnable {
 
     private static JbootGatewayHealthChecker me = new JbootGatewayHealthChecker();
 
@@ -40,7 +40,6 @@ public class JbootGatewayHealthChecker implements Runnable{
     private ScheduledThreadPoolExecutor fixedScheduler;
     private long fixedSchedulerInitialDelay = 10;
     private long fixedSchedulerDelay = 30;
-
 
 
     /**
@@ -58,6 +57,11 @@ public class JbootGatewayHealthChecker implements Runnable{
         }
     }
 
+    public void stop() {
+        fixedScheduler.shutdown();
+        fixedScheduler = null;
+    }
+
 
     @Override
     public void run() {
@@ -73,10 +77,7 @@ public class JbootGatewayHealthChecker implements Runnable{
      */
     private void doHealthCheck() {
         for (JbootGatewayConfig config : JbootGatewayManager.me().getConfigMap().values()) {
-            if (config.isEnable()
-                    && config.isUriHealthCheckEnable()
-                    && StrUtil.isNotBlank(config.getUriHealthCheckPath())) {
-
+            if (config.isEnable() && config.isUriHealthCheckEnable() && StrUtil.isNotBlank(config.getUriHealthCheckPath())) {
                 String[] uris = config.getUri();
                 for (String uri : uris) {
                     String url = uri + config.getUriHealthCheckPath();

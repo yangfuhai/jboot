@@ -34,21 +34,19 @@ public class JbootGatewayManager {
         return me;
     }
 
-    private ConcurrentHashMap<String, JbootGatewayConfig> configMap;
-
+    private Map<String, JbootGatewayConfig> configMap;
     private GatewayErrorRender gatewayErrorRender;
+
 
     private JbootGatewayManager() {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
-        if (!configMap.isEmpty()) {
-            for (Map.Entry<String, JbootGatewayConfig> e : configMap.entrySet()) {
-                JbootGatewayConfig config = e.getValue();
-                if (config.isConfigOk()) {
-                    if (StrUtil.isBlank(config.getName())) {
-                        config.setName(e.getKey());
-                    }
-                    registerConfig(config);
+        for (Map.Entry<String, JbootGatewayConfig> entry : configMap.entrySet()) {
+            JbootGatewayConfig config = entry.getValue();
+            if (config.isConfigOk()) {
+                if (StrUtil.isBlank(config.getName())) {
+                    config.setName(entry.getKey());
                 }
+                registerConfig(config);
             }
         }
     }
@@ -56,15 +54,16 @@ public class JbootGatewayManager {
 
     /**
      * 动态注册新的路由配置
+     *
      * @param config 配置信息
      */
-    public synchronized void registerConfig(JbootGatewayConfig config) {
+    public void registerConfig(JbootGatewayConfig config) {
         if (configMap == null) {
             configMap = new ConcurrentHashMap<>();
         }
         configMap.put(config.getName(), config);
 
-        if (config.isEnable() && config.isConfigOk()){
+        if (config.isEnable() && config.isConfigOk()) {
             JbootGatewayHealthChecker.me().start();
         }
     }
@@ -72,6 +71,7 @@ public class JbootGatewayManager {
 
     /**
      * 动态移除路由配置
+     *
      * @param name 配置名称
      * @return 被移除的配置信息
      */
@@ -81,7 +81,8 @@ public class JbootGatewayManager {
 
 
     /**
-     *  获取某个配置信息
+     * 获取某个配置信息
+     *
      * @param name 配置名称
      * @return 配置信息
      */
@@ -92,6 +93,7 @@ public class JbootGatewayManager {
 
     /**
      * 获取所有的配置信息
+     *
      * @return
      */
     public Map<String, JbootGatewayConfig> getConfigMap() {
@@ -122,7 +124,6 @@ public class JbootGatewayManager {
     public void setGatewayErrorRender(GatewayErrorRender gatewayErrorRender) {
         this.gatewayErrorRender = gatewayErrorRender;
     }
-
 
 
 }

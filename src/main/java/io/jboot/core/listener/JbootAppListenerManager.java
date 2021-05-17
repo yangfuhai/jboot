@@ -77,8 +77,6 @@ public class JbootAppListenerManager implements JbootAppListener {
             }
         }
 
-
-
         WeightUtil.sort(listeners);
     }
 
