@@ -28,6 +28,7 @@ public class JbootApplicationConfig {
     private boolean bannerEnable = true;
     private String bannerFile = "banner.txt";
     private String jfinalConfig = "io.jboot.core.JbootCoreConfig";
+    private String listener = "*";
 
 
     public String getMode() {
@@ -70,8 +71,16 @@ public class JbootApplicationConfig {
         this.jfinalConfig = jfinalConfig;
     }
 
+    public String getListener() {
+        return listener;
+    }
+
+    public void setListener(String listener) {
+        this.listener = listener;
+    }
 
     private static JbootApplicationConfig instance;
+
     public static JbootApplicationConfig get() {
         if (instance == null) {
             instance = JbootConfigManager.me().get(JbootApplicationConfig.class);
@@ -86,6 +95,7 @@ public class JbootApplicationConfig {
                 ", mode='" + mode + '\'' +
                 ", version='" + version + '\'' +
                 ", config='" + jfinalConfig + '\'' +
+                ", listener='" + listener + '\'' +
                 " }";
     }
 }

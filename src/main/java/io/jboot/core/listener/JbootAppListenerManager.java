@@ -18,16 +18,20 @@ package io.jboot.core.listener;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Interceptors;
 import com.jfinal.config.Routes;
+import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
+import io.jboot.app.JbootApplicationConfig;
 import io.jboot.core.weight.WeightUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class JbootAppListenerManager implements JbootAppListener {
     private static Log log = Log.getLog(JbootAppListenerManager.class);
@@ -43,21 +47,37 @@ public class JbootAppListenerManager implements JbootAppListener {
     List<JbootAppListener> listeners = new ArrayList<>();
 
     private JbootAppListenerManager() {
-        List<Class<JbootAppListener>> allListeners = ClassScanner.scanSubClass(JbootAppListener.class, true);
-        if (allListeners == null || allListeners.size() == 0) {
-            return;
+
+
+        Set<String> listenerset = null;
+        String listener = JbootApplicationConfig.get().getListener();
+        if (StrUtil.isNotBlank(listener) && !"*".equals(listener)){
+            listenerset = StrUtil.splitToSet(listener, ";");
         }
 
-        for (Class<? extends JbootAppListener> clazz : allListeners) {
-            if (JbootAppListenerManager.class == clazz || JbootAppListenerBase.class == clazz) {
-                continue;
-            }
-
-            JbootAppListener listener = ClassUtil.newInstance(clazz);
-            if (listener != null) {
-                listeners.add(listener);
+        if (listenerset != null && !listenerset.isEmpty()){
+            listenerset.forEach(clazz -> {
+                JbootAppListener l = ClassUtil.newInstance(clazz);
+                if (l != null) {
+                    listeners.add(l);
+                }else {
+                    LogKit.warn("Can not create JbootAppListener by class: " + clazz);
+                }
+            });
+        }else {
+            List<Class<JbootAppListener>> allListeners = ClassScanner.scanSubClass(JbootAppListener.class, true);
+            for (Class<? extends JbootAppListener> clazz : allListeners) {
+                if (JbootAppListenerManager.class == clazz || JbootAppListenerBase.class == clazz) {
+                    continue;
+                }
+                JbootAppListener l = ClassUtil.newInstance(clazz);
+                if (l != null) {
+                    listeners.add(l);
+                }
             }
         }
+
+
 
         WeightUtil.sort(listeners);
     }
