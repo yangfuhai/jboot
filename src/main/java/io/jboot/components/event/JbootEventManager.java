@@ -197,9 +197,6 @@ public class JbootEventManager {
     private void invokeListeners(final JbootEvent event, List<JbootEventListener> syncListeners) {
         for (final JbootEventListener listener : syncListeners) {
             try {
-                if (Jboot.isDevMode()) {
-                    log.debug(String.format("listener[%s]-->>onEvent(%s)", listener, event));
-                }
                 listener.onEvent(event);
             } catch (Throwable e) {
                 log.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
@@ -211,9 +208,6 @@ public class JbootEventManager {
         for (final JbootEventListener listener : listeners) {
             threadPool.execute(() -> {
                 try {
-                    if (Jboot.isDevMode()) {
-                        log.debug(String.format("listener[%s]-->>onEvent(%s) in async", listener, event));
-                    }
                     listener.onEvent(event);
                 } catch (Throwable e) {
                     log.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
@@ -222,4 +216,7 @@ public class JbootEventManager {
         }
     }
 
+    public ExecutorService getThreadPool() {
+        return threadPool;
+    }
 }
