@@ -35,7 +35,6 @@ import io.jboot.app.ApplicationUtil;
 import io.jboot.components.cache.support.JbootCaptchaCache;
 import io.jboot.components.cache.support.JbootTokenCache;
 import io.jboot.components.gateway.JbootGatewayHandler;
-import io.jboot.components.gateway.JbootGatewayManager;
 import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
@@ -310,10 +309,7 @@ public class JbootCoreConfig extends JFinalConfig {
         //用户的 handler 优先于 jboot 的 handler 执行
         JbootAppListenerManager.me().onHandlerConfig(new JfinalHandlers(handlers));
 
-        if (JbootGatewayManager.me().isConfigOkAndEnable()) {
-            handlers.add(new JbootGatewayHandler());
-        }
-
+        handlers.add(new JbootGatewayHandler());
         handlers.add(new AttachmentHandler());
 
         SentinelConfig sentinelConfig = SentinelConfig.get();
@@ -362,7 +358,6 @@ public class JbootCoreConfig extends JFinalConfig {
         LimiterManager.me().init();
         JbootSeataManager.me().init();
         JbootSentinelManager.me().init();
-        JbootGatewayManager.me().init();
 
         JbootAppListenerManager.me().onStart();
 

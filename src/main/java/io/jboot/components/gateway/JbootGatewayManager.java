@@ -19,7 +19,6 @@ import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,47 +54,46 @@ public class JbootGatewayManager {
     }
 
 
+    /**
+     * 动态注册新的路由配置
+     * @param config 配置信息
+     */
     public synchronized void registerConfig(JbootGatewayConfig config) {
         if (configMap == null) {
             configMap = new ConcurrentHashMap<>();
         }
         configMap.put(config.getName(), config);
-    }
 
-
-    public boolean isConfigOkAndEnable() {
-        if (configMap == null || configMap.isEmpty()) {
-            return false;
-        }
-
-        for (JbootGatewayConfig config : configMap.values()) {
-            if (config.isEnable()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    public void init() {
-        // 启动定时健康检查
-        if (isConfigOkAndEnable()) {
+        if (config.isEnable() && config.isConfigOk()){
             JbootGatewayHealthChecker.me().start();
         }
     }
 
 
+    /**
+     * 动态移除路由配置
+     * @param name 配置名称
+     * @return 被移除的配置信息
+     */
     public JbootGatewayConfig removeConfig(String name) {
         return configMap == null ? null : configMap.remove(name);
     }
 
 
+    /**
+     *  获取某个配置信息
+     * @param name 配置名称
+     * @return 配置信息
+     */
     public JbootGatewayConfig getConfig(String name) {
         return configMap == null ? null : configMap.get(name);
     }
 
 
+    /**
+     * 获取所有的配置信息
+     * @return
+     */
     public Map<String, JbootGatewayConfig> getConfigMap() {
         return configMap;
     }
@@ -108,10 +106,8 @@ public class JbootGatewayManager {
      */
     public JbootGatewayConfig matchingConfig(HttpServletRequest req) {
         if (configMap != null && !configMap.isEmpty()) {
-            Iterator<JbootGatewayConfig> iterator = configMap.values().iterator();
-            while (iterator.hasNext()) {
-                JbootGatewayConfig config = iterator.next();
-                if (config.matches(req)) {
+            for (JbootGatewayConfig config : configMap.values()) {
+                if (config.isEnable() && config.matches(req)) {
                     return config;
                 }
             }
