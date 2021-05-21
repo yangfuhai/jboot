@@ -38,7 +38,7 @@ public class ModelUtil {
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> List<M> copy(List<M> modelList) {
+    public static <M extends JbootModel<?>> List<M> copy(List<M> modelList) {
         if (modelList == null || modelList.isEmpty()) {
             return modelList;
         }
@@ -62,7 +62,7 @@ public class ModelUtil {
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> Set<M> copy(Set<M> modelSet) {
+    public static <M extends JbootModel<?>> Set<M> copy(Set<M> modelSet) {
         if (modelSet == null || modelSet.isEmpty()) {
             return modelSet;
         }
@@ -86,7 +86,7 @@ public class ModelUtil {
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> M[] copy(M[] models) {
+    public static <M extends JbootModel<?>> M[] copy(M[] models) {
         if (models == null || models.length == 0) {
             return models;
         }
@@ -107,7 +107,7 @@ public class ModelUtil {
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> Page<M> copy(Page<M> modelPage) {
+    public static <M extends JbootModel<?>> Page<M> copy(Page<M> modelPage) {
         if (modelPage == null) {
             return null;
         }
@@ -129,7 +129,7 @@ public class ModelUtil {
      * @param <M>
      * @return
      */
-    public static <M extends JbootModel> M copy(M model) {
+    public static <M extends JbootModel<?>> M copy(M model) {
         return model == null ? null : (M) model.copy();
     }
 
@@ -138,7 +138,7 @@ public class ModelUtil {
         try {
             return clazz.newInstance();
         } catch (Exception e) {
-            throw new JbootException("can not newInstance class:" + clazz + "\n" + e.toString(), e);
+            throw new JbootException("can not newInstance class:" + clazz + "\n" + e, e);
         }
     }
 

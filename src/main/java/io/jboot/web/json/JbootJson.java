@@ -35,7 +35,7 @@ import java.util.*;
 public class JbootJson extends JFinalJson {
 
     private JbootJsonConfig config = Jboot.config(JbootJsonConfig.class);
-    protected static Map<Class, MethodsAndFieldsWrapper> methodAndFieldsCache = new HashMap<>();
+    protected static Map<Class<?>, MethodsAndFieldsWrapper> methodAndFieldsCache = new HashMap<>();
 
     public JbootJson() {
 
@@ -58,7 +58,7 @@ public class JbootJson extends JFinalJson {
     }
 
 
-    protected JFinalJsonKit.ToJson<Model> jbootModelToJson = (model, depth, ret) -> {
+    protected JFinalJsonKit.ToJson<Model<?>> jbootModelToJson = (model, depth, ret) -> {
         if (JFinalJsonKit.checkDepth(depth--, ret)) {
             return;
         }
@@ -88,7 +88,7 @@ public class JbootJson extends JFinalJson {
     }
 
 
-    protected void fillBeanToMap(Object bean, Map toMap) {
+    protected void fillBeanToMap(Object bean, Map<String, Object> toMap) {
 
         MethodsAndFieldsWrapper wrapper = methodAndFieldsCache.get(bean.getClass());
         if (wrapper == null) {
