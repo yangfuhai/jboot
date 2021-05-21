@@ -80,7 +80,7 @@ public class JbootActionReporter {
     /**
      * Report the action
      */
-    public static final void report(String target, Controller controller, Action action, Invocation invocation, long time) {
+    public static void report(String target, Controller controller, Action action, Invocation invocation, long time) {
         try {
             doReport(target, controller, action, invocation, time);
         } catch (Exception ex) {
@@ -93,7 +93,7 @@ public class JbootActionReporter {
     }
 
 
-    private static final void doReport(String target, Controller controller, Action action, Invocation invocation, long time) throws Exception {
+    private static void doReport(String target, Controller controller, Action action, Invocation invocation, long time) throws Exception {
         CtClass ctClass = ClassPool.getDefault().get(action.getControllerClass().getName());
         String desc = JbootActionReporterUtil.getMethodDescWithoutName(action.getMethod());
         CtMethod ctMethod = ctClass.getMethod(action.getMethodName(), desc);
@@ -101,7 +101,7 @@ public class JbootActionReporter {
 
         StringBuilder sb = new StringBuilder(title).append(sdf.get().format(new Date(time))).append(" -------------------------\n");
         sb.append("Request     : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
-        Class cc = action.getMethod().getDeclaringClass();
+        Class<?> cc = action.getMethod().getDeclaringClass();
         sb.append("Controller  : ").append(cc.getName()).append(".(").append(getClassFileName(cc)).append(".java:" + lineNumber + ")");
         if (JbootActionInvocation.isControllerInvoked()) {
             sb.append(ConsoleColor.GREEN_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
@@ -128,7 +128,7 @@ public class JbootActionReporter {
                     sb.append("\n              ");
                 }
                 Interceptor inter = inters[i];
-                Class ic = inter.getClass();
+                Class<?> ic = inter.getClass();
 
                 if (ic == JwtInterceptor.class) {
                     printJwt = true;
