@@ -238,6 +238,7 @@ public class ClassScanner {
         excludeJars.add("shadow-core-rewrite-");
         excludeJars.add("apiguardian-api-");
         excludeJars.add("opentest4j-");
+        excludeJars.add("opentracing-");
         excludeJars.add("freemarker-");
         excludeJars.add("protobuf-");
         excludeJars.add("jdom2-");
@@ -271,8 +272,8 @@ public class ClassScanner {
         excludeJars.add("byte-buddy-");
         excludeJars.add("jodd-");
         excludeJars.add("redisson-");
+        excludeJars.add("bcprov-");
         excludeJars.add("org.jacoco");
-
     }
 
 
@@ -316,6 +317,7 @@ public class ClassScanner {
         excludeClasses.add("org.jetbrains.");
         excludeClasses.add("org.jacoco.");
         excludeClasses.add("org.xnio.");
+        excludeClasses.add("org.bouncycastle.");
         excludeClasses.add("aj.org.");
         excludeClasses.add("ch.qos.");
         excludeClasses.add("com.alibaba.csp.");
@@ -353,6 +355,7 @@ public class ClassScanner {
         excludeClasses.add("io.swagger.");
         excludeClasses.add("io.undertow.");
         excludeClasses.add("io.netty.");
+        excludeClasses.add("io.opentracing.");
         excludeClasses.add("it.sauronsoftware");
         excludeClasses.add("net.oschina.j2cache");
         excludeClasses.add("net.bytebuddy");
