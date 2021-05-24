@@ -1,3 +1,15 @@
+jboot v3.9.13:
+新增：新增配置 "jboot.app.listener"，用于配置可以执行的 appListener
+新增：新增配置 "jboot.json.skipModelAttrs" 和 "jboot.json.skipBeanGetters" 配置
+优化：JbootGatewayHandler 默认添加在系统里，方便进行动态路由
+优化：JbootGatewayHealthChecker 的代码
+优化：升级 JFinal 等依赖到最新版本
+优化：对 ClickHouse 高级版本 驱动 进行适配
+修复：代码生成器在某些情况下输出的 html 不是 utf8 编码的问题
+修复：WeightUtil 判断错误的 bug
+
+
+
 jboot v3.9.12:
 新增：devModel 可以动态配置，方便在某些场景下切换 devMode
 修复：在某些极端场景下，PathKit.getWebRootPath() 可能出错的问题
