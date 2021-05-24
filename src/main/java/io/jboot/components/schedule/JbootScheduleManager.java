@@ -46,10 +46,10 @@ public class JbootScheduleManager {
     private ScheduledThreadPoolExecutor fixedScheduler;
     private JbooScheduleConfig config;
 
-    private Map<Class, Runnable> scheduleRunnableCache = new ConcurrentHashMap<>();
+    private Map<Class<?>, Runnable> scheduleRunnableCache = new ConcurrentHashMap<>();
 
     // add by lixin 08.08, 用于 remove fixedScheduler 
-    private Map<Class, ScheduledFuture> scheduleFutureCache = new ConcurrentHashMap<>();
+    private Map<Class<?>, ScheduledFuture<?>> scheduleFutureCache = new ConcurrentHashMap<>();
 
     public JbootScheduleManager() {
         config = Jboot.config(JbooScheduleConfig.class);
@@ -93,7 +93,7 @@ public class JbootScheduleManager {
             try {
                 scheduleRunnableCache.put(runnableClass, executeRunnable);
                 // modified by lixin 08.08, 用于remove fixedScheduler
-                ScheduledFuture sf = fixedScheduler.scheduleWithFixedDelay(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
+                ScheduledFuture<?> sf = fixedScheduler.scheduleWithFixedDelay(executeRunnable, fixedDelayJob.initialDelay(), fixedDelayJob.period(), TimeUnit.SECONDS);
                 scheduleFutureCache.put(runnableClass, sf);
             } catch (Exception e) {
                 LOG.error(e.toString(), e);
@@ -108,8 +108,8 @@ public class JbootScheduleManager {
                     : new JbootDistributedRunnable(runnable, fixedRateJob.period());
             try {
                 scheduleRunnableCache.put(runnableClass, executeRunnable);
-                // modified by lixin 08.08, 用于remove fixedScheduler
-                ScheduledFuture future = fixedScheduler.scheduleAtFixedRate(executeRunnable, fixedRateJob.initialDelay(), fixedRateJob.period(), TimeUnit.SECONDS);
+                // modified by lixin 08.08, 用于 remove fixedScheduler
+                ScheduledFuture<?> future = fixedScheduler.scheduleAtFixedRate(executeRunnable, fixedRateJob.initialDelay(), fixedRateJob.period(), TimeUnit.SECONDS);
                 scheduleFutureCache.put(runnableClass, future);
             } catch (Exception e) {
                 LOG.error(e.toString(), e);
@@ -138,14 +138,14 @@ public class JbootScheduleManager {
             scheduleRunnableCache.remove(removeClass);
         }
 
-        //add by lixin 08.08, 用于remove fixedScheduler
-        ScheduledFuture sf = scheduleFutureCache.get(removeClass);
+        //add by lixin 08.08, 用于 remove fixedScheduler
+        ScheduledFuture<?> sf = scheduleFutureCache.remove(removeClass);
         if (sf != null) {
             sf.cancel(true);
         }
     }
 
-    public Map<Class, Runnable> getScheduleRunnableCache() {
+    public Map<Class<?>, Runnable> getScheduleRunnableCache() {
         return scheduleRunnableCache;
     }
 
@@ -161,7 +161,7 @@ public class JbootScheduleManager {
         return config;
     }
 
-    public Map<Class, ScheduledFuture> getScheduleFutureCache() {
+    public Map<Class<?>, ScheduledFuture<?>> getScheduleFutureCache() {
         return scheduleFutureCache;
     }
 }
