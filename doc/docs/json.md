@@ -497,6 +497,12 @@ jboot.json.skipNullValueField = true
 
 #配置输出的时间格式，默认值为 yyyy-MM-dd HH:mm:ss
 jboot.json.timestampPattern = "yyyy-MM-dd HH:mm:ss"
+
+# 是否跳过 model 的 attr，只用 bean 的 getter 来渲染
+jboot.json.skipModelAttrs = false
+
+# 是否值跳过 bean 的 getter，只用 model 的 attr 渲染
+jboot.json.skipBeanGetters =false
 ```
 
 ### jboot v3.5.1 之前的配置
