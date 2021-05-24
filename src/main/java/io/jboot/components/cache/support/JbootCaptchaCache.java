@@ -6,7 +6,7 @@ import io.jboot.Jboot;
 
 public class JbootCaptchaCache implements ICaptchaCache {
 
-    static final String CACHE_NAME = "__jboot_captcha";
+    public static final String CACHE_NAME = "__jboot_captcha";
 
     @Override
     public void put(Captcha captcha) {
