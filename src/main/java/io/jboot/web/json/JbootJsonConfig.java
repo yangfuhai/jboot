@@ -27,6 +27,8 @@ public class JbootJsonConfig {
     private boolean camelCaseJsonStyleEnable = true;
     private boolean camelCaseToLowerCaseAnyway = false;
     private boolean skipNullValueField = true;
+    private boolean skipModelAttrs = false;
+    private boolean skipBeanGetters = false;
     private String timestampPattern;
 
     public boolean isCamelCaseJsonStyleEnable() {
@@ -51,6 +53,22 @@ public class JbootJsonConfig {
 
     public void setSkipNullValueField(boolean skipNullValueField) {
         this.skipNullValueField = skipNullValueField;
+    }
+
+    public boolean isSkipModelAttrs() {
+        return skipModelAttrs;
+    }
+
+    public void setSkipModelAttrs(boolean skipModelAttrs) {
+        this.skipModelAttrs = skipModelAttrs;
+    }
+
+    public boolean isSkipBeanGetters() {
+        return skipBeanGetters;
+    }
+
+    public void setSkipBeanGetters(boolean skipBeanGetters) {
+        this.skipBeanGetters = skipBeanGetters;
     }
 
     public String getTimestampPattern() {

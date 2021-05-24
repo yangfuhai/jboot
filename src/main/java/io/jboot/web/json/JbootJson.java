@@ -65,9 +65,13 @@ public class JbootJson extends JFinalJson {
 
         Map<String, Object> map = new HashMap<>();
 
-        fillMapToMap(CPI.getAttrs(model), map);
-        fillBeanToMap(model, map);
+        if (!config.isSkipModelAttrs()) {
+            fillModelAttrsToMap(CPI.getAttrs(model), map);
+        }
 
+        if (!config.isSkipBeanGetters()) {
+            fillBeanToMap(model, map);
+        }
 
         optimizeMapAttrs(map);
 
@@ -75,9 +79,9 @@ public class JbootJson extends JFinalJson {
     };
 
 
-    protected void fillMapToMap(Map<String, Object> fillMap, Map<String, Object> toMap) {
-        if (fillMap != null && !fillMap.isEmpty()) {
-            for (Map.Entry<String, Object> entry : fillMap.entrySet()) {
+    protected void fillModelAttrsToMap(Map<String, Object> attrs, Map<String, Object> toMap) {
+        if (attrs != null && !attrs.isEmpty()) {
+            for (Map.Entry<String, Object> entry : attrs.entrySet()) {
                 String fieldName = entry.getKey();
                 if (config.isCamelCaseJsonStyleEnable()) {
                     fieldName = StrKit.toCamelCase(fieldName, config.isCamelCaseToLowerCaseAnyway());
