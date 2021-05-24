@@ -15,6 +15,7 @@
  */
 package io.jboot.codegen.service;
 
+import com.jfinal.core.JFinal;
 import com.jfinal.kit.JavaKeyword;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.PathKit;
@@ -25,9 +26,7 @@ import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
 import io.jboot.codegen.CodeGenHelpler;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,13 +154,10 @@ public class JbootServiceImplGenerator {
             return;
         }
 
-
-        FileWriter fw = new FileWriter(target);
-        try {
-            fw.write(tableMeta.baseModelContent);
-        } finally {
-            fw.close();
+        try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(target), JFinal.me().getConstants().getEncoding())) {
+            osw.write(tableMeta.baseModelContent);
         }
+
     }
 
 

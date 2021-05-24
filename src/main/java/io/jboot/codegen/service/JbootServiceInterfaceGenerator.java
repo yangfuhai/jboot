@@ -15,6 +15,7 @@
  */
 package io.jboot.codegen.service;
 
+import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.StrKit;
@@ -26,8 +27,9 @@ import com.jfinal.template.source.ClassPathSourceFactory;
 import io.jboot.codegen.CodeGenHelpler;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
@@ -143,11 +145,8 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
             return;
         }
 
-        FileWriter fw = new FileWriter(target);
-        try {
-            fw.write(tableMeta.baseModelContent);
-        } finally {
-            fw.close();
+        try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(target), JFinal.me().getConstants().getEncoding())) {
+            osw.write(tableMeta.baseModelContent);
         }
     }
 
