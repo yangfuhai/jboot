@@ -33,7 +33,7 @@ public class OfficialClickHouseConnection extends ClickHouseConnectionImpl {
     private ClickHouseProperties properties;
 
 
-    public OfficialClickHouseConnection(String url) {
+    public OfficialClickHouseConnection(String url) throws SQLException {
         super(url);
         try {
             this.properties = ClickhouseJdbcUrlParser.parse(url,new Properties());
@@ -42,7 +42,7 @@ public class OfficialClickHouseConnection extends ClickHouseConnectionImpl {
         }
     }
 
-    public OfficialClickHouseConnection(String url, ClickHouseProperties properties) {
+    public OfficialClickHouseConnection(String url, ClickHouseProperties properties) throws SQLException {
         super(url, properties);
         try {
             this.properties = ClickhouseJdbcUrlParser.parse(url, properties.asProperties());
