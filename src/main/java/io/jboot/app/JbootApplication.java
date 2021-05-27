@@ -87,6 +87,7 @@ public class JbootApplication {
 
         return new JbootUndertowServer(undertowConfig)
                 .configWeb(webBuilder -> {
+                    tryAddContenTypes(webBuilder);
                     tryAddMetricsSupport(webBuilder);
                     tryAddShiroSupport(webBuilder);
                     tryAddWebSocketSupport(webBuilder);
@@ -102,6 +103,11 @@ public class JbootApplication {
         undertowConfig.addSystemClassPrefix("io.jboot.app");
         undertowConfig.addHotSwapClassPrefix("io.jboot");
         return undertowConfig;
+    }
+
+
+    private static void tryAddContenTypes(WebBuilder webBuilder) {
+        HttpContentTypes.init(webBuilder.getDeploymentInfo());
     }
 
 

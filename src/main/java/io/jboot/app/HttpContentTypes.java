@@ -30,20 +30,26 @@ public class HttpContentTypes {
     private static Map<String, String> mappings = new HashMap<>();
 
     static {
+
         /**
          * 视频相关
          */
         mappings.put("asf", "video/x-ms-asf");
         mappings.put("asx", "video/x-ms-asf");
         mappings.put("avi", "video/avi");
-        mappings.put("mp4", "video/mpeg4");
+        mappings.put("flv", "video/x-flv");
+        mappings.put("mp4", "video/mp4");
         mappings.put("mpeg", "video/mpg");
         mappings.put("mps", "video/x-mpeg");
         mappings.put("mpv", "video/mpg");
+        mappings.put("mov", "video/quicktime");
         mappings.put("mpa", "video/x-mpg");
         mappings.put("mpe", "video/x-mpg");
         mappings.put("m4e", "video/mpeg4");
         mappings.put("m2v", "video/x-mpeg");
+        mappings.put("wmv", "video/x-ms-wmv");
+        mappings.put("3gp", "video/3gpp");
+        mappings.put("ts", "video/MP2T");
 
 
         /**
@@ -59,6 +65,19 @@ public class HttpContentTypes {
         mappings.put("wav", "audio/wav");
         mappings.put("wax", "audio/x-ms-wax");
         mappings.put("wma", "audio/x-ms-wma");
+
+        /**
+         * 文档相关
+         */
+        mappings.put("pdf","application/pdf");
+        mappings.put("xml","application/xml");
+        mappings.put("json","application/json");
+        mappings.put("doc","application/msword");
+        mappings.put("docx","application/msword");
+        mappings.put("xls","application/vnd.ms-excel");
+        mappings.put("xlsx","application/vnd.ms-excel");
+        mappings.put("pot","application/vnd.ms-powerpoint");
+        mappings.put("ppt","application/vnd.ms-powerpoint");
     }
 
     /**
