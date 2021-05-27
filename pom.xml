@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.9.13</version>
+    <version>3.9.14-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -888,6 +888,7 @@
 
     <profiles>
         <profile>
+            <!-- mvn clean source:jar install -->
             <!-- mvn deploy -Dmaven.test.skip=true -e -P release -->
             <!-- mvn deploy -e -P release -->
             <id>release</id>
