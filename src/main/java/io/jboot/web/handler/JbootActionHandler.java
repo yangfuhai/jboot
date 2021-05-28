@@ -18,14 +18,16 @@ package io.jboot.web.handler;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.*;
 import com.jfinal.log.Log;
+import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import io.jboot.components.valid.ValidErrorRender;
+import io.jboot.components.valid.ValidException;
 import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.render.JbootErrorRender;
 import io.jboot.web.render.JbootRenderFactory;
-import io.jboot.components.valid.ValidException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,16 +134,7 @@ public class JbootActionHandler extends ActionHandler {
         } catch (ActionException e) {
             handleActionException(target, request, response, action, e);
         } catch (ValidException e) {
-            if (LOG.isErrorEnabled()) {
-                String qs = request.getQueryString();
-                String targetInfo = qs == null ? target : target + "?" + qs;
-                LOG.error(e.getReason() + " : " + targetInfo, e);
-            }
-            Render render = renderManager.getRenderFactory().getErrorRender(ValidUtil.getErrorCode());
-            if (render instanceof JbootErrorRender) {
-                ((JbootErrorRender) render).setThrowable(e);
-            }
-            render.setContext(request, response, action.getViewPath()).render();
+            handleValidException(target, request, response, action, e);
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 String qs = request.getQueryString();
@@ -156,7 +149,14 @@ public class JbootActionHandler extends ActionHandler {
         }
     }
 
-    private void doStartRender(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled, Action action, Controller controller, Invocation invocation) {
+
+    private void doStartRender(String target
+            , HttpServletRequest request
+            , HttpServletResponse response
+            , boolean[] isHandled
+            , Action action
+            , Controller controller
+            , Invocation invocation) {
 
         invocation.invoke();
 
@@ -183,6 +183,15 @@ public class JbootActionHandler extends ActionHandler {
     }
 
 
+    /**
+     * 处理 Action（Controller的方法）执行错误
+     *
+     * @param target
+     * @param request
+     * @param response
+     * @param action
+     * @param e
+     */
     private void handleActionException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ActionException e) {
         int errorCode = e.getErrorCode();
         String msg = null;
@@ -219,6 +228,35 @@ public class JbootActionHandler extends ActionHandler {
         }
 
         e.getErrorRender().setContext(request, response, action.getViewPath()).render();
+    }
+
+
+    /**
+     * 处理参数验证错误
+     *
+     * @param target
+     * @param request
+     * @param response
+     * @param action
+     * @param e
+     */
+    private void handleValidException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ValidException e) {
+        if (LOG.isErrorEnabled()) {
+            String qs = request.getQueryString();
+            String targetInfo = qs == null ? target : target + "?" + qs;
+            LOG.error(e.getReason() + " : " + targetInfo, e);
+        }
+        IRenderFactory factory = renderManager.getRenderFactory();
+        if (factory instanceof JbootRenderFactory) {
+            ValidErrorRender render = ((JbootRenderFactory) factory).getValidErrorRender(e);
+            render.setContext(request, response, action.getViewPath()).render();
+        } else {
+            Render render = renderManager.getRenderFactory().getErrorRender(ValidUtil.getErrorCode());
+            if (render instanceof JbootErrorRender) {
+                ((JbootErrorRender) render).setThrowable(e);
+            }
+            render.setContext(request, response, action.getViewPath()).render();
+        }
     }
 
 

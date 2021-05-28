@@ -19,6 +19,8 @@ import com.jfinal.core.Action;
 import com.jfinal.render.ContentType;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderFactory;
+import io.jboot.components.valid.ValidErrorRender;
+import io.jboot.components.valid.ValidException;
 
 public class JbootRenderFactory extends RenderFactory {
 
@@ -132,6 +134,10 @@ public class JbootRenderFactory extends RenderFactory {
 
     public Render getReturnValueRender(Action action, Object returnValue) {
         return new JbootReturnValueRender(action, returnValue);
+    }
+
+    public ValidErrorRender getValidErrorRender(ValidException validException){
+        return new ValidErrorRender(validException);
     }
 
 
