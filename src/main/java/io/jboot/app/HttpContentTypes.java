@@ -39,7 +39,7 @@ public class HttpContentTypes {
         mappings.put("avi", "video/avi");
         mappings.put("flv", "video/x-flv");
         mappings.put("mp4", "video/mp4");
-        mappings.put("mpeg", "video/mpg");
+        mappings.put("mpeg", "video/mpeg");
         mappings.put("mps", "video/x-mpeg");
         mappings.put("mpv", "video/mpg");
         mappings.put("mov", "video/quicktime");
@@ -55,7 +55,7 @@ public class HttpContentTypes {
         /**
          * 音频相关
          */
-        mappings.put("mp3", "audio/mp3");
+        mappings.put("mp3", "audio/mpeg");
         mappings.put("mp2", "audio/mp2");
         mappings.put("m3u", "audio/x-mpegurl");
         mappings.put("m3u8", "audio/x-mpegurl");
@@ -69,24 +69,25 @@ public class HttpContentTypes {
         /**
          * 文档相关
          */
-        mappings.put("pdf","application/pdf");
-        mappings.put("xml","application/xml");
-        mappings.put("json","application/json");
-        mappings.put("doc","application/msword");
-        mappings.put("docx","application/msword");
-        mappings.put("xls","application/vnd.ms-excel");
-        mappings.put("xlsx","application/vnd.ms-excel");
-        mappings.put("pot","application/vnd.ms-powerpoint");
-        mappings.put("ppt","application/vnd.ms-powerpoint");
+        mappings.put("pdf", "application/pdf");
+        mappings.put("xml", "application/xml");
+        mappings.put("json", "application/json");
+        mappings.put("doc", "application/msword");
+        mappings.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        mappings.put("xls", "application/vnd.ms-excel");
+        mappings.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        mappings.put("pot", "application/vnd.ms-powerpoint");
+        mappings.put("ppt", "application/vnd.ms-powerpoint");
+        mappings.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
     }
 
     /**
      * 让 undertow 支持音视频格式文件在线播放
      */
     public static void init(DeploymentInfo di) {
-       for (Map.Entry<String,String> entry : mappings.entrySet()){
-           di.addMimeMapping(new MimeMapping(entry.getKey(),entry.getValue()));
-       }
+        for (Map.Entry<String, String> entry : mappings.entrySet()) {
+            di.addMimeMapping(new MimeMapping(entry.getKey(), entry.getValue()));
+        }
     }
 
 }
