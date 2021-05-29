@@ -25,6 +25,7 @@ import com.jfinal.kit.JsonKit;
 import io.jboot.Jboot;
 import io.jboot.JbootConsts;
 import io.jboot.support.jwt.JwtInterceptor;
+import io.jboot.utils.ClassUtil;
 import io.jboot.utils.RequestUtil;
 import io.jboot.web.controller.JbootController;
 import javassist.ClassPool;
@@ -94,7 +95,7 @@ public class JbootActionReporter {
 
 
     private static void doReport(String target, Controller controller, Action action, Invocation invocation, long time) throws Exception {
-        CtClass ctClass = ClassPool.getDefault().get(action.getControllerClass().getName());
+        CtClass ctClass = ClassPool.getDefault().get(ClassUtil.getUsefulClass(action.getControllerClass()).getName());
         String desc = JbootActionReporterUtil.getMethodDescWithoutName(action.getMethod());
         CtMethod ctMethod = ctClass.getMethod(action.getMethodName(), desc);
         int lineNumber = ctMethod.getMethodInfo().getLineNumber(0);
@@ -128,16 +129,16 @@ public class JbootActionReporter {
                     sb.append("\n              ");
                 }
                 Interceptor inter = inters[i];
-                Class<?> ic = inter.getClass();
+                Class<?> interClass = ClassUtil.getUsefulClass(inter.getClass());
 
-                if (ic == JwtInterceptor.class) {
+                if (interClass == JwtInterceptor.class) {
                     printJwt = true;
                 }
 
-                CtClass icClass = ClassPool.getDefault().get(ic.getName());
+                CtClass icClass = ClassPool.getDefault().get(interClass.getName());
                 CtMethod icMethod = icClass.getMethod("intercept", interceptMethodDesc);
                 int icLineNumber = icMethod.getMethodInfo().getLineNumber(0);
-                sb.append(icMethod.getDeclaringClass().getName()).append(".(").append(getClassFileName(ic)).append(".java:" + icLineNumber + ")");
+                sb.append(icMethod.getDeclaringClass().getName()).append(".(").append(getClassFileName(interClass)).append(".java:" + icLineNumber + ")");
 
                 if (invokedInterceptors.contains(inter)) {
                     sb.append(ConsoleColor.GREEN_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
