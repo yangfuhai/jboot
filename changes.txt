@@ -1,3 +1,10 @@
+jboot v3.9.14:
+新增：为 undertow 新增默认的 content-type，解决 mp4 等视频不能播放的问题
+新增：ValidErrorRender，方便用户自定义 "数据验证" 错误的渲染器
+修复：当 Interceptor 被 cglib 代理时，无法正确输出其日志的问题
+
+
+
 jboot v3.9.13:
 新增：新增配置 "jboot.app.listener"，用于配置可以执行的 appListener
 新增：新增配置 "jboot.json.skipModelAttrs" 和 "jboot.json.skipBeanGetters" 配置
