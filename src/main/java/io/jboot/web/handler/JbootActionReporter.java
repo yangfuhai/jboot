@@ -22,17 +22,21 @@ import com.jfinal.core.ActionReporter;
 import com.jfinal.core.Controller;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.JsonKit;
+import com.jfinal.render.*;
 import io.jboot.Jboot;
 import io.jboot.JbootConsts;
 import io.jboot.support.jwt.JwtInterceptor;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.ReflectUtil;
 import io.jboot.utils.RequestUtil;
+import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
@@ -180,20 +184,65 @@ public class JbootActionReporter {
         }
 
 
-        if (!"GET".equalsIgnoreCase(controller.getRequest().getMethod()) && !RequestUtil.isMultipartRequest(controller.getRequest())) {
+        if (!"GET".equalsIgnoreCase(controller.getRequest().getMethod())
+                && !RequestUtil.isMultipartRequest(controller.getRequest())
+                && StrUtil.isNotBlank(controller.getRawData())) {
             sb.append("RawData     : ").append(controller.getRawData());
             sb.append("\n");
         }
 
         if (printJwt && controller instanceof JbootController) {
-            sb.append("Jwt         : ").append(JsonKit.toJson(((JbootController) controller).getJwtParas()));
-            sb.append("\n");
+            String jwtString = JsonKit.toJson(((JbootController) controller).getJwtParas());
+            if (StrUtil.isNotBlank(jwtString)) {
+                sb.append("Jwt         : ").append(jwtString.replace("\n", ""));
+                sb.append("\n");
+            }
         }
 
+        appendRenderMessage(controller, sb);
 
         sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n\n\n");
 
         writer.write(sb.toString());
+    }
+
+    private static void appendRenderMessage(Controller controller, StringBuilder sb) {
+        Render render = controller.getRender();
+        String view = render.getView();
+        if (StrUtil.isNotBlank(view)) {
+            sb.append("Render      : ").append(view);
+        } else if (render instanceof JsonRender) {
+            String jsontext = ((JsonRender) render).getJsonText();
+            if (jsontext == null) {
+                jsontext = "";
+            }
+            jsontext = jsontext.replace("\n", "");
+            if (jsontext.length() > 100) {
+                jsontext = jsontext.substring(0, 100) + "...";
+            }
+            sb.append("Render      : ").append(jsontext);
+        } else if (render instanceof TextRender) {
+            String text = ((TextRender) render).getText();
+            if (text == null) {
+                text = "";
+            }
+            text = text.replace("\n", "");
+            if (text.length() > 100) {
+                text = text.substring(0, 100) + "...";
+            }
+            sb.append("Render      : ").append(text);
+        } else if (render instanceof FileRender) {
+            File file = ReflectUtil.getFieldValue(FileRender.class, "file", render);
+            sb.append("Render      : ").append(file);
+        } else if (render instanceof RedirectRender) {
+            String url = ReflectUtil.getFieldValue(RedirectRender.class, "url", render);
+            sb.append("Redirect    : ").append(url);
+        } else if (render instanceof NullRender) {
+            sb.append("Render      :  null");
+        } else {
+            sb.append("Render      : ").append(ClassUtil.getUsefulClass(render.getClass()).getName());
+        }
+        sb.append("\n");
     }
 
 
