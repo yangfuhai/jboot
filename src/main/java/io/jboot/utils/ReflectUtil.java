@@ -22,6 +22,10 @@ import java.lang.reflect.Field;
  */
 public class ReflectUtil {
 
+    public static <T> T getFieldValue(Class<?> dClass, String fieldName) {
+        return getFieldValue(dClass, fieldName, null);
+    }
+
     public static <T> T getFieldValue(Class<?> dClass, String fieldName, Object from) {
         try {
             Field field = searchField(dClass, fieldName);

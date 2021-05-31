@@ -70,7 +70,6 @@ import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.web.xss.XSSHandler;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -137,14 +136,8 @@ public class JbootCoreConfig extends JFinalConfig {
      * 此方法的目的是为了防止 webRootPath 为 null
      */
     private void initWebRootPath() {
-        try {
-            Field webRootPathField = PathKit.class.getDeclaredField("webRootPath");
-            webRootPathField.setAccessible(true);
-            if (webRootPathField.get(null) == null) {
-                PathKit.setWebRootPath(PathKit.getRootClassPath());
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        if (ReflectUtil.getFieldValue(PathKit.class,"webRootPath") == null){
+            PathKit.setWebRootPath(PathKit.getRootClassPath());
         }
     }
 
