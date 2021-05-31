@@ -133,7 +133,8 @@ public class JbootApplication {
             webBuilder.addListener("org.apache.shiro.web.env.EnvironmentLoaderListener");
             webBuilder.addFilter("shiro", "io.jboot.support.shiro.JbootShiroFilter")
                     .addFilterUrlMapping("shiro", urlMapping, DispatcherType.REQUEST);
-
+            webBuilder.getDeploymentInfo().addInitParameter("shiroEnvironmentClass",
+                    "io.jboot.support.shiro.JbootShiroWebEnvironment");
         }
     }
 
