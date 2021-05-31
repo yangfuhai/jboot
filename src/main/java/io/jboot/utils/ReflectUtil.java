@@ -28,12 +28,15 @@ public class ReflectUtil {
 
     public static <T> T getFieldValue(Class<?> dClass, String fieldName, Object from) {
         try {
-            Field field = searchField(dClass, fieldName);
-            if (field != null) {
-                field.setAccessible(true);
-                return (T) field.get(from);
+            if (StrUtil.isBlank(fieldName)) {
+                throw new IllegalArgumentException("fieldName must not be null or empty.");
             }
-            throw new NoSuchFieldException(fieldName);
+            Field field = searchField(dClass, fieldName);
+            if (field == null) {
+                throw new NoSuchFieldException(fieldName);
+            }
+            field.setAccessible(true);
+            return (T) field.get(from);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -41,7 +44,7 @@ public class ReflectUtil {
 
 
     private static Field searchField(Class<?> dClass, String fieldName) {
-        if (dClass == null || StrUtil.isBlank(fieldName)) {
+        if (dClass == null) {
             return null;
         }
         Field[] fields = dClass.getDeclaredFields();
