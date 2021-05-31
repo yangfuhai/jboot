@@ -70,6 +70,7 @@ import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.web.xss.XSSHandler;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -93,12 +94,24 @@ public class JbootCoreConfig extends JFinalConfig {
 
         Aop.inject(this);
 
-        //配置默认的 WebRootPath
-        //在某些情况下，通过 JFinal.initPathKit() 设置 webrootpath 会为 null
-        //可以提前配置，防止 PathKit.detectWebRootPath 调用而得到错误的路径
-        PathKit.setWebRootPath(PathKit.getRootClassPath());
+        initWebRootPath();
 
         JbootAppListenerManager.me().onInit();
+    }
+
+    private void initWebRootPath() {
+        try {
+            Field webRootPathField = PathKit.class.getDeclaredField("webRootPath");
+            webRootPathField.setAccessible(true);
+            if (webRootPathField.get(null) == null) {
+                //配置默认的 WebRootPath
+                //在某些情况下，通过 JFinal.initPathKit() 设置 webrootpath 会为 null
+                //可以提前配置，防止 PathKit.detectWebRootPath 调用而得到错误的路径
+                PathKit.setWebRootPath(PathKit.getRootClassPath());
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
 

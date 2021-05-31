@@ -41,7 +41,20 @@ public class ApplicationUtil {
         System.out.println(appConfig.toString());
     }
 
+    private static Boolean runInFatjar;
     public static boolean runInFatjar() {
+        if (runInFatjar == null){
+            synchronized (ApplicationUtil.class){
+                if (runInFatjar == null){
+                    runInFatjar = buildRunInFatjar();
+                }
+            }
+        }
+        return runInFatjar;
+    }
+
+
+    private static boolean buildRunInFatjar() {
         URL url = Thread.currentThread().getContextClassLoader().getResource("");
         if (url == null) {
             return true;
@@ -64,6 +77,8 @@ public class ApplicationUtil {
 
         return false;
     }
+
+
 
     static void printClassPath() {
         try {
