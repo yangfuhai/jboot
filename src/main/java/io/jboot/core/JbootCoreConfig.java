@@ -99,28 +99,13 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootAppListenerManager.me().onInit();
     }
 
-    private void initWebRootPath() {
-        try {
-            Field webRootPathField = PathKit.class.getDeclaredField("webRootPath");
-            webRootPathField.setAccessible(true);
-            if (webRootPathField.get(null) == null) {
-                //配置默认的 WebRootPath
-                //在某些情况下，通过 JFinal.initPathKit() 设置 webrootpath 会为 null
-                //可以提前配置，防止 PathKit.detectWebRootPath 调用而得到错误的路径
-                PathKit.setWebRootPath(PathKit.getRootClassPath());
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     /**
-     * 设置必要的系统参数：
-     * 有些组件，比如 apollo、sentinel 等配置需要通过 System Properites来进行配置的
+     * apollo、sentinel 等配置需要通过 System Properites 来进行配置的
+     * 而 System Properties 的配置需要在启动的时候同 java -D 添加配置，极为不方便
+     * 此时，可以添加在 jboot-system.properties 里添加，来代替 java -D 的情况
      */
     private void initSystemProperties() {
-
         //加载 jboot-system.properties 代替启动参数的 -D 配置
         File spf = new File(PathKit.getRootClassPath(), "jboot-system.properties");
         if (spf.exists() && spf.isFile()) {
@@ -142,6 +127,27 @@ public class JbootCoreConfig extends JFinalConfig {
             }
         }
     }
+
+
+
+
+    /**
+     * 在 JFinal.initPathKit() 这个方法中，如果 webRootPath 会为 null
+     * 其会去通过 PathKit.detectWebRootPath() 去初始化一个错误的路径
+     * 此方法的目的是为了防止 webRootPath 为 null
+     */
+    private void initWebRootPath() {
+        try {
+            Field webRootPathField = PathKit.class.getDeclaredField("webRootPath");
+            webRootPathField.setAccessible(true);
+            if (webRootPathField.get(null) == null) {
+                PathKit.setWebRootPath(PathKit.getRootClassPath());
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     @Override
