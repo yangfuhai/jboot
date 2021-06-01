@@ -3,6 +3,7 @@ package io.jboot.test.mvc;
 import io.jboot.test.MockMvc;
 import io.jboot.test.junit5.JbootExtension;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,8 @@ public class MockAppTester5 {
     public static void start() {
         System.out.println(">>>>>>>>app.start()....");
 //        app.start();
+
+        Assertions.assertAll();
     }
 
     @AfterAll

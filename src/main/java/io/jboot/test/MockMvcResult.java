@@ -37,6 +37,10 @@ public class MockMvcResult {
         return response.getStatus();
     }
 
+    public String getHeader(String name) {
+        return response.getHeader(name);
+    }
+
     public MockHttpServletResponse getResponse() {
         return response;
     }
@@ -46,12 +50,30 @@ public class MockMvcResult {
         return this;
     }
 
+    public MockMvcResult assertThat(MockMvcAsserter mockMvcAssert) {
+        mockMvcAssert.doAssert(this);
+        return this;
+    }
+
+
+    public MockMvcResult assertTrue(MockMvcTrueAsserter mockMvcTrueAsserter) {
+        return assertTrue(mockMvcTrueAsserter, "MockMvc result can not match the asserter.");
+    }
+
+
+    public MockMvcResult assertTrue(MockMvcTrueAsserter mockMvcTrueAsserter, String message) {
+        if (!mockMvcTrueAsserter.doAssert(this)) {
+            throw new AssertionError(message);
+        }
+        return this;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Content-Type:").append("\n").append(getContentType()).append("\n\n");
-        sb.append("Http-Code:").append("\n").append(getHttpCode()).append("\n\n");
-        sb.append("Content:").append("\n").append(getContent()).append("\n\n");
-        return sb.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("Content-Type:").append("\n").append(getContentType()).append("\n\n");
+        builder.append("Http-Code:").append("\n").append(getHttpCode()).append("\n\n");
+        builder.append("Content:").append("\n").append(getContent()).append("\n\n");
+        return builder.toString();
     }
 }
