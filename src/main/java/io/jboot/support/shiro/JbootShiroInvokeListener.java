@@ -20,6 +20,9 @@ import com.jfinal.core.Controller;
 import io.jboot.Jboot;
 import io.jboot.support.shiro.processer.AuthorizeResult;
 import io.jboot.utils.StrUtil;
+import org.apache.shiro.web.util.WebUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -81,6 +84,9 @@ public interface JbootShiroInvokeListener {
                 controller.renderError(401);
                 return;
             }
+            HttpServletRequest request = controller.getRequest();
+            //保存被拦截的请求 Shiro将在登录成功后跳转到原请求
+            WebUtils.saveRequest(request);
             controller.redirect(config.getLoginUrl());
         }
 
