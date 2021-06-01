@@ -62,7 +62,7 @@ public class SqlBuilder {
         buildByColumns(whereSqlBuilder, columns, separator);
 
         if (whereSqlBuilder.length() > 0) {
-            if (appendWhereKeyword && !isAllSqlPartColumns(columns)) {
+            if (appendWhereKeyword && !isAllGroupByColumns(columns)) {
                 sqlBuilder.append(" WHERE ");
             }
             sqlBuilder.append(whereSqlBuilder);
@@ -70,9 +70,9 @@ public class SqlBuilder {
     }
 
     //fixed: https://gitee.com/JbootProjects/jboot/issues/I3TP7J
-    private static boolean isAllSqlPartColumns(List<Column> columns) {
+    private static boolean isAllGroupByColumns(List<Column> columns) {
         for (Column column : columns) {
-            if (!(column instanceof SqlPart)) {
+            if (!(column instanceof GroupBy)) {
                 return false;
             }
         }
