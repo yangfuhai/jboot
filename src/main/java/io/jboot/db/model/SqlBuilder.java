@@ -53,7 +53,7 @@ public class SqlBuilder {
     }
 
 
-    public static void buildWhereSql(StringBuilder sqlBuilder, List<Column> columns, char separator, boolean withWhereKeyword) {
+    public static void buildWhereSql(StringBuilder sqlBuilder, List<Column> columns, char separator, boolean appendWhereKeyword) {
         if (ArrayUtil.isNullOrEmpty(columns)) {
             return;
         }
@@ -61,12 +61,12 @@ public class SqlBuilder {
         StringBuilder whereSqlBuilder = new StringBuilder();
         buildByColumns(whereSqlBuilder, columns, separator);
 
-        String whereSql = whereSqlBuilder.toString();
-
-        if (StrUtil.isNotBlank(whereSql) && !isAllSqlPartColumns(columns)) {
-            sqlBuilder.append(withWhereKeyword ? " WHERE " : "").append(whereSql);
+        if (whereSqlBuilder.length() > 0) {
+            if (appendWhereKeyword && !isAllSqlPartColumns(columns)) {
+                sqlBuilder.append(" WHERE ");
+            }
+            sqlBuilder.append(whereSqlBuilder);
         }
-
     }
 
     //fixed: https://gitee.com/JbootProjects/jboot/issues/I3TP7J
