@@ -47,7 +47,7 @@ public class ShiroHasAllRolesDirective extends JbootShiroDirectiveBase {
     @Override
     public void onRender(Env env, Scope scope, Writer writer) {
         if (getSubject() != null && ArrayUtil.isNotEmpty(exprList.getExprArray())) {
-            List<String> roles = new ArrayList<String>();
+            List<String> roles = new ArrayList<>();
             for (Expr expr : exprList.getExprArray()) {
                 roles.add(expr.eval(scope).toString());
             }

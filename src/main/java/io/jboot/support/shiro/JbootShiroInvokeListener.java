@@ -36,7 +36,7 @@ public interface JbootShiroInvokeListener {
      *
      * @param inv
      */
-    public void onInvokeBefore(Invocation inv);
+    void onInvokeBefore(Invocation inv);
 
     /**
      * 通过这个方法，可以用来自定义shiro 处理结果 和 错误逻辑
@@ -44,10 +44,10 @@ public interface JbootShiroInvokeListener {
      * @param inv
      * @param result
      */
-    public void onInvokeAfter(Invocation inv, AuthorizeResult result);
+    void onInvokeAfter(Invocation inv, AuthorizeResult result);
 
 
-    public static final JbootShiroInvokeListener DEFAULT = new JbootShiroInvokeListener() {
+    JbootShiroInvokeListener DEFAULT = new JbootShiroInvokeListener() {
 
 
         private JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
