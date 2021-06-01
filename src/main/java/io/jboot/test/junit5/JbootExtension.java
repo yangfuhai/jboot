@@ -35,6 +35,7 @@ public class JbootExtension implements BeforeAllCallback, AfterAllCallback, Befo
         MockApp.getInstance().stop();
     }
 
+
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestInstance().isPresent()) {

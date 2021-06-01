@@ -37,9 +37,12 @@ public class JbootRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        MockApp.getInstance().start();
-        super.run(notifier);
-        MockApp.getInstance().stop();
+        try {
+            MockApp.getInstance().start();
+            super.run(notifier);
+        } finally {
+            MockApp.getInstance().stop();
+        }
     }
 
 

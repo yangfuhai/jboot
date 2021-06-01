@@ -30,10 +30,10 @@ import java.lang.reflect.Method;
 
 public class MockApp {
 
-    private static MockApp app = new MockApp();
+    private static final MockApp app = new MockApp();
 
     private JFinalConfig config;
-    private JFinalFilter filter;
+    private final JFinalFilter filter;
 
 
     private MockApp() {
@@ -64,7 +64,9 @@ public class MockApp {
 
 
     public void stop() {
-        config.onStop();
+        if (config != null) {
+            config.onStop();
+        }
     }
 
 
