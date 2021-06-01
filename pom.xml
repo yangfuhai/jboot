@@ -277,6 +277,14 @@
 
 
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.4.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-core</artifactId>
             <version>${sentinel.version}</version>
@@ -729,6 +737,7 @@
             <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
+
 
         <!--        <dependency>-->
         <!--            <groupId>ch.qos.logback</groupId>-->

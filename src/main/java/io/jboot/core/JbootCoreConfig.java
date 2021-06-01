@@ -21,7 +21,6 @@ import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.core.Path;
 import com.jfinal.json.JsonManager;
-import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -70,10 +69,7 @@ import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.web.xss.XSSHandler;
 
 import java.io.File;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -128,19 +124,17 @@ public class JbootCoreConfig extends JFinalConfig {
     }
 
 
-
-
     /**
      * 在 JFinal.initPathKit() 这个方法中，如果 webRootPath 会为 null
      * 其会去通过 PathKit.detectWebRootPath() 去初始化一个错误的路径
      * 此方法的目的是为了防止 webRootPath 为 null
      */
     private void initWebRootPath() {
-        if (ReflectUtil.getFieldValue(PathKit.class,"webRootPath") == null){
+        String webRootPath = ReflectUtil.getFieldValue(PathKit.class, "webRootPath");
+        if (webRootPath == null) {
             PathKit.setWebRootPath(PathKit.getRootClassPath());
         }
     }
-
 
 
     @Override
@@ -380,21 +374,13 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void onStop() {
-        Enumeration<Driver> drivers = DriverManager.getDrivers();
-        if (drivers != null) {
-            while (drivers.hasMoreElements()) {
-                try {
-                    Driver driver = drivers.nextElement();
-                    DriverManager.deregisterDriver(driver);
-                } catch (Exception e) {
-                    LogKit.error(e.toString(), e);
-                }
-            }
-        }
         JbootAppListenerManager.me().onStop();
+
         JbootScheduleManager.me().stop();
         JbootSeataManager.me().stop();
         JbootrpcManager.me().stop();
+
+
     }
 
 

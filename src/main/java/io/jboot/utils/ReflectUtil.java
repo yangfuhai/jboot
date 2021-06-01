@@ -16,6 +16,7 @@
 package io.jboot.utils;
 
 import java.lang.reflect.Field;
+import java.util.function.Predicate;
 
 /**
  * 反射相关操作的工具类
@@ -31,7 +32,7 @@ public class ReflectUtil {
             if (StrUtil.isBlank(fieldName)) {
                 throw new IllegalArgumentException("fieldName must not be null or empty.");
             }
-            Field field = searchField(dClass, fieldName);
+            Field field = searchField(dClass, f -> f.getName().equals(fieldName));
             if (field == null) {
                 throw new NoSuchFieldException(fieldName);
             }
@@ -43,16 +44,16 @@ public class ReflectUtil {
     }
 
 
-    private static Field searchField(Class<?> dClass, String fieldName) {
+    public static Field searchField(Class<?> dClass, Predicate<Field> filter) {
         if (dClass == null) {
             return null;
         }
         Field[] fields = dClass.getDeclaredFields();
         for (Field field : fields) {
-            if (field.getName().equals(fieldName)) {
+            if (filter.test(field)) {
                 return field;
             }
         }
-        return searchField(dClass.getSuperclass(), fieldName);
+        return searchField(dClass.getSuperclass(), filter);
     }
 }
