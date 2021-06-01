@@ -63,11 +63,22 @@ public class SqlBuilder {
 
         String whereSql = whereSqlBuilder.toString();
 
-        if (StrUtil.isNotBlank(whereSql)) {
+        if (StrUtil.isNotBlank(whereSql) && !isAllSqlPartColumns(columns)) {
             sqlBuilder.append(withWhereKeyword ? " WHERE " : "").append(whereSql);
         }
 
     }
+
+    //fixed: https://gitee.com/JbootProjects/jboot/issues/I3TP7J
+    private static boolean isAllSqlPartColumns(List<Column> columns) {
+        for (Column column : columns) {
+            if (!(column instanceof SqlPart)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     private static void buildByColumns(StringBuilder sqlBuilder, List<Column> columns, char separator) {
         for (int i = 0; i < columns.size(); i++) {
