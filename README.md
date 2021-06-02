@@ -52,6 +52,7 @@ public class HelloworldController extends JbootController {
 - [序列化](./doc/docs/serialize.md)
 - [事件机制](./doc/docs/event.md)
 - [SPI扩展机制](./doc/docs/spi.md)
+- [单元测试](./doc/docs/junit.md)
 - [代码生成器](./doc/docs/codegen.md)
 - [项目打包](./doc/docs/build.md)
 - [项目部署](./doc/docs/deploy.md)

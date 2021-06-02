@@ -1,3 +1,13 @@
+jboot v3.9.15:
+新增：新增单元测试的辅助类的支持
+新增：ActionReporter 新增 render 信息的输出功能
+新增：工具类 ReflectUtil.java
+优化：调整默认的JbootShiroInvokeListener实现，保存被拦截的请求便于后续跳转使用，感谢 @没牙的小朋友
+修复：jboot.properties配置文件中 jboot.shiro.ini 配置未生效的问题，感谢 @没牙的小朋友
+修复：在某些情况下 PathKit.getWebRootPath 得到错误结果的问题
+
+
+
 jboot v3.9.14:
 新增：为 undertow 新增默认的 content-type，解决 mp4 等视频不能播放的问题
 新增：ValidErrorRender，方便用户自定义 "数据验证" 错误的渲染器

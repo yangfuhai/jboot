@@ -3,9 +3,9 @@ package io.jboot.test.mvc;
 import io.jboot.test.MockMvc;
 import io.jboot.test.junit4.JbootRunner;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 
 @RunWith(JbootRunner.class)
@@ -32,7 +32,7 @@ public class MockAppTester4 {
     public void testRequest() {
         System.out.println(">>>>>>>>app.testRequest()....");
         mvc.get("/aaa").printResult()
-                .assertThat(result -> Assertions.assertEquals(result.getHttpCode(), 300))
+                .assertThat(result -> Assert.assertNotNull(result.getContent()))
                 .assertTrue(result -> result.getHttpCode() == 300);
     }
 

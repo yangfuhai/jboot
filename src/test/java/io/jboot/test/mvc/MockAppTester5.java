@@ -1,41 +1,42 @@
 package io.jboot.test.mvc;
 
 import io.jboot.test.MockMvc;
+import io.jboot.test.MockMvcResult;
 import io.jboot.test.junit5.JbootExtension;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(JbootExtension.class)
 public class MockAppTester5 {
 
-    private static MockMvc app = new MockMvc();
+    private static MockMvc mvc = new MockMvc();
 
-    @BeforeAll
-    public static void start() {
-        System.out.println(">>>>>>>>app.start()....");
-//        app.start();
+//    @Inject
+//    private MyService myService;
 
-        Assertions.assertAll();
-    }
+    @Test
+    public void test_url_aaa() {
+        MockMvcResult mvcResult = mvc.get("/aaa");
 
-    @AfterAll
-    public static void stop(){
-        System.out.println(">>>>>>>>app.stop()....");
-//        app.stop();
+        mvcResult.printResult()
+                .assertThat(result -> Assertions.assertNotNull(result.getContent()))
+                .assertTrue(result -> result.getHttpCode() == 200);
     }
 
     @Test
-    public void testRequest(){
-        System.out.println(">>>>>>>>app.testRequest()....");
-        app.get("/aaa");
+    public void test_url_bbb() {
+        MockMvcResult mvcResult = mvc.get("/bbb");
+
+        mvcResult.printResult()
+                .assertThat(result -> Assertions.assertNotNull(result.getContent()))
+                .assertTrue(result -> result.getHttpCode() == 200);
     }
 
-    @Test
-    public void testOtherRequest(){
-        System.out.println(">>>>>>>>app.testOtherRequest()....");
-        app.post("/bbb");
-    }
+//    @Test
+//    public void test_my_service() {
+//        Ret ret = myService.doSomeThing();
+//        Assertions.assertNotNull(ret);
+//        //.....
+//    }
 }
