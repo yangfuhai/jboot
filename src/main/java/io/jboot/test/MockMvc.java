@@ -45,6 +45,7 @@ public class MockMvc {
 
         if (paras != null) {
             paras.forEach(request::addParameter);
+            request.setQueryString(StrUtil.mapToQueryString(paras));
         }
 
         MockHttpServletResponse response = new MockHttpServletResponse();

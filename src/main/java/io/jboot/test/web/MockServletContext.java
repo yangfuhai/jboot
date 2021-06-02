@@ -160,7 +160,7 @@ public class MockServletContext implements ServletContext {
 
     @Override
     public Enumeration<String> getInitParameterNames() {
-        return new Vector<>(initParameters.keySet()).elements();
+        return Collections.enumeration(initParameters.keySet());
     }
 
     @Override
@@ -175,7 +175,7 @@ public class MockServletContext implements ServletContext {
 
     @Override
     public Enumeration<String> getAttributeNames() {
-        return new Vector<>(attributes.keySet()).elements();
+        return Collections.enumeration(attributes.keySet());
     }
 
     @Override

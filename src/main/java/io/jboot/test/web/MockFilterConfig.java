@@ -52,6 +52,6 @@ public class MockFilterConfig implements FilterConfig {
 
     @Override
     public Enumeration<String> getInitParameterNames() {
-        return new Vector<>(initParameters.keySet()).elements();
+        return Collections.enumeration(initParameters.keySet());
     }
 }

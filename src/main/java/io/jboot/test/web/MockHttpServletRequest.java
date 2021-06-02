@@ -17,7 +17,9 @@ package io.jboot.test.web;
 
 import io.jboot.test.MockProxy;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.*;
 import java.io.BufferedReader;
@@ -33,23 +35,30 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     protected String pathInfo;
     protected String pathTranslated;
     protected String queryString;
-    protected String remoteUser;
     protected String requestURI;
     protected String servletPath;
-    protected String characterEncoding;
-    protected String protocol;
+    protected String characterEncoding = "UTF-8";
+    protected String protocol = "HTTP/1.1";
+
+    protected String remoteUser;
+    protected String authType;
+    protected Principal userPrincipal;
 
     protected StringBuffer requestURL;
     protected HttpSession session;
     protected ServletInputStream inputStream;
-    protected Principal userPrincipal;
+
+    private byte[] content;
+
+
     protected ServletContext servletContext = MockServletContext.DEFAULT;
     protected HttpServletResponse response;
 
     protected Map<String, String> headers = new HashMap<>();
     protected Map<String, Object> attributeMap = new HashMap<>();
-    protected Map<String, String[]> params = new HashMap<>();
+    protected Map<String, String[]> parameters = new HashMap<>();
     protected Set<Cookie> cookies = new HashSet<>();
+    protected LinkedList<Locale> locales = new LinkedList<>();
 
 
     public MockHttpServletRequest() {
@@ -67,6 +76,7 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
+
 
     @Override
     public String getHeader(String name) {
@@ -103,11 +113,7 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public String getPathTranslated() {
-        return pathTranslated;
-    }
-
-    public void setPathTranslated(String pathTranslated) {
-        this.pathTranslated = pathTranslated;
+        return (this.pathInfo != null ? getRealPath(this.pathInfo) : null);
     }
 
 
@@ -130,6 +136,15 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         this.remoteUser = remoteUser;
     }
 
+
+    @Override
+    public String getAuthType() {
+        return authType;
+    }
+
+    public void setAuthType(String authType) {
+        this.authType = authType;
+    }
 
     @Override
     public String getRequestURI() {
@@ -197,6 +212,16 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         return session;
     }
 
+
+    @Override
+    public String changeSessionId() {
+        String sessionId = UUID.randomUUID().toString().replace("-", "");
+        session = new MockHttpSession(sessionId, getServletContext());
+        session.setMaxInactiveInterval(60 * 60);
+        setCookie("jsessionId", sessionId, -1);
+        return sessionId;
+    }
+
     /**
      * Get cookie value by cookie name.
      */
@@ -246,7 +271,7 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public Enumeration<String> getAttributeNames() {
-        return new Vector<>(attributeMap.keySet()).elements();
+        return Collections.enumeration(attributeMap.keySet());
     }
 
 
@@ -284,10 +309,21 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     }
 
 
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
+
+    @Override
+    public long getContentLengthLong() {
+        return (this.content != null ? this.content.length : -1);
+    }
+
+
     @Override
     public String getParameter(String key) {
-        if (params.containsKey(key)) {
-            return params.get(key)[0];
+        if (parameters.containsKey(key)) {
+            return parameters.get(key)[0];
         }
         return null;
     }
@@ -297,30 +333,30 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     public void addParameter(String key, String[] values) {
-        params.put(key, values);
+        parameters.put(key, values);
     }
 
     public void addParameter(String key, String value) {
-        params.put(key, new String[]{value});
+        parameters.put(key, new String[]{value});
     }
 
     public void addParameter(String key, Object value) {
-        params.put(key, new String[]{String.valueOf(value)});
+        parameters.put(key, new String[]{String.valueOf(value)});
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        return params;
+        return parameters;
     }
 
     @Override
     public Enumeration<String> getParameterNames() {
-        return new Vector<>(params.keySet()).elements();
+        return Collections.enumeration(parameters.keySet());
     }
 
     @Override
     public String[] getParameterValues(String name) {
-        return params.get(name);
+        return parameters.get(name);
     }
 
 
@@ -343,7 +379,6 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         attributeMap.put(key, value);
     }
 
-
     @Override
     public Cookie[] getCookies() {
         return cookies.toArray(new Cookie[cookies.size()]);
@@ -353,6 +388,14 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         this.cookies = cookies;
     }
 
+    @Override
+    public Enumeration<Locale> getLocales() {
+        return Collections.enumeration(locales);
+    }
+
+    public void setLocales(LinkedList<Locale> locales) {
+        this.locales = locales;
+    }
 
     @Override
     public void setCharacterEncoding(String characterEncoding) {
@@ -392,6 +435,90 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     @Override
     public String getRemoteHost() {
         return "localhost";
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromURL() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromCookie() {
+        return true;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdValid() {
+        return true;
+    }
+
+    @Override
+    public String getScheme() {
+        return "http";
+    }
+
+    @Override
+    public Locale getLocale() {
+        return this.locales.getFirst();
+    }
+
+    @Override
+    public int getLocalPort() {
+        return 80;
+    }
+
+    @Override
+    public String getLocalAddr() {
+        return "127.0.0.1";
+    }
+
+    @Override
+    public String getLocalName() {
+        return "localhost";
+    }
+
+    @Override
+    public boolean isAsyncSupported() {
+        return false;
+    }
+
+    @Override
+    public boolean isSecure() {
+        return false;
+    }
+
+    @Override
+    public long getDateHeader(String name) {
+        return Long.valueOf(getHeader(name));
+    }
+
+    @Override
+    public DispatcherType getDispatcherType() {
+        return DispatcherType.REQUEST;
+    }
+
+    @Override
+    public Enumeration<String> getHeaders(String name) {
+        String header = getHeader(name);
+        String[] headers = header.split(";");
+        return Collections.enumeration(Arrays.asList(headers));
+    }
+
+    @Override
+    public Enumeration<String> getHeaderNames() {
+        return Collections.enumeration(headers.keySet());
+    }
+
+    @Override
+    public int getIntHeader(String name) {
+        return Integer.valueOf(getHeader(name));
+    }
+
+    @Override
+    public void logout() throws ServletException {
+        this.userPrincipal = null;
+        this.remoteUser = null;
+        this.authType = null;
     }
 
     public void setServletContext(ServletContext servletContext) {
