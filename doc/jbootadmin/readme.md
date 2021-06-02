@@ -17,6 +17,12 @@ JbootAdmin 是 Jboot（码云 GVP 项目） 作者海哥基于 Jboot 和 JFinal 
 
 ![](./images/jbootadmin-demo.jpg)
 
+更多关于 JbootAdmin：
+
+- 福利1：https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw
+- 福利2：https://mp.weixin.qq.com/s/7eZDyjxX3jD4QxgIWLfGBQ
+- 福利3：https://mp.weixin.qq.com/s/reV48hBRkWY2c9O9Fi1TfA
+
 
 ## JbootAdmin 特点
 

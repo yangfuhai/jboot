@@ -4,7 +4,7 @@
 module.exports = {
   title: 'Jboot 官方网站',
   description: 'Jboot 一个开源的分布式、商业级微服务框架。',
-  base:'/docs/',
+  // base:'/docs/',
 
   theme: 'vuepress-theme-reco',
   themeConfig: {
