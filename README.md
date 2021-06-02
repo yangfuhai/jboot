@@ -65,9 +65,22 @@ public class HelloworldController extends JbootController {
   - [shiro](./doc/docs/shiro.md)
   - [jwt](./doc/docs/jwt.md)
   - [swagger](./doc/docs/swagger.md)
+  
 
 
 ## 微信交流群
 
 ![](./doc/docs/static/images/jboot-wechat-group.png)
 
+## JbootAdmin 
+
+JbootAdmin 是 Jboot 官方推出的、收费的、企业级快速开发框架，关于 JbootAdmin 的功能详情或者演示，请咨询海哥（微信：wx198819880）。
+
+![](./doc/jbootadmin/images/jbootadmin-demo.jpg)
+
+
+更多关于 JbootAdmin：
+
+- 福利1：https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw
+- 福利2：https://mp.weixin.qq.com/s/7eZDyjxX3jD4QxgIWLfGBQ
+- 福利3：https://mp.weixin.qq.com/s/reV48hBRkWY2c9O9Fi1TfA

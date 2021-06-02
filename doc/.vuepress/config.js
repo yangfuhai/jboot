@@ -4,7 +4,7 @@
 module.exports = {
   title: 'Jboot 官方网站',
   description: 'Jboot 一个开源的分布式、商业级微服务框架。',
-  // base:'/docs/',
+  base:'/docs/',
 
   theme: 'vuepress-theme-reco',
   themeConfig: {
@@ -83,6 +83,7 @@ module.exports = {
             {title: '事件机制', path: '/docs/event'},
             {title: '序列化', path: '/docs/serialize'},
             {title: 'SPI扩展', path: '/docs/spi'},
+            {title: '单元测试', path: '/docs/junit'},
             {title: '代码生成器', path: '/docs/codegen'},
             {title: '项目构建', path: '/docs/build'},
             {title: '项目部署', path: '/docs/deploy'},

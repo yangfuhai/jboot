@@ -2,20 +2,23 @@
 
 # 关于 JbootAdmin
 
-## 简介
+## JbootAdmin 简介
 
-JbootAdmin 是 Jboot 作者海哥基于 Jboot 开发的一个功能强大、简单易用的快速开发框架，是一个真正的微服务框架平台。在各种 ***Admin 开源盛行的今天，我们为什么还要推出 JbootAdmin 呢？ 主要是有以下几点原因：
+JbootAdmin 是 Jboot（码云 GVP 项目） 作者海哥基于 Jboot 和 JFinal 开发的快速开发手脚架，拥有极高性能和极度简单的开发体验。
 
 
-### JbootAdmin 双11活动正在促销中...
+同时，JbootAdmin 因得益于 Jboot 超过 4 年在微服务和分布式的开源耕耘，使得 JbootAdmin 拥有极高的稳定性和可扩展性。
 
-- 1) [功能介绍](https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw) 
-- 2) [点击查看](https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw) 
-- 3) [我要购买](https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw) 
 
-JbootAdmin 双11活动正在促销中...
+使用 JbootAdmin 开发我们的产品，除了可以使用传统的 war 包部署方式，也可以通过 `java -jar all-in-one.jar` 这种方式进行快速部署。
+同时，通过简单的配置，我们可以把我们开发的单体项目改成分布式部署项目，这一切，你无需考虑分布式带来的问题，
+比如分布式文件同步、分布式session、分布式缓存等等。
 
-## 特点
+
+![](./images/jbootadmin-demo.jpg)
+
+
+## JbootAdmin 特点
 
 **第一：JbootAdmin 提供长久的商业技术支持**
 
@@ -23,7 +26,7 @@ JbootAdmin 双11活动正在促销中...
 
 **第二：JbootAdmin 更像一套标准和规范**
 
-Jboot 已经开源超过 4 年的时间，非常稳定。JbootAdmin 又建立在 Jboot 之上，其稳定性是不言而喻的，更重要的是，JbootAdmin 更像是一套标准和规范，您的项目建立在这套规范之上，会大大的减轻团队协作带来的各种问题。
+Jboot 已经开源超过 5 年的时间，非常稳定。JbootAdmin 又建立在 Jboot 之上，其稳定性是不言而喻的，更重要的是，JbootAdmin 更像是一套标准和规范，您的项目建立在这套规范之上，会大大的减轻团队协作带来的各种问题。
 
 **第三：同一套源码不同的部署形式**
 

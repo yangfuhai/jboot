@@ -45,7 +45,7 @@ public class MyAppTester {
 
         mvcResult.printResult()
                 .assertThat(result -> Assert.assertNotNull(result.getContent()))
-                .assertTrue(result -> result.getHttpCode() == 200);
+                .assertTrue(result -> result.getStatus() == 200);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class MyAppTester {
 
         mvcResult.printResult()
                 .assertThat(result -> Assert.assertNotNull(result.getContent()))
-                .assertTrue(result -> result.getHttpCode() == 200);
+                .assertTrue(result -> result.getStatus() == 200);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class MyAppTester {
 
         mvcResult.printResult()
                 .assertThat(result -> Assertions.assertNotNull(result.getContent()))
-                .assertTrue(result -> result.getHttpCode() == 200);
+                .assertTrue(result -> result.getStatus() == 200);
     }
 
     @Test
@@ -107,7 +107,7 @@ public class MyAppTester {
 
         mvcResult.printResult()
                 .assertThat(result -> Assertions.assertNotNull(result.getContent()))
-                .assertTrue(result -> result.getHttpCode() == 200);
+                .assertTrue(result -> result.getStatus() == 200);
     }
 
     @Test
