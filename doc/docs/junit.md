@@ -3,6 +3,7 @@
 ## 目录
 - Junit4 单元测试
 - Junit5 单元测试
+- 注意事项
 
 ## Junit 单元测试简介
 
@@ -118,3 +119,35 @@ public class MyAppTester {
 }
 ```
 > 注意：Junit5 测试类必须添加 `@ExtendWith(JbootExtension.class)` 配置
+
+
+## 注意事项
+
+在测试的过程中，Jboot 默认的 webRootPath 是 `target/classes/webapp` 目录，而 classPath 的目录是 `target/classes`
+目录。
+
+如果我们需要修改此目录，则需要在测试类中添加 @TestConfig 注解，对 webRootPath 或 classPath 进行配置。
+
+例如：
+
+```java
+@RunWith(JbootRunner.class)
+@TestConfig(webRootPath = "your-path",classPath = "your-path")
+public class MyAppTester {
+
+    private static MockMvc mvc = new MockMvc();
+    
+
+    @Test
+    public void test_url_aaa() {
+        MockMvcResult mvcResult = mvc.get("/aaa");
+
+        //your code ...
+    }
+
+
+}
+```
+
+`@TestConfig(webRootPath = "your-path",classPath = "your-path")` 里的配置路径，可以是绝对路径或相对路径，
+若是相对路径，则是相对 `target/test-classes` 目录的路径。
