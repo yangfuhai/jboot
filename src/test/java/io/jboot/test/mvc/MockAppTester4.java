@@ -33,7 +33,7 @@ public class MockAppTester4 {
         System.out.println(">>>>>>>>app.testRequest()....");
         mvc.get("/aaa").printResult()
                 .assertThat(result -> Assert.assertNotNull(result.getContent()))
-                .assertTrue(result -> result.getHttpCode() == 300);
+                .assertTrue(result -> result.getStatus() == 300);
     }
 
     @Test

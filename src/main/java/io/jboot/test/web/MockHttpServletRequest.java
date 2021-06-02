@@ -58,6 +58,9 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public String getContextPath() {
+        if (contextPath == null) {
+            contextPath = servletContext.getContextPath();
+        }
         return contextPath;
     }
 
@@ -163,6 +166,9 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
     public void setServletPath(String servletPath) {
         this.servletPath = servletPath;
+        if (requestURI == null) {
+            this.requestURI = getContextPath() + servletPath;
+        }
     }
 
 
@@ -178,14 +184,14 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
             return session;
         }
 
-        String sessionId = getCookie("jsessionId");
+        String sessionId = getCookieValue("jsessionId");
         if (sessionId != null) {
             session = new MockHttpSession(sessionId, getServletContext());
-            session.setMaxInactiveInterval(60*60);
+            session.setMaxInactiveInterval(60 * 60);
         } else if (create) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
             session = new MockHttpSession(sessionId, getServletContext());
-            session.setMaxInactiveInterval(60*60);
+            session.setMaxInactiveInterval(60 * 60);
             setCookie("jsessionId", sessionId, -1);
         }
         return session;
@@ -194,7 +200,7 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     /**
      * Get cookie value by cookie name.
      */
-    private String getCookie(String name) {
+    private String getCookieValue(String name) {
         Cookie cookie = getCookieObject(name);
         return cookie != null ? cookie.getValue() : null;
     }
@@ -267,7 +273,7 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        if (inputStream == null){
+        if (inputStream == null) {
             inputStream = new MockServletInputStream("");
         }
         return inputStream;
@@ -297,6 +303,7 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     public void addParameter(String key, String value) {
         params.put(key, new String[]{value});
     }
+
     public void addParameter(String key, Object value) {
         params.put(key, new String[]{String.valueOf(value)});
     }
@@ -336,6 +343,17 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         attributeMap.put(key, value);
     }
 
+
+    @Override
+    public Cookie[] getCookies() {
+        return cookies.toArray(new Cookie[cookies.size()]);
+    }
+
+    public void setCookies(Set<Cookie> cookies) {
+        this.cookies = cookies;
+    }
+
+
     @Override
     public void setCharacterEncoding(String characterEncoding) {
         this.characterEncoding = characterEncoding;
@@ -348,17 +366,32 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public String getServerName() {
-        return "jboot-mock";
+        return "localhost";
     }
 
     @Override
     public int getServerPort() {
-        return 0;
+        return 80;
     }
 
     @Override
     public BufferedReader getReader() throws IOException {
         return new BufferedReader(new InputStreamReader(getInputStream()));
+    }
+
+    @Override
+    public int getRemotePort() {
+        return 0;
+    }
+
+    @Override
+    public String getRemoteAddr() {
+        return "127.0.0.1";
+    }
+
+    @Override
+    public String getRemoteHost() {
+        return "localhost";
     }
 
     public void setServletContext(ServletContext servletContext) {

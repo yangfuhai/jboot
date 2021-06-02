@@ -17,18 +17,23 @@ package io.jboot.test;
 
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.core.JFinalFilter;
+import com.jfinal.kit.PathKit;
 import io.jboot.app.PathKitExt;
 import io.jboot.test.web.MockFilterChain;
 import io.jboot.test.web.MockFilterConfig;
 import io.jboot.utils.ReflectUtil;
+import io.jboot.utils.StrUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 public class MockApp {
+
+    public static final String DEFAULT_WEB_ROOT_PATH = "../classes/webapp";
+    public static final String DEFAULT_CLASS_PATH = "../classes";
 
     private static final MockApp app = new MockApp();
 
@@ -52,9 +57,9 @@ public class MockApp {
         }
     }
 
-    public void start() {
+    public void start(TestConfig testConfig) {
         try {
-            doInitJFinalPathKit();
+            doInitJFinalPathKit(testConfig);
             filter.init(new MockFilterConfig());
             config = ReflectUtil.getFieldValue(JFinalFilter.class, "jfinalConfig", filter);
         } catch (ServletException e) {
@@ -70,20 +75,46 @@ public class MockApp {
     }
 
 
-    private void doInitJFinalPathKit() {
+    private void doInitJFinalPathKit(TestConfig testConfig) {
         try {
-            Class<?> c = MockApp.class.getClassLoader().loadClass("com.jfinal.kit.PathKit");
-            Method setWebRootPath = c.getMethod("setWebRootPath", String.class);
-            String webRootPath = PathKitExt.getWebRootPath();
-            setWebRootPath.invoke(null, webRootPath);
+            String configWebRootPath = testConfig != null ? testConfig.webRootPath() : DEFAULT_WEB_ROOT_PATH;
+            String configClassPath = testConfig != null ? testConfig.classPath() : DEFAULT_CLASS_PATH;
 
-            // -------
-            Method setRootClassPath = c.getMethod("setRootClassPath", String.class);
-            String rootClassPath = PathKitExt.getRootClassPath();
-            setRootClassPath.invoke(null, rootClassPath);
+
+            //相对路径，是相对 /target/test-classes 进行判断的
+            if (!isAbsolutePath(configWebRootPath)) {
+                String webRootPath = PathKitExt.getWebRootPath();
+                configWebRootPath = StrUtil.isBlank(configWebRootPath)
+                        ? webRootPath
+                        : new File(webRootPath, configWebRootPath).getAbsolutePath();
+            }
+
+            //设置 web root path
+            PathKit.setWebRootPath(configWebRootPath);
+
+
+            if (!isAbsolutePath(configClassPath)) {
+                String rootClassPath = PathKitExt.getRootClassPath();
+                configClassPath = StrUtil.isBlank(configClassPath)
+                        ? rootClassPath
+                        : new File(rootClassPath, configClassPath).getAbsolutePath();
+            }
+            //设置 class path
+            PathKit.setRootClassPath(configClassPath);
+
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * 判断是否是绝对路径
+     *
+     * @param path
+     * @return true：绝对路径
+     */
+    private static boolean isAbsolutePath(String path) {
+        return path.startsWith("/") || path.indexOf(":") > 0;
     }
 
 

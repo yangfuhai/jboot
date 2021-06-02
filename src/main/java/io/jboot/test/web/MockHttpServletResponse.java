@@ -32,7 +32,8 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
 
     protected PrintWriter writer;
     protected Map<String, String> headers = new HashMap<>();
-    protected Set<Cookie> cookies = new HashSet<>();;
+    protected Set<Cookie> cookies = new HashSet<>();
+    ;
 
     protected int status = 200;
     protected String statusMessage = "OK";
@@ -83,7 +84,10 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
 
     @Override
     public void sendRedirect(String value) throws IOException {
-        headers.put("Location", "" + value);
+        if (status == 200) {
+            setStatus(302);
+        }
+        headers.put("Location", value);
     }
 
     @Override
@@ -152,7 +156,8 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
             }
 
             @Override
-            public void setWriteListener(WriteListener writeListener) {}
+            public void setWriteListener(WriteListener writeListener) {
+            }
         };
     }
 
@@ -211,6 +216,11 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
     @Override
     public String getHeader(String key) {
         return headers.get(key);
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return headers.keySet();
     }
 
     @Override

@@ -17,6 +17,7 @@ package io.jboot.test.junit4;
 
 import com.jfinal.aop.Aop;
 import io.jboot.test.MockApp;
+import io.jboot.test.TestConfig;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -38,11 +39,15 @@ public class JbootRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(RunNotifier notifier) {
         try {
-            MockApp.getInstance().start();
+            MockApp.getInstance().start(getConfigAnnotation());
             super.run(notifier);
         } finally {
             MockApp.getInstance().stop();
         }
+    }
+
+    private TestConfig getConfigAnnotation(){
+        return getTestClass().getJavaClass().getAnnotation(TestConfig.class);
     }
 
 

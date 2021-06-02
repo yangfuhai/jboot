@@ -36,7 +36,6 @@ public class MockMvc {
 
     public MockMvcResult get(String target, Map<String, Object> paras, Map<String, String> headers) {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI(target);
         request.setServletPath(target);
         request.setMethod("GET");
 
@@ -72,7 +71,6 @@ public class MockMvc {
 
     public MockMvcResult post(String target, Map<String, Object> paras, Map<String, String> headers, String postData) {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI(target);
         request.setServletPath(target);
         request.setMethod("POST");
         if (headers != null) {

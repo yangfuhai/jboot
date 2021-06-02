@@ -17,6 +17,10 @@ package io.jboot.test;
 
 import io.jboot.test.web.MockHttpServletResponse;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 public class MockMvcResult {
 
     final MockHttpServletResponse response;
@@ -33,13 +37,25 @@ public class MockMvcResult {
         return response.getContentType();
     }
 
-    public int getHttpCode() {
+    public int getStatus() {
         return response.getStatus();
     }
 
     public String getHeader(String name) {
         return response.getHeader(name);
     }
+
+    public Map<String, String> getHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        Collection<String> headerNames = response.getHeaderNames();
+        if (headerNames != null) {
+            for (String headerName : headerNames) {
+                headers.put(headerName, response.getHeader(headerName));
+            }
+        }
+        return headers;
+    }
+
 
     public MockHttpServletResponse getResponse() {
         return response;
@@ -68,11 +84,12 @@ public class MockMvcResult {
         return this;
     }
 
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Content-Type:").append("\n").append(getContentType()).append("\n\n");
-        builder.append("Http-Code:").append("\n").append(getHttpCode()).append("\n\n");
+        builder.append("Headers:").append("\n").append(getHeaders()).append("\n\n");
+        builder.append("Status:").append("\n").append(getStatus()).append("\n\n");
         builder.append("Content:").append("\n").append(getContent()).append("\n\n");
         return builder.toString();
     }

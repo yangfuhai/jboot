@@ -21,7 +21,7 @@ public class MockAppTester5 {
 
         mvcResult.printResult()
                 .assertThat(result -> Assertions.assertNotNull(result.getContent()))
-                .assertTrue(result -> result.getHttpCode() == 200);
+                .assertTrue(result -> result.getStatus() == 200);
     }
 
     @Test
@@ -30,7 +30,7 @@ public class MockAppTester5 {
 
         mvcResult.printResult()
                 .assertThat(result -> Assertions.assertNotNull(result.getContent()))
-                .assertTrue(result -> result.getHttpCode() == 200);
+                .assertTrue(result -> result.getStatus() == 200);
     }
 
 //    @Test
