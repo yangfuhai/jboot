@@ -98,7 +98,8 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * 同步上层 session 到 sessionStore
-     *
+     * @// TODO: 2021/6/3 若上层动态修改了 上层自己的 session，会导致 Controller 的 session 和 上层 session 不同步的情况
+     * @// TODO: 2021/6/3 临时的解决方案需要用户手动通过 Controller 来修改 session 数据
      * @param store
      */
     private void syncOriginSessionData(Map<String, Object> store) {
