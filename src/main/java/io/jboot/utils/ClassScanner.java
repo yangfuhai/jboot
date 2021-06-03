@@ -78,6 +78,7 @@ public class ClassScanner {
         excludeJars.add("db2jcc4-");
         excludeJars.add("ojdbc");
         excludeJars.add("junit-");
+        excludeJars.add("junit5-");
         excludeJars.add("org.junit");
         excludeJars.add("hamcrest-");
         excludeJars.add("jboss-");
@@ -273,6 +274,8 @@ public class ClassScanner {
         excludeJars.add("jodd-");
         excludeJars.add("redisson-");
         excludeJars.add("bcprov-");
+        excludeJars.add("pay-java-");
+        excludeJars.add("mapper-extras-");
         excludeJars.add("org.jacoco");
     }
 
@@ -293,6 +296,8 @@ public class ClassScanner {
         excludeClasses.add("javassist.");
         excludeClasses.add("google.");
         excludeClasses.add("com.jfinal.");
+        excludeClasses.add("com.aliyuncs.");
+        excludeClasses.add("com.carrotsearch.");
         excludeClasses.add("org.aopalliance.");
         excludeClasses.add("org.apache.");
         excludeClasses.add("org.nustaq.");
@@ -301,7 +306,6 @@ public class ClassScanner {
         excludeClasses.add("org.antlr.");
         excludeClasses.add("org.jboss.");
         excludeClasses.add("org.checkerframework.");
-        excludeClasses.add("org.hamcrest.");
         excludeClasses.add("org.jsoup.");
         excludeClasses.add("org.objenesis.");
         excludeClasses.add("org.ow2.");
@@ -309,17 +313,24 @@ public class ClassScanner {
         excludeClasses.add("org.yaml.");
         excludeClasses.add("org.checker");
         excludeClasses.add("org.codehaus");
+        excludeClasses.add("org.commonmark");
         excludeClasses.add("org.jdom2.");
         excludeClasses.add("org.aspectj.");
         excludeClasses.add("org.hibernate.");
         excludeClasses.add("org.ahocorasick.");
+        excludeClasses.add("org.lionsoul.jcseg.");
         excludeClasses.add("org.ini4j.");
         excludeClasses.add("org.jetbrains.");
         excludeClasses.add("org.jacoco.");
         excludeClasses.add("org.xnio.");
         excludeClasses.add("org.bouncycastle.");
+        excludeClasses.add("org.elasticsearch.");
+        excludeClasses.add("org.hamcrest.");
+        excludeClasses.add("org.objectweb.");
+        excludeClasses.add("org.joda.");
         excludeClasses.add("aj.org.");
         excludeClasses.add("ch.qos.");
+        excludeClasses.add("joptsimple.");
         excludeClasses.add("com.alibaba.csp.");
         excludeClasses.add("com.alibaba.nacos.");
         excludeClasses.add("com.alibaba.druid.");
@@ -343,6 +354,7 @@ public class ClassScanner {
         excludeClasses.add("com.zaxxer.");
         excludeClasses.add("com.mysql.");
         excludeClasses.add("com.papertrail.");
+        excludeClasses.add("com.egzosn.");
         excludeClasses.add("org.gjt.");
         excludeClasses.add("org.fusesource.");
         excludeClasses.add("org.redisson.");
