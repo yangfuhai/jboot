@@ -48,18 +48,20 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     private HttpServletResponse response;
     private HttpServletRequest originRequest;
+    private HttpSession originSession;
     private JbootHttpSession jbootSession;
 
 
     public JbootServletRequestWrapper(HttpServletRequest request, HttpServletResponse response) {
         super(request);
-        this.originRequest = request;
         this.response = response;
+        this.originRequest = request;
+        this.originSession = request.getSession(false);
     }
 
     @Override
     public HttpSession getSession() {
-        return getSession(false);
+        return getSession(true);
     }
 
 
@@ -71,11 +73,11 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
         String sessionId = getCookie(cookieName);
         if (sessionId != null) {
-            jbootSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId));
+            jbootSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId), originSession);
             jbootSession.setMaxInactiveInterval(maxInactiveInterval);
-        } else if (create) {
+        } else if (create || originSession != null) {
             sessionId = UUID.randomUUID().toString().replace("-", "");
-            jbootSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId));
+            jbootSession = new JbootHttpSession(sessionId, originRequest.getServletContext(), createSessionStore(sessionId), originSession);
             jbootSession.setMaxInactiveInterval(maxInactiveInterval);
             setCookie(cookieName, sessionId, cookieMaxAge);
         }
@@ -87,18 +89,26 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
         Map<String, Object> store = jbootCache.get(cacheName, sessionId);
         if (store == null) {
             store = new HashMap<>();
-            HttpSession originSession = originRequest.getSession();
-            if (originSession != null) {
-                Enumeration<String> names = originSession.getAttributeNames();
-                if (names != null) {
-                    while (names.hasMoreElements()) {
-                        String name = names.nextElement();
-                        store.put(name, originSession.getAttribute(name));
-                    }
-                }
-            }
+            syncOriginSessionData(store);
+            jbootCache.put(cacheName, sessionId, store);
         }
         return store;
+    }
+
+
+    /**
+     * 同步上层 session 到 sessionStore
+     *
+     * @param store
+     */
+    private void syncOriginSessionData(Map<String, Object> store) {
+        if (this.originSession != null) {
+            Enumeration<String> names = originSession.getAttributeNames();
+            while (names.hasMoreElements()) {
+                String name = names.nextElement();
+                store.put(name, originSession.getAttribute(name));
+            }
+        }
     }
 
 
@@ -112,10 +122,11 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
         // 空的 jbootSession 数据
         // 或者 session 已经被整体删除，调用了session.invalidate()
-        if (jbootSession.isEmpty() || !jbootSession.isValid()) {
+        if (!jbootSession.isValid()) {
             jbootCache.remove(cacheName, jbootSession.getId());
             setCookie(cookieName, null, 0);
         }
+
         //session 已经被修改(session数据的增删改查)
         else if (jbootSession.isDataChanged()) {
             Map<String, Object> snapshot = jbootSession.snapshot();
@@ -127,6 +138,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
                 jbootCache.put(cacheName, jbootSession.getId(), snapshot, maxInactiveInterval);
             }
         }
+
         //更新session存储时间
         else {
             jbootCache.setTtl(cacheName, jbootSession.getId(), maxInactiveInterval);

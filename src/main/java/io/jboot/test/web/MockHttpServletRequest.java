@@ -189,7 +189,7 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public HttpSession getSession() {
-        return getSession(false);
+        return getSession(true);
     }
 
 

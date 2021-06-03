@@ -26,7 +26,7 @@ public class MockHttpSession extends JbootHttpSession {
     protected static Map<String, Map<String, Object>> storeCache = new HashMap<>();
 
     public MockHttpSession(String id, ServletContext servletContext) {
-        super(id, servletContext, createSessionStore(id));
+        super(id, servletContext, createSessionStore(id), null);
     }
 
     private static Map<String, Object> createSessionStore(String sessionId) {

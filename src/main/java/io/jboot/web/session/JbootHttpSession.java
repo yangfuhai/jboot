@@ -21,10 +21,7 @@ import com.google.common.collect.Sets;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JbootHttpSession implements HttpSession {
 
@@ -42,18 +39,23 @@ public class JbootHttpSession implements HttpSession {
     private final Set<String> deleteAttribute = Sets.newHashSet();
     private final Map<String, Object> sessionStore;
 
-    private volatile boolean invalid;
-    private volatile boolean dataChanged;
-    private volatile boolean empty;
+    private volatile boolean invalid = false;
+    private volatile boolean dataChanged = false;
+    private volatile boolean empty = false;
 
-    public JbootHttpSession(String id, ServletContext servletContext, Map<String, Object> sessionStore) {
+    private volatile HttpSession originSession;
+
+    public JbootHttpSession(String id, ServletContext servletContext, Map<String, Object> sessionStore, HttpSession originSession) {
         this.id = id;
         this.servletContext = servletContext;
         this.sessionStore = sessionStore;
         this.createdAt = System.currentTimeMillis();
         this.lastAccessedAt = createdAt;
         this.empty = sessionStore.isEmpty();
+        this.originSession = originSession;
     }
+
+
 
     @Override
     public long getCreationTime() {
@@ -138,6 +140,10 @@ public class JbootHttpSession implements HttpSession {
         empty = false;
         dataChanged = true;
 
+        if (originSession != null) {
+            originSession.setAttribute(name, value);
+        }
+
     }
 
     @Override
@@ -159,6 +165,10 @@ public class JbootHttpSession implements HttpSession {
         deleteAttribute.add(name);
         newAttributes.remove(name);
         dataChanged = true;
+
+        if (originSession != null) {
+            originSession.removeAttribute(name);
+        }
     }
 
     @Override
@@ -170,6 +180,10 @@ public class JbootHttpSession implements HttpSession {
     public void invalidate() {
         invalid = true;
         dataChanged = true;
+
+        if (originSession != null) {
+            originSession.invalidate();
+        }
     }
 
     @Override
@@ -184,7 +198,7 @@ public class JbootHttpSession implements HttpSession {
 
 
     public Map<String, Object> snapshot() {
-        Map<String, Object> snap = Maps.newHashMap();
+        Map<String, Object> snap = new HashMap<>();
         snap.putAll(sessionStore);
         snap.putAll(newAttributes);
         for (String name : deleteAttribute) {
