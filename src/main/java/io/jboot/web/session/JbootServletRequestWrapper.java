@@ -120,8 +120,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
             return;
         }
 
-        // 空的 jbootSession 数据
-        // 或者 session 已经被整体删除，调用了session.invalidate()
+        //session 已经被整体删除，用户调用了session.invalidate()
         if (!jbootSession.isValid()) {
             jbootCache.remove(cacheName, jbootSession.getId());
             setCookie(cookieName, null, 0);
