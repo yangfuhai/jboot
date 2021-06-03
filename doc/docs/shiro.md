@@ -19,25 +19,24 @@ Apache Shiro是一个强大且易用的Java安全框架，执行身份验证、�
 Jboot 默认情况下并没有依赖 shiro，因此，在在使用 Jboot 的 Shiro 模块之前，需要你添加下 Shiro 的 Maven 依赖。
 
 ```xml
-<dependency>
-    <groupId>org.apache.shiro</groupId>
-    <artifactId>shiro-core</artifactId>
-    <version>1.3.2</version>
+ <dependency>
+  <groupId>org.apache.shiro</groupId>
+  <artifactId>shiro-core</artifactId>
+  <version>1.7.1</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.shiro</groupId>
-    <artifactId>shiro-web</artifactId>
-    <version>1.3.2</version>
+  <groupId>org.apache.shiro</groupId>
+  <artifactId>shiro-web</artifactId>
+  <version>1.7.1</version>
 </dependency>
 ```
-注意：目前暂时不支持 Shiro 1.4.x 版本，晚点会添加支持。
 
 
 同时，需要在 resources 目录下配置上您的 `shiro.ini` 配置文件，并在 `jboot.porperties` 添加上 `jboot.shiro.ini = shiro.ini` 配置。在 `shiro.ini` 文件里，需要在自行扩展 `realm` 等信息。
 
 ## Shiro的使用
-Jboot 的 Shiro 模块为您提供了以下12个模板指令，同时支持 Shiro 的5个 Requires 注解功能。方便您使用 Shiro。
+Jboot 的 Shiro 模块为您提供了以下12个模板指令，同时支持 Shiro 的 5 个 Requires 注解功能。方便您使用 Shiro。
 
 **12个Html模板指令**
 - shiroAuthenticated：用户已经身份验证通过，Subject.login登录成功
@@ -196,7 +195,7 @@ public class MyController extends JbootController{
 }
 ```
 
-RequiresUser、RequiresGuest、RequiresAuthentication的使用
+RequiresUser、RequiresGuest、RequiresAuthentication 的使用
 
 ```java
 public class MyController extends JbootController{
@@ -233,12 +232,12 @@ public class MyshiroListener implements  JbootShiroInvokeListener {
 
 
     @Override
-    public void onInvokeBefore(FixedInvocation inv) {
+    public void onInvokeBefore(Invocation inv) {
         //do nothing
     }
 
     @Override
-    public void onInvokeAfter(FixedInvocation inv, AuthorizeResult result) {
+    public void onInvokeAfter(Invocation inv, AuthorizeResult result) {
 
         //说明该用户授权成功，
         //可以允许访问
