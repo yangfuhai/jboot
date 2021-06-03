@@ -2,43 +2,49 @@ package io.jboot.test.mvc;
 
 import io.jboot.test.MockMvc;
 import io.jboot.test.junit4.JbootRunner;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RunWith(JbootRunner.class)
 public class MockAppTester4 {
 
     private static MockMvc mvc = new MockMvc();
 
-    @Before
-    public void start() {
-        System.out.println(">>>>>>>>app.start()....");
-//        app.start();
-    }
 
-    @After
-    public void stop() {
-        System.out.println(">>>>>>>>app.stop()....");
-//        app.stop();
-
-//        assertThat
-//        assertthat
+    @Test
+    public void test_url_aaa() {
+        Map<String, Object> paras = new HashMap<>();
+        paras.put("p1","v1");
+        paras.put("p2","v2");
+        mvc.get("/mvc/aaa",paras).printResult()
+                .assertThat(result -> Assert.assertEquals(result.getContent(),"aaa"))
+                .assertTrue(result -> result.getStatus() == 200);
     }
 
     @Test
-    public void testRequest() {
-        System.out.println(">>>>>>>>app.testRequest()....");
-        mvc.get("/aaa").printResult()
-                .assertThat(result -> Assert.assertNotNull(result.getContent()))
-                .assertTrue(result -> result.getStatus() == 300);
+    public void test_url_bbb() {
+        Map<String, Object> paras = new HashMap<>();
+        paras.put("p1","v1");
+        paras.put("p2","v2");
+        mvc.post("/mvc/bbb",paras).printResult()
+                .assertThat(result -> Assert.assertEquals(result.getContent(),"bbb"))
+                .assertTrue(result -> result.getStatus() == 200);
     }
 
-    @Test
-    public void testOtherRequest() {
-        System.out.println(">>>>>>>>app.testOtherRequest()....");
-        mvc.get("/bbb").printResult();
-    }
+//    @Inject
+//    private MyService myService;
+
+
+//    @Test
+//    public void test_my_service() {
+//        Ret ret = myService.doSomeThing();
+//        Assert.assertNotNull(ret);
+//        //.....
+//    }
+
+
 }
