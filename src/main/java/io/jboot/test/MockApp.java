@@ -22,7 +22,6 @@ import io.jboot.app.PathKitExt;
 import io.jboot.test.web.MockFilterChain;
 import io.jboot.test.web.MockFilterConfig;
 import io.jboot.utils.ReflectUtil;
-import io.jboot.utils.StrUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -80,26 +79,18 @@ public class MockApp {
             String configWebRootPath = testConfig != null ? testConfig.webRootPath() : DEFAULT_WEB_ROOT_PATH;
             String configClassPath = testConfig != null ? testConfig.classPath() : DEFAULT_CLASS_PATH;
 
-
             //相对路径，是相对 /target/test-classes 进行判断的
             if (!isAbsolutePath(configWebRootPath)) {
-                String webRootPath = PathKitExt.getWebRootPath();
-                configWebRootPath = StrUtil.isBlank(configWebRootPath)
-                        ? webRootPath
-                        : new File(webRootPath, configWebRootPath).getAbsolutePath();
+                configWebRootPath = new File(PathKitExt.getWebRootPath(), configWebRootPath).getCanonicalPath();
             }
-
-            //设置 web root path
+            //设置 webRootPath
             PathKit.setWebRootPath(configWebRootPath);
 
 
             if (!isAbsolutePath(configClassPath)) {
-                String rootClassPath = PathKitExt.getRootClassPath();
-                configClassPath = StrUtil.isBlank(configClassPath)
-                        ? rootClassPath
-                        : new File(rootClassPath, configClassPath).getAbsolutePath();
+                configClassPath = new File(PathKitExt.getRootClassPath(), configClassPath).getCanonicalPath();
             }
-            //设置 class path
+            //设置 classPath
             PathKit.setRootClassPath(configClassPath);
 
         } catch (Exception ex) {
