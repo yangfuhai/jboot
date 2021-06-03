@@ -1,10 +1,10 @@
-package io.jboot.test.mvc;
+package io.jboot.test.junit;
 
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
-@RequestMapping("/mvc")
-public class MvcController extends JbootController {
+@RequestMapping("/test")
+public class TestController extends JbootController {
 
     public void aaa(){
         System.out.println(">>>>>>>queryString:" + getRequest().getQueryString());
