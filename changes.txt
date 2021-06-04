@@ -1,3 +1,9 @@
+jboot v3.9.16:
+修复：Junit 测试对于个别 ServletRequest 方法没有 mock 到而错处的问题
+修复：当 Jboot 有上层 session 时（比如使用 shiro），修改 Controller session 无法同步上层 session 的问题
+
+
+
 jboot v3.9.15:
 新增：新增单元测试的辅助类的支持
 新增：ActionReporter 新增 render 信息的输出功能
