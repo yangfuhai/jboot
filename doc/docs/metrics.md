@@ -115,14 +115,14 @@ scrape_configs:
 <dependency>
     <groupId>io.prometheus</groupId>
     <artifactId>simpleclient_dropwizard</artifactId>
-    <version>0.9.0</version>
+    <version>0.11.0</version>
     <scope>provided</scope>
 </dependency>
 
 <dependency>
     <groupId>io.prometheus</groupId>
     <artifactId>simpleclient_httpserver</artifactId>
-    <version>0.9.0</version>
+    <version>0.11.0</version>
     <scope>provided</scope>
 </dependency>
 ```

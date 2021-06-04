@@ -23,7 +23,7 @@ JUnit 是一个 Java 编程语言的单元测试框架。JUnit 在测试驱动�
 <dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
-    <version>4.12</version>
+    <version>4.13.2</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -76,7 +76,7 @@ public class MyAppTester {
 <dependency>
     <groupId>org.junit.jupiter</groupId>
     <artifactId>junit-jupiter-engine</artifactId>
-    <version>5.4.2</version>
+    <version>5.7.2</version>
     <scope>test</scope>
 </dependency>
 ```
