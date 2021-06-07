@@ -93,7 +93,10 @@ public class JbootActionReporter {
     public static void report(String target, Controller controller, Action action, Invocation invocation, long time) {
         try {
             doReport(target, controller, action, invocation, time);
-        } catch (ClassNotFoundException e) {
+        }
+        // 在 tomcat 或者自定义 classloader 的情况下，
+        // 可能会出现 ClassNotFoundException 错误
+        catch (ClassNotFoundException e) {
             ClassPool.getDefault().insertClassPath(new ClassClassPath(controller.getClass()));
             try {
                 doReport(target, controller, action, invocation, time);
