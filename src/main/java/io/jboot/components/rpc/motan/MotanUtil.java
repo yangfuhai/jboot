@@ -45,7 +45,7 @@ public class MotanUtil {
 
         //protocol 配置
         Map<String, ProtocolConfig> protocolConfigs = configs(ProtocolConfig.class, "jboot.rpc.motan.protocol");
-        if (protocolConfigs != null && !protocolConfigs.isEmpty()) {
+        if (!protocolConfigs.isEmpty()) {
             protocolConfigMap.putAll(protocolConfigs);
         } else {
             protocolConfigMap.put("default", MotanFrameworkUtil.getDefaultProtocolConfig());
@@ -53,7 +53,7 @@ public class MotanUtil {
 
         //registry 配置
         Map<String, RegistryConfig> registryConfigs = configs(RegistryConfig.class, "jboot.rpc.motan.registry");
-        if (registryConfigs != null && !registryConfigs.isEmpty()) {
+        if (!registryConfigs.isEmpty()) {
             registryConfigMap.putAll(registryConfigs);
         } else {
             registryConfigMap.put("default", MotanFrameworkUtil.getDefaultRegistryConfig());
@@ -70,7 +70,7 @@ public class MotanUtil {
         RPCUtil.setChildConfig(serviceConfigs, registryConfigs, "jboot.rpc.motan.service", "registry");
 
 
-        if (serviceConfigs != null && !serviceConfigs.isEmpty()) {
+        if (!serviceConfigs.isEmpty()) {
             baseServiceConfigMap.putAll(serviceConfigs);
         }
 
@@ -80,7 +80,7 @@ public class MotanUtil {
         RPCUtil.setChildConfig(refererConfigs, protocolConfigs, "jboot.rpc.motan.referer", "protocol");
         RPCUtil.setChildConfig(refererConfigs, registryConfigs, "jboot.rpc.motan.referer", "registry");
 
-        if (refererConfigs != null && !refererConfigs.isEmpty()) {
+        if (!refererConfigs.isEmpty()) {
             baseRefererConfigMap.putAll(refererConfigs);
         }
 
