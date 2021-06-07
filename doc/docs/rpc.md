@@ -463,11 +463,14 @@ https://dubbo.apache.org/zh/docs/v2.7/user/references/xml/dubbo-registry/
 jboot.rpc.dubbo.registry.address = xx.xx.xx
 ```
 
+> 例如使用 ncaos 注册中心时，配置内容如下：
+> 
+> `jboot.rpc.dubbo.registry.address=nacos://127.0.0.1:8848?namespace=test`
 
 
-**多 registry （多注册中心）**
 
-默认的注册中心配置内容如下：
+
+更多的注册中心配置内容如下：
 
 ```properties
 jboot.rpc.dubbo.registry.address = xx.xx.xx
@@ -475,6 +478,8 @@ jboot.rpc.dubbo.registry.port = xx.xx.xx
 jboot.rpc.dubbo.registry.username = xx.xx.xx
 jboot.rpc.dubbo.registry.password = xx.xx.xx
 ```
+
+**多个注册中心**
 
 多注册中心可以配置如下（多 protocol 、多 consumer、多provider 都是同理）：
 
@@ -498,8 +503,8 @@ jboot.rpc.dubbo.registry.other2.username = xx.xx.xx
 jboot.rpc.dubbo.registry.other2.password = xx.xx.xx
 ```
 
-这样，在系统中就存在了多个注册中心，名称（name 或者 id）分别为 default（没有name的时候，默认为default）、other1、other2，这样，当一个服务（或者接口）需要在
-多个注册中心暴露的时候，只需要在其 registry 配置相应的 id 即可。
+这样，在系统中就存在了多个注册中心，第一个配置的名称（name）分别为 default，第二个和第三个为
+other1、other2，这样，当一个服务（或者接口）需要在多个注册中心暴露的时候，只需要在其 registry 配置相应的 name 即可。
 
 例如：
 
@@ -507,7 +512,7 @@ jboot.rpc.dubbo.registry.other2.password = xx.xx.xx
 jboot.rpc.dubbo.provider.address = default,other1
 ```
 
-若当服务没有指定注册中心，那么该服务会在这三个注册中心同时暴露。
+若当服务没有指定注册中心，注册中心默认为 default。
 
 
 #### protocol
