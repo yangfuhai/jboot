@@ -31,6 +31,7 @@ import io.jboot.utils.ReflectUtil;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
+import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -74,6 +75,10 @@ public class JbootActionReporter {
         JbootActionReporter.writer = writer;
     }
 
+    public static Writer getWriter() {
+        return writer;
+    }
+
     public static boolean isReportEnable() {
         return reportEnable;
     }
@@ -88,9 +93,14 @@ public class JbootActionReporter {
     public static void report(String target, Controller controller, Action action, Invocation invocation, long time) {
         try {
             doReport(target, controller, action, invocation, time);
+        } catch (ClassNotFoundException e) {
+            ClassPool.getDefault().insertClassPath(new ClassClassPath(controller.getClass()));
+            try {
+                doReport(target, controller, action, invocation, time);
+            } catch (Exception exception) {
+                actionReporter.report(target, controller, action);
+            }
         } catch (Exception ex) {
-            // 出错的情况，一般情况下是：用户自定义了自己的 classloader, 此 classloader 加载的 class 没有被添加到 javassist 的 ClassPool
-            // 如何添加可以参考 jpress 的 插件加载
             actionReporter.report(target, controller, action);
         } finally {
             JbootActionInvocation.clear();
@@ -100,6 +110,7 @@ public class JbootActionReporter {
 
     private static void doReport(String target, Controller controller, Action action, Invocation invocation, long time) throws Exception {
         CtClass ctClass = ClassPool.getDefault().get(ClassUtil.getUsefulClass(action.getControllerClass()).getName());
+        ClassPool.getDefault().get(ClassUtil.getUsefulClass(action.getControllerClass()).getName());
         String desc = JbootActionReporterUtil.getMethodDescWithoutName(action.getMethod());
         CtMethod ctMethod = ctClass.getMethod(action.getMethodName(), desc);
         int lineNumber = ctMethod.getMethodInfo().getLineNumber(0);
