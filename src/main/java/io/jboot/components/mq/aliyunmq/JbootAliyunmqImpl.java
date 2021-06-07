@@ -111,7 +111,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
         properties.put(PropertyKeyConst.AccessKey, aliyunmqConfig.getAccessKey());//AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
         properties.put(PropertyKeyConst.SecretKey, aliyunmqConfig.getSecretKey());//SecretKey 阿里云身份验证，在阿里云服务器管理控制台创建
         properties.put(PropertyKeyConst.ProducerId, aliyunmqConfig.getProducerId());//您在控制台创建的Producer ID
-        properties.put(PropertyKeyConst.ONSAddr, aliyunmqConfig.getAddr());
+        properties.put(PropertyKeyConst.NAMESRV_ADDR, aliyunmqConfig.getAddr());
         properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, aliyunmqConfig.getSendMsgTimeoutMillis());//设置发送超时时间，单位毫秒
         return properties;
     }
