@@ -208,6 +208,9 @@ public class JbootActionReporter {
 
     private static void appendRenderMessage(Controller controller, StringBuilder sb) {
         Render render = controller.getRender();
+        if (render == null) {
+            return;
+        }
         String view = render.getView();
         if (StrUtil.isNotBlank(view)) {
             sb.append("Render      : ").append(view);
