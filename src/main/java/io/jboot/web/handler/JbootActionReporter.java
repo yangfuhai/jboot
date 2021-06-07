@@ -31,10 +31,7 @@ import io.jboot.utils.ReflectUtil;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
-import javassist.ClassClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
+import javassist.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -95,8 +92,8 @@ public class JbootActionReporter {
             doReport(target, controller, action, invocation, time);
         }
         // 在 tomcat 或者自定义 classloader 的情况下，
-        // 可能会出现 ClassNotFoundException 错误
-        catch (ClassNotFoundException e) {
+        // 可能会出现 NotFoundException 错误
+        catch (NotFoundException e) {
             ClassPool.getDefault().insertClassPath(new ClassClassPath(controller.getClass()));
             try {
                 doReport(target, controller, action, invocation, time);
