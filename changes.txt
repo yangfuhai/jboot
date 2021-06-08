@@ -1,5 +1,13 @@
+jboot v3.9.17:
+修复：JbootActionReporter 可能出现 NotFoundException 的问题
+修复：JbootActionReporter 可能出现 NPE 的问题
+修复：阿里云商业 MQ Aliyunmq 配置错误的问题，感谢 @不器
+文档：修改某些描述错误的文档
+
+
+
 jboot v3.9.16:
-修复：Junit 测试对于个别 ServletRequest 方法没有 mock 到而错处的问题
+修复：Junit 测试对于个别 ServletRequest 方法没有 mock 到而出错的问题
 修复：当 Jboot 有上层 session 时（比如使用 shiro），修改 Controller session 无法同步上层 session 的问题
 
 
