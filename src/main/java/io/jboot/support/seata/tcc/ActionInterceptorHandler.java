@@ -169,7 +169,7 @@ public class ActionInterceptorHandler {
         for (Parameter p : parameters) {
             if (!p.isNamePresent()) {
                 // 必须通过添加 -parameters 进行编译，才可以获取 Parameter 的编译前的名字
-                throw new RuntimeException(" Maven or IDE config is error. see http://www.jfinal.com/doc/3-3 ");
+                throw new RuntimeException(" Maven or IDE config is error. see https://jfinal.com/doc/3-3 ");
             }
             if (!"io.seata.rm.tcc.api.BusinessActionContext".equals(p.getType().getName())) {
                 context.put(p.getName(), arguments[x]);
