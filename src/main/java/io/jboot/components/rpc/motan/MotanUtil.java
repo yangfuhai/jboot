@@ -110,7 +110,7 @@ public class MotanUtil {
         //referer protocol
         if (StrUtil.isNotBlank(jbootrpcReferenceConfig.getProtocol())) {
             List<ProtocolConfig> protocolConfigs = new ArrayList<>();
-            Set<String> protocolNames = StrUtil.splitToSetByComma(jbootrpcReferenceConfig.getRegistry());
+            Set<String> protocolNames = StrUtil.splitToSetByComma(jbootrpcReferenceConfig.getProtocol());
             for (String protocalName : protocolNames) {
                 ProtocolConfig registryConfig = protocolConfigMap.get(protocalName);
                 if (registryConfig != null) {
@@ -169,7 +169,7 @@ public class MotanUtil {
         //service protocol
         if (StrUtil.isNotBlank(jbootrpcServiceConfig.getProtocol())) {
             List<ProtocolConfig> protocolConfigs = new ArrayList<>();
-            Set<String> protocolNames = StrUtil.splitToSetByComma(jbootrpcServiceConfig.getRegistry());
+            Set<String> protocolNames = StrUtil.splitToSetByComma(jbootrpcServiceConfig.getProtocol());
             for (String protocalName : protocolNames) {
                 ProtocolConfig registryConfig = protocolConfigMap.get(protocalName);
                 if (registryConfig != null) {
