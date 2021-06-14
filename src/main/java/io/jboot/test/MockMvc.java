@@ -20,6 +20,7 @@ import io.jboot.test.web.MockHttpServletResponse;
 import io.jboot.test.web.MockServletInputStream;
 import io.jboot.utils.StrUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class MockMvc {
@@ -36,8 +37,19 @@ public class MockMvc {
 
     public MockMvcResult get(String target, Map<String, Object> paras, Map<String, String> headers) {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServletPath(target);
         request.setMethod("GET");
+
+        int indexOf = target.lastIndexOf("?");
+        if (indexOf != -1){
+            Map<String, String> targetParas = StrUtil.queryStringToMap(target.substring(indexOf + 1));
+            if (paras == null){
+                paras = new HashMap<>();
+            }
+            paras.putAll(targetParas);
+            target = target.substring(0,indexOf);
+        }
+
+        request.setServletPath(target);
 
         if (headers != null) {
             request.setHeaders(headers);
@@ -72,8 +84,20 @@ public class MockMvc {
 
     public MockMvcResult post(String target, Map<String, Object> paras, Map<String, String> headers, String postData) {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServletPath(target);
         request.setMethod("POST");
+
+        int indexOf = target.lastIndexOf("?");
+        if (indexOf != -1){
+            Map<String, String> targetParas = StrUtil.queryStringToMap(target.substring(indexOf + 1));
+            if (paras == null){
+                paras = new HashMap<>();
+            }
+            paras.putAll(targetParas);
+            target = target.substring(0,indexOf);
+        }
+
+        request.setServletPath(target);
+
         if (headers != null) {
             request.setHeaders(headers);
         }
