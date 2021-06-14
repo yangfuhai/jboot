@@ -15,10 +15,12 @@
  */
 package io.jboot.test;
 
+import com.jfinal.kit.LogKit;
 import io.jboot.aop.cglib.JbootCglibCallback;
 import io.jboot.utils.ReflectUtil;
 import io.jboot.utils.StrUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -108,6 +110,29 @@ class MockMethodInfo extends JbootCglibCallback {
             System.arraycopy(args, 0, newArgs, 1, args.length);
             args = newArgs;
         }
-        return mockMethod.invoke(MockApp.getInstance().getTestInstantce(), args);
+
+        Object testInstance = MockApp.getInstance().getTestInstance();
+        if (testInstance == null) {
+            testInstance = newInstance(this.mockClass);
+        }
+
+        if (testInstance == null) {
+            return null;
+        }
+
+        return mockMethod.invoke(testInstance, args);
     }
+
+
+    public static <T> T newInstance(Class<T> clazz) {
+        try {
+            Constructor constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return (T) constructor.newInstance();
+        } catch (Exception e) {
+            LogKit.logNothing(e);
+        }
+        return null;
+    }
+
 }

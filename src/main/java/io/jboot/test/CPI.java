@@ -32,8 +32,8 @@ public class CPI {
         MockApp.mockRequest(request, response);
     }
 
-    public static void setTestInstantce(Object testInstants) {
-        MockApp.getInstance().setTestInstantce(testInstants);
+    public static void setTestInstance(Object testInstants) {
+        MockApp.getInstance().setTestInstance(testInstants);
     }
 
 }

@@ -43,7 +43,7 @@ class MockApp {
     private JFinalConfig config;
     private final JFinalFilter filter;
 
-    private Object testInstantce;
+    private Object testInstance;
 
 
     private MockApp() {
@@ -62,12 +62,12 @@ class MockApp {
         }
     }
 
-    public void setTestInstantce(Object testInstantce) {
-        this.testInstantce = testInstantce;
+    public void setTestInstance(Object testInstance) {
+        this.testInstance = testInstance;
     }
 
-    public Object getTestInstantce() {
-        return testInstantce;
+    public Object getTestInstance() {
+        return testInstance;
     }
 
     void start(Class<?> testClass) {

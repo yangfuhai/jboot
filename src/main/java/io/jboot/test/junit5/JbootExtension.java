@@ -47,7 +47,7 @@ public class JbootExtension implements BeforeAllCallback, AfterAllCallback, Befo
         Optional<Object> instantceOptional = extensionContext.getTestInstance();
         if (instantceOptional.isPresent()) {
             Aop.inject(instantceOptional.get());
-            CPI.setTestInstantce(instantceOptional.get());
+            CPI.setTestInstance(instantceOptional.get());
         }
     }
 

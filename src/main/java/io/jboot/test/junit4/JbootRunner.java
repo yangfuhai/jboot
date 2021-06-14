@@ -32,8 +32,8 @@ public class JbootRunner extends BlockJUnit4ClassRunner {
     @Override
     protected Object createTest() throws Exception {
         Object ret = Aop.inject(super.createTest());
-        CPI.setTestInstantce(ret);
-        return Aop.inject(ret);
+        CPI.setTestInstance(ret);
+        return ret;
     }
 
     @Override
