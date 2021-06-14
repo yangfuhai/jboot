@@ -26,11 +26,11 @@ import java.util.Map;
 
 class MockMethodInterceptor extends JbootCglibCallback {
 
-    private static final Map<InterceptorCache.MethodKey, MockMethodInfo> methods = new HashMap();
+    private static final Map<InterceptorCache.MethodKey, MockMethodInfo> METHOD_INFO_CACHE = new HashMap();
 
-    public static void addMethod(MockMethodInfo value) {
+    public static void addMethodInfo(MockMethodInfo value) {
         InterceptorCache.MethodKey methodKey = InterceptorCache.getMethodKey(value.getTargetClass(), value.getTargetMethod());
-        methods.put(methodKey, value);
+        METHOD_INFO_CACHE.put(methodKey, value);
     }
 
 
@@ -38,13 +38,17 @@ class MockMethodInterceptor extends JbootCglibCallback {
     public Object intercept(Object target, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
 
         Class<?> targetClass = ClassUtil.getUsefulClass(target.getClass());
+        if (targetClass == Object.class){
+            targetClass = method.getDeclaringClass();
+        }
+
         InterceptorCache.MethodKey methodKey = InterceptorCache.getMethodKey(targetClass, method);
 
-        if (!methods.containsKey(methodKey)) {
+        if (!METHOD_INFO_CACHE.containsKey(methodKey)) {
             return super.intercept(target, method, args, methodProxy);
         }
 
-        MockMethodInfo methodInfo = methods.get(methodKey);
+        MockMethodInfo methodInfo = METHOD_INFO_CACHE.get(methodKey);
         return methodInfo.invokeMock(target, args);
     }
 }

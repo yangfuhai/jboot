@@ -28,4 +28,7 @@ public @interface TestConfig {
     //class path 配置
     String classPath() default MockApp.DEFAULT_CLASS_PATH;
 
+    //自动 Mock Interface 接口，有些接口没有实现类的，当执行其方法时，啥都不操作，若有返回值则返回 null
+    boolean autoMockInterface() default false;
+
 }

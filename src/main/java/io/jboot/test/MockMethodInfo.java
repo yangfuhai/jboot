@@ -124,11 +124,11 @@ class MockMethodInfo extends JbootCglibCallback {
     }
 
 
-    public static <T> T newInstance(Class<T> clazz) {
+    private static <T> T newInstance(Class<T> clazz) {
         try {
-            Constructor constructor = clazz.getDeclaredConstructor();
+            Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
-            return (T) constructor.newInstance();
+            return constructor.newInstance();
         } catch (Exception e) {
             LogKit.logNothing(e);
         }
