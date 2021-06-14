@@ -16,6 +16,9 @@
 package io.jboot.aop.cglib;
 
 import com.jfinal.proxy.ProxyFactory;
+import net.sf.cglib.proxy.MethodInterceptor;
+
+import java.util.function.Function;
 
 /**
  * JbootCglibProxyFactory 用于扩展 cglib 的代理模式
@@ -29,9 +32,22 @@ import com.jfinal.proxy.ProxyFactory;
  */
 public class JbootCglibProxyFactory extends ProxyFactory {
 
+    /**
+     * 方便在单元测试的时候，可以对任意 class 进行 Mock
+     */
+    private static Function<Class<?>,MethodInterceptor> methodInterceptor = aClass -> new JbootCglibCallback();
+
+    public static Function<Class<?>, MethodInterceptor> getMethodInterceptor() {
+        return methodInterceptor;
+    }
+
+    public static void setMethodInterceptor(Function<Class<?>, MethodInterceptor> methodInterceptor) {
+        JbootCglibProxyFactory.methodInterceptor = methodInterceptor;
+    }
+
     @Override
     public <T> T get(Class<T> target) {
-        return (T) net.sf.cglib.proxy.Enhancer.create(target, new JbootCglibCallback());
+        return (T) net.sf.cglib.proxy.Enhancer.create(target, methodInterceptor.apply(target));
     }
 
 

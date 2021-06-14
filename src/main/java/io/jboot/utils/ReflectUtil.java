@@ -16,6 +16,7 @@
 package io.jboot.utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.function.Predicate;
 
 /**
@@ -55,5 +56,19 @@ public class ReflectUtil {
             }
         }
         return searchField(dClass.getSuperclass(), filter);
+    }
+
+
+    public static Method searchMethod(Class<?> dClass, Predicate<Method> filter) {
+        if (dClass == null) {
+            return null;
+        }
+        Method[] methods = dClass.getDeclaredMethods();
+        for (Method method : methods) {
+            if (filter.test(method)) {
+                return method;
+            }
+        }
+        return searchMethod(dClass.getSuperclass(), filter);
     }
 }

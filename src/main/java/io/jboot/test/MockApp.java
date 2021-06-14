@@ -18,6 +18,7 @@ package io.jboot.test;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.core.JFinalFilter;
 import com.jfinal.kit.PathKit;
+import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.app.PathKitExt;
 import io.jboot.test.web.MockFilterChain;
 import io.jboot.test.web.MockFilterConfig;
@@ -28,8 +29,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MockApp {
+class MockApp {
 
     public static final String DEFAULT_WEB_ROOT_PATH = "../classes/webapp";
     public static final String DEFAULT_CLASS_PATH = "../classes";
@@ -56,9 +60,16 @@ public class MockApp {
         }
     }
 
-    public void start(TestConfig testConfig) {
+    void start(Class<?> testClass) {
         try {
-            doInitJFinalPathKit(testConfig);
+            doInitJFinalPathKit(testClass.getAnnotation(TestConfig.class));
+
+            List<MockMethodInfo> mockMethodInfos = getMockMethodInfoList(testClass);
+            if (mockMethodInfos.size() > 0) {
+                mockMethodInfos.forEach(MockMethodInterceptor::addMethod);
+                JbootCglibProxyFactory.setMethodInterceptor(aClass -> new MockMethodInterceptor());
+            }
+
             filter.init(new MockFilterConfig());
             config = ReflectUtil.getFieldValue(JFinalFilter.class, "jfinalConfig", filter);
         } catch (ServletException e) {
@@ -66,8 +77,30 @@ public class MockApp {
         }
     }
 
+    private List<MockMethodInfo> getMockMethodInfoList(Class<?> testClass) {
+        List<MockMethodInfo> methodInfoList = new ArrayList<>();
+        searchMockMethods(testClass, methodInfoList);
+        return methodInfoList;
+    }
 
-    public void stop() {
+
+    private void searchMockMethods(Class<?> searchClass, List<MockMethodInfo> tolist) {
+        Method[] methods = searchClass.getDeclaredMethods();
+        for (Method method : methods) {
+            MockMethod mockMethod = method.getAnnotation(MockMethod.class);
+            if (mockMethod != null) {
+                tolist.add(new MockMethodInfo(searchClass, method, mockMethod));
+            }
+        }
+
+        Class<?> superClass = searchClass.getSuperclass();
+        if (superClass != Object.class && superClass != null) {
+            searchMockMethods(superClass, tolist);
+        }
+    }
+
+
+    void stop() {
         if (config != null) {
             config.onStop();
         }

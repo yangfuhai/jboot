@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-class JbootCglibCallback implements MethodInterceptor {
+public class JbootCglibCallback implements MethodInterceptor {
 
     private static final Set<String> excludedMethodName = buildExcludedMethodName();
     private static final InterceptorManager interManager = InterceptorManager.me();
@@ -69,7 +69,7 @@ class JbootCglibCallback implements MethodInterceptor {
     }
 
 
-    private static final Set<String> buildExcludedMethodName() {
+    private static Set<String> buildExcludedMethodName() {
         Set<String> excludedMethodName = new HashSet<String>(64, 0.25F);
         Method[] methods = Object.class.getDeclaredMethods();
         for (Method m : methods) {

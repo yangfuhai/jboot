@@ -16,8 +16,7 @@
 package io.jboot.test.junit5;
 
 import com.jfinal.aop.Aop;
-import io.jboot.test.MockApp;
-import io.jboot.test.TestConfig;
+import io.jboot.test.CPI;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -31,15 +30,14 @@ public class JbootExtension implements BeforeAllCallback, AfterAllCallback, Befo
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
         Optional<Class<?>> optional = extensionContext.getTestClass();
         if (optional.isPresent()) {
-            TestConfig config = optional.get().getAnnotation(TestConfig.class);
-            MockApp.getInstance().start(config);
+            CPI.startApp(optional.get());
         }
     }
 
 
     @Override
     public void afterAll(ExtensionContext extensionContext) throws Exception {
-        MockApp.getInstance().stop();
+        CPI.stopApp();
     }
 
 
