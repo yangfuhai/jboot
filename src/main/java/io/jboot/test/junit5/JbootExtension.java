@@ -28,10 +28,11 @@ public class JbootExtension implements BeforeAllCallback, AfterAllCallback, Befo
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
-        Optional<Class<?>> optional = extensionContext.getTestClass();
-        if (optional.isPresent()) {
-            CPI.startApp(optional.get());
+        Optional<Class<?>> classOptional = extensionContext.getTestClass();
+        if (classOptional.isPresent()) {
+            CPI.startApp(classOptional.get());
         }
+
     }
 
 
@@ -43,8 +44,10 @@ public class JbootExtension implements BeforeAllCallback, AfterAllCallback, Befo
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        if (extensionContext.getTestInstance().isPresent()) {
-            Aop.inject(extensionContext.getTestInstance().get());
+        Optional<Object> instantceOptional = extensionContext.getTestInstance();
+        if (instantceOptional.isPresent()) {
+            Aop.inject(instantceOptional.get());
+            CPI.setTestInstantce(instantceOptional.get());
         }
     }
 

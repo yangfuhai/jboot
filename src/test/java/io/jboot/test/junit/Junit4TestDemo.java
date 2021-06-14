@@ -1,6 +1,7 @@
 package io.jboot.test.junit;
 
 import com.jfinal.aop.Inject;
+import io.jboot.test.MockMethod;
 import io.jboot.test.MockMvc;
 import io.jboot.test.junit4.JbootRunner;
 import org.junit.Assert;
@@ -46,5 +47,17 @@ public class Junit4TestDemo {
         Assert.assertEquals(ret, "ok");
     }
 
+
+    @Test
+    public void test_my_service_mock() {
+        String ret = myService.doOther();
+        System.out.println(">>>>>>" + ret);
+    }
+
+
+    @MockMethod(targetClass = TestService.class, targetMethod = "doOther")
+    public String mockTestService(TestService oo) {
+        return "from mock";
+    }
 
 }

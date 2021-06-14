@@ -1,6 +1,7 @@
 package io.jboot.test.junit;
 
 import com.jfinal.aop.Inject;
+import io.jboot.test.MockMethod;
 import io.jboot.test.MockMvc;
 import io.jboot.test.junit5.JbootExtension;
 import org.junit.jupiter.api.Assertions;
@@ -44,6 +45,19 @@ public class Junit5TestDemo {
     public void test_my_service() {
         String ret = myService.doSomething();
         Assertions.assertEquals(ret, "ok");
+    }
+
+
+    @Test
+    public void test_my_service_mock() {
+        String ret = myService.doOther();
+        System.out.println(">>>>>>" + ret);
+    }
+
+
+    @MockMethod(targetClass = TestService.class, targetMethod = "doOther")
+    public String mockTestService(TestService oo) {
+        return "from mock";
     }
 
 }

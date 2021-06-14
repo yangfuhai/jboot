@@ -43,6 +43,8 @@ class MockApp {
     private JFinalConfig config;
     private final JFinalFilter filter;
 
+    private Object testInstantce;
+
 
     private MockApp() {
         filter = new JFinalFilter();
@@ -58,6 +60,14 @@ class MockApp {
         } catch (IOException | ServletException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setTestInstantce(Object testInstantce) {
+        this.testInstantce = testInstantce;
+    }
+
+    public Object getTestInstantce() {
+        return testInstantce;
     }
 
     void start(Class<?> testClass) {

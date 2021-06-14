@@ -6,4 +6,8 @@ public class TestService{
         System.out.println(">>>>>>>>TestService.doSomething");
         return "ok";
     }
+
+    public String doOther(){
+        return "doOther";
+    }
 }
