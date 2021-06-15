@@ -3,7 +3,8 @@
 ## 目录
 - Junit4 单元测试
 - Junit5 单元测试
-- 注意事项
+- @TestConfig
+- @MockMethod
 
 ## Junit 单元测试简介
 
@@ -121,7 +122,7 @@ public class MyAppTester {
 > 注意：Junit5 测试类必须添加 `@ExtendWith(JbootExtension.class)` 配置
 
 
-## 注意事项
+## @TestConfig
 
 在测试的过程中，Jboot 默认的 webRootPath 是 `target/classes/webapp` 目录，而 classPath 的目录是 `target/classes`
 目录。
@@ -151,3 +152,48 @@ public class MyAppTester {
 
 `@TestConfig(webRootPath = "your-path",classPath = "your-path")` 里的配置路径，可以是绝对路径或相对路径，
 若是相对路径，则是相对 `target/test-classes` 目录的路径。
+
+## @MockMethod
+Jboot 提供了 `@MockMethod` 注解，方便对 AOP 管理的类进行 Mock 操作。
+
+例如：
+```java
+@RunWith(JbootRunner.class)
+@TestConfig(autoMockInterface = true)
+public class OptionApiControllerTest {
+
+    private static final MockMvc mvc = new MockMvc();
+
+    @Test
+    public void query() {
+        mvc.get("/api/option/query?key=myKey").printResult();
+    }
+
+
+    @MockMethod(targetClass = JPressCoreInitializer.class)
+    public void onHandlerConfig(JfinalHandlers handlers) {
+        handlers.add(new JPressHandler());
+    }
+    
+
+    @MockMethod(targetClass = UtmService.class)
+    public void doRecord(Utm utm){
+        System.out.println(">>>>>>>>>doRecord: " + utm);
+    }
+    
+
+    @MockMethod(targetClass = WebInitializer.class,targetMethod = "onEngineConfig")
+    public void mock_on_engine_config(Engine engine){
+        System.out.println(">>>>>>>>>onEngineConfig: " + engine);
+    }
+}
+```
+
+在以上的代码中，有几个关键的地方
+- `@TestConfig(autoMockInterface = true)`，表示当我们测试 `query()` 方法的时候，可能会遇到一些注入进来的接口，但是可能没有实现类（或者说实现类在别的 Maven Module，并没有依赖进来），但是保证不出错。
+当调用接口方法时，等同于什么都不做，若有返回值，则返回 `null`。
+- `@MockMethod(targetClass = JPressCoreInitializer.class)` 表示复写 `JPressCoreInitializer` 类的 `onHandlerConfig` 方法。
+- `@MockMethod(targetClass = UtmService.class)` 表示复写 `UtmService` 类的 `doRecord` 方法。
+- `@MockMethod(targetClass = WebInitializer.class,targetMethod = "onEngineConfig")` 表示复写 `WebInitializer` 类的 `onEngineConfig` 方法。
+
+> `@MockMethod` 的优先级高于 `@TestConfig(autoMockInterface = true)` 的配置。
