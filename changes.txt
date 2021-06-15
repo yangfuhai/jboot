@@ -1,3 +1,10 @@
+jboot v3.9.18:
+新增：新增 @MockMethod 注解，方便对 AOP 方法进行 Mock
+新增：@TestConfig(autoMockInterface=false) 配置，方便对接口进行 Mock 操作
+修复：Motan RPC 框架的 protocol 配置不生效的问题
+修复：ide 配置错误时给出的 JFinal 配置帮助文档网址错误
+
+
 jboot v3.9.17:
 修复：JbootActionReporter 可能出现 NotFoundException 的问题
 修复：JbootActionReporter 可能出现 NPE 的问题

@@ -15,12 +15,14 @@
  */
 package io.jboot.test;
 
+import com.jfinal.kit.LogKit;
 import io.jboot.aop.InterceptorCache;
 import io.jboot.aop.cglib.JbootCglibCallback;
 import io.jboot.utils.ClassUtil;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,22 +35,37 @@ class MockMethodInterceptor extends JbootCglibCallback {
         METHOD_INFO_CACHE.put(methodKey, value);
     }
 
+    private boolean autoMockInterface;
+
+    public MockMethodInterceptor(boolean autoMockInterface) {
+        this.autoMockInterface = autoMockInterface;
+    }
 
     @Override
     public Object intercept(Object target, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
 
         Class<?> targetClass = ClassUtil.getUsefulClass(target.getClass());
-        if (targetClass == Object.class){
+
+        //对于接口而且没有实现类的情况，target 是一个 Object 类
+        if (targetClass == Object.class && method.getDeclaringClass() != Object.class) {
             targetClass = method.getDeclaringClass();
         }
 
         InterceptorCache.MethodKey methodKey = InterceptorCache.getMethodKey(targetClass, method);
 
-        if (!METHOD_INFO_CACHE.containsKey(methodKey)) {
-            return super.intercept(target, method, args, methodProxy);
+        if (METHOD_INFO_CACHE.containsKey(methodKey)) {
+            MockMethodInfo methodInfo = METHOD_INFO_CACHE.get(methodKey);
+            return methodInfo.invokeMock(target, args);
         }
 
-        MockMethodInfo methodInfo = METHOD_INFO_CACHE.get(methodKey);
-        return methodInfo.invokeMock(target, args);
+        if (autoMockInterface && Modifier.isInterface(targetClass.getModifiers())) {
+            if (!("toString".equals(method.getName()) && args.length == 0)) {
+                LogKit.warn("Return null for Mock Method: \"" + ClassUtil.buildMethodString(method) + "\", \n" +
+                        "Because the class \"" + targetClass.getName() + "\" is an interface and has no any implementation classes.");
+            }
+            return null;
+        }
+
+        return super.intercept(target, method, args, methodProxy);
     }
 }

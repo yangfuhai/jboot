@@ -17,13 +17,11 @@ package io.jboot.test;
 
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.core.JFinalFilter;
-import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.app.PathKitExt;
 import io.jboot.test.web.MockFilterChain;
 import io.jboot.test.web.MockFilterConfig;
-import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ReflectUtil;
 
 import javax.servlet.ServletException;
@@ -32,7 +30,6 @@ import javax.servlet.ServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,18 +80,7 @@ class MockApp {
                 mockMethodInfos.forEach(MockMethodInterceptor::addMethodInfo);
 
                 boolean autoMockInterface = testConfig != null && testConfig.autoMockInterface();
-                if (autoMockInterface) {
-                    JbootCglibProxyFactory.setMethodInterceptor(aClass -> Modifier.isInterface(aClass.getModifiers()) ? (obj, method, args, proxy) -> {
-                        if (!("toString".equals(method.getName()) && args.length == 0)) {
-                            LogKit.warn("Return null for Mock Method: \"" + ClassUtil.buildMethodString(method) + "\", \n" +
-                                    "Because the class \"" + method.getDeclaringClass().getName() + "\" is an interface and has no any implementation classes.");
-                        }
-                        return null;
-                    } : new MockMethodInterceptor());
-                } else {
-                    JbootCglibProxyFactory.setMethodInterceptor(aClass -> new MockMethodInterceptor());
-                }
-
+                JbootCglibProxyFactory.setMethodInterceptor(aClass -> new MockMethodInterceptor(autoMockInterface));
             }
 
             filter.init(new MockFilterConfig());
