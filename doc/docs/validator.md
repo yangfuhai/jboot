@@ -2,6 +2,7 @@
 
 Jboot 从 V3.7.5 开始，增强 Jboot  的验证方式，在 Jboot 之前的 @EmptyValidate、@RegexValidate 等基础上，进一步基于 JSR 303 – Bean Validation 简化了验证方式，相比 Spring 更加优雅简单。
 
+[[toc]]
 
 ## @NotNull
 
@@ -155,3 +156,29 @@ public class MyController extends JbootController {
 - 当我们访问 `/action1` 的时候，会出现手机号不能为空的错误提示。访问 `/action1?mobile=123` 的时候，正常访问。
 - 当我们访问 `/action2` 或者 `/action2?mobile=123`  的时候，会出现手机号不正确的错误提示。
   访问 `/action2?mobile=18611223344` 的时候，正常访问。因为 `18611223344` 是一个正确的手机号 。
+
+## 自定义渲染器
+
+   我们可以写一个 `RenderFactory` 继承自 `JbootRenderFactory` ，并复写其 `getValidErrorRender()` 方法。
+
+   例如：
+
+```java
+public MyRenderFactory extends JbootRenderFactory(){
+
+    @Override
+    public ValidErrorRender getValidErrorRender(ValidException validException){
+        //return 返回自己写渲染器
+    }
+}
+```
+
+然后在项目启动的时候，通过在 `onConstantConfig(Constants constants)` 里配置上自己的 `MyRenderFactory`:
+
+```java
+@Override
+public void onConstantConfig(Constants constants) {
+    constants.setRenderFactory(new MyRenderFactory());
+}
+ 
+```
