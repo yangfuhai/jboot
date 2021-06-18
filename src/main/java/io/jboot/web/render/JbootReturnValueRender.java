@@ -87,7 +87,7 @@ public class JbootReturnValueRender extends Render {
 
 
     private boolean isBaseType(Object value) {
-        Class c = value.getClass();
+        Class<?> c = value.getClass();
         return c == String.class || c == char.class
                 || c == Integer.class || c == int.class
                 || c == Long.class || c == long.class
