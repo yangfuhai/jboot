@@ -22,19 +22,27 @@ import io.jboot.utils.StrUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public class MockMvc {
 
-    private static Map<String, String> globalParas = new HashMap<>();
-    private static Map<String, Function<MockHttpServletRequest, String>> globalParaFunctions = new HashMap<>();
+    private Consumer<MockHttpServletRequest> requestStartListener;
+    private Consumer<MockHttpServletResponse> requestFinishedListener;
 
-    public void addGlobalParas(String key, String value) {
-        globalParas.put(key, value);
+    public Consumer<MockHttpServletRequest> getRequestStartListener() {
+        return requestStartListener;
     }
 
-    public void addGlobalParaFunction(String key, Function<MockHttpServletRequest, String> valueFunction) {
-        globalParaFunctions.put(key, valueFunction);
+    public void setRequestStartListener(Consumer<MockHttpServletRequest> requestStartListener) {
+        this.requestStartListener = requestStartListener;
+    }
+
+    public Consumer<MockHttpServletResponse> getRequestFinishedListener() {
+        return requestFinishedListener;
+    }
+
+    public void setRequestFinishedListener(Consumer<MockHttpServletResponse> requestFinishedListener) {
+        this.requestFinishedListener = requestFinishedListener;
     }
 
     public MockMvcResult get(String target) {
@@ -69,29 +77,12 @@ public class MockMvc {
 
         paras.forEach(request::addParameter);
 
-        if (!globalParas.isEmpty()){
-            paras.forEach(request::addParameter);
-            paras.putAll(globalParas);
+
+        if (requestStartListener != null) {
+            requestStartListener.accept(request);
         }
 
-        //set for globalParaFunctions
-        request.setQueryString(StrUtil.mapToQueryString(paras));
-
-        if (!globalParaFunctions.isEmpty()){
-
-            globalParaFunctions.forEach((k, f) -> {
-                String v = f.apply(request);
-                paras.put(k,v);
-                request.addParameter(k,v);
-            });
-
-            request.setQueryString(StrUtil.mapToQueryString(paras));
-        }
-
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        sendRequest(request, response);
-        return new MockMvcResult(response);
+        return doStartMockRequest(request);
     }
 
     public MockMvcResult post(String target) {
@@ -135,22 +126,31 @@ public class MockMvc {
             paras.forEach(request::addParameter);
         }
 
-        if (!globalParas.isEmpty()){
-            globalParas.forEach(request::addParameter);
-        }
-
-        if (!globalParaFunctions.isEmpty()){
-            globalParaFunctions.forEach((s, f) -> request.addParameter(s,f.apply(request)));
-        }
-
         if (StrUtil.isNotBlank(postData)) {
             request.setInputStream(new MockServletInputStream(postData));
         }
 
+        if (requestStartListener != null) {
+            requestStartListener.accept(request);
+        }
+
+        return doStartMockRequest(request);
+    }
+
+
+    private MockMvcResult doStartMockRequest(MockHttpServletRequest request) {
         MockHttpServletResponse response = new MockHttpServletResponse();
-        sendRequest(request, response);
+        try {
+            sendRequest(request, response);
+        } finally {
+            if (requestFinishedListener != null) {
+                requestFinishedListener.accept(response);
+            }
+        }
+
         return new MockMvcResult(response);
     }
+
 
     public void sendRequest(MockHttpServletRequest request, MockHttpServletResponse response) {
         MockApp.mockRequest(request, response);
