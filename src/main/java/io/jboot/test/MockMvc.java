@@ -141,7 +141,7 @@ public class MockMvc {
     private MockMvcResult doStartMockRequest(MockHttpServletRequest request) {
         MockHttpServletResponse response = new MockHttpServletResponse();
         try {
-            sendRequest(request, response);
+            doSendRequest(request, response);
         } finally {
             if (requestFinishedListener != null) {
                 requestFinishedListener.accept(response);
@@ -152,7 +152,7 @@ public class MockMvc {
     }
 
 
-    public void sendRequest(MockHttpServletRequest request, MockHttpServletResponse response) {
+    public void doSendRequest(MockHttpServletRequest request, MockHttpServletResponse response) {
         MockApp.mockRequest(request, response);
     }
 
