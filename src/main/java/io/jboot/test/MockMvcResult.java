@@ -15,6 +15,8 @@
  */
 package io.jboot.test;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.jboot.test.web.MockHttpServletResponse;
 
 import java.util.Collection;
@@ -31,6 +33,10 @@ public class MockMvcResult {
 
     public String getContent() {
         return response.getContentString();
+    }
+
+    public JSONObject getContentAsJSONObject() {
+        return JSON.parseObject(getContent());
     }
 
     public String getContentType() {
@@ -66,8 +72,18 @@ public class MockMvcResult {
         return this;
     }
 
+    public MockMvcResult printContent() {
+        System.out.println(getContent());
+        return this;
+    }
+
     public MockMvcResult assertThat(MockMvcAsserter mockMvcAssert) {
         mockMvcAssert.doAssert(this);
+        return this;
+    }
+
+    public MockMvcResult assertJson(MockMvcJsonAsserter mockMvcAssert) {
+        mockMvcAssert.doAssert(this.getContentAsJSONObject());
         return this;
     }
 
