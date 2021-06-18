@@ -47,16 +47,16 @@ public class MockMvc {
     }
 
 
-    public MockMvcResult get(String target, Map<String, Object> paras, Map<String, String> headers) {
+    public MockMvcResult get(String target, Map<String, Object> p, Map<String, String> headers) {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
+
+        final Map<String, Object> paras = p != null ? p : new HashMap<>();
+
 
         int indexOf = target.lastIndexOf("?");
         if (indexOf != -1) {
             Map<String, String> targetParas = StrUtil.queryStringToMap(target.substring(indexOf + 1));
-            if (paras == null) {
-                paras = new HashMap<>();
-            }
             paras.putAll(targetParas);
             target = target.substring(0, indexOf);
         }
@@ -67,17 +67,25 @@ public class MockMvc {
             request.setHeaders(headers);
         }
 
-        if (paras != null) {
-            paras.forEach(request::addParameter);
-            request.setQueryString(StrUtil.mapToQueryString(paras));
-        }
+        paras.forEach(request::addParameter);
 
         if (!globalParas.isEmpty()){
-            globalParas.forEach(request::addParameter);
+            paras.forEach(request::addParameter);
+            paras.putAll(globalParas);
         }
 
+        //set for globalParaFunctions
+        request.setQueryString(StrUtil.mapToQueryString(paras));
+
         if (!globalParaFunctions.isEmpty()){
-            globalParaFunctions.forEach((s, f) -> request.addParameter(s,f.apply(request)));
+
+            globalParaFunctions.forEach((k, f) -> {
+                String v = f.apply(request);
+                paras.put(k,v);
+                request.addParameter(k,v);
+            });
+
+            request.setQueryString(StrUtil.mapToQueryString(paras));
         }
 
 

@@ -34,7 +34,7 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     protected String method = "GET";
     protected String pathInfo;
     protected String pathTranslated;
-    protected String queryString;
+    protected String queryString = "";
     protected String requestURI;
     protected String servletPath;
     protected String characterEncoding = "UTF-8";
