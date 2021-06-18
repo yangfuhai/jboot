@@ -31,4 +31,10 @@ public @interface TestConfig {
     //自动 Mock Interface 接口，有些接口没有实现类的，当执行其方法时，啥都不操作，若有返回值则返回 null
     boolean autoMockInterface() default false;
 
+    //配置 appMode
+    boolean devMode() default true;
+
+    //配置启动参数
+    String[] launchArgs() default "";
+
 }

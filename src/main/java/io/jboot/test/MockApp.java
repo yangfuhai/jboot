@@ -20,6 +20,7 @@ import com.jfinal.core.JFinalFilter;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.app.PathKitExt;
+import io.jboot.app.config.JbootConfigManager;
 import io.jboot.test.web.MockFilterChain;
 import io.jboot.test.web.MockFilterConfig;
 import io.jboot.utils.ReflectUtil;
@@ -73,7 +74,15 @@ class MockApp {
     void start(Class<?> testClass) {
         try {
             TestConfig testConfig = testClass.getAnnotation(TestConfig.class);
+
+
+            if (testConfig != null){
+                JbootConfigManager.parseArgs(testConfig.launchArgs());
+                JbootConfigManager.me().setDevMode(testConfig.devMode());
+            }
+
             doInitJFinalPathKit(testConfig);
+
 
             List<MockMethodInfo> mockMethodInfos = getMockMethodInfoList(testClass);
             if (mockMethodInfos.size() > 0) {
