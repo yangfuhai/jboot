@@ -350,14 +350,14 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         }
     }
 
-    public void addQueryParameter(String key,Object value){
+    public void addQueryParameter(String key, Object value) {
 
         if ("GET".equalsIgnoreCase(getMethod())) {
             parameters.put(key, new String[]{String.valueOf(value)});
         }
 
         Map queryStringMap = StrUtil.isNotBlank(queryString) ? StrUtil.queryStringToMap(this.queryString) : new HashMap();
-        queryStringMap.put(key,value);
+        queryStringMap.put(key, value);
         setQueryString(StrUtil.mapToQueryString(queryStringMap));
     }
 
@@ -388,7 +388,6 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
                             sb.append("&");
                         }
                         sb.append(key.trim()).append("=").append(StrUtil.urlEncode(values[i]));
-                        ;
                     }
                 }
             }
