@@ -60,7 +60,7 @@ class MockMethodInterceptor extends JbootCglibCallback {
 
         if (autoMockInterface && Modifier.isInterface(targetClass.getModifiers())) {
             if (!("toString".equals(method.getName()) && args.length == 0)) {
-                LogKit.warn("Return null for Mock Method: \"" + ClassUtil.buildMethodString(method) + "\", \n" +
+                LogKit.warn("Return null for Mock Method: \"" + ClassUtil.buildMethodString(method) + "\", " +
                         "Because the class \"" + targetClass.getName() + "\" is an interface and has no any implementation classes.");
             }
             return null;

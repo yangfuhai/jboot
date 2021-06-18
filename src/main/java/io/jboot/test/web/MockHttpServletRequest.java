@@ -16,6 +16,7 @@
 package io.jboot.test.web;
 
 import io.jboot.test.MockProxy;
+import io.jboot.utils.StrUtil;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
@@ -332,16 +333,68 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         addParameter(key, num.toString());
     }
 
-    public void addParameter(String key, String[] values) {
-        parameters.put(key, values);
-    }
-
     public void addParameter(String key, String value) {
-        parameters.put(key, new String[]{value});
+        addParameter(key, new String[]{value});
     }
 
     public void addParameter(String key, Object value) {
-        parameters.put(key, new String[]{String.valueOf(value)});
+        addParameter(key, new String[]{String.valueOf(value)});
+    }
+
+
+    public void addParameter(String key, String[] values) {
+        parameters.put(key, values);
+
+        if ("GET".equalsIgnoreCase(getMethod())) {
+            updateQueryString();
+        }
+    }
+
+    public void addQueryParameter(String key,Object value){
+
+        if ("GET".equalsIgnoreCase(getMethod())) {
+            parameters.put(key, new String[]{String.valueOf(value)});
+        }
+
+        Map queryStringMap = StrUtil.isNotBlank(queryString) ? StrUtil.queryStringToMap(this.queryString) : new HashMap();
+        queryStringMap.put(key,value);
+        setQueryString(StrUtil.mapToQueryString(queryStringMap));
+    }
+
+    private void updateQueryString() {
+        StringBuilder sb = new StringBuilder();
+        for (String key : parameters.keySet()) {
+            if (key == null || key.length() == 0) {
+                continue;
+            }
+            if (sb.length() > 0) {
+                sb.append("&");
+            }
+
+            sb.append(key.trim()).append("=");
+            String[] values = parameters.get(key);
+            if (values == null || values.length == 0) {
+                continue;
+            }
+
+            if (values.length == 1) {
+                sb.append(StrUtil.urlEncode(values[0]));
+            } else {
+                for (int i = 0; i < values.length; i++) {
+                    if (i == 0) {
+                        sb.append(StrUtil.urlEncode(values[i]));
+                    } else {
+                        if (sb.length() > 0) {
+                            sb.append("&");
+                        }
+                        sb.append(key.trim()).append("=").append(StrUtil.urlEncode(values[i]));
+                        ;
+                    }
+                }
+            }
+        }
+
+        setQueryString(sb.toString());
     }
 
     @Override
