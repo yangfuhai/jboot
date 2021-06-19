@@ -19,7 +19,6 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.Action;
 import com.jfinal.core.Controller;
-import com.jfinal.core.JFinal;
 import io.jboot.aop.InterceptorBuilderManager;
 import io.jboot.aop.InterceptorCache;
 
@@ -42,24 +41,25 @@ public class JbootActionInvocation extends Invocation {
 
     private Object returnValue;
 
+
+    protected boolean recordEnable;
+
     protected static ThreadLocal<List<Interceptor>> invokedInterceptors = ThreadLocal.withInitial(ArrayList::new);
     protected static ThreadLocal<Boolean> controllerInvokeFlag = ThreadLocal.withInitial(() -> Boolean.FALSE);
-
-    private static boolean devMode = JFinal.me().getConstants().getDevMode();
-    private static InterceptorBuilderManager builderManager = InterceptorBuilderManager.me();
+    protected static InterceptorBuilderManager builderManager = InterceptorBuilderManager.me();
 
     public JbootActionInvocation(Action action, Controller controller) {
-//        super(action, controller);
 
         this.action = action;
         this.inters = buildInterceptors(action);
         this.target = controller;
 
         this.args = action.getParameterGetter().get(action, controller);
+        this.recordEnable = JbootActionReporter.isReportEnable();
     }
 
 
-    private Interceptor[] buildInterceptors(Action action) {
+    protected Interceptor[] buildInterceptors(Action action) {
 
         InterceptorCache.MethodKey key = InterceptorCache.getMethodKey(action.getControllerClass(), action.getMethod());
         Interceptor[] inters = InterceptorCache.get(key);
@@ -82,14 +82,14 @@ public class JbootActionInvocation extends Invocation {
     public void invoke() {
         if (index < inters.length) {
             Interceptor interceptor = inters[index++];
-            if (devMode) {
+            if (recordEnable) {
                 invokedInterceptors.get().add(interceptor);
             }
             interceptor.intercept(this);
         } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
             try {
                 // Invoke the action
-                if (devMode) {
+                if (recordEnable) {
                     controllerInvokeFlag.set(true);
                 }
                 returnValue = action.getMethod().invoke(target, args);
