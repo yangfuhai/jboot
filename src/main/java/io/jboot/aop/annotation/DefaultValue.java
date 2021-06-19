@@ -17,9 +17,10 @@ package io.jboot.aop.annotation;
 
 import java.lang.annotation.*;
 
+
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface BeanExclude {
-    Class<?>[] value();
+@Target({ElementType.PARAMETER})
+public @interface DefaultValue {
+    String value();
 }

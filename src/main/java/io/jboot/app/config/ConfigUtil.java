@@ -221,7 +221,7 @@ public class ConfigUtil {
     public static void doNothing(Throwable ex) {
     }
 
-    public static final Object convert(Class<?> convertClass, String s, Type genericType) {
+    public static Object convert(Class<?> convertClass, String s, Type genericType) {
 
         if (convertClass == String.class || s == null || convertClass == Object.class) {
             return s;
@@ -269,7 +269,7 @@ public class ConfigUtil {
                 List list = LinkedList.class == convertClass ? new LinkedList() : new ArrayList();
                 String[] strings = s.split(",");
                 for (String s1 : strings) {
-                    if (s != null && s1.trim().length() > 0) {
+                    if (s1.trim().length() > 0) {
                         list.add(s1.trim());
                     }
                 }
@@ -282,7 +282,7 @@ public class ConfigUtil {
                 Set set = LinkedHashSet.class == convertClass ? new LinkedHashSet() : new HashSet();
                 String[] strings = s.split(",");
                 for (String s1 : strings) {
-                    if (s != null && s1.trim().length() > 0) {
+                    if (s1.trim().length() > 0) {
                         set.add(s1.trim());
                     }
                 }
@@ -293,7 +293,7 @@ public class ConfigUtil {
         } else if (convertClass.isArray() && convertClass.getComponentType() == String.class) {
             List<String> list = new LinkedList();
             String[] strings = s.split(",");
-            if (strings != null && strings.length > 0) {
+            if (strings.length > 0) {
                 for (String s1 : strings) {
                     if (s1 != null && s1.trim().length() != 0) {
                         list.add(s1.trim());

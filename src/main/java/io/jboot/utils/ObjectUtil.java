@@ -15,7 +15,11 @@
  */
 package io.jboot.utils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -128,6 +132,90 @@ public class ObjectUtil {
      */
     public static <T> boolean notSameObject(T object1, T object2, ObjectFunc<T>... compareAttrGetters) {
         return !isSameObject(object1, object2, compareAttrGetters);
+    }
+
+
+    public static Object convert(Object value, Class<?> targetClass) {
+        if (value.getClass().isAssignableFrom(targetClass)) {
+            return value;
+        }
+
+        if (targetClass == Integer.class || targetClass == int.class) {
+            if (value instanceof Number) {
+                return ((Number) value).intValue();
+            }
+            return Integer.parseInt(value.toString());
+        } else if (targetClass == Long.class || targetClass == long.class) {
+            if (value instanceof Number) {
+                return ((Number) value).longValue();
+            }
+            return Long.parseLong(value.toString());
+        } else if (targetClass == Double.class || targetClass == double.class) {
+            if (value instanceof Number) {
+                return ((Number) value).doubleValue();
+            }
+            return Double.parseDouble(value.toString());
+        } else if (targetClass == Float.class || targetClass == float.class) {
+            if (value instanceof Number) {
+                return ((Number) value).floatValue();
+            }
+            return Float.parseFloat(value.toString());
+        } else if (targetClass == Boolean.class || targetClass == boolean.class) {
+            String v = value.toString().toLowerCase();
+            if ("1".equals(v) || "true".equals(v)) {
+                return Boolean.TRUE;
+            } else if ("0".equals(v) || "false".equals(v)) {
+                return Boolean.FALSE;
+            } else {
+                throw new RuntimeException("Can not parse to boolean type of value: \"" + value + "\"");
+            }
+        } else if (targetClass == java.math.BigDecimal.class) {
+            return new java.math.BigDecimal(value.toString());
+        } else if (targetClass == java.math.BigInteger.class) {
+            return new java.math.BigInteger(value.toString());
+        } else if (targetClass == byte[].class) {
+            return value.toString().getBytes();
+        } else if (targetClass == Date.class) {
+            return parseDate(value);
+        } else if (targetClass == LocalDateTime.class) {
+            return DateUtil.toLocalDateTime(parseDate(value));
+        } else if (targetClass == LocalDate.class) {
+            return DateUtil.toLocalDate(parseDate(value));
+        } else if (targetClass == LocalTime.class) {
+            return DateUtil.toLocalTime(parseDate(value));
+        } else if (targetClass == Short.class || targetClass == short.class) {
+            if (value instanceof Number) {
+                return ((Number) value).shortValue();
+            }
+            return Short.parseShort(value.toString());
+        }
+
+        throw new RuntimeException("\"" + targetClass.getName() + "\" can not be parsed.");
+    }
+
+
+    private static Date parseDate(Object value) {
+        if (value instanceof Number) {
+            return new Date(((Number) value).longValue());
+        }
+        return DateUtil.parseDate(value.toString());
+    }
+
+    public static Object getPrimitiveDefaultValue(Class<?> paraClass) {
+        if (paraClass == int.class || paraClass == long.class || paraClass == float.class || paraClass == double.class) {
+            return 0;
+        } else if (paraClass == boolean.class) {
+            return Boolean.FALSE;
+        } else if (paraClass == short.class) {
+            return (short) 0;
+        } else if (paraClass == byte.class) {
+            return (byte) 0;
+        } else if (paraClass == char.class) {
+            return '\u0000';
+        } else {
+            //不存在这种类型
+            return null;
+        }
     }
 
 }

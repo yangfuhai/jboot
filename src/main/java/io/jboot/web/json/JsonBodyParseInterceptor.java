@@ -28,15 +28,15 @@ import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.utils.ClassUtil;
-import io.jboot.utils.DateUtil;
+import io.jboot.utils.ObjectUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
 
 import java.lang.reflect.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @AutoLoad
 public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder {
@@ -115,7 +115,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     public static Object parseJsonBody(Object jsonObjectOrArray, Class<?> paraClass, Type paraType, String jsonKey) throws InstantiationException, IllegalAccessException {
         if (jsonObjectOrArray == null) {
-            return paraClass.isPrimitive() ? getPrimitiveDefaultValue(paraClass) : null;
+            return paraClass.isPrimitive() ? ObjectUtil.getPrimitiveDefaultValue(paraClass) : null;
         }
         if (Collection.class.isAssignableFrom(paraClass) || paraClass.isArray()) {
             return parseArray(jsonObjectOrArray, paraClass, paraType, jsonKey);
@@ -159,13 +159,13 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         }
 
         if (result == null || StrUtil.EMPTY.equals(result)) {
-            return paraClass.isPrimitive() ? getPrimitiveDefaultValue(paraClass) : null;
+            return paraClass.isPrimitive() ? ObjectUtil.getPrimitiveDefaultValue(paraClass) : null;
         }
 
         if (result instanceof JSONObject) {
             return toJavaObject((JSONObject) result, paraClass, paraType);
         } else {
-            return convert(result, paraClass);
+            return ObjectUtil.convert(result, paraClass);
         }
     }
 
@@ -247,7 +247,7 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
 
     private static Object toJavaObject(JSONObject rawObject, Class<?> paraClass, Type paraType) throws IllegalAccessException, InstantiationException {
         if (rawObject.isEmpty()) {
-            return paraClass.isPrimitive() ? getPrimitiveDefaultValue(paraClass) : null;
+            return paraClass.isPrimitive() ? ObjectUtil.getPrimitiveDefaultValue(paraClass) : null;
         }
 
         //非泛型 的 map
@@ -271,89 +271,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
 
-
-    private static Object convert(Object value, Class<?> targetClass) {
-        if (value.getClass().isAssignableFrom(targetClass)) {
-            return value;
-        }
-
-        if (targetClass == Integer.class || targetClass == int.class) {
-            if (value instanceof Number) {
-                return ((Number) value).intValue();
-            }
-            return Integer.parseInt(value.toString());
-        } else if (targetClass == Long.class || targetClass == long.class) {
-            if (value instanceof Number) {
-                return ((Number) value).longValue();
-            }
-            return Long.parseLong(value.toString());
-        } else if (targetClass == Double.class || targetClass == double.class) {
-            if (value instanceof Number) {
-                return ((Number) value).doubleValue();
-            }
-            return Double.parseDouble(value.toString());
-        } else if (targetClass == Float.class || targetClass == float.class) {
-            if (value instanceof Number) {
-                return ((Number) value).floatValue();
-            }
-            return Float.parseFloat(value.toString());
-        } else if (targetClass == Boolean.class || targetClass == boolean.class) {
-            String v = value.toString().toLowerCase();
-            if ("1".equals(v) || "true".equals(v)) {
-                return Boolean.TRUE;
-            } else if ("0".equals(v) || "false".equals(v)) {
-                return Boolean.FALSE;
-            } else {
-                throw new RuntimeException("Can not parse to boolean type of value: " + value);
-            }
-        } else if (targetClass == java.math.BigDecimal.class) {
-            return new java.math.BigDecimal(value.toString());
-        } else if (targetClass == java.math.BigInteger.class) {
-            return new java.math.BigInteger(value.toString());
-        } else if (targetClass == byte[].class) {
-            return value.toString().getBytes();
-        } else if (targetClass == Date.class) {
-            return parseDate(value);
-        } else if (targetClass == LocalDateTime.class) {
-            return DateUtil.toLocalDateTime(parseDate(value));
-        } else if (targetClass == LocalDate.class) {
-            return DateUtil.toLocalDate(parseDate(value));
-        } else if (targetClass == LocalTime.class) {
-            return DateUtil.toLocalTime(parseDate(value));
-        } else if (targetClass == Short.class || targetClass == short.class) {
-            if (value instanceof Number) {
-                return ((Number) value).shortValue();
-            }
-            return Short.parseShort(value.toString());
-        }
-
-        throw new RuntimeException(targetClass.getName() + " can not be parsed in json.");
-    }
-
-
-    private static Date parseDate(Object value) {
-        if (value instanceof Number) {
-            return new Date(((Number) value).longValue());
-        }
-        return DateUtil.parseDate(value.toString());
-    }
-
-    private static Object getPrimitiveDefaultValue(Class<?> paraClass) {
-        if (paraClass == int.class || paraClass == long.class || paraClass == float.class || paraClass == double.class) {
-            return 0;
-        } else if (paraClass == boolean.class) {
-            return Boolean.FALSE;
-        } else if (paraClass == short.class) {
-            return (short) 0;
-        } else if (paraClass == byte.class) {
-            return (byte) 0;
-        } else if (paraClass == char.class) {
-            return '\u0000';
-        } else {
-            //不存在这种类型
-            return null;
-        }
-    }
 
 
     @Override

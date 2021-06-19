@@ -435,8 +435,8 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    private boolean inExcludes(Class interfaceClass, Class[] excludes) {
-        for (Class ex : excludes) {
+    private boolean inExcludes(Class<?> interfaceClass, Class<?>[] excludes) {
+        for (Class<?> ex : excludes) {
             if (ex.isAssignableFrom(interfaceClass)) {
                 return true;
             }
