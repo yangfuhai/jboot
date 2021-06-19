@@ -74,12 +74,7 @@ public class JwtManager {
             token = controller.get(getHttpParameterKey());
         }
 
-        if (StrUtil.isBlank(token)) {
-            LogKit.debug("Can not get jwt token form http header or parameter!!");
-            return EMPTY_MAP;
-        }
-
-        return parseJwtToken(token);
+        return StrUtil.isBlank(token) ? EMPTY_MAP : parseJwtToken(token);
     }
 
 
