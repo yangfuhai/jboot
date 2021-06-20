@@ -23,17 +23,34 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class MockMethodInterceptor extends JbootCglibCallback {
 
-    private static final Map<InterceptorCache.MethodKey, MockMethodInfo> METHOD_INFO_CACHE = new HashMap();
+    private static final Map<InterceptorCache.MethodKey, MockMethodInfo> METHOD_INFO_CACHE = new HashMap<>();
 
     public static void addMethodInfo(MockMethodInfo value) {
         InterceptorCache.MethodKey methodKey = InterceptorCache.getMethodKey(value.getTargetClass(), value.getTargetMethod());
         METHOD_INFO_CACHE.put(methodKey, value);
     }
+
+    public static void addMockClass(Class<?> mockClass) {
+        Class<?>[] interfaces = mockClass.getInterfaces();
+        List<MockMethodInfo> mockMethodInfos = new ArrayList<>();
+        for (Class<?> inter : interfaces) {
+            for (MockMethodInfo mockMethodInfo : METHOD_INFO_CACHE.values()) {
+                //相同的代理对象
+                if (mockMethodInfo.getTargetClass() == inter) {
+                    mockMethodInfos.add(new MockMethodInfo(mockMethodInfo, mockClass));
+                }
+            }
+        }
+        mockMethodInfos.forEach(MockMethodInterceptor::addMethodInfo);
+    }
+
 
     private boolean autoMockInterface;
 

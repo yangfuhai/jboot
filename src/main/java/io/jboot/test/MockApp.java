@@ -86,17 +86,20 @@ class MockApp {
             doInitJFinalPathKit(testConfig);
 
 
-            List<MockMethodInfo> mockMethodInfos = getMockMethodInfoList(testClass);
-            if (mockMethodInfos.size() > 0) {
-                mockMethodInfos.forEach(MockMethodInterceptor::addMethodInfo);
+            boolean autoMockInterface = testConfig != null && testConfig.autoMockInterface();
+            JbootCglibProxyFactory.setMethodInterceptor(aClass -> new MockMethodInterceptor(autoMockInterface));
 
-                boolean autoMockInterface = testConfig != null && testConfig.autoMockInterface();
-                JbootCglibProxyFactory.setMethodInterceptor(aClass -> new MockMethodInterceptor(autoMockInterface));
+            List<MockMethodInfo> mockMethodInfos = getMockMethodInfoList(testClass);
+            if (!mockMethodInfos.isEmpty()) {
+                mockMethodInfos.forEach(MockMethodInterceptor::addMethodInfo);
             }
 
             List<MockClassInfo> mockClassInfos = getMockClassInfoList(testClass);
             if (mockClassInfos != null && !mockClassInfos.isEmpty()) {
-                mockClassInfos.forEach(mockClassInfo -> JbootAopFactory.me().addMapping(mockClassInfo.getTargetClass(), mockClassInfo.getMockClass()));
+                mockClassInfos.forEach(mockClassInfo -> {
+                    JbootAopFactory.me().addMapping(mockClassInfo.getTargetClass(), mockClassInfo.getMockClass());
+                    MockMethodInterceptor.addMockClass(mockClassInfo.getMockClass());
+                });
             }
 
             filter.init(new MockFilterConfig());
@@ -109,7 +112,7 @@ class MockApp {
     private List<MockClassInfo> getMockClassInfoList(Class<?> testClass) {
         List<Class> scanedClasses = ClassScanner.scanClassByAnnotation(MockClass.class, true);
 
-        LinkedList<Class<?>> mockClasses = new LinkedList<>(scanedClasses);
+        LinkedList<Class> mockClasses = new LinkedList<>(scanedClasses);
         Class<?>[] declardClasses = testClass.getDeclaredClasses();
         if (declardClasses.length > 0) {
             for (Class<?> declardClass : declardClasses) {
@@ -129,9 +132,9 @@ class MockApp {
 //            MockClass annotation = mockClass.getAnnotation(MockClass.class);
 //            Class<?>[] targetClasses = annotation.value();
 //            if (targetClasses.length == 0) {
-//                targetClasses = mockClasses.getClass().getInterfaces();
+//                targetClasses = mockClass.getInterfaces();
 //            }
-            Class<?>[] targetClasses = mockClasses.getClass().getInterfaces();
+            Class<?>[] targetClasses = mockClass.getInterfaces();
             if (targetClasses.length == 0) {
                 throw new IllegalStateException("@MockClass() in \"" + mockClass.getName() + "\" must implementation interface.");
             }

@@ -18,7 +18,6 @@ package io.jboot.aop;
 import com.jfinal.aop.AopFactory;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
-import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.proxy.Proxy;
@@ -324,7 +323,6 @@ public class JbootAopFactory extends AopFactory {
                 return this;
             } else {
                 singletonCache.remove(mappingClass);
-                LogKit.warn("Aop Class[" + from + "] mapping changed from  " + mappingClass + " to " + to);
             }
         }
 

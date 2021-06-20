@@ -33,6 +33,15 @@ class MockMethodInfo {
     private Class<?> mockClass;
     private Method mockMethod;
 
+    public MockMethodInfo(MockMethodInfo methodInfo,Class<?> newTargetClass) {
+        this.targetClass = newTargetClass;
+        this.targetMethod = methodInfo.targetMethod;
+        this.firstArgIsTarget = methodInfo.firstArgIsTarget;
+        this.mockClass = methodInfo.mockClass;
+        this.mockMethod = methodInfo.mockMethod;
+    }
+
+
     public MockMethodInfo(Class<?> testClass, Method testClassMethod, MockMethod mockMethod) {
         this.targetClass = mockMethod.targetClass();
 
