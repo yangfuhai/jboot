@@ -34,7 +34,7 @@ public class DefaultValueInterceptor implements Interceptor, InterceptorBuilder 
             DefaultValue defaultValue = parameters[index].getAnnotation(DefaultValue.class);
             if (defaultValue != null) {
                 Object arg = inv.getArg(index);
-                if (arg == null || "".equals(arg)) {
+                if (arg == null || isPrimitiveDefaultValue(arg, parameters[index].getType())) {
                     Object value = ObjectUtil.convert(defaultValue.value(), parameters[index].getType());
                     if (value != null) {
                         inv.setArg(index, value);
@@ -44,6 +44,15 @@ public class DefaultValueInterceptor implements Interceptor, InterceptorBuilder 
         }
 
         inv.invoke();
+    }
+
+    public static boolean isPrimitiveDefaultValue(Object value, Class<?> paraClass) {
+        if (paraClass == int.class || paraClass == long.class || paraClass == float.class || paraClass == double.class || paraClass == short.class) {
+            return ((Number) value).intValue() == 0;
+        } else if (paraClass == boolean.class) {
+            return !(boolean) value;
+        }
+        return false;
     }
 
 
