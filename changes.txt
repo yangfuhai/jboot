@@ -1,3 +1,20 @@
+jboot v3.9.19:
+新增：@MockClass() 注解，用于多 AOP 的 Class 进行 Mock
+新增：MockMvc 新增 requestStartListener 和 requestFinishedListener 的支持
+新增：@TestConfig.devMode 和 @TestConfig.launchArgs 配置的支持
+新增：MockMvcResult.getContentAsJSONObject() 和 assertJson() 方法
+新增：MockHttpServletRequest 新增 addQueryParameter() 方法
+新增：@DefaultValue() 注解，用与对参数配置默认值
+新增："jboot.sentinel.reqeustTargetPrefix" 配置的支持，用于配置 sentinel 对某些 url 进行拦截
+优化：优化控制台 action 的日志输出的性能
+优化：升级 JFinal 到最新版本
+优化：通过 MockMvc 进行单元测试的时候，若 Controller 发生 404 或者 500 等错误的时候，则不通过 junit 测试
+文档：添加验证器错误自定义渲染的相关文档
+文档：同步 junit 测试文档
+文档：修复 Sentinel 的里错误的配置文档
+
+
+
 jboot v3.9.18:
 新增：新增 @MockMethod 注解，方便对 AOP 方法进行 Mock
 新增：@TestConfig(autoMockInterface=false) 配置，方便对接口进行 Mock 操作
