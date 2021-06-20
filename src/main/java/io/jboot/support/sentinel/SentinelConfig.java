@@ -36,6 +36,8 @@ public class SentinelConfig {
     // 是否对 http 请求启用限流，启用后还需要去 sentinel 后台配置
     private boolean reqeustEnable = true;
 
+    private String reqeustTargetPrefix;
+
     // 如果 http 被限流后跳转的页面
     private String requestBlockPage;
 
@@ -67,6 +69,14 @@ public class SentinelConfig {
 
     public void setReqeustEnable(boolean reqeustEnable) {
         this.reqeustEnable = reqeustEnable;
+    }
+
+    public String getReqeustTargetPrefix() {
+        return reqeustTargetPrefix;
+    }
+
+    public void setReqeustTargetPrefix(String reqeustTargetPrefix) {
+        this.reqeustTargetPrefix = reqeustTargetPrefix;
     }
 
     public String getRequestBlockPage() {

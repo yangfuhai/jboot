@@ -29,14 +29,46 @@ public class SentinelHandler extends Handler {
 
     private static final String EMPTY_ORIGIN = "";
 
+    private final String[] targetPrefix;
+
+    public SentinelHandler() {
+        targetPrefix = parseTargetPrefix();
+    }
+
+    private String[] parseTargetPrefix() {
+        String reqeustTargetPrefix = SentinelConfig.get().getReqeustTargetPrefix();
+        if (StrUtil.isBlank(reqeustTargetPrefix)) {
+            return new String[0];
+        } else {
+            return StrUtil.splitToSet(reqeustTargetPrefix, ",").toArray(new String[0]);
+        }
+    }
+
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
 
         // 不对静态资源进行流量管理
-        if (target.contains(".")){
+        if (target.contains(".")) {
             next.handle(target, request, response, isHandled);
             return;
         }
+
+        //配置了前缀的情况
+        if (targetPrefix.length > 0) {
+            boolean matchTarget = false;
+            for (String prefx : targetPrefix) {
+                if (target.startsWith(prefx)) {
+                    matchTarget = true;
+                    break;
+                }
+            }
+
+            if (!matchTarget) {
+                next.handle(target, request, response, isHandled);
+                return;
+            }
+        }
+
 
         Entry urlEntry = null;
         try {
