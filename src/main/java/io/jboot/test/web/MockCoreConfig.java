@@ -15,17 +15,18 @@
  */
 package io.jboot.test.web;
 
+import com.jfinal.config.Handlers;
+import io.jboot.core.JbootCoreConfig;
+import io.jboot.web.handler.JbootActionHandler;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import java.io.IOException;
-
-public class MockFilterChain implements FilterChain {
+public class MockCoreConfig extends JbootCoreConfig {
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
-        //do nothing
+    public void configHandler(Handlers handlers) {
+        super.configHandler(handlers);
+
+        if (handlers.getActionHandler().getClass() == JbootActionHandler.class){
+            handlers.setActionHandler(new MockActionHandler());
+        }
     }
 }

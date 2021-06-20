@@ -24,6 +24,7 @@ import io.jboot.app.PathKitExt;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.test.web.MockFilterChain;
 import io.jboot.test.web.MockFilterConfig;
+import io.jboot.test.web.MockJFinalFilter;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.ReflectUtil;
 
@@ -51,7 +52,7 @@ class MockApp {
 
 
     private MockApp() {
-        filter = new JFinalFilter();
+        filter = new MockJFinalFilter();
     }
 
     public static MockApp getInstance() {

@@ -15,11 +15,12 @@
  */
 package io.jboot.test.web;
 
-import io.jboot.core.JbootCoreConfig;
-
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
-import java.util.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MockFilterConfig implements FilterConfig {
 
@@ -27,7 +28,7 @@ public class MockFilterConfig implements FilterConfig {
     protected ServletContext servletContext = MockServletContext.DEFAULT;
 
     public MockFilterConfig() {
-        initParameters.put("configClass", JbootCoreConfig.class.getName());
+        initParameters.put("configClass", MockCoreConfig.class.getName());
     }
 
 

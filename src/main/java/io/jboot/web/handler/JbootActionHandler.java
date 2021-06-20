@@ -136,18 +136,14 @@ public class JbootActionHandler extends ActionHandler {
         } catch (ValidException e) {
             handleValidException(target, request, response, action, e);
         } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                String qs = request.getQueryString();
-                String targetInfo = qs == null ? target : target + "?" + qs;
-                String info = ClassUtil.buildMethodString(action.getMethod());
-                LOG.error(info + " : " + targetInfo, e);
-            }
-            renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
+            handleException(target, request, response, action, e);
         } finally {
             JbootControllerContext.release();
             controllerFactory.recycle(controller);
         }
     }
+
+
 
 
     private void doStartRender(String target
@@ -185,14 +181,8 @@ public class JbootActionHandler extends ActionHandler {
 
     /**
      * 处理 Action（Controller的方法）执行错误
-     *
-     * @param target
-     * @param request
-     * @param response
-     * @param action
-     * @param e
      */
-    private void handleActionException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ActionException e) {
+    protected void handleActionException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ActionException e) {
         int errorCode = e.getErrorCode();
         String msg = null;
         if (errorCode == 404) {
@@ -233,14 +223,8 @@ public class JbootActionHandler extends ActionHandler {
 
     /**
      * 处理参数验证错误
-     *
-     * @param target
-     * @param request
-     * @param response
-     * @param action
-     * @param e
      */
-    private void handleValidException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ValidException e) {
+    protected void handleValidException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ValidException e) {
         if (LOG.isErrorEnabled()) {
             String qs = request.getQueryString();
             String targetInfo = qs == null ? target : target + "?" + qs;
@@ -258,6 +242,18 @@ public class JbootActionHandler extends ActionHandler {
             render.setContext(request, response, action.getViewPath()).render();
         }
     }
+
+
+    protected void handleException(String target, HttpServletRequest request, HttpServletResponse response, Action action, Exception e) {
+        if (LOG.isErrorEnabled()) {
+            String qs = request.getQueryString();
+            String targetInfo = qs == null ? target : target + "?" + qs;
+            String info = ClassUtil.buildMethodString(action.getMethod());
+            LOG.error(info + " : " + targetInfo, e);
+        }
+        renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
+    }
+
 
 
 }
