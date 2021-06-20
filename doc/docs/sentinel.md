@@ -65,13 +65,16 @@ https://github.com/alibaba/Sentinel/wiki/%E6%8E%A7%E5%88%B6%E5%8F%B0#%E6%8E%A7%E
 jboot.sentinel.enable = true;
 
 // 是否对 http 请求启用限流，默认值为 true，启用后还需要去 sentinel 后台配置
-boot.sentinel.ereqeustEnable = true;
+jboot.sentinel.reqeustEnable = true;
+
+// 配置 sentinel 的前缀，多个用英文逗号隔开，若不配置则所有的都会被拦截
+jboot.sentinel.reqeustTargetPrefix = "/my";
 
 // 如果 http 被限流后跳转的页面
-jboot.sentinel.e requestBlockPage;
+jboot.sentinel.requestBlockPage;
 
  // 如果 http 被限流后渲染的 json 数据，requestBlockPage 配置优先于此项
-jboot.sentinel.erequestBlockJsonMap;
+jboot.sentinel.requestBlockJsonMap;
 ```
   
 在项目的 resource 目录下创建 sentinel.properties 文本，并配置相关信息如下：
