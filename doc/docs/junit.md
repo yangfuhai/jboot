@@ -5,6 +5,7 @@
 - Junit5 单元测试
 - @TestConfig
 - @MockMethod
+- @MockClass
 
 ## Junit 单元测试简介
 
@@ -154,7 +155,8 @@ public class MyAppTester {
 若是相对路径，则是相对 `target/test-classes` 目录的路径。
 
 ## @MockMethod
-Jboot 提供了 `@MockMethod` 注解，方便对 AOP 管理的类进行 Mock 操作。
+
+Jboot 提供了 `@MockMethod` 注解，方便对 AOP 管理的类里的方法（method）进行 Mock 操作。
 
 例如：
 ```java
@@ -196,4 +198,57 @@ public class OptionApiControllerTest {
 - `@MockMethod(targetClass = UtmService.class)` 表示复写 `UtmService` 类的 `doRecord` 方法。
 - `@MockMethod(targetClass = WebInitializer.class,targetMethod = "onEngineConfig")` 表示复写 `WebInitializer` 类的 `onEngineConfig` 方法。
 
-> `@MockMethod` 的优先级高于 `@TestConfig(autoMockInterface = true)` 的配置。
+> 注意：
+> 
+> 1、在以上代码中，`mock_on_engine_config` 方法的参数必须和 `WebInitializer.onEngineConfig` 里的参数一样，
+> 或者 `mock_on_engine_config` 可以多出一个 `targetClass` 的对象参数，例如：mock_on_engine_config(WebInitializer webInitializer,Engine engine)
+> 
+> 2、`@MockMethod` 的优先级高于 `@TestConfig(autoMockInterface = true)` 的配置。
+
+
+## @MockClass
+
+Jboot 提供了 `@MockClass` 注解，方便对 AOP 管理的类（Class）进行 Mock 操作。
+
+例如，如下的代码是请求了 `/api/article/detail` 这个 API 接口。
+
+```java
+public class ArticleApiControllerTest{
+    
+    static final MockMvc mvc = new MockMvc();
+    
+    @Test
+    public void detail() {
+        mvc.get("/api/article/detail?id=1").printResult();
+    }
+}
+```
+
+假设这个 API 接口里的 `Controller` 通过 `ArticleService` 进行进步一查询数据。除了我们可以通过 `@MockMethod` 对 `ArticleService` 的方法进行 Mock，
+也编写一个类，实现 `ArticleService` 接口，并通过 `@MockClass` 添加在实现的类上。
+
+```java
+@MockClass
+public class ArticleServiceMock implements ArticleService {
+
+    @Override
+    public Article findById(Object id) {
+        Article article = new Article();
+        article.setId((Long) id);
+        article.setStatus(Article.STATUS_NORMAL);
+        return article;
+    }
+
+}
+```
+
+此时，我们在测试的时候，当 `Controller` 调用了 `ArticleService.findById(id)` 就会自动调用了 `ArticleServiceMock` 里的 `findById` 方法。
+
+相对 `@MockMethod` 而言，`@MockClass` 有几个好处：
+
+- 1、`@MockClass` 注解的类是去实现某个接口的，ide 等工具会自动帮我们生成方法，不易出错。
+- 2、当 Mock 很多个方法的时候，可以写到这个类里，使得测试代码更加简洁
+- 3、在有多个测试类的时候，多个测试类可以共用相同的 Mock 代码，减少代码量
+
+
+> 注意：如果 `@MockClass` 和 `@MockMethod` 同时对一个方法进行 Mock，`@MockMethod` 的优先级高于 `@MockClass`。
