@@ -18,11 +18,13 @@ package io.jboot.test;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.core.JFinalFilter;
 import com.jfinal.kit.PathKit;
+import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
 import io.jboot.app.PathKitExt;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.test.web.MockFilterChain;
 import io.jboot.test.web.MockFilterConfig;
+import io.jboot.utils.ClassScanner;
 import io.jboot.utils.ReflectUtil;
 
 import javax.servlet.ServletException;
@@ -32,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 class MockApp {
@@ -75,8 +78,7 @@ class MockApp {
         try {
             TestConfig testConfig = testClass.getAnnotation(TestConfig.class);
 
-
-            if (testConfig != null){
+            if (testConfig != null) {
                 JbootConfigManager.parseArgs(testConfig.launchArgs());
                 JbootConfigManager.me().setDevMode(testConfig.devMode());
             }
@@ -92,11 +94,54 @@ class MockApp {
                 JbootCglibProxyFactory.setMethodInterceptor(aClass -> new MockMethodInterceptor(autoMockInterface));
             }
 
+            List<MockClassInfo> mockClassInfos = getMockClassInfoList(testClass);
+            if (mockClassInfos != null && !mockClassInfos.isEmpty()) {
+                mockClassInfos.forEach(mockClassInfo -> JbootAopFactory.me().addMapping(mockClassInfo.getTargetClass(), mockClassInfo.getMockClass()));
+            }
+
             filter.init(new MockFilterConfig());
             config = ReflectUtil.getFieldValue(JFinalFilter.class, "jfinalConfig", filter);
         } catch (ServletException e) {
             e.printStackTrace();
         }
+    }
+
+    private List<MockClassInfo> getMockClassInfoList(Class<?> testClass) {
+        List<Class> scanedClasses = ClassScanner.scanClassByAnnotation(MockClass.class, true);
+
+        LinkedList<Class<?>> mockClasses = new LinkedList<>(scanedClasses);
+        Class<?>[] declardClasses = testClass.getDeclaredClasses();
+        if (declardClasses.length > 0) {
+            for (Class<?> declardClass : declardClasses) {
+                if (declardClass.getAnnotation(MockClass.class) != null) {
+                    mockClasses.remove(declardClass);
+                    mockClasses.addLast(declardClass);
+                }
+            }
+        }
+
+        if (mockClasses.isEmpty()) {
+            return null;
+        }
+
+        List<MockClassInfo> classInfoList = new ArrayList<>();
+        for (Class<?> mockClass : mockClasses) {
+//            MockClass annotation = mockClass.getAnnotation(MockClass.class);
+//            Class<?>[] targetClasses = annotation.value();
+//            if (targetClasses.length == 0) {
+//                targetClasses = mockClasses.getClass().getInterfaces();
+//            }
+            Class<?>[] targetClasses = mockClasses.getClass().getInterfaces();
+            if (targetClasses.length == 0) {
+                throw new IllegalStateException("@MockClass() in \"" + mockClass.getName() + "\" must implementation interface.");
+            }
+
+            for (Class<?> targetClass : targetClasses) {
+                classInfoList.add(new MockClassInfo(mockClass, targetClass));
+            }
+        }
+
+        return classInfoList;
     }
 
     private List<MockMethodInfo> getMockMethodInfoList(Class<?> testClass) {

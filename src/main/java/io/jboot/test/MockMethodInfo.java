@@ -16,7 +16,6 @@
 package io.jboot.test;
 
 import com.jfinal.kit.LogKit;
-import io.jboot.aop.cglib.JbootCglibCallback;
 import io.jboot.utils.ReflectUtil;
 import io.jboot.utils.StrUtil;
 
@@ -25,7 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-class MockMethodInfo extends JbootCglibCallback {
+class MockMethodInfo {
 
     private Class<?> targetClass;
     private Method targetMethod;
