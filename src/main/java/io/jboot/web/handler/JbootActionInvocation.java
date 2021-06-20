@@ -24,28 +24,22 @@ import io.jboot.aop.InterceptorCache;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  */
 public class JbootActionInvocation extends Invocation {
 
-    private Action action;
-    private Object target;
-    private Object[] args;
+    protected Action action;
+    protected Object target;
+    protected Object[] args;
 
-    private Interceptor[] inters;
-    private int index = 0;
+    protected Interceptor[] inters;
+    protected int index = 0;
 
-    private Object returnValue;
+    protected Object returnValue;
 
 
-    protected boolean recordEnable;
-
-    protected static ThreadLocal<List<Interceptor>> invokedInterceptors = ThreadLocal.withInitial(ArrayList::new);
-    protected static ThreadLocal<Boolean> controllerInvokeFlag = ThreadLocal.withInitial(() -> Boolean.FALSE);
     protected static InterceptorBuilderManager builderManager = InterceptorBuilderManager.me();
 
     public JbootActionInvocation(Action action, Controller controller) {
@@ -55,7 +49,6 @@ public class JbootActionInvocation extends Invocation {
         this.target = controller;
 
         this.args = action.getParameterGetter().get(action, controller);
-        this.recordEnable = JbootActionReporter.isReportEnable();
     }
 
 
@@ -81,17 +74,10 @@ public class JbootActionInvocation extends Invocation {
     @Override
     public void invoke() {
         if (index < inters.length) {
-            Interceptor interceptor = inters[index++];
-            if (recordEnable) {
-                invokedInterceptors.get().add(interceptor);
-            }
-            interceptor.intercept(this);
+            inters[index++].intercept(this);
         } else if (index++ == inters.length) {    // index++ ensure invoke action only one time
             try {
                 // Invoke the action
-                if (recordEnable) {
-                    controllerInvokeFlag.set(true);
-                }
                 returnValue = action.getMethod().invoke(target, args);
             } catch (InvocationTargetException e) {
                 Throwable t = e.getTargetException();
@@ -107,25 +93,6 @@ public class JbootActionInvocation extends Invocation {
         }
     }
 
-
-    public static List<Interceptor> getInvokedInterceptor() {
-        return invokedInterceptors.get();
-    }
-
-    public static boolean isControllerInvoked() {
-        return controllerInvokeFlag.get();
-    }
-
-
-    public static void clear() {
-        invokedInterceptors.get().clear();
-        invokedInterceptors.remove();
-        controllerInvokeFlag.remove();
-    }
-
-    public Interceptor[] getInters() {
-        return inters;
-    }
 
 
     @Override

@@ -74,7 +74,7 @@ public class JbootActionHandler extends ActionHandler {
      * @return
      */
     public Invocation getInvocation(Action action, Controller controller) {
-        return new JbootActionInvocation(action, controller);
+        return JbootActionReporter.isReportEnable() ? new JbootActionReporterInvocation(action, controller) : new JbootActionInvocation(action, controller);
     }
 
 

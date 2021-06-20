@@ -103,7 +103,7 @@ public class JbootActionReporter {
         } catch (Exception ex) {
             actionReporter.report(target, controller, action);
         } finally {
-            JbootActionInvocation.clear();
+            JbootActionReporterInvocation.clear();
         }
     }
 
@@ -119,7 +119,7 @@ public class JbootActionReporter {
         sb.append("Request     : ").append(controller.getRequest().getMethod()).append(" ").append(target).append("\n");
         Class<?> cc = action.getMethod().getDeclaringClass();
         sb.append("Controller  : ").append(cc.getName()).append(".(").append(getClassFileName(cc)).append(".java:" + lineNumber + ")");
-        if (JbootActionInvocation.isControllerInvoked()) {
+        if (JbootActionReporterInvocation.isControllerInvoked()) {
             sb.append(ConsoleColor.GREEN_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
         } else {
             sb.append(ConsoleColor.RED_BRIGHT + " ---> skipped ×" + ConsoleColor.RESET);
@@ -132,8 +132,8 @@ public class JbootActionReporter {
             sb.append("UrlPara     : ").append(urlParas).append("\n");
         }
 
-        Interceptor[] inters = invocation instanceof JbootActionInvocation ? ((JbootActionInvocation) invocation).getInters() : action.getInterceptors();
-        List<Interceptor> invokedInterceptors = JbootActionInvocation.getInvokedInterceptor();
+        Interceptor[] inters = invocation instanceof JbootActionReporterInvocation ? ((JbootActionReporterInvocation) invocation).getInters() : action.getInterceptors();
+        List<Interceptor> invokedInterceptors = JbootActionReporterInvocation.getInvokedInterceptor();
 
         boolean printJwt = false;
 
