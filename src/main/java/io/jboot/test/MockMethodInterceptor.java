@@ -18,6 +18,7 @@ package io.jboot.test;
 import com.jfinal.kit.LogKit;
 import io.jboot.aop.InterceptorCache;
 import io.jboot.aop.cglib.JbootCglibCallback;
+import io.jboot.service.JbootServiceBase;
 import io.jboot.utils.ClassUtil;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -83,6 +84,15 @@ class MockMethodInterceptor extends JbootCglibCallback {
             return null;
         }
 
-        return super.intercept(target, method, args, methodProxy);
+        try {
+            return super.intercept(target, method, args, methodProxy);
+        } catch (Exception ex) {
+            if ("initDao".equals(method.getName()) && JbootServiceBase.class == method.getDeclaringClass()) {
+                return null;
+            } else {
+                throw ex;
+            }
+        }
+
     }
 }
