@@ -46,8 +46,6 @@ class Util {
             if (value != null) {
                 if (value.getClass().isArray()) {
                     Object[] values = (Object[]) value;
-//                    Collections.addAll(paras, values);
-
                     for (Object v : values) {
                         if (v.getClass() == int[].class) {
                             addAll(paras, (int[]) v);
@@ -108,7 +106,7 @@ class Util {
             if (value instanceof Date) {
                 sb.append(DateKit.toStr((Date) value, DateKit.timeStampPattern));
             } else {
-                sb.append(value.toString());
+                sb.append(value);
             }
             return sql.replaceFirst("\\?", Matcher.quoteReplacement(sb.toString()));
         }
