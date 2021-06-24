@@ -171,7 +171,7 @@ public class JbootCoreConfig extends JFinalConfig {
         List<Class<Controller>> controllerClassList = ClassScanner.scanSubClass(Controller.class);
         if (ArrayUtil.isNotEmpty(controllerClassList)) {
             for (Class<Controller> clazz : controllerClassList) {
-                String[] valueAndViewPath = getMappingValueAndViewPath(clazz);
+                String[] valueAndViewPath = getMappingAndViewPath(clazz);
                 if (valueAndViewPath != null) {
                     initRoutes(routes, clazz, valueAndViewPath[0], valueAndViewPath[1]);
                 }
@@ -192,25 +192,25 @@ public class JbootCoreConfig extends JFinalConfig {
         routeList.addAll(routes.getRouteItemList());
     }
 
-    private String[] getMappingValueAndViewPath(Class<? extends Controller> clazz) {
+    public static String[] getMappingAndViewPath(Class<? extends Controller> clazz) {
         RequestMapping rm = clazz.getAnnotation(RequestMapping.class);
         if (rm != null) {
-            return new String[]{rm.value(), rm.viewPath()};
+            return new String[]{AnnotationUtil.get(rm.value()), AnnotationUtil.get(rm.viewPath())};
         }
 
         Path path = clazz.getAnnotation(Path.class);
         if (path != null) {
-            return new String[]{path.value(), path.viewPath()};
+            return new String[]{AnnotationUtil.get(path.value()), AnnotationUtil.get(path.viewPath())};
         }
 
         GetMapping gp = clazz.getAnnotation(GetMapping.class);
         if (gp != null) {
-            return new String[]{gp.value(), gp.viewPath()};
+            return new String[]{AnnotationUtil.get(gp.value()), AnnotationUtil.get(gp.viewPath())};
         }
 
         PostMapping pp = clazz.getAnnotation(PostMapping.class);
         if (pp != null) {
-            return new String[]{pp.value(), pp.viewPath()};
+            return new String[]{AnnotationUtil.get(pp.value()), AnnotationUtil.get(pp.viewPath())};
         }
 
         return null;
