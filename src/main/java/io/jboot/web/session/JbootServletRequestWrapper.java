@@ -42,7 +42,7 @@ public class JbootServletRequestWrapper extends HttpServletRequestWrapper {
 
     private static JbootCache jbootCache = JbootCacheManager.me()
             .getCache(StrUtil.isBlank(cacheType) || JbootCacheConfig.TYPE_NONE.equals(cacheType)
-                    ? JbootCacheConfig.TYPE_EHCACHE
+                    ? JbootCacheConfig.TYPE_CAFFEINE
                     : cacheType);
 
 
