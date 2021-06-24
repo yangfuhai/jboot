@@ -1,3 +1,10 @@
+jboot v3.9.20:
+优化：由于 JFinal 紧急发布新版本，因此同步到 JFinal 最新版本
+修复：因为 ehcache 依赖默认并没有引入，将 session 的默认存储改为 caffeine。感谢 @orangeJ
+修复：@RequestMapping() @Path() 无法配置动态参数的问题
+
+
+
 jboot v3.9.19:
 新增：@MockClass() 注解，用于多 AOP 的 Class 进行 Mock
 新增：MockMvc 新增 requestStartListener 和 requestFinishedListener 的支持
