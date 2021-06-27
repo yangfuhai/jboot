@@ -3,6 +3,7 @@ package io.jboot.components.cache.support;
 import com.jfinal.captcha.Captcha;
 import com.jfinal.captcha.ICaptchaCache;
 import io.jboot.Jboot;
+import io.jboot.utils.StrUtil;
 
 public class JbootCaptchaCache implements ICaptchaCache {
 
@@ -15,12 +16,14 @@ public class JbootCaptchaCache implements ICaptchaCache {
 
     @Override
     public Captcha get(String key) {
-        return Jboot.getCache().get(CACHE_NAME, key);
+        return StrUtil.isBlank(key) ? null : Jboot.getCache().get(CACHE_NAME, key);
     }
 
     @Override
     public void remove(String key) {
-        Jboot.getCache().remove(CACHE_NAME, key);
+        if (StrUtil.isNotBlank(key)) {
+            Jboot.getCache().remove(CACHE_NAME, key);
+        }
     }
 
     @Override
