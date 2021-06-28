@@ -33,31 +33,36 @@ public abstract class ApiDocRender {
                 "#end" +
                 "#end" +
                 "\n" +
+                "#if(operation.paraNotes)" +
                 "   > #(operation.paraNotes ??)" +
+                "#end"+
                 "#end";
 
         @Override
         void render(List<ApiDocument> apiDocuments, ApiDocConfig config) {
 
-//            engine.setBaseTemplatePath(config.getBasePathAbsolute());
-
-            for (ApiDocument document : apiDocuments) {
-                Map<String, Object> templateParas = new HashMap<>();
-                templateParas.put("config", config);
-                templateParas.put("document", document);
-
-                File file = new File(config.getBasePathAbsolute(), document.getFilePath() + ".md");
-                if (!file.exists()){
-                    try {
-                        file.getParentFile().mkdirs();
-                        file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            try {
+                for (ApiDocument document : apiDocuments) {
+                    doRender(document, config);
                 }
-                System.err.println("gen doc -----> " + file.getAbsolutePath());
-                engine.getTemplateByString(template).render(templateParas, file);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+        }
+
+        private void doRender(ApiDocument document, ApiDocConfig config) throws IOException {
+            Map<String, Object> templateParas = new HashMap<>();
+            templateParas.put("config", config);
+            templateParas.put("document", document);
+
+            File file = new File(config.getBasePathAbsolute(), document.getFilePath() + ".md");
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+            System.err.println("Jboot generated apidoc -----> " + file.getCanonicalPath());
+            engine.getTemplateByString(template).render(templateParas, file);
         }
     };
 
