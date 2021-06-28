@@ -27,10 +27,7 @@ import io.jboot.web.controller.annotation.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ApiDocManager {
 
@@ -103,9 +100,20 @@ public class ApiDocManager {
             apiOperation.setValue(apiOper.value());
             apiOperation.setNotes(apiOper.notes());
             apiOperation.setParaNotes(apiOper.paraNotes());
+            apiOperation.setOrderNo(apiOper.orderNo());
             apiOperation.setContentType(apiOper.contentType());
 
             document.addOperation(apiOperation);
+        }
+
+        List<ApiOperation> operations = document.getApiOperations();
+        if (operations != null) {
+            operations.sort(new Comparator<ApiOperation>() {
+                @Override
+                public int compare(ApiOperation o1, ApiOperation o2) {
+                    return o1.getOrderNo() == o2.getOrderNo() ? o1.getMethod().getName().compareTo(o2.getMethod().getName()) : o1.getOrderNo() - o2.getOrderNo();
+                }
+            });
         }
 
         return document;

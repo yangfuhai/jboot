@@ -18,6 +18,7 @@ public class ApiOperation {
     private String value;
     private String notes;
     private String paraNotes;
+    private int orderNo;
 
     private String actionKey;
     private ContentType contentType;
@@ -53,6 +54,14 @@ public class ApiOperation {
 
     public void setParaNotes(String paraNotes) {
         this.paraNotes = paraNotes;
+    }
+
+    public int getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(int orderNo) {
+        this.orderNo = orderNo;
     }
 
     public String getActionKey() {

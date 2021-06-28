@@ -32,4 +32,6 @@ public @interface ApiOper {
 
     ContentType contentType() default ContentType.DEFAULT;
 
+    int orderNo() default 0;
+
 }

@@ -17,7 +17,7 @@ package io.jboot.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -76,7 +76,7 @@ public class ReflectUtil {
 
 
     public static List<Method> searchMethodList(Class<?> dClass, Predicate<Method> filter) {
-        List<Method> methods = new ArrayList<>();
+        List<Method> methods = new LinkedList<>();
         doSearchMethodList(dClass, filter, methods);
         return methods;
     }
