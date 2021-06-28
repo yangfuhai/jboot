@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -456,8 +457,16 @@ public class ClassScanner {
             return new ArrayList<>(appClassesCache);
         }
 
+        return scanClass(ClassScanner::isInstantiable);
+
+    }
+
+    public static List<Class> scanClass(Predicate<Class> filter) {
+
+        initIfNecessary();
+
         return appClassesCache.stream()
-                .filter(ClassScanner::isInstantiable)
+                .filter(filter)
                 .collect(Collectors.toList());
 
     }

@@ -39,7 +39,11 @@ public class NotEmptyInterceptor implements Interceptor {
                         || (validObject instanceof String && StrUtil.isBlank((String) validObject))
                         || (validObject instanceof Map && ((Map) validObject).isEmpty())
                         || (validObject instanceof Collection && ((Collection) validObject).isEmpty())
-                        || (validObject.getClass().isArray() && ((Object[]) validObject).length == 0)) {
+                        || (validObject.getClass().isArray() && ((Object[]) validObject).length == 0)
+                        || (validObject.getClass() == int[].class && ((int[]) validObject).length == 0)
+                        || (validObject.getClass() == long[].class && ((long[]) validObject).length == 0)
+                        || (validObject.getClass() == short[].class && ((short[]) validObject).length == 0)
+                ) {
                     String reason = parameters[index].getName() + " is null or empty at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     ValidUtil.throwValidException(parameters[index].getName(), notEmpty.message(), reason);
                 }
