@@ -171,29 +171,35 @@ public class ApiOperation {
 
             if (parameter.getAnnotation(NotBlank.class) != null) {
                 apiParameter.setNotBlank(true);
+                apiParameter.setRequire(true);
             }
 
             if (parameter.getAnnotation(NotEmpty.class) != null) {
                 apiParameter.setNotEmpty(true);
+                apiParameter.setRequire(true);
             }
 
             if (parameter.getAnnotation(Email.class) != null) {
                 apiParameter.setEmail(true);
+                apiParameter.setRequire(true);
             }
 
             Min min = parameter.getAnnotation(Min.class);
             if (min != null) {
                 apiParameter.setMin(min.value());
+                apiParameter.setRequire(true);
             }
 
             Max max = parameter.getAnnotation(Max.class);
             if (max != null) {
                 apiParameter.setMax(max.value());
+                apiParameter.setRequire(true);
             }
 
             Pattern pattern = parameter.getAnnotation(Pattern.class);
             if (pattern != null) {
                 apiParameter.setPattern(pattern.regexp());
+                apiParameter.setRequire(true);
             }
 
             DefaultValue defaultValue = parameter.getAnnotation(DefaultValue.class);
