@@ -15,6 +15,9 @@ public class ApiDocument {
     private Class<?> controllerClass;
     private HttpMethod controllerMethod;
 
+    public ApiDocument() {
+    }
+
     public String getValue() {
         return value;
     }

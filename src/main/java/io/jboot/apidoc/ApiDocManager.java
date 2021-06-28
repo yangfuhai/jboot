@@ -89,8 +89,10 @@ public class ApiDocManager {
             document.setFilePath(filePath);
         }
 
+
         List<Method> methods = ReflectUtil.searchMethodList(controllerClass,
                 method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
+
 
         for (Method method : methods) {
             ApiOperation apiOperation = new ApiOperation();
@@ -105,6 +107,34 @@ public class ApiDocManager {
 
             document.addOperation(apiOperation);
         }
+
+
+        Class<?>[] collectClasses = api.collect();
+        for (Class<?> cClass : collectClasses) {
+
+            ApiDocument temp = new ApiDocument();
+            temp.setControllerClass(cClass);
+            setDocmentPathAndMethod(temp, cClass);
+
+            List<Method> collectMethods = ReflectUtil.searchMethodList(cClass,
+                    method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
+
+            for (Method method : collectMethods) {
+                ApiOperation apiOperation = new ApiOperation();
+                apiOperation.setMethodAndInfo(method, temp.getControllerPath(), getMethodHttpMethods(method, temp.getControllerMethod()));
+
+                ApiOper apiOper = method.getAnnotation(ApiOper.class);
+                apiOperation.setValue(apiOper.value());
+                apiOperation.setNotes(apiOper.notes());
+                apiOperation.setParaNotes(apiOper.paraNotes());
+                apiOperation.setOrderNo(apiOper.orderNo());
+                apiOperation.setContentType(apiOper.contentType());
+
+                document.addOperation(apiOperation);
+            }
+        }
+
+
 
         List<ApiOperation> operations = document.getApiOperations();
         if (operations != null) {
@@ -149,6 +179,8 @@ public class ApiDocManager {
             return;
         }
     }
+
+
 
 
     private HttpMethod[] getMethodHttpMethods(Method method, HttpMethod defaultMethod) {

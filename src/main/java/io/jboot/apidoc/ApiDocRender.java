@@ -20,7 +20,9 @@ public abstract class ApiDocRender {
                 "\n" +
                 "#(\"##\") #(operation.value ??)" +
                 "\n" +
-                "#(operation.notes ??)" +
+                "#if(operation.notes)" +
+                "\n#(operation.notes ??) \n" +
+                "#end" +
                 "\n" +
                 "- 访问路径: `#(operation.actionKey ??)`\n" +
                 "- 数据类型: `#(operation.contentType.value ??)`\n" +

@@ -22,14 +22,32 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface Api {
 
+    /**
+     * 文档标题
+     *
+     * @return
+     */
     String value();
 
+    /**
+     * 文档描述
+     *
+     * @return
+     */
     String notes() default "";
 
     /**
      * 生成的文件路径，不配置的情况下，默认为 Controller 的 mapping 转换，例如 mapping 为：/abc/aaa 转为为 abc_aaa。 / 转为为 index。
+     *
      * @return
      */
     String filePath() default "";
+
+    /**
+     * 其他类的方法也汇总到此 API 文档里来
+     *
+     * @return
+     */
+    Class<?>[] collect() default {};
 
 }
