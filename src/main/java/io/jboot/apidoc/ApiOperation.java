@@ -3,6 +3,7 @@ package io.jboot.apidoc;
 import com.jfinal.core.ActionKey;
 import io.jboot.apidoc.annotation.ApiPara;
 import io.jboot.apidoc.annotation.ApiParas;
+import io.jboot.web.json.JsonBody;
 
 import javax.validation.constraints.*;
 import java.lang.reflect.Method;
@@ -15,6 +16,8 @@ public class ApiOperation {
 
     private String value;
     private String notes;
+    private String paraNotes;
+
     private String actionKey;
     private ContentType contentType;
     private List<ApiParameter> apiParameters;
@@ -41,6 +44,14 @@ public class ApiOperation {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getParaNotes() {
+        return paraNotes;
+    }
+
+    public void setParaNotes(String paraNotes) {
+        this.paraNotes = paraNotes;
     }
 
     public String getActionKey() {
@@ -74,7 +85,7 @@ public class ApiOperation {
         apiParameters.add(parameter);
     }
 
-    public boolean hasParameter(){
+    public boolean hasParameter() {
         return apiParameters != null && apiParameters.size() > 0;
     }
 
@@ -127,7 +138,12 @@ public class ApiOperation {
             Parameter parameter = parameters[i];
             apiParameter.setName(parameter.getName());
             apiParameter.setDataType(parameter.getType());
-            apiParameter.setHttpMethods(defaultMethods);
+
+            if (parameter.getAnnotation(JsonBody.class) != null) {
+                apiParameter.setHttpMethods(new HttpMethod[]{HttpMethod.POST});
+            } else {
+                apiParameter.setHttpMethods(defaultMethods);
+            }
 
             ApiPara paraAnnotation = parameter.getAnnotation(ApiPara.class);
             if (paraAnnotation != null) {

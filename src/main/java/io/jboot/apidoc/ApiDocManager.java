@@ -102,6 +102,7 @@ public class ApiDocManager {
             ApiOper apiOper = method.getAnnotation(ApiOper.class);
             apiOperation.setValue(apiOper.value());
             apiOperation.setNotes(apiOper.notes());
+            apiOperation.setParaNotes(apiOper.paraNotes());
             apiOperation.setContentType(apiOper.contentType());
 
             document.addOperation(apiOperation);

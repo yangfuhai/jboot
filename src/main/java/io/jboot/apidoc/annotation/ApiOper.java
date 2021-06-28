@@ -28,6 +28,8 @@ public @interface ApiOper {
 
     String notes() default "";
 
+    String paraNotes() default "";
+
     ContentType contentType() default ContentType.DEFAULT;
 
 }

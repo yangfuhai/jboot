@@ -19,6 +19,8 @@ public abstract class ApiDocRender {
                 "#for(operation : document.apiOperations)" +
                 "#(\"##\") #(operation.value ??)\n" +
                 "\n" +
+                "#(operation.notes ??)" +
+                "\n" +
                 "- 访问路径: `#(operation.actionKey ??)`\n" +
                 "- 数据类型: `#(operation.contentType.value ??)`\n" +
                 "#if(operation.hasParameter())" +
@@ -31,7 +33,7 @@ public abstract class ApiDocRender {
                 "#end" +
                 "#end" +
                 "\n" +
-                "> #(operation.notes ??)" +
+                "   > #(operation.paraNotes ??)" +
                 "#end";
 
         @Override
