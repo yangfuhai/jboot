@@ -26,16 +26,17 @@ public abstract class ApiDocRender {
                 "#if(operation.hasParameter())" +
                 "- 参数：\n" +
                 "\n" +
-                "  | 名称 | 参数 | 是否必须 | 提交方式 | 描述 |  \n" +
+                "  | 参数 | 名称 | 是否必须 | 提交方式 | 描述 |  \n" +
                 "  | --- | --- | --- | --- | --- |\n" +
                 "#for(parameter : operation.apiParameters)" +
-                "  | #(parameter.value ??) | #(parameter.name ??) | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString) | #(parameter.notes ??) |  \n" +
+                "  | #(parameter.name ??) | #(parameter.value ??) | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString ??) | #(parameter.notes ??) |  \n" +
                 "#end" +
                 "#end" +
                 "\n" +
+                "\n" +
                 "#if(operation.paraNotes)" +
                 "   > #(operation.paraNotes ??)" +
-                "#end"+
+                "#end" +
                 "#end";
 
         @Override

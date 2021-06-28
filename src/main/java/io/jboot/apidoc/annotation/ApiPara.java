@@ -24,9 +24,9 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface ApiPara {
 
-    String name();
-
     String value();
+
+    String name() default "";
 
     String notes() default "";
 

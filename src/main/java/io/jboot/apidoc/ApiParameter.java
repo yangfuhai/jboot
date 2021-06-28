@@ -21,6 +21,7 @@ public class ApiParameter {
     }
 
     public ApiParameter(ApiPara apiPara, HttpMethod[] defaultMethods) {
+        this.name = apiPara.name();
         this.value = apiPara.value();
         this.notes = apiPara.notes();
         this.dataType = apiPara.dataType();
