@@ -14,10 +14,11 @@ public abstract class ApiDocRender {
         private String template = "#(\"#\") #(document.value ??)\n" +
                 "\n" +
                 "#(document.notes ??)" +
-                "\n" +
-                "\n" +
                 "#for(operation : document.apiOperations)" +
-                "#(\"##\") #(operation.value ??)\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "#(\"##\") #(operation.value ??)" +
                 "\n" +
                 "#(operation.notes ??)" +
                 "\n" +
