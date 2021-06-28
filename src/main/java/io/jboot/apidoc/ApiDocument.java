@@ -1,6 +1,6 @@
 package io.jboot.apidoc;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ApiDocument {
@@ -72,7 +72,7 @@ public class ApiDocument {
 
     public void addOperation(ApiOperation apiOperation) {
         if (apiOperations == null){
-            apiOperations = new ArrayList<>();
+            apiOperations = new LinkedList<>();
         }
         apiOperations.add(apiOperation);
     }

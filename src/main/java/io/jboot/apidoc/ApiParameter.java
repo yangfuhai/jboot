@@ -1,6 +1,7 @@
 package io.jboot.apidoc;
 
 import io.jboot.apidoc.annotation.ApiPara;
+import io.jboot.utils.StrUtil;
 
 public class ApiParameter {
 
@@ -16,6 +17,7 @@ public class ApiParameter {
     private Long min;
     private Long max;
     private String pattern;
+    private String defaultValue;
 
     public ApiParameter() {
     }
@@ -124,6 +126,14 @@ public class ApiParameter {
         this.pattern = pattern;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
     public String getHttpMethodsString() {
         StringBuilder sb = new StringBuilder();
         if (httpMethods != null) {
@@ -133,6 +143,21 @@ public class ApiParameter {
                     sb.append(", ");
                 }
             }
+        }
+        return sb.toString();
+    }
+
+    public String getNotesString() {
+        StringBuilder sb = new StringBuilder();
+        if (StrUtil.isNotBlank(defaultValue)) {
+            sb.append("默认值：" + defaultValue);
+        }
+
+        if (StrUtil.isNotBlank(notes)) {
+            if (sb.length() > 0) {
+                sb.append(" ；");
+            }
+            sb.append(notes);
         }
         return sb.toString();
     }

@@ -29,7 +29,7 @@ public abstract class ApiDocRender {
                 "  | 参数 | 名称 | 是否必须 | 提交方式 | 描述 |  \n" +
                 "  | --- | --- | --- | --- | --- |\n" +
                 "#for(parameter : operation.apiParameters)" +
-                "  | #(parameter.name ??) | #(parameter.value ??) | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString ??) | #(parameter.notes ??) |  \n" +
+                "  | #(parameter.name ??) | #(parameter.value ??) | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString ??) | #(parameter.notesString ??) |  \n" +
                 "#end" +
                 "#end" +
                 "\n" +

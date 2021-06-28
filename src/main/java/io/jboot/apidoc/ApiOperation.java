@@ -1,6 +1,7 @@
 package io.jboot.apidoc;
 
 import com.jfinal.core.ActionKey;
+import io.jboot.aop.annotation.DefaultValue;
 import io.jboot.apidoc.annotation.ApiPara;
 import io.jboot.apidoc.annotation.ApiParas;
 import io.jboot.web.json.JsonBody;
@@ -9,7 +10,7 @@ import javax.validation.constraints.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ApiOperation {
@@ -80,7 +81,7 @@ public class ApiOperation {
 
     public void addApiParameter(ApiParameter parameter) {
         if (apiParameters == null) {
-            apiParameters = new ArrayList<>();
+            apiParameters = new LinkedList<>();
         }
         apiParameters.add(parameter);
     }
@@ -184,6 +185,11 @@ public class ApiOperation {
             Pattern pattern = parameter.getAnnotation(Pattern.class);
             if (pattern != null) {
                 apiParameter.setPattern(pattern.regexp());
+            }
+
+            DefaultValue defaultValue = parameter.getAnnotation(DefaultValue.class);
+            if (defaultValue != null) {
+                apiParameter.setDefaultValue(defaultValue.value());
             }
 
             addApiParameter(apiParameter);
