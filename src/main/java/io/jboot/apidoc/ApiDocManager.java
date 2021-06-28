@@ -88,7 +88,7 @@ public class ApiDocManager {
         setDocmentPathAndMethod(document, controllerClass);
 
         String filePath = api.filePath();
-        if (StrUtil.isBlank(filePath)) {
+        if (StrUtil.isNotBlank(filePath)) {
             document.setFilePath(filePath);
         }
 
@@ -116,24 +116,28 @@ public class ApiDocManager {
         if (rm != null) {
             docment.setMappingAndFilePath(AnnotationUtil.get(rm.value()));
             docment.setControllerMethod(HttpMethod.ALL);
+            return;
         }
 
         Path path = controllerClass.getAnnotation(Path.class);
         if (path != null) {
             docment.setMappingAndFilePath(AnnotationUtil.get(path.value()));
             docment.setControllerMethod(HttpMethod.ALL);
+            return;
         }
 
         PostMapping pm = controllerClass.getAnnotation(PostMapping.class);
         if (pm != null) {
             docment.setMappingAndFilePath(AnnotationUtil.get(pm.value()));
             docment.setControllerMethod(HttpMethod.POST);
+            return;
         }
 
         GetMapping gm = controllerClass.getAnnotation(GetMapping.class);
         if (gm != null) {
             docment.setMappingAndFilePath(AnnotationUtil.get(gm.value()));
             docment.setControllerMethod(HttpMethod.GET);
+            return;
         }
     }
 
