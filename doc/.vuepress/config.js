@@ -85,6 +85,7 @@ module.exports = {
             {title: 'SPI扩展', path: '/docs/spi'},
             {title: '单元测试', path: '/docs/junit'},
             {title: '代码生成器', path: '/docs/codegen'},
+            {title: 'API 文档生成', path: '/docs/apidoc'},
             {title: '项目构建', path: '/docs/build'},
             {title: '项目部署', path: '/docs/deploy'},
             {title: 'Docker', path: '/docs/docker'},
