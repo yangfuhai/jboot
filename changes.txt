@@ -1,3 +1,10 @@
+jboot v3.10.0:
+新增：apidoc 模块
+优化：JbootCaptchaCache 在某些情况下可能出现 NPE 的问题
+优化：升级 JFinal 到 v4.9.1 最新版本
+
+
+
 jboot v3.9.20:
 优化：由于 JFinal 紧急发布新版本，因此同步到 JFinal 最新版本
 修复：因为 ehcache 依赖默认并没有引入，将 session 的默认存储改为 caffeine。感谢 @orangeJ
