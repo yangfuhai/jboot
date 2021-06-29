@@ -24,14 +24,34 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 public @interface ApiOper {
 
+    /**
+     * 标题
+     * @return
+     */
     String value();
 
+    /**
+     * 描述
+     * @return
+     */
     String notes() default "";
 
+    /**
+     * 参数描述
+     * @return
+     */
     String paraNotes() default "";
 
+    /**
+     * Http 的 Content-Type
+     * @return
+     */
     ContentType contentType() default ContentType.DEFAULT;
 
+    /**
+     * 生成文档的排序
+     * @return
+     */
     int orderNo() default 0;
 
 }
