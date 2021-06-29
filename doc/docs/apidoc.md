@@ -165,3 +165,49 @@ public class UserApiController extends ApiControllerBase {
     }
 }    
 ```
+
+## 生成 word、html 或更多...
+
+默认情况下，在如下的代码中，`ApiDocManager` 生成的是 Markdown 文档。
+
+```java
+public class ApiDocGenerator {
+
+    public static void main(String[] args) {
+
+        ApiDocConfig config = new ApiDocConfig();
+        config.setBasePath("./doc/api");
+
+        ApiDocManager.me().genDocs(config);
+    }
+}
+```
+
+
+如果我们需要生成 word、html 等其他文档，需要自定义 `ApiDocRender` ，并配置给 `ApiDocManager`。
+
+```java
+public class MyApiDocRender extends ApiDocRender {
+
+    void render(List<ApiDocument> apiDocuments, ApiDocConfig config){
+        //自定义渲染，生成 html 或者 word 等等...
+    }
+
+}
+```
+
+配置 `MyApiDocRender` 并开始生成文档。
+
+```java
+public class ApiDocGenerator {
+
+    public static void main(String[] args) {
+
+        ApiDocConfig config = new ApiDocConfig();
+        config.setBasePath("./doc/api");
+
+        ApiDocManager.me().setRender(new MyApiDocRender());
+        ApiDocManager.me().genDocs(config);
+    }
+}
+```
