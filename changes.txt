@@ -1,7 +1,7 @@
 jboot v3.10.0:
 新增：apidoc 模块
 优化：JbootCaptchaCache 在某些情况下可能出现 NPE 的问题
-优化：升级 JFinal 到 v4.9.1 最新版本
+优化：升级 JFinal 到 v4.9.14 最新版本
 
 
 
