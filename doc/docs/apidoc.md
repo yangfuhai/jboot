@@ -34,7 +34,6 @@ public class UserApiController extends ApiControllerBase {
     private UserService userService;
 
 
-    @PostRequest
     @ApiOper("用户登录")
     public Ret login(@ApiPara(value = "登录账户", notes = "可以是邮箱") @NotNull String loginAccount
             , @ApiPara("登录密码") @NotNull String password) {
@@ -110,7 +109,6 @@ public class ApiDocGenerator {
 public class UserApiController extends ApiControllerBase {
 
     
-    @PostRequest
     @ApiOper("用户登录")
     public Ret login(@ApiPara(value = "登录账户", notes = "可以是邮箱") @NotNull String loginAccount
             , @ApiPara("登录密码") @NotNull String password) {
@@ -125,3 +123,45 @@ public class UserApiController extends ApiControllerBase {
 的文档会把 `Controler1` 和  `Controller2` 的接口也汇总到此文档里来。
 
 > 注意：此时，`Controler1` 和  `Controller2` 不再需要添加 `@Api` 注解。
+
+
+## 无参数的 Action 生成 API 文档
+在 Jboot 和 JFinal 中，有很多 Controller 的方法可能不是带有参数的，而是通过 `getPara()` 等方法来获取参数。
+
+```java
+@RequestMapping("/api/user")
+@Api(value="用户相关API")
+public class UserApiController extends ApiControllerBase {
+
+    public Ret login() {
+        String loginName = getPara("loginName");
+        String password = getPara("password");
+        
+        //....
+    }
+}    
+```
+
+我们可以使用 `@ApiParas` 注解，代码如下：
+
+```java
+import io.jboot.apidoc.annotation.ApiPara;
+import io.jboot.apidoc.annotation.ApiParas;
+
+@RequestMapping("/api/user")
+@Api(value = "用户相关API")
+public class UserApiController extends ApiControllerBase {
+
+
+    @ApiParas({
+            @ApiPara(value="登录名",name="loginName"),
+            @ApiPara(value="密码",name="password"),
+    })
+    public Ret login() {
+        String loginName = getPara("loginName");
+        String password = getPara("password");
+
+        //....
+    }
+}    
+```
