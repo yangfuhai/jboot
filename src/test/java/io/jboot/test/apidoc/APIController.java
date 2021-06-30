@@ -12,13 +12,24 @@ import java.util.Map;
 public class APIController extends BaseController<ApiModel2> {
 
     @ApiOper("index")
-    public List<String> index(){
+    public List<String> index(List<String> list){
         return null;
     }
 
     @ApiOper("users")
-    public Map<String, ApiModel1> users(){
+    public Map<String, ApiModel1> users(Map<String, ApiModel1> map){
         return null;
+    }
+
+    @ApiOper("index2")
+    public String index2(long str){
+        return null;
+    }
+
+
+    @ApiOper("index3")
+    public void index3(){
+        return ;
     }
 
 

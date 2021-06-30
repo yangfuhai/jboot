@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ApiDocRender {
-    public static ApiDocRender DEFAULT_RENDER = new ApiDocRender() {
+public interface ApiDocRender {
+    ApiDocRender DEFAULT_RENDER = new ApiDocRender() {
         private Engine engine = new Engine("apidoc");
         private String template = "#(\"#\") #(document.value ??)\n" +
                 "\n" +
@@ -44,10 +44,10 @@ public abstract class ApiDocRender {
                 "#if(operation.hasParameter())" +
                 "- 参数：\n" +
                 "\n" +
-                "  | 参数 | 名称 | 是否必须 | 提交方式 | 描述 |  \n" +
-                "  | --- | --- | --- | --- | --- |\n" +
+                "  | 参数 | 名称 | 数据类型 | 是否必须 | 提交方式 | 描述 |  \n" +
+                "  | --- | --- | --- | --- | --- | --- |\n" +
                 "#for(parameter : operation.apiParameters)" +
-                "  | #(parameter.name ??) | #(parameter.value ??) | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString ??) | #(parameter.notesString ??) |  \n" +
+                "  | #(parameter.name ??) | #(parameter.value ??) | `#(parameter.dataType ??)` | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString ??) | #(parameter.notesString ??) |  \n" +
                 "#end" +
                 "#end" +
                 "\n" +
@@ -58,7 +58,7 @@ public abstract class ApiDocRender {
                 "#end";
 
         @Override
-        void render(List<ApiDocument> apiDocuments, ApiDocConfig config) {
+        public void render(List<ApiDocument> apiDocuments, ApiDocConfig config) {
 
             try {
                 for (ApiDocument document : apiDocuments) {
@@ -86,5 +86,5 @@ public abstract class ApiDocRender {
     };
 
 
-    abstract void render(List<ApiDocument> apiDocuments, ApiDocConfig config);
+     void render(List<ApiDocument> apiDocuments, ApiDocConfig config);
 }

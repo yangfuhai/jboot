@@ -17,8 +17,12 @@ package io.jboot.apidoc;
 
 public class ClassType {
 
-    private Class<?> mainClass;
-    private ClassType[] genericType;
+    private Class<?> mainClass; //类
+    private ClassType[] genericTypes;//泛型
+
+    public ClassType(Class<?> mainClass) {
+        this.mainClass = mainClass;
+    }
 
     public Class<?> getMainClass() {
         return mainClass;
@@ -28,11 +32,35 @@ public class ClassType {
         this.mainClass = mainClass;
     }
 
-    public ClassType[] getGenericType() {
-        return genericType;
+    public ClassType[] getGenericTypes() {
+        return genericTypes;
     }
 
-    public void setGenericType(ClassType[] genericType) {
-        this.genericType = genericType;
+    public void setGenericTypes(ClassType[] genericTypes) {
+        this.genericTypes = genericTypes;
+    }
+
+    public String getDataType() {
+        return mainClass.getSimpleName();
+    }
+
+    public boolean isGeneric() {
+        return genericTypes != null && genericTypes.length > 0;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(mainClass.getSimpleName());
+        if (isGeneric()) {
+            sb.append("<");
+            for (int i = 0; i < genericTypes.length; i++) {
+                sb.append(genericTypes[i].toString());
+                if (i != genericTypes.length - 1) {
+                    sb.append(", ");
+                }
+            }
+            sb.append(">");
+        }
+        return sb.toString();
     }
 }

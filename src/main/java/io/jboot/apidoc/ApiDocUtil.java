@@ -125,46 +125,39 @@ class ApiDocUtil {
     }
 
 
-    public static Class<?>[] getTypeActualClass(Type type, Class<?> defClass) {
-        return getTypeActualClass(type, defClass, 0, Integer.MAX_VALUE);
-    }
-
-
-    public static Class<?>[] getTypeActualClass(Type type, Class<?> defClass, int deep) {
-        return getTypeActualClass(type, defClass, 0, deep);
-    }
-
-
-    private static Class<?>[] getTypeActualClass(Type type, Class<?> defClass, int currentDeep, int totalDeep) {
+    public static ClassType getTypeActualClass(Type type, Class<?> defClass) {
         if (type instanceof Class) {
-            return new Class<?>[]{(Class<?>) type};
-        } else if (type instanceof TypeVariable) {
-            Type variableRawType = ApiDocUtil.getTypeVariableRawType(defClass, ((TypeVariable<?>) type));
+            return new ClassType((Class<?>) type);
+        }
+
+        // 泛型定义在参数里，例如 List<String>
+        else if (type instanceof ParameterizedType) {
+            ClassType classType = new ClassType((Class<?>) ((ParameterizedType) type).getRawType());
+
+            Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+            ClassType[] genericTypes = new ClassType[actualTypeArguments.length];
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                genericTypes[i] = getTypeActualClass(actualTypeArguments[i], defClass);
+            }
+
+            classType.setGenericTypes(genericTypes);
+            return classType;
+        }
+
+        //泛型定义在 class 里，例如 List<T>，其中 T 是在 class 里的参数
+        else if (type instanceof TypeVariable && defClass != null) {
+            Type variableRawType = ApiDocUtil.getTypeInClassDefined(defClass, ((TypeVariable<?>) type));
             if (variableRawType != null) {
-                return getTypeActualClass(variableRawType, defClass, currentDeep, totalDeep);
+                return getTypeActualClass(variableRawType, defClass);
             } else {
                 return null;
             }
-        } else if (type instanceof ParameterizedType) {
-            if (currentDeep == totalDeep) {
-                return new Class<?>[]{(Class<?>) ((ParameterizedType) type).getRawType()};
-            }
-
-            currentDeep++;
-
-            Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
-            Class<?>[] retClasses = new Class[actualTypeArguments.length];
-            for (int i = 0; i < actualTypeArguments.length; i++) {
-                retClasses[i] = getTypeActualClass(actualTypeArguments[i], defClass, currentDeep, totalDeep)[0];
-            }
-
-            return retClasses;
         }
 
-        return new Class<?>[]{};
+        return null;
     }
 
-    public static Type getTypeVariableRawType(Class<?> defClass, TypeVariable<?> typeVariable) {
+    private static Type getTypeInClassDefined(Class<?> defClass, TypeVariable<?> typeVariable) {
         Type type = defClass.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
