@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ApiDocRender {
-    ApiDocRender DEFAULT_RENDER = new ApiDocRender() {
+    ApiDocRender MARKDOWN_RENDER = new ApiDocRender() {
         private Engine engine = new Engine("apidoc");
         private String template = "#(\"#\") #(document.value ??)\n" +
                 "\n" +

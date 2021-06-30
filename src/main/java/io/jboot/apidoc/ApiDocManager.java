@@ -24,9 +24,7 @@ import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class ApiDocManager {
 
@@ -36,7 +34,15 @@ public class ApiDocManager {
         return me;
     }
 
-    private ApiDocRender render = ApiDocRender.DEFAULT_RENDER;
+    //渲染器
+    private ApiDocRender render = ApiDocRender.MARKDOWN_RENDER;
+
+    //每个类对于的属性名称，一般支持从数据库读取 COMMENT 填充
+    private Map<Class<?>, Map<String, String>> modelFieldNames = new HashMap<>();
+
+    //classType Mocks
+    private Map<String, Object> classTypeMocks = new HashMap<>();
+
 
     public ApiDocRender getRender() {
         return render;
@@ -44,6 +50,30 @@ public class ApiDocManager {
 
     public void setRender(ApiDocRender render) {
         this.render = render;
+    }
+
+    public Map<Class<?>, Map<String, String>> getModelFieldNames() {
+        return modelFieldNames;
+    }
+
+    public void setModelFieldNames(Map<Class<?>, Map<String, String>> modelFieldNames) {
+        this.modelFieldNames = modelFieldNames;
+    }
+
+    public void addModelFieldNames(Class<?> modelClass, Map<String, String> fieldNames) {
+        this.modelFieldNames.put(modelClass, fieldNames);
+    }
+
+    public Map<String, Object> getClassTypeMocks() {
+        return classTypeMocks;
+    }
+
+    public void setClassTypeMocks(Map<String, Object> classTypeMocks) {
+        this.classTypeMocks = classTypeMocks;
+    }
+
+    public void addClassTypeMocks(String classType, Object mockData) {
+        this.classTypeMocks.put(classType, mockData);
     }
 
     /**
@@ -86,9 +116,8 @@ public class ApiDocManager {
     }
 
 
-
     private void buildAllInOneDocument(ApiDocument document, List<Class> controllerClasses) {
-        for (Class<?> controllerClass : controllerClasses){
+        for (Class<?> controllerClass : controllerClasses) {
             buildOperation(document, controllerClass);
         }
 
@@ -97,7 +126,6 @@ public class ApiDocManager {
             operations.sort(Comparator.comparing(ApiOperation::getActionKey));
         }
     }
-
 
 
     private ApiDocument buildDocument(Class<?> controllerClass) {
