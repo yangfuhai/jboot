@@ -24,6 +24,13 @@ public class ApiDocConfig {
     private String basePath;
     private String packagePrefix;
 
+
+    private boolean allInOneEnable = false;
+    private String allInOneTitle;
+    private String allInOneNotes;
+    private String allInFilePath;
+
+
     public String getBasePath() {
         return basePath;
     }
@@ -47,6 +54,38 @@ public class ApiDocConfig {
         this.packagePrefix = packagePrefix;
     }
 
+
+    public boolean isAllInOneEnable() {
+        return allInOneEnable;
+    }
+
+    public void setAllInOneEnable(boolean allInOneEnable) {
+        this.allInOneEnable = allInOneEnable;
+    }
+
+    public String getAllInOneTitle() {
+        return allInOneTitle;
+    }
+
+    public void setAllInOneTitle(String allInOneTitle) {
+        this.allInOneTitle = allInOneTitle;
+    }
+
+    public String getAllInOneNotes() {
+        return allInOneNotes;
+    }
+
+    public void setAllInOneNotes(String allInOneNotes) {
+        this.allInOneNotes = allInOneNotes;
+    }
+
+    public String getAllInFilePath() {
+        return allInFilePath;
+    }
+
+    public void setAllInFilePath(String allInFilePath) {
+        this.allInFilePath = allInFilePath;
+    }
 
     /**
      * 判断是否是绝对路径

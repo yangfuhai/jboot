@@ -8,7 +8,11 @@ public class ApiParameter {
     private String name;
     private String value;
     private String notes;
+
     private Class<?> dataType;
+    private Class<?>[] dataGenericTypes;
+
+
     private HttpMethod[] httpMethods;
     private Boolean require;
     private Boolean notBlank;

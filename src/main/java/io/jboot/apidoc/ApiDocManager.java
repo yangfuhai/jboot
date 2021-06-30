@@ -16,18 +16,17 @@
 package io.jboot.apidoc;
 
 import com.jfinal.core.Controller;
-import com.jfinal.core.Path;
 import io.jboot.apidoc.annotation.Api;
 import io.jboot.apidoc.annotation.ApiOper;
-import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.ReflectUtil;
 import io.jboot.utils.StrUtil;
-import io.jboot.web.controller.annotation.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class ApiDocManager {
 
@@ -59,13 +58,25 @@ public class ApiDocManager {
         }
 
         List<ApiDocument> apiDocuments = new ArrayList<>();
-        for (Class<?> controllerClass : controllerClasses) {
-            if (StrUtil.isNotBlank(config.getPackagePrefix())) {
-                if (controllerClass.getName().startsWith(config.getPackagePrefix())) {
+
+        if (config.isAllInOneEnable()) {
+            ApiDocument document = new ApiDocument();
+            document.setValue(config.getAllInOneTitle());
+            document.setNotes(config.getAllInOneNotes());
+            document.setFilePath(config.getAllInFilePath());
+
+            buildAllInOneDocument(document, controllerClasses);
+
+            apiDocuments.add(document);
+        } else {
+            for (Class<?> controllerClass : controllerClasses) {
+                if (StrUtil.isNotBlank(config.getPackagePrefix())) {
+                    if (controllerClass.getName().startsWith(config.getPackagePrefix())) {
+                        apiDocuments.add(buildDocument(controllerClass));
+                    }
+                } else {
                     apiDocuments.add(buildDocument(controllerClass));
                 }
-            } else {
-                apiDocuments.add(buildDocument(controllerClass));
             }
         }
 
@@ -74,6 +85,21 @@ public class ApiDocManager {
         }
     }
 
+
+
+    private void buildAllInOneDocument(ApiDocument document, List<Class> controllerClasses) {
+        for (Class<?> controllerClass : controllerClasses){
+            buildOperation(document, controllerClass);
+        }
+
+        List<ApiOperation> operations = document.getApiOperations();
+        if (operations != null) {
+            operations.sort(Comparator.comparing(ApiOperation::getActionKey));
+        }
+    }
+
+
+
     private ApiDocument buildDocument(Class<?> controllerClass) {
 
         Api api = controllerClass.getAnnotation(Api.class);
@@ -81,60 +107,15 @@ public class ApiDocManager {
         document.setControllerClass(controllerClass);
         document.setValue(api.value());
         document.setNotes(api.notes());
+        document.setFilePathByControllerPath(ApiDocUtil.getControllerPath(controllerClass));
 
-        setDocmentPathAndMethod(document, controllerClass);
 
         String filePath = api.filePath();
         if (StrUtil.isNotBlank(filePath)) {
             document.setFilePath(filePath);
         }
 
-
-        List<Method> methods = ReflectUtil.searchMethodList(controllerClass,
-                method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
-
-
-        for (Method method : methods) {
-            ApiOperation apiOperation = new ApiOperation();
-            apiOperation.setMethodAndInfo(method, document.getControllerPath(), getMethodHttpMethods(method, document.getControllerMethod()));
-
-            ApiOper apiOper = method.getAnnotation(ApiOper.class);
-            apiOperation.setValue(apiOper.value());
-            apiOperation.setNotes(apiOper.notes());
-            apiOperation.setParaNotes(apiOper.paraNotes());
-            apiOperation.setOrderNo(apiOper.orderNo());
-            apiOperation.setContentType(apiOper.contentType());
-
-            document.addOperation(apiOperation);
-        }
-
-
-        Class<?>[] collectClasses = api.collect();
-        for (Class<?> cClass : collectClasses) {
-
-            ApiDocument temp = new ApiDocument();
-            temp.setControllerClass(cClass);
-            setDocmentPathAndMethod(temp, cClass);
-
-            List<Method> collectMethods = ReflectUtil.searchMethodList(cClass,
-                    method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
-
-            for (Method method : collectMethods) {
-                ApiOperation apiOperation = new ApiOperation();
-                apiOperation.setMethodAndInfo(method, temp.getControllerPath(), getMethodHttpMethods(method, temp.getControllerMethod()));
-
-                ApiOper apiOper = method.getAnnotation(ApiOper.class);
-                apiOperation.setValue(apiOper.value());
-                apiOperation.setNotes(apiOper.notes());
-                apiOperation.setParaNotes(apiOper.paraNotes());
-                apiOperation.setOrderNo(apiOper.orderNo());
-                apiOperation.setContentType(apiOper.contentType());
-
-                document.addOperation(apiOperation);
-            }
-        }
-
-
+        buildOperation(document, controllerClass);
 
         List<ApiOperation> operations = document.getApiOperations();
         if (operations != null) {
@@ -150,57 +131,56 @@ public class ApiDocManager {
     }
 
 
-    private void setDocmentPathAndMethod(ApiDocument docment, Class<?> controllerClass) {
-        RequestMapping rm = controllerClass.getAnnotation(RequestMapping.class);
-        if (rm != null) {
-            docment.setMappingAndFilePath(AnnotationUtil.get(rm.value()));
-            docment.setControllerMethod(HttpMethod.ALL);
-            return;
+    private void buildOperation(ApiDocument document, Class<?> controllerClass) {
+
+        List<Method> methods = ReflectUtil.searchMethodList(controllerClass,
+                method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
+
+        String controllerPath = ApiDocUtil.getControllerPath(controllerClass);
+        HttpMethod defaultHttpMethod = ApiDocUtil.getControllerMethod(controllerClass);
+
+        for (Method method : methods) {
+            ApiOperation apiOperation = new ApiOperation();
+            apiOperation.setMethodAndInfo(method, controllerPath, ApiDocUtil.getMethodHttpMethods(method, defaultHttpMethod));
+
+            ApiOper apiOper = method.getAnnotation(ApiOper.class);
+            apiOperation.setValue(apiOper.value());
+            apiOperation.setNotes(apiOper.notes());
+            apiOperation.setParaNotes(apiOper.paraNotes());
+            apiOperation.setOrderNo(apiOper.orderNo());
+            apiOperation.setContentType(apiOper.contentType());
+
+            document.addOperation(apiOperation);
         }
 
-        Path path = controllerClass.getAnnotation(Path.class);
-        if (path != null) {
-            docment.setMappingAndFilePath(AnnotationUtil.get(path.value()));
-            docment.setControllerMethod(HttpMethod.ALL);
-            return;
+
+        Api api = controllerClass.getAnnotation(Api.class);
+        if (api != null) {
+            Class<?>[] collectClasses = api.collect();
+            for (Class<?> cClass : collectClasses) {
+
+                String tempControllerPath = ApiDocUtil.getControllerPath(cClass);
+                HttpMethod tempDefaultHttpMethod = ApiDocUtil.getControllerMethod(cClass);
+
+                List<Method> collectMethods = ReflectUtil.searchMethodList(cClass,
+                        method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
+
+                for (Method method : collectMethods) {
+                    ApiOperation apiOperation = new ApiOperation();
+                    apiOperation.setMethodAndInfo(method, tempControllerPath, ApiDocUtil.getMethodHttpMethods(method, tempDefaultHttpMethod));
+
+                    ApiOper apiOper = method.getAnnotation(ApiOper.class);
+                    apiOperation.setValue(apiOper.value());
+                    apiOperation.setNotes(apiOper.notes());
+                    apiOperation.setParaNotes(apiOper.paraNotes());
+                    apiOperation.setOrderNo(apiOper.orderNo());
+                    apiOperation.setContentType(apiOper.contentType());
+
+                    document.addOperation(apiOperation);
+                }
+            }
         }
 
-        PostMapping pm = controllerClass.getAnnotation(PostMapping.class);
-        if (pm != null) {
-            docment.setMappingAndFilePath(AnnotationUtil.get(pm.value()));
-            docment.setControllerMethod(HttpMethod.POST);
-            return;
-        }
-
-        GetMapping gm = controllerClass.getAnnotation(GetMapping.class);
-        if (gm != null) {
-            docment.setMappingAndFilePath(AnnotationUtil.get(gm.value()));
-            docment.setControllerMethod(HttpMethod.GET);
-            return;
-        }
-    }
-
-
-
-
-    private HttpMethod[] getMethodHttpMethods(Method method, HttpMethod defaultMethod) {
-        Set<HttpMethod> httpMethods = new HashSet<>();
-        if (method.getAnnotation(GetRequest.class) != null) {
-            httpMethods.add(HttpMethod.GET);
-        }
-        if (method.getAnnotation(PostRequest.class) != null) {
-            httpMethods.add(HttpMethod.POST);
-        }
-        if (method.getAnnotation(PutRequest.class) != null) {
-            httpMethods.add(HttpMethod.PUT);
-        }
-        if (method.getAnnotation(DeleteRequest.class) != null) {
-            httpMethods.add(HttpMethod.DELETE);
-        }
-        if (method.getAnnotation(PatchRequest.class) != null) {
-            httpMethods.add(HttpMethod.PATCH);
-        }
-        return httpMethods.isEmpty() ? new HttpMethod[]{defaultMethod} : httpMethods.toArray(new HttpMethod[]{});
     }
 
 

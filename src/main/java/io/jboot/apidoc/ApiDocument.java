@@ -11,9 +11,7 @@ public class ApiDocument {
 
     private List<ApiOperation> apiOperations;
 
-    private String controllerPath;
     private Class<?> controllerClass;
-    private HttpMethod controllerMethod;
 
     public ApiDocument() {
     }
@@ -42,27 +40,17 @@ public class ApiDocument {
         this.filePath = filePath;
     }
 
-    public String getControllerPath() {
-        return controllerPath;
-    }
-
-    public void setControllerPath(String controllerPath) {
-        this.controllerPath = controllerPath;
-    }
-
-    public void setMappingAndFilePath(String mapping) {
-        this.controllerPath = mapping;
-
-        if ("/".equals(mapping)) {
-            mapping = "index";
-        } else if (mapping.startsWith("/")) {
-            mapping = mapping.substring(1);
+    public void setFilePathByControllerPath(String controllerPath) {
+        if ("/".equals(controllerPath)) {
+            controllerPath = "index";
+        } else if (controllerPath.startsWith("/")) {
+            controllerPath = controllerPath.substring(1);
         }
-        if (mapping.contains("/")) {
-            mapping = mapping.replace("/", "_");
+        if (controllerPath.contains("/")) {
+            controllerPath = controllerPath.replace("/", "_");
         }
 
-        this.filePath = mapping;
+        this.filePath = controllerPath;
     }
 
     public List<ApiOperation> getApiOperations() {
@@ -87,14 +75,5 @@ public class ApiDocument {
     public void setControllerClass(Class<?> controllerClass) {
         this.controllerClass = controllerClass;
     }
-
-    public HttpMethod getControllerMethod() {
-        return controllerMethod;
-    }
-
-    public void setControllerMethod(HttpMethod controllerMethod) {
-        this.controllerMethod = controllerMethod;
-    }
-
 
 }

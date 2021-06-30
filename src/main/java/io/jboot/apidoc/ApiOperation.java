@@ -1,6 +1,5 @@
 package io.jboot.apidoc;
 
-import com.jfinal.core.ActionKey;
 import io.jboot.aop.annotation.DefaultValue;
 import io.jboot.apidoc.annotation.ApiPara;
 import io.jboot.apidoc.annotation.ApiParas;
@@ -9,7 +8,6 @@ import io.jboot.web.json.JsonBody;
 import javax.validation.constraints.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +23,7 @@ public class ApiOperation {
     private List<ApiParameter> apiParameters;
 
     private Class<?> retType;
-    private Type[] retGenericTypes;
+    private Class<?>[] retGenericTypes;
 
     private Method method;
 
@@ -107,11 +105,11 @@ public class ApiOperation {
         this.retType = retType;
     }
 
-    public Type[] getRetGenericTypes() {
+    public Class<?>[] getRetGenericTypes() {
         return retGenericTypes;
     }
 
-    public void setRetGenericTypes(Type[] retGenericTypes) {
+    public void setRetGenericTypes(Class<?>[] retGenericTypes) {
         this.retGenericTypes = retGenericTypes;
     }
 
@@ -126,9 +124,15 @@ public class ApiOperation {
     public void setMethodAndInfo(Method method, String controllerPath, HttpMethod[] defaultMethods) {
 
         this.method = method;
-        this.actionKey = getActionKey(method, controllerPath);
+        this.actionKey = ApiDocUtil.getActionKey(method, controllerPath);
+        this.retType = method.getReturnType();
+//        method.getGenericReturnType()
 
 
+        setParameters(method, defaultMethods);
+    }
+
+    private void setParameters(Method method, HttpMethod[] defaultMethods) {
         ApiParas apiParas = method.getAnnotation(ApiParas.class);
         if (apiParas != null) {
             for (ApiPara apiPara : apiParas.value()) {
@@ -211,31 +215,5 @@ public class ApiOperation {
         }
     }
 
-    private static final String SLASH = "/";
 
-    private static String getActionKey(Method method, String controllerPath) {
-        String methodName = method.getName();
-        ActionKey ak = method.getAnnotation(ActionKey.class);
-        String actionKey;
-        if (ak != null) {
-            actionKey = ak.value().trim();
-
-            if (actionKey.startsWith(SLASH)) {
-                //actionKey = actionKey
-            } else if (actionKey.startsWith("./")) {
-                actionKey = controllerPath + actionKey.substring(1);
-            } else {
-                actionKey = SLASH + actionKey;
-            }
-//                        if (!actionKey.startsWith(SLASH)) {
-//                            actionKey = SLASH + actionKey;
-//                        }
-        } else if (methodName.equals("index")) {
-            actionKey = controllerPath;
-        } else {
-            actionKey = controllerPath.equals(SLASH) ? SLASH + methodName : controllerPath + SLASH + methodName;
-        }
-
-        return actionKey;
-    }
 }
