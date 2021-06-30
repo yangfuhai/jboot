@@ -55,6 +55,13 @@ public interface ApiDocRender {
                 "#if(operation.paraNotes)" +
                 "   > #(operation.paraNotes ??)" +
                 "#end" +
+                "#if(operation.retType)" +
+                "\n" +
+                "\n" +
+                "- 返回值：`#(operation.retType ??)`\n" +
+                "#end" +
+                "\n" +
+                "\n" +
                 "#end";
 
         @Override
