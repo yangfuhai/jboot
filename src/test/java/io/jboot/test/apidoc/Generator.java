@@ -7,6 +7,7 @@ public class Generator {
 
     public static void main(String[] args) {
         ApiDocConfig config = new ApiDocConfig();
+        config.setAllInOneEnable(true);
 //        config.setBasePath();
 
         ApiDocManager.me().genDocs(config);

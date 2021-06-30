@@ -27,9 +27,9 @@ public class ApiDocConfig {
 
 
     private boolean allInOneEnable = false;
-    private String allInOneTitle;
+    private String allInOneTitle = "Api Document";
     private String allInOneNotes;
-    private String allInFilePath;
+    private String allInOneFilePath = "apidoc";
 
 
     public String getBasePath() {
@@ -80,12 +80,12 @@ public class ApiDocConfig {
         this.allInOneNotes = allInOneNotes;
     }
 
-    public String getAllInFilePath() {
-        return allInFilePath;
+    public String getAllInOneFilePath() {
+        return allInOneFilePath;
     }
 
-    public void setAllInFilePath(String allInFilePath) {
-        this.allInFilePath = allInFilePath;
+    public void setAllInOneFilePath(String allInOneFilePath) {
+        this.allInOneFilePath = allInOneFilePath;
     }
 
     /**

@@ -37,10 +37,10 @@ public class ApiDocManager {
     //渲染器
     private ApiDocRender render = ApiDocRender.MARKDOWN_RENDER;
 
-    //每个类对于的属性名称，一般支持从数据库读取 COMMENT 填充
+    //每个类对于的属性名称，一般支持从数据库读取 COMMENT 填充，来源于 api-model.json
     private Map<Class<?>, Map<String, String>> modelFieldNames = new HashMap<>();
 
-    //classType Mocks
+    //classType Mocks，来源于 api-mock.json
     private Map<String, Object> classTypeMocks = new HashMap<>();
 
 
@@ -93,7 +93,7 @@ public class ApiDocManager {
             ApiDocument document = new ApiDocument();
             document.setValue(config.getAllInOneTitle());
             document.setNotes(config.getAllInOneNotes());
-            document.setFilePath(config.getAllInFilePath());
+            document.setFilePath(config.getAllInOneFilePath());
 
             buildAllInOneDocument(document, controllerClasses);
 
