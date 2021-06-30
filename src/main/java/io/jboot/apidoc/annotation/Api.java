@@ -50,4 +50,10 @@ public @interface Api {
      */
     Class<?>[] collect() default {};
 
+    /**
+     * 生成文档的排序
+     * @return
+     */
+    int orderNo() default 0;
+
 }
