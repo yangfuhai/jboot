@@ -21,6 +21,9 @@ import io.jboot.utils.AnnotationUtil;
 import io.jboot.web.controller.annotation.*;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -119,6 +122,64 @@ class ApiDocUtil {
         }
 
         return actionKey;
+    }
+
+
+    public static Class<?>[] getTypeActualClass(Type type, Class<?> defClass) {
+        return getTypeActualClass(type, defClass, 0, Integer.MAX_VALUE);
+    }
+
+
+    public static Class<?>[] getTypeActualClass(Type type, Class<?> defClass, int deep) {
+        return getTypeActualClass(type, defClass, 0, deep);
+    }
+
+
+    private static Class<?>[] getTypeActualClass(Type type, Class<?> defClass, int currentDeep, int totalDeep) {
+        if (type instanceof Class) {
+            return new Class<?>[]{(Class<?>) type};
+        } else if (type instanceof TypeVariable) {
+            Type variableRawType = ApiDocUtil.getTypeVariableRawType(defClass, ((TypeVariable<?>) type));
+            if (variableRawType != null) {
+                return getTypeActualClass(variableRawType, defClass, currentDeep, totalDeep);
+            } else {
+                return null;
+            }
+        } else if (type instanceof ParameterizedType) {
+            if (currentDeep == totalDeep) {
+                return new Class<?>[]{(Class<?>) ((ParameterizedType) type).getRawType()};
+            }
+
+            currentDeep++;
+
+            Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+            Class<?>[] retClasses = new Class[actualTypeArguments.length];
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                retClasses[i] = getTypeActualClass(actualTypeArguments[i], defClass, currentDeep, totalDeep)[0];
+            }
+
+            return retClasses;
+        }
+
+        return new Class<?>[]{};
+    }
+
+    public static Type getTypeVariableRawType(Class<?> defClass, TypeVariable<?> typeVariable) {
+        Type type = defClass.getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
+            if (typeArguments.length == 1) {
+                return typeArguments[0];
+            } else if (typeArguments.length > 1) {
+                TypeVariable<?>[] typeVariables = typeVariable.getGenericDeclaration().getTypeParameters();
+                for (int i = 0; i < typeVariables.length; i++) {
+                    if (typeVariable.getName().equals(typeVariables[i].getName())) {
+                        return typeArguments[i];
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 

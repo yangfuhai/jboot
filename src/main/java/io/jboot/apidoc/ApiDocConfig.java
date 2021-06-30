@@ -16,12 +16,13 @@
 package io.jboot.apidoc;
 
 import com.jfinal.kit.PathKit;
+import io.jboot.utils.StrUtil;
 
 import java.io.File;
 
 public class ApiDocConfig {
 
-    private String basePath;
+    private String basePath = "";
     private String packagePrefix;
 
 
@@ -36,10 +37,10 @@ public class ApiDocConfig {
     }
 
     public String getBasePathAbsolute() {
-        if (isAbsolutePath(basePath)){
+        if (isAbsolutePath(basePath)) {
             return basePath;
         }
-        return new File(PathKit.getRootClassPath(),"../../" + basePath).getAbsolutePath();
+        return new File(PathKit.getRootClassPath(), "../../" + basePath).getAbsolutePath();
     }
 
     public void setBasePath(String basePath) {
@@ -94,7 +95,7 @@ public class ApiDocConfig {
      * @return true：绝对路径
      */
     private static boolean isAbsolutePath(String path) {
-        return path.startsWith("/") || path.indexOf(":") > 0;
+        return StrUtil.isNotBlank(path) && (path.startsWith("/") || path.indexOf(":") > 0);
     }
 
 }

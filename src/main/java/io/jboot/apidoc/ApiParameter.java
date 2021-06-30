@@ -3,6 +3,8 @@ package io.jboot.apidoc;
 import io.jboot.apidoc.annotation.ApiPara;
 import io.jboot.utils.StrUtil;
 
+import java.lang.reflect.Type;
+
 public class ApiParameter {
 
     private String name;
@@ -10,7 +12,7 @@ public class ApiParameter {
     private String notes;
 
     private Class<?> dataType;
-    private Class<?>[] dataGenericTypes;
+    private Type dataGenericType;
 
 
     private HttpMethod[] httpMethods;
@@ -64,6 +66,14 @@ public class ApiParameter {
 
     public void setDataType(Class<?> dataType) {
         this.dataType = dataType;
+    }
+
+    public Type getDataGenericType() {
+        return dataGenericType;
+    }
+
+    public void setDataGenericType(Type dataGenericType) {
+        this.dataGenericType = dataGenericType;
     }
 
     public HttpMethod[] getHttpMethods() {

@@ -141,6 +141,7 @@ public class ApiDocManager {
 
         for (Method method : methods) {
             ApiOperation apiOperation = new ApiOperation();
+            apiOperation.setControllerClass(controllerClass);
             apiOperation.setMethodAndInfo(method, controllerPath, ApiDocUtil.getMethodHttpMethods(method, defaultHttpMethod));
 
             ApiOper apiOper = method.getAnnotation(ApiOper.class);
@@ -167,6 +168,7 @@ public class ApiDocManager {
 
                 for (Method method : collectMethods) {
                     ApiOperation apiOperation = new ApiOperation();
+                    apiOperation.setControllerClass(cClass);
                     apiOperation.setMethodAndInfo(method, tempControllerPath, ApiDocUtil.getMethodHttpMethods(method, tempDefaultHttpMethod));
 
                     ApiOper apiOper = method.getAnnotation(ApiOper.class);

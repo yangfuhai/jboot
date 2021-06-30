@@ -8,6 +8,7 @@ import io.jboot.web.json.JsonBody;
 import javax.validation.constraints.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,8 +24,9 @@ public class ApiOperation {
     private List<ApiParameter> apiParameters;
 
     private Class<?> retType;
-    private Class<?>[] retGenericTypes;
+    private Type retGenericType;
 
+    private Class<?> controllerClass;
     private Method method;
 
     public ApiOperation() {
@@ -105,12 +107,12 @@ public class ApiOperation {
         this.retType = retType;
     }
 
-    public Class<?>[] getRetGenericTypes() {
-        return retGenericTypes;
+    public Type getRetGenericType() {
+        return retGenericType;
     }
 
-    public void setRetGenericTypes(Class<?>[] retGenericTypes) {
-        this.retGenericTypes = retGenericTypes;
+    public void setRetGenericType(Type retGenericType) {
+        this.retGenericType = retGenericType;
     }
 
     public Method getMethod() {
@@ -121,16 +123,27 @@ public class ApiOperation {
         this.method = method;
     }
 
+    public Class<?> getControllerClass() {
+        return controllerClass;
+    }
+
+    public void setControllerClass(Class<?> controllerClass) {
+        this.controllerClass = controllerClass;
+    }
+
     public void setMethodAndInfo(Method method, String controllerPath, HttpMethod[] defaultMethods) {
 
         this.method = method;
         this.actionKey = ApiDocUtil.getActionKey(method, controllerPath);
         this.retType = method.getReturnType();
-//        method.getGenericReturnType()
-
+        this.retGenericType = method.getGenericReturnType();
+//        Class<?>[] types = ApiDocUtil.getTypeActualClass(retGenericType,getControllerClass(),1);
 
         setParameters(method, defaultMethods);
     }
+
+
+
 
     private void setParameters(Method method, HttpMethod[] defaultMethods) {
         ApiParas apiParas = method.getAnnotation(ApiParas.class);
@@ -146,12 +159,14 @@ public class ApiOperation {
         }
 
         Parameter[] parameters = method.getParameters();
+        Type[] paraTypes = method.getGenericParameterTypes();
         for (int i = 0; i < parameters.length; i++) {
 
             ApiParameter apiParameter = new ApiParameter();
             Parameter parameter = parameters[i];
             apiParameter.setName(parameter.getName());
             apiParameter.setDataType(parameter.getType());
+            apiParameter.setDataGenericType(paraTypes[i]);
 
             if (parameter.getAnnotation(JsonBody.class) != null) {
                 apiParameter.setHttpMethods(new HttpMethod[]{HttpMethod.POST});
