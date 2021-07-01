@@ -31,6 +31,9 @@ public class ApiDocConfig {
     private String allInOneNotes;
     private String allInOneFilePath = "apidoc";
 
+    private String mockJsonPath = "api-mock.json";
+    private String modelJsonPath = "api-mock.json";
+
 
     public String getBasePath() {
         return basePath;
@@ -86,6 +89,36 @@ public class ApiDocConfig {
 
     public void setAllInOneFilePath(String allInOneFilePath) {
         this.allInOneFilePath = allInOneFilePath;
+    }
+
+    public String getMockJsonPath() {
+        return mockJsonPath;
+    }
+
+    public void setMockJsonPath(String mockJsonPath) {
+        this.mockJsonPath = mockJsonPath;
+    }
+
+    public String getMockJsonPathAbsolute() {
+        if (isAbsolutePath(mockJsonPath)) {
+            return mockJsonPath;
+        }
+        return new File(PathKit.getRootClassPath(), mockJsonPath).getAbsolutePath();
+    }
+
+    public String getModelJsonPath() {
+        return modelJsonPath;
+    }
+
+    public void setModelJsonPath(String modelJsonPath) {
+        this.modelJsonPath = modelJsonPath;
+    }
+
+    public String getModelJsonPathAbsolute() {
+        if (isAbsolutePath(modelJsonPath)) {
+            return modelJsonPath;
+        }
+        return new File(PathKit.getRootClassPath(), modelJsonPath).getAbsolutePath();
     }
 
     /**

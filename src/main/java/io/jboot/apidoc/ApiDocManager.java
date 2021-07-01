@@ -15,16 +15,17 @@
  */
 package io.jboot.apidoc;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.apidoc.annotation.Api;
 import io.jboot.apidoc.annotation.ApiOper;
-import io.jboot.utils.ClassScanner;
-import io.jboot.utils.ReflectUtil;
-import io.jboot.utils.StrUtil;
+import io.jboot.utils.*;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -41,14 +42,109 @@ public class ApiDocManager {
     private ApiDocRender render = ApiDocRender.MARKDOWN_RENDER;
 
     //每个类对于的属性名称，一般支持从数据库读取 COMMENT 填充，来源于 api-model.json
-    private Map<Class<?>, Map<String, String>> modelFieldNames = new HashMap<>();
+    private Map<String, Map<String, String>> modelFieldNames = new HashMap<>();
 
     //ClassType Mocks，来源于 api-mock.json
-    private Map<String, Object> classTypeMocks = new HashMap<>();
+    private Map<String, Object> classTypeMockDatas = new HashMap<>();
+    private Map<Class<?>, ApiMockBuilder> classTypeMockBuilders = new HashMap<>();
 
     //ApiOperation 排序方式
     private Comparator<ApiOperation> operationComparator;
 
+    private ApiDocManager() {
+        initDefaultClassTypeMockBuilder();
+    }
+
+    private void initDefaultClassTypeMockBuilder() {
+
+        addClassTypeMockBuilders(Ret.class, new ApiMockBuilder() {
+            @Override
+            Object build(ClassType classType) {
+                Ret ret = Ret.ok();
+                if (classType.isGeneric()) {
+                    ClassType[] genericTypes = classType.getGenericTypes();
+                    if (genericTypes.length == 1) {
+                        Class<?> type = genericTypes[0].getMainClass();
+                        if (List.class.isAssignableFrom(type)) {
+                            ret.set("list", getMockObject(genericTypes[0]));
+                        } else if (Map.class.isAssignableFrom(type)) {
+                            ret.set("map", getMockObject(genericTypes[0]));
+                        } else if (Page.class.isAssignableFrom(type)) {
+                            ret.set("page", getMockObject(genericTypes[0]));
+                        } else {
+                            ret.set("object", getMockObject(genericTypes[0]));
+                        }
+                    }
+                }
+                return ret;
+            }
+        });
+
+
+        addClassTypeMockBuilders(Map.class, new ApiMockBuilder() {
+            @Override
+            Object build(ClassType classType) {
+                // ret 让给 retBuilder 去构建
+                if (Ret.class.isAssignableFrom(classType.getMainClass())) {
+                    return null;
+                }
+
+                Map map = new HashMap();
+                if (classType.isGeneric()) {
+                    Object key = getMockObject(classType.getGenericTypes()[0]);
+                    if (key == null) {
+                        key = "key";
+                    }
+                    Object value = getMockObject(classType.getGenericTypes()[1]);
+                    map.put(key, value);
+                }
+                return map;
+            }
+        });
+
+
+        addClassTypeMockBuilders(List.class, new ApiMockBuilder() {
+            @Override
+            Object build(ClassType classType) {
+                List list = new ArrayList();
+                if (classType.isGeneric()) {
+                    Object value = getMockObject(classType.getGenericTypes()[0]);
+                    list.add(value);
+                    Object value2 = getMockObject(classType.getGenericTypes()[0]);
+                    list.add(value2);
+                }
+                return list;
+            }
+        });
+
+
+        addClassTypeMockBuilders(Page.class, new ApiMockBuilder() {
+            @Override
+            Object build(ClassType classType) {
+                Page page = new Page();
+                page.setPageNumber(1);
+                page.setPageSize(10);
+                page.setTotalPage(1);
+                page.setTotalRow(2);
+
+                List list = new ArrayList();
+                list.add(getMockObject(classType.getGenericTypes()[0]));
+                list.add(getMockObject(classType.getGenericTypes()[0]));
+
+                page.setList(list);
+                return page;
+            }
+        });
+
+
+        addClassTypeMockBuilders(String.class, new ApiMockBuilder() {
+            @Override
+            Object build(ClassType classType) {
+                return "string";
+            }
+        });
+
+    }
 
     public ApiDocRender getRender() {
         return render;
@@ -58,28 +154,32 @@ public class ApiDocManager {
         this.render = render;
     }
 
-    public Map<Class<?>, Map<String, String>> getModelFieldNames() {
+    public Map<String, Map<String, String>> getModelFieldNames() {
         return modelFieldNames;
     }
 
-    public void setModelFieldNames(Map<Class<?>, Map<String, String>> modelFieldNames) {
+    public void setModelFieldNames(Map<String, Map<String, String>> modelFieldNames) {
         this.modelFieldNames = modelFieldNames;
     }
 
-    public void addModelFieldNames(Class<?> modelClass, Map<String, String> fieldNames) {
-        this.modelFieldNames.put(modelClass, fieldNames);
+    public void addModelFieldNames(String classOrSimpleName, Map<String, String> fieldNames) {
+        this.modelFieldNames.put(classOrSimpleName, fieldNames);
     }
 
-    public Map<String, Object> getClassTypeMocks() {
-        return classTypeMocks;
+    public Map<String, Object> getClassTypeMockDatas() {
+        return classTypeMockDatas;
     }
 
-    public void setClassTypeMocks(Map<String, Object> classTypeMocks) {
-        this.classTypeMocks = classTypeMocks;
+    public void setClassTypeMockDatas(Map<String, Object> classTypeMockDatas) {
+        this.classTypeMockDatas = classTypeMockDatas;
     }
 
     public void addClassTypeMocks(String classType, Object mockData) {
-        this.classTypeMocks.put(classType, mockData);
+        this.classTypeMockDatas.put(classType, mockData);
+    }
+
+    public Object getClassTypeMockData(String classType) {
+        return this.classTypeMockDatas.get(classType);
     }
 
     public Comparator<ApiOperation> getOperationComparator() {
@@ -90,60 +190,48 @@ public class ApiDocManager {
         this.operationComparator = operationComparator;
     }
 
+    public Map<Class<?>, ApiMockBuilder> getClassTypeMockBuilders() {
+        return classTypeMockBuilders;
+    }
 
-    String getMockJson(ClassType classType, Method method) {
-        return JsonKit.toJson(getMockObject(classType, method));
+    public void setClassTypeMockBuilders(Map<Class<?>, ApiMockBuilder> classTypeMockBuilders) {
+        this.classTypeMockBuilders = classTypeMockBuilders;
+    }
+
+    public void addClassTypeMockBuilders(Class<?> forClass, ApiMockBuilder builder) {
+        this.classTypeMockBuilders.put(forClass, builder);
     }
 
 
-    private Object getMockObject(ClassType classType, Method method) {
-        Object jsonDataObject = classTypeMocks.get(classType.toString());
-        if (jsonDataObject != null) {
-            return jsonDataObject;
-        }
-        if (Ret.class.isAssignableFrom(classType.getMainClass())) {
-            Ret ret = Ret.ok();
-            if (classType.isGeneric()) {
-                ClassType[] genericTypes = classType.getGenericTypes();
-                if (genericTypes.length == 1) {
-                    Class<?> type = genericTypes[0].getMainClass();
-                    if (List.class.isAssignableFrom(type)) {
-                        ret.set("list", getMockObject(genericTypes[0], method));
-                    } else if (Map.class.isAssignableFrom(type)) {
-                        ret.set("map", getMockObject(genericTypes[0], method));
-                    } else if (Page.class.isAssignableFrom(type)) {
-                        ret.set("page", getMockObject(genericTypes[0], method));
-                    } else {
-                        ret.set("object", getMockObject(genericTypes[0], method));
-                    }
-                }
-            }
-            return ret;
-        } else if (Map.class.isAssignableFrom(classType.getMainClass())) {
-            Map map = new HashMap();
-            if (classType.isGeneric()) {
-                Object key = getMockObject(classType.getGenericTypes()[0], method);
-                if (key == null) {
-                    key = "key";
-                }
-                Object value = getMockObject(classType.getGenericTypes()[1], method);
-                map.put(key, value);
-            }
-            return map;
-        } else if (List.class.isAssignableFrom(classType.getMainClass())) {
-            List list = new ArrayList();
-            if (classType.isGeneric()) {
-                Object value = getMockObject(classType.getGenericTypes()[0], method);
-                list.add(value);
-            }
-            return list;
-        } else if (String.class == classType.getMainClass()){
-            return "string";
-        }else {
-            return null;
-        }
+    String getMockJson(ClassType classType, Method method) {
+        return ApiDocUtil.prettyJson(JsonKit.toJson(getMockObject(classType)));
+    }
 
 
+    Object getMockObject(ClassType classType) {
+        Object retObject = getClassTypeMockData(classType.toString().toLowerCase());
+
+        if (retObject == null) {
+            getClassTypeMockData(classType.getMainClass().getName().toLowerCase());
+        }
+
+        if (retObject == null) {
+            getClassTypeMockData(classType.getMainClass().getSimpleName().toLowerCase());
+        }
+
+        if (retObject != null) {
+            return retObject;
+        }
+
+        for (Class<?> aClass : classTypeMockBuilders.keySet()) {
+            if (aClass.isAssignableFrom(classType.getMainClass())) {
+                Object object = classTypeMockBuilders.get(aClass).build(classType);
+                if (object != null) {
+                    return object;
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -157,6 +245,9 @@ public class ApiDocManager {
         if (controllerClasses.isEmpty()) {
             return;
         }
+
+        initMockJson(config);
+        initModelInfoJson(config);
 
         List<ApiDocument> apiDocuments = new ArrayList<>();
 
@@ -183,6 +274,32 @@ public class ApiDocManager {
 
         if (render != null) {
             render.render(apiDocuments, config);
+        }
+    }
+
+
+    private void initMockJson(ApiDocConfig config) {
+        File mockJsonFile = new File(config.getMockJsonPathAbsolute());
+        if (mockJsonFile.exists()) {
+            String mockJsonString = FileUtil.readString(mockJsonFile);
+            JSONObject mockJsonObject = JSONObject.parseObject(mockJsonString);
+            for (String s : mockJsonObject.keySet()) {
+                this.classTypeMockDatas.put(s.toLowerCase(), mockJsonObject.get(s));
+            }
+        }
+    }
+
+
+    private void initModelInfoJson(ApiDocConfig config) {
+        File modelJsonFile = new File(config.getModelJsonPath());
+        if (modelJsonFile.exists()) {
+            String modelJsonString = FileUtil.readString(modelJsonFile);
+            JSONObject modelJsonObject = JSONObject.parseObject(modelJsonString);
+            for (String s : modelJsonObject.keySet()) {
+                Map<String, String> attrs = new HashMap<>();
+                modelJsonObject.forEach((k, v) -> attrs.put(StrKit.firstCharToLowerCase(StrKit.toCamelCase(k)), String.valueOf(v)));
+                this.modelFieldNames.put(s.toLowerCase(), attrs);
+            }
         }
     }
 

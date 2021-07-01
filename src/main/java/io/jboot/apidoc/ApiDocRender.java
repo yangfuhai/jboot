@@ -59,9 +59,9 @@ public interface ApiDocRender {
                 "\n" +
                 "\n" +
                 "- 返回值：`#(operation.retType ??)`\n\n" +
-                "   ```json\n" +
-                "   #(operation.mockJson ??)\n" +
-                "   ```" +
+                "```json\n" +
+                "#(operation.mockJson ??)\n" +
+                "```" +
                 "#end" +
                 "\n" +
                 "\n" +
@@ -69,7 +69,6 @@ public interface ApiDocRender {
 
         @Override
         public void render(List<ApiDocument> apiDocuments, ApiDocConfig config) {
-
             try {
                 for (ApiDocument document : apiDocuments) {
                     doRender(document, config);
@@ -77,7 +76,6 @@ public interface ApiDocRender {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
         private void doRender(ApiDocument document, ApiDocConfig config) throws IOException {

@@ -15,9 +15,11 @@
  */
 package io.jboot.apidoc;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Path;
 import io.jboot.utils.AnnotationUtil;
+import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.annotation.*;
 
 import java.lang.reflect.Method;
@@ -174,6 +176,21 @@ class ApiDocUtil {
         }
         return null;
     }
+
+
+    public static String prettyJson(String json) {
+        if (StrUtil.isBlank(json)) {
+            return json;
+        }
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = JSONObject.parseObject(json);
+        } catch (Exception e) {
+            return json;
+        }
+        return JSONObject.toJSONString(jsonObject, true);
+    }
+
 
 
 }
