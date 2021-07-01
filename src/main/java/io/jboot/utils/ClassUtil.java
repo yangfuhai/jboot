@@ -273,32 +273,55 @@ public class ClassUtil {
     }
 
 
-    public static Class getGenericClass(Class<?> clazz) {
-        return getGenericClass(getUsefulClass(clazz).getGenericSuperclass());
-    }
-
-
-    public static Class[] getGenericClass(Method method) {
-        Type[] type = method.getGenericParameterTypes();
-        Class[] classes = new Class[type.length];
-        for (int i = 0; i < type.length; i++) {
-            classes[i] = getGenericClass(type[i]);
+    public static ClassType getClassType(Type type, Class<?> runClass) {
+        if (type instanceof Class) {
+            return new ClassType((Class<?>) type);
         }
-        return classes;
+
+        // 泛型定义在参数里，例如 List<String>
+        else if (type instanceof ParameterizedType) {
+            ClassType classType = new ClassType((Class<?>) ((ParameterizedType) type).getRawType());
+
+            Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+            ClassType[] genericTypes = new ClassType[actualTypeArguments.length];
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                genericTypes[i] = getClassType(actualTypeArguments[i], runClass);
+            }
+
+            classType.setGenericTypes(genericTypes);
+            return classType;
+        }
+
+        //泛型定义在 class 里，例如 List<T>，其中 T 是在 class 里的参数
+        else if (type instanceof TypeVariable && runClass != null) {
+            Type variableRawType = getTypeInClassDefined(runClass, ((TypeVariable<?>) type));
+            if (variableRawType != null) {
+                return getClassType(variableRawType, runClass);
+            } else {
+                return null;
+            }
+        }
+
+        return null;
     }
 
 
-    public static Class getGenericClass(Field field) {
-        return getGenericClass(field.getType());
-    }
-
-
-    public static Class getGenericClass(Type type) {
+    private static Type getTypeInClassDefined(Class<?> runClass, TypeVariable<?> typeVariable) {
+        Type type = runClass.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
-            return (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
-        } else {
-            return null;
+            Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
+            if (typeArguments.length == 1) {
+                return typeArguments[0];
+            } else if (typeArguments.length > 1) {
+                TypeVariable<?>[] typeVariables = typeVariable.getGenericDeclaration().getTypeParameters();
+                for (int i = 0; i < typeVariables.length; i++) {
+                    if (typeVariable.getName().equals(typeVariables[i].getName())) {
+                        return typeArguments[i];
+                    }
+                }
+            }
         }
+        return null;
     }
 
 

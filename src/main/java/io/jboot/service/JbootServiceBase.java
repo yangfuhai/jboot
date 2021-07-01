@@ -15,16 +15,18 @@
  */
 package io.jboot.service;
 
+import com.jfinal.kit.LogKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
-import io.jboot.exception.JbootException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ObjectFunc;
 import io.jboot.utils.ObjectUtil;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,13 +56,14 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     protected M initDao() {
-        Class<M> modelClass = ClassUtil.getGenericClass(getClass());
-        if (modelClass == null) {
-            throw new JbootException("can not get model class name in " + ClassUtil.getUsefulClass(getClass()));
+        Type type = ClassUtil.getUsefulClass(getClass()).getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            Class<M> modelClass = (Class<M>) ((ParameterizedType) type).getActualTypeArguments()[0];
+            return ClassUtil.newInstance(modelClass, false);
         }
 
-        //默认不通过AOP构建DAO，提升性能，若特殊需要重写initDao()方法即可
-        return ClassUtil.newInstance(modelClass, false);
+        LogKit.warn("Not define Model class in Servlce: " + ClassUtil.getUsefulClass(getClass()));
+        return null;
     }
 
 
