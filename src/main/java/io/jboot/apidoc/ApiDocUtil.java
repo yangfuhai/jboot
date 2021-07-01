@@ -125,7 +125,7 @@ class ApiDocUtil {
     }
 
 
-    public static ClassType getTypeActualClass(Type type, Class<?> defClass) {
+    public static ClassType getTypeActualClass(Type type, Class<?> runClass) {
         if (type instanceof Class) {
             return new ClassType((Class<?>) type);
         }
@@ -137,7 +137,7 @@ class ApiDocUtil {
             Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
             ClassType[] genericTypes = new ClassType[actualTypeArguments.length];
             for (int i = 0; i < actualTypeArguments.length; i++) {
-                genericTypes[i] = getTypeActualClass(actualTypeArguments[i], defClass);
+                genericTypes[i] = getTypeActualClass(actualTypeArguments[i], runClass);
             }
 
             classType.setGenericTypes(genericTypes);
@@ -145,10 +145,10 @@ class ApiDocUtil {
         }
 
         //泛型定义在 class 里，例如 List<T>，其中 T 是在 class 里的参数
-        else if (type instanceof TypeVariable && defClass != null) {
-            Type variableRawType = ApiDocUtil.getTypeInClassDefined(defClass, ((TypeVariable<?>) type));
+        else if (type instanceof TypeVariable && runClass != null) {
+            Type variableRawType = ApiDocUtil.getTypeInClassDefined(runClass, ((TypeVariable<?>) type));
             if (variableRawType != null) {
-                return getTypeActualClass(variableRawType, defClass);
+                return getTypeActualClass(variableRawType, runClass);
             } else {
                 return null;
             }
@@ -157,8 +157,8 @@ class ApiDocUtil {
         return null;
     }
 
-    private static Type getTypeInClassDefined(Class<?> defClass, TypeVariable<?> typeVariable) {
-        Type type = defClass.getGenericSuperclass();
+    private static Type getTypeInClassDefined(Class<?> runClass, TypeVariable<?> typeVariable) {
+        Type type = runClass.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
             if (typeArguments.length == 1) {

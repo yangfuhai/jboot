@@ -235,5 +235,9 @@ public class ApiOperation {
         }
     }
 
+    public String getMockJson(){
+        return ApiDocManager.me().getMockJson(retType,method);
+    }
+
 
 }

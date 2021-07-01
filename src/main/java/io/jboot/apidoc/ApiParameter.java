@@ -26,7 +26,6 @@ public class ApiParameter {
 
     private ClassType dataType;
 
-
     private HttpMethod[] httpMethods;
     private Boolean require;
     private Boolean notBlank;

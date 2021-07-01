@@ -15,13 +15,23 @@
  */
 package io.jboot.apidoc;
 
-public class ClassType {
+import java.io.Serializable;
+
+public class ClassType implements Serializable {
 
     private Class<?> mainClass; //类
     private ClassType[] genericTypes;//泛型
 
+    public ClassType() {
+    }
+
     public ClassType(Class<?> mainClass) {
         this.mainClass = mainClass;
+    }
+
+    public ClassType(Class<?> mainClass, ClassType[] genericTypes) {
+        this.mainClass = mainClass;
+        this.genericTypes = genericTypes;
     }
 
     public Class<?> getMainClass() {

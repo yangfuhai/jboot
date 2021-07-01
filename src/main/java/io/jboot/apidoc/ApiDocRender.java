@@ -58,7 +58,10 @@ public interface ApiDocRender {
                 "#if(operation.retType)" +
                 "\n" +
                 "\n" +
-                "- 返回值：`#(operation.retType ??)`\n" +
+                "- 返回值：`#(operation.retType ??)`\n\n" +
+                "   ```json\n" +
+                "   #(operation.mockJson ??)\n" +
+                "   ```" +
                 "#end" +
                 "\n" +
                 "\n" +
