@@ -43,6 +43,9 @@ public class ApiDocManager {
     //classType Mocks，来源于 api-mock.json
     private Map<String, Object> classTypeMocks = new HashMap<>();
 
+    // ApiOperation 排序方式
+    private Comparator<ApiOperation> operationComparator;
+
 
     public ApiDocRender getRender() {
         return render;
@@ -74,6 +77,14 @@ public class ApiDocManager {
 
     public void addClassTypeMocks(String classType, Object mockData) {
         this.classTypeMocks.put(classType, mockData);
+    }
+
+    public Comparator<ApiOperation> getOperationComparator() {
+        return operationComparator;
+    }
+
+    public void setOperationComparator(Comparator<ApiOperation> operationComparator) {
+        this.operationComparator = operationComparator;
     }
 
     /**
@@ -123,7 +134,11 @@ public class ApiDocManager {
 
         List<ApiOperation> operations = document.getApiOperations();
         if (operations != null) {
-            operations.sort(Comparator.comparing(ApiOperation::getActionKey));
+            if (operationComparator != null) {
+                operations.sort(operationComparator);
+            } else {
+                operations.sort(Comparator.comparing(ApiOperation::getActionKey));
+            }
         }
     }
 
@@ -147,12 +162,16 @@ public class ApiDocManager {
 
         List<ApiOperation> operations = document.getApiOperations();
         if (operations != null) {
-            operations.sort(new Comparator<ApiOperation>() {
-                @Override
-                public int compare(ApiOperation o1, ApiOperation o2) {
-                    return o1.getOrderNo() == o2.getOrderNo() ? o1.getMethod().getName().compareTo(o2.getMethod().getName()) : o1.getOrderNo() - o2.getOrderNo();
-                }
-            });
+            if (operationComparator != null) {
+                operations.sort(operationComparator);
+            } else {
+                operations.sort(new Comparator<ApiOperation>() {
+                    @Override
+                    public int compare(ApiOperation o1, ApiOperation o2) {
+                        return o1.getOrderNo() == o2.getOrderNo() ? o1.getMethod().getName().compareTo(o2.getMethod().getName()) : o1.getOrderNo() - o2.getOrderNo();
+                    }
+                });
+            }
         }
 
         return document;
