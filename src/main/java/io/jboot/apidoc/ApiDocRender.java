@@ -66,8 +66,9 @@ public interface ApiDocRender {
                 "#for(info : item.value)" +
                 "| #(info.name ??) | #(info.dataType ??) | #(info.remarks ??) |  \n" +
                 "#end" +
+                "\n\n" +
                 "#end" +
-                "\n\n**JSON 示例：**\n" +
+                "**JSON 示例：**\n" +
                 "```json\n" +
                 "#(operation.mockJson ??)\n" +
                 "```" +

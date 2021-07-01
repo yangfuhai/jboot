@@ -42,7 +42,7 @@ public class ApiDocManager {
     private ApiDocRender render = ApiDocRender.MARKDOWN_RENDER;
 
     //每个类对于的属性名称，一般支持从数据库读取 字段配置 填充，来源于 api-model.json
-    private Map<String, Map<String, String>> modelFieldNames = new HashMap<>();
+    private Map<String, Map<String, String>> modelFieldRemarks = new HashMap<>();
 
     //ClassType Mocks，来源于 api-mock.json
     private Map<String, Object> classTypeMockDatas = new HashMap<>();
@@ -154,16 +154,16 @@ public class ApiDocManager {
         this.render = render;
     }
 
-    public Map<String, Map<String, String>> getModelFieldNames() {
-        return modelFieldNames;
+    public Map<String, Map<String, String>> getModelFieldRemarks() {
+        return modelFieldRemarks;
     }
 
-    public void setModelFieldNames(Map<String, Map<String, String>> modelFieldNames) {
-        this.modelFieldNames = modelFieldNames;
+    public void setModelFieldRemarks(Map<String, Map<String, String>> modelFieldRemarks) {
+        this.modelFieldRemarks = modelFieldRemarks;
     }
 
-    public void addModelFieldNames(String classOrSimpleName, Map<String, String> fieldNames) {
-        this.modelFieldNames.put(classOrSimpleName, fieldNames);
+    public void addModelFieldRemarks(String classOrSimpleName, Map<String, String> fieldNames) {
+        this.modelFieldRemarks.put(classOrSimpleName, fieldNames);
     }
 
     public Map<String, Object> getClassTypeMockDatas() {
@@ -236,16 +236,16 @@ public class ApiDocManager {
 
 
     Map<String, List<ApiFieldInfo>> getMockFieldInfo(ClassType classType) {
-        Map<String, List<ApiFieldInfo>> retMap = new HashMap<>();
+        Map<String, List<ApiFieldInfo>> retMap = new LinkedHashMap<>();
         doGetMockFieldInfo(retMap, classType);
         return retMap;
     }
 
     private void doGetMockFieldInfo(Map<String, List<ApiFieldInfo>> retMap, ClassType classType) {
         Class<?> mainClass = classType.getMainClass();
-        Map<String, String> fieldNames = getFieldNames(mainClass);
-        if (fieldNames != null && !fieldNames.isEmpty()) {
-            retMap.put(mainClass.getSimpleName(), buildApiFieldInfos(fieldNames, mainClass));
+        Map<String, String> fieldRemarks = getFieldRemarks(mainClass);
+        if (fieldRemarks != null && !fieldRemarks.isEmpty()) {
+            retMap.put(mainClass.getSimpleName(), buildApiFieldInfos(fieldRemarks, classType));
         }
 
         ClassType[] types = classType.getGenericTypes();
@@ -256,29 +256,51 @@ public class ApiDocManager {
         }
     }
 
-    private Map<String, String> getFieldNames(Class<?> clazz) {
-        Map<String, String> ret = modelFieldNames.get(clazz.getName().toLowerCase());
-        return ret != null ? ret : modelFieldNames.get(clazz.getSimpleName().toLowerCase());
+    private Map<String, String> getFieldRemarks(Class<?> clazz) {
+        Map<String, String> ret = modelFieldRemarks.get(clazz.getName().toLowerCase());
+        return ret != null ? ret : modelFieldRemarks.get(clazz.getSimpleName().toLowerCase());
     }
 
-    private static List<ApiFieldInfo> buildApiFieldInfos(Map<String, String> fieldNames, Class<?> mainClass) {
-        List<Method> getterMethods = ReflectUtil.searchMethodList(mainClass, method -> method.getParameterCount() == 0
+    private List<ApiFieldInfo> buildApiFieldInfos(Map<String, String> fieldRemarks, ClassType classType) {
+
+        List<Method> getterMethods = ReflectUtil.searchMethodList(classType.getMainClass(), method -> method.getParameterCount() == 0
                 && method.getReturnType() != void.class
                 && Modifier.isPublic(method.getModifiers())
                 && (method.getName().startsWith("get") || method.getName().startsWith("is"))
                 && !"getClass".equals(method.getName())
         );
 
-        List<ApiFieldInfo> apiFieldInfos = new ArrayList<>();
-
+        Map<String, Method> filedAndMethodMap = new HashMap<>();
         for (Method getterMethod : getterMethods) {
-            String filedName = StrUtil.firstCharToLowerCase(getGetterMethodField(getterMethod.getName()));
+            filedAndMethodMap.put(StrUtil.firstCharToLowerCase(getGetterMethodField(getterMethod.getName())), getterMethod);
+        }
+
+        List<ApiFieldInfo> apiFieldInfos = new ArrayList<>();
+        for (String key : fieldRemarks.keySet()) {
+
             ApiFieldInfo fieldInfo = new ApiFieldInfo();
-            fieldInfo.setName(filedName);
-            fieldInfo.setDataType(getterMethod.getReturnType().getSimpleName());
-            fieldInfo.setRemarks(fieldNames.get(filedName));
+            fieldInfo.setName(key);
+            fieldInfo.setRemarks(fieldRemarks.get(key));
+
+            Method getterMethod = filedAndMethodMap.get(key);
+            if (getterMethod != null) {
+                fieldInfo.setDataType(getterMethod.getReturnType().getSimpleName());
+            }
+            //若没有 getter 方法，一般情况下 map 或者 ret 等
+            //此时，需要通过 Mock 数据来对 key 的 dataType 进行推断
+            else {
+                Object object = getMockObject(classType);
+                if (object instanceof Map) {
+                    Object value = ((Map<?, ?>) object).get(key);
+                    if (value != null) {
+                        fieldInfo.setDataType(value.getClass().getSimpleName());
+                    }
+                }
+            }
+
             apiFieldInfos.add(fieldInfo);
         }
+
 
         return apiFieldInfos;
     }
@@ -304,7 +326,7 @@ public class ApiDocManager {
         }
 
         initMockJson(config);
-        initModelInfoJson(config);
+        initModelRemarks(config);
 
         List<ApiDocument> apiDocuments = new ArrayList<>();
 
@@ -347,28 +369,34 @@ public class ApiDocManager {
     }
 
 
-    private void initModelInfoJson(ApiDocConfig config) {
+    private void initModelRemarks(ApiDocConfig config) {
 
-        Map<String, String> pageAttrs = new HashMap<>();
-        pageAttrs.put("totalRow", "总行数");
-        pageAttrs.put("pageNumber", "当前页码");
-        pageAttrs.put("firstPage", "是否是第一页");
-        pageAttrs.put("lastPage", "是否是最后一页");
-        pageAttrs.put("totalPage", "总页数");
-        pageAttrs.put("pageSize", "每页数据量");
-        pageAttrs.put("list", "数据列表");
-        this.modelFieldNames.put(Page.class.getName().toLowerCase(), pageAttrs);
+        Map<String, String> pageRemarks = new HashMap<>();
+        pageRemarks.put("totalRow", "总行数");
+        pageRemarks.put("pageNumber", "当前页码");
+        pageRemarks.put("firstPage", "是否是第一页");
+        pageRemarks.put("lastPage", "是否是最后一页");
+        pageRemarks.put("totalPage", "总页数");
+        pageRemarks.put("pageSize", "每页数据量");
+        pageRemarks.put("list", "数据列表");
+        addModelFieldRemarks(Page.class.getName().toLowerCase(), pageRemarks);
+
+
+        Map<String, String> retRemarks = new HashMap<>();
+        retRemarks.put("state", "状态，成功 ok，失败 fail");
+        addModelFieldRemarks(Ret.class.getName().toLowerCase(), retRemarks);
+        addModelFieldRemarks(ApiRet.class.getName().toLowerCase(), retRemarks);
 
 
         File modelJsonFile = new File(config.getModelJsonPathAbsolute());
         if (modelJsonFile.exists()) {
             String modelJsonString = FileUtil.readString(modelJsonFile);
             JSONObject modelJsonObject = JSONObject.parseObject(modelJsonString);
-            for (String s : modelJsonObject.keySet()) {
-                Map<String, String> attrs = new HashMap<>();
-                JSONObject value = modelJsonObject.getJSONObject(s);
-                value.forEach((k, v) -> attrs.put(StrKit.firstCharToLowerCase(StrKit.toCamelCase(k)), String.valueOf(v)));
-                this.modelFieldNames.put(s.toLowerCase(), attrs);
+            for (String classOrSimpleName : modelJsonObject.keySet()) {
+                Map<String, String> remarks = new HashMap<>();
+                JSONObject value = modelJsonObject.getJSONObject(classOrSimpleName);
+                value.forEach((k, v) -> remarks.put(StrKit.firstCharToLowerCase(StrKit.toCamelCase(k)), String.valueOf(v)));
+                addModelFieldRemarks(classOrSimpleName.toLowerCase(), remarks);
             }
         }
     }
