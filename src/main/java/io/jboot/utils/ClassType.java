@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.apidoc;
+package io.jboot.utils;
 
 import java.io.Serializable;
 
@@ -66,7 +66,7 @@ public class ClassType implements Serializable {
             for (int i = 0; i < genericTypes.length; i++) {
                 sb.append(genericTypes[i].toString());
                 if (i != genericTypes.length - 1) {
-                    sb.append(", ");
+                    sb.append(",");
                 }
             }
             sb.append(">");

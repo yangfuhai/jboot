@@ -16,6 +16,8 @@
 package io.jboot.apidoc;
 
 import io.jboot.apidoc.annotation.ApiPara;
+import io.jboot.utils.ClassType;
+import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 public class ApiParameter {
@@ -43,7 +45,7 @@ public class ApiParameter {
         this.name = apiPara.name();
         this.value = apiPara.value();
         this.notes = apiPara.notes();
-        this.dataType = ApiDocUtil.getTypeActualClass(apiPara.dataType(), null);
+        this.dataType = ClassUtil.getClassType(apiPara.dataType(), null);
         this.httpMethods = apiPara.method().length == 0 ? defaultMethods : apiPara.method();
     }
 

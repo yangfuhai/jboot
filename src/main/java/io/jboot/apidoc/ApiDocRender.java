@@ -39,26 +39,35 @@ public interface ApiDocRender {
                 "\n#(operation.notes ??) \n" +
                 "#end" +
                 "\n" +
-                "- 访问路径: `#(operation.actionKey ??)`\n" +
-                "- 数据类型: `#(operation.contentType.value ??)`\n" +
+                "#('#####') 访问路径: `#(operation.actionKey ??)`\n" +
+                "#('#####') 数据类型: `#(operation.contentType.value ??)`\n" +
                 "#if(operation.hasParameter())" +
-                "- 参数：\n" +
+                "#('###') 请求参数：\n" +
                 "\n" +
-                "  | 参数 | 名称 | 数据类型 | 是否必须 | 提交方式 | 描述 |  \n" +
-                "  | --- | --- | --- | --- | --- | --- |\n" +
+                "| 参数 | 名称 | 数据类型 | 是否必须 | 提交方式 | 描述 |  \n" +
+                "| --- | --- | --- | --- | --- | --- |\n" +
                 "#for(parameter : operation.apiParameters)" +
-                "  | #(parameter.name ??) | #(parameter.value ??) | `#(parameter.dataType ??)` | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString ??) | #(parameter.notesString ??) |  \n" +
+                "| #(parameter.name ??) | #(parameter.value ??) | `#(parameter.dataType ??)` | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString ??) | #(parameter.notesString ??) |  \n" +
                 "#end" +
                 "#end" +
                 "\n" +
                 "\n" +
                 "#if(operation.paraNotes)" +
-                "   > #(operation.paraNotes ??)" +
+                "> #(operation.paraNotes ??)" +
                 "#end" +
                 "#if(operation.retType)" +
                 "\n" +
                 "\n" +
-                "- 返回值：`#(operation.retType ??)`\n\n" +
+                "#('###') 数据响应：`#(operation.retType ??)`\n\n" +
+                "#for(item : operation.mockFieldInfos)" +
+                "#(item.key ??)\n\n" +
+                "| 字段  | 数据类型 | 描述 |  \n" +
+                "| --- | --- | --- | \n" +
+                "#for(info : item.value)" +
+                "| #(info.name ??) | #(info.dataType ??) | #(info.remarks ??) |  \n" +
+                "#end" +
+                "#end" +
+                "\n\n**JSON 示例：**\n" +
                 "```json\n" +
                 "#(operation.mockJson ??)\n" +
                 "```" +

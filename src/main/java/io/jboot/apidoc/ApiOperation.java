@@ -18,6 +18,8 @@ package io.jboot.apidoc;
 import io.jboot.aop.annotation.DefaultValue;
 import io.jboot.apidoc.annotation.ApiPara;
 import io.jboot.apidoc.annotation.ApiParas;
+import io.jboot.utils.ClassType;
+import io.jboot.utils.ClassUtil;
 import io.jboot.web.json.JsonBody;
 
 import javax.validation.constraints.*;
@@ -26,6 +28,7 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class ApiOperation {
 
@@ -143,7 +146,7 @@ public class ApiOperation {
 
         this.method = method;
         this.actionKey = ApiDocUtil.getActionKey(method, controllerPath);
-        this.retType = ApiDocUtil.getTypeActualClass(method.getGenericReturnType(), getControllerClass());
+        this.retType = ClassUtil.getClassType(method.getGenericReturnType(), getControllerClass());
 
         System.out.println(retType);
 
@@ -171,7 +174,7 @@ public class ApiOperation {
             ApiParameter apiParameter = new ApiParameter();
             Parameter parameter = parameters[i];
             apiParameter.setName(parameter.getName());
-            apiParameter.setDataType(ApiDocUtil.getTypeActualClass(paraTypes[i],getControllerClass()));
+            apiParameter.setDataType(ClassUtil.getClassType(paraTypes[i],getControllerClass()));
 
             if (parameter.getAnnotation(JsonBody.class) != null) {
                 apiParameter.setHttpMethods(new HttpMethod[]{HttpMethod.POST});
@@ -236,7 +239,11 @@ public class ApiOperation {
     }
 
     public String getMockJson(){
-        return ApiDocManager.me().getMockJson(retType,method);
+        return ApiDocManager.me().getMockJson(retType);
+    }
+
+    public Map<String,List<ApiFieldInfo>> getMockFieldInfos(){
+        return ApiDocManager.me().getMockFieldInfo(retType);
     }
 
 

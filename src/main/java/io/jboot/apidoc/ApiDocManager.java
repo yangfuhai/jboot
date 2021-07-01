@@ -41,7 +41,7 @@ public class ApiDocManager {
     //渲染器
     private ApiDocRender render = ApiDocRender.MARKDOWN_RENDER;
 
-    //每个类对于的属性名称，一般支持从数据库读取 COMMENT 填充，来源于 api-model.json
+    //每个类对于的属性名称，一般支持从数据库读取 字段配置 填充，来源于 api-model.json
     private Map<String, Map<String, String>> modelFieldNames = new HashMap<>();
 
     //ClassType Mocks，来源于 api-mock.json
@@ -203,7 +203,7 @@ public class ApiDocManager {
     }
 
 
-    String getMockJson(ClassType classType, Method method) {
+    String getMockJson(ClassType classType) {
         return ApiDocUtil.prettyJson(JsonKit.toJson(getMockObject(classType)));
     }
 
@@ -234,6 +234,63 @@ public class ApiDocManager {
         return null;
     }
 
+
+    Map<String, List<ApiFieldInfo>> getMockFieldInfo(ClassType classType) {
+        Map<String, List<ApiFieldInfo>> retMap = new HashMap<>();
+        doGetMockFieldInfo(retMap, classType);
+        return retMap;
+    }
+
+    private void doGetMockFieldInfo(Map<String, List<ApiFieldInfo>> retMap, ClassType classType) {
+        Class<?> mainClass = classType.getMainClass();
+        Map<String, String> fieldNames = getFieldNames(mainClass);
+        if (fieldNames != null && !fieldNames.isEmpty()) {
+            retMap.put(mainClass.getSimpleName(), buildApiFieldInfos(fieldNames, mainClass));
+        }
+
+        ClassType[] types = classType.getGenericTypes();
+        if (types != null) {
+            for (ClassType type : types) {
+                doGetMockFieldInfo(retMap, type);
+            }
+        }
+    }
+
+    private Map<String, String> getFieldNames(Class<?> clazz) {
+        Map<String, String> ret = modelFieldNames.get(clazz.getName().toLowerCase());
+        return ret != null ? ret : modelFieldNames.get(clazz.getSimpleName().toLowerCase());
+    }
+
+    private static List<ApiFieldInfo> buildApiFieldInfos(Map<String, String> fieldNames, Class<?> mainClass) {
+        List<Method> getterMethods = ReflectUtil.searchMethodList(mainClass, method -> method.getParameterCount() == 0
+                && method.getReturnType() != void.class
+                && Modifier.isPublic(method.getModifiers())
+                && (method.getName().startsWith("get") || method.getName().startsWith("is"))
+                && !"getClass".equals(method.getName())
+        );
+
+        List<ApiFieldInfo> apiFieldInfos = new ArrayList<>();
+
+        for (Method getterMethod : getterMethods) {
+            String filedName = StrUtil.firstCharToLowerCase(getGetterMethodField(getterMethod.getName()));
+            ApiFieldInfo fieldInfo = new ApiFieldInfo();
+            fieldInfo.setName(filedName);
+            fieldInfo.setDataType(getterMethod.getReturnType().getSimpleName());
+            fieldInfo.setRemarks(fieldNames.get(filedName));
+            apiFieldInfos.add(fieldInfo);
+        }
+
+        return apiFieldInfos;
+    }
+
+    private static String getGetterMethodField(String methodName) {
+        if (methodName.startsWith("get") && methodName.length() > 3) {
+            return methodName.substring(3);
+        } else if (methodName.startsWith("is") && methodName.length() > 2) {
+            return methodName.substring(2);
+        }
+        return null;
+    }
 
     /**
      * 生成 API 文档
@@ -291,13 +348,26 @@ public class ApiDocManager {
 
 
     private void initModelInfoJson(ApiDocConfig config) {
-        File modelJsonFile = new File(config.getModelJsonPath());
+
+        Map<String, String> pageAttrs = new HashMap<>();
+        pageAttrs.put("totalRow", "总行数");
+        pageAttrs.put("pageNumber", "当前页码");
+        pageAttrs.put("firstPage", "是否是第一页");
+        pageAttrs.put("lastPage", "是否是最后一页");
+        pageAttrs.put("totalPage", "总页数");
+        pageAttrs.put("pageSize", "每页数据量");
+        pageAttrs.put("list", "数据列表");
+        this.modelFieldNames.put(Page.class.getName().toLowerCase(), pageAttrs);
+
+
+        File modelJsonFile = new File(config.getModelJsonPathAbsolute());
         if (modelJsonFile.exists()) {
             String modelJsonString = FileUtil.readString(modelJsonFile);
             JSONObject modelJsonObject = JSONObject.parseObject(modelJsonString);
             for (String s : modelJsonObject.keySet()) {
                 Map<String, String> attrs = new HashMap<>();
-                modelJsonObject.forEach((k, v) -> attrs.put(StrKit.firstCharToLowerCase(StrKit.toCamelCase(k)), String.valueOf(v)));
+                JSONObject value = modelJsonObject.getJSONObject(s);
+                value.forEach((k, v) -> attrs.put(StrKit.firstCharToLowerCase(StrKit.toCamelCase(k)), String.valueOf(v)));
                 this.modelFieldNames.put(s.toLowerCase(), attrs);
             }
         }

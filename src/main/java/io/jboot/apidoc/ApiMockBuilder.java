@@ -15,6 +15,8 @@
  */
 package io.jboot.apidoc;
 
+import io.jboot.utils.ClassType;
+
 public abstract class ApiMockBuilder {
 
 

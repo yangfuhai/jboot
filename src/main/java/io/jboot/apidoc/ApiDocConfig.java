@@ -32,7 +32,7 @@ public class ApiDocConfig {
     private String allInOneFilePath = "apidoc";
 
     private String mockJsonPath = "api-mock.json";
-    private String modelJsonPath = "api-mock.json";
+    private String modelJsonPath = "api-model.json";
 
 
     public String getBasePath() {

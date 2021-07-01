@@ -1,10 +1,10 @@
 {
   "ApiModel1": {
-      "key1": "aaa"
+      "aaa": "字段说明1"
   },
 
   "ApiModel2": {
-    "key2": "aaa"
+    "aaa": "字段说明2"
   }
 
 }
