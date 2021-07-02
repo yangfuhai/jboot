@@ -173,7 +173,7 @@ jboot.datasource.password =
 
 通过配置完毕后，Jboot就已经有了访问数据库的能力，我们可以在 IndexController 写一个 `dbtest()` 方法，来测试下 Jboot 的数据库访问能力，代码如下：
 
-```
+```java
 @RequestMapping("/")
 public class IndexController extends JbootController {
 
