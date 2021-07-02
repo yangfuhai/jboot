@@ -16,6 +16,7 @@
 package io.jboot.apidoc;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Path;
 import com.jfinal.kit.StrKit;
@@ -156,7 +157,7 @@ class ApiDocUtil {
         }
         JSONObject jsonObject = null;
         try {
-            jsonObject = JSONObject.parseObject(json);
+            jsonObject = JSONObject.parseObject(json, Feature.OrderedField);
         } catch (Exception e) {
             return json;
         }

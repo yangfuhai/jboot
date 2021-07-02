@@ -16,6 +16,7 @@
 package io.jboot.apidoc;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Ret;
@@ -378,7 +379,7 @@ public class ApiDocManager {
         File mockJsonFile = new File(config.getMockJsonPathAbsolute());
         if (mockJsonFile.exists()) {
             String mockJsonString = FileUtil.readString(mockJsonFile);
-            JSONObject mockJsonObject = JSONObject.parseObject(mockJsonString);
+            JSONObject mockJsonObject = JSONObject.parseObject(mockJsonString, Feature.OrderedField);
             for (String classTypeKey : mockJsonObject.keySet()) {
                 this.classTypeMockDatas.put(classTypeKey, mockJsonObject.get(classTypeKey));
             }
@@ -388,7 +389,7 @@ public class ApiDocManager {
 
     private void initModelRemarks(ApiDocConfig config) {
 
-        Map<String, String> pageRemarks = new HashMap<>();
+        Map<String, String> pageRemarks = new LinkedHashMap<>();
         pageRemarks.put("totalRow", "总行数");
         pageRemarks.put("pageNumber", "当前页码");
         pageRemarks.put("firstPage", "是否是第一页");
@@ -399,11 +400,11 @@ public class ApiDocManager {
         defaultModelFieldRemarks.put(Page.class.getName(), pageRemarks);
 
 
-        Map<String, String> retRemarks = new HashMap<>();
+        Map<String, String> retRemarks = new LinkedHashMap<>();
         retRemarks.put("state", "状态，成功 ok，失败 fail");
         defaultModelFieldRemarks.put(Ret.class.getName(), retRemarks);
 
-        Map<String, String> apiRetRemarks = new HashMap<>();
+        Map<String, String> apiRetRemarks = new LinkedHashMap<>();
         apiRetRemarks.put("state", "状态，成功 ok，失败 fail");
         apiRetRemarks.put("errorCode", "错误码，可能返回 null");
         apiRetRemarks.put("message", "错误消息");
@@ -414,9 +415,9 @@ public class ApiDocManager {
         File modelJsonFile = new File(config.getRemarksJsonPathAbsolute());
         if (modelJsonFile.exists()) {
             String modelJsonString = FileUtil.readString(modelJsonFile);
-            JSONObject modelJsonObject = JSONObject.parseObject(modelJsonString);
+            JSONObject modelJsonObject = JSONObject.parseObject(modelJsonString, Feature.OrderedField);
             for (String classOrSimpleName : modelJsonObject.keySet()) {
-                Map<String, String> remarks = new HashMap<>();
+                Map<String, String> remarks = new LinkedHashMap<>();
                 JSONObject modelRemarks = modelJsonObject.getJSONObject(classOrSimpleName);
                 modelRemarks.forEach((k, v) -> remarks.put(k, String.valueOf(v)));
                 addModelFieldRemarks(classOrSimpleName, remarks);
