@@ -59,7 +59,7 @@ public interface ApiDocRender {
                 "\n" +
                 "\n" +
                 "#('###') 数据响应：`#(operation.retType ??)`\n\n" +
-                "#for(item : operation.mockFieldInfos)" +
+                "#for(item : operation.retFieldInfos)" +
                 "#(item.key ??)\n\n" +
                 "| 字段  | 数据类型 | 描述 |  \n" +
                 "| --- | --- | --- | \n" +
@@ -70,7 +70,7 @@ public interface ApiDocRender {
                 "#end" +
                 "**JSON 示例：**\n" +
                 "```json\n" +
-                "#(operation.mockJson ??)\n" +
+                "#(operation.retMockJson ??)\n" +
                 "```" +
                 "#end" +
                 "\n" +

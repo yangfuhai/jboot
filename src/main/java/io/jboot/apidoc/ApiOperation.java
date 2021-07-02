@@ -42,9 +42,13 @@ public class ApiOperation {
     private List<ApiParameter> apiParameters;
 
     private ClassType retType;
+    private String retMockJson;
+    private Map<String, List<ApiFieldInfo>> retFieldInfos;
+
 
     private Class<?> controllerClass;
     private Method method;
+
 
     public ApiOperation() {
     }
@@ -141,14 +145,13 @@ public class ApiOperation {
     }
 
 
-
     public void setMethodAndInfo(Method method, String controllerPath, HttpMethod[] defaultMethods) {
 
         this.method = method;
         this.actionKey = ApiDocUtil.getActionKey(method, controllerPath);
         this.retType = ClassUtil.getClassType(method.getGenericReturnType(), getControllerClass());
-
-        System.out.println(retType);
+        this.retMockJson = ApiDocManager.me().getMockJson(retType);
+        this.retFieldInfos = ApiDocManager.me().getMockFieldInfo(retType);
 
         setParameters(method, defaultMethods);
     }
@@ -174,7 +177,7 @@ public class ApiOperation {
             ApiParameter apiParameter = new ApiParameter();
             Parameter parameter = parameters[i];
             apiParameter.setName(parameter.getName());
-            apiParameter.setDataType(ClassUtil.getClassType(paraTypes[i],getControllerClass()));
+            apiParameter.setDataType(ClassUtil.getClassType(paraTypes[i], getControllerClass()));
 
             if (parameter.getAnnotation(JsonBody.class) != null) {
                 apiParameter.setHttpMethods(new HttpMethod[]{HttpMethod.POST});
@@ -238,13 +241,19 @@ public class ApiOperation {
         }
     }
 
-    public String getMockJson(){
-        return ApiDocManager.me().getMockJson(retType);
+    public String getRetMockJson() {
+        return retMockJson;
     }
 
-    public Map<String,List<ApiFieldInfo>> getMockFieldInfos(){
-        return ApiDocManager.me().getMockFieldInfo(retType);
+    public void setRetMockJson(String retMockJson) {
+        this.retMockJson = retMockJson;
     }
 
+    public Map<String, List<ApiFieldInfo>> getRetFieldInfos() {
+        return retFieldInfos;
+    }
 
+    public void setRetFieldInfos(Map<String, List<ApiFieldInfo>> retFieldInfos) {
+        this.retFieldInfos = retFieldInfos;
+    }
 }

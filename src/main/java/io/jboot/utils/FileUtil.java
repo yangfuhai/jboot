@@ -150,4 +150,12 @@ public class FileUtil {
         return StrUtil.isNotBlank(path) && (path.startsWith("/") || path.indexOf(":") > 0);
     }
 
+    public static String getCanonicalPath(File file) {
+        try {
+            return file.getCanonicalPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -64,7 +64,16 @@ public class CodeGenHelpler {
 
 
     public static MetaBuilder createMetaBuilder(DataSource dataSource, String type) {
-        MetaBuilder metaBuilder = new MetaBuilder(dataSource);
+        return createMetaBuilder(dataSource, type, true);
+    }
+
+    public static MetaBuilder createMetaBuilder(DataSource dataSource, String type, boolean removeNoPrimaryKeyTable) {
+        MetaBuilder metaBuilder = removeNoPrimaryKeyTable ? new MetaBuilder(dataSource) : new MetaBuilder(dataSource) {
+            @Override
+            protected void removeNoPrimaryKeyTable(List<TableMeta> ret) {
+                //do Nothing...
+            }
+        };
         metaBuilder.setGenerateRemarks(true);
         switch (type) {
             case DataSourceConfig.TYPE_MYSQL:
