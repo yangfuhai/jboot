@@ -17,6 +17,7 @@ package io.jboot.apidoc;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.PathKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.generator.ColumnMeta;
 import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
@@ -83,7 +84,7 @@ public class ApiJsonGenerator {
                 }
             }
             if (!modelRemarks.isEmpty()) {
-                root.put(tableMeta.modelName, modelRemarks);
+                root.put(StrKit.firstCharToLowerCase(tableMeta.modelName), modelRemarks);
             }
         }
 
@@ -142,7 +143,7 @@ public class ApiJsonGenerator {
                 }
             }
             if (!modelRemarks.isEmpty()) {
-                root.put(tableMeta.modelName, modelRemarks);
+                root.put(StrKit.firstCharToLowerCase(tableMeta.modelName), modelRemarks);
             }
         }
 

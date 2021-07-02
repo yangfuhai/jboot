@@ -19,9 +19,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.apidoc.annotation.Api;
 import io.jboot.apidoc.annotation.ApiOper;
+import io.jboot.apidoc.annotation.ApiResp;
+import io.jboot.apidoc.annotation.ApiResps;
 import io.jboot.utils.*;
 
 import java.io.File;
@@ -221,7 +224,7 @@ public class ApiDocManager {
         }
 
         if (retObject == null) {
-            getClassTypeMockData(classType.getMainClass().getSimpleName());
+            getClassTypeMockData(StrKit.firstCharToLowerCase(classType.getMainClass().getSimpleName()));
         }
 
         if (retObject != null) {
@@ -257,21 +260,24 @@ public class ApiDocManager {
 
         //根据方法的 @Resp 来构建
         if (level == 0) {
-            doBuildRemarksByMethodAnnotation(apiResponses, method);
+            List<Class<?>> dataTypeClasses = doBuildRemarksByMethodAnnotation(apiResponses, method);
+            for (Class<?> dataType : dataTypeClasses) {
+                doBuildRemarks(retMap, new ClassType(dataType), method, level + 1);
+            }
         }
 
         //根据配置文件来构建
         doBuildRemarksByConfig(apiResponses, classType, method);
 
         if (!apiResponses.isEmpty()) {
-            retMap.put(mainClass.getSimpleName(), new ArrayList<>(apiResponses));
+            retMap.put(StrKit.firstCharToLowerCase(mainClass.getSimpleName()), new ArrayList<>(apiResponses));
         }
 
 
         ClassType[] types = classType.getGenericTypes();
         if (types != null) {
             for (ClassType type : types) {
-                doBuildRemarks(retMap, type, method, ++level);
+                doBuildRemarks(retMap, type, method, level + 1);
             }
         }
     }
@@ -323,9 +329,27 @@ public class ApiDocManager {
     }
 
 
-    private void doBuildRemarksByMethodAnnotation(Set<ApiResponse> apiResponses, Method method1) {
-        List<ApiResponse> apiResponses1 = ApiDocUtil.getApiResponseInMethod(method1);
+    private List<Class<?>> doBuildRemarksByMethodAnnotation(Set<ApiResponse> apiResponses, Method method) {
+
+        List<ApiResponse> apiResponses1 = new LinkedList<>();
+        List<Class<?>> dataTypes = new ArrayList<>();
+
+        ApiResps apiResps = method.getAnnotation(ApiResps.class);
+        if (apiResps != null) {
+            for (ApiResp apiResp : apiResps.value()) {
+                apiResponses1.add(new ApiResponse(apiResp));
+                dataTypes.add(apiResp.dataType());
+            }
+        }
+
+        ApiResp apiResp = method.getAnnotation(ApiResp.class);
+        if (apiResp != null) {
+            apiResponses1.add(new ApiResponse(apiResp));
+            dataTypes.add(apiResp.dataType());
+        }
+
         apiResponses.addAll(apiResponses1);
+        return dataTypes;
     }
 
 
@@ -376,7 +400,7 @@ public class ApiDocManager {
 
     private Map<String, String> getConfigRemarks(Class<?> clazz) {
         Map<String, String> ret = modelFieldRemarks.get(clazz.getName());
-        return ret != null ? ret : modelFieldRemarks.get(clazz.getSimpleName());
+        return ret != null ? ret : modelFieldRemarks.get(StrKit.firstCharToLowerCase(clazz.getSimpleName()));
     }
 
 
