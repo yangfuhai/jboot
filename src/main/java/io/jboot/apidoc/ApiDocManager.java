@@ -287,11 +287,11 @@ public class ApiDocManager {
         doBuildRemarksByConfig(apiResponses, classType, method);
 
         if (!apiResponses.isEmpty()) {
-            retMap.put(StrKit.firstCharToLowerCase(mainClass.getSimpleName()), new ArrayList<>(apiResponses));
+            retMap.put(mainClass.getSimpleName(), new ArrayList<>(apiResponses));
         }
 
         //必须执行在 retMap.put 之后，才能保证 remarks 在文档中的顺序
-        if (dataTypeClasses != null){
+        if (dataTypeClasses != null) {
             for (Class<?> dataType : dataTypeClasses) {
                 doBuildRemarks(retMap, new ClassType(dataType), method, level + 1);
             }
