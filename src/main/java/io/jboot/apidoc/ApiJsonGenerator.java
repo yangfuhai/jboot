@@ -16,6 +16,7 @@
 package io.jboot.apidoc;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.generator.ColumnMeta;
@@ -36,7 +37,10 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.temporal.Temporal;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -63,7 +67,7 @@ public class ApiJsonGenerator {
         //如果文件存在，则先读取其配置，然后再修改
         if (file.exists()) {
             String oldJson = FileUtil.readString(file);
-            JSONObject rootJsonObject = JSONObject.parseObject(oldJson);
+            JSONObject rootJsonObject = JSONObject.parseObject(oldJson, Feature.OrderedField);
             if (rootJsonObject != null && !rootJsonObject.isEmpty()) {
                 for (String classOrSimpleName : rootJsonObject.keySet()) {
                     root.put(classOrSimpleName, rootJsonObject.getJSONObject(classOrSimpleName));
@@ -82,7 +86,7 @@ public class ApiJsonGenerator {
 
 
         for (TableMeta tableMeta : tableMetas) {
-            Map<String, Object> classMockData = new HashMap<>();
+            Map<String, Object> classMockData = new LinkedHashMap<>();
             for (ColumnMeta columnMeta : tableMeta.columnMetas) {
                 Object mockData = createMockData(columnMeta);
                 if (mockData != null && !"".equals(mockData)) {
@@ -170,10 +174,10 @@ public class ApiJsonGenerator {
         //如果文件存在，则先读取其配置，然后再修改
         if (file.exists()) {
             String oldJson = FileUtil.readString(file);
-            JSONObject rootJsonObject = JSONObject.parseObject(oldJson);
+            JSONObject rootJsonObject = JSONObject.parseObject(oldJson, Feature.OrderedField);
             if (rootJsonObject != null && !rootJsonObject.isEmpty()) {
                 for (String classOrSimpleName : rootJsonObject.keySet()) {
-                    Map<String, String> remarks = new HashMap<>();
+                    Map<String, String> remarks = new LinkedHashMap<>();
                     JSONObject modelRemarks = rootJsonObject.getJSONObject(classOrSimpleName);
                     modelRemarks.forEach((k, v) -> remarks.put(k, String.valueOf(v)));
                     root.put(classOrSimpleName, remarks);
@@ -193,7 +197,7 @@ public class ApiJsonGenerator {
 
 
         for (TableMeta tableMeta : tableMetas) {
-            Map<String, String> modelRemarks = new HashMap<>();
+            Map<String, String> modelRemarks = new LinkedHashMap<>();
             for (ColumnMeta columnMeta : tableMeta.columnMetas) {
                 if (StrUtil.isNotBlank(columnMeta.remarks)) {
                     modelRemarks.put(columnMeta.attrName, columnMeta.remarks);
