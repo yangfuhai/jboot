@@ -26,8 +26,11 @@ public class ApiResponse implements Serializable {
 
     private String name;
     private String dataType;
+    private Class<?> dataTypeClass;
     private String remarks;
     private String mock;
+
+
 
     public ApiResponse() {
     }
@@ -35,6 +38,7 @@ public class ApiResponse implements Serializable {
     public ApiResponse(ApiResp apiResp) {
         this.name = apiResp.name();
         this.dataType = apiResp.dataType().getSimpleName();
+        this.dataTypeClass = apiResp.dataType();
         this.remarks = apiResp.notes();
         this.mock = apiResp.mock();
     }
@@ -53,6 +57,14 @@ public class ApiResponse implements Serializable {
 
     public void setDataType(String dataType) {
         this.dataType = dataType;
+    }
+
+    public Class<?> getDataTypeClass() {
+        return dataTypeClass;
+    }
+
+    public void setDataTypeClass(Class<?> dataTypeClass) {
+        this.dataTypeClass = dataTypeClass;
     }
 
     public String getRemarks() {

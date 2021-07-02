@@ -61,25 +61,34 @@ public class ApiDocManager {
     private void initDefaultClassTypeMockBuilder() {
         addClassTypeMockBuilders(Ret.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType, Method method) {
+            Object build(ClassType classType, Method method, int level) {
                 Ret ret = Ret.ok();
                 if (classType.isGeneric()) {
                     ClassType[] genericTypes = classType.getGenericTypes();
                     if (genericTypes.length == 1) {
                         Class<?> type = genericTypes[0].getMainClass();
                         if (List.class.isAssignableFrom(type)) {
-                            ret.set("list", getMockObject(genericTypes[0], method));
+                            ret.set("list", getMockObject(genericTypes[0], method, level));
                         } else if (Map.class.isAssignableFrom(type)) {
-                            ret.set("map", getMockObject(genericTypes[0], method));
+                            ret.set("map", getMockObject(genericTypes[0], method, level));
                         } else if (Page.class.isAssignableFrom(type)) {
-                            ret.set("page", getMockObject(genericTypes[0], method));
+                            ret.set("page", getMockObject(genericTypes[0], method, level));
                         } else {
-                            ret.set("object", getMockObject(genericTypes[0], method));
+                            ret.set("object", getMockObject(genericTypes[0], method, level));
                         }
                     }
                 }
                 List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
-                responses.forEach(apiResponse -> ret.put(apiResponse.getName(), apiResponse.getMockObject()));
+                for (ApiResponse response : responses) {
+                    Object mockObject = null;
+                    if (level == 0 && response.getDataTypeClass() != Map.class && response.getDataTypeClass() != Ret.class) {
+                        mockObject = getMockObject(new ClassType(response.getDataTypeClass()), method, level);
+                    }
+                    if (mockObject == null || "".equals(mockObject)) {
+                        mockObject = response.getMockObject();
+                    }
+                    ret.put(response.getName(), mockObject);
+                }
                 return ret;
             }
         });
@@ -87,7 +96,7 @@ public class ApiDocManager {
 
         addClassTypeMockBuilders(Map.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType, Method method) {
+            Object build(ClassType classType, Method method, int level) {
                 // ret 让给 retBuilder 去构建
                 if (Ret.class.isAssignableFrom(classType.getMainClass())) {
                     return null;
@@ -96,16 +105,25 @@ public class ApiDocManager {
 
                 Map map = new HashMap();
                 if (classType.isGeneric()) {
-                    Object key = getMockObject(classType.getGenericTypes()[0], method);
+                    Object key = getMockObject(classType.getGenericTypes()[0], method, level);
                     if (key == null) {
                         key = "key";
                     }
-                    Object value = getMockObject(classType.getGenericTypes()[1], method);
+                    Object value = getMockObject(classType.getGenericTypes()[1], method, level);
                     map.put(key, value);
                 }
 
                 List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
-                responses.forEach(apiResponse -> map.put(apiResponse.getName(), apiResponse.getMockObject()));
+                for (ApiResponse response : responses) {
+                    Object mockObject = null;
+                    if (level == 0 && response.getDataTypeClass() != Map.class && response.getDataTypeClass() != Ret.class) {
+                        mockObject = getMockObject(new ClassType(response.getDataTypeClass()), method, level);
+                    }
+                    if (mockObject == null || "".equals(mockObject)) {
+                        mockObject = response.getMockObject();
+                    }
+                    map.put(response.getName(), mockObject);
+                }
                 return map;
             }
         });
@@ -113,12 +131,12 @@ public class ApiDocManager {
 
         addClassTypeMockBuilders(List.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType, Method method) {
+            Object build(ClassType classType, Method method, int level) {
                 List list = new ArrayList();
                 if (classType.isGeneric()) {
-                    Object value = getMockObject(classType.getGenericTypes()[0], method);
+                    Object value = getMockObject(classType.getGenericTypes()[0], method, level);
                     list.add(value);
-                    Object value2 = getMockObject(classType.getGenericTypes()[0], method);
+                    Object value2 = getMockObject(classType.getGenericTypes()[0], method, level);
                     list.add(value2);
                 }
                 return list;
@@ -128,7 +146,7 @@ public class ApiDocManager {
 
         addClassTypeMockBuilders(Page.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType, Method method) {
+            Object build(ClassType classType, Method method, int level) {
                 Page page = new Page();
                 page.setPageNumber(1);
                 page.setPageSize(10);
@@ -136,8 +154,8 @@ public class ApiDocManager {
                 page.setTotalRow(2);
 
                 List list = new ArrayList();
-                list.add(getMockObject(classType.getGenericTypes()[0], method));
-                list.add(getMockObject(classType.getGenericTypes()[0], method));
+                list.add(getMockObject(classType.getGenericTypes()[0], method, level));
+                list.add(getMockObject(classType.getGenericTypes()[0], method, level));
 
                 page.setList(list);
                 return page;
@@ -147,8 +165,8 @@ public class ApiDocManager {
 
         addClassTypeMockBuilders(String.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType, Method method) {
-                return "string";
+            Object build(ClassType classType, Method method, int level) {
+                return "";
             }
         });
 
@@ -212,19 +230,19 @@ public class ApiDocManager {
 
 
     String buildMockJson(ClassType classType, Method method) {
-        return ApiDocUtil.prettyJson(JsonKit.toJson(doBuildMockObject(classType, method)));
+        return ApiDocUtil.prettyJson(JsonKit.toJson(doBuildMockObject(classType, method, 0)));
     }
 
 
-    Object doBuildMockObject(ClassType classType, Method method) {
+    Object doBuildMockObject(ClassType classType, Method method, int level) {
         Object retObject = getClassTypeMockData(classType.toString());
 
         if (retObject == null) {
-            getClassTypeMockData(classType.getMainClass().getName());
+            retObject = getClassTypeMockData(classType.getMainClass().getName());
         }
 
         if (retObject == null) {
-            getClassTypeMockData(StrKit.firstCharToLowerCase(classType.getMainClass().getSimpleName()));
+            retObject = getClassTypeMockData(StrKit.firstCharToLowerCase(classType.getMainClass().getSimpleName()));
         }
 
         if (retObject != null) {
@@ -233,7 +251,7 @@ public class ApiDocManager {
 
         for (Class<?> aClass : classTypeMockBuilders.keySet()) {
             if (aClass.isAssignableFrom(classType.getMainClass())) {
-                Object object = classTypeMockBuilders.get(aClass).build(classType, method);
+                Object object = classTypeMockBuilders.get(aClass).build(classType, method, level);
                 if (object != null) {
                     return object;
                 }
@@ -314,7 +332,7 @@ public class ApiDocManager {
             //若没有 getter 方法，一般情况下 map 或者 ret 等
             //此时，需要通过 Mock 数据来对 key 的 dataType 进行推断
             else {
-                Object object = doBuildMockObject(classType, method1);
+                Object object = doBuildMockObject(classType, method1, 0);
                 if (object instanceof Map) {
                     Object value = ((Map<?, ?>) object).get(key);
                     if (value != null) {
@@ -385,7 +403,7 @@ public class ApiDocManager {
             //若没有 getter 方法，一般情况下 map 或者 ret 等
             //此时，需要通过 Mock 数据来对 key 的 dataType 进行推断
             else {
-                Object object = doBuildMockObject(classType, method1);
+                Object object = doBuildMockObject(classType, method1, 0);
                 if (object instanceof Map) {
                     Object value = ((Map<?, ?>) object).get(key);
                     if (value != null) {
