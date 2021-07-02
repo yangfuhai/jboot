@@ -17,12 +17,14 @@ package io.jboot.apidoc;
 
 import io.jboot.utils.ClassType;
 
+import java.lang.reflect.Method;
+
 public abstract class ApiMockBuilder {
 
 
-    public Object getMockObject(ClassType classType) {
-        return ApiDocManager.me().getMockObject(classType);
+    public Object getMockObject(ClassType classType, Method method) {
+        return ApiDocManager.me().doBuildMockObject(classType, method);
     }
 
-    abstract Object build(ClassType classType);
+    abstract Object build(ClassType classType, Method method);
 }

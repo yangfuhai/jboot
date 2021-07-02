@@ -43,7 +43,7 @@ public class ApiOperation {
 
     private ClassType retType;
     private String retMockJson;
-    private Map<String, List<ApiFieldInfo>> retFieldInfos;
+    private Map<String, List<ApiResponse>> retRemarks;
 
 
     private Class<?> controllerClass;
@@ -152,8 +152,8 @@ public class ApiOperation {
         this.retType = ClassUtil.getClassType(method.getGenericReturnType(), getControllerClass());
 
         if (retType.getMainClass() != void.class) {
-            this.retMockJson = ApiDocManager.me().getMockJson(retType);
-            this.retFieldInfos = ApiDocManager.me().getMockFieldInfo(retType);
+            this.retMockJson = ApiDocManager.me().buildMockJson(retType,method);
+            this.retRemarks = ApiDocManager.me().buildRemarks(retType,method);
         }
 
         setParameters(method, defaultMethods);
@@ -252,11 +252,11 @@ public class ApiOperation {
         this.retMockJson = retMockJson;
     }
 
-    public Map<String, List<ApiFieldInfo>> getRetFieldInfos() {
-        return retFieldInfos;
+    public Map<String, List<ApiResponse>> getRetRemarks() {
+        return retRemarks;
     }
 
-    public void setRetFieldInfos(Map<String, List<ApiFieldInfo>> retFieldInfos) {
-        this.retFieldInfos = retFieldInfos;
+    public void setRetRemarks(Map<String, List<ApiResponse>> retRemarks) {
+        this.retRemarks = retRemarks;
     }
 }

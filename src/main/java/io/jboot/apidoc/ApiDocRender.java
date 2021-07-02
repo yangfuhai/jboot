@@ -65,7 +65,7 @@ public interface ApiDocRender {
                 "\n" +
                 "#('####') 数据响应：`#(operation.retType ??)`\n\n" +
 
-                "#for(item : operation.retFieldInfos)" +
+                "#for(item : operation.retRemarks)" +
                 "#(item.key ??)\n\n" +
                 "| 字段  | 数据类型 | 描述 |  \n" +
                 "| --- | --- | --- | \n" +

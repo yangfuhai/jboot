@@ -42,6 +42,7 @@ public class ApiDocManager {
 
     //每个类对于的属性名称，一般支持从数据库读取 字段配置 填充，来源于 api-remarks.json
     private Map<String, Map<String, String>> modelFieldRemarks = new HashMap<>();
+    private Map<String, Map<String, String>> defaultModelFieldRemarks = new HashMap<>();
 
     //ClassType Mocks，来源于 api-mock.json
     private Map<String, Object> classTypeMockDatas = new HashMap<>();
@@ -55,26 +56,27 @@ public class ApiDocManager {
     }
 
     private void initDefaultClassTypeMockBuilder() {
-
         addClassTypeMockBuilders(Ret.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType) {
+            Object build(ClassType classType, Method method) {
                 Ret ret = Ret.ok();
                 if (classType.isGeneric()) {
                     ClassType[] genericTypes = classType.getGenericTypes();
                     if (genericTypes.length == 1) {
                         Class<?> type = genericTypes[0].getMainClass();
                         if (List.class.isAssignableFrom(type)) {
-                            ret.set("list", getMockObject(genericTypes[0]));
+                            ret.set("list", getMockObject(genericTypes[0], method));
                         } else if (Map.class.isAssignableFrom(type)) {
-                            ret.set("map", getMockObject(genericTypes[0]));
+                            ret.set("map", getMockObject(genericTypes[0], method));
                         } else if (Page.class.isAssignableFrom(type)) {
-                            ret.set("page", getMockObject(genericTypes[0]));
+                            ret.set("page", getMockObject(genericTypes[0], method));
                         } else {
-                            ret.set("object", getMockObject(genericTypes[0]));
+                            ret.set("object", getMockObject(genericTypes[0], method));
                         }
                     }
                 }
+                List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
+                responses.forEach(apiResponse -> ret.put(apiResponse.getName(), apiResponse.getMock()));
                 return ret;
             }
         });
@@ -82,21 +84,25 @@ public class ApiDocManager {
 
         addClassTypeMockBuilders(Map.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType) {
+            Object build(ClassType classType, Method method) {
                 // ret 让给 retBuilder 去构建
                 if (Ret.class.isAssignableFrom(classType.getMainClass())) {
                     return null;
                 }
 
+
                 Map map = new HashMap();
                 if (classType.isGeneric()) {
-                    Object key = getMockObject(classType.getGenericTypes()[0]);
+                    Object key = getMockObject(classType.getGenericTypes()[0], method);
                     if (key == null) {
                         key = "key";
                     }
-                    Object value = getMockObject(classType.getGenericTypes()[1]);
+                    Object value = getMockObject(classType.getGenericTypes()[1], method);
                     map.put(key, value);
                 }
+
+                List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
+                responses.forEach(apiResponse -> map.put(apiResponse.getName(), apiResponse.getMock()));
                 return map;
             }
         });
@@ -104,12 +110,12 @@ public class ApiDocManager {
 
         addClassTypeMockBuilders(List.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType) {
+            Object build(ClassType classType, Method method) {
                 List list = new ArrayList();
                 if (classType.isGeneric()) {
-                    Object value = getMockObject(classType.getGenericTypes()[0]);
+                    Object value = getMockObject(classType.getGenericTypes()[0], method);
                     list.add(value);
-                    Object value2 = getMockObject(classType.getGenericTypes()[0]);
+                    Object value2 = getMockObject(classType.getGenericTypes()[0], method);
                     list.add(value2);
                 }
                 return list;
@@ -119,7 +125,7 @@ public class ApiDocManager {
 
         addClassTypeMockBuilders(Page.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType) {
+            Object build(ClassType classType, Method method) {
                 Page page = new Page();
                 page.setPageNumber(1);
                 page.setPageSize(10);
@@ -127,8 +133,8 @@ public class ApiDocManager {
                 page.setTotalRow(2);
 
                 List list = new ArrayList();
-                list.add(getMockObject(classType.getGenericTypes()[0]));
-                list.add(getMockObject(classType.getGenericTypes()[0]));
+                list.add(getMockObject(classType.getGenericTypes()[0], method));
+                list.add(getMockObject(classType.getGenericTypes()[0], method));
 
                 page.setList(list);
                 return page;
@@ -138,7 +144,7 @@ public class ApiDocManager {
 
         addClassTypeMockBuilders(String.class, new ApiMockBuilder() {
             @Override
-            Object build(ClassType classType) {
+            Object build(ClassType classType, Method method) {
                 return "string";
             }
         });
@@ -202,12 +208,12 @@ public class ApiDocManager {
     }
 
 
-    String getMockJson(ClassType classType) {
-        return ApiDocUtil.prettyJson(JsonKit.toJson(getMockObject(classType)));
+    String buildMockJson(ClassType classType, Method method) {
+        return ApiDocUtil.prettyJson(JsonKit.toJson(doBuildMockObject(classType, method)));
     }
 
 
-    Object getMockObject(ClassType classType) {
+    Object doBuildMockObject(ClassType classType, Method method) {
         Object retObject = getClassTypeMockData(classType.toString());
 
         if (retObject == null) {
@@ -224,7 +230,7 @@ public class ApiDocManager {
 
         for (Class<?> aClass : classTypeMockBuilders.keySet()) {
             if (aClass.isAssignableFrom(classType.getMainClass())) {
-                Object object = classTypeMockBuilders.get(aClass).build(classType);
+                Object object = classTypeMockBuilders.get(aClass).build(classType, method);
                 if (object != null) {
                     return object;
                 }
@@ -234,39 +240,54 @@ public class ApiDocManager {
     }
 
 
-    Map<String, List<ApiFieldInfo>> getMockFieldInfo(ClassType classType) {
-        Map<String, List<ApiFieldInfo>> retMap = new LinkedHashMap<>();
-        doGetMockFieldInfo(retMap, classType);
+    Map<String, List<ApiResponse>> buildRemarks(ClassType classType, Method method) {
+        Map<String, List<ApiResponse>> retMap = new LinkedHashMap<>();
+        doBuildRemarks(retMap, classType, method, 0);
         return retMap;
     }
 
-    private void doGetMockFieldInfo(Map<String, List<ApiFieldInfo>> retMap, ClassType classType) {
+
+    private void doBuildRemarks(Map<String, List<ApiResponse>> retMap, ClassType classType, Method method, int level) {
         Class<?> mainClass = classType.getMainClass();
-        Map<String, String> fieldRemarks = getFieldRemarks(mainClass);
-        if (fieldRemarks != null && !fieldRemarks.isEmpty()) {
-            retMap.put(mainClass.getSimpleName(), buildApiFieldInfos(fieldRemarks, classType));
+
+        Set<ApiResponse> apiResponses = new HashSet<>();
+
+        //根据默认的配置构建
+        doBuildRemarksByDefault(apiResponses, classType, method);
+
+        //根据方法的 @Resp 来构建
+        if (level == 0) {
+            doBuildRemarksByMethodAnnotation(apiResponses, method);
         }
+
+        //根据配置文件来构建
+        doBuildRemarksByConfig(apiResponses, classType, method);
+
+        if (!apiResponses.isEmpty()) {
+            retMap.put(mainClass.getSimpleName(), new ArrayList<>(apiResponses));
+        }
+
 
         ClassType[] types = classType.getGenericTypes();
         if (types != null) {
             for (ClassType type : types) {
-                doGetMockFieldInfo(retMap, type);
+                doBuildRemarks(retMap, type, method, ++level);
             }
         }
     }
 
-    private Map<String, String> getFieldRemarks(Class<?> clazz) {
-        Map<String, String> ret = modelFieldRemarks.get(clazz.getName());
-        return ret != null ? ret : modelFieldRemarks.get(clazz.getSimpleName());
-    }
 
-    private List<ApiFieldInfo> buildApiFieldInfos(Map<String, String> fieldRemarks, ClassType classType) {
+    private void doBuildRemarksByDefault(Set<ApiResponse> apiResponses, ClassType classType, Method method1) {
+        Map<String, String> defaultModelRemarks = defaultModelFieldRemarks.get(classType.getMainClass().getName());
+        if (defaultModelRemarks == null || defaultModelRemarks.isEmpty()) {
+            return;
+        }
 
-        List<Method> getterMethods = ReflectUtil.searchMethodList(classType.getMainClass(), method -> method.getParameterCount() == 0
-                && method.getReturnType() != void.class
-                && Modifier.isPublic(method.getModifiers())
-                && (method.getName().startsWith("get") || method.getName().startsWith("is"))
-                && !"getClass".equals(method.getName())
+        List<Method> getterMethods = ReflectUtil.searchMethodList(classType.getMainClass(), m -> m.getParameterCount() == 0
+                && m.getReturnType() != void.class
+                && Modifier.isPublic(m.getModifiers())
+                && (m.getName().startsWith("get") || m.getName().startsWith("is"))
+                && !"getClass".equals(m.getName())
         );
 
         Map<String, Method> filedAndMethodMap = new HashMap<>();
@@ -274,35 +295,90 @@ public class ApiDocManager {
             filedAndMethodMap.put(StrUtil.firstCharToLowerCase(getGetterMethodField(getterMethod.getName())), getterMethod);
         }
 
-        List<ApiFieldInfo> apiFieldInfos = new ArrayList<>();
-        for (String key : fieldRemarks.keySet()) {
+        for (String key : defaultModelRemarks.keySet()) {
 
-            ApiFieldInfo fieldInfo = new ApiFieldInfo();
-            fieldInfo.setName(key);
-            fieldInfo.setRemarks(fieldRemarks.get(key));
+            ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setName(key);
+            apiResponse.setRemarks(defaultModelRemarks.get(key));
 
             Method getterMethod = filedAndMethodMap.get(key);
             if (getterMethod != null) {
-                fieldInfo.setDataType(getterMethod.getReturnType().getSimpleName());
+                apiResponse.setDataType(getterMethod.getReturnType().getSimpleName());
             }
             //若没有 getter 方法，一般情况下 map 或者 ret 等
             //此时，需要通过 Mock 数据来对 key 的 dataType 进行推断
             else {
-                Object object = getMockObject(classType);
+                Object object = doBuildMockObject(classType, method1);
                 if (object instanceof Map) {
                     Object value = ((Map<?, ?>) object).get(key);
                     if (value != null) {
-                        fieldInfo.setDataType(value.getClass().getSimpleName());
+                        apiResponse.setDataType(value.getClass().getSimpleName());
                     }
                 }
             }
 
-            apiFieldInfos.add(fieldInfo);
+            apiResponses.add(apiResponse);
+        }
+
+    }
+
+
+    private void doBuildRemarksByMethodAnnotation(Set<ApiResponse> apiResponses, Method method1) {
+        List<ApiResponse> apiResponses1 = ApiDocUtil.getApiResponseInMethod(method1);
+        apiResponses.addAll(apiResponses1);
+    }
+
+
+    private void doBuildRemarksByConfig(Set<ApiResponse> apiResponses, ClassType classType, Method method1) {
+        Map<String, String> configRemarks = getConfigRemarks(classType.getMainClass());
+        if (configRemarks == null || configRemarks.isEmpty()) {
+            return;
+        }
+
+        List<Method> getterMethods = ReflectUtil.searchMethodList(classType.getMainClass(), m -> m.getParameterCount() == 0
+                && m.getReturnType() != void.class
+                && Modifier.isPublic(m.getModifiers())
+                && (m.getName().startsWith("get") || m.getName().startsWith("is"))
+                && !"getClass".equals(m.getName())
+        );
+
+        Map<String, Method> filedAndMethodMap = new HashMap<>();
+        for (Method getterMethod : getterMethods) {
+            filedAndMethodMap.put(StrUtil.firstCharToLowerCase(getGetterMethodField(getterMethod.getName())), getterMethod);
         }
 
 
-        return apiFieldInfos;
+        for (String key : configRemarks.keySet()) {
+
+            ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setName(key);
+            apiResponse.setRemarks(configRemarks.get(key));
+
+            Method getterMethod = filedAndMethodMap.get(key);
+            if (getterMethod != null) {
+                apiResponse.setDataType(getterMethod.getReturnType().getSimpleName());
+            }
+            //若没有 getter 方法，一般情况下 map 或者 ret 等
+            //此时，需要通过 Mock 数据来对 key 的 dataType 进行推断
+            else {
+                Object object = doBuildMockObject(classType, method1);
+                if (object instanceof Map) {
+                    Object value = ((Map<?, ?>) object).get(key);
+                    if (value != null) {
+                        apiResponse.setDataType(value.getClass().getSimpleName());
+                    }
+                }
+            }
+
+            apiResponses.add(apiResponse);
+        }
     }
+
+    private Map<String, String> getConfigRemarks(Class<?> clazz) {
+        Map<String, String> ret = modelFieldRemarks.get(clazz.getName());
+        return ret != null ? ret : modelFieldRemarks.get(clazz.getSimpleName());
+    }
+
 
     private static String getGetterMethodField(String methodName) {
         if (methodName.startsWith("get") && methodName.length() > 3) {
@@ -378,13 +454,19 @@ public class ApiDocManager {
         pageRemarks.put("totalPage", "总页数");
         pageRemarks.put("pageSize", "每页数据量");
         pageRemarks.put("list", "数据列表");
-        addModelFieldRemarks(Page.class.getName(), pageRemarks);
+        defaultModelFieldRemarks.put(Page.class.getName(), pageRemarks);
 
 
         Map<String, String> retRemarks = new HashMap<>();
         retRemarks.put("state", "状态，成功 ok，失败 fail");
-        addModelFieldRemarks(Ret.class.getName(), retRemarks);
-        addModelFieldRemarks(ApiRet.class.getName(), retRemarks);
+        defaultModelFieldRemarks.put(Ret.class.getName(), retRemarks);
+
+        Map<String, String> apiRetRemarks = new HashMap<>();
+        apiRetRemarks.put("state", "状态，成功 ok，失败 fail");
+        apiRetRemarks.put("errorCode", "错误码，可能返回 null");
+        apiRetRemarks.put("message", "错误消息");
+        apiRetRemarks.put("data", "数据");
+        defaultModelFieldRemarks.put(ApiRet.class.getName(), apiRetRemarks);
 
 
         File modelJsonFile = new File(config.getRemarksJsonPathAbsolute());

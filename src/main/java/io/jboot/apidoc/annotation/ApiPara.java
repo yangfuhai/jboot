@@ -26,30 +26,35 @@ public @interface ApiPara {
 
     /**
      * 标题
+     *
      * @return
      */
     String value();
 
     /**
      * 参数名称
+     *
      * @return
      */
     String name() default "";
 
     /**
      * 描述
+     *
      * @return
      */
     String notes() default "";
 
     /**
      * 数据类型
+     *
      * @return
      */
     Class<?> dataType() default void.class;
 
     /**
      * 要求通过哪些方法传入，比如只能通过 post 传入
+     *
      * @return
      */
     HttpMethod[] method() default {};

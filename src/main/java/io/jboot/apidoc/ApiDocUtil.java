@@ -18,12 +18,16 @@ package io.jboot.apidoc;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Path;
+import io.jboot.apidoc.annotation.ApiResp;
+import io.jboot.apidoc.annotation.ApiResps;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.annotation.*;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 class ApiDocUtil {
@@ -123,6 +127,25 @@ class ApiDocUtil {
         return actionKey;
     }
 
+
+    public static List<ApiResponse> getApiResponseInMethod(Method method){
+
+        List<ApiResponse> retList = new LinkedList<>();
+
+        ApiResps apiResps = method.getAnnotation(ApiResps.class);
+        if (apiResps != null) {
+            for (ApiResp apiResp : apiResps.value()) {
+                retList.add(new ApiResponse(apiResp));
+            }
+        }
+
+        ApiResp apiResp = method.getAnnotation(ApiResp.class);
+        if (apiResp != null) {
+            retList.add(new ApiResponse(apiResp));
+        }
+
+        return retList;
+    }
 
 
 

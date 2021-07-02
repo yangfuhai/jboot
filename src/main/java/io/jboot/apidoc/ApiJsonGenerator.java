@@ -216,7 +216,7 @@ public class ApiJsonGenerator {
             if (FileUtil.isAbsolutePath(jsonFilePath)) {
                 return jsonFilePath;
             }
-            return new File(PathKit.getRootClassPath(), "../../" + jsonFilePath).getAbsolutePath();
+            return FileUtil.getCanonicalPath(new File(PathKit.getRootClassPath(), "../../" + jsonFilePath));
         }
 
 

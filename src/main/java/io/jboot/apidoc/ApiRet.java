@@ -1,102 +1,130 @@
 package io.jboot.apidoc;
 
 import com.jfinal.kit.Ret;
-import com.jfinal.kit.StrKit;
 
-import java.util.Map;
+public class ApiRet<T> {
 
-public class ApiRet<T> extends Ret {
-
-
-    private static final long serialVersionUID = -3021472182023759198L;
-
-    private static final String STATE = "state";
     private static final String STATE_OK = "ok";
     private static final String STATE_FAIL = "fail";
 
-    public ApiRet() {
-    }
+    //状态，使用 string 是为了兼容 JFinal 的 Ret，目前很多前端是通过 state 来进行判断的
+    private String state;
 
-    public static ApiRet by(Object key, Object value) {
-        return new ApiRet().set(key, value);
-    }
+    //错误码
+    private Integer errorCode;
 
-    public static ApiRet create(Object key, Object value) {
-        return new ApiRet().set(key, value);
-    }
+    //对本次状态码的描述
+    private String message;
 
-    public static ApiRet create() {
-        return new ApiRet();
+    //数据
+    private T data;
+
+    public static ApiRet by(Ret ret) {
+        ApiRet apiRet = new ApiRet();
+        apiRet.state = ret.isOk() ? STATE_OK : (ret.isFail() ? STATE_FAIL : null);
+        for (Object key : ret.keySet()) {
+            if ("state".equals(key)) {
+                continue;
+            }
+            apiRet.data = ret.get(key);
+        }
+        return apiRet;
     }
 
     public static ApiRet ok() {
-        return new ApiRet().setOk();
+        ApiRet apiRet = new ApiRet();
+        apiRet.state = STATE_OK;
+        return apiRet;
     }
 
-    public static ApiRet ok(Object key, Object value) {
-        return ok().set(key, value);
+    public static ApiRet ok(Object data) {
+        ApiRet apiRet = new ApiRet();
+        apiRet.state = STATE_OK;
+        apiRet.data = data;
+        return apiRet;
     }
 
     public static ApiRet fail() {
-        return new ApiRet().setFail();
+        ApiRet apiRet = new ApiRet();
+        apiRet.state = STATE_FAIL;
+        return apiRet;
     }
 
-    public static ApiRet fail(Object key, Object value) {
-        return fail().set(key, value);
+
+    public static ApiRet fail(int errorCode) {
+        ApiRet apiRet = new ApiRet();
+        apiRet.state = STATE_FAIL;
+        apiRet.errorCode = errorCode;
+        return apiRet;
     }
 
-    @Override
-    public ApiRet<T> setOk() {
-        super.put(STATE, STATE_OK);
+    public static ApiRet fail(String message) {
+        ApiRet apiRet = new ApiRet();
+        apiRet.state = STATE_FAIL;
+        apiRet.message = message;
+        return apiRet;
+    }
+
+
+    public static ApiRet fail(int errorCode, String message) {
+        ApiRet apiRet = new ApiRet();
+        apiRet.state = STATE_FAIL;
+        apiRet.errorCode = errorCode;
+        apiRet.message = message;
+        return apiRet;
+    }
+
+
+    public ApiRet<T> data(T data) {
+        this.data = data;
         return this;
     }
 
-    @Override
-    public ApiRet<T> setFail() {
-        super.put(STATE, STATE_FAIL);
+    public ApiRet<T> message(String message) {
+        this.message = message;
         return this;
     }
 
-
-    @Override
-    public ApiRet<T> set(Object key, Object value) {
-        super.put(key, value);
+    public ApiRet<T> code(int errorCode) {
+        this.errorCode = errorCode;
         return this;
     }
 
-    @Override
-    public ApiRet<T> setIfNotBlank(Object key, String value) {
-        if (StrKit.notBlank(value)) {
-            set(key, value);
-        }
-        return this;
-    }
-
-    @Override
-    public ApiRet<T> setIfNotNull(Object key, Object value) {
-        if (value != null) {
-            set(key, value);
-        }
-        return this;
-    }
-
-    @Override
-    public ApiRet<T> set(Map map) {
-        super.putAll(map);
-        return this;
-    }
-
-    @Override
-    public ApiRet<T> set(Ret ret) {
-        super.putAll(ret);
+    public ApiRet<T> state(boolean ok) {
+        this.state = ok ? STATE_OK : STATE_FAIL;
         return this;
     }
 
 
-    @Override
-    public ApiRet<T> delete(Object key) {
-        super.remove(key);
-        return this;
+    public String getState() {
+        return state;
     }
 
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public Integer getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(Integer errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
 }

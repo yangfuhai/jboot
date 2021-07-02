@@ -15,48 +15,41 @@
  */
 package io.jboot.apidoc.annotation;
 
-import io.jboot.apidoc.ContentType;
-
 import java.lang.annotation.*;
 
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface ApiOper {
+@Target({ElementType.METHOD, ElementType.PARAMETER})
+public @interface ApiResp {
 
     /**
-     * 标题
+     * 参数名称
      *
      * @return
      */
-    String value();
+    String name();
 
     /**
      * 描述
      *
      * @return
      */
-    String notes() default "";
+    String notes();
 
     /**
-     * 参数描述
+     * 数据类型
      *
      * @return
      */
-    String paraNotes() default "";
+    Class<?> dataType() default String.class;
+
 
     /**
-     * Http 的 Content-Type
+     * mock 数据
      *
      * @return
      */
-    ContentType contentType() default ContentType.DEFAULT;
+    String mock() default "";
 
-    /**
-     * 生成文档的排序
-     *
-     * @return
-     */
-    int orderNo() default 0;
 
 }

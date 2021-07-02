@@ -15,11 +15,26 @@
  */
 package io.jboot.apidoc;
 
-public class ApiFieldInfo {
+import io.jboot.apidoc.annotation.ApiResp;
+
+import java.util.Objects;
+
+public class ApiResponse {
 
     private String name;
     private String dataType;
     private String remarks;
+    private String mock;
+
+    public ApiResponse() {
+    }
+
+    public ApiResponse(ApiResp apiResp) {
+        this.name = apiResp.name();
+        this.dataType = apiResp.dataType().getSimpleName();
+        this.remarks = apiResp.notes();
+        this.mock = apiResp.mock();
+    }
 
     public String getName() {
         return name;
@@ -44,4 +59,25 @@ public class ApiFieldInfo {
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
+
+    public String getMock() {
+        return mock;
+    }
+
+    public void setMock(String mock) {
+        this.mock = mock;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ApiResponse that = (ApiResponse) o;
+        return Objects.equals(name, that.name);
+    }
+
 }

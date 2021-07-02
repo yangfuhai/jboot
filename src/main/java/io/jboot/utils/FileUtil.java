@@ -67,6 +67,9 @@ public class FileUtil {
     }
 
     public static void writeString(File file, String string) {
+        if (!file.getParentFile().exists()){
+            file.getParentFile().mkdirs();
+        }
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(file, false);
