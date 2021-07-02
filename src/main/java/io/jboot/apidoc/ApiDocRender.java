@@ -42,6 +42,7 @@ public interface ApiDocRender {
                 "#('####') 接口信息：\n" +
                 "- 访问路径： `#(operation.actionKey ??)`\n" +
                 "- 数据类型： `#(operation.contentType.value ??)`\n" +
+
                 "#if(operation.hasParameter())" +
                 "#('####') 请求参数：\n" +
                 "\n" +
@@ -50,16 +51,20 @@ public interface ApiDocRender {
                 "#for(parameter : operation.apiParameters)" +
                 "| #(parameter.name ??) | #(parameter.value ??) | `#(parameter.dataType ??)` | #(parameter.require ? '是' : '否') | #(parameter.httpMethodsString ??) | #(parameter.notesString ??) |  \n" +
                 "#end" +
-                "#end" +
+                "#end" + //参数表格信息
+
                 "\n" +
                 "\n" +
+
                 "#if(operation.paraNotes)" +
                 "> #(operation.paraNotes ??)" +
-                "#end" +
+                "#end" + //参数配置
+
                 "#if(operation.retType)" +
                 "\n" +
                 "\n" +
                 "#('####') 数据响应：`#(operation.retType ??)`\n\n" +
+
                 "#for(item : operation.retFieldInfos)" +
                 "#(item.key ??)\n\n" +
                 "| 字段  | 数据类型 | 描述 |  \n" +
@@ -68,12 +73,16 @@ public interface ApiDocRender {
                 "| #(info.name ??) | #(info.dataType ??) | #(info.remarks ??) |  \n" +
                 "#end" +
                 "\n\n" +
-                "#end" +
+                "#end" + //end 响应字段表格
+
+                "#if(operation.retMockJson)" +
                 "**JSON 示例：**\n" +
                 "```json\n" +
                 "#(operation.retMockJson ??)\n" +
                 "```" +
-                "#end" +
+                "#end" + //end json示例
+
+                "#end" + // end operation
                 "\n" +
                 "\n" +
                 "#end";

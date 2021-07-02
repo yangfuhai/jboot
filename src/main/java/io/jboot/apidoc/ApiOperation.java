@@ -150,8 +150,11 @@ public class ApiOperation {
         this.method = method;
         this.actionKey = ApiDocUtil.getActionKey(method, controllerPath);
         this.retType = ClassUtil.getClassType(method.getGenericReturnType(), getControllerClass());
-        this.retMockJson = ApiDocManager.me().getMockJson(retType);
-        this.retFieldInfos = ApiDocManager.me().getMockFieldInfo(retType);
+
+        if (retType.getMainClass() != void.class) {
+            this.retMockJson = ApiDocManager.me().getMockJson(retType);
+            this.retFieldInfos = ApiDocManager.me().getMockFieldInfo(retType);
+        }
 
         setParameters(method, defaultMethods);
     }
