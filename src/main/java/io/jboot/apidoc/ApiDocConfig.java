@@ -32,7 +32,7 @@ public class ApiDocConfig {
     private String allInOneFilePath = "apidoc";
 
     private String mockJsonPath = "api-mock.json";
-    private String modelJsonPath = "api-model.json";
+    private String remarksJsonPath = "api-remarks.json";
 
 
     public String getBasePath() {
@@ -106,19 +106,19 @@ public class ApiDocConfig {
         return new File(PathKit.getRootClassPath(), mockJsonPath).getAbsolutePath();
     }
 
-    public String getModelJsonPath() {
-        return modelJsonPath;
+    public String getRemarksJsonPath() {
+        return remarksJsonPath;
     }
 
-    public void setModelJsonPath(String modelJsonPath) {
-        this.modelJsonPath = modelJsonPath;
+    public void setRemarksJsonPath(String remarksJsonPath) {
+        this.remarksJsonPath = remarksJsonPath;
     }
 
-    public String getModelJsonPathAbsolute() {
-        if (isAbsolutePath(modelJsonPath)) {
-            return modelJsonPath;
+    public String getRemarksJsonPathAbsolute() {
+        if (isAbsolutePath(remarksJsonPath)) {
+            return remarksJsonPath;
         }
-        return new File(PathKit.getRootClassPath(), modelJsonPath).getAbsolutePath();
+        return new File(PathKit.getRootClassPath(), remarksJsonPath).getAbsolutePath();
     }
 
     /**

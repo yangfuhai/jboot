@@ -41,7 +41,7 @@ public class ApiDocManager {
     //渲染器
     private ApiDocRender render = ApiDocRender.MARKDOWN_RENDER;
 
-    //每个类对于的属性名称，一般支持从数据库读取 字段配置 填充，来源于 api-model.json
+    //每个类对于的属性名称，一般支持从数据库读取 字段配置 填充，来源于 api-remarks.json
     private Map<String, Map<String, String>> modelFieldRemarks = new HashMap<>();
 
     //ClassType Mocks，来源于 api-mock.json
@@ -388,14 +388,14 @@ public class ApiDocManager {
         addModelFieldRemarks(ApiRet.class.getName().toLowerCase(), retRemarks);
 
 
-        File modelJsonFile = new File(config.getModelJsonPathAbsolute());
+        File modelJsonFile = new File(config.getRemarksJsonPathAbsolute());
         if (modelJsonFile.exists()) {
             String modelJsonString = FileUtil.readString(modelJsonFile);
             JSONObject modelJsonObject = JSONObject.parseObject(modelJsonString);
             for (String classOrSimpleName : modelJsonObject.keySet()) {
                 Map<String, String> remarks = new HashMap<>();
-                JSONObject value = modelJsonObject.getJSONObject(classOrSimpleName);
-                value.forEach((k, v) -> remarks.put(StrKit.firstCharToLowerCase(StrKit.toCamelCase(k)), String.valueOf(v)));
+                JSONObject modelRemarks = modelJsonObject.getJSONObject(classOrSimpleName);
+                modelRemarks.forEach((k, v) -> remarks.put(StrKit.firstCharToLowerCase(StrKit.toCamelCase(k)), String.valueOf(v)));
                 addModelFieldRemarks(classOrSimpleName.toLowerCase(), remarks);
             }
         }
