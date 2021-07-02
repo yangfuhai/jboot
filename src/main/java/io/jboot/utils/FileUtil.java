@@ -145,4 +145,9 @@ public class FileUtil {
         return name.contains("..") || name.endsWith(".jsp") || name.endsWith(".jspx");
     }
 
+
+    public static boolean isAbsolutePath(String path) {
+        return StrUtil.isNotBlank(path) && (path.startsWith("/") || path.indexOf(":") > 0);
+    }
+
 }

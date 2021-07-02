@@ -16,7 +16,7 @@
 package io.jboot.apidoc;
 
 import com.jfinal.kit.PathKit;
-import io.jboot.utils.StrUtil;
+import io.jboot.utils.FileUtil;
 
 import java.io.File;
 
@@ -40,7 +40,7 @@ public class ApiDocConfig {
     }
 
     public String getBasePathAbsolute() {
-        if (isAbsolutePath(basePath)) {
+        if (FileUtil.isAbsolutePath(basePath)) {
             return basePath;
         }
         return new File(PathKit.getRootClassPath(), "../../" + basePath).getAbsolutePath();
@@ -100,7 +100,7 @@ public class ApiDocConfig {
     }
 
     public String getMockJsonPathAbsolute() {
-        if (isAbsolutePath(mockJsonPath)) {
+        if (FileUtil.isAbsolutePath(mockJsonPath)) {
             return mockJsonPath;
         }
         return new File(PathKit.getRootClassPath(), mockJsonPath).getAbsolutePath();
@@ -115,20 +115,11 @@ public class ApiDocConfig {
     }
 
     public String getRemarksJsonPathAbsolute() {
-        if (isAbsolutePath(remarksJsonPath)) {
+        if (FileUtil.isAbsolutePath(remarksJsonPath)) {
             return remarksJsonPath;
         }
         return new File(PathKit.getRootClassPath(), remarksJsonPath).getAbsolutePath();
     }
 
-    /**
-     * 判断是否是绝对路径
-     *
-     * @param path
-     * @return true：绝对路径
-     */
-    private static boolean isAbsolutePath(String path) {
-        return StrUtil.isNotBlank(path) && (path.startsWith("/") || path.indexOf(":") > 0);
-    }
 
 }

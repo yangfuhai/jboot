@@ -26,6 +26,7 @@ import io.jboot.test.web.MockFilterChain;
 import io.jboot.test.web.MockFilterConfig;
 import io.jboot.test.web.MockJFinalFilter;
 import io.jboot.utils.ClassScanner;
+import io.jboot.utils.FileUtil;
 import io.jboot.utils.ReflectUtil;
 
 import javax.servlet.ServletException;
@@ -184,14 +185,14 @@ class MockApp {
             String configClassPath = testConfig != null ? testConfig.classPath() : DEFAULT_CLASS_PATH;
 
             //相对路径，是相对 /target/test-classes 进行判断的
-            if (!isAbsolutePath(configWebRootPath)) {
+            if (!FileUtil.isAbsolutePath(configWebRootPath)) {
                 configWebRootPath = new File(PathKitExt.getWebRootPath(), configWebRootPath).getCanonicalPath();
             }
             //设置 webRootPath
             PathKit.setWebRootPath(configWebRootPath);
 
 
-            if (!isAbsolutePath(configClassPath)) {
+            if (!FileUtil.isAbsolutePath(configClassPath)) {
                 configClassPath = new File(PathKitExt.getRootClassPath(), configClassPath).getCanonicalPath();
             }
             //设置 classPath
@@ -200,16 +201,6 @@ class MockApp {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    /**
-     * 判断是否是绝对路径
-     *
-     * @param path
-     * @return true：绝对路径
-     */
-    private static boolean isAbsolutePath(String path) {
-        return path.startsWith("/") || path.indexOf(":") > 0;
     }
 
 

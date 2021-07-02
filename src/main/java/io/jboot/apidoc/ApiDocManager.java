@@ -19,7 +19,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Ret;
-import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.apidoc.annotation.Api;
 import io.jboot.apidoc.annotation.ApiOper;
@@ -209,14 +208,14 @@ public class ApiDocManager {
 
 
     Object getMockObject(ClassType classType) {
-        Object retObject = getClassTypeMockData(classType.toString().toLowerCase());
+        Object retObject = getClassTypeMockData(classType.toString());
 
         if (retObject == null) {
-            getClassTypeMockData(classType.getMainClass().getName().toLowerCase());
+            getClassTypeMockData(classType.getMainClass().getName());
         }
 
         if (retObject == null) {
-            getClassTypeMockData(classType.getMainClass().getSimpleName().toLowerCase());
+            getClassTypeMockData(classType.getMainClass().getSimpleName());
         }
 
         if (retObject != null) {
@@ -257,8 +256,8 @@ public class ApiDocManager {
     }
 
     private Map<String, String> getFieldRemarks(Class<?> clazz) {
-        Map<String, String> ret = modelFieldRemarks.get(clazz.getName().toLowerCase());
-        return ret != null ? ret : modelFieldRemarks.get(clazz.getSimpleName().toLowerCase());
+        Map<String, String> ret = modelFieldRemarks.get(clazz.getName());
+        return ret != null ? ret : modelFieldRemarks.get(clazz.getSimpleName());
     }
 
     private List<ApiFieldInfo> buildApiFieldInfos(Map<String, String> fieldRemarks, ClassType classType) {
@@ -362,8 +361,8 @@ public class ApiDocManager {
         if (mockJsonFile.exists()) {
             String mockJsonString = FileUtil.readString(mockJsonFile);
             JSONObject mockJsonObject = JSONObject.parseObject(mockJsonString);
-            for (String s : mockJsonObject.keySet()) {
-                this.classTypeMockDatas.put(s.toLowerCase(), mockJsonObject.get(s));
+            for (String classTypeKey : mockJsonObject.keySet()) {
+                this.classTypeMockDatas.put(classTypeKey, mockJsonObject.get(classTypeKey));
             }
         }
     }
@@ -379,13 +378,13 @@ public class ApiDocManager {
         pageRemarks.put("totalPage", "总页数");
         pageRemarks.put("pageSize", "每页数据量");
         pageRemarks.put("list", "数据列表");
-        addModelFieldRemarks(Page.class.getName().toLowerCase(), pageRemarks);
+        addModelFieldRemarks(Page.class.getName(), pageRemarks);
 
 
         Map<String, String> retRemarks = new HashMap<>();
         retRemarks.put("state", "状态，成功 ok，失败 fail");
-        addModelFieldRemarks(Ret.class.getName().toLowerCase(), retRemarks);
-        addModelFieldRemarks(ApiRet.class.getName().toLowerCase(), retRemarks);
+        addModelFieldRemarks(Ret.class.getName(), retRemarks);
+        addModelFieldRemarks(ApiRet.class.getName(), retRemarks);
 
 
         File modelJsonFile = new File(config.getRemarksJsonPathAbsolute());
@@ -395,8 +394,8 @@ public class ApiDocManager {
             for (String classOrSimpleName : modelJsonObject.keySet()) {
                 Map<String, String> remarks = new HashMap<>();
                 JSONObject modelRemarks = modelJsonObject.getJSONObject(classOrSimpleName);
-                modelRemarks.forEach((k, v) -> remarks.put(StrKit.firstCharToLowerCase(StrKit.toCamelCase(k)), String.valueOf(v)));
-                addModelFieldRemarks(classOrSimpleName.toLowerCase(), remarks);
+                modelRemarks.forEach((k, v) -> remarks.put(k, String.valueOf(v)));
+                addModelFieldRemarks(classOrSimpleName, remarks);
             }
         }
     }
