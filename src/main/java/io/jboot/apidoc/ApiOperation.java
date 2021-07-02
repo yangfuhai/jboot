@@ -23,6 +23,7 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.web.json.JsonBody;
 
 import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -30,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class ApiOperation {
+public class ApiOperation implements Serializable {
 
     private String value;
     private String notes;

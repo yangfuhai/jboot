@@ -20,7 +20,9 @@ import io.jboot.utils.ClassType;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
-public class ApiParameter {
+import java.io.Serializable;
+
+public class ApiParameter implements Serializable {
 
     private String name;
     private String value;

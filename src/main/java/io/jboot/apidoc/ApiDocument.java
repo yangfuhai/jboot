@@ -15,10 +15,11 @@
  */
 package io.jboot.apidoc;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ApiDocument {
+public class ApiDocument implements Serializable {
 
     private String value;
     private String notes;
@@ -77,7 +78,7 @@ public class ApiDocument {
     }
 
     public void addOperation(ApiOperation apiOperation) {
-        if (apiOperations == null){
+        if (apiOperations == null) {
             apiOperations = new LinkedList<>();
         }
         apiOperations.add(apiOperation);

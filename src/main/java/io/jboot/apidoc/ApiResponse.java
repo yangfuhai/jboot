@@ -17,9 +17,10 @@ package io.jboot.apidoc;
 
 import io.jboot.apidoc.annotation.ApiResp;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ApiResponse {
+public class ApiResponse implements Serializable {
 
     private String name;
     private String dataType;
