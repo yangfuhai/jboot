@@ -39,10 +39,11 @@ public interface ApiDocRender {
                 "\n#(operation.notes ??) \n" +
                 "#end" +
                 "\n" +
-                "#('#####') 访问路径: `#(operation.actionKey ??)`\n" +
-                "#('#####') 数据类型: `#(operation.contentType.value ??)`\n" +
+                "#('####') 接口信息：\n" +
+                "- 访问路径： `#(operation.actionKey ??)`\n" +
+                "- 数据类型： `#(operation.contentType.value ??)`\n" +
                 "#if(operation.hasParameter())" +
-                "#('###') 请求参数：\n" +
+                "#('####') 请求参数：\n" +
                 "\n" +
                 "| 参数 | 名称 | 数据类型 | 是否必须 | 提交方式 | 描述 |  \n" +
                 "| --- | --- | --- | --- | --- | --- |\n" +
@@ -58,7 +59,7 @@ public interface ApiDocRender {
                 "#if(operation.retType)" +
                 "\n" +
                 "\n" +
-                "#('###') 数据响应：`#(operation.retType ??)`\n\n" +
+                "#('####') 数据响应：`#(operation.retType ??)`\n\n" +
                 "#for(item : operation.retFieldInfos)" +
                 "#(item.key ??)\n\n" +
                 "| 字段  | 数据类型 | 描述 |  \n" +
