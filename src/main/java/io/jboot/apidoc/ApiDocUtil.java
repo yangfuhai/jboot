@@ -18,6 +18,7 @@ package io.jboot.apidoc;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Path;
+import com.jfinal.kit.StrKit;
 import io.jboot.apidoc.annotation.ApiResp;
 import io.jboot.apidoc.annotation.ApiResps;
 import io.jboot.utils.AnnotationUtil;
@@ -160,6 +161,17 @@ class ApiDocUtil {
             return json;
         }
         return JSONObject.toJSONString(jsonObject, true);
+    }
+
+
+    public static String getterMethod2Field(Method getterMethod) {
+        String methodName = getterMethod.getName();
+        if (methodName.startsWith("get") && methodName.length() > 3) {
+            return StrKit.firstCharToLowerCase(methodName.substring(3));
+        } else if (methodName.startsWith("is") && methodName.length() > 2) {
+            return StrKit.firstCharToLowerCase(methodName.substring(2));
+        }
+        return null;
     }
 
 

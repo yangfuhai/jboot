@@ -59,117 +59,11 @@ public class ApiDocManager {
     }
 
     private void initDefaultClassTypeMockBuilder() {
-        addClassTypeMockBuilders(Ret.class, new ApiMockBuilder() {
-            @Override
-            Object build(ClassType classType, Method method, int level) {
-                Ret ret = Ret.ok();
-                if (classType.isGeneric()) {
-                    ClassType[] genericTypes = classType.getGenericTypes();
-                    if (genericTypes.length == 1) {
-                        Class<?> type = genericTypes[0].getMainClass();
-                        if (List.class.isAssignableFrom(type)) {
-                            ret.set("list", getMockObject(genericTypes[0], method, level));
-                        } else if (Map.class.isAssignableFrom(type)) {
-                            ret.set("map", getMockObject(genericTypes[0], method, level));
-                        } else if (Page.class.isAssignableFrom(type)) {
-                            ret.set("page", getMockObject(genericTypes[0], method, level));
-                        } else {
-                            ret.set("object", getMockObject(genericTypes[0], method, level));
-                        }
-                    }
-                }
-                List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
-                for (ApiResponse response : responses) {
-                    Object mockObject = null;
-                    if (level == 0 && response.getDataTypeClass() != Map.class && response.getDataTypeClass() != Ret.class) {
-                        mockObject = getMockObject(new ClassType(response.getDataTypeClass()), method, level);
-                    }
-                    if (mockObject == null || "".equals(mockObject)) {
-                        mockObject = response.getMockObject();
-                    }
-                    ret.put(response.getName(), mockObject);
-                }
-                return ret;
-            }
-        });
-
-
-        addClassTypeMockBuilders(Map.class, new ApiMockBuilder() {
-            @Override
-            Object build(ClassType classType, Method method, int level) {
-                // ret 让给 retBuilder 去构建
-                if (Ret.class.isAssignableFrom(classType.getMainClass())) {
-                    return null;
-                }
-
-
-                Map map = new HashMap();
-                if (classType.isGeneric()) {
-                    Object key = getMockObject(classType.getGenericTypes()[0], method, level);
-                    if (key == null) {
-                        key = "key";
-                    }
-                    Object value = getMockObject(classType.getGenericTypes()[1], method, level);
-                    map.put(key, value);
-                }
-
-                List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
-                for (ApiResponse response : responses) {
-                    Object mockObject = null;
-                    if (level == 0 && response.getDataTypeClass() != Map.class && response.getDataTypeClass() != Ret.class) {
-                        mockObject = getMockObject(new ClassType(response.getDataTypeClass()), method, level);
-                    }
-                    if (mockObject == null || "".equals(mockObject)) {
-                        mockObject = response.getMockObject();
-                    }
-                    map.put(response.getName(), mockObject);
-                }
-                return map;
-            }
-        });
-
-
-        addClassTypeMockBuilders(List.class, new ApiMockBuilder() {
-            @Override
-            Object build(ClassType classType, Method method, int level) {
-                List list = new ArrayList();
-                if (classType.isGeneric()) {
-                    Object value = getMockObject(classType.getGenericTypes()[0], method, level);
-                    list.add(value);
-                    Object value2 = getMockObject(classType.getGenericTypes()[0], method, level);
-                    list.add(value2);
-                }
-                return list;
-            }
-        });
-
-
-        addClassTypeMockBuilders(Page.class, new ApiMockBuilder() {
-            @Override
-            Object build(ClassType classType, Method method, int level) {
-                Page page = new Page();
-                page.setPageNumber(1);
-                page.setPageSize(10);
-                page.setTotalPage(1);
-                page.setTotalRow(2);
-
-                List list = new ArrayList();
-                list.add(getMockObject(classType.getGenericTypes()[0], method, level));
-                list.add(getMockObject(classType.getGenericTypes()[0], method, level));
-
-                page.setList(list);
-                return page;
-            }
-        });
-
-
-        addClassTypeMockBuilders(String.class, new ApiMockBuilder() {
-            @Override
-            Object build(ClassType classType, Method method, int level) {
-                return "";
-            }
-        });
-
+        addClassTypeMockBuilders(Ret.class, ApiMockBuilders.retBuilder);
+        addClassTypeMockBuilders(Map.class, ApiMockBuilders.mapBuilder);
+        addClassTypeMockBuilders(List.class, ApiMockBuilders.listBuilder);
+        addClassTypeMockBuilders(Page.class, ApiMockBuilders.pageBuilder);
+        addClassTypeMockBuilders(String.class, ApiMockBuilders.stringBuilder);
     }
 
     public ApiDocRender getRender() {
@@ -322,7 +216,7 @@ public class ApiDocManager {
 
         Map<String, Method> filedAndMethodMap = new HashMap<>();
         for (Method getterMethod : getterMethods) {
-            filedAndMethodMap.put(StrUtil.firstCharToLowerCase(getGetterMethodField(getterMethod.getName())), getterMethod);
+            filedAndMethodMap.put(ApiDocUtil.getterMethod2Field(getterMethod), getterMethod);
         }
 
         for (String key : defaultModelRemarks.keySet()) {
@@ -392,7 +286,7 @@ public class ApiDocManager {
 
         Map<String, Method> filedAndMethodMap = new HashMap<>();
         for (Method getterMethod : getterMethods) {
-            filedAndMethodMap.put(StrUtil.firstCharToLowerCase(getGetterMethodField(getterMethod.getName())), getterMethod);
+            filedAndMethodMap.put(ApiDocUtil.getterMethod2Field(getterMethod), getterMethod);
         }
 
 
@@ -428,14 +322,14 @@ public class ApiDocManager {
     }
 
 
-    private static String getGetterMethodField(String methodName) {
-        if (methodName.startsWith("get") && methodName.length() > 3) {
-            return methodName.substring(3);
-        } else if (methodName.startsWith("is") && methodName.length() > 2) {
-            return methodName.substring(2);
-        }
-        return null;
-    }
+//    private static String getGetterMethodField(String methodName) {
+//        if (methodName.startsWith("get") && methodName.length() > 3) {
+//            return methodName.substring(3);
+//        } else if (methodName.startsWith("is") && methodName.length() > 2) {
+//            return methodName.substring(2);
+//        }
+//        return null;
+//    }
 
     /**
      * 生成 API 文档
