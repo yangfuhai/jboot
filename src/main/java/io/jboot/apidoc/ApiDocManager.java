@@ -76,7 +76,7 @@ public class ApiDocManager {
                     }
                 }
                 List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
-                responses.forEach(apiResponse -> ret.put(apiResponse.getName(), apiResponse.getMock()));
+                responses.forEach(apiResponse -> ret.put(apiResponse.getName(), apiResponse.getMockObject()));
                 return ret;
             }
         });
@@ -102,7 +102,7 @@ public class ApiDocManager {
                 }
 
                 List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
-                responses.forEach(apiResponse -> map.put(apiResponse.getName(), apiResponse.getMock()));
+                responses.forEach(apiResponse -> map.put(apiResponse.getName(), apiResponse.getMockObject()));
                 return map;
             }
         });

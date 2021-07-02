@@ -15,7 +15,9 @@
  */
 package io.jboot.apidoc;
 
+import com.alibaba.fastjson.JSONObject;
 import io.jboot.apidoc.annotation.ApiResp;
+import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -63,6 +65,17 @@ public class ApiResponse implements Serializable {
 
     public String getMock() {
         return mock;
+    }
+
+    public Object getMockObject() {
+        if (StrUtil.isBlank(mock)) {
+            return "";
+        }
+        if ((mock.startsWith("{") && mock.endsWith("}")) || (mock.startsWith("[") && mock.endsWith("]"))) {
+            return JSONObject.parse(mock);
+        } else {
+            return mock;
+        }
     }
 
     public void setMock(String mock) {
