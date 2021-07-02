@@ -276,12 +276,11 @@ public class ApiDocManager {
         //根据默认的配置构建
         doBuildRemarksByDefault(apiResponses, classType, method);
 
+        List<Class<?>> dataTypeClasses = null;
+
         //根据方法的 @Resp 来构建
         if (level == 0) {
-            List<Class<?>> dataTypeClasses = doBuildRemarksByMethodAnnotation(apiResponses, method);
-            for (Class<?> dataType : dataTypeClasses) {
-                doBuildRemarks(retMap, new ClassType(dataType), method, level + 1);
-            }
+            dataTypeClasses = doBuildRemarksByMethodAnnotation(apiResponses, method);
         }
 
         //根据配置文件来构建
@@ -289,6 +288,13 @@ public class ApiDocManager {
 
         if (!apiResponses.isEmpty()) {
             retMap.put(StrKit.firstCharToLowerCase(mainClass.getSimpleName()), new ArrayList<>(apiResponses));
+        }
+
+        //必须执行在 retMap.put 之后，才能保证 remarks 在文档中的顺序
+        if (dataTypeClasses != null){
+            for (Class<?> dataType : dataTypeClasses) {
+                doBuildRemarks(retMap, new ClassType(dataType), method, level + 1);
+            }
         }
 
 
