@@ -27,6 +27,7 @@ import io.jboot.codegen.CodeGenHelpler;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.driver.DriverClassNames;
 import io.jboot.utils.FileUtil;
+import io.jboot.utils.StrUtil;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -77,9 +78,13 @@ public class ApiJsonGenerator {
         for (TableMeta tableMeta : tableMetas) {
             Map<String, String> modelRemarks = new HashMap<>();
             for (ColumnMeta columnMeta : tableMeta.columnMetas) {
-                modelRemarks.put(columnMeta.attrName, columnMeta.remarks);
+                if (StrUtil.isNotBlank(columnMeta.remarks)) {
+                    modelRemarks.put(columnMeta.attrName, columnMeta.remarks);
+                }
             }
-            root.put(tableMeta.modelName, modelRemarks);
+            if (!modelRemarks.isEmpty()) {
+                root.put(tableMeta.modelName, modelRemarks);
+            }
         }
 
 
@@ -132,9 +137,13 @@ public class ApiJsonGenerator {
         for (TableMeta tableMeta : tableMetas) {
             Map<String, String> modelRemarks = new HashMap<>();
             for (ColumnMeta columnMeta : tableMeta.columnMetas) {
-                modelRemarks.put(columnMeta.attrName, columnMeta.remarks);
+                if (StrUtil.isNotBlank(columnMeta.remarks)) {
+                    modelRemarks.put(columnMeta.attrName, columnMeta.remarks);
+                }
             }
-            root.put(tableMeta.modelName, modelRemarks);
+            if (!modelRemarks.isEmpty()) {
+                root.put(tableMeta.modelName, modelRemarks);
+            }
         }
 
 
