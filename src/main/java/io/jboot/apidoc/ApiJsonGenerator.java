@@ -27,15 +27,16 @@ import io.jboot.Jboot;
 import io.jboot.codegen.CodeGenHelpler;
 import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.driver.DriverClassNames;
+import io.jboot.utils.DateUtil;
 import io.jboot.utils.FileUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.sql.DataSource;
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.temporal.Temporal;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -56,12 +57,18 @@ public class ApiJsonGenerator {
      */
     public static void genMockJson(JsonGeneratorConfig config) {
 
+        Map<String, Map<String, Object>> root = new LinkedHashMap<>();
 
         File file = new File(config.getJsonFilePathPathAbsolute());
         //如果文件存在，则先读取其配置，然后再修改
         if (file.exists()) {
-            System.err.println("genMockJson() do Nothing, file exists: " + FileUtil.getCanonicalPath(file));
-            return;
+            String oldJson = FileUtil.readString(file);
+            JSONObject rootJsonObject = JSONObject.parseObject(oldJson);
+            if (rootJsonObject != null && !rootJsonObject.isEmpty()) {
+                for (String classOrSimpleName : rootJsonObject.keySet()) {
+                    root.put(classOrSimpleName, rootJsonObject.getJSONObject(classOrSimpleName));
+                }
+            }
         }
 
         MetaBuilder builder = CodeGenHelpler.createMetaBuilder(config.getDatasource(), config.getType(), false);
@@ -73,18 +80,17 @@ public class ApiJsonGenerator {
                     .collect(Collectors.toList());
         }
 
-        Map<String, Map<String, String>> root = new LinkedHashMap<>();
-
 
         for (TableMeta tableMeta : tableMetas) {
-            Map<String, String> modelRemarks = new HashMap<>();
+            Map<String, Object> classMockData = new HashMap<>();
             for (ColumnMeta columnMeta : tableMeta.columnMetas) {
-                if (StrUtil.isNotBlank(columnMeta.remarks)) {
-                    modelRemarks.put(columnMeta.attrName, columnMeta.remarks);
+                Object mockData = createMockData(columnMeta);
+                if (mockData != null && !"".equals(mockData)) {
+                    classMockData.put(columnMeta.attrName, mockData);
                 }
             }
-            if (!modelRemarks.isEmpty()) {
-                root.put(StrKit.firstCharToLowerCase(tableMeta.modelName), modelRemarks);
+            if (!classMockData.isEmpty()) {
+                root.put(StrKit.firstCharToLowerCase(tableMeta.modelName), classMockData);
             }
         }
 
@@ -94,6 +100,57 @@ public class ApiJsonGenerator {
 
         System.out.println("Gen Remarks Json File ----->" + FileUtil.getCanonicalPath(file));
     }
+
+
+    private static Object createMockData(ColumnMeta columnMeta) {
+        if (String.class.getName().equals(columnMeta.javaType)) {
+            return columnMeta.remarks;
+        } else if (Date.class.getName().equals(columnMeta.javaType)) {
+            return DateUtil.toDateTimeString(new Date());
+        } else if (isTemporal(columnMeta.javaType)) {
+            return DateUtil.toDateTimeString(new Date());
+        } else if (int.class.getName().equals(columnMeta.javaType)) {
+            return 1;
+        } else if (Integer.class.getName().equals(columnMeta.javaType)) {
+            return 100;
+        } else if (long.class.getName().equals(columnMeta.javaType)) {
+            return 1;
+        } else if (Long.class.getName().equals(columnMeta.javaType)) {
+            return 100;
+        } else if (short.class.getName().equals(columnMeta.javaType)) {
+            return 1;
+        } else if (Short.class.getName().equals(columnMeta.javaType)) {
+            return 100;
+        } else if (BigDecimal.class.getName().equals(columnMeta.javaType)) {
+            return BigDecimal.ONE;
+        } else if (BigInteger.class.getName().equals(columnMeta.javaType)) {
+            return BigDecimal.ONE;
+        } else if (boolean.class.getName().equals(columnMeta.javaType)) {
+            return Boolean.TRUE;
+        } else if (Boolean.class.getName().equals(columnMeta.javaType)) {
+            return Boolean.TRUE;
+        } else if (float.class.getName().equals(columnMeta.javaType)) {
+            return 1.0f;
+        } else if (Float.class.getName().equals(columnMeta.javaType)) {
+            return 1.0f;
+        } else if (double.class.getName().equals(columnMeta.javaType)) {
+            return 1.0d;
+        } else if (Double.class.getName().equals(columnMeta.javaType)) {
+            return 1.0d;
+        } else {
+            return "";
+        }
+    }
+
+    private static boolean isTemporal(String javaType) {
+        try {
+            return Temporal.class.isAssignableFrom(Class.forName(javaType));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     /**
      * 生成 Model 的字段备注数据
