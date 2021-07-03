@@ -1,10 +1,11 @@
 # Jboot API 文档生成
 
-在 Jboot 中内置了 3 个注解，用于生成帮助开发者生成 API 文档。它们分别是
+在 Jboot 中内置了 4 个注解，用于生成帮助开发者生成 API 文档。它们分别是
 
 - @Api  ：给 Controller 配置，一个 Controller 生成一个文档文件。
-- @ApiOper ： 给 Controller 的方法配置。
+- @ApiOper ：给 Controller 的方法配置。
 - @ApiPara ：给 Controller 的参数进行配置。
+- @ApiResp ：给 Controller 的 Render 内容进行配置。
 
 ## 基本使用
 
@@ -35,9 +36,12 @@ public class UserApiController extends ApiControllerBase {
 
 
     @ApiOper("用户登录")
-    public Ret login(@ApiPara(value = "登录账户", notes = "可以是邮箱") @NotNull String loginAccount
+    @ApiResp(key="Jwt",notes="Jwt 的 Token 信息")
+    public Ret login(
+              @ApiPara(value = "登录账户", notes = "可以是邮箱") @NotNull String loginAccount
             , @ApiPara("登录密码") @NotNull String password) {
         //....
+        return Ret.ok().set("Jwt","....");
     }
 
 
@@ -56,7 +60,7 @@ public class UserApiController extends ApiControllerBase {
 
 默认情况下，` ApiDocManager.me().genDocs(config)` 生成的是 Markdown 文档，内容如下：
 
-![](./static/images/apidoc.jpg)
+![](./static/images/apidoc1.jpg)
 
 ## 不同的文档生成在不同的目录
 
@@ -123,6 +127,26 @@ public class UserApiController extends ApiControllerBase {
 的文档会把 `Controler1` 和  `Controller2` 的接口也汇总到此文档里来。
 
 > 注意：此时，`Controler1` 和  `Controller2` 不再需要添加 `@Api` 注解。
+
+## 所有的 API 生成在 1 文档里
+
+```java
+public class ApiDocGenerator {
+
+    public static void main(String[] args) {
+
+        ApiDocConfig config = new ApiDocConfig();
+        config.setBasePath("./doc/api");
+        
+        //所有的 api 信息生成在同一个文档里
+        config.setAllInOneEnable(true);
+
+        ApiDocManager.me().genDocs(config);
+    }
+}
+```
+
+
 
 
 ## 无参数的 Action 生成 API 文档
