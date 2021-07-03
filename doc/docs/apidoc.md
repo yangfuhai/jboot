@@ -36,7 +36,7 @@ public class UserApiController extends ApiControllerBase {
 
 
     @ApiOper("用户登录")
-    @ApiResp(key="Jwt",notes="Jwt 的 Token 信息")
+    @ApiResp(field="Jwt",notes="Jwt 的 Token 信息")
     public Ret login(
               @ApiPara(value = "登录账户", notes = "可以是邮箱") @NotNull String loginAccount
             , @ApiPara("登录密码") @NotNull String password) {
