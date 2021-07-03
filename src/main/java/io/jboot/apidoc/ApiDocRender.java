@@ -36,7 +36,7 @@ public interface ApiDocRender {
                 "#(\"##\") #(operation.value ??)" +
                 "\n" +
                 "#if(operation.notes)" +
-                "\n#(operation.notes ??) \n" +
+                "\n\n#(operation.notes ??) \n" +
                 "#end" +
                 "\n" +
                 "#('####') 接口信息：\n" +
@@ -44,7 +44,7 @@ public interface ApiDocRender {
                 "- 数据类型： `#(operation.contentType.value ??)`\n" +
 
                 "#if(operation.hasParameter())" +
-                "#('####') 请求参数：\n" +
+                "\n#('####') 请求参数：\n" +
                 "\n" +
                 "| 参数 | 名称 | 数据类型 | 是否必须 | 提交方式 | 描述 |  \n" +
                 "| --- | --- | --- | --- | --- | --- |\n" +
@@ -70,7 +70,7 @@ public interface ApiDocRender {
                 "| 字段  | 数据类型 | 描述 |  \n" +
                 "| --- | --- | --- | \n" +
                 "#for(info : item.value)" +
-                "| #(info.name ??) | #(info.dataType ??) | #(info.remarks ??) |  \n" +
+                "| #(info.name ??) | `#(info.classType ?? info.dataType ?? )` | #(info.remarks ??) |  \n" +
                 "#end" +
                 "\n\n" +
                 "#end" + //end 响应字段表格

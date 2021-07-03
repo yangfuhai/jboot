@@ -17,6 +17,7 @@ package io.jboot.apidoc;
 
 import com.alibaba.fastjson.JSONObject;
 import io.jboot.apidoc.annotation.ApiResp;
+import io.jboot.utils.ClassType;
 import io.jboot.utils.StrUtil;
 
 import java.io.Serializable;
@@ -26,10 +27,9 @@ public class ApiResponse implements Serializable {
 
     private String name;
     private String dataType;
-    private Class<?> dataTypeClass;
+    private ClassType classType;
     private String remarks;
     private String mock;
-
 
 
     public ApiResponse() {
@@ -38,7 +38,7 @@ public class ApiResponse implements Serializable {
     public ApiResponse(ApiResp apiResp) {
         this.name = apiResp.name();
         this.dataType = apiResp.dataType().getSimpleName();
-        this.dataTypeClass = apiResp.dataType();
+        this.classType = new ClassType(apiResp.dataType(), apiResp.genericTypes());
         this.remarks = apiResp.notes();
         this.mock = apiResp.mock();
     }
@@ -59,12 +59,12 @@ public class ApiResponse implements Serializable {
         this.dataType = dataType;
     }
 
-    public Class<?> getDataTypeClass() {
-        return dataTypeClass;
+    public ClassType getClassType() {
+        return classType;
     }
 
-    public void setDataTypeClass(Class<?> dataTypeClass) {
-        this.dataTypeClass = dataTypeClass;
+    public void setClassType(ClassType classType) {
+        this.classType = classType;
     }
 
     public String getRemarks() {

@@ -29,6 +29,16 @@ public class ClassType implements Serializable {
         this.mainClass = mainClass;
     }
 
+    public ClassType(Class<?> mainClass, Class<?>[] genericClasses) {
+        this.mainClass = mainClass;
+        if (genericClasses != null && genericClasses.length > 0) {
+            genericTypes = new ClassType[genericClasses.length];
+            for (int i = 0; i < genericClasses.length; i++) {
+                genericTypes[i] = new ClassType(genericClasses[i]);
+            }
+        }
+    }
+
     public ClassType(Class<?> mainClass, ClassType[] genericTypes) {
         this.mainClass = mainClass;
         this.genericTypes = genericTypes;

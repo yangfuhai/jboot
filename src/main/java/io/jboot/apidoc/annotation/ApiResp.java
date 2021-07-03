@@ -43,6 +43,13 @@ public @interface ApiResp {
      */
     Class<?> dataType() default String.class;
 
+    /**
+     * 泛型类型
+     *
+     * @return
+     */
+    Class<?>[] genericTypes() default {};
+
 
     /**
      * mock 数据
