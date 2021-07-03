@@ -90,6 +90,10 @@ public class ApiResponse implements Serializable {
         }
         if ((mock.startsWith("{") && mock.endsWith("}")) || (mock.startsWith("[") && mock.endsWith("]"))) {
             return JSONObject.parse(mock);
+        } else if (StrUtil.isNumeric(mock) && (Number.class.isAssignableFrom(classType.getMainClass()) || isType(int.class) || isType(long.class))) {
+            return Long.parseLong(mock);
+        } else if (StrUtil.isDecimal(mock) && (Number.class.isAssignableFrom(classType.getMainClass()) || isType(float.class) || isType(double.class))) {
+            return Double.parseDouble(mock);
         } else {
             return mock;
         }
