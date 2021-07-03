@@ -59,6 +59,11 @@ public class ApiResponse implements Serializable {
         this.dataType = dataType;
     }
 
+    public void setDataAndClassType(Class<?> clazz) {
+        this.dataType = clazz.getSimpleName();
+        this.classType = new ClassType(clazz);
+    }
+
     public ClassType getClassType() {
         return classType;
     }
@@ -106,4 +111,17 @@ public class ApiResponse implements Serializable {
         return Objects.equals(name, that.name);
     }
 
+    public boolean isType(Class<?> clazz) {
+        return this.classType != null && clazz == this.classType.getMainClass();
+    }
+
+
+    @Override
+    public String toString() {
+        return "ApiResponse{" +
+                "name='" + name + '\'' +
+                ", dataType='" + dataType + '\'' +
+                ", remarks='" + remarks + '\'' +
+                '}';
+    }
 }

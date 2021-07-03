@@ -92,4 +92,11 @@ public class ApiDocument implements Serializable {
         this.controllerClass = controllerClass;
     }
 
+    @Override
+    public String toString() {
+        return "ApiDocument{" +
+                "value='" + value + '\'' +
+                ", notes='" + notes + '\'' +
+                '}';
+    }
 }

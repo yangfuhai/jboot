@@ -49,7 +49,7 @@ public class ApiMockBuilders {
             List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
             for (ApiResponse response : responses) {
                 Object mockObject = null;
-                if (level == 0 && response.getClassType().getMainClass() != Map.class && response.getClassType().getMainClass() != Ret.class) {
+                if (level == 0 && !response.isType(Map.class) && !response.isType(Ret.class)) {
                     mockObject = getMockObject(response.getClassType(), method, level);
                 }
                 if (mockObject == null || "".equals(mockObject)) {
@@ -70,7 +70,6 @@ public class ApiMockBuilders {
                 return null;
             }
 
-
             Map map = new HashMap();
             if (classType.isGeneric()) {
                 Object key = getMockObject(classType.getGenericTypes()[0], method, level);
@@ -84,7 +83,7 @@ public class ApiMockBuilders {
             List<ApiResponse> responses = ApiDocUtil.getApiResponseInMethod(method);
             for (ApiResponse response : responses) {
                 Object mockObject = null;
-                if (level == 0 && response.getClassType().getMainClass() != Map.class && response.getClassType().getMainClass() != Ret.class) {
+                if (level == 0 && !response.isType(Map.class) && !response.isType(Ret.class)) {
                     mockObject = getMockObject(response.getClassType(), method, level);
                 }
                 if (mockObject == null || "".equals(mockObject)) {

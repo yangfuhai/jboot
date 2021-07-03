@@ -70,7 +70,7 @@ public interface ApiDocRender {
                 "| 字段  | 数据类型 | 描述 |  \n" +
                 "| --- | --- | --- | \n" +
                 "#for(info : item.value)" +
-                "| #(info.name ??) | `#(info.classType ?? info.dataType ?? )` | #(info.remarks ??) |  \n" +
+                "| #(info.name ??) | `#(info.classType ??)` | #(info.remarks ??) |  \n" +
                 "#end" +
                 "\n\n" +
                 "#end" + //end 响应字段表格

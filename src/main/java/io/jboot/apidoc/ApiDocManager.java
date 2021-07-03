@@ -228,7 +228,7 @@ public class ApiDocManager {
 
             Method getterMethod = filedAndMethodMap.get(key);
             if (getterMethod != null) {
-                apiResponse.setDataType(getterMethod.getReturnType().getSimpleName());
+                apiResponse.setDataAndClassType(getterMethod.getReturnType());
             }
             //若没有 getter 方法，一般情况下 map 或者 ret 等
             //此时，需要通过 Mock 数据来对 key 的 dataType 进行推断
@@ -237,7 +237,7 @@ public class ApiDocManager {
                 if (object instanceof Map) {
                     Object value = ((Map<?, ?>) object).get(key);
                     if (value != null) {
-                        apiResponse.setDataType(value.getClass().getSimpleName());
+                        apiResponse.setDataAndClassType(value.getClass());
                     }
                 }
             }
@@ -299,7 +299,7 @@ public class ApiDocManager {
 
             Method getterMethod = filedAndMethodMap.get(key);
             if (getterMethod != null) {
-                apiResponse.setDataType(getterMethod.getReturnType().getSimpleName());
+                apiResponse.setDataAndClassType(getterMethod.getReturnType());
             }
             //若没有 getter 方法，一般情况下 map 或者 ret 等
             //此时，需要通过 Mock 数据来对 key 的 dataType 进行推断
@@ -308,7 +308,7 @@ public class ApiDocManager {
                 if (object instanceof Map) {
                     Object value = ((Map<?, ?>) object).get(key);
                     if (value != null) {
-                        apiResponse.setDataType(value.getClass().getSimpleName());
+                        apiResponse.setDataAndClassType(value.getClass());
                     }
                 }
             }
@@ -322,15 +322,6 @@ public class ApiDocManager {
         return ret != null ? ret : modelFieldRemarks.get(StrKit.firstCharToLowerCase(clazz.getSimpleName()));
     }
 
-
-//    private static String getGetterMethodField(String methodName) {
-//        if (methodName.startsWith("get") && methodName.length() > 3) {
-//            return methodName.substring(3);
-//        } else if (methodName.startsWith("is") && methodName.length() > 2) {
-//            return methodName.substring(2);
-//        }
-//        return null;
-//    }
 
     /**
      * 生成 API 文档
@@ -528,7 +519,6 @@ public class ApiDocManager {
                 }
             }
         }
-
     }
 
 

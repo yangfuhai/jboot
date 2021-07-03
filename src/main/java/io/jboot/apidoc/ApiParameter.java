@@ -182,4 +182,14 @@ public class ApiParameter implements Serializable {
         }
         return sb.toString();
     }
+
+
+    @Override
+    public String toString() {
+        return "ApiParameter{" +
+                "name='" + name + '\'' +
+                ", value='" + value + '\'' +
+                ", notes='" + notes + '\'' +
+                '}';
+    }
 }

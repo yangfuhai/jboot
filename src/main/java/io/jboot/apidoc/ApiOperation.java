@@ -260,4 +260,13 @@ public class ApiOperation implements Serializable {
     public void setRetRemarks(Map<String, List<ApiResponse>> retRemarks) {
         this.retRemarks = retRemarks;
     }
+
+    @Override
+    public String toString() {
+        return "ApiOperation{" +
+                "value='" + value + '\'' +
+                ", notes='" + notes + '\'' +
+                ", actionKey='" + actionKey + '\'' +
+                '}';
+    }
 }
