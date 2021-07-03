@@ -495,17 +495,17 @@ public class ApiDocManager {
         Api api = controllerClass.getAnnotation(Api.class);
         if (api != null) {
             Class<?>[] collectClasses = api.collect();
-            for (Class<?> cClass : collectClasses) {
+            for (Class<?> collectClass : collectClasses) {
 
-                String tempControllerPath = ApiDocUtil.getControllerPath(cClass);
-                HttpMethod tempDefaultHttpMethod = ApiDocUtil.getControllerMethod(cClass);
+                String tempControllerPath = ApiDocUtil.getControllerPath(collectClass);
+                HttpMethod tempDefaultHttpMethod = ApiDocUtil.getControllerMethod(collectClass);
 
-                List<Method> collectMethods = ReflectUtil.searchMethodList(cClass,
+                List<Method> collectMethods = ReflectUtil.searchMethodList(collectClass,
                         method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
 
                 for (Method method : collectMethods) {
                     ApiOperation apiOperation = new ApiOperation();
-                    apiOperation.setControllerClass(cClass);
+                    apiOperation.setControllerClass(collectClass);
                     apiOperation.setMethodAndInfo(method, tempControllerPath, ApiDocUtil.getMethodHttpMethods(method, tempDefaultHttpMethod));
 
                     ApiOper apiOper = method.getAnnotation(ApiOper.class);
