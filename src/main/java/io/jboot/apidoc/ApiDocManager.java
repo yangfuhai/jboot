@@ -166,7 +166,7 @@ public class ApiDocManager {
     private void doBuildRemarks(Map<String, List<ApiResponse>> retMap, ClassType classType, Method method, int level) {
         Class<?> mainClass = classType.getMainClass();
 
-        Set<ApiResponse> apiResponses = new HashSet<>();
+        Set<ApiResponse> apiResponses = new LinkedHashSet<>();
 
         //根据默认的配置构建
         doBuildRemarksByDefault(apiResponses, classType, method);
@@ -182,10 +182,10 @@ public class ApiDocManager {
         doBuildRemarksByConfig(apiResponses, classType, method);
 
         if (!apiResponses.isEmpty()) {
-            retMap.put(mainClass.getSimpleName(), new ArrayList<>(apiResponses));
+            retMap.put(mainClass.getSimpleName(), new LinkedList<>(apiResponses));
         }
 
-        //必须执行在 retMap.put 之后，才能保证 remarks 在文档中的顺序
+        //必须执行在 retMap.put 之后，才能保证 remarks 表格在文档中的顺序
         if (dataTypeClasses != null) {
             for (Class<?> dataType : dataTypeClasses) {
                 doBuildRemarks(retMap, new ClassType(dataType), method, level + 1);
