@@ -25,7 +25,7 @@ import java.util.Objects;
 
 public class ApiResponse implements Serializable {
 
-    private String name;
+    private String field;
     private String dataType;
     private ClassType classType;
     private String remarks;
@@ -36,19 +36,19 @@ public class ApiResponse implements Serializable {
     }
 
     public ApiResponse(ApiResp apiResp) {
-        this.name = apiResp.name();
+        this.field = apiResp.field();
         this.dataType = apiResp.dataType().getSimpleName();
         this.classType = new ClassType(apiResp.dataType(), apiResp.genericTypes());
         this.remarks = apiResp.notes();
         this.mock = apiResp.mock();
     }
 
-    public String getName() {
-        return name;
+    public String getField() {
+        return field;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setField(String field) {
+        this.field = field;
     }
 
     public String getDataType() {
@@ -112,7 +112,7 @@ public class ApiResponse implements Serializable {
             return false;
         }
         ApiResponse that = (ApiResponse) o;
-        return Objects.equals(name, that.name);
+        return Objects.equals(field, that.field);
     }
 
     public boolean isType(Class<?> clazz) {
@@ -123,7 +123,7 @@ public class ApiResponse implements Serializable {
     @Override
     public String toString() {
         return "ApiResponse{" +
-                "name='" + name + '\'' +
+                "name='" + field + '\'' +
                 ", dataType='" + dataType + '\'' +
                 ", remarks='" + remarks + '\'' +
                 '}';

@@ -223,7 +223,7 @@ public class ApiDocManager {
         for (String key : defaultModelRemarks.keySet()) {
 
             ApiResponse apiResponse = new ApiResponse();
-            apiResponse.setName(key);
+            apiResponse.setField(key);
             apiResponse.setRemarks(defaultModelRemarks.get(key));
 
             Method getterMethod = filedAndMethodMap.get(key);
@@ -294,7 +294,7 @@ public class ApiDocManager {
         for (String key : configRemarks.keySet()) {
 
             ApiResponse apiResponse = new ApiResponse();
-            apiResponse.setName(key);
+            apiResponse.setField(key);
             apiResponse.setRemarks(configRemarks.get(key));
 
             Method getterMethod = filedAndMethodMap.get(key);

@@ -23,11 +23,11 @@ import java.lang.annotation.*;
 public @interface ApiResp {
 
     /**
-     * 参数名称
+     * 字段名称
      *
      * @return
      */
-    String name();
+    String field();
 
     /**
      * 描述

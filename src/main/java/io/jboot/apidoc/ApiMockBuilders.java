@@ -55,7 +55,7 @@ public class ApiMockBuilders {
                 if (mockObject == null || "".equals(mockObject)) {
                     mockObject = response.getMockObject();
                 }
-                ret.put(response.getName(), mockObject);
+                ret.put(response.getField(), mockObject);
             }
             return ret;
         }
@@ -89,7 +89,7 @@ public class ApiMockBuilders {
                 if (mockObject == null || "".equals(mockObject)) {
                     mockObject = response.getMockObject();
                 }
-                map.put(response.getName(), mockObject);
+                map.put(response.getField(), mockObject);
             }
             return map;
         }
