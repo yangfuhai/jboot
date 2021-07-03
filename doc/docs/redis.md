@@ -176,11 +176,11 @@ JbootRedis 是通过 `jedis` 或者 `JedisCluster` 进行操作的，如果想�
 JbootRedis redis = Jboot.me().getReids();
 
 //单机模式下
-JbootRedisImpl redisImpl = (JbootRedisImpl)redis;
+JbootJedisImpl redisImpl = (JbootJedisImpl)redis;
 Jedis jedis = redisImpl.getJedis();
 
 //集群模式下
-JbootClusterRedisImpl redisImpl = (JbootClusterRedisImpl)redis;
+JbootJedisClusterImpl redisImpl = (JbootJedisClusterImpl)redis;
 JedisCluster jedis = redisImpl.getJedisCluster();
 ```
 ## Redis集群
