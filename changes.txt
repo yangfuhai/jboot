@@ -1,3 +1,15 @@
+jboot v3.10.1:
+新增：ApiDoc 新增 allInOne 模式，方便把所有 api 生成到一个文档里
+新增：@Api() 注解新增 orderNo 的配置
+新增：可以通过 api-remarks.json 和 api-mock.json 为文档配置 json 输出
+新增 "ApiJsonGenerator"，用于生成通过数据库生成 api-remarks.json 和 api-mock.json 文件
+新增：ApiDoc 文档新增自定义排序 Comparator 配置的支持
+新增：ApiDoc 新增自定义 ApiMockBuilder 的支持，用于构建任意 Model 的 Mock 数据
+新增："@ApiResp" 注解，用于对 JFinal 通过 render 而非返回值的形式的支持
+新增：ApiDocument 等信息添加序列化的支持
+
+
+
 jboot v3.10.0:
 新增：apidoc 模块
 优化：JbootCaptchaCache 在某些情况下可能出现 NPE 的问题
