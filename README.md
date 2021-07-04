@@ -26,7 +26,7 @@ Jboot 是一个基于 JFinal、Dubbo、Seata、Sentinel、ShardingSphere、Nacos
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.10.0</version>
+    <version>3.10.1</version>
 </dependency>
 ```
 
