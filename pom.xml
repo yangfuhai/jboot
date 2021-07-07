@@ -47,7 +47,7 @@
         <jfinal-weixin.version>3.1</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
-        <jackson.version>2.12.3</jackson.version>
+        <jackson.version>2.12.4</jackson.version>
         <mysql.version>5.1.49</mysql.version>
         <undertow.version>2.2.8.Final</undertow.version>
         <slf4j.version>1.7.31</slf4j.version>
@@ -66,11 +66,11 @@
         <httpcore.version>4.4.13</httpcore.version>
         <netty.version>4.1.52.Final</netty.version>
         <sentinel.version>1.8.1</sentinel.version>
-        <dubbo.version>2.7.11</dubbo.version>
+        <dubbo.version>2.7.12</dubbo.version>
         <resteasy.version>3.13.2.Final</resteasy.version>
         <seata.version>1.4.2</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.2.1</metrics.version>
+        <metrics.version>4.2.2</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
