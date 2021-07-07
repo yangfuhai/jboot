@@ -153,8 +153,8 @@ public class ApiOperation implements Serializable {
         this.retType = ClassUtil.getClassType(method.getGenericReturnType(), getControllerClass());
 
         if (retType.getMainClass() != void.class) {
-            this.retMockJson = ApiDocManager.me().buildMockJson(retType,method);
-            this.retRemarks = ApiDocManager.me().buildRemarks(retType,method);
+            this.retMockJson = ApiDocManager.me().buildMockJson(retType, method);
+            this.retRemarks = ApiDocManager.me().buildRemarks(retType, method);
         }
 
         setParameters(method, defaultMethods);
@@ -197,12 +197,13 @@ public class ApiOperation implements Serializable {
                 if (paraAnnotation.method().length > 0) {
                     apiParameter.setHttpMethods(paraAnnotation.method());
                 }
-                if(paraAnnotation.require()) {
-                	apiParameter.setNotBlank(true);
-                	apiParameter.setRequire(true);
+
+                if (paraAnnotation.require()) {
+                    apiParameter.setNotBlank(true);
+                    apiParameter.setRequire(true);
                 }
             }
-           
+
             if (parameter.getAnnotation(NotNull.class) != null) {
                 apiParameter.setRequire(true);
             }
