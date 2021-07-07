@@ -102,15 +102,15 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
         }
 
         String pageAttr = getPara(KEY_PAGE_ATTR, scope, DEFAULT_PAGE_ATTR);
-        Page<?> page = controller.getAttr(pageAttr);
-        if (page != null) {
-            return page;
+        Object page = controller.getAttr(pageAttr);
+        if (page instanceof Page) {
+            return (Page<?>) page;
         }
 
         Enumeration<String> attrNames = controller.getAttrNames();
         if (attrNames != null) {
             while (attrNames.hasMoreElements()) {
-                Object attrValue = controller.get(attrNames.nextElement());
+                Object attrValue = controller.getAttr(attrNames.nextElement());
                 if (attrValue instanceof Page) {
                     return (Page<?>) attrValue;
                 }
