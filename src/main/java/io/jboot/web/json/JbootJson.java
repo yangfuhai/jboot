@@ -43,7 +43,7 @@ public class JbootJson extends JFinalJson {
         setSkipNullValueField(config.isSkipNullValueField());
 
         //设置转换层级
-        setConvertDepth(8);
+        setConvertDepth(config.getDepth());
 
         //默认设置为 CamelCase 的属性模式
         if (config.isCamelCaseJsonStyleEnable()) {
