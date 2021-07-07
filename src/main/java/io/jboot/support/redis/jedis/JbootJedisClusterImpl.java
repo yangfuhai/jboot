@@ -53,7 +53,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
             this.timeout = timeout;
         }
         if(maxAttempts == null) {
-        	config.setMaxAttempts(this.maxAttempts);
+        	maxAttempts = this.maxAttempts;
         }
 
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
