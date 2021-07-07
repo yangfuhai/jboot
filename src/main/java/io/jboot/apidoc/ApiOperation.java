@@ -33,22 +33,22 @@ import java.util.Map;
 
 public class ApiOperation implements Serializable {
 
-    private String value;
-    private String notes;
-    private String paraNotes;
-    private int orderNo;
+    private String value; //标题
+    private String notes; //描述
+    private String paraNotes; //参数描述，对所有参数的描述
+    private int orderNo; //排序序号
 
-    private String actionKey;
+    private String actionKey; // 路径
     private ContentType contentType;
-    private List<ApiParameter> apiParameters;
+    private List<ApiParameter> apiParameters; //所有的参数
 
-    private ClassType retType;
-    private String retMockJson;
-    private Map<String, List<ApiResponse>> retRemarks;
+    private ClassType retType; //响应类型
+    private String retMockJson; //响应 mock json
+    private Map<String, List<ApiResponse>> retRemarks; //响应的字段备注（描述），key 类名的简称，value 类名的字段
 
 
-    private Class<?> controllerClass;
-    private Method method;
+    private Class<?> controllerClass; //所在的类
+    private Method method; //对应的方法
 
 
     public ApiOperation() {
