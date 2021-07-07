@@ -58,5 +58,10 @@ public @interface ApiPara {
      * @return
      */
     HttpMethod[] method() default {};
-
+    
+    /**
+     * 是否必填
+     * @return
+     */
+    boolean require() default false;
 }

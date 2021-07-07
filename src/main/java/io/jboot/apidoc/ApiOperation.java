@@ -197,8 +197,12 @@ public class ApiOperation implements Serializable {
                 if (paraAnnotation.method().length > 0) {
                     apiParameter.setHttpMethods(paraAnnotation.method());
                 }
+                if(paraAnnotation.require()) {
+                	apiParameter.setNotBlank(true);
+                	apiParameter.setRequire(true);
+                }
             }
-
+           
             if (parameter.getAnnotation(NotNull.class) != null) {
                 apiParameter.setRequire(true);
             }
