@@ -32,7 +32,7 @@ public class JbootJsonConfig {
     private String timestampPattern;
     private int depth = 16;
 
-	public boolean isCamelCaseJsonStyleEnable() {
+    public boolean isCamelCaseJsonStyleEnable() {
         return camelCaseJsonStyleEnable;
     }
 
@@ -81,10 +81,10 @@ public class JbootJsonConfig {
     }
 
     public int getDepth() {
-		return depth;
-	}
+        return depth;
+    }
 
-	public void setDepth(int depth) {
-		this.depth = depth;
-	}
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
 }
