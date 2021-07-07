@@ -36,6 +36,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 
     protected JedisCluster jedisCluster;
     private int timeout = 2000;
+    private int maxAttempts = 5;
 
     static final Log LOG = Log.getLog(JbootJedisClusterImpl.class);
 
@@ -51,7 +52,9 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
         if (timeout != null) {
             this.timeout = timeout;
         }
-
+        if(maxAttempts == null) {
+        	config.setMaxAttempts(this.maxAttempts);
+        }
 
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
 
