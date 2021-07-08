@@ -16,6 +16,7 @@
 package io.jboot.apidoc;
 
 import com.jfinal.kit.PathKit;
+import com.jfinal.kit.Ret;
 import io.jboot.utils.FileUtil;
 
 import java.io.File;
@@ -33,6 +34,8 @@ public class ApiDocConfig {
 
     private String mockJsonPath = "api-mock.json";
     private String remarksJsonPath = "api-remarks.json";
+
+    private Class<?> defaultContainerClass = Ret.class;
 
 
     public String getBasePath() {
@@ -121,5 +124,11 @@ public class ApiDocConfig {
         return new File(PathKit.getRootClassPath(), remarksJsonPath).getAbsolutePath();
     }
 
+    public Class<?> getDefaultContainerClass() {
+        return defaultContainerClass;
+    }
 
+    public void setDefaultContainerClass(Class<?> defaultContainerClass) {
+        this.defaultContainerClass = defaultContainerClass;
+    }
 }
