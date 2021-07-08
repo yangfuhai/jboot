@@ -345,17 +345,17 @@ public class ApiDocManager {
             document.setNotes(config.getAllInOneNotes());
             document.setFilePath(config.getAllInOneFilePath());
 
-            buildAllInOneDocument(document, controllerClasses);
+            buildAllInOneDocument(document, controllerClasses, config);
 
             apiDocuments.add(document);
         } else {
             for (Class<?> controllerClass : controllerClasses) {
                 if (StrUtil.isNotBlank(config.getPackagePrefix())) {
                     if (controllerClass.getName().startsWith(config.getPackagePrefix())) {
-                        apiDocuments.add(buildDocument(controllerClass));
+                        apiDocuments.add(buildDocument(controllerClass, config));
                     }
                 } else {
-                    apiDocuments.add(buildDocument(controllerClass));
+                    apiDocuments.add(buildDocument(controllerClass, config));
                 }
             }
         }
@@ -417,9 +417,9 @@ public class ApiDocManager {
     }
 
 
-    private void buildAllInOneDocument(ApiDocument document, List<Class> controllerClasses) {
+    private void buildAllInOneDocument(ApiDocument document, List<Class> controllerClasses, ApiDocConfig config) {
         for (Class<?> controllerClass : controllerClasses) {
-            buildOperation(document, controllerClass);
+            buildOperation(document, controllerClass, config);
         }
 
         List<ApiOperation> operations = document.getApiOperations();
@@ -433,7 +433,7 @@ public class ApiDocManager {
     }
 
 
-    private ApiDocument buildDocument(Class<?> controllerClass) {
+    private ApiDocument buildDocument(Class<?> controllerClass, ApiDocConfig config) {
 
         Api api = controllerClass.getAnnotation(Api.class);
         ApiDocument document = new ApiDocument();
@@ -448,7 +448,7 @@ public class ApiDocManager {
             document.setFilePath(filePath);
         }
 
-        buildOperation(document, controllerClass);
+        buildOperation(document, controllerClass, config);
 
         List<ApiOperation> operations = document.getApiOperations();
         if (operations != null) {
@@ -468,7 +468,7 @@ public class ApiDocManager {
     }
 
 
-    private void buildOperation(ApiDocument document, Class<?> controllerClass) {
+    private void buildOperation(ApiDocument document, Class<?> controllerClass, ApiDocConfig config) {
 
         List<Method> methods = ReflectUtil.searchMethodList(controllerClass,
                 method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
@@ -477,11 +477,15 @@ public class ApiDocManager {
         HttpMethod defaultHttpMethod = ApiDocUtil.getControllerMethod(controllerClass);
 
         for (Method method : methods) {
+            ApiOper apiOper = method.getAnnotation(ApiOper.class);
+
             ApiOperation apiOperation = new ApiOperation();
             apiOperation.setControllerClass(controllerClass);
-            apiOperation.setMethodAndInfo(method, controllerPath, ApiDocUtil.getMethodHttpMethods(method, defaultHttpMethod));
 
-            ApiOper apiOper = method.getAnnotation(ApiOper.class);
+            Class<?> containerClass = apiOper.container() != void.class ? apiOper.container() : config.getDefaultContainerClass();
+            apiOperation.setMethodAndInfo(method, controllerPath, ApiDocUtil.getMethodHttpMethods(method, defaultHttpMethod), containerClass);
+
+
             apiOperation.setValue(apiOper.value());
             apiOperation.setNotes(apiOper.notes());
             apiOperation.setParaNotes(apiOper.paraNotes());
@@ -497,18 +501,19 @@ public class ApiDocManager {
             Class<?>[] collectClasses = api.collect();
             for (Class<?> collectClass : collectClasses) {
 
-                String tempControllerPath = ApiDocUtil.getControllerPath(collectClass);
-                HttpMethod tempDefaultHttpMethod = ApiDocUtil.getControllerMethod(collectClass);
-
                 List<Method> collectMethods = ReflectUtil.searchMethodList(collectClass,
                         method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
 
                 for (Method method : collectMethods) {
+                    ApiOper apiOper = method.getAnnotation(ApiOper.class);
+
                     ApiOperation apiOperation = new ApiOperation();
                     apiOperation.setControllerClass(collectClass);
-                    apiOperation.setMethodAndInfo(method, tempControllerPath, ApiDocUtil.getMethodHttpMethods(method, tempDefaultHttpMethod));
 
-                    ApiOper apiOper = method.getAnnotation(ApiOper.class);
+                    Class<?> containerClass = apiOper.container() != void.class ? apiOper.container() : config.getDefaultContainerClass();
+                    apiOperation.setMethodAndInfo(method, controllerPath, ApiDocUtil.getMethodHttpMethods(method, defaultHttpMethod), containerClass);
+
+
                     apiOperation.setValue(apiOper.value());
                     apiOperation.setNotes(apiOper.notes());
                     apiOperation.setParaNotes(apiOper.paraNotes());

@@ -29,7 +29,7 @@ public class ApiMockBuilders {
 
     static ApiMockBuilder retBuilder = new ApiMockBuilder() {
         @Override
-        Object build(ClassType classType, Method method, int level) {
+        public Object build(ClassType classType, Method method, int level) {
             Ret ret = Ret.ok();
             if (classType.isGeneric()) {
                 ClassType[] genericTypes = classType.getGenericTypes();
@@ -64,7 +64,7 @@ public class ApiMockBuilders {
 
     static ApiMockBuilder mapBuilder = new ApiMockBuilder() {
         @Override
-        Object build(ClassType classType, Method method, int level) {
+        public Object build(ClassType classType, Method method, int level) {
             // ret 让给 retBuilder 去构建
             if (Ret.class.isAssignableFrom(classType.getMainClass())) {
                 return null;
@@ -98,7 +98,7 @@ public class ApiMockBuilders {
 
     static ApiMockBuilder listBuilder = new ApiMockBuilder() {
         @Override
-        Object build(ClassType classType, Method method, int level) {
+        public Object build(ClassType classType, Method method, int level) {
             List list = new ArrayList();
             if (classType.isGeneric()) {
                 Object value = getMockObject(classType.getGenericTypes()[0], method, level);
@@ -113,7 +113,7 @@ public class ApiMockBuilders {
 
     static ApiMockBuilder pageBuilder = new ApiMockBuilder() {
         @Override
-        Object build(ClassType classType, Method method, int level) {
+        public Object build(ClassType classType, Method method, int level) {
             Page page = new Page();
             page.setPageNumber(1);
             page.setPageSize(10);
@@ -132,7 +132,7 @@ public class ApiMockBuilders {
 
     static ApiMockBuilder stringBuilder = new ApiMockBuilder() {
         @Override
-        Object build(ClassType classType, Method method, int level) {
+        public Object build(ClassType classType, Method method, int level) {
             return "";
         }
     };

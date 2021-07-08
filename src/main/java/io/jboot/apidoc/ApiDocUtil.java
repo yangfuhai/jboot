@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-class ApiDocUtil {
+public class ApiDocUtil {
 
 
     public static String getControllerPath(Class<?> controllerClass) {
@@ -130,7 +130,7 @@ class ApiDocUtil {
     }
 
 
-    public static List<ApiResponse> getApiResponseInMethod(Method method){
+    public static List<ApiResponse> getApiResponseInMethod(Method method) {
 
         List<ApiResponse> retList = new LinkedList<>();
 
@@ -148,7 +148,6 @@ class ApiDocUtil {
 
         return retList;
     }
-
 
 
     public static String prettyJson(String json) {
@@ -174,7 +173,6 @@ class ApiDocUtil {
         }
         return null;
     }
-
 
 
 }

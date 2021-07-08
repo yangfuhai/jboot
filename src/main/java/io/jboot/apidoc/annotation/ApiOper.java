@@ -58,7 +58,14 @@ public @interface ApiOper {
      * @return
      */
     int orderNo() default 0;
-    
-    
+
+
+    /**
+     * 对于某些没有返回值（void）的方法，其调用其他方法渲染数据时，可以通过其设置顶级的类 比如  Ret 或者 Map 之类的
+     *
+     * @return
+     */
+    Class<?> container() default void.class;
+
 
 }
