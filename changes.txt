@@ -1,3 +1,12 @@
+jboot v3.10.2:
+新增：注解 @ApiPara() 增加 require 参数的配置，感谢 @lijiahong
+优化：Json 增加递归深度配置，修复多层级数据返回不完全问题，感谢 @lijiahong
+优化：升级 JFinal、jackson、Dubbo 等到最新版本
+修复：JbootPaginateDirective 在默认情况下无法获取 page 的问题
+修复：Redis 连接有密码时，Redis 集群时未设置 maxAttempts 连接权限不上问题，感谢 @lijiahong
+
+
+
 jboot v3.10.1:
 新增：ApiDoc 新增 allInOne 模式，方便把所有 api 生成到一个文档里
 新增：@Api() 注解新增 orderNo 的配置
