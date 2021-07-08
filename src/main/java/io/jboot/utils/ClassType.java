@@ -68,6 +68,10 @@ public class ClassType implements Serializable {
         return genericTypes != null && genericTypes.length > 0;
     }
 
+    public boolean  isVoid(){
+        return mainClass == void.class;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(mainClass.getSimpleName());

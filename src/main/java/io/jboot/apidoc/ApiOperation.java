@@ -152,10 +152,8 @@ public class ApiOperation implements Serializable {
         this.actionKey = ApiDocUtil.getActionKey(method, controllerPath);
         this.retType = ClassUtil.getClassType(method.getGenericReturnType(), getControllerClass());
 
-        if (retType.getMainClass() != void.class) {
-            this.retMockJson = ApiDocManager.me().buildMockJson(retType, method);
-            this.retRemarks = ApiDocManager.me().buildRemarks(retType, method);
-        }
+        this.retMockJson = ApiDocManager.me().buildMockJson(retType, method);
+        this.retRemarks = ApiDocManager.me().buildRemarks(retType, method);
 
         setParameters(method, defaultMethods);
     }
