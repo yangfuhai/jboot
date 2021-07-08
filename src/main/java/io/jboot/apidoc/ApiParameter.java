@@ -49,6 +49,7 @@ public class ApiParameter implements Serializable {
         this.notes = apiPara.notes();
         this.dataType = ClassUtil.getClassType(apiPara.dataType(), null);
         this.httpMethods = apiPara.method().length == 0 ? defaultMethods : apiPara.method();
+        this.require = apiPara.require();
     }
 
     public String getName() {
