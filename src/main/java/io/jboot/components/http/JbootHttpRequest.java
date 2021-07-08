@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -122,7 +122,7 @@ public class JbootHttpRequest {
 
     public void addParam(String key, Object value) {
         if (params == null) {
-            params = new HashMap<>();
+            params = new LinkedHashMap<>();
         }
         if (value instanceof File) {
             setMultipartFormData(true);
@@ -132,7 +132,7 @@ public class JbootHttpRequest {
 
     public void addParams(Map<String, Object> map) {
         if (params == null) {
-            params = new HashMap<>();
+            params = new LinkedHashMap<>();
         }
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() == null) {
@@ -234,7 +234,7 @@ public class JbootHttpRequest {
 
     public void addHeader(String key, String value) {
         if (headers == null) {
-            headers = new HashMap<>();
+            headers = new LinkedHashMap<>();
         }
         headers.put(key, value);
     }
@@ -245,7 +245,7 @@ public class JbootHttpRequest {
         }
 
         if (this.headers == null) {
-            this.headers = new HashMap<>();
+            this.headers = new LinkedHashMap<>();
         }
         this.headers.putAll(headers);
     }
