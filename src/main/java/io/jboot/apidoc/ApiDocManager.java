@@ -482,7 +482,7 @@ public class ApiDocManager {
             ApiOperation apiOperation = new ApiOperation();
             apiOperation.setControllerClass(controllerClass);
 
-            Class<?> containerClass = apiOper.container() != void.class ? apiOper.container() : config.getDefaultContainerClass();
+            Class<?> containerClass = apiOper.containerClass() != void.class ? apiOper.containerClass() : config.getDefaultContainerClass();
             apiOperation.setMethodAndInfo(method, controllerPath, ApiDocUtil.getMethodHttpMethods(method, defaultHttpMethod), containerClass);
 
 
@@ -510,7 +510,7 @@ public class ApiDocManager {
                     ApiOperation apiOperation = new ApiOperation();
                     apiOperation.setControllerClass(collectClass);
 
-                    Class<?> containerClass = apiOper.container() != void.class ? apiOper.container() : config.getDefaultContainerClass();
+                    Class<?> containerClass = apiOper.containerClass() != void.class ? apiOper.containerClass() : config.getDefaultContainerClass();
                     apiOperation.setMethodAndInfo(method, controllerPath, ApiDocUtil.getMethodHttpMethods(method, defaultHttpMethod), containerClass);
 
 
