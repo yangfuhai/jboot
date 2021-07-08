@@ -192,6 +192,9 @@ public class JbootHttpImpl implements JbootHttp {
         connection.setConnectTimeout(request.getConnectTimeOut());
         connection.setRequestMethod(request.getMethod());
 
+        //如果 reqeust 的 header 不配置 content-Type, 使用默认的
+        connection.setRequestProperty("Content-Type",request.getContentType());
+
         if (request.getHeaders() != null && request.getHeaders().size() > 0) {
             for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());

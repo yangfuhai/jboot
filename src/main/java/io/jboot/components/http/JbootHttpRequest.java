@@ -43,8 +43,9 @@ public class JbootHttpRequest {
     public static final int CONNECT_TIME_OUT = 1000 * 5; // 5秒
     public static final String CHAR_SET = "UTF-8";
 
+    public static final String CONTENT_TYPE_TEXT = "text/plain; charset=utf-8";
     public static final String CONTENT_TYPE_JSON = "application/json; charset=utf-8";
-    public static final String CONTENT_TYPE_URL_ENCODED = "application/x-www-form-urlencoded;charset=utf-8";
+    public static final String CONTENT_TYPE_URL_ENCODED = "application/x-www-form-urlencoded; charset=utf-8";
 
     private String requestUrl;
 
