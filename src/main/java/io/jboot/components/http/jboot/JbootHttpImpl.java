@@ -86,7 +86,7 @@ public class JbootHttpImpl implements JbootHttp {
 
             //get 请求
             else {
-                connection.setInstanceFollowRedirects(true);
+                connection.setInstanceFollowRedirects(request.isInstanceFollowRedirects());
                 connection.connect();
             }
 

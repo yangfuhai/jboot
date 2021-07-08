@@ -72,6 +72,9 @@ public class JbootHttpRequest {
     // 如果某些时候只是为了去读取 http 头信息，而不需要 http body，可以配置为 false
     private boolean readBody = true;
 
+    // 遇到重定向是否自动跟随
+    private boolean instanceFollowRedirects = true;
+
 
     public static JbootHttpRequest create(String url) {
         return new JbootHttpRequest(url);
@@ -350,5 +353,13 @@ public class JbootHttpRequest {
 
     public void setReadBody(boolean readBody) {
         this.readBody = readBody;
+    }
+
+    public boolean isInstanceFollowRedirects() {
+        return instanceFollowRedirects;
+    }
+
+    public void setInstanceFollowRedirects(boolean instanceFollowRedirects) {
+        this.instanceFollowRedirects = instanceFollowRedirects;
     }
 }
