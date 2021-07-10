@@ -55,12 +55,10 @@ public class JbootGatewayManager {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
         for (Map.Entry<String, JbootGatewayConfig> entry : configMap.entrySet()) {
             JbootGatewayConfig config = entry.getValue();
-            if (config.isConfigOk()) {
-                if (StrUtil.isBlank(config.getName())) {
-                    config.setName(entry.getKey());
-                }
-                registerConfig(config);
+            if (StrUtil.isBlank(config.getName())) {
+                config.setName(entry.getKey());
             }
+            registerConfig(config);
         }
     }
 
@@ -103,7 +101,7 @@ public class JbootGatewayManager {
             });
         }
 
-        if (config.isEnable() && config.isConfigOk()) {
+        if (config.isEnable()) {
             JbootGatewayHealthChecker.me().start();
         }
     }
