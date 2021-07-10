@@ -34,6 +34,7 @@ import io.jboot.app.ApplicationUtil;
 import io.jboot.components.cache.support.JbootCaptchaCache;
 import io.jboot.components.cache.support.JbootTokenCache;
 import io.jboot.components.gateway.JbootGatewayHandler;
+import io.jboot.components.gateway.discovery.GatewayDiscoveryManager;
 import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
@@ -364,6 +365,7 @@ public class JbootCoreConfig extends JFinalConfig {
         LimiterManager.me().init();
         JbootSeataManager.me().init();
         JbootSentinelManager.me().init();
+        GatewayDiscoveryManager.me().init();
 
         JbootAppListenerManager.me().onStart();
 

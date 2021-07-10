@@ -34,7 +34,7 @@ public class JbootGatewayConfig implements Serializable {
     public static final GatewayInterceptor[] EMPTY_GATEWAY_INTERCEPTOR_ARRAY = new GatewayInterceptor[0];
 
     private String name;
-    private String[] uri;
+    private Set<String> uri;
 
 
     // 是否启用健康检查
@@ -97,11 +97,11 @@ public class JbootGatewayConfig implements Serializable {
     }
 
 
-    public String[] getUri() {
+    public Set<String> getUri() {
         return uri;
     }
 
-    public void setUri(String[] uri) {
+    public void setUri(Set<String> uri) {
         this.uri = uri;
     }
 
@@ -374,7 +374,7 @@ public class JbootGatewayConfig implements Serializable {
         }
         synchronized (this) {
             if (configOk == null) {
-                configOk = uri != null && uri.length > 0;
+                configOk = uri != null && uri.size() > 0;
                 if (configOk) {
                     ensureUriConfigCorrect();
                 }
@@ -490,6 +490,23 @@ public class JbootGatewayConfig implements Serializable {
 
         return false;
     }
+
+    public void addUri(String uri) {
+        if (this.uri == null) {
+            this.uri = new LinkedHashSet<>();
+        }
+
+        if (this.uri.add(uri)) {
+            healthUriChanged = true;
+        }
+    }
+
+    public void removeUri(String uri) {
+        if (this.uri != null && this.uri.remove(uri)) {
+            healthUriChanged = true;
+        }
+    }
+
 
     public void addUnHealthUri(String uri) {
         if (unHealthUris.add(uri)) {

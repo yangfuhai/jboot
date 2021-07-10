@@ -20,13 +20,12 @@ import com.codahale.metrics.*;
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplicationConfig;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.NetUtil;
 import io.jboot.utils.StrUtil;
 import io.prometheus.client.dropwizard.DropwizardExports;
 import io.prometheus.client.dropwizard.samplebuilder.DefaultSampleBuilder;
 import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -96,7 +95,7 @@ public class PrometheusExports extends io.prometheus.client.Collector implements
 
     private static final String getInstance() {
         if (instance == null) {
-            String ipAddress = getIpAddress();
+            String ipAddress = NetUtil.getLocalIpAddress();
             if (StrUtil.isNotBlank(ipAddress)) {
                 instance = ipAddress + ":" + Jboot.configValue("undertow.port");
             } else {
@@ -106,38 +105,6 @@ public class PrometheusExports extends io.prometheus.client.Collector implements
         return instance;
     }
 
-    private static String getIpAddress() {
-        String hostIpAddress = null;
-        String siteLocalIpAddress = null;// 外网IP
-        try {
-            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-            InetAddress address = null;
-            boolean findSiteLocalIpAddress = false;// 是否找到外网IP
-            while (networkInterfaces.hasMoreElements() && !findSiteLocalIpAddress) {
-                NetworkInterface ni = networkInterfaces.nextElement();
-                Enumeration<InetAddress> addresses = ni.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    address = addresses.nextElement();
-
-                    if (!address.isSiteLocalAddress() && !address.isLoopbackAddress()
-                            && address.getHostAddress().indexOf(":") == -1) {// 外网IP
-                        siteLocalIpAddress = address.getHostAddress();
-                        findSiteLocalIpAddress = true;
-                        break;
-                    } else if (address.isSiteLocalAddress()
-                            && !address.isLoopbackAddress()
-                            && address.getHostAddress().indexOf(":") == -1) {// 内网IP
-                        hostIpAddress = address.getHostAddress();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // 优先使用配置的外网IP地址
-        return StrUtil.isNotBlank(siteLocalIpAddress) ? siteLocalIpAddress : hostIpAddress;
-    }
 
     /**
      * Export counter as Prometheus <a href="https://prometheus.io/docs/concepts/metric_types/#gauge">Gauge</a>.

@@ -21,6 +21,7 @@ import io.jboot.utils.HttpUtil;
 import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
 
+import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -78,7 +79,7 @@ public class JbootGatewayHealthChecker implements Runnable {
     private void doHealthCheck() {
         for (JbootGatewayConfig config : JbootGatewayManager.me().getConfigMap().values()) {
             if (config.isEnable() && config.isUriHealthCheckEnable() && StrUtil.isNotBlank(config.getUriHealthCheckPath())) {
-                String[] uris = config.getUri();
+                Set<String> uris = config.getUri();
                 for (String uri : uris) {
                     String url = uri + config.getUriHealthCheckPath();
                     if (getHttpCode(url) == 200) {
