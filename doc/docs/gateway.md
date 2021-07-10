@@ -7,7 +7,8 @@
 - host路由
 - query路由
 - 多个 Gateway 配置
-- 其他
+- 服务发现
+- 注意事项
 
 
 ## 概述
@@ -273,7 +274,130 @@ jboot.gateway.xxx.queryEquals = aa:bb,cc:dd
 jboot.gateway.xxx.queryContains = aa,bb
 ```
 
-## 其他
+## 服务发现
+
+Jboot Gateway 功能通过 Nacos（可以通过 SPI 进行扩展其他事项方式） 实现了自动发现服务。
+
+使用方法如下：
+
+1、新增 nacos 依赖（Gateway 端和服务端都需要）
+
+```xml
+<dependency>
+    <groupId>com.alibaba.nacos</groupId>
+    <artifactId>nacos-client</artifactId>
+    <version>版本号</version>
+</dependency>
+```
+
+2、启动 Nacos
+
+- Clone Nacos 项目
+
+```
+git clone https://github.com/nacos-group/nacos-docker.git
+cd nacos-docker
+```
+
+单机模式 Derby
+```
+docker-compose -f example/standalone-derby.yaml up
+```
+
+单机模式 Mysql
+```
+docker-compose -f example/standalone-mysql.yaml up
+```
+
+集群模式
+```
+docker-compose -f example/cluster-hostname.yaml up 
+```
+
+3、在 Gateway 网关端添加如下配置：
+
+```properties
+jboot.gateway.discovery.enable = true
+
+#若配置其他，则自行通过 SPI 进行扩展
+jboot.gateway.discovery.type = nacos
+
+#默认值为：jboot-gateway
+jboot.gateway.discovery.group =
+
+jboot.gateway.discovery.nacos.serverAddr = 127.0.0.1:8848
+```
+
+更多的 nacos 配置如下：
+```properties
+jboot.gateway.discovery.nacos.isUseCloudNamespaceParsing = xxx
+jboot.gateway.discovery.nacos.isUseEndpointParsingRule = xxx
+jboot.gateway.discovery.nacos.endpoint = xxx
+jboot.gateway.discovery.nacos.endpointPort = xxx
+jboot.gateway.discovery.nacos.namespace = xxx
+jboot.gateway.discovery.nacos.username = xxx
+jboot.gateway.discovery.nacos.password = xxx
+jboot.gateway.discovery.nacos.accessKey = xxx
+jboot.gateway.discovery.nacos.secretKey = xxx
+jboot.gateway.discovery.nacos.ramRoleName = xxx
+jboot.gateway.discovery.nacos.contextPath = xxx
+jboot.gateway.discovery.nacos.clusterName = xxx
+jboot.gateway.discovery.nacos.encode = xxx
+jboot.gateway.discovery.nacos.configLongPollTimeout = xxx
+jboot.gateway.discovery.nacos.configRetryTime = xxx
+jboot.gateway.discovery.nacos.maxRetry = xxx
+jboot.gateway.discovery.nacos.enableRemoteSyncConfig = xxx
+```
+
+4、在 服务端 添加如下配置
+
+```properties
+jboot.gateway.discovery.enable = true
+
+#若配置其他，则自行通过 SPI 进行扩展
+jboot.gateway.discovery.type = nacos
+
+#默认值为：jboot-gateway，这个值必须和 gateway 配置的一致
+jboot.gateway.discovery.group =
+
+jboot.gateway.instance.name = name
+
+#不配置默认为 http,可以配置为 https
+jboot.gateway.instance.uriScheme = http
+
+#不配置默认为当前服务器的IP地址，可以获取错误
+jboot.gateway.instance.uriHost = 
+
+#默认为 undertow.port 的配置
+jboot.gateway.instance.uriPort = http
+
+jboot.gateway.instance.uriPath = /user/aaa
+
+jboot.gateway.discovery.nacos.serverAddr = 127.0.0.1:8848
+```
+
+更多的 nacos 配置如下：
+```properties
+jboot.gateway.discovery.nacos.isUseCloudNamespaceParsing = xxx
+jboot.gateway.discovery.nacos.isUseEndpointParsingRule = xxx
+jboot.gateway.discovery.nacos.endpoint = xxx
+jboot.gateway.discovery.nacos.endpointPort = xxx
+jboot.gateway.discovery.nacos.namespace = xxx
+jboot.gateway.discovery.nacos.username = xxx
+jboot.gateway.discovery.nacos.password = xxx
+jboot.gateway.discovery.nacos.accessKey = xxx
+jboot.gateway.discovery.nacos.secretKey = xxx
+jboot.gateway.discovery.nacos.ramRoleName = xxx
+jboot.gateway.discovery.nacos.contextPath = xxx
+jboot.gateway.discovery.nacos.clusterName = xxx
+jboot.gateway.discovery.nacos.encode = xxx
+jboot.gateway.discovery.nacos.configLongPollTimeout = xxx
+jboot.gateway.discovery.nacos.configRetryTime = xxx
+jboot.gateway.discovery.nacos.maxRetry = xxx
+jboot.gateway.discovery.nacos.enableRemoteSyncConfig = xxx
+```
+
+## 注意事项
 当配置中，如果一个内容存在多个值的时候，需要用英文逗号（,）隔开。
 
 比如:

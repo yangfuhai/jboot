@@ -48,6 +48,7 @@ public class GatewayDiscoveryManager {
 
     /**
      * 暴露本地的示例到 nacos 等服务注册中心
+     *
      * @param gatewayDiscovery
      */
     private void exportLocalInstance(GatewayDiscovery gatewayDiscovery) {
@@ -61,7 +62,7 @@ public class GatewayDiscoveryManager {
             GatewayInstance instance = new GatewayInstance();
             instance.setHealthy(true);
             instance.setServiceName(instanceConfig.getName());
-            instance.setUri(instanceConfig.getUri());
+            instance.setUri(instanceConfig.toUri());
 
             instance.setHost(NetUtil.getLocalIpAddress());
             instance.setPort(Integer.parseInt(Jboot.configValue("undertow.port", "8080")));

@@ -267,7 +267,7 @@ https://nacos.io/zh-cn/docs/quick-start-docker.html
 
 **第三步，在 jboot.properties 添加如下配置**
 
-```java
+```properties
 jboot.config.nacos.enable = true
 jboot.config.nacos.serverAddr = 127.0.0.1:8848
 jboot.config.nacos.dataId = jboot
@@ -277,7 +277,7 @@ jboot.config.nacos.group = jboot
 nacos 支持如下更多配置，但是只需要以上配置就可以正常运行。
     
 
-```
+```properties
 jboot.config.nacos.isUseCloudNamespaceParsing = xxx
 jboot.config.nacos.isUseEndpointParsingRule = xxx
 jboot.config.nacos.endpoint = xxx

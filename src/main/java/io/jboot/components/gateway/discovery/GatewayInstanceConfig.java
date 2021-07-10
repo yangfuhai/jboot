@@ -15,10 +15,17 @@
  */
 package io.jboot.components.gateway.discovery;
 
+import io.jboot.Jboot;
+import io.jboot.utils.NetUtil;
+import io.jboot.utils.StrUtil;
+
 public class GatewayInstanceConfig {
 
     private String name;
-    private String uri;
+    private String uriScheme = "http";
+    private String uriHost;
+    private int uriPort;
+    private int uriPath;
 
     public String getName() {
         return name;
@@ -28,11 +35,53 @@ public class GatewayInstanceConfig {
         this.name = name;
     }
 
-    public String getUri() {
-        return uri;
+    public String getUriScheme() {
+        return uriScheme;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setUriScheme(String uriScheme) {
+        this.uriScheme = uriScheme;
+    }
+
+    public String getUriHost() {
+        return uriHost;
+    }
+
+    public void setUriHost(String uriHost) {
+        this.uriHost = uriHost;
+    }
+
+    public int getUriPort() {
+        return uriPort;
+    }
+
+    public void setUriPort(int uriPort) {
+        this.uriPort = uriPort;
+    }
+
+    public int getUriPath() {
+        return uriPath;
+    }
+
+    public void setUriPath(int uriPath) {
+        this.uriPath = uriPath;
+    }
+
+    public String toUri() {
+        StringBuilder sb = new StringBuilder(uriScheme).append("://");
+        if (StrUtil.isNotBlank(uriHost)) {
+            sb.append(uriHost);
+        } else {
+            sb.append(NetUtil.getLocalIpAddress());
+        }
+        if (uriPort == 0) {
+            uriPort = Integer.parseInt(Jboot.configValue("undertow.port", "8080"));
+        }
+        sb.append(":").append(uriPort);
+        if (StrUtil.isNotBlank(uriPath)) {
+            sb.append(uriPath);
+        }
+
+        return sb.toString();
     }
 }
