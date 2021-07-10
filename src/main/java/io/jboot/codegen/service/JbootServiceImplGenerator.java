@@ -18,15 +18,18 @@ package io.jboot.codegen.service;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.JavaKeyword;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.PathKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.generator.MetaBuilder;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
 import io.jboot.codegen.CodeGenHelpler;
+import io.jboot.codegen.PathKit;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +68,7 @@ public class JbootServiceImplGenerator {
     }
 
     private String buildOutPutDir() {
-        return PathKit.getWebRootPath() + "/src/main/java/" + (basePackage + "." + implName).replace(".", "/");
+        return PathKit.getUserDir() + "/src/main/java/" + (basePackage + "." + implName).replace(".", "/");
     }
 
 

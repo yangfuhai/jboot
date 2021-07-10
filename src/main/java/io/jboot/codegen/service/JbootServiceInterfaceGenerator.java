@@ -17,7 +17,6 @@ package io.jboot.codegen.service;
 
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.PathKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.generator.BaseModelGenerator;
 import com.jfinal.plugin.activerecord.generator.MetaBuilder;
@@ -25,6 +24,7 @@ import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
 import io.jboot.codegen.CodeGenHelpler;
+import io.jboot.codegen.PathKit;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,7 +43,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
 
 
     public JbootServiceInterfaceGenerator(String basePackage, String modelPacket) {
-        super(basePackage, PathKit.getWebRootPath() + "/src/main/java/" + basePackage.replace(".", "/"));
+        super(basePackage, PathKit.getUserDir() + "/src/main/java/" + basePackage.replace(".", "/"));
 
 
         this.modelPacket = modelPacket;
