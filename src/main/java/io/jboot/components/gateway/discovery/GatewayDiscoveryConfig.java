@@ -19,7 +19,7 @@ import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.utils.StrUtil;
 
 @ConfigModel(prefix = "jboot.gateway.discovery")
-public class DiscoveryConfig {
+public class GatewayDiscoveryConfig {
 
     public static final String TYPE_NACOS = "nacos";
 

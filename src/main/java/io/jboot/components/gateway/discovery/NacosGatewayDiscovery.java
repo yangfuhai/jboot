@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class NacosGatewayDiscovery implements GatewayDiscovery {
 
-    private DiscoveryConfig discoveryConfig;
+    private GatewayDiscoveryConfig discoveryConfig;
     private NacosServerConfig nacosServerConfig;
     private NamingService namingService;
 

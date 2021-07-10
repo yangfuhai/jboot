@@ -34,12 +34,12 @@ public class GatewayDiscoveryManager {
         return manager;
     }
 
-    private DiscoveryConfig discoveryConfig;
+    private GatewayDiscoveryConfig discoveryConfig;
     private GatewayDiscovery gatewayDiscovery;
 
 
     public void init() {
-        discoveryConfig = Jboot.config(DiscoveryConfig.class);
+        discoveryConfig = Jboot.config(GatewayDiscoveryConfig.class);
 
         gatewayDiscovery = createDiscovery(discoveryConfig);
 
@@ -75,17 +75,17 @@ public class GatewayDiscoveryManager {
         return gatewayDiscovery;
     }
 
-    public DiscoveryConfig getDiscoveryConfig() {
+    public GatewayDiscoveryConfig getDiscoveryConfig() {
         return discoveryConfig;
     }
 
-    public GatewayDiscovery createDiscovery(DiscoveryConfig config) {
+    public GatewayDiscovery createDiscovery(GatewayDiscoveryConfig config) {
         if (config == null || !config.isConfigOk() || !config.isEnable()) {
             return null;
         }
 
         switch (config.getType()) {
-            case DiscoveryConfig.TYPE_NACOS:
+            case GatewayDiscoveryConfig.TYPE_NACOS:
                 return new NacosGatewayDiscovery();
             default:
                 return JbootSpiLoader.load(GatewayDiscovery.class, config.getType());
