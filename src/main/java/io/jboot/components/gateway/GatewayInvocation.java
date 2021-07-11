@@ -92,7 +92,8 @@ public class GatewayInvocation {
         Exception exception = proxy.getException();
         if (exception != null && !skipExceptionRender) {
             if (exception instanceof ConnectException) {
-                renderError(exception, GatewayErrorRender.connectionError, config, request, response);
+                Ret connectionError = Ret.fail().set("errorCode", 2).set("message", "Can not connect to target server: " + proxyUrl);
+                renderError(exception, connectionError, config, request, response);
             } else {
                 Ret ret = Ret.fail().set("errorCode", 9).set("message", exception.getMessage());
                 renderError(exception, ret, config, request, response);

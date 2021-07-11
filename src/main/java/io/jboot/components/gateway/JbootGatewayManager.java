@@ -22,8 +22,10 @@ import io.jboot.components.gateway.discovery.GatewayInstance;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -90,19 +92,17 @@ public class JbootGatewayManager {
         if (discovery != null) {
             List<GatewayInstance> healthyInstances = discovery.selectInstances(config.getName(), true);
             if (healthyInstances != null && !healthyInstances.isEmpty()) {
-                healthyInstances.forEach(instance -> config.addUri(instance.getUri()));
+                Set<String> uris = new HashSet<>();
+                healthyInstances.forEach(instance -> uris.add(instance.getUri()));
+                config.syncDiscoveryUris(uris);
             }
 
             discovery.subscribe(config.getName(), eventInfo -> {
-                List<GatewayInstance> instances = eventInfo.getInstances();
-                if (instances != null) {
-                    instances.forEach(instance -> {
-                        if (!instance.isHealthy()) {
-                            config.removeUri(instance.getUri());
-                        } else {
-                            config.addUri(instance.getUri());
-                        }
-                    });
+                List<GatewayInstance> changedInstances = eventInfo.getInstances();
+                if (changedInstances != null) {
+                    Set<String> uris = new HashSet<>();
+                    changedInstances.forEach(instance -> uris.add(instance.getUri()));
+                    config.syncDiscoveryUris(uris);
                 }
             });
         }

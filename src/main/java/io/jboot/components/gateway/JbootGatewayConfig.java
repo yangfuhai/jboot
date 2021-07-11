@@ -15,7 +15,6 @@
  */
 package io.jboot.components.gateway;
 
-import com.google.common.collect.Sets;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -104,6 +103,8 @@ public class JbootGatewayConfig implements Serializable {
         this.uri = uri;
     }
 
+    //服务发现的 URI 列表
+    private Set<String> discoveryUris;
 
     //健康的 URI 缓存
     private String[] healthUris;
@@ -115,17 +116,25 @@ public class JbootGatewayConfig implements Serializable {
         if (healthUriChanged) {
             synchronized (this) {
                 if (healthUriChanged) {
-                    if (uri == null || uri.isEmpty()) {
+                    if ((uri == null || uri.isEmpty()) && (discoveryUris == null || discoveryUris.isEmpty())) {
                         healthUris = null;
-                        healthUriChanged = false;
                     } else {
-                        HashSet<String> healthUriSet = Sets.newHashSet(uri);
+                        HashSet<String> healthUriSet = new HashSet<>();
+                        if (uri != null && !uri.isEmpty()) {
+                            healthUriSet.addAll(uri);
+                        }
+
+                        if (discoveryUris != null && !discoveryUris.isEmpty()) {
+                            healthUriSet.addAll(discoveryUris);
+                        }
+
                         if (!unHealthUris.isEmpty()) {
                             healthUriSet.removeAll(unHealthUris);
                         }
                         healthUris = healthUriSet.isEmpty() ? null : healthUriSet.toArray(new String[healthUriSet.size()]);
-                        healthUriChanged = false;
+
                     }
+                    healthUriChanged = false;
                 }
             }
         }
@@ -468,18 +477,23 @@ public class JbootGatewayConfig implements Serializable {
         return false;
     }
 
-    public void addUri(String uri) {
-        if (this.uri == null) {
-            this.uri = new LinkedHashSet<>();
-        }
-
-        if (this.uri.add(uri)) {
+    public void syncDiscoveryUris(Collection<String> syncUris) {
+        if (syncUris == null || syncUris.isEmpty()) {
+            discoveryUris = null;
             healthUriChanged = true;
         }
-    }
 
-    public void removeUri(String uri) {
-        if (this.uri != null && this.uri.remove(uri)) {
+        if (discoveryUris == null) {
+            discoveryUris = new HashSet<>(syncUris);
+            healthUriChanged = true;
+            return;
+        }
+
+        if (discoveryUris.size() == syncUris.size() && discoveryUris.containsAll(syncUris)) {
+            return;
+        } else {
+            discoveryUris.clear();
+            discoveryUris.addAll(syncUris);
             healthUriChanged = true;
         }
     }

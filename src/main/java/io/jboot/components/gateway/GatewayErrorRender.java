@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface GatewayErrorRender {
 
-    Ret noneHealthUrl = Ret.fail().set("errorCode", 1).set("message", "None health url in gateway.");
-    Ret connectionError = Ret.fail().set("errorCode", 2).set("message", "Can not connect to target server.");
+    Ret noneHealthUrl = Ret.fail().set("errorCode", 1).set("message", "No healthy url in Gateway.");
     Ret sentinelBlockedError = Ret.fail().set("errorCode", 3).set("message", "Blocked by Sentinel (flow limiting) in Jboot.");
 
 
