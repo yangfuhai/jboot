@@ -278,6 +278,11 @@ jboot.gateway.xxx.queryContains = aa,bb
 
 Jboot Gateway 功能通过 Nacos（可以通过 SPI 进行扩展其他事项方式） 实现了自动发现服务。
 
+相关代码示例可以参考：
+
+https://gitee.com/JbootProjects/jboot/tree/master/simples/gateway
+
+
 使用方法如下：
 
 1、新增 nacos 依赖（Gateway 端和服务端都需要）
@@ -292,31 +297,19 @@ Jboot Gateway 功能通过 Nacos（可以通过 SPI 进行扩展其他事项方�
 
 2、启动 Nacos
 
-- Clone Nacos 项目
+参考文档：
 
-```
-git clone https://github.com/nacos-group/nacos-docker.git
-cd nacos-docker
-```
+https://nacos.io/zh-cn/docs/quick-start.html
 
-单机模式 Derby
-```
-docker-compose -f example/standalone-derby.yaml up
-```
-
-单机模式 Mysql
-```
-docker-compose -f example/standalone-mysql.yaml up
-```
-
-集群模式
-```
-docker-compose -f example/cluster-hostname.yaml up 
-```
 
 3、在 Gateway 网关端添加如下配置：
 
 ```properties
+jboot.gateway.name = myName
+jboot.gateway.enable = true
+jboot.gateway.pathStartsWith = /
+
+
 jboot.gateway.discovery.enable = true
 
 #若配置其他，则自行通过 SPI 进行扩展
@@ -360,7 +353,8 @@ jboot.gateway.discovery.type = nacos
 #默认值为：jboot-gateway，这个值必须和 gateway 配置的一致
 jboot.gateway.discovery.group =
 
-jboot.gateway.instance.name = name
+## 注意：这个配置的 myName 必须和 Gateway 里的 'jboot.gateway.name = myName' 中的 myName 一样
+jboot.gateway.instance.name = myName
 
 #不配置默认为 http,可以配置为 https
 jboot.gateway.instance.uriScheme = http
