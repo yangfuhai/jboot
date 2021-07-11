@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * @author michael yang (fuhai999@gmail.com)
  * 负载均衡策略
  */
 public interface GatewayLoadBalanceStrategy {

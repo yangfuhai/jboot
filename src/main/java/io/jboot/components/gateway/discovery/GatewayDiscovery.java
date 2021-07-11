@@ -18,7 +18,7 @@ package io.jboot.components.gateway.discovery;
 import java.util.List;
 
 /**
- * GatewayInterceptor.
+ * GatewayDiscovery.
  */
 public interface GatewayDiscovery {
 

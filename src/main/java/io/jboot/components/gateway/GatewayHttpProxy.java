@@ -30,10 +30,6 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 
-/**
- * @author michael yang (fuhai999@gmail.com)
- * @Date: 2020/3/24
- */
 public class GatewayHttpProxy {
 
     private static final Log LOG = Log.getLog(GatewayHttpProxy.class);

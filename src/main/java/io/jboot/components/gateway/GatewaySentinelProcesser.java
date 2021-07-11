@@ -26,10 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @author michael yang (fuhai999@gmail.com)
- * @Date: 2020/1/7
- */
 public class GatewaySentinelProcesser {
 
 

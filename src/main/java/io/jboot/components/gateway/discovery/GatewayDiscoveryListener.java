@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GatewayInterceptor.
+ * GatewayDiscoveryListener.
  */
 public interface GatewayDiscoveryListener {
 
     void onEvent(EventInfo eventInfo);
 
-    class EventInfo{
+    class EventInfo {
 
         private String serviceName;
         private List<GatewayInstance> instances;
@@ -47,7 +47,7 @@ public interface GatewayDiscoveryListener {
         }
 
         public void addInstances(GatewayInstance instance) {
-            if (this.instances == null){
+            if (this.instances == null) {
                 this.instances = new ArrayList<>();
             }
             this.instances.add(instance);

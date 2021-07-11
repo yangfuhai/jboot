@@ -24,10 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.ConnectException;
 
-/**
- * @author michael yang (fuhai999@gmail.com)
- * @Date: 2020/3/24
- */
+
 public class GatewayInvocation {
 
     private JbootGatewayConfig config;
