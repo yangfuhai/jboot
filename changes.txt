@@ -1,3 +1,19 @@
+jboot v3.10.3:
+新增：门户网关 Gateway 新增基于 Nacos 的自动服务发现的功能
+新增：JbootHttpImpl 新增默认的 Content-Type 配置
+新增：JbootHttpRequest 新增 "instanceFollowRedirects" 配置
+优化：允许 void 的 Controller 方法生成 retRemarks
+优化：添加 ApiOper.containerClass 配置，用于对 void 类型的 Controller 设置返回值
+优化：添加 ApiDocConfig.defaultContainerClass 配置，用于配置默认的 void Controller 返回值
+优化：对 HttpRequest 进行优化，保证 headers 和 paras 的顺序
+优化：删除 JbootGatewayHandler 默认添加的必要，修改为默认不添加此 Handler
+修复：@ApiPara.require() 在方法上不起作用的问题
+修复：Jboot 升级 JFinal 到最新版本后，代码生成器的路径错误的问题
+示例：新增 Gateway 通过 Nacos 自动发现的 Demo 示例
+示例：新增 WebSocket 的 Demo 示例
+
+
+
 jboot v3.10.2:
 新增：注解 @ApiPara() 增加 require 参数的配置，感谢 @lijiahong
 优化：Json 增加递归深度配置，修复多层级数据返回不完全问题，感谢 @lijiahong
