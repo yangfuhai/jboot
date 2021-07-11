@@ -48,13 +48,12 @@ public class JbootGatewayManager {
         initDiscovery();
 
         initConfigs();
-
     }
 
     private void initConfigs() {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
         for (Map.Entry<String, JbootGatewayConfig> entry : configMap.entrySet()) {
-            if ("discovery".equals(entry.getKey()) || "instance".equals(entry.getKey())){
+            if ("discovery".equals(entry.getKey()) || "instance".equals(entry.getKey())) {
                 continue;
             }
             JbootGatewayConfig config = entry.getValue();
@@ -70,6 +69,10 @@ public class JbootGatewayManager {
      */
     private void initDiscovery() {
         this.discovery = GatewayDiscoveryManager.me().getGatewayDiscovery();
+    }
+
+    public boolean isConfigOk() {
+        return configMap != null && !configMap.isEmpty();
     }
 
 

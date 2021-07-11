@@ -36,6 +36,7 @@ public class GatewayDiscoveryManager {
 
     private GatewayDiscoveryConfig discoveryConfig;
     private GatewayDiscovery gatewayDiscovery;
+    private boolean isInited = false;
 
 
     public void init() {
@@ -44,6 +45,8 @@ public class GatewayDiscoveryManager {
         gatewayDiscovery = createDiscovery(discoveryConfig);
 
         exportLocalInstance(gatewayDiscovery);
+
+        isInited = true;
     }
 
     /**
@@ -72,6 +75,9 @@ public class GatewayDiscoveryManager {
     }
 
     public GatewayDiscovery getGatewayDiscovery() {
+        if (!isInited){
+            init();
+        }
         return gatewayDiscovery;
     }
 
