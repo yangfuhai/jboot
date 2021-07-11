@@ -105,7 +105,9 @@ public class JbootGatewayManager {
     }
 
     private void syncDiscoveryUris(List<GatewayInstance> instances, JbootGatewayConfig config) {
-        if (instances != null) {
+        if (instances == null) {
+            config.syncDiscoveryUris(null);
+        } else {
             Set<String> uris = new HashSet<>();
             instances.forEach(instance -> {
                 if (instance.isHealthy()) {
