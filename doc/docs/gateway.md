@@ -315,7 +315,7 @@ jboot.gateway.discovery.enable = true
 #若配置其他，则自行通过 SPI 进行扩展
 jboot.gateway.discovery.type = nacos
 
-#默认值为：jboot-gateway
+#默认值为：DEFAULT_GROUP
 jboot.gateway.discovery.group =
 
 jboot.gateway.discovery.nacos.serverAddr = 127.0.0.1:8848
@@ -350,7 +350,7 @@ jboot.gateway.discovery.enable = true
 #若配置其他，则自行通过 SPI 进行扩展
 jboot.gateway.discovery.type = nacos
 
-#默认值为：jboot-gateway，这个值必须和 gateway 配置的一致
+#默认值为：DEFAULT_GROUP，这个值必须和 gateway 配置的一致
 jboot.gateway.discovery.group =
 
 ## 注意：这个配置的 myName 必须和 Gateway 里的 'jboot.gateway.name = myName' 中的 myName 一样
