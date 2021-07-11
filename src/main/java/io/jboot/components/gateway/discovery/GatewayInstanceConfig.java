@@ -25,7 +25,7 @@ public class GatewayInstanceConfig {
     private String uriScheme = "http";
     private String uriHost;
     private int uriPort;
-    private int uriPath;
+    private String uriPath;
 
     public String getName() {
         return name;
@@ -59,11 +59,11 @@ public class GatewayInstanceConfig {
         this.uriPort = uriPort;
     }
 
-    public int getUriPath() {
+    public String getUriPath() {
         return uriPath;
     }
 
-    public void setUriPath(int uriPath) {
+    public void setUriPath(String uriPath) {
         this.uriPath = uriPath;
     }
 

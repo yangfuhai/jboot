@@ -24,7 +24,7 @@ public class GatewayDiscoveryConfig {
     public static final String TYPE_NACOS = "nacos";
 
     private String type;// nacos， other
-    private String group = "jboot-gateway";
+    private String group = "DEFAULT_GROUP";
     private boolean enable;
 
     public String getType() {

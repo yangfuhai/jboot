@@ -54,6 +54,9 @@ public class JbootGatewayManager {
     private void initConfigs() {
         Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
         for (Map.Entry<String, JbootGatewayConfig> entry : configMap.entrySet()) {
+            if ("discovery".equals(entry.getKey()) || "instance".equals(entry.getKey())){
+                continue;
+            }
             JbootGatewayConfig config = entry.getValue();
             if (StrUtil.isBlank(config.getName())) {
                 config.setName(entry.getKey());

@@ -115,12 +115,17 @@ public class JbootGatewayConfig implements Serializable {
         if (healthUriChanged) {
             synchronized (this) {
                 if (healthUriChanged) {
-                    HashSet<String> healthUriSet = Sets.newHashSet(uri);
-                    if (!unHealthUris.isEmpty()) {
-                        healthUriSet.removeAll(unHealthUris);
+                    if (uri == null || uri.isEmpty()) {
+                        healthUris = null;
+                        healthUriChanged = false;
+                    } else {
+                        HashSet<String> healthUriSet = Sets.newHashSet(uri);
+                        if (!unHealthUris.isEmpty()) {
+                            healthUriSet.removeAll(unHealthUris);
+                        }
+                        healthUris = healthUriSet.isEmpty() ? null : healthUriSet.toArray(new String[healthUriSet.size()]);
+                        healthUriChanged = false;
                     }
-                    healthUris = healthUriSet.isEmpty() ? null : healthUriSet.toArray(new String[healthUriSet.size()]);
-                    healthUriChanged = false;
                 }
             }
         }
