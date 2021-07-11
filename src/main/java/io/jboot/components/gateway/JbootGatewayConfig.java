@@ -15,6 +15,7 @@
  */
 package io.jboot.components.gateway;
 
+import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -478,19 +479,19 @@ public class JbootGatewayConfig implements Serializable {
     }
 
     public void syncDiscoveryUris(Collection<String> syncUris) {
+        if (ArrayUtil.isSameElements(syncUris, discoveryUris)) {
+            return;
+        }
+
         if (syncUris == null || syncUris.isEmpty()) {
             discoveryUris = null;
             healthUriChanged = true;
+            return;
         }
 
         if (discoveryUris == null) {
             discoveryUris = new HashSet<>(syncUris);
             healthUriChanged = true;
-            return;
-        }
-
-        if (discoveryUris.size() == syncUris.size() && discoveryUris.containsAll(syncUris)) {
-            return;
         } else {
             discoveryUris.clear();
             discoveryUris.addAll(syncUris);

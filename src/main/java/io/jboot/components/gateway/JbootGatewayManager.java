@@ -91,24 +91,28 @@ public class JbootGatewayManager {
 
         if (discovery != null) {
             List<GatewayInstance> healthyInstances = discovery.selectInstances(config.getName(), true);
-            if (healthyInstances != null && !healthyInstances.isEmpty()) {
-                Set<String> uris = new HashSet<>();
-                healthyInstances.forEach(instance -> uris.add(instance.getUri()));
-                config.syncDiscoveryUris(uris);
-            }
+            syncDiscoveryUris(healthyInstances, config);
 
             discovery.subscribe(config.getName(), eventInfo -> {
                 List<GatewayInstance> changedInstances = eventInfo.getInstances();
-                if (changedInstances != null) {
-                    Set<String> uris = new HashSet<>();
-                    changedInstances.forEach(instance -> uris.add(instance.getUri()));
-                    config.syncDiscoveryUris(uris);
-                }
+                syncDiscoveryUris(changedInstances, config);
             });
         }
 
         if (config.isEnable()) {
             JbootGatewayHealthChecker.me().start();
+        }
+    }
+
+    private void syncDiscoveryUris(List<GatewayInstance> instances, JbootGatewayConfig config) {
+        if (instances != null) {
+            Set<String> uris = new HashSet<>();
+            instances.forEach(instance -> {
+                if (instance.isHealthy()) {
+                    uris.add(instance.getUri());
+                }
+            });
+            config.syncDiscoveryUris(uris);
         }
     }
 

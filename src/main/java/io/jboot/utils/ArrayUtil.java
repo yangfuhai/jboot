@@ -74,4 +74,20 @@ public class ArrayUtil {
         return false;
     }
 
+    public static boolean isSameElements(Collection<?> c1, Collection<?> c2) {
+        if (c1 == c2) {
+            return true;
+        }
+
+        if ((c1 == null || c1.isEmpty()) && (c2 == null || c2.isEmpty())) {
+            return true;
+        }
+
+        if (c1 != null && c2 != null && c1.size() == c2.size() && c1.containsAll(c2)) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
