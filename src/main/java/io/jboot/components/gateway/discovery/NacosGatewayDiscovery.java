@@ -109,7 +109,9 @@ public class NacosGatewayDiscovery implements GatewayDiscovery {
                 List<Instance> nacosInstanceList = ((NamingEvent) event).getInstances();
                 if (nacosInstanceList != null && !nacosInstanceList.isEmpty()) {
                     for (Instance nacosInstance : nacosInstanceList) {
-                        eventInfo.addInstances(nacosInstance2GatewayInstance(nacosInstance));
+                        GatewayInstance instance = nacosInstance2GatewayInstance(nacosInstance);
+                        instance.setServiceName(eventInfo.getServiceName());
+                        eventInfo.addInstances(instance);
                     }
                 }
                 listener.onEvent(eventInfo);
