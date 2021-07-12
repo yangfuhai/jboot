@@ -60,13 +60,11 @@ public class Helloworld extends JbootController {
 ## JbootAdmin 
 
 JbootAdmin 是 Jboot 官方推出的、收费的、企业级快速开发框架，真诚的为各位开发者提供一站式、保姆式的开发服务。
-关于 JbootAdmin 的功能详情或者演示，请咨询海哥（微信：wx198819880）。
+关于 JbootAdmin 的更多的功能请咨询海哥（微信：wx198819880），或请访问以下网址：
+
+[http://jboot.io/jbootadmin/feature.html](http://jboot.io/jbootadmin/feature.html)
+
 
 ![](./doc/jbootadmin/images/jbootadmin-demo.jpg)
 
 
-更多关于 JbootAdmin：
-
-- 福利1：https://mp.weixin.qq.com/s/UjaqF6v8yNufm7X5r4UFSw
-- 福利2：https://mp.weixin.qq.com/s/7eZDyjxX3jD4QxgIWLfGBQ
-- 福利3：https://mp.weixin.qq.com/s/reV48hBRkWY2c9O9Fi1TfA
