@@ -5,3 +5,8 @@
 
 Nacos 启动文档：
 https://nacos.io/zh-cn/docs/quick-start.html
+
+
+## 架构图
+
+![](./asserts/gateway-nacos.png)
