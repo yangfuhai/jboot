@@ -123,7 +123,7 @@ public class ArpManager {
             activeRecordPlugin.setCache(jbootCache);
         }
 
-        configSqlTemplate(config, activeRecordPlugin);
+        configSqlTemplate(activeRecordPlugin, config);
         configDialect(activeRecordPlugin, config);
 
         /**
@@ -188,7 +188,7 @@ public class ArpManager {
      * @param datasourceConfig
      * @param activeRecordPlugin
      */
-    private void configSqlTemplate(DataSourceConfig datasourceConfig, ActiveRecordPlugin activeRecordPlugin) {
+    private void configSqlTemplate(ActiveRecordPlugin activeRecordPlugin, DataSourceConfig datasourceConfig) {
         String sqlTemplatePath = datasourceConfig.getSqlTemplatePath();
         if (StrUtil.isNotBlank(sqlTemplatePath)) {
             activeRecordPlugin.setBaseSqlTemplatePath(sqlTemplatePath);
