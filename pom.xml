@@ -44,7 +44,7 @@
         <jfinal.version>4.9.15</jfinal.version>
         <jfinal-cos.version>2020.4</jfinal-cos.version>
         <jfinal-undertow.version>2.5</jfinal-undertow.version>
-        <jfinal-weixin.version>3.1</jfinal-weixin.version>
+        <jfinal-weixin.version>3.2</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
         <jackson.version>2.12.4</jackson.version>
