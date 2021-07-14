@@ -15,6 +15,8 @@
  */
 package io.jboot.apidoc;
 
+import io.jboot.utils.StrUtil;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,6 +59,10 @@ public class ApiDocument implements Serializable {
     }
 
     public void setFilePathByControllerPath(String controllerPath) {
+        if (controllerPath == null || StrUtil.isBlank(controllerPath)) {
+            throw new IllegalArgumentException("The request mapping path of Controller \"" + getControllerClass().getName() + "\" is empty.");
+        }
+
         if ("/".equals(controllerPath)) {
             controllerPath = "index";
         } else if (controllerPath.startsWith("/")) {

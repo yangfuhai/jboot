@@ -17,20 +17,20 @@ package io.jboot.apidoc;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import com.jfinal.config.Routes;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Path;
 import com.jfinal.kit.StrKit;
 import io.jboot.apidoc.annotation.ApiResp;
 import io.jboot.apidoc.annotation.ApiResps;
+import io.jboot.core.listener.JbootAppListener;
+import io.jboot.core.listener.JbootAppListenerManager;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.annotation.*;
 
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ApiDocUtil {
 
@@ -55,7 +55,41 @@ public class ApiDocUtil {
         if (gm != null) {
             return AnnotationUtil.get(gm.value());
         }
-        return null;
+
+
+        return tryToGetInAppListener(controllerClass);
+    }
+
+    private static Map<Class<?>, String> controllerPathMap = null;
+
+    private static String tryToGetInAppListener(Class<?> controllerClass) {
+
+        if (controllerPathMap != null) {
+            controllerPathMap.get(controllerClass);
+        }
+
+
+        List<JbootAppListener> listeners = JbootAppListenerManager.me().getListeners();
+        if (listeners == null || listeners.isEmpty()) {
+            return null;
+        }
+
+        controllerPathMap = new HashMap<>();
+        Routes baseRoutes = new Routes() {
+            @Override
+            public void config() {
+            }
+        };
+
+        listeners.forEach(jbootAppListener -> jbootAppListener.onRouteConfig(baseRoutes));
+        List<Routes.Route> routeItemList = baseRoutes.getRouteItemList();
+
+        List<Routes> routesList = Routes.getRoutesList();
+        routesList.forEach(routes -> routeItemList.addAll(routes.getRouteItemList()));
+
+        routeItemList.forEach(route -> controllerPathMap.put(route.getControllerClass(), route.getControllerPath()));
+
+        return controllerPathMap.get(controllerClass);
     }
 
 

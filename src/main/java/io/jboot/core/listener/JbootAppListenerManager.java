@@ -44,7 +44,7 @@ public class JbootAppListenerManager implements JbootAppListener {
     }
 
 
-    List<JbootAppListener> listeners = new ArrayList<>();
+    private List<JbootAppListener> listeners = new ArrayList<>();
 
     private JbootAppListenerManager() {
 
@@ -75,6 +75,9 @@ public class JbootAppListenerManager implements JbootAppListener {
         WeightUtil.sort(listeners);
     }
 
+    public List<JbootAppListener> getListeners() {
+        return listeners;
+    }
 
     @Override
     public void onInit() {
