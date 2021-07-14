@@ -65,16 +65,17 @@ public class ApiDocUtil {
     private static String tryToGetInAppListener(Class<?> controllerClass) {
 
         if (controllerPathMap != null) {
-            controllerPathMap.get(controllerClass);
+            return controllerPathMap.get(controllerClass);
+        } else {
+            controllerPathMap = new HashMap<>();
         }
-
 
         List<JbootAppListener> listeners = JbootAppListenerManager.me().getListeners();
         if (listeners == null || listeners.isEmpty()) {
             return null;
         }
 
-        controllerPathMap = new HashMap<>();
+
         Routes baseRoutes = new Routes() {
             @Override
             public void config() {
@@ -82,12 +83,15 @@ public class ApiDocUtil {
         };
 
         listeners.forEach(jbootAppListener -> jbootAppListener.onRouteConfig(baseRoutes));
-        List<Routes.Route> routeItemList = baseRoutes.getRouteItemList();
 
-        List<Routes> routesList = Routes.getRoutesList();
-        routesList.forEach(routes -> routeItemList.addAll(routes.getRouteItemList()));
+        //base Routes
+        baseRoutes.getRouteItemList().forEach(route -> controllerPathMap.put(route.getControllerClass(), route.getControllerPath()));
 
-        routeItemList.forEach(route -> controllerPathMap.put(route.getControllerClass(), route.getControllerPath()));
+
+        //all child routes
+        Routes.getRoutesList().forEach(routes -> routes.getRouteItemList()
+                .forEach(route -> controllerPathMap.put(route.getControllerClass(), route.getControllerPath())));
+
 
         return controllerPathMap.get(controllerClass);
     }
