@@ -80,18 +80,21 @@ public class ApiDocUtil {
             @Override
             public void config() {
             }
+
+            @Override
+            public Routes add(Routes childRoutes) {
+                childRoutes.config();
+                //all child routes
+                childRoutes.getRouteItemList()
+                        .forEach(route -> controllerPathMap.put(route.getControllerClass(), route.getControllerPath()));
+                return this;
+            }
         };
 
         listeners.forEach(jbootAppListener -> jbootAppListener.onRouteConfig(baseRoutes));
 
         //base Routes
         baseRoutes.getRouteItemList().forEach(route -> controllerPathMap.put(route.getControllerClass(), route.getControllerPath()));
-
-
-        //all child routes
-        Routes.getRoutesList().forEach(routes -> routes.getRouteItemList()
-                .forEach(route -> controllerPathMap.put(route.getControllerClass(), route.getControllerPath())));
-
 
         return controllerPathMap.get(controllerClass);
     }
