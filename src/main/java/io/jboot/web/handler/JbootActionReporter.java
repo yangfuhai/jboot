@@ -54,6 +54,7 @@ public class JbootActionReporter {
     private static Writer writer = new SystemOutWriter();
     private static ActionReporter actionReporter = JFinal.me().getConstants().getActionReporter();
     private static boolean reportEnable = Jboot.isDevMode();
+    private static boolean colorRenderEnable = true;
 
     private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
@@ -82,6 +83,14 @@ public class JbootActionReporter {
 
     public static void setReportEnable(boolean reportEnable) {
         JbootActionReporter.reportEnable = reportEnable;
+    }
+
+    public static boolean isColorRenderEnable() {
+        return colorRenderEnable;
+    }
+
+    public static void setColorRenderEnable(boolean colorRenderEnable) {
+        JbootActionReporter.colorRenderEnable = colorRenderEnable;
     }
 
     /**
@@ -120,9 +129,9 @@ public class JbootActionReporter {
         Class<?> cc = action.getMethod().getDeclaringClass();
         sb.append("Controller  : ").append(cc.getName()).append(".(").append(getClassFileName(cc)).append(".java:" + lineNumber + ")");
         if (JbootActionReporterInvocation.isControllerInvoked()) {
-            sb.append(ConsoleColor.GREEN_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
+            sb.append((colorRenderEnable ? ConsoleColor.GREEN_BRIGHT : "") + " ---> invoked √" + (colorRenderEnable ? ConsoleColor.RESET : ""));
         } else {
-            sb.append(ConsoleColor.RED_BRIGHT + " ---> skipped ×" + ConsoleColor.RESET);
+            sb.append((colorRenderEnable ? ConsoleColor.RED_BRIGHT : "") + " ---> skipped ×" + (colorRenderEnable ? ConsoleColor.RESET : ""));
         }
         sb.append("\nMethod      : ").append(JbootActionReporterUtil.getMethodString(action.getMethod())).append("\n");
 
@@ -156,9 +165,9 @@ public class JbootActionReporter {
                 sb.append(icMethod.getDeclaringClass().getName()).append(".(").append(getClassFileName(interClass)).append(".java:" + icLineNumber + ")");
 
                 if (invokedInterceptors.contains(inter)) {
-                    sb.append(ConsoleColor.GREEN_BRIGHT + " ---> invoked √" + ConsoleColor.RESET);
+                    sb.append((colorRenderEnable ? ConsoleColor.GREEN_BRIGHT : "") + " ---> invoked √" + (colorRenderEnable ? ConsoleColor.RESET : ""));
                 } else {
-                    sb.append(ConsoleColor.RED_BRIGHT + " ---> skipped ×" + ConsoleColor.RESET);
+                    sb.append((colorRenderEnable ? ConsoleColor.RED_BRIGHT : "") + " ---> skipped ×" + (colorRenderEnable ? ConsoleColor.RESET : ""));
                 }
             }
             sb.append("\n");
