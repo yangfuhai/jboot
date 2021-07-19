@@ -1,3 +1,10 @@
+jboot v3.10.4:
+优化：升级 JFinal-Weixin 到最新版本
+优化：添加 JbootActionReporter.colorRenderEnable 的配置
+修复：通过在 JFinal Routes 配置的 Controller，APIDoc 无法正常生成的问题
+
+
+
 jboot v3.10.3:
 新增：门户网关 Gateway 新增基于 Nacos 的自动服务发现的功能
 新增：JbootHttpImpl 新增默认的 Content-Type 配置
