@@ -33,12 +33,14 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
     private JbootRedis redis;
     private JbootRedisCacheConfig cacheConfig;
     private static String redisCacheNamesKey = "jboot_cache_names";
+    private String globalKeyPrefix = "";
 
 
     public JbootRedisCacheImpl() {
         cacheConfig = Jboot.config(JbootRedisCacheConfig.class);
         if (StrUtil.isNotBlank(cacheConfig.getGlobalKeyPrefix())) {
-            redisCacheNamesKey = cacheConfig.getGlobalKeyPrefix() + ":" + redisCacheNamesKey;
+            globalKeyPrefix = cacheConfig.getGlobalKeyPrefix() + ":";
+            redisCacheNamesKey = globalKeyPrefix + redisCacheNamesKey;
         }
 
         if (cacheConfig.isConfigOk()) {
@@ -125,14 +127,9 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
 
     private String buildKey(String cacheName, Object key) {
-        StringBuilder keyBuilder = new StringBuilder();
+        StringBuilder keyBuilder = new StringBuilder(globalKeyPrefix)
+                .append(cacheName).append(":");
 
-        if (StrUtil.isNotBlank(cacheConfig.getGlobalKeyPrefix())) {
-            keyBuilder.append(cacheConfig.getGlobalKeyPrefix())
-                    .append(":");
-        }
-
-        keyBuilder.append(cacheName).append(":");
         if (key instanceof String) {
             keyBuilder.append("S");
         } else if (key instanceof Number) {
