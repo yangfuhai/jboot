@@ -15,6 +15,7 @@ public class RedisCacheTester {
         JbootApplication.setBootArg("jboot.cache.type", "redis");
         JbootApplication.setBootArg("jboot.cache.redis.host", "127.0.0.1");
         JbootApplication.setBootArg("jboot.cache.redis.port", "6379");
+        JbootApplication.setBootArg("jboot.cache.redis.globalKeyPrefix", "myapp");
     }
 
     @Test
