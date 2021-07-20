@@ -97,21 +97,18 @@ https://github.com/alibaba/Sentinel/wiki/%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E9
     <groupId>com.alibaba.csp</groupId>
     <artifactId>sentinel-core</artifactId>
     <version>${sentinel.version}</version>
-    <scope>provided</scope>
 </dependency>
 
 <dependency>
     <groupId>com.alibaba.csp</groupId>
     <artifactId>sentinel-cluster-client-default</artifactId>
     <version>${sentinel.version}</version>
-    <scope>provided</scope>
 </dependency>
 
 <dependency>
     <groupId>com.alibaba.csp</groupId>
     <artifactId>sentinel-transport-simple-http</artifactId>
     <version>${sentinel.version}</version>
-    <scope>provided</scope>
 </dependency>
 ```
 
