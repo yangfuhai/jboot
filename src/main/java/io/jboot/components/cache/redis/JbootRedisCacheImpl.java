@@ -22,6 +22,7 @@ import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.components.cache.JbootCacheBase;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.RedisScanResult;
+import io.jboot.utils.StrUtil;
 
 import java.util.*;
 
@@ -30,13 +31,18 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
 
     private JbootRedis redis;
-    private static final String redisCacheNamesKey = "jboot_cache_names";
+    private JbootRedisCacheConfig cacheConfig;
+    private static String redisCacheNamesKey = "jboot_cache_names";
 
 
     public JbootRedisCacheImpl() {
-        JbootRedisCacheConfig redisConfig = Jboot.config(JbootRedisCacheConfig.class);
-        if (redisConfig.isConfigOk()) {
-            redis = JbootRedisManager.me().getRedis(redisConfig);
+        cacheConfig = Jboot.config(JbootRedisCacheConfig.class);
+        if (StrUtil.isNotBlank(cacheConfig.getGlobalKeyPrefix())) {
+            redisCacheNamesKey = cacheConfig.getGlobalKeyPrefix() + ":" + redisCacheNamesKey;
+        }
+
+        if (cacheConfig.isConfigOk()) {
+            redis = JbootRedisManager.me().getRedis(cacheConfig);
         } else {
             redis = Jboot.getRedis();
         }
@@ -119,7 +125,14 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
 
     private String buildKey(String cacheName, Object key) {
-        StringBuilder keyBuilder = new StringBuilder(cacheName).append(":");
+        StringBuilder keyBuilder = new StringBuilder();
+
+        if (StrUtil.isNotBlank(cacheConfig.getGlobalKeyPrefix())) {
+            keyBuilder.append(cacheConfig.getGlobalKeyPrefix())
+                    .append(":");
+        }
+
+        keyBuilder.append(cacheName).append(":");
         if (key instanceof String) {
             keyBuilder.append("S");
         } else if (key instanceof Number) {
