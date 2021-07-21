@@ -1563,6 +1563,15 @@ public class JbootJedisImpl extends JbootRedisBase {
         }
     }
 
+    @Override
+    public Object eval(String script, int keyCount, String... params) {
+        Jedis jedis = getJedis();
+        try {
+            return jedis.eval(script, keyCount, params);
+        } finally {
+            returnResource(jedis);
+        }
+    }
 
     public Jedis getJedis() {
         try {

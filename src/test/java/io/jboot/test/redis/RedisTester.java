@@ -4,11 +4,37 @@ import io.jboot.app.JbootApplication;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.support.redis.RedisScanResult;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RedisTester {
+
+    @Before
+    public void config() {
+        JbootApplication.setBootArg("jboot.redis.host", "127.0.0.1");
+        JbootApplication.setBootArg("jboot.redis.port", "6379");
+    }
+
+    @Test
+    public void testGetAndSet() {
+        JbootRedis redis = JbootRedisManager.me().getRedis();
+        String key = "JbootRedisValue";
+        Assert.assertEquals("OK", redis.set(key, "10"));
+        Assert.assertEquals("10", redis.get(key));
+        redis.del(key);
+    }
+
+    @Test
+    public void testEval() {
+        JbootRedis redis = JbootRedisManager.me().getRedis();
+        String response = (String) redis.eval("return KEYS[1]", 1, "key1");
+        Assert.assertEquals("key1", response);
+    }
+
 
     public static void main(String[] args) {
         JbootApplication.setBootArg("jboot.redis.host", "127.0.0.1");
