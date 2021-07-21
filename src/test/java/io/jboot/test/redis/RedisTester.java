@@ -1,6 +1,7 @@
 package io.jboot.test.redis;
 
 import io.jboot.app.JbootApplication;
+import io.jboot.components.limiter.redis.RedisRateLimitUtil;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
 import io.jboot.support.redis.RedisScanResult;
@@ -35,6 +36,13 @@ public class RedisTester {
         Assert.assertEquals("key1", response);
     }
 
+    @Test
+    public void testRateLimit() {
+        String resource = "limited-resource";
+        Assert.assertTrue(RedisRateLimitUtil.tryAcquire(resource, 2, 1));
+        Assert.assertTrue(RedisRateLimitUtil.tryAcquire(resource, 2, 1));
+        Assert.assertFalse(RedisRateLimitUtil.tryAcquire(resource, 2, 1));
+    }
 
     public static void main(String[] args) {
         JbootApplication.setBootArg("jboot.redis.host", "127.0.0.1");

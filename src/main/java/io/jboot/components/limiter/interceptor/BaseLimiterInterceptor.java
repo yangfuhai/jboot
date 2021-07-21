@@ -19,6 +19,7 @@ package io.jboot.components.limiter.interceptor;
 import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.aop.Invocation;
 import io.jboot.components.limiter.LimiterManager;
+import io.jboot.components.limiter.redis.RedisRateLimitUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -52,6 +53,17 @@ public abstract class BaseLimiterInterceptor {
         RateLimiter limiter = LimiterManager.me().getOrCreateRateLimiter(resource, rate);
         //允许通行
         if (limiter.tryAcquire()) {
+            inv.invoke();
+        }
+        //不允许通行
+        else {
+            doExecFallback(resource, fallback, inv);
+        }
+    }
+
+    protected void doInterceptForTokenBucketWithCluster(int rate, String resource, String fallback, Invocation inv) {
+        //允许通行
+        if (RedisRateLimitUtil.tryAcquire(resource, rate)) {
             inv.invoke();
         }
         //不允许通行

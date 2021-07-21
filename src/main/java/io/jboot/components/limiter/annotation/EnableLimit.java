@@ -15,6 +15,7 @@
  */
 package io.jboot.components.limiter.annotation;
 
+import io.jboot.components.limiter.LimitScope;
 import io.jboot.components.limiter.LimitType;
 
 import java.lang.annotation.*;
@@ -37,6 +38,12 @@ public @interface EnableLimit {
      * @return
      */
     String type() default LimitType.TOKEN_BUCKET;
+
+
+    /**
+     * 作用域，默认为单节点本地限次
+     */
+    LimitScope scope() default LimitScope.NODE;
 
     /**
      * 频率

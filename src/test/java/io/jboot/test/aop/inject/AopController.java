@@ -2,6 +2,7 @@ package io.jboot.test.aop.inject;
 
 import com.jfinal.aop.Inject;
 import io.jboot.aop.annotation.ConfigValue;
+import io.jboot.components.limiter.LimitScope;
 import io.jboot.components.limiter.annotation.EnableLimit;
 import io.jboot.test.aop.staticconstruct.StaticConstructManager;
 import io.jboot.web.controller.JbootController;
@@ -33,6 +34,11 @@ public class AopController extends JbootController {
 
     @EnableLimit(rate = 1,fallback = "aaa")
     public void config() {
+        renderText("host:" + host + "   port:" + port + "  xxx:" + xxx);
+    }
+
+    @EnableLimit(rate = 1, fallback = "aaa", scope = LimitScope.CLUSTER)
+    public void bbb() {
         renderText("host:" + host + "   port:" + port + "  xxx:" + xxx);
     }
 

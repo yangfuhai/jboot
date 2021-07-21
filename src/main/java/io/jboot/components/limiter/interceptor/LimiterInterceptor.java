@@ -18,6 +18,7 @@ package io.jboot.components.limiter.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import io.jboot.components.limiter.LimitScope;
 import io.jboot.components.limiter.LimitType;
 import io.jboot.components.limiter.annotation.EnableLimit;
 import io.jboot.utils.AnnotationUtil;
@@ -40,10 +41,17 @@ public class LimiterInterceptor extends BaseLimiterInterceptor implements Interc
         String type = AnnotationUtil.get(enableLimit.type());
         switch (type) {
             case LimitType.CONCURRENCY:
+                if (LimitScope.CLUSTER == enableLimit.scope()) {
+                    throw new IllegalArgumentException("Concurrency limit for cluster not implement!");
+                }
                 doInterceptForConcurrency(enableLimit.rate(), resource, enableLimit.fallback(), inv);
                 break;
             case LimitType.TOKEN_BUCKET:
-                doInterceptForTokenBucket(enableLimit.rate(), resource, enableLimit.fallback(), inv);
+                if (LimitScope.CLUSTER == enableLimit.scope()) {
+                    doInterceptForTokenBucketWithCluster(enableLimit.rate(), resource, enableLimit.fallback(), inv);
+                } else {
+                    doInterceptForTokenBucket(enableLimit.rate(), resource, enableLimit.fallback(), inv);
+                }
                 break;
         }
     }
