@@ -659,6 +659,7 @@ public interface JbootRedis {
 
     public List valueListFromBytesList(Collection<byte[]> data);
 
+    Object eval(String script, int keyCount, String... params);
 }
 
 

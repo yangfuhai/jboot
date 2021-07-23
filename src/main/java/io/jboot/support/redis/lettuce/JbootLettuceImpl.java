@@ -525,4 +525,9 @@ public class JbootLettuceImpl implements JbootRedis {
     public List valueListFromBytesList(Collection<byte[]> data) {
         return null;
     }
+
+    @Override
+    public Object eval(String script, int keyCount, String... params) {
+        return null;
+    }
 }

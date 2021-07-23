@@ -52,8 +52,8 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
         if (timeout != null) {
             this.timeout = timeout;
         }
-        if(maxAttempts == null) {
-        	maxAttempts = this.maxAttempts;
+        if (maxAttempts == null) {
+            maxAttempts = this.maxAttempts;
         }
 
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
@@ -1227,6 +1227,10 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
         return new RedisScanResult<>(scanResult.getStringCursor(), scanResult.getResult());
     }
 
+    @Override
+    public Object eval(String script, int keyCount, String... params) {
+        return jedisCluster.eval(script, keyCount, params);
+    }
 
     public JedisCluster getJedisCluster() {
         return jedisCluster;
