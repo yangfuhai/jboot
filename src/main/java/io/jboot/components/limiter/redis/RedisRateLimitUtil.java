@@ -1,5 +1,6 @@
 package io.jboot.components.limiter.redis;
 
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
 
@@ -43,6 +44,9 @@ public class RedisRateLimitUtil {
     public static boolean tryAcquire(String resource, int rate, int periodSeconds) {
         if (redis == null) {
             redis = JbootRedisManager.me().getRedis();
+            if (redis == null) {
+                throw new JbootIllegalConfigException("Redis config not well, can not use LimitScope.CLUSTER in @EnableLimit() ");
+            }
         }
         Long count = (Long) redis.eval(RATE_LIMIT_SCRIPT, 1, resource, String.valueOf(rate), String.valueOf(periodSeconds));
         return count <= rate;
