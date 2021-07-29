@@ -53,7 +53,7 @@ public class ClassScanner {
 
 
     public static void addScanJarPrefix(String prefix) {
-        scanJars.add(prefix.trim());
+        scanJars.add(prefix.toLowerCase().trim());
     }
 
     static {
@@ -62,7 +62,7 @@ public class ClassScanner {
 
 
     public static void addUnscanJarPrefix(String prefix) {
-        excludeJars.add(prefix.trim());
+        excludeJars.add(prefix.toLowerCase().trim());
     }
 
     static {
@@ -276,8 +276,24 @@ public class ClassScanner {
         excludeJars.add("redisson-");
         excludeJars.add("bcprov-");
         excludeJars.add("pay-java-");
+        excludeJars.add("alipay-sdk-");
         excludeJars.add("mapper-extras-");
         excludeJars.add("org.jacoco");
+        excludeJars.add("jxl-");
+        excludeJars.add("jxls-");
+        excludeJars.add("jstl-");
+        excludeJars.add("batik-");
+        excludeJars.add("xmlsec-");
+        excludeJars.add("pdfbox-");
+        excludeJars.add("fontbox-");
+        excludeJars.add("xk-time-");
+        excludeJars.add("geohash-");
+        excludeJars.add("ezmorph-");
+        excludeJars.add("async-http-");
+        excludeJars.add("jsr-");
+        excludeJars.add("jsr250");
+        excludeJars.add("pinyin4j");
+        excludeJars.add("ijpay-");
     }
 
 
@@ -356,6 +372,7 @@ public class ClassScanner {
         excludeClasses.add("com.mysql.");
         excludeClasses.add("com.papertrail.");
         excludeClasses.add("com.egzosn.");
+        excludeClasses.add("com.alipay.api");
         excludeClasses.add("org.gjt.");
         excludeClasses.add("org.fusesource.");
         excludeClasses.add("org.redisson.");
@@ -379,11 +396,15 @@ public class ClassScanner {
         excludeClasses.add("freemarker.");
         excludeClasses.add("com.twelvemonkeys.");
         excludeClasses.add("eu.bitwalker.");
+        excludeClasses.add("jstl.");
+        excludeClasses.add("jxl.");
+        excludeClasses.add("org.jxls");
+        excludeClasses.add("org.kordamp");
     }
 
 
     public static void addScanClassPrefix(String prefix) {
-        scanClasses.add(prefix.trim());
+        scanClasses.add(prefix.toLowerCase().trim());
     }
 
     static {
