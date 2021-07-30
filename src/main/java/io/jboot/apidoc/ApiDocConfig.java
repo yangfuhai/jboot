@@ -23,7 +23,7 @@ import java.io.File;
 
 public class ApiDocConfig {
 
-    private String basePath = "";
+    private String basePath = "apidoc";
     private String packagePrefix;
 
 
@@ -46,7 +46,7 @@ public class ApiDocConfig {
         if (FileUtil.isAbsolutePath(basePath)) {
             return basePath;
         }
-        return new File(PathKit.getRootClassPath(), "../../" + basePath).getAbsolutePath();
+        return FileUtil.getCanonicalPath(new File(PathKit.getRootClassPath(), "../../" + basePath));
     }
 
     public void setBasePath(String basePath) {
