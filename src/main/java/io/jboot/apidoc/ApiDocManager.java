@@ -339,6 +339,7 @@ public class ApiDocManager {
 
         List<ApiDocument> apiDocuments = new ArrayList<>();
 
+        //所有 Controller 构建为同一个文档
         if (config.isAllInOneEnable()) {
             ApiDocument document = new ApiDocument();
             document.setValue(config.getAllInOneTitle());
@@ -348,7 +349,9 @@ public class ApiDocManager {
             buildAllInOneDocument(document, controllerClasses, config);
 
             apiDocuments.add(document);
-        } else {
+        }
+        //不同的 Controller 构建为不同的文档
+        else {
             for (Class<?> controllerClass : controllerClasses) {
                 if (StrUtil.isNotBlank(config.getPackagePrefix())) {
                     if (controllerClass.getName().startsWith(config.getPackagePrefix())) {
@@ -504,6 +507,9 @@ public class ApiDocManager {
                 List<Method> collectMethods = ReflectUtil.searchMethodList(collectClass,
                         method -> method.getAnnotation(ApiOper.class) != null && Modifier.isPublic(method.getModifiers()));
 
+                String collectControllerPath = ApiDocUtil.getControllerPath(collectClass);
+                HttpMethod collectDefaultHttpMethod = ApiDocUtil.getControllerMethod(controllerClass);
+
                 for (Method method : collectMethods) {
                     ApiOper apiOper = method.getAnnotation(ApiOper.class);
 
@@ -511,7 +517,7 @@ public class ApiDocManager {
                     apiOperation.setControllerClass(collectClass);
 
                     Class<?> containerClass = apiOper.containerClass() != void.class ? apiOper.containerClass() : config.getDefaultContainerClass();
-                    apiOperation.setMethodAndInfo(method, controllerPath, ApiDocUtil.getMethodHttpMethods(method, defaultHttpMethod), containerClass);
+                    apiOperation.setMethodAndInfo(method, collectControllerPath, ApiDocUtil.getMethodHttpMethods(method, collectDefaultHttpMethod), containerClass);
 
 
                     apiOperation.setValue(apiOper.value());
