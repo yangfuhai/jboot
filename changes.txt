@@ -1,3 +1,9 @@
+jboot v3.10.6:
+修复：ClassScanner 添加排除的前缀时，如果有大写字母不生效的问题
+修复：当使用 @Api(collect={}) 时，子 Controller 路径错误的问题
+
+
+
 jboot v3.10.5:
 新增：@EnableLimit() 注解新增通过 redis 实现集群的限流的功能，感谢 @orangeJ
 新增：为 JbootRedis 增加 eval 方法，用于执行 lua 脚本，感谢 @orangeJ
