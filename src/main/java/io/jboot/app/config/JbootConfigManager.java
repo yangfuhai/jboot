@@ -461,8 +461,13 @@ public class JbootConfigManager {
     }
 
 
-    public static void setBootProperties(String propertiesFileName) {
-        setBootProperties(new JbootProp(propertiesFileName).getProperties());
+    public static void setBootProperties(String propertiesFilePath) {
+        File file = new File(propertiesFilePath);
+        if (file.exists()) {
+            setBootProperties(file);
+        } else {
+            setBootProperties(new JbootProp(propertiesFilePath).getProperties());
+        }
     }
 
 
