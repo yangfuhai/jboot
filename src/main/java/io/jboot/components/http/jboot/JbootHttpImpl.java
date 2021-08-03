@@ -193,7 +193,7 @@ public class JbootHttpImpl implements JbootHttp {
         connection.setRequestMethod(request.getMethod());
 
         //如果 reqeust 的 header 不配置 content-Type, 使用默认的
-        connection.setRequestProperty("Content-Type",request.getContentType());
+        connection.setRequestProperty("Content-Type", request.getContentType());
 
         if (request.getHeaders() != null && request.getHeaders().size() > 0) {
             for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
@@ -219,7 +219,13 @@ public class JbootHttpImpl implements JbootHttp {
         URL url = new URL(request.getRequestUrl());
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
-        if (request.getCertPath() != null && request.getCertPass() != null) {
+        //自定义 sslContext
+        if (request.getSslContext() != null) {
+            SSLSocketFactory ssf = request.getSslContext().getSocketFactory();
+            conn.setSSLSocketFactory(ssf);
+        }
+        //配置证书的路径和密码
+        else if (request.getCertPath() != null && request.getCertPass() != null) {
 
             KeyStore clientStore = KeyStore.getInstance("PKCS12");
             clientStore.load(request.getCertInputStream(), request.getCertPass().toCharArray());
@@ -237,7 +243,9 @@ public class JbootHttpImpl implements JbootHttp {
 
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
 
-        } else {
+        }
+        // 默认的 sslContext
+        else {
             conn.setHostnameVerifier(hnv);
             SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
             if (sslContext != null) {

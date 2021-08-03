@@ -17,6 +17,7 @@ package io.jboot.components.http;
 
 import io.jboot.utils.StrUtil;
 
+import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -74,6 +75,9 @@ public class JbootHttpRequest {
 
     // 遇到重定向是否自动跟随
     private boolean instanceFollowRedirects = true;
+
+    // 自定义 sslContext
+    private SSLContext sslContext;
 
 
     public static JbootHttpRequest create(String url) {
@@ -361,5 +365,13 @@ public class JbootHttpRequest {
 
     public void setInstanceFollowRedirects(boolean instanceFollowRedirects) {
         this.instanceFollowRedirects = instanceFollowRedirects;
+    }
+
+    public SSLContext getSslContext() {
+        return sslContext;
+    }
+
+    public void setSslContext(SSLContext sslContext) {
+        this.sslContext = sslContext;
     }
 }

@@ -65,7 +65,7 @@ public class OKHttpImpl implements JbootHttp {
 
         } catch (Throwable ex) {
             response.setError(ex);
-        }finally {
+        } finally {
             response.close();
         }
     }
@@ -135,7 +135,13 @@ public class OKHttpImpl implements JbootHttp {
 
     public OkHttpClient getHttpsClient(JbootHttpRequest request) throws Exception {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if (request.getCertPath() != null && request.getCertPass() != null) {
+        //自定义 sslContext
+        if (request.getSslContext() != null) {
+            SSLSocketFactory ssf = request.getSslContext().getSocketFactory();
+            builder.sslSocketFactory(ssf, trustAnyTrustManager);
+        }
+        //配置证书的路径和密码
+        else if (request.getCertPath() != null && request.getCertPass() != null) {
             KeyStore clientStore = KeyStore.getInstance("PKCS12");
             clientStore.load(request.getCertInputStream(), request.getCertPass().toCharArray());
 
