@@ -21,6 +21,7 @@ import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.app.config.support.apollo.ApolloConfigManager;
 import io.jboot.app.config.support.nacos.NacosConfigManager;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -452,6 +453,25 @@ public class JbootConfigManager {
             argMap = new HashMap<>();
         }
         argMap.put(key, value.toString());
+    }
+
+    public static void setBootProperties(Properties properties) {
+        Objects.requireNonNull(properties, "properties must not be null");
+        properties.forEach((o, o2) -> setBootArg(o.toString(), o2));
+    }
+
+
+    public static void setBootProperties(String propertiesFileName) {
+        setBootProperties(new JbootProp(propertiesFileName).getProperties());
+    }
+
+
+    public static void setBootProperties(File propertiesFile) {
+        if (propertiesFile.exists()) {
+            setBootProperties(new JbootProp(propertiesFile).getProperties());
+        } else {
+            System.err.println("Warning: properties file not exists: " + propertiesFile);
+        }
     }
 
     /**
