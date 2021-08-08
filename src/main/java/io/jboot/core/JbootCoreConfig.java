@@ -131,7 +131,7 @@ public class JbootCoreConfig extends JFinalConfig {
      * 此方法的目的是为了防止 webRootPath 为 null
      */
     private void initWebRootPath() {
-        String webRootPath = ReflectUtil.getFieldValue(PathKit.class, "webRootPath");
+        String webRootPath = ReflectUtil.getStaticFieldValue(PathKit.class, "webRootPath");
         if (webRootPath == null) {
             PathKit.setWebRootPath(PathKit.getRootClassPath());
         }

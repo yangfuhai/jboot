@@ -17,6 +17,8 @@ package io.jboot.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -26,7 +28,7 @@ import java.util.function.Predicate;
  */
 public class ReflectUtil {
 
-    public static <T> T getFieldValue(Class<?> dClass, String fieldName) {
+    public static <T> T getStaticFieldValue(Class<?> dClass, String fieldName) {
         return getFieldValue(dClass, fieldName, null);
     }
 
@@ -61,6 +63,35 @@ public class ReflectUtil {
     }
 
 
+    public static List<Field> searchFieldList(Class<?> dClass, Predicate<Field> filter) {
+        List<Field> fields = new ArrayList<>();
+        doSearchFieldList(fields, dClass, filter);
+        return fields;
+    }
+
+
+    private static void doSearchFieldList(List<Field> searchToList, Class<?> dClass, Predicate<Field> filter) {
+        if (dClass == null || dClass == Object.class) {
+            return;
+        }
+
+        Field[] fields = dClass.getDeclaredFields();
+        if (fields.length > 0) {
+            if (filter != null) {
+                for (Field field : fields) {
+                    if (filter.test(field)) {
+                        searchToList.add(field);
+                    }
+                }
+            } else {
+                searchToList.addAll(Arrays.asList(fields));
+            }
+        }
+
+        doSearchFieldList(searchToList, dClass.getSuperclass(), filter);
+    }
+
+
     public static Method searchMethod(Class<?> dClass, Predicate<Method> filter) {
         if (dClass == null) {
             return null;
@@ -86,11 +117,18 @@ public class ReflectUtil {
             return;
         }
         Method[] methods = dClass.getDeclaredMethods();
-        for (Method method : methods) {
-            if (filter.test(method)) {
-                list.add(method);
+        if (methods.length > 0) {
+            if (filter != null) {
+                for (Method method : methods) {
+                    if (filter.test(method)) {
+                        list.add(method);
+                    }
+                }
+            } else {
+                list.addAll(Arrays.asList(methods));
             }
         }
+
         doSearchMethodList(dClass.getSuperclass(), filter, list);
     }
 }
