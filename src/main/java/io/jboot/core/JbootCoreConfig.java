@@ -20,6 +20,7 @@ import com.jfinal.aop.AopManager;
 import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.core.Path;
+import com.jfinal.core.converter.TypeConverter;
 import com.jfinal.json.JsonManager;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
@@ -55,6 +56,7 @@ import io.jboot.support.swagger.JbootSwaggerManager;
 import io.jboot.utils.*;
 import io.jboot.web.JbootAciontMapping;
 import io.jboot.web.JbootWebConfig;
+import io.jboot.web.TypeConverterFunc;
 import io.jboot.web.attachment.AttachmentHandler;
 import io.jboot.web.attachment.LocalAttachmentContainerConfig;
 import io.jboot.web.controller.JbootControllerManager;
@@ -372,6 +374,9 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootSentinelManager.me().init();
 
         JbootAppListenerManager.me().onStart();
+
+        //自定义参数转换方法
+        TypeConverter.me().setConvertFunc(new TypeConverterFunc());
 
 
         //使用场景：需要等所有组件 onStart() 完成之后，再去执行某些工作的时候
