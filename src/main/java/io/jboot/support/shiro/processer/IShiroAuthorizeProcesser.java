@@ -17,7 +17,9 @@ package io.jboot.support.shiro.processer;
 
 /**
  * Shiro 的认证处理器
- * 用于对每个controller 的 每个方法进行认证
+ * 用于对每个 controller 的 每个方法进行认证
+ *
+ * 每个 shiro 注解，都有一个对于的 Processer，比如 注解 @RequiresGuest 的处理器为 ShiroRequiresGuestProcesser.java
  */
 public interface IShiroAuthorizeProcesser {
 

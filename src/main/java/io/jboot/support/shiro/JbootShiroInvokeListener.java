@@ -36,7 +36,7 @@ public interface JbootShiroInvokeListener {
      *
      * @param inv
      */
-    void onInvokeBefore(Invocation inv);
+    AuthorizeResult onInvokeBefore(Invocation inv);
 
     /**
      * 通过这个方法，可以用来自定义shiro 处理结果 和 错误逻辑
@@ -54,8 +54,9 @@ public interface JbootShiroInvokeListener {
 
 
         @Override
-        public void onInvokeBefore(Invocation inv) {
+        public AuthorizeResult onInvokeBefore(Invocation inv) {
             //do nothing
+            return null;
         }
 
         @Override

@@ -18,19 +18,32 @@ package io.jboot.support.shiro;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.support.shiro.processer.AuthorizeResult;
+
 /**
  * Shiro 拦截器
  */
 public class JbootShiroInterceptor implements Interceptor {
 
 
-
     @Override
     public void intercept(Invocation inv) {
+        // 优先执行 onInvokeBefore，得到 AuthorizeResult
+        // 如果 AuthorizeResult 不为 null，则说用户自定义了其认证方式，比如 jwt、oss 等，此时直接返回给 onInvokeAfter
+        // 如果 AuthorizeResult 为 null，则有系统去执行（主要是去判断 Shiro 注解，然后通过对于的 Processer 去执行 ）
 
-        JbootShiroManager.me().getInvokeListener().onInvokeBefore(inv);
-        AuthorizeResult result = JbootShiroManager.me().invoke(inv.getActionKey());
-        JbootShiroManager.me().getInvokeListener().onInvokeAfter(inv, result == null ? AuthorizeResult.ok() : result);
+        JbootShiroManager manager = JbootShiroManager.me();
+
+        AuthorizeResult result = manager.getInvokeListener().onInvokeBefore(inv);
+
+        if (result == null) {
+            result = manager.invoke(inv.getActionKey());
+        }
+
+        if (result == null) {
+            result = AuthorizeResult.ok();
+        }
+
+        manager.getInvokeListener().onInvokeAfter(inv, result);
     }
 
 }

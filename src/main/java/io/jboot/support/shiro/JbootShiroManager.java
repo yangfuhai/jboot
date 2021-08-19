@@ -49,10 +49,6 @@ public class JbootShiroManager {
 
     private ConcurrentHashMap<String, ShiroAuthorizeProcesserInvoker> invokers = new ConcurrentHashMap<>();
 
-    private ShiroRequiresAuthenticationProcesser requiresAuthenticationProcesser = new ShiroRequiresAuthenticationProcesser();
-    private ShiroRequiresUserProcesser requiresUserProcesser = new ShiroRequiresUserProcesser();
-    private ShiroRequiresGuestProcesser requiresGuestProcesser = new ShiroRequiresGuestProcesser();
-
 
     public void init(List<Routes.Route> routes) {
         if (!jbootShiroConfig.isConfigOK()) {
@@ -66,6 +62,11 @@ public class JbootShiroManager {
      */
     private void initInvokers(List<Routes.Route> routes) {
         Set<String> excludedMethodName = JbootShiroUtil.buildExcludedMethodName();
+
+        ShiroRequiresAuthenticationProcesser requiresAuthenticationProcesser = new ShiroRequiresAuthenticationProcesser();
+        ShiroRequiresUserProcesser requiresUserProcesser = new ShiroRequiresUserProcesser();
+        ShiroRequiresGuestProcesser requiresGuestProcesser = new ShiroRequiresGuestProcesser();
+
 
         for (Routes.Route route : routes) {
             Class<? extends Controller> controllerClass = route.getControllerClass();
@@ -92,7 +93,6 @@ public class JbootShiroManager {
                 String actionKey = JbootShiroUtil.createActionKey(controllerClass, method, controllerKey);
                 ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
 
-
                 for (Annotation annotation : allAnnotations) {
                     if (annotation.annotationType() == RequiresPermissions.class) {
                         ShiroRequiresPermissionsProcesser processer = new ShiroRequiresPermissionsProcesser((RequiresPermissions) annotation);
@@ -112,7 +112,6 @@ public class JbootShiroManager {
                 if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
                     invokers.put(actionKey, invoker);
                 }
-
             }
         }
     }
