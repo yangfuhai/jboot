@@ -95,7 +95,7 @@ public class SqlDebugger {
                     if (value instanceof Date) {
                         sb.append(DateUtil.toDateTimeString((Date) value));
                     } else {
-                        sb.append(value.toString());
+                        sb.append(value);
                     }
                     sb.append("'");
                     sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(sb.toString()));
