@@ -232,7 +232,7 @@ public class MyshiroListener implements  JbootShiroInvokeListener {
 
 
     @Override
-    public void onInvokeBefore(Invocation inv) {
+    public AuthorizeResult onInvokeBefore(Invocation inv) {
         //do nothing
     }
 
@@ -279,4 +279,12 @@ jboot.shiro.invokeListener=com.xxx.MyshiroListener
 
 ### Shiro 与 Jwt 整合
 
+ 在 `JbootShiroInvokeListener.onInvokeBefore()` 中，接收 JWT 数据，并 JWT 处理的相关认证，然后返回
+ `AuthorizeResult`，返回的 `AuthorizeResult` 直接交给 `onInvokeAfter` 处理，不再交给
+Shiro 内部处理。
+
+若 `JbootShiroInvokeListener.onInvokeBefore()` 返回 null，则交给 Shiro 内部处理
+
 ### Shiro 与 SSO 整合
+
+同 Jwt 处理方案。
