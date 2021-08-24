@@ -37,6 +37,10 @@ public class CacheUtil {
         return JbootCacheManager.me().getCache().use(cacheNamePrefix);
     }
 
+    public static void clearPrefix() {
+        JbootCacheManager.me().getCache().clear();
+    }
+
     public static <T> T get(String cacheName, Object key) {
         return Jboot.getCache().get(cacheName, key);
     }

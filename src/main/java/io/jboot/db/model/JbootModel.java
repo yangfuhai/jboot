@@ -18,6 +18,7 @@ package io.jboot.db.model;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
+import io.jboot.db.JbootDb;
 import io.jboot.db.SqlDebugger;
 import io.jboot.db.dialect.JbootDialect;
 import io.jboot.exception.JbootException;
@@ -131,7 +132,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (isCopyModel) {
             return (M) this;
         } else {
-            M model = copy().superUse(datasourceName);
+            M model = copy()._setConfigName(datasourceName);
             model.isCopyModel = true;
             return model;
         }
@@ -211,7 +212,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             synchronized (configName.intern()) {
                 newDao = this.get(DATASOURCE_CACHE_PREFIX + configName);
                 if (newDao == null) {
-                    newDao = this.copy().superUse(configName);
+                    newDao = this.copy()._setConfigName(configName);
                     if (newDao._getConfig() == null) {
                         if (validateExist) {
                             throw new JbootIllegalConfigException("the datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
@@ -219,7 +220,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                             return null;
                         }
                     } else {
-                        newDao.datasourceName = configName;
                         this.put(DATASOURCE_CACHE_PREFIX + configName, newDao);
                     }
                 }
@@ -229,8 +229,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    M superUse(String configName) {
-        return super.use(configName);
+    M _setConfigName(String configName) {
+        this.datasourceName = configName;
+        return (M) this;
+    }
+
+    @Override
+    protected Config _getConfig() {
+        if (datasourceName != null) {
+            return DbKit.getConfig(datasourceName);
+        }
+
+        String currentConfigName = JbootDb.getCurentConfigName();
+        if (StrUtil.isNotBlank(currentConfigName)) {
+            return DbKit.getConfig(currentConfigName);
+        }
+
+        return DbKit.getConfig(_getUsefulClass());
     }
 
 
@@ -324,10 +339,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected M loadByCache(Object... idValues) {
 
         //临时关闭 id 缓存的情况
-        if (JbootModelHintManager.me().isClosedIdCache(getClass())){
+        if (JbootModelHintManager.me().isClosedIdCache(getClass())) {
             try {
                 return JbootModel.super.findByIds(idValues);
-            }finally {
+            } finally {
                 JbootModelHintManager.me().clearIdCacheFlag();
             }
         }
@@ -350,9 +365,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     /**
      * 临时关闭 id 缓存，关闭后通过 findById 执行后又会开启了
      * 一般情况下的使用方法是 DAO.closeIdCacheTemporary().findById(...)
+     *
      * @return
      */
-    public M closeIdCacheTemporary(){
+    public M closeIdCacheTemporary() {
         JbootModelHintManager.me().closeIdCache(getClass());
         return (M) this;
     }
@@ -720,12 +736,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             conn = config.getConnection();
 //            String totalRowSql = config.dialect.forPaginateTotalRow(select, sqlExceptSelect, this);
             String totalRowSqlExceptSelect = _getDialect().forPaginateFrom(alias, joins, _getTableName(), columns.getList(), null);
-            String totalRowSql = config.getDialect().forPaginateTotalRow(selectPartSql, totalRowSqlExceptSelect,this);
+            String totalRowSql = config.getDialect().forPaginateTotalRow(selectPartSql, totalRowSqlExceptSelect, this);
 
             StringBuilder findSql = new StringBuilder();
             findSql.append(selectPartSql).append(' ').append(fromPartSql);
 
-            return doPaginateByFullSql(config, conn, pageNumber, pageSize, null, totalRowSql, findSql,  columns.getValueArray());
+            return doPaginateByFullSql(config, conn, pageNumber, pageSize, null, totalRowSql, findSql, columns.getValueArray());
         } catch (Exception e) {
             throw new ActiveRecordException(e);
         } finally {

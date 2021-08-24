@@ -19,19 +19,34 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import io.jboot.db.dbpro.JbootDbPro;
 import io.jboot.db.model.Columns;
+import io.jboot.utils.StrUtil;
 
 import java.util.List;
 
 
 public class JbootDb extends Db {
 
+    private static ThreadLocal<String> CONFIG_NAME_TL = new ThreadLocal<>();
+
+    public static String getCurentConfigName() {
+        return CONFIG_NAME_TL.get();
+    }
+
+    public static void setCurrentConfigName(String configName) {
+        CONFIG_NAME_TL.set(configName);
+    }
+
+    public static void clearCurrentConfigName() {
+        CONFIG_NAME_TL.remove();
+    }
 
     public static JbootDbPro use(String configName) {
         return (JbootDbPro) Db.use(configName);
     }
 
     public static JbootDbPro use() {
-        return (JbootDbPro) Db.use();
+        String currentConfigName = getCurentConfigName();
+        return StrUtil.isBlank(currentConfigName) ? (JbootDbPro) Db.use() : use(currentConfigName);
     }
 
 
