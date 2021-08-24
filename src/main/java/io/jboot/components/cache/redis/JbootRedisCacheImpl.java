@@ -127,6 +127,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
 
     private String buildKey(String cacheName, Object key) {
+        cacheName = buildCacheName(cacheName);
         StringBuilder keyBuilder = new StringBuilder(globalKeyPrefix)
                 .append(cacheName).append(":");
 

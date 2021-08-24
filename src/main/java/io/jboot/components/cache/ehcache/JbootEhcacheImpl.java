@@ -65,6 +65,7 @@ public class JbootEhcacheImpl extends JbootCacheBase {
     }
 
     public Cache getOrAddCache(String cacheName) {
+        cacheName = buildCacheName(cacheName);
         Cache cache = cacheManager.getCache(cacheName);
         if (cache == null) {
             synchronized (locker) {

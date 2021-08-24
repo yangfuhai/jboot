@@ -30,10 +30,12 @@ public class CaffeineCacheImpl extends JbootCacheBase {
     private Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
 
     protected Cache getCacheOnly(String cacheName) {
+        cacheName = buildCacheName(cacheName);
         return cacheMap.get(cacheName);
     }
 
     protected Cache getCache(String cacheName) {
+        cacheName = buildCacheName(cacheName);
         Cache cache = cacheMap.get(cacheName);
         if (cache == null) {
             synchronized (CaffeineCacheImpl.class) {

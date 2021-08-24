@@ -26,6 +26,11 @@ import java.util.List;
  */
 public class NoneCacheImpl implements JbootCache {
     @Override
+    public JbootCache use(String cacheNamePrefix) {
+        return this;
+    }
+
+    @Override
     public <T> T get(String cacheName, Object key) {
         return null;
     }

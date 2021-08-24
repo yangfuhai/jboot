@@ -54,16 +54,15 @@ public class JbootCacheManager {
         }
 
         JbootCache cache = cacheMap.get(type);
-        if (cache != null) {
-            return cache;
-        }
 
-        synchronized (type.intern()) {
-            if (cache == null) {
-                JbootCacheConfig cacheConfig = new JbootCacheConfig();
-                cacheConfig.setType(type);
-                cache = buildCache(cacheConfig);
-                cacheMap.put(type, cache);
+        if (cache == null) {
+            synchronized (type.intern()) {
+                if (cache == null) {
+                    JbootCacheConfig cacheConfig = new JbootCacheConfig();
+                    cacheConfig.setType(type);
+                    cache = buildCache(cacheConfig);
+                    cacheMap.put(type, cache);
+                }
             }
         }
 

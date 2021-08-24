@@ -3,7 +3,6 @@ package io.jboot.components.cache;
 
 import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
-import io.jboot.Jboot;
 
 import java.util.List;
 
@@ -13,11 +12,15 @@ public class AopCache {
 
     private static JbootCache aopCache;
 
+    public static JbootCache usePrefix(String cacheNamePrefix) {
+        return getAopCache().use(cacheNamePrefix);
+    }
+
     static JbootCache getAopCache() {
         if (aopCache == null) {
             synchronized (AopCache.class) {
                 if (aopCache == null) {
-                    aopCache = JbootCacheManager.me().getCache(Jboot.config(JbootCacheConfig.class).getAopCacheType());
+                    aopCache = JbootCacheManager.me().getCache(JbootCacheConfig.getInstance().getAopCacheType());
                 }
             }
         }

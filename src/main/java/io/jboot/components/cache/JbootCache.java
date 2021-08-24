@@ -22,6 +22,7 @@ import java.util.List;
 
 public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache {
 
+    public JbootCache use(String cacheNamePrefix);
 
     @Override
     public <T> T get(String cacheName, Object key);

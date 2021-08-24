@@ -16,6 +16,7 @@
 package io.jboot.components.cache;
 
 
+import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.utils.StrUtil;
 
@@ -33,11 +34,13 @@ public class JbootCacheConfig {
 
 
     private String type = TYPE_CAFFEINE;
+    private String defaultCacheNamePrefix;
 
     // AOP 缓存的默认有效时间，0为永久有效，单位秒，
     // 当 @Cacheable 和 @CachePut 注解不配置的时候默认用这个配置
     private int aopCacheLiveSeconds = 0;
     private String aopCacheType;
+    private String aopCacheDefaultCacheNamePrefix;
 
     public String getType() {
         return type;
@@ -45,6 +48,14 @@ public class JbootCacheConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getDefaultCacheNamePrefix() {
+        return defaultCacheNamePrefix;
+    }
+
+    public void setDefaultCacheNamePrefix(String defaultCacheNamePrefix) {
+        this.defaultCacheNamePrefix = defaultCacheNamePrefix;
     }
 
     public int getAopCacheLiveSeconds() {
@@ -65,4 +76,14 @@ public class JbootCacheConfig {
     public void setAopCacheType(String aopCacheType) {
         this.aopCacheType = aopCacheType;
     }
+
+    private static JbootCacheConfig me;
+
+    public static JbootCacheConfig getInstance() {
+        if (me == null) {
+            me = JbootConfigManager.me().get(JbootCacheConfig.class);
+        }
+        return me;
+    }
+
 }

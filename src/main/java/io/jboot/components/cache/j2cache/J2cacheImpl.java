@@ -36,28 +36,33 @@ public class J2cacheImpl extends JbootCacheBase {
 
     @Override
     public <T> T get(String cacheName, Object key) {
+        cacheName = buildCacheName(cacheName);
         CacheObject cacheObject = J2Cache.getChannel().get(cacheName, key.toString(), false);
         return cacheObject != null ? (T) cacheObject.getValue() : null;
     }
 
     @Override
     public void put(String cacheName, Object key, Object value) {
+        cacheName = buildCacheName(cacheName);
         J2Cache.getChannel().set(cacheName, key.toString(), value);
     }
 
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
+        cacheName = buildCacheName(cacheName);
         J2Cache.getChannel().set(cacheName, key.toString(), value, liveSeconds);
     }
 
 
     @Override
     public void remove(String cacheName, Object key) {
+        cacheName = buildCacheName(cacheName);
         J2Cache.getChannel().evict(cacheName, key.toString());
     }
 
     @Override
     public void removeAll(String cacheName) {
+        cacheName = buildCacheName(cacheName);
         J2Cache.getChannel().clear(cacheName);
     }
 
@@ -91,6 +96,7 @@ public class J2cacheImpl extends JbootCacheBase {
 
     @Override
     public void refresh(String cacheName, Object key) {
+        cacheName = buildCacheName(cacheName);
         if (sendEvictCmdMethod == null) {
             synchronized (this) {
                 if (sendEvictCmdMethod == null) {
@@ -110,6 +116,7 @@ public class J2cacheImpl extends JbootCacheBase {
 
     @Override
     public void refresh(String cacheName) {
+        cacheName = buildCacheName(cacheName);
         if (sendClearCmdMethod == null) {
             synchronized (this) {
                 if (sendClearCmdMethod == null) {
@@ -135,6 +142,7 @@ public class J2cacheImpl extends JbootCacheBase {
 
     @Override
     public List getKeys(String cacheName) {
+        cacheName = buildCacheName(cacheName);
         Collection keys = J2Cache.getChannel().keys(cacheName);
         return keys != null ? new ArrayList(keys) : null;
     }

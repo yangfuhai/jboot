@@ -64,7 +64,12 @@ public class JbootWebConfig {
         this.escapeParas = escapeParas;
     }
 
-    public static JbootWebConfig getInstance(){
-        return JbootConfigManager.me().get(JbootWebConfig.class);
+    private static JbootWebConfig me;
+
+    public static JbootWebConfig getInstance() {
+        if (me == null) {
+            me = JbootConfigManager.me().get(JbootWebConfig.class);
+        }
+        return me;
     }
 }

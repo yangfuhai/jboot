@@ -29,8 +29,12 @@ import java.util.List;
  */
 public class CacheUtil {
 
-    public static JbootCache use(String type) {
+    public static JbootCache useType(String type) {
         return JbootCacheManager.me().getCache(type);
+    }
+
+    public static JbootCache usePrefix(String cacheNamePrefix) {
+        return JbootCacheManager.me().getCache().use(cacheNamePrefix);
     }
 
     public static <T> T get(String cacheName, Object key) {
