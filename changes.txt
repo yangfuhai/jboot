@@ -1,3 +1,13 @@
+jboot v3.10.7:
+新增：JbootHttpRequest 添加 sslContext 的配置，方便自定义 ssl
+新增：JbootConfigManager 添加 setBootProperties 方法，方便用于添加启动配置
+新增：工具类 ReflectUtil 新增 searchFieldList() 方法
+新增：添加 TypeConverterFunc，用于处理前端传入枚举内容
+优化：JbootShiroInvokeListener，在 onInvokeBefore() 方法添加返回值 AuthorizeResult，更加方便整合 Jwt sso 等
+优化：升级 jedis/jsoup/jfinal/fastjson 等到最新版本
+
+
+
 jboot v3.10.6:
 修复：ClassScanner 添加排除的前缀时，如果有大写字母不生效的问题
 修复：当使用 @Api(collect={}) 时，子 Controller 路径错误的问题
