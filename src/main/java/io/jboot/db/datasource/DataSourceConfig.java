@@ -75,6 +75,7 @@ public class DataSourceConfig {
 
     private String table; //此数据源包含哪些表
     private String exTable; //该数据源排除哪些表
+    private String tablePrefix; //表前缀，假设 @Table(tableName="xxx")，那么实际表名为：tablePrefix + tableName
 
     private String dialectClass;
     private String activeRecordPluginClass;
@@ -289,6 +290,14 @@ public class DataSourceConfig {
 
     public void setExTable(String exTable) {
         this.exTable = exTable;
+    }
+
+    public String getTablePrefix() {
+        return tablePrefix;
+    }
+
+    public void setTablePrefix(String tablePrefix) {
+        this.tablePrefix = tablePrefix;
     }
 
     public Long getMaxLifetime() {

@@ -129,8 +129,8 @@ public class ArpManager {
         /**
          * 不需要添加映射的直接返回
          *
-         * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了，
-         * 添加映射：默认为该model的数据源，
+         * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了
+         * 添加映射：默认为该 model 的数据源
          * 不添加映射：通过 model.use("xxx").save() 这种方式去调用该数据源
          * 不添加映射使用从场景一般是：读写分离时，用于读取只读数据库的数据
          */
@@ -145,10 +145,11 @@ public class ArpManager {
         }
 
         for (TableInfo table : tableInfos) {
+            String tableName = StrUtil.isNotBlank(config.getTablePrefix()) ? config.getTablePrefix() + table.getTableName() : table.getTableName();
             if (StrUtil.isNotBlank(table.getPrimaryKey())) {
-                activeRecordPlugin.addMapping(table.getTableName(), table.getPrimaryKey(), (Class<? extends Model<?>>) table.getModelClass());
+                activeRecordPlugin.addMapping(tableName, table.getPrimaryKey(), (Class<? extends Model<?>>) table.getModelClass());
             } else {
-                activeRecordPlugin.addMapping(table.getTableName(), (Class<? extends Model<?>>) table.getModelClass());
+                activeRecordPlugin.addMapping(tableName, (Class<? extends Model<?>>) table.getModelClass());
             }
         }
 

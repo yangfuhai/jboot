@@ -64,7 +64,7 @@ public class TableInfoManager {
 
         for (TableInfo tableInfo : getAllTableInfos()) {
 
-            //说明该表已经被指定到datasource了
+            //说明该表已经被指定到 datasource 了
             if (tableInfo.getDatasources() != null) {
                 continue;
             }
