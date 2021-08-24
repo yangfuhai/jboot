@@ -32,6 +32,11 @@ public abstract class JbootCacheBase implements JbootCache {
         return this;
     }
 
+    public void clear(){
+        CACHE_NAME_PREFIX_TL.remove();
+    }
+
+
     protected String buildCacheName(String cacheName) {
         String cacheNamePrefix = CACHE_NAME_PREFIX_TL.get();
         if (StrUtil.isBlank(cacheNamePrefix)) {

@@ -16,6 +16,10 @@ public class AopCache {
         return getAopCache().use(cacheNamePrefix);
     }
 
+    public static void clearPrefix() {
+        getAopCache().clear();
+    }
+
     static JbootCache getAopCache() {
         if (aopCache == null) {
             synchronized (AopCache.class) {
@@ -30,7 +34,6 @@ public class AopCache {
     public static void setAopCache(JbootCache aopCache) {
         AopCache.aopCache = aopCache;
     }
-
 
 
     public static void put(String cacheName, Object key, Object value) {
