@@ -1559,7 +1559,7 @@ public class JbootJedisImpl extends JbootRedisBase {
         params.match(pattern).count(scanCount);
         try (Jedis jedis = getJedis()) {
             ScanResult<String> scanResult = jedis.scan(cursor, params);
-            return new RedisScanResult<>(scanResult.getStringCursor(), scanResult.getResult());
+            return new RedisScanResult<>(scanResult.getCursor(), scanResult.getResult());
         }
     }
 

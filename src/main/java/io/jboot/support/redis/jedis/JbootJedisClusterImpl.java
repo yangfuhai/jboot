@@ -378,8 +378,9 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
      */
     public String select(int databaseIndex) {
 
-        return jedisCluster.select(databaseIndex);
-
+//        return jedisCluster.select(databaseIndex);
+        throw new IllegalStateException("Redis Cluster does not support multiple databases like the stand alone version of Redis, " +
+                "there is just database 0, and SELECT is not allowed.");
     }
 
     /**
@@ -851,9 +852,21 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
      * 通常用于测试与服务器的连接是否仍然生效，或者用于测量延迟值。
      */
     public String ping() {
+//        jedisCluster.getClusterNodes().get("aa").getResource().ping
+//        return jedisCluster..ping();
 
-        return jedisCluster.ping();
-
+        Map<String, JedisPool> nodes = jedisCluster.getClusterNodes();
+        if (nodes != null) {
+            for (JedisPool pool : nodes.values()) {
+                try (Jedis node = pool.getResource()) {
+                    String ret = node.ping();
+                    if (ret != null) {
+                        return ret;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -1141,9 +1154,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
      * @param message
      */
     public void publish(byte[] channel, byte[] message) {
-
         jedisCluster.publish(channel, message);
-
     }
 
 
@@ -1224,7 +1235,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
         ScanParams params = new ScanParams();
         params.match(pattern).count(scanCount);
         ScanResult<String> scanResult = jedisCluster.scan(cursor, params);
-        return new RedisScanResult<>(scanResult.getStringCursor(), scanResult.getResult());
+        return new RedisScanResult<>(scanResult.getCursor(), scanResult.getResult());
     }
 
     @Override
