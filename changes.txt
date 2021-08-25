@@ -1,3 +1,11 @@
+jboot v3.10.8:
+新增：JbootCache 新增通过前缀了使用 "多实例" 的支持
+新增：Model、Db 动态设置默认数据源的支持
+新增：DatasourceConfig 新增表前缀配置的支持
+修复：由于 RPC 添加 Reference 缓存后，造成 Controller 多个 Service 无法注入的问题
+
+
+
 jboot v3.10.7:
 新增：JbootHttpRequest 添加 sslContext 的配置，方便自定义 ssl
 新增：JbootConfigManager 添加 setBootProperties 方法，方便用于添加启动配置
