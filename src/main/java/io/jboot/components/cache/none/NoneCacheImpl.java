@@ -31,6 +31,11 @@ public class NoneCacheImpl implements JbootCache {
     }
 
     @Override
+    public void clear() {
+
+    }
+
+    @Override
     public <T> T get(String cacheName, Object key) {
         return null;
     }

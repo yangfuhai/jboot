@@ -23,17 +23,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ReferenceConfigCache {
 
-    private static Map<Object, Serializable> configs = new ConcurrentHashMap<>();
+    private static Map<Integer, Serializable> configs = new ConcurrentHashMap<>();
 
     public static JbootrpcReferenceConfig getReferenceConfig(RPCInject rpcInject) {
-        JbootrpcReferenceConfig referenceConfig = (JbootrpcReferenceConfig) configs.get(rpcInject);
+        int identityHashCode = System.identityHashCode(rpcInject);
+        JbootrpcReferenceConfig referenceConfig = (JbootrpcReferenceConfig) configs.get(identityHashCode);
         if (referenceConfig == null) {
             synchronized (rpcInject) {
-                referenceConfig = (JbootrpcReferenceConfig) configs.get(rpcInject);
+                referenceConfig = (JbootrpcReferenceConfig) configs.get(identityHashCode);
                 if (referenceConfig == null) {
                     referenceConfig = new JbootrpcReferenceConfig();
                     RPCUtil.appendAnnotation(RPCInject.class, rpcInject, referenceConfig);
-                    configs.put(rpcInject, referenceConfig);
+                    configs.put(identityHashCode, referenceConfig);
                 }
             }
         }

@@ -3,6 +3,7 @@ package io.jboot.test.rpc.dubbonacos;
 import io.jboot.app.JbootApplication;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.test.rpc.commons.BlogService;
+import io.jboot.test.rpc.commons.BookService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -22,7 +23,6 @@ public class DubboClientNacosDemo extends JbootController {
         //注册中心地址，即 nacos 的地址
         JbootApplication.setBootArg("jboot.rpc.dubbo.registry.address", "127.0.0.1:8848");
 
-
         JbootApplication.run(args);
     }
 
@@ -30,11 +30,18 @@ public class DubboClientNacosDemo extends JbootController {
     @RPCInject
     private BlogService blogService;
 
+
+    @RPCInject
+    private BookService bookService;
+
     public void index() {
 
         System.out.println("DubboClientNacosDemo.index()");
 
-        System.out.println(blogService);
-        renderText(blogService.findById());
+        System.out.println(blogService.findById());
+        System.out.println(bookService.findById());
+
+
+        renderText("ok");
     }
 }

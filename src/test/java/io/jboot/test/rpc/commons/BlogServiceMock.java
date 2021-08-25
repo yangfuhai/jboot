@@ -11,7 +11,7 @@ public class BlogServiceMock implements BlogService {
     @Override
     public String findById() {
         System.err.println("BlogServiceMock.findById() invoked.");
-        return "id from mock";
+        return "id from BlogServiceMock";
     }
 
     @Override
