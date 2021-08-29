@@ -20,12 +20,13 @@ import com.jfinal.log.Log;
 import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderManager;
+import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -36,10 +37,22 @@ public class AttachmentManager {
     private static final Log LOG = Log.getLog(AttachmentManager.class);
 
 
-    private static final AttachmentManager ME = new AttachmentManager();
+    private static Map<String, AttachmentManager> managers = new HashMap<>();
 
     public static AttachmentManager me() {
-        return ME;
+        return use("default");
+    }
+
+    public static AttachmentManager use(String name) {
+        AttachmentManager manager = managers.get(name);
+        if (manager == null) {
+            synchronized (AttachmentManager.class) {
+                if (manager == null) {
+                    manager = new AttachmentManager();
+                }
+            }
+        }
+        return manager;
     }
 
     private AttachmentManager() {
@@ -208,6 +221,18 @@ public class AttachmentManager {
 
 
     /**
+     * 创建一个新的文件
+     * 使用创建一般是创建一个空的文件，然后由外部逻辑进行写入
+     *
+     * @param suffix
+     * @return
+     */
+    public File createNewFile(String suffix) {
+        return getDefaultContainer().creatNewFile(suffix);
+    }
+
+
+    /**
      * 渲染文件到浏览器
      *
      * @param target
@@ -216,7 +241,9 @@ public class AttachmentManager {
      * @return true 渲染成功，false 不进行渲染
      */
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        if (target.startsWith(defaultContainer.getTargetPrefix()) && target.lastIndexOf('.') != -1) {
+        if (StrUtil.isNotBlank(defaultContainer.getTargetPrefix())
+                && target.startsWith(defaultContainer.getTargetPrefix())
+                && target.lastIndexOf('.') != -1) {
             Render render = getFileRender(getFile(target));
             render.setContext(request, response).render();
             return true;

@@ -52,7 +52,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
     @Override
     public String saveFile(File file) {
-        File newfile = newRandomFile(FileUtil.getSuffix(file.getName()));
+        File newfile = creatNewFile(FileUtil.getSuffix(file.getName()));
 
         if (!newfile.getParentFile().exists()) {
             newfile.getParentFile().mkdirs();
@@ -133,7 +133,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     }
 
 
-    public File newRandomFile(String suffix) {
+    public File creatNewFile(String suffix) {
         String rootPath = getRootPath();
 
         StringBuilder newFileName = new StringBuilder(rootPath).append(targetPrefix)
