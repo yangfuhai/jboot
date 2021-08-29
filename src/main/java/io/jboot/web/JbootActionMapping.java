@@ -9,9 +9,9 @@ import io.jboot.utils.ClassUtil;
 
 import java.lang.reflect.*;
 
-public class JbootAciontMapping extends ActionMapping {
+public class JbootActionMapping extends ActionMapping {
 
-    public JbootAciontMapping(Routes routes) {
+    public JbootActionMapping(Routes routes) {
         super(routes);
     }
 

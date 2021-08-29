@@ -54,7 +54,7 @@ import io.jboot.support.swagger.JbootSwaggerConfig;
 import io.jboot.support.swagger.JbootSwaggerController;
 import io.jboot.support.swagger.JbootSwaggerManager;
 import io.jboot.utils.*;
-import io.jboot.web.JbootAciontMapping;
+import io.jboot.web.JbootActionMapping;
 import io.jboot.web.JbootWebConfig;
 import io.jboot.web.TypeConverterFunc;
 import io.jboot.web.attachment.AttachmentHandler;
@@ -159,7 +159,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
         constants.setBaseUploadPath(LocalAttachmentContainerConfig.getInstance().buildUploadAbsolutePath());
 
-        constants.setActionMapping(JbootAciontMapping::new);
+        constants.setActionMapping(JbootActionMapping::new);
 
         JbootAppListenerManager.me().onConstantConfig(constants);
 
