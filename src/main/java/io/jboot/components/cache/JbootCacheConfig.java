@@ -34,7 +34,8 @@ public class JbootCacheConfig {
 
 
     private String type = TYPE_CAFFEINE;
-    private String defaultCacheNamePrefix;
+    private String name = "default";
+    private String defaultCachePrefix;
 
     // AOP 缓存的默认有效时间，0为永久有效，单位秒，
     // 当 @Cacheable 和 @CachePut 注解不配置的时候默认用这个配置
@@ -50,12 +51,20 @@ public class JbootCacheConfig {
         this.type = type;
     }
 
-    public String getDefaultCacheNamePrefix() {
-        return defaultCacheNamePrefix;
+    public String getName() {
+        return name;
     }
 
-    public void setDefaultCacheNamePrefix(String defaultCacheNamePrefix) {
-        this.defaultCacheNamePrefix = defaultCacheNamePrefix;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDefaultCachePrefix() {
+        return defaultCachePrefix;
+    }
+
+    public void setDefaultCachePrefix(String defaultCachePrefix) {
+        this.defaultCachePrefix = defaultCachePrefix;
     }
 
     public int getAopCacheLiveSeconds() {

@@ -12,12 +12,12 @@ public class AopCache {
 
     private static JbootCache aopCache;
 
-    public static JbootCache usePrefix(String cacheNamePrefix) {
-        return getAopCache().use(cacheNamePrefix);
+    public static JbootCache setCurrentPrefix(String cacheNamePrefix) {
+        return getAopCache().setCurrentCacheNamePrefix(cacheNamePrefix);
     }
 
-    public static void clearPrefix() {
-        getAopCache().clear();
+    public static void clearCurrentPrefix() {
+        getAopCache().removeCurrentCacheNamePrefix();
     }
 
     static JbootCache getAopCache() {

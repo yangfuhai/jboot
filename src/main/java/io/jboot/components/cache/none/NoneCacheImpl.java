@@ -26,12 +26,12 @@ import java.util.List;
  */
 public class NoneCacheImpl implements JbootCache {
     @Override
-    public JbootCache use(String cacheNamePrefix) {
+    public JbootCache setCurrentCacheNamePrefix(String cacheNamePrefix) {
         return this;
     }
 
     @Override
-    public void clear() {
+    public void removeCurrentCacheNamePrefix() {
 
     }
 

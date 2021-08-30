@@ -23,7 +23,7 @@ public abstract class JbootCacheBase implements JbootCache {
     private ThreadLocal<String> CACHE_NAME_PREFIX_TL = new ThreadLocal<>();
 
     @Override
-    public JbootCache use(String cacheNamePrefix) {
+    public JbootCache setCurrentCacheNamePrefix(String cacheNamePrefix) {
         if (StrUtil.isNotBlank(cacheNamePrefix)) {
             CACHE_NAME_PREFIX_TL.set(cacheNamePrefix);
         } else {
@@ -32,7 +32,8 @@ public abstract class JbootCacheBase implements JbootCache {
         return this;
     }
 
-    public void clear(){
+    @Override
+    public void removeCurrentCacheNamePrefix(){
         CACHE_NAME_PREFIX_TL.remove();
     }
 
@@ -40,7 +41,7 @@ public abstract class JbootCacheBase implements JbootCache {
     protected String buildCacheName(String cacheName) {
         String cacheNamePrefix = CACHE_NAME_PREFIX_TL.get();
         if (StrUtil.isBlank(cacheNamePrefix)) {
-            cacheNamePrefix = JbootCacheConfig.getInstance().getDefaultCacheNamePrefix();
+            cacheNamePrefix = JbootCacheConfig.getInstance().getDefaultCachePrefix();
         }
 
         if (StrUtil.isBlank(cacheNamePrefix)) {

@@ -38,14 +38,14 @@ public class JbootCacheManager {
     }
 
     private Map<String, JbootCache> cacheMap = new ConcurrentHashMap<>();
-    private JbootCacheConfig config = Jboot.config(JbootCacheConfig.class);
+    private JbootCacheConfig defaultConfig = Jboot.config(JbootCacheConfig.class);
 
     public static JbootCacheManager me() {
         return me;
     }
 
     public JbootCache getCache() {
-        return getCache(config.getType());
+        return getCache(defaultConfig.getType());
     }
 
     public JbootCache getCache(String type) {
