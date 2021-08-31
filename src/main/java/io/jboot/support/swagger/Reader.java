@@ -15,6 +15,7 @@
  */
 package io.jboot.support.swagger;
 
+import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 import io.jboot.web.controller.JbootControllerManager;
 import io.swagger.models.Operation;
@@ -72,7 +73,11 @@ public class Reader {
 
             String methodPath = "index".equals(method.getName()) ? "" : "/" + method.getName();
             String operationPath = JbootControllerManager.me().getPathByController((Class<? extends Controller>) context.getCls()) + methodPath;
-
+            //如果有ActionKey注解的URL路径,则使用该路径而不是方法名
+            ActionKey actionKeyAnnotation = ReflectionUtils.getAnnotation(method, ActionKey.class);
+            if(actionKeyAnnotation != null && !actionKeyAnnotation.value().isEmpty()){
+                operationPath = actionKeyAnnotation.value();
+            }
             String httpMethod = extension.getHttpMethod(context, method);
 
             if (operationPath == null || httpMethod == null) {
