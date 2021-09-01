@@ -30,7 +30,8 @@ public class JbootWebConfig {
     private String cookieEncryptKey = DEFAULT_COOKIE_ENCRYPT_KEY;
     private int cookieMaxAge = 60 * 60 * 24 * 2; // 2 days（单位：秒）
     private String webSocketEndpoint;
-    private boolean escapeParas = false;
+    private boolean escapeParasEnable = false;
+    private boolean pathVariableEnable = false;
 
     public String getCookieEncryptKey() {
         return cookieEncryptKey;
@@ -56,12 +57,20 @@ public class JbootWebConfig {
         this.webSocketEndpoint = webSocketEndpoint;
     }
 
-    public boolean isEscapeParas() {
-        return escapeParas;
+    public boolean isEscapeParasEnable() {
+        return escapeParasEnable;
     }
 
-    public void setEscapeParas(boolean escapeParas) {
-        this.escapeParas = escapeParas;
+    public void setEscapeParasEnable(boolean escapeParasEnable) {
+        this.escapeParasEnable = escapeParasEnable;
+    }
+
+    public boolean isPathVariableEnable() {
+        return pathVariableEnable;
+    }
+
+    public void setPathVariableEnable(boolean pathVariableEnable) {
+        this.pathVariableEnable = pathVariableEnable;
     }
 
     private static JbootWebConfig me;

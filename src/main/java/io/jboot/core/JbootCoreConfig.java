@@ -56,6 +56,7 @@ import io.jboot.support.swagger.JbootSwaggerManager;
 import io.jboot.utils.*;
 import io.jboot.web.JbootActionMapping;
 import io.jboot.web.JbootWebConfig;
+import io.jboot.web.PathVariableActionMapping;
 import io.jboot.web.TypeConverterFunc;
 import io.jboot.web.attachment.AttachmentHandler;
 import io.jboot.web.attachment.LocalAttachmentContainerConfig;
@@ -67,6 +68,7 @@ import io.jboot.web.directive.SharedEnumObject;
 import io.jboot.web.directive.annotation.*;
 import io.jboot.web.handler.JbootActionHandler;
 import io.jboot.web.handler.JbootHandler;
+import io.jboot.web.handler.PathVariableActionHandler;
 import io.jboot.web.json.JbootJson;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.web.xss.XSSHandler;
@@ -159,7 +161,11 @@ public class JbootCoreConfig extends JFinalConfig {
 
         constants.setBaseUploadPath(LocalAttachmentContainerConfig.getInstance().buildUploadAbsolutePath());
 
-        constants.setActionMapping(JbootActionMapping::new);
+        if (JbootWebConfig.getInstance().isPathVariableEnable()){
+            constants.setActionMapping(PathVariableActionMapping::new);
+        }else {
+            constants.setActionMapping(JbootActionMapping::new);
+        }
 
         JbootAppListenerManager.me().onConstantConfig(constants);
 
@@ -344,7 +350,7 @@ public class JbootCoreConfig extends JFinalConfig {
             }
         }
 
-        if (JbootWebConfig.getInstance().isEscapeParas()) {
+        if (JbootWebConfig.getInstance().isEscapeParasEnable()) {
             handlers.add(new XSSHandler());
         }
 
@@ -352,7 +358,11 @@ public class JbootCoreConfig extends JFinalConfig {
 
         //若用户自己没配置 ActionHandler，默认使用 JbootActionHandler
         if (handlers.getActionHandler() == null) {
-            handlers.setActionHandler(new JbootActionHandler());
+            if (JbootWebConfig.getInstance().isPathVariableEnable()){
+                handlers.setActionHandler(new PathVariableActionHandler());
+            }else {
+                handlers.setActionHandler(new JbootActionHandler());
+            }
         }
 
     }
