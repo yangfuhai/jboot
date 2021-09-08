@@ -2,6 +2,7 @@ package io.jboot.support.shiro;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
+import io.jboot.web.controller.JbootController;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -45,13 +46,16 @@ public class JbootShiroUtil {
         return actionKey;
     }
 
+    private static final Set<String> excludedMethodName = new HashSet<String>();
 
-    public static Set<String> buildExcludedMethodName() {
-        Set<String> excludedMethodName = new HashSet<String>();
-        Method[] methods = Controller.class.getMethods();
-        for (Method m : methods) {
-            excludedMethodName.add(m.getName());
+    public static Set<String> getControllerExcludedMethodName() {
+        if (excludedMethodName.isEmpty()) {
+            Method[] methods = JbootController.class.getMethods();
+            for (Method m : methods) {
+                excludedMethodName.add(m.getName());
+            }
         }
+
         return excludedMethodName;
     }
 

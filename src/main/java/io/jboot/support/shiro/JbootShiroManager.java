@@ -15,11 +15,12 @@
  */
 package io.jboot.support.shiro;
 
+import com.jfinal.aop.Invocation;
 import com.jfinal.config.Routes;
 import com.jfinal.core.Controller;
 import io.jboot.Jboot;
-import io.jboot.support.shiro.processer.*;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.support.shiro.processer.*;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
@@ -28,16 +29,19 @@ import org.apache.shiro.authz.annotation.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * shiro 管理器.
  */
 public class JbootShiroManager {
-    private static JbootShiroManager me = new JbootShiroManager();
+    private final static JbootShiroManager me = new JbootShiroManager();
 
-    private JbootShiroConfig jbootShiroConfig = Jboot.config(JbootShiroConfig.class);
+    private final JbootShiroConfig jbootShiroConfig = Jboot.config(JbootShiroConfig.class);
+
+    private final ShiroRequiresAuthenticationProcesser requiresAuthenticationProcessor = new ShiroRequiresAuthenticationProcesser();
+    private final ShiroRequiresUserProcesser requiresUserProcessor = new ShiroRequiresUserProcesser();
+    private final ShiroRequiresGuestProcesser requiresGuestProcessor = new ShiroRequiresGuestProcesser();
 
     private JbootShiroManager() {
     }
@@ -51,74 +55,54 @@ public class JbootShiroManager {
 
 
     public void init(List<Routes.Route> routes) {
-        if (!jbootShiroConfig.isConfigOK()) {
-            return;
-        }
-        initInvokers(routes);
+        // do nothing
     }
 
     /**
-     * 初始化 invokers 变量
+     * 根据类和方法上的注解生成shiro的注解处理器
+     *
+     * @return 返回是否有shiro处理器，ShiroInterceptorBuilder 根据这一结果来决定是否对方法进行拦截
      */
-    private void initInvokers(List<Routes.Route> routes) {
-        Set<String> excludedMethodName = JbootShiroUtil.buildExcludedMethodName();
+    public boolean buildShiroInvoker(Class clazz, Method method) {
+        if (Controller.class.isAssignableFrom(clazz) &&
+                JbootShiroUtil.getControllerExcludedMethodName().contains(method.getName())) {
+            // 忽略 JbootController 中的方法
+            return false;
+        }
 
-        ShiroRequiresAuthenticationProcesser requiresAuthenticationProcesser = new ShiroRequiresAuthenticationProcesser();
-        ShiroRequiresUserProcesser requiresUserProcesser = new ShiroRequiresUserProcesser();
-        ShiroRequiresGuestProcesser requiresGuestProcesser = new ShiroRequiresGuestProcesser();
+        if (method.getAnnotation(ShiroClear.class) != null) {
+            return false;
+        }
 
-
-        for (Routes.Route route : routes) {
-            Class<? extends Controller> controllerClass = route.getControllerClass();
-
-            String controllerKey = route.getControllerPath();
-
-            Annotation[] controllerAnnotations = controllerClass.getAnnotations();
-
-            Method[] methods = controllerClass.getMethods();
-            for (Method method : methods) {
-                if (excludedMethodName.contains(method.getName())) {
-                    continue;
-                }
-
-                if (method.getAnnotation(ShiroClear.class) != null) {
-                    continue;
-                }
-
-
-                Annotation[] methodAnnotations = method.getAnnotations();
-                Annotation[] allAnnotations = ArrayUtil.concat(controllerAnnotations, methodAnnotations);
-
-
-                String actionKey = JbootShiroUtil.createActionKey(controllerClass, method, controllerKey);
-                ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
-
-                for (Annotation annotation : allAnnotations) {
-                    if (annotation.annotationType() == RequiresPermissions.class) {
-                        ShiroRequiresPermissionsProcesser processer = new ShiroRequiresPermissionsProcesser((RequiresPermissions) annotation);
-                        invoker.addProcesser(processer);
-                    } else if (annotation.annotationType() == RequiresRoles.class) {
-                        ShiroRequiresRolesProcesser processer = new ShiroRequiresRolesProcesser((RequiresRoles) annotation);
-                        invoker.addProcesser(processer);
-                    } else if (annotation.annotationType() == RequiresUser.class) {
-                        invoker.addProcesser(requiresUserProcesser);
-                    } else if (annotation.annotationType() == RequiresAuthentication.class) {
-                        invoker.addProcesser(requiresAuthenticationProcesser);
-                    } else if (annotation.annotationType() == RequiresGuest.class) {
-                        invoker.addProcesser(requiresGuestProcesser);
-                    }
-                }
-
-                if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
-                    invokers.put(actionKey, invoker);
-                }
+        Annotation[] allAnnotations = ArrayUtil.concat(clazz.getAnnotations(), method.getAnnotations());
+        ShiroAuthorizeProcesserInvoker invoker = new ShiroAuthorizeProcesserInvoker();
+        for (Annotation annotation : allAnnotations) {
+            if (annotation.annotationType() == RequiresPermissions.class) {
+                ShiroRequiresPermissionsProcesser processor = new ShiroRequiresPermissionsProcesser((RequiresPermissions) annotation);
+                invoker.addProcesser(processor);
+            } else if (annotation.annotationType() == RequiresRoles.class) {
+                ShiroRequiresRolesProcesser processor = new ShiroRequiresRolesProcesser((RequiresRoles) annotation);
+                invoker.addProcesser(processor);
+            } else if (annotation.annotationType() == RequiresUser.class) {
+                invoker.addProcesser(requiresUserProcessor);
+            } else if (annotation.annotationType() == RequiresAuthentication.class) {
+                invoker.addProcesser(requiresAuthenticationProcessor);
+            } else if (annotation.annotationType() == RequiresGuest.class) {
+                invoker.addProcesser(requiresGuestProcessor);
             }
         }
+
+        if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
+            invokers.put(method.toGenericString(), invoker);
+            return true;
+        }
+
+        return false;
     }
 
-
-    public AuthorizeResult invoke(String actionKey) {
-        ShiroAuthorizeProcesserInvoker invoker = invokers.get(actionKey);
+    public AuthorizeResult invoke(Invocation invocation) {
+        String key = invocation.getMethod().toGenericString();
+        ShiroAuthorizeProcesserInvoker invoker = invokers.get(key);
         if (invoker == null) {
             return AuthorizeResult.ok();
         }
