@@ -21,6 +21,7 @@ import com.jfinal.server.undertow.WebBuilder;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.undertow.JbootUndertowConfig;
 import io.jboot.app.undertow.JbootUndertowServer;
+import io.jboot.utils.StrUtil;
 
 import javax.servlet.DispatcherType;
 
@@ -130,8 +131,11 @@ public class JbootApplication {
             if (urlMapping == null) {
                 urlMapping = "/*";
             }
+            String filterClass = StrUtil.defaultIfBlank(ApplicationUtil.getConfigValue("jboot.shiro.filter"),
+                    "io.jboot.support.shiro.JbootShiroFilter");
+
             webBuilder.addListener("org.apache.shiro.web.env.EnvironmentLoaderListener");
-            webBuilder.addFilter("shiro", "io.jboot.support.shiro.JbootShiroFilter")
+            webBuilder.addFilter("shiro", filterClass)
                     .addFilterUrlMapping("shiro", urlMapping, DispatcherType.REQUEST);
             webBuilder.getDeploymentInfo().addInitParameter("shiroEnvironmentClass",
                     "io.jboot.support.shiro.JbootShiroWebEnvironment");

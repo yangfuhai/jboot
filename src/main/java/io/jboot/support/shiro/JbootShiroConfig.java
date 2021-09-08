@@ -27,6 +27,7 @@ public class JbootShiroConfig {
     private String urlMapping = "/*";
 
     private String invokeListener;
+    private String filter = "io.jboot.support.shiro.JbootShiroFilter";
 
     public String getLoginUrl() {
         return loginUrl;
@@ -78,6 +79,14 @@ public class JbootShiroConfig {
 
     public boolean isConfigOK() {
         return ini != null;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 }
 
