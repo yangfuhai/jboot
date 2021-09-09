@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,17 +41,22 @@ public class JbootTestBase {
         JbootApplication.run(null);
     }
 
-    protected static int getAvailablePort() {
-        while (true) {
-            try {
-                ServerSocket socket = new ServerSocket(0); // 随机端口
-                socket.close();
-                Thread.sleep(50); // 等待端口完全关闭
 
-                return socket.getLocalPort();
-            } catch (Exception ignore) {
+    private static Integer getAvailablePort() {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(0);
+            return serverSocket.getLocalPort();
+        } catch (IOException e) {
+        } finally {
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                }
             }
         }
+        return null;
     }
 
     public static String httpGet(String url) {
