@@ -18,6 +18,7 @@ package io.jboot.support.shiro;
 import com.jfinal.aop.Invocation;
 import com.jfinal.config.Routes;
 import com.jfinal.core.Controller;
+import com.jfinal.template.expr.ast.MethodKeyBuilder;
 import io.jboot.Jboot;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.shiro.processer.*;
@@ -51,7 +52,7 @@ public class JbootShiroManager {
         return me;
     }
 
-    private ConcurrentHashMap<String, ShiroAuthorizeProcesserInvoker> invokers = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Long, ShiroAuthorizeProcesserInvoker> invokers = new ConcurrentHashMap<>();
 
 
     public void init(List<Routes.Route> routes) {
@@ -93,7 +94,7 @@ public class JbootShiroManager {
         }
 
         if (invoker.getProcessers() != null && invoker.getProcessers().size() > 0) {
-            invokers.put(method.toGenericString(), invoker);
+            invokers.put(getMethodKey(method), invoker);
             return true;
         }
 
@@ -101,14 +102,21 @@ public class JbootShiroManager {
     }
 
     public AuthorizeResult invoke(Invocation invocation) {
-        String key = invocation.getMethod().toGenericString();
-        ShiroAuthorizeProcesserInvoker invoker = invokers.get(key);
+        ShiroAuthorizeProcesserInvoker invoker = invokers.get(getMethodKey(invocation.getMethod()));
         if (invoker == null) {
             return AuthorizeResult.ok();
         }
 
         return invoker.invoke();
     }
+
+
+    private static MethodKeyBuilder keyBuilder = new MethodKeyBuilder.FastMethodKeyBuilder();
+
+    public static Long getMethodKey(Method method) {
+        return keyBuilder.getMethodKey(method.getDeclaringClass(), method.getName(), method.getParameterTypes());
+    }
+
 
     private JbootShiroInvokeListener invokeListener;
 
