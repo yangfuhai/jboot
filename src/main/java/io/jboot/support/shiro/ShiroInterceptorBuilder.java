@@ -28,13 +28,18 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class ShiroInterceptorBuilder implements InterceptorBuilder {
 
-    private static JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
+    private static final JbootShiroConfig config = Jboot.config(JbootShiroConfig.class);
 
     @Override
     public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
 
-        if (Util.isController(targetClass) && config.isConfigOK()) {
-            interceptors.add(JbootShiroInterceptor.class);
+        if (config.isConfigOK() &&
+                Util.isController(targetClass)  // 暂时只对 controller 层的方法进行拦截
+        ) {
+            boolean needIntercept = JbootShiroManager.me().buildShiroInvoker(targetClass, method);
+            if (needIntercept) {
+                interceptors.add(JbootShiroInterceptor.class);
+            }
         }
     }
 
