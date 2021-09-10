@@ -1,3 +1,15 @@
+jboot v3.11.0:
+新增：实验性新增 Restful 支持，默认关闭，可以通过 "jboot.web.pathVariableEnable=true" 开启，感谢 @没牙的小朋友
+新增：shiro 配置添加 filter 参数，自定义shiro相关的filter，感谢 @orangeJ
+优化：在shiro拦截器初始化时处理对应方法的注解，取消对路由、actionKey的倚赖，感谢 @orangeJ
+优化：修改 JbootActionMapping 拼写错误
+优化：AttachmentManager 新增多实例的支持
+优化：优化缓存前缀配置的方法名，否则可能会造成误解
+优化：同时修改 "jboot.web.escapeParas"配置为 "jboot.web.escapeParasEnable"
+修复：修正现有swagger实现中，会忽略ActionKey注解中的URL的问题，感谢 @没牙的小朋友
+
+
+
 jboot v3.10.8:
 新增：JbootCache 新增通过前缀了使用 "多实例" 的支持
 新增：Model、Db 动态设置默认数据源的支持
