@@ -42,7 +42,7 @@ public class RequestUtil {
         return "XMLHttpRequest".equalsIgnoreCase(header);
     }
 
-    public static boolean isJsonContentType(HttpServletRequest request){
+    public static boolean isJsonContentType(HttpServletRequest request) {
         String contentType = request.getContentType();
         return contentType != null && contentType.toLowerCase().contains("application/json");
     }
@@ -117,9 +117,9 @@ public class RequestUtil {
     }
 
     public static String getIpAddress(HttpServletRequest request) {
-        String ip = request.getHeader("X-requested-For");
+        String ip = request.getHeader("X-Forwarded-For");
         if (StrUtil.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Forwarded-For");
+            ip = request.getHeader("X-Real-IP");
         }
         if (StrUtil.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
@@ -139,8 +139,7 @@ public class RequestUtil {
 
         if (ip != null && ip.contains(",")) {
             String[] ips = ip.split(",");
-            for (int index = 0; index < ips.length; index++) {
-                String strIp = ips[index];
+            for (String strIp : ips) {
                 if (!("unknown".equalsIgnoreCase(strIp))) {
                     ip = strIp;
                     break;
