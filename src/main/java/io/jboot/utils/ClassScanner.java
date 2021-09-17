@@ -294,6 +294,7 @@ public class ClassScanner {
         excludeJars.add("jsr250");
         excludeJars.add("pinyin4j");
         excludeJars.add("ijpay-");
+        excludeJars.add("wildfly-");
     }
 
 
@@ -345,6 +346,8 @@ public class ClassScanner {
         excludeClasses.add("org.hamcrest.");
         excludeClasses.add("org.objectweb.");
         excludeClasses.add("org.joda.");
+        excludeClasses.add("org.wildfly.");
+        excludeClasses.add("org.owasp.");
         excludeClasses.add("aj.org.");
         excludeClasses.add("ch.qos.");
         excludeClasses.add("joptsimple.");
