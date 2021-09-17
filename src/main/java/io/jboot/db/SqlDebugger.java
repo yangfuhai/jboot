@@ -35,6 +35,11 @@ public class SqlDebugger {
         private boolean printSqlEnable = Jboot.isDevMode();
 
         @Override
+        public void setPrintEnable(boolean enable) {
+            this.printSqlEnable = enable;
+        }
+
+        @Override
         public boolean isPrintEnable(Config config) {
             return printSqlEnable;
         }
@@ -108,6 +113,9 @@ public class SqlDebugger {
 
 
     public static interface SqlDebugPrinter {
+
+        public void setPrintEnable(boolean enable);
+
         public boolean isPrintEnable(Config config);
 
         public void print(String sql, Long takedTimeMillis);
