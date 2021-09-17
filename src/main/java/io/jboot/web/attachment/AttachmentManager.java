@@ -49,6 +49,7 @@ public class AttachmentManager {
             synchronized (AttachmentManager.class) {
                 if (manager == null) {
                     manager = new AttachmentManager();
+                    managers.put(name,manager);
                 }
             }
         }
