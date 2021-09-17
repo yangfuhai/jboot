@@ -1,3 +1,11 @@
+jboot v3.11.1:
+新增：SqlDebugPrinter 新增是否打印 SQL 的独立开关
+新增：新增更多的 JbootApplication.createServer(...) 方法
+优化：升级JFinal、Jedis、Naocs、Dubbo 等到最新版本
+修复：AttachmentManager.use(name) 无法使用的问题
+
+
+
 jboot v3.11.0:
 新增：实验性新增 Restful 支持，默认关闭，可以通过 "jboot.web.pathVariableEnable=true" 开启，感谢 @没牙的小朋友
 新增：shiro 配置添加 filter 参数，自定义shiro相关的filter，感谢 @orangeJ
