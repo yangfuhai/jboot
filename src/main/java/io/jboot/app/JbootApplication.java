@@ -22,8 +22,10 @@ import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.undertow.JbootUndertowConfig;
 import io.jboot.app.undertow.JbootUndertowServer;
 import io.jboot.utils.StrUtil;
+import io.undertow.Undertow;
 
 import javax.servlet.DispatcherType;
+import java.util.function.Consumer;
 
 public class JbootApplication {
 
@@ -59,7 +61,7 @@ public class JbootApplication {
      */
     public static UndertowServer createServer(String[] args) {
         JbootApplicationConfig appConfig = ApplicationUtil.getAppConfig(args);
-        return createServer(appConfig, createUndertowConfig(appConfig), null);
+        return createServer(appConfig, createUndertowConfig(appConfig), null, null);
     }
 
     /**
@@ -77,9 +79,29 @@ public class JbootApplication {
     }
 
 
+    public static UndertowServer createServer(String[] args, JbootWebBuilderConfiger configer, Consumer<Undertow.Builder> builder) {
+        JbootApplicationConfig appConfig = ApplicationUtil.getAppConfig(args);
+        return createServer(appConfig, createUndertowConfig(appConfig), configer, builder);
+    }
+
+
+    public static UndertowServer createServer(String[] args, Consumer<Undertow.Builder> builder) {
+        JbootApplicationConfig appConfig = ApplicationUtil.getAppConfig(args);
+        return createServer(appConfig, createUndertowConfig(appConfig), null, builder);
+    }
+
+
     public static UndertowServer createServer(JbootApplicationConfig appConfig
             , UndertowConfig undertowConfig
             , JbootWebBuilderConfiger configer) {
+        return createServer(appConfig, undertowConfig, configer, null);
+    }
+
+
+    public static UndertowServer createServer(JbootApplicationConfig appConfig
+            , UndertowConfig undertowConfig
+            , JbootWebBuilderConfiger configer
+            , Consumer<Undertow.Builder> builder) {
 
         ApplicationUtil.printBannerInfo(appConfig);
         ApplicationUtil.printApplicationInfo(appConfig);
@@ -95,7 +117,7 @@ public class JbootApplication {
                     if (configer != null) {
                         configer.onConfig(webBuilder);
                     }
-                });
+                }).onStart(builder);
     }
 
 
