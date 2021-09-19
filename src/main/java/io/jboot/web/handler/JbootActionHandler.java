@@ -144,8 +144,6 @@ public class JbootActionHandler extends ActionHandler {
     }
 
 
-
-
     private void doStartRender(String target
             , HttpServletRequest request
             , HttpServletResponse response
@@ -249,11 +247,10 @@ public class JbootActionHandler extends ActionHandler {
             String qs = request.getQueryString();
             String targetInfo = qs == null ? target : target + "?" + qs;
             String info = ClassUtil.buildMethodString(action.getMethod());
-            LOG.error(info + " : " + targetInfo, e);
+            LOG.error(info + " \nQuery: " + targetInfo + "\n", e);
         }
         renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
     }
-
 
 
 }
