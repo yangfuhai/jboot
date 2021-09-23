@@ -60,7 +60,6 @@ public class Columns implements Serializable {
     }
 
 
-
     public static Columns create(Column column) {
         Columns that = new Columns();
         that.add(column);
@@ -86,9 +85,8 @@ public class Columns implements Serializable {
 
 
     public static Columns safeCreate(String name, Object value) {
-        return safeMode().eq(name,value);
+        return safeMode().eq(name, value);
     }
-
 
 
     /**
@@ -114,6 +112,7 @@ public class Columns implements Serializable {
 
     /**
      * add Columns
+     *
      * @param columns
      * @return
      */
@@ -393,7 +392,7 @@ public class Columns implements Serializable {
      * @param name
      * @return
      */
-    public Columns groupBy(String name){
+    public Columns groupBy(String name) {
         add(new GroupBy(name));
         return this;
     }
@@ -402,7 +401,7 @@ public class Columns implements Serializable {
      * @param name
      * @return
      */
-    public Columns having(String name){
+    public Columns having(String name) {
         add(new Having(name));
         return this;
     }
@@ -412,8 +411,8 @@ public class Columns implements Serializable {
      * @param sql
      * @return
      */
-    public Columns having(String sql,Object ... paras){
-        add(new Having(sql,paras));
+    public Columns having(String sql, Object... paras) {
+        add(new Having(sql, paras));
         return this;
     }
 
@@ -422,7 +421,7 @@ public class Columns implements Serializable {
      * @param columns
      * @return
      */
-    public Columns having(Columns columns){
+    public Columns having(Columns columns) {
         add(new Having(columns));
         return this;
     }
@@ -628,6 +627,19 @@ public class Columns implements Serializable {
         return cols;
     }
 
+    public boolean containsName(String name) {
+        if (isEmpty()) {
+            return false;
+        }
+
+        for (Column col : cols) {
+            if (col.getName() != null && col.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public String getCacheKey() {
         if (isEmpty()) {
@@ -731,6 +743,7 @@ public class Columns implements Serializable {
 
     /**
      * 输出 where 后面的 sql 部分，风格是 mysql 的风格 SQL
+     *
      * @return
      */
     public String toWherePartSql() {
@@ -738,9 +751,9 @@ public class Columns implements Serializable {
     }
 
 
-
     /**
      * 输出 where 后面的 sql 部分，风格是 mysql 的风格 SQL
+     *
      * @param withWhereKeyword 是否带上 where 关键字
      * @return
      */
@@ -749,10 +762,10 @@ public class Columns implements Serializable {
     }
 
 
-
     /**
      * 输出 where 部分的 sql
-     * @param separator 字段分隔符
+     *
+     * @param separator        字段分隔符
      * @param withWhereKeyword 是否带上 "where 关键字"
      * @return
      */
@@ -804,7 +817,7 @@ public class Columns implements Serializable {
         columns.or();
 
 //        columns.sqlPartWithoutLink("group by xxx");
-        columns.groupBy("aaa").having(Columns.create("aaa","bbb").ge("ccc",111));
+        columns.groupBy("aaa").having(Columns.create("aaa", "bbb").ge("ccc", 111));
 //        columns.or();
 //        columns.or();
 //        columns.or();
@@ -813,7 +826,7 @@ public class Columns implements Serializable {
         System.out.println(Arrays.toString(columns.getValueArray()));
         System.out.println(columns.toMysqlSql());
         System.out.println("-----------");
-        System.out.println(columns.toWherePartSql('"',true));
+        System.out.println(columns.toWherePartSql('"', true));
 
     }
 
@@ -824,17 +837,18 @@ public class Columns implements Serializable {
      */
     private String toMysqlSql() {
         JbootMysqlDialect dialect = new JbootMysqlDialect();
-        return dialect.forFindByColumns(null,null, "table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null, null, "table", "*", getList(), null, null);
     }
 
 
     /**
      * 这个只是用于调试
+     *
      * @return
      */
     private String toSqlServerSql() {
         JbootSqlServerDialect dialect = new JbootSqlServerDialect();
-        return dialect.forFindByColumns(null,null, "table", "*", getList(), null, null);
+        return dialect.forFindByColumns(null, null, "table", "*", getList(), null, null);
     }
 
 }
