@@ -53,6 +53,8 @@ public class MyTask implements Runnable {
     }
 }
 ```
+注意：由于 jdk `ScheduledThreadPoolExecutor` 自身实现的问题，任务的 run 方法如果抛出异常，会造成线程池停止调度，
+请务必在任务的 run 方法中使用 try catch 自行捕捉异常。
 
 **方案3：**
 使用 JFinal 自带的任务调度方案，参考文档：https://www.jfinal.com/doc/9-1
