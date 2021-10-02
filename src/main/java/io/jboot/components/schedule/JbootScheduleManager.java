@@ -53,7 +53,7 @@ public class JbootScheduleManager {
 
     public JbootScheduleManager() {
         config = Jboot.config(JbooScheduleConfig.class);
-        fixedScheduler = new ScheduledThreadPoolExecutor(config.getPoolSize(),new NamedThreadFactory("jboot-scheduler"));
+        fixedScheduler = new ScheduledThreadPoolExecutor(config.getPoolSize(), new NamedThreadFactory("jboot-scheduler"));
 
         File cron4jProperties = new File(PathKit.getRootClassPath(), config.getCron4jFile());
         cron4jPlugin = cron4jProperties.exists()
@@ -90,6 +90,10 @@ public class JbootScheduleManager {
             Runnable executeRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class) == null
                     ? runnable
                     : new JbootDistributedRunnable(runnable, fixedDelayJob.period());
+
+            // ScheduledThreadPoolExecutor 线程池在遇到未捕获的异常时会终止调度
+            // JbootSafeRunnable 可以捕捉业务代码异常，防止线程池意外终止调度
+            executeRunnable = new JbootSafeRunnable(executeRunnable);
             try {
                 scheduleRunnableCache.put(runnableClass, executeRunnable);
                 // modified by lixin 08.08, 用于remove fixedScheduler
@@ -106,6 +110,7 @@ public class JbootScheduleManager {
             Runnable executeRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class) == null
                     ? runnable
                     : new JbootDistributedRunnable(runnable, fixedRateJob.period());
+            executeRunnable = new JbootSafeRunnable(executeRunnable);
             try {
                 scheduleRunnableCache.put(runnableClass, executeRunnable);
                 // modified by lixin 08.08, 用于 remove fixedScheduler
