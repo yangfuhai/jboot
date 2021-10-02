@@ -6,11 +6,23 @@
 
 
 ### 账户管理
-账户相关的配置和管理：账户、部门、职位、角色等。
 
 ![](./features/account.png)
 
-### 权限分配
+### 部门管理
+
+![](./features/dept.jpeg)
+
+### 职位管理
+
+![](./features/station.jpeg)
+
+### 角色管理
+
+![](./features/role.jpeg)
+
+
+### 角色的权限分配
 对角色的权限进行分配、包括菜单的权限、功能的权限、逻辑权限（根据业务进行人为定义的权限）、敏感数据权限（根据业务进行人为定义的、涉及数据敏感的权限）
 
 ![](./features/role_permission.jpeg)
@@ -85,13 +97,36 @@ public enum PayType {
 
 ![](./features/wechat_account.jpeg)
 
+自动回复
+![](./features/wechat_reply.jpeg)
+
 通过关键字自动回复...
 
 ![](./features/wechat_keyword.jpeg)
 
+![](./features/wechat_keyword_config.jpeg)
 
 
-## API文档生成
+## 特色功能（独创）
+
+### 特色功能1：同一套代码支持 Tab 模式和独立页面模式
+JbootAdmin 同一套代码，后台支持 Tab 模式，也支持独立页面模式，同时 Tab 模式和独立页面模式支持用户自主切换，也支持后台配置为固定，不允许用户切换。 如下图所示是 Tab 模式：
+
+![](./images/jbootadmin-demo.jpg)
+
+### 特色功能2：免手动维护的权限列表
+在一般的系统中，需要我们一边开发，一边手动定义系统有哪些权限，但是在 JbootAdmin 中，所有的权限都是免手动维护的，我们可以通过后台，一键自动生成权限列表，存储到数据库里去。这样避免了繁杂的人为手动维护，也大大减少了出错的可能性。
+
+![](./features/build_permission.jpeg)
+
+### 特色功能3：免手动维护的系统菜单
+
+原理同免维护的权限列表。后台一键构建左边菜单的功能。
+
+![](./features/build_memu.jpeg)
+
+
+## API文档自动生成
 
 Jboot API 功能自动根据代码、自动生成文档、Debug 页面、对数据进行 Mock 等功能。
 
@@ -100,7 +135,7 @@ Jboot API 功能自动根据代码、自动生成文档、Debug 页面、对数�
 
 ![](./features/apidoc_code.png)
 
-### API 文档
+### API 生成文档
 
 ![](./features/apidoc_info.jpeg)
 
