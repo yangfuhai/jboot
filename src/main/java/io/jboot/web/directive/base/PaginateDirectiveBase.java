@@ -98,8 +98,12 @@ public abstract class PaginateDirectiveBase extends JbootDirectiveBase {
         int currentPageNumber = page == null ? 1 : page.getPageNumber();
         int totalPage = page == null ? 0 : page.getTotalPage();
 
-        if ((totalPage <= 0) || (currentPageNumber > totalPage)) {
+        if (totalPage == 0) {
             return;
+        }
+
+        if (currentPageNumber > totalPage) {
+            currentPageNumber = totalPage;
         }
 
         int startPage = currentPageNumber - siblingsItemCount;
