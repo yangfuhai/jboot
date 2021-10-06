@@ -295,6 +295,11 @@ public class ClassScanner {
         excludeJars.add("pinyin4j");
         excludeJars.add("ijpay-");
         excludeJars.add("wildfly-");
+        excludeJars.add("liquibase-");
+        excludeJars.add("flowable-");
+        excludeJars.add("mybatis-");
+        excludeJars.add("ip2region-");
+        excludeJars.add("java-uuid-generator-");
     }
 
 
@@ -403,6 +408,9 @@ public class ClassScanner {
         excludeClasses.add("jxl.");
         excludeClasses.add("org.jxls");
         excludeClasses.add("org.kordamp");
+        excludeClasses.add("org.mybatis");
+        excludeClasses.add("org.lisonsoul");
+        excludeClasses.add("org.flowable");
     }
 
 
