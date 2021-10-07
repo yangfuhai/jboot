@@ -15,6 +15,7 @@
  */
 package io.jboot.db;
 
+import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Config;
 import io.jboot.Jboot;
 import io.jboot.utils.DateUtil;
@@ -30,31 +31,8 @@ import java.util.regex.Matcher;
  */
 public class SqlDebugger {
 
-    private static SqlDebugPrinter defaultPrinter = new SqlDebugPrinter() {
 
-        private boolean printSqlEnable = Jboot.isDevMode();
-
-        @Override
-        public void setPrintEnable(boolean enable) {
-            this.printSqlEnable = enable;
-        }
-
-        @Override
-        public boolean isPrintEnable(Config config) {
-            return printSqlEnable;
-        }
-
-        @Override
-        public void print(String sql, Long takedTimeMillis) {
-            if (takedTimeMillis != null) {
-                System.out.println("Jboot exec sql taked " + takedTimeMillis + " ms >>>  " + sql);
-            } else {
-                System.out.println("Jboot exec sql >>>  " + sql);
-            }
-        }
-    };
-
-    private static SqlDebugPrinter printer = defaultPrinter;
+    private static SqlDebugPrinter printer = SqlDebugPrinter.DEFAULT_PRINTER;
 
     public static SqlDebugPrinter getPrinter() {
         return printer;
@@ -114,11 +92,60 @@ public class SqlDebugger {
 
     public static interface SqlDebugPrinter {
 
-        public void setPrintEnable(boolean enable);
+        SqlDebugPrinter DEFAULT_PRINTER = new SqlDebugPrinter() {
 
-        public boolean isPrintEnable(Config config);
+            private boolean printSqlEnable = Jboot.isDevMode();
 
-        public void print(String sql, Long takedTimeMillis);
+            @Override
+            public void setPrintEnable(boolean enable) {
+                this.printSqlEnable = enable;
+            }
+
+            @Override
+            public boolean isPrintEnable(Config config) {
+                return printSqlEnable;
+            }
+
+            @Override
+            public void print(String sql, Long takedTimeMillis) {
+                if (takedTimeMillis != null) {
+                    System.out.println("Jboot exec sql taked " + takedTimeMillis + " ms >>>  " + sql);
+                } else {
+                    System.out.println("Jboot exec sql >>>  " + sql);
+                }
+            }
+        };
+
+        SqlDebugPrinter LOG_PRINTER = new SqlDebugPrinter() {
+
+            private boolean printSqlEnable = Jboot.isDevMode();
+            private Log log = Log.getLog("SqlDebugPrinter.LogPrinter");
+
+            @Override
+            public void setPrintEnable(boolean enable) {
+                this.printSqlEnable = enable;
+            }
+
+            @Override
+            public boolean isPrintEnable(Config config) {
+                return printSqlEnable;
+            }
+
+            @Override
+            public void print(String sql, Long takedTimeMillis) {
+                if (takedTimeMillis != null) {
+                    log.debug("Jboot exec sql taked " + takedTimeMillis + " ms >>>  " + sql);
+                } else {
+                    log.debug("Jboot exec sql >>>  " + sql);
+                }
+            }
+        };
+
+        void setPrintEnable(boolean enable);
+
+        boolean isPrintEnable(Config config);
+
+        void print(String sql, Long takedTimeMillis);
     }
 
     public static interface SqlRunner<V> {
