@@ -184,7 +184,7 @@ public class JbootActionReporter {
                 if (values.length == 1) {
                     sb.append(name).append("=");
                     if (values[0] != null && values[0].length() > maxOutputLengthOfParaValue) {
-                        sb.append(values[0].substring(0, maxOutputLengthOfParaValue)).append("...");
+                        sb.append(values[0], 0, maxOutputLengthOfParaValue).append("...");
                     } else {
                         sb.append(values[0]);
                     }
@@ -269,7 +269,7 @@ public class JbootActionReporter {
     }
 
 
-    private static String getClassFileName(Class clazz) {
+    private static String getClassFileName(Class<?> clazz) {
         String classFileName = clazz.getName();
         if (classFileName.contains("$")) {
             int indexOf = classFileName.contains(".") ? classFileName.lastIndexOf(".") + 1 : 0;
