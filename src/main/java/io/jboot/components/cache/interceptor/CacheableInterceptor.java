@@ -18,7 +18,6 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.kit.LogKit;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.Jboot;
 import io.jboot.components.cache.AopCache;
@@ -72,9 +71,6 @@ public class CacheableInterceptor implements Interceptor {
                 inv.setReturnValue(getCopyObject(inv, data));
             } else {
                 inv.setReturnValue(data);
-            }
-            if (devMode) {
-                LogKit.debug("Return value by @Cacheable for method: " + ClassUtil.buildMethodString(method));
             }
         } else {
             inv.invoke();
