@@ -1,3 +1,13 @@
+jboot v3.11.2:
+新增：Columns.containsName() 方法
+新增：SqlDebugger 新增对 Sql 输出到日志的实现方案，只要只有接口需要自己实现
+优化：捕获 ScheduledThreadPoolExecutor 所有业务异常，防止其意外终止调度
+优化：PaginateDirectiveBase，当其有数据的时候，显示分页内容
+优化：ClassScanner，新增某些排除对象
+优化：删除 CacheableInterceptor 一些不必要的 debug 信息
+
+
+
 jboot v3.11.1:
 新增：SqlDebugPrinter 新增是否打印 SQL 的独立开关
 新增：新增更多的 JbootApplication.createServer(...) 方法
