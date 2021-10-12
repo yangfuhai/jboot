@@ -27,6 +27,8 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -918,4 +920,22 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }, config, sql, paras);
     }
 
+
+    //////
+
+    @Override
+    public BigInteger getBigInteger(String attr) {
+        Object data = _getAttrs().get(attr);
+        if (data instanceof BigInteger) {
+            return (BigInteger) data;
+        }
+        //oracle 下和 mysql 下不一致
+        else if (data instanceof BigDecimal) {
+            return ((BigDecimal) data).toBigInteger();
+        } else if (data instanceof Number) {
+            return BigInteger.valueOf(((Number) data).longValue());
+        }
+        //可能会抛出异常，应该让其抛出
+        return (BigInteger) data;
+    }
 }
