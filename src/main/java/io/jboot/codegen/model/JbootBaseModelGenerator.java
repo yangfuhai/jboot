@@ -31,6 +31,12 @@ public class JbootBaseModelGenerator extends BaseModelGenerator {
         this.metaBuilder = CodeGenHelpler.createMetaBuilder();
     }
 
+    @Override
+    protected void initEngine() {
+        this.getterTypeMap.put("java.math.BigInteger", "getBigInteger");
+        super.initEngine();
+    }
+
     public void generate() {
         super.generate(metaBuilder.build());
     }
