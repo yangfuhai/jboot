@@ -938,4 +938,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         //可能会抛出异常，应该让其抛出
         return (BigInteger) data;
     }
+
+
+    @Override
+    public BigDecimal getBigDecimal(String attr) {
+        Object data = _getAttrs().get(attr);
+        if (data instanceof BigDecimal) {
+            return (BigDecimal) data;
+        } else if (data instanceof Number) {
+            return new BigDecimal(data.toString());
+        }
+        //可能会抛出异常，应该让其抛出
+        return (BigDecimal) data;
+    }
 }
