@@ -929,7 +929,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (data instanceof BigInteger) {
             return (BigInteger) data;
         }
-        //oracle 下和 mysql 下不一致
+        //数据类型 id(19 number)在 Oracle Jdbc 下对应的是 BigDecimal,
+        //但是在 MySql 下对应的是 BigInteger，这会导致在 MySql 下生成的代码无法在 Oracle 数据库中使用
+        //此处是为了解决这个问题的
         else if (data instanceof BigDecimal) {
             return ((BigDecimal) data).toBigInteger();
         } else if (data instanceof Number) {
