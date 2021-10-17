@@ -1,3 +1,10 @@
+jboot v3.11.3:
+新增：重写 Model 的 getBigInteger，防止转换异常
+新增：代码生成器 生成的 Model，如果字段是 BigInteger ，自动调用 getBigInteger 方法的功能
+优化：升级相关依赖到最新版本
+
+
+
 jboot v3.11.2:
 新增：Columns.containsName() 方法
 新增：SqlDebugger 新增对 Sql 输出到日志的实现方案，只要只有接口需要自己实现
