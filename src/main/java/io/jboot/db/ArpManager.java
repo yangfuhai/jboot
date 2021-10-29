@@ -24,6 +24,7 @@ import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.datasource.DataSourceConfigManager;
 import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
+import io.jboot.db.record.JbootRecordBuilder;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtil;
@@ -125,6 +126,9 @@ public class ArpManager {
 
         configSqlTemplate(activeRecordPlugin, config);
         configDialect(activeRecordPlugin, config);
+
+        //配置 Record 构建器
+        activeRecordPlugin.getConfig().getDialect().setRecordBuilder(new JbootRecordBuilder());
 
         /**
          * 不需要添加映射的直接返回

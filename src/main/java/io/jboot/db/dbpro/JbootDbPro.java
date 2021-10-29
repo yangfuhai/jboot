@@ -75,22 +75,15 @@ public class JbootDbPro extends DbPro {
 
         //add sql debug support
         return SqlDebugger.run(() -> {
-            PreparedStatement pst;
-            if (dialect.isOracle()) {
-                pst = conn.prepareStatement(sql.toString(), pKeys);
-            } else {
-                pst = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+            try (PreparedStatement pst =
+                         dialect.isOracle() ?
+                                 conn.prepareStatement(sql.toString(), pKeys) :
+                                 conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
+                dialect.fillStatement(pst, paras);
+                int result = pst.executeUpdate();
+                dialect.getRecordGeneratedKey(pst, record, pKeys);
+                return result >= 1;
             }
-            dialect.fillStatement(pst, paras);
-            int result = pst.executeUpdate();
-            dialect.getRecordGeneratedKey(pst, record, pKeys);
-
-            if (pst != null) {
-                pst.close();
-            }
-
-            return result >= 1;
-
         }, config, sql.toString(), paras.toArray());
     }
 
