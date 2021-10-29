@@ -17,6 +17,7 @@ package io.jboot.web.attachment;
 
 import com.jfinal.ext.kit.DateKit;
 import com.jfinal.kit.LogKit;
+import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.utils.FileUtil;
 import io.jboot.utils.StrUtil;
 
@@ -29,7 +30,7 @@ import java.util.Date;
 /**
  * @author michael yang (fuhai999@gmail.com)
  */
-public class LocalAttachmentContainer implements AttachmentContainer {
+public class LocalAttachmentContainer implements AttachmentContainer, JbootmqMessageListener {
 
     private String rootPath;
     private String targetPrefix;
@@ -39,6 +40,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
         this.rootPath = config.getRootPath();
         this.targetPrefix = config.getTargetPrefix();
     }
+
 
     /**
      * @param rootPath
@@ -76,7 +78,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
         try {
 
             //相同的文件，不需要做任何处理
-            if (toFile.equals(file)){
+            if (toFile.equals(file)) {
                 return toRelativePath;
             }
 
@@ -101,7 +103,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
         File toFile = new File(getRootPath(), toRelativePath);
 
-        if (toFile.exists()){
+        if (toFile.exists()) {
             toFile.delete();
         }
 
@@ -129,7 +131,7 @@ public class LocalAttachmentContainer implements AttachmentContainer {
     @Override
     public boolean deleteFile(String relativePath) {
         File file = getFile(relativePath);
-        return file != null && file.delete();
+        return file.exists() && file.delete();
     }
 
 
@@ -175,5 +177,22 @@ public class LocalAttachmentContainer implements AttachmentContainer {
 
     public void setTargetPrefix(String targetPrefix) {
         this.targetPrefix = targetPrefix;
+    }
+
+
+    /**
+     * 接收 mq 的文件删除消息
+     *
+     * @param channel of topic
+     * @param message topic message
+     */
+    @Override
+    public void onMessage(String channel, Object message) {
+        if (message instanceof AttachmentDeleteAction &&
+                //不同是相同的节点发送消息
+                !AttachmentManager.me().getDeleteMqActionId().equals(((AttachmentDeleteAction) message).getId())) {
+            String path = ((AttachmentDeleteAction) message).getPath();
+            deleteFile(path);
+        }
     }
 }
