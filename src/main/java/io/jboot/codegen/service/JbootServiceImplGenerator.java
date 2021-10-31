@@ -24,7 +24,6 @@ import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
 import io.jboot.codegen.CodeGenHelpler;
-import io.jboot.codegen.PathKit;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,7 +67,7 @@ public class JbootServiceImplGenerator {
     }
 
     private String buildOutPutDir() {
-        return PathKit.getUserDir() + "/src/main/java/" + (basePackage + "." + implName).replace(".", "/");
+        return CodeGenHelpler.getUserDir() + "/src/main/java/" + (basePackage + "." + implName).replace(".", "/");
     }
 
 

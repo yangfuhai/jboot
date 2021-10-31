@@ -35,6 +35,11 @@ import java.util.Set;
  */
 public class CodeGenHelpler {
 
+    public static String getUserDir() {
+        return System.getProperty("user.dir");
+    }
+
+
 
     /**
      * 获取数据源

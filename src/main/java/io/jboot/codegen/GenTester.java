@@ -35,8 +35,8 @@ public class GenTester {
         String modelPackage = "io.jboot.codegen.test.model";
         String baseModelPackage = modelPackage + ".base";
 
-        String modelDir = PathKit.getUserDir() + "/src/main/java/" + modelPackage.replace(".", "/");
-        String baseModelDir = PathKit.getUserDir() + "/src/main/java/" + baseModelPackage.replace(".", "/");
+        String modelDir = CodeGenHelpler.getUserDir() + "/src/main/java/" + modelPackage.replace(".", "/");
+        String baseModelDir = CodeGenHelpler.getUserDir() + "/src/main/java/" + baseModelPackage.replace(".", "/");
 
         System.out.println("start generate...");
         System.out.println("generate dir:" + modelDir);

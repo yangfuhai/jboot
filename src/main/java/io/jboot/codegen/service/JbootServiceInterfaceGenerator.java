@@ -24,7 +24,6 @@ import com.jfinal.plugin.activerecord.generator.TableMeta;
 import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
 import io.jboot.codegen.CodeGenHelpler;
-import io.jboot.codegen.PathKit;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,7 +42,7 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
 
 
     public JbootServiceInterfaceGenerator(String basePackage, String modelPacket) {
-        super(basePackage, PathKit.getUserDir() + "/src/main/java/" + basePackage.replace(".", "/"));
+        super(basePackage, CodeGenHelpler.getUserDir() + "/src/main/java/" + basePackage.replace(".", "/"));
 
 
         this.modelPacket = modelPacket;
