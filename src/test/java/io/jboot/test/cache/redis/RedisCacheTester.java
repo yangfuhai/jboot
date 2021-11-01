@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class RedisCacheTester {
 
-    @Before
+    // @Before
     public void config() {
         JbootApplication.setBootArg("jboot.cache.type", "redis");
         JbootApplication.setBootArg("jboot.cache.redis.host", "127.0.0.1");
