@@ -20,14 +20,15 @@ import com.jfinal.log.Log;
 import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderManager;
-import io.jboot.components.mq.Jbootmq;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -64,7 +65,7 @@ public class AttachmentManager {
     /**
      * 默认的 附件容器
      */
-    private LocalAttachmentContainer localContainer = new LocalAttachmentContainer();
+    private LocalAttachmentContainer defaultContainer = new LocalAttachmentContainer();
 
     /**
      * 其他附件容器
@@ -81,49 +82,9 @@ public class AttachmentManager {
      */
     private final String name;
 
-    /**
-     * 文件同步的 MQ
-     */
-    private Jbootmq deleteMq;
-
-    /**
-     * MQ 发送消息的 Channel
-     */
-    private String deleteMqChannel = "attachmentDelete";
-
-    /**
-     * 节点消息ID
-     */
-    private String deleteMqActionId = StrUtil.uuid();
-
 
     public String getName() {
         return name;
-    }
-
-    public Jbootmq getDeleteMq() {
-        return deleteMq;
-    }
-
-    public void setDeleteMq(Jbootmq deleteMq) {
-        this.deleteMq = deleteMq;
-        this.deleteMq.addMessageListener(localContainer, deleteMqChannel);
-    }
-
-    public String getDeleteMqChannel() {
-        return deleteMqChannel;
-    }
-
-    public void setDeleteMqChannel(String deleteMqChannel) {
-        this.deleteMqChannel = deleteMqChannel;
-    }
-
-    public String getDeleteMqActionId() {
-        return deleteMqActionId;
-    }
-
-    public void setDeleteMqActionId(String deleteMqActionId) {
-        this.deleteMqActionId = deleteMqActionId;
     }
 
     public IRenderFactory getRenderFactory() {
@@ -135,12 +96,12 @@ public class AttachmentManager {
     }
 
 
-    public LocalAttachmentContainer getLocalContainer() {
-        return localContainer;
+    public LocalAttachmentContainer getDefaultContainer() {
+        return defaultContainer;
     }
 
-    public void setLocalContainer(LocalAttachmentContainer localContainer) {
-        this.localContainer = localContainer;
+    public void setDefaultContainer(LocalAttachmentContainer defaultContainer) {
+        this.defaultContainer = defaultContainer;
     }
 
     public void addContainer(AttachmentContainer container) {
@@ -165,12 +126,12 @@ public class AttachmentManager {
      */
     public String saveFile(File file) {
         //优先从 默认的 container 去保存文件
-        String relativePath = localContainer.saveFile(file);
-        File defaultContainerFile = localContainer.getFile(relativePath);
+        String relativePath = defaultContainer.saveFile(file);
+        File defaultContainerFile = defaultContainer.getFile(relativePath);
 
         for (AttachmentContainer container : containers) {
             try {
-                if (container != localContainer) {
+                if (container != defaultContainer) {
                     container.saveFile(defaultContainerFile);
                 }
             } catch (Exception ex) {
@@ -189,12 +150,12 @@ public class AttachmentManager {
      */
     public String saveFile(File file, String toRelativePath) {
         //优先从 默认的 container 去保存文件
-        String relativePath = localContainer.saveFile(file, toRelativePath);
-        File defaultContainerFile = localContainer.getFile(relativePath);
+        String relativePath = defaultContainer.saveFile(file, toRelativePath);
+        File defaultContainerFile = defaultContainer.getFile(relativePath);
 
         for (AttachmentContainer container : containers) {
             try {
-                if (container != localContainer) {
+                if (container != defaultContainer) {
                     container.saveFile(defaultContainerFile, toRelativePath);
                 }
             } catch (Exception ex) {
@@ -212,12 +173,12 @@ public class AttachmentManager {
      */
     public String saveFile(InputStream inputStream, String toRelativePath) {
         //优先从 默认的 container 去保存文件
-        String relativePath = localContainer.saveFile(inputStream, toRelativePath);
-        File defaultContainerFile = localContainer.getFile(relativePath);
+        String relativePath = defaultContainer.saveFile(inputStream, toRelativePath);
+        File defaultContainerFile = defaultContainer.getFile(relativePath);
 
         for (AttachmentContainer container : containers) {
             try {
-                if (container != localContainer) {
+                if (container != defaultContainer) {
                     container.saveFile(defaultContainerFile, toRelativePath);
                 }
             } catch (Exception ex) {
@@ -242,14 +203,7 @@ public class AttachmentManager {
                 LOG.error("Delete file error in container :" + container, ex);
             }
         }
-        boolean success = localContainer.deleteFile(relativePath);
-
-        //删除，同步到其他 Server
-        if (success && this.deleteMq != null) {
-            deleteMq.publish(new AttachmentDeleteAction(deleteMqActionId, relativePath), deleteMqChannel);
-        }
-
-        return success;
+        return defaultContainer.deleteFile(relativePath);
     }
 
     /**
@@ -261,7 +215,7 @@ public class AttachmentManager {
     public File getFile(String relativePath) {
 
         //优先从 默认的 container 去获取
-        File file = localContainer.getFile(relativePath);
+        File file = defaultContainer.getFile(relativePath);
         if (file != null && file.exists()) {
             return file;
         }
@@ -286,7 +240,7 @@ public class AttachmentManager {
      * @return
      */
     public String getRelativePath(File file) {
-        String relativePath = localContainer.getRelativePath(file);
+        String relativePath = defaultContainer.getRelativePath(file);
         return relativePath != null ? relativePath.replace("\\", "/") : null;
     }
 
@@ -299,7 +253,7 @@ public class AttachmentManager {
      * @return
      */
     public File createNewFile(String suffix) {
-        return getLocalContainer().creatNewFile(suffix);
+        return getDefaultContainer().creatNewFile(suffix);
     }
 
 
@@ -312,8 +266,8 @@ public class AttachmentManager {
      * @return true 渲染成功，false 不进行渲染
      */
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        if (StrUtil.isNotBlank(localContainer.getTargetPrefix())
-                && target.startsWith(localContainer.getTargetPrefix())
+        if (StrUtil.isNotBlank(defaultContainer.getTargetPrefix())
+                && target.startsWith(defaultContainer.getTargetPrefix())
                 && target.lastIndexOf('.') != -1) {
             Render render = getFileRender(getFile(target));
             render.setContext(request, response).render();

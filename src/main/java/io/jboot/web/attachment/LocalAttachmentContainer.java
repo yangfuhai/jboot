@@ -17,7 +17,6 @@ package io.jboot.web.attachment;
 
 import com.jfinal.ext.kit.DateKit;
 import com.jfinal.kit.LogKit;
-import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.utils.FileUtil;
 import io.jboot.utils.StrUtil;
 
@@ -30,7 +29,7 @@ import java.util.Date;
 /**
  * @author michael yang (fuhai999@gmail.com)
  */
-public class LocalAttachmentContainer implements AttachmentContainer, JbootmqMessageListener {
+public class LocalAttachmentContainer implements AttachmentContainer {
 
     private String rootPath;
     private String targetPrefix;
@@ -180,19 +179,4 @@ public class LocalAttachmentContainer implements AttachmentContainer, JbootmqMes
     }
 
 
-    /**
-     * 接收 mq 的文件删除消息
-     *
-     * @param channel of topic
-     * @param message topic message
-     */
-    @Override
-    public void onMessage(String channel, Object message) {
-        if (message instanceof AttachmentDeleteAction &&
-                //不同是相同的节点发送消息
-                !AttachmentManager.me().getDeleteMqActionId().equals(((AttachmentDeleteAction) message).getId())) {
-            String path = ((AttachmentDeleteAction) message).getPath();
-            deleteFile(path);
-        }
-    }
 }
