@@ -52,6 +52,11 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
         cookies.add(cookie);
     }
 
+    public Set<Cookie> getCookies() {
+        return cookies;
+    }
+
+
     @Override
     public void addDateHeader(String key, long value) {
         headers.put(key, "" + value);

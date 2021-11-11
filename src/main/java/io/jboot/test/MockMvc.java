@@ -20,14 +20,40 @@ import io.jboot.test.web.MockHttpServletResponse;
 import io.jboot.test.web.MockServletInputStream;
 import io.jboot.utils.StrUtil;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.Cookie;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class MockMvc {
 
-    private Consumer<MockHttpServletRequest> requestStartListener;
-    private Consumer<MockHttpServletResponse> requestFinishedListener;
+    protected boolean holdCookiesEnable = false;
+    protected Set<Cookie> holdCookies = new HashSet<>();
+
+    protected Consumer<MockHttpServletRequest> requestStartListener;
+    protected Consumer<MockHttpServletResponse> requestFinishedListener;
+
+    public MockMvc() {
+    }
+
+    public MockMvc(boolean holdCookiesEnable) {
+        this.holdCookiesEnable = holdCookiesEnable;
+    }
+
+    public boolean isHoldCookiesEnable() {
+        return holdCookiesEnable;
+    }
+
+    public void setHoldCookiesEnable(boolean holdCookiesEnable) {
+        this.holdCookiesEnable = holdCookiesEnable;
+    }
+
+    public Set<Cookie> getHoldCookies() {
+        return holdCookies;
+    }
+
+    public void setHoldCookies(Set<Cookie> holdCookies) {
+        this.holdCookies = holdCookies;
+    }
 
     public Consumer<MockHttpServletRequest> getRequestStartListener() {
         return requestStartListener;
@@ -141,14 +167,30 @@ public class MockMvc {
     private MockMvcResult doStartMockRequest(MockHttpServletRequest request) {
         MockHttpServletResponse response = new MockHttpServletResponse();
         try {
+            //开启 cookie 保持, 用户未设置自己的 cookie, 上次的 cookie 有值
+            if (isHoldCookiesEnable() && request.getCookies().length == 0 && holdCookies.size() > 0) {
+                request.setCookies(holdCookies);
+            }
+
             doSendRequest(request, response);
         } finally {
             if (requestFinishedListener != null) {
                 requestFinishedListener.accept(response);
             }
+
+            if (isHoldCookiesEnable() && response.getCookies().size() > 0) {
+                response.getCookies().forEach(this::doSetCookie);
+            }
         }
 
         return new MockMvcResult(response);
+    }
+
+    public void doSetCookie(Cookie newCookie) {
+        holdCookies.removeIf(cookie -> Objects.equals(cookie.getName(), newCookie.getName()));
+        if (newCookie.getValue() != null) {
+            holdCookies.add(newCookie);
+        }
     }
 
 
