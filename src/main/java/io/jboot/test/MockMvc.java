@@ -104,10 +104,6 @@ public class MockMvc {
         paras.forEach(request::addParameter);
 
 
-        if (requestStartListener != null) {
-            requestStartListener.accept(request);
-        }
-
         return doStartMockRequest(request);
     }
 
@@ -156,23 +152,26 @@ public class MockMvc {
             request.setInputStream(new MockServletInputStream(postData));
         }
 
-        if (requestStartListener != null) {
-            requestStartListener.accept(request);
-        }
-
         return doStartMockRequest(request);
     }
 
 
     private MockMvcResult doStartMockRequest(MockHttpServletRequest request) {
+
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         try {
+            if (requestStartListener != null) {
+                requestStartListener.accept(request);
+            }
+
             //开启 cookie 保持, 用户未设置自己的 cookie, 上次的 cookie 有值
             if (isHoldCookiesEnable() && request.getCookies().length == 0 && holdCookies.size() > 0) {
                 request.setCookies(holdCookies);
             }
 
             doSendRequest(request, response);
+
         } finally {
             if (requestFinishedListener != null) {
                 requestFinishedListener.accept(response);
@@ -188,7 +187,7 @@ public class MockMvc {
 
     public void doSetCookie(Cookie newCookie) {
         holdCookies.removeIf(cookie -> Objects.equals(cookie.getName(), newCookie.getName()));
-        if (newCookie.getValue() != null) {
+        if (StrUtil.isNotEmpty(newCookie.getValue())) {
             holdCookies.add(newCookie);
         }
     }
