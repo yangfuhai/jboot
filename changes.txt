@@ -1,3 +1,11 @@
+jboot v3.11.4:
+新增：新增 DAO.distinct() 方法，用于对内容进行去重
+新增：MockMvc 新增 holdCookie 配置，用于在不同的测试用例里，保持 cookie 的功能
+优化：保证 Model 和 Record 的 getBigInteger 的行为一致
+优化：移除 codegen 下的 PathKit 类，同时使用 CodeGenHelpler 答题
+
+
+
 jboot v3.11.3:
 新增：重写 Model 的 getBigInteger，防止转换异常
 新增：代码生成器 生成的 Model，如果字段是 BigInteger ，自动调用 getBigInteger 方法的功能
