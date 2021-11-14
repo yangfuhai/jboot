@@ -27,7 +27,7 @@ public interface JbootDialect {
     public String forFindByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit);
 
 
-    public String forFindCountByColumns(String alias, List<Join> joins, String table, List<Column> columns);
+    public String forFindCountByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns);
 
 
     public String forDeleteByColumns(String alias, List<Join> joins, String table, List<Column> columns);

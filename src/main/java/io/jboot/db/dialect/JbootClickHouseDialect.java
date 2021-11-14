@@ -15,14 +15,12 @@
  */
 package io.jboot.db.dialect;
 
-import com.jfinal.plugin.activerecord.CPI;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.Table;
 import com.jfinal.plugin.activerecord.dialect.AnsiSqlDialect;
-import io.jboot.db.model.Column;
-import io.jboot.db.model.Join;
-import io.jboot.db.model.SqlBuilder;
+import io.jboot.db.model.*;
+import io.jboot.utils.StrUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -135,8 +133,8 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
 
 
     @Override
-    public String forFindCountByColumns(String alias, List<Join> joins, String table, List<Column> columns) {
-        return SqlBuilder.forFindCountByColumns(alias, joins, table, columns, ' ');
+    public String forFindCountByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns) {
+        return SqlBuilder.forFindCountByColumns(alias, joins, table, loadColumns, columns, ' ');
     }
 
 
@@ -169,11 +167,19 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
     @Override
     public String forPaginateTotalRow(String select, String sqlExceptSelect, Object ext) {
         if (ext instanceof Model) {
-            String[] primaryKeys = CPI.getTable((Model) ext).getPrimaryKey();
-            if (primaryKeys != null && primaryKeys.length == 1) {
-                return "select count(" + primaryKeys[0] + ") " + replaceOrderBy(sqlExceptSelect);
+            if (io.jboot.db.model.CPI.hasAnyJoinEffective((JbootModel) ext)) {
+                String distinct = ((JbootModel<?>) ext).get(JbootModelExts.DISTINCT);
+                if (StrUtil.isNotBlank(distinct)) {
+                    return "SELECT count(DISTINCT " + distinct + ") " + replaceOrderBy(sqlExceptSelect);
+                }
+            } else {
+                String[] primaryKeys = com.jfinal.plugin.activerecord.CPI.getTable((Model) ext).getPrimaryKey();
+                if (primaryKeys != null && primaryKeys.length == 1) {
+                    return "select count(" + primaryKeys[0] + ") " + replaceOrderBy(sqlExceptSelect);
+                }
             }
         }
+
 
         //return "select count(*) " + replaceOrderBy(sqlExceptSelect);
         return super.forPaginateTotalRow(select, sqlExceptSelect, ext);

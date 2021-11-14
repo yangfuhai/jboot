@@ -37,8 +37,8 @@ public class JbootMysqlDialect extends MysqlDialect implements JbootDialect {
     }
 
     @Override
-    public String forFindCountByColumns(String alias, List<Join> joins, String table, List<Column> columns) {
-        return SqlBuilder.forFindCountByColumns(alias, joins, table, columns, '`');
+    public String forFindCountByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns) {
+        return SqlBuilder.forFindCountByColumns(alias, joins, table, loadColumns, columns, '`');
     }
 
     @Override
@@ -56,6 +56,12 @@ public class JbootMysqlDialect extends MysqlDialect implements JbootDialect {
     @Override
     public String forPaginateFrom(String alias, List<Join> joins, String table, List<Column> columns, String orderBy) {
         return SqlBuilder.forPaginateFrom(alias, joins, table, columns, orderBy, '`');
+    }
+
+    @Override
+    public String forPaginateTotalRow(String select, String sqlExceptSelect, Object ext) {
+        String distinctSql = SqlBuilder.forPaginateDistinctTotalRow(select, sqlExceptSelect, ext);
+        return distinctSql != null ? distinctSql : super.forPaginateTotalRow(select, sqlExceptSelect, ext);
     }
 
 }

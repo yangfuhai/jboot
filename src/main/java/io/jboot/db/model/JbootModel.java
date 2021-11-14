@@ -130,6 +130,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    public M distinct(String distinctColumnName) {
+        if (StrUtil.isBlank(distinctColumnName)) {
+            throw new IllegalArgumentException("distinctColumnName must not be null or empty.");
+        }
+        M model = getOrCopyModel();
+        model.put(JbootModelExts.DISTINCT, distinctColumnName);
+        return model;
+    }
+
     private M getOrCopyModel() {
         if (isCopyModel) {
             return (M) this;
@@ -671,10 +680,35 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             loadColumns = this.loadColumns;
         }
         if (StrUtil.isBlank(loadColumns)) {
-            loadColumns = "*";
+            //使用 distinct
+            if (hasAnyJoinEffective() && StrUtil.isNotBlank(get(JbootModelExts.DISTINCT))) {
+                loadColumns = "DISTINCT " + get(JbootModelExts.DISTINCT)
+                        + "," + (StrUtil.isNotBlank(alias) ? alias : _getTableName()) + ".*";
+            }
+            //未使用 distinct
+            else {
+                loadColumns = "*";
+            }
         }
+
+
         String sql = _getDialect().forFindByColumns(alias, joins, _getTableName(), loadColumns, columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
+    }
+
+
+    boolean hasAnyJoinEffective() {
+        if (joins == null || joins.size() == 0) {
+            return false;
+        }
+
+        for (Join join : joins) {
+            if (join.isEffective()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
@@ -721,8 +755,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (StrUtil.isBlank(loadColumns) && this.loadColumns != null) {
             loadColumns = this.loadColumns;
         }
+
         if (StrUtil.isBlank(loadColumns)) {
-            loadColumns = "*";
+            //使用 distinct
+            if (hasAnyJoinEffective() && StrUtil.isNotBlank(get(JbootModelExts.DISTINCT))) {
+                loadColumns = "DISTINCT " + get(JbootModelExts.DISTINCT)
+                        + "," + (StrUtil.isNotBlank(alias) ? alias : _getTableName()) + ".*";
+            }
+            //未使用 distinct
+            else {
+                loadColumns = "*";
+            }
         }
 
         String selectPartSql = _getDialect().forPaginateSelect(loadColumns);
@@ -758,7 +801,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public long findCountByColumns(Columns columns) {
-        String sql = _getDialect().forFindCountByColumns(alias, joins, _getTableName(), columns.getList());
+        String loadColumns = "*";
+
+        //使用 distinct
+        if (hasAnyJoinEffective() && StrUtil.isNotBlank(get(JbootModelExts.DISTINCT))) {
+            loadColumns = "DISTINCT " + get(JbootModelExts.DISTINCT);
+        }
+
+
+        String sql = _getDialect().forFindCountByColumns(alias, joins, _getTableName(), loadColumns, columns.getList());
         Long value = Db.use(_getConfig().getName()).queryLong(sql, Util.getValueArray(columns.getList()));
         return value == null ? 0 : value;
     }

@@ -19,6 +19,7 @@ import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -235,6 +236,26 @@ public class SqlBuilder {
         return sqlBuilder;
     }
 
+    //来源于 @link Dialect.java
+    private static final Pattern ORDER_BY_PATTERN = Pattern.compile(
+            "order\\s+by\\s+[^,\\s]+(\\s+asc|\\s+desc)?(\\s*,\\s*[^,\\s]+(\\s+asc|\\s+desc)?)*",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
+    private static String replaceOrderBy(String sql) {
+        return ORDER_BY_PATTERN.matcher(sql).replaceAll("");
+    }
+
+    public static String forPaginateDistinctTotalRow(String select, String sqlExceptSelect, Object ext) {
+        if (ext instanceof JbootModel && CPI.hasAnyJoinEffective((JbootModel) ext)) {
+            String distinct = ((JbootModel<?>) ext).get(JbootModelExts.DISTINCT);
+            if (StrUtil.isNotBlank(distinct)) {
+                return "SELECT count(DISTINCT " + distinct + ") " + replaceOrderBy(sqlExceptSelect);
+            }
+        }
+        return null;
+    }
+
+
     public static String forPaginateFrom(String alias, List<Join> joins, String table, List<Column> columns, String orderBy, char separator) {
         StringBuilder sqlBuilder = new StringBuilder(" FROM ")
                 .append(separator)
@@ -281,8 +302,8 @@ public class SqlBuilder {
     }
 
 
-    public static String forFindCountByColumns(String alias, List<Join> joins, String table, List<Column> columns, char separator) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT count(*) FROM ")
+    public static String forFindCountByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns, char separator) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT count(" + loadColumns + ") FROM ")
                 .append(separator)
                 .append(table)
                 .append(separator);

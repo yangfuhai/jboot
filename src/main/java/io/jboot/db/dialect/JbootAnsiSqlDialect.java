@@ -17,8 +17,8 @@ package io.jboot.db.dialect;
 
 import com.jfinal.plugin.activerecord.dialect.AnsiSqlDialect;
 import io.jboot.db.model.Column;
-import io.jboot.db.model.SqlBuilder;
 import io.jboot.db.model.Join;
+import io.jboot.db.model.SqlBuilder;
 import io.jboot.exception.JbootException;
 
 import java.util.List;
@@ -39,8 +39,8 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements JbootDialect 
     }
 
     @Override
-    public String forFindCountByColumns(String alias, List<Join> joins, String table, List<Column> columns) {
-        return SqlBuilder.forFindCountByColumns(alias, joins, table, columns, ' ');
+    public String forFindCountByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns) {
+        return SqlBuilder.forFindCountByColumns(alias, joins, table, loadColumns, columns, ' ');
     }
 
     @Override
@@ -60,5 +60,10 @@ public class JbootAnsiSqlDialect extends AnsiSqlDialect implements JbootDialect 
         return SqlBuilder.forPaginateFrom(alias, joins, table, columns, orderBy, ' ');
     }
 
+    @Override
+    public String forPaginateTotalRow(String select, String sqlExceptSelect, Object ext) {
+        String distinctSql = SqlBuilder.forPaginateDistinctTotalRow(select, sqlExceptSelect, ext);
+        return distinctSql != null ? distinctSql : super.forPaginateTotalRow(select, sqlExceptSelect, ext);
+    }
 
 }
