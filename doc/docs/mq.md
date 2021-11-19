@@ -1,5 +1,7 @@
 # MQ 消息队列
 
+## 基本使用
+
 Jboot 内置了对MQ消息队列的功能支持，使用MQ需要以下几步步骤。
 
 **第一步：配置jboot.properties文件，内容如下：**
@@ -97,3 +99,52 @@ jboot.mq.rocket.consumeMessageBatchMaxSize
 jboot.mq.rocket.broadcastChannelPrefix "broadcast-";
 jboot.mq.rocket.producerGroup "jboot_default_producer_group";
 ```
+
+## 多 MQ 实例
+
+若在一个应用在，里面有多个 MQ 实例，假设有两个 redis 实例和两个 Rabbitmq 实例，配置如下：
+
+```properties
+# 默认 MQ 及其类型
+jboot.mq.type=redis
+jboot.mq.channel=channel1,channel2,myChannel
+
+jboot.mq.redis.host=127.0.0.1
+jboot.mq.redis.port=6379
+jboot.mq.redis.timeout=2000
+
+
+# 其他另一个 mq1 的类型
+jboot.mq.other1.type=redis
+jboot.mq.other1.typeName=redis1
+jboot.mq.other1.channel=channel1,channel2....
+
+
+jboot.mq.redis.redis1.host=127.0.0.1
+jboot.mq.redis.redis1.port=6379
+jboot.mq.redis.redis1.timeout=2000
+
+
+# 其他另一个 mq2 的类型
+jboot.mq.other2.type=rabbitmq
+jboot.mq.other2.typeName=rabbitmqaaa
+jboot.mq.other2.channel=channel1,channel2....
+
+jboot.mq.rabbitmq.rabbitmqaaa.username=guest
+jboot.mq.rabbitmq.rabbitmqaaa.password=guest
+jboot.mq.rabbitmq.rabbitmqaaa.host=127.0.0.1
+jboot.mq.rabbitmq.rabbitmqaaa.port=5672
+
+# 其他另一个 mq3 的类型
+jboot.mq.other3.type=rabbitmq
+jboot.mq.other3.typeName=rabbitmqbbb
+jboot.mq.other3.channel=channel1,channel2....
+
+jboot.mq.rabbitmq.rabbitmqbbb.username=guest
+jboot.mq.rabbitmq.rabbitmqbbb.password=guest
+jboot.mq.rabbitmq.rabbitmqbbb.host=127.0.0.1
+jboot.mq.rabbitmq.rabbitmqbbb.port=5672
+
+
+```
+

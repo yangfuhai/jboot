@@ -58,12 +58,33 @@ public class Jboot {
 
 
     /**
+     * 获取指定的缓存
+     *
+     * @param name
+     * @return
+     */
+    public static JbootCache getCache(String name) {
+        return JbootCacheManager.me().getCache(name);
+    }
+
+
+    /**
      * 获取 JbootRedis 工具类，方便操作Redis请求
      *
      * @return
      */
     public static JbootRedis getRedis() {
         return JbootRedisManager.me().getRedis();
+    }
+
+    /**
+     * 获取指定的 Redis
+     *
+     * @param name
+     * @return
+     */
+    public static JbootRedis getRedis(String name) {
+        return JbootRedisManager.me().getRedis(name);
     }
 
 
@@ -84,6 +105,16 @@ public class Jboot {
      */
     public static Jbootmq getMq() {
         return JbootmqManager.me().getJbootmq();
+    }
+
+    /**
+     * 获取指定的 MQ
+     *
+     * @param name
+     * @return
+     */
+    public static Jbootmq getMq(String name) {
+        return JbootmqManager.me().getJbootmq(name);
     }
 
 

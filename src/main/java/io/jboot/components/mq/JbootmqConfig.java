@@ -15,8 +15,11 @@
  */
 package io.jboot.components.mq;
 
+import com.google.common.collect.Sets;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.utils.StrUtil;
+
+import java.util.Set;
 
 
 @ConfigModel(prefix = "jboot.mq")
@@ -28,6 +31,10 @@ public class JbootmqConfig {
     public static final String TYPE_ROCKETMQ = "rocketmq";
     public static final String TYPE_QPID = "qpid";
     public static final String TYPE_LOCAL = "local";
+
+    public static final Set<String> TYPES = Sets.newHashSet(TYPE_REDIS, TYPE_ACTIVEMQ, TYPE_ALIYUNMQ, TYPE_RABBITMQ
+            , TYPE_ROCKETMQ, TYPE_QPID, TYPE_LOCAL);
+
 
     private String name = "default";  // MQ 的名称，可以配置多个 MQ 实例，但是需要名称不能一样
     private String type;  // MQ 的类型： redis、rocketmq 等

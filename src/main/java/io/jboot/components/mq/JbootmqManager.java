@@ -67,6 +67,8 @@ public class JbootmqManager {
                 mq = jbootmqMap.get(name);
                 if (mq == null) {
                     Map<String, JbootmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootmqConfig.class, "jboot.mq");
+                    JbootmqConfig.TYPES.forEach(configModels::remove);
+
                     if (!configModels.containsKey(name)) {
                         throw new JbootIllegalConfigException("Please config \"jboot.mq." + name + ".type\" in your jboot.properties.");
                     }
