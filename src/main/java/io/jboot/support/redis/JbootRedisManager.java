@@ -17,9 +17,14 @@ package io.jboot.support.redis;
 
 
 import io.jboot.Jboot;
+import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.jedis.JbootJedisClusterImpl;
 import io.jboot.support.redis.jedis.JbootJedisImpl;
-import io.jboot.exception.JbootException;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 参考： com.jfinal.plugin.redis
@@ -37,6 +42,7 @@ public class JbootRedisManager {
     }
 
     private JbootRedis redis;
+    private Map<String, JbootRedis> jbootRedisMap = new ConcurrentHashMap<>();
 
     public JbootRedis getRedis() {
         if (redis == null) {
@@ -46,6 +52,26 @@ public class JbootRedisManager {
 
         return redis;
     }
+
+    public JbootRedis getRedis(String name) {
+        JbootRedis redis = jbootRedisMap.get(name);
+        if (redis == null) {
+            synchronized (this) {
+                redis = jbootRedisMap.get(name);
+                if (redis == null) {
+                    Map<String, JbootRedisConfig> configModels = JbootConfigUtil.getConfigModels(JbootRedisConfig.class, "jboot.redis");
+                    if (!configModels.containsKey(name)) {
+                        throw new JbootIllegalConfigException("Please config \"jboot.redis." + name + ".host\" in your jboot.properties.");
+                    }
+                    JbootRedisConfig jbootRedisConfig = configModels.get(name);
+                    redis = getRedis(jbootRedisConfig);
+                    jbootRedisMap.put(name, redis);
+                }
+            }
+        }
+        return redis;
+    }
+
 
     public JbootRedis getRedis(JbootRedisConfig config) {
         if (config == null || !config.isConfigOk()) {

@@ -29,6 +29,7 @@ public class JbootRedisConfig {
     public static final String TYPE_REDISSON = "redisson";
     public static final String TYPE_LETTUCE = "lettuce";
 
+    private String name = "default";
     private String host;
     private Integer port = 6379;
     private Integer timeout = 2000;
@@ -51,6 +52,13 @@ public class JbootRedisConfig {
 
     private String serializer;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getHost() {
         return host;
