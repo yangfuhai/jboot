@@ -83,17 +83,19 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
             MessageProducer producer = session.createProducer(destination);
             producer.setTimeToLive(30000);
 
-            Message m = null;
-            if (!serializerEnable) {
-                m = session.createTextMessage((String) message);
+            Message sendMsg = null;
+            if (message instanceof Message){
+                sendMsg = (Message) message;
+            }else if (!serializerEnable) {
+                sendMsg = session.createTextMessage((String) message);
             } else {
                 byte[] data = getSerializer().serialize(message);
-                m = session.createBytesMessage();
-                m.setIntProperty("data-len", data.length);
-                ((BytesMessage) m).writeBytes(data);
+                sendMsg = session.createBytesMessage();
+                sendMsg.setIntProperty("data-len", data.length);
+                ((BytesMessage) sendMsg).writeBytes(data);
             }
 
-            producer.send(m);
+            producer.send(sendMsg);
 
         } catch (Exception e) {
             LOG.error(e.toString(), e);

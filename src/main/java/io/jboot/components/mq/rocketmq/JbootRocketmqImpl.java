@@ -145,8 +145,14 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     private void trySendMessage(Object message, String topic, int tryTimes) {
         if (tryTimes < 3) {
             try {
-                Message rocketMessage = new Message(topic, getSerializer().serialize(message));
-                SendResult result = getMQProducer().send(rocketMessage);
+                Message sendMsg = null;
+                if (message instanceof Message) {
+                    sendMsg = (Message) message;
+                } else {
+                    sendMsg = new Message(topic, getSerializer().serialize(message));
+                }
+
+                SendResult result = getMQProducer().send(sendMsg);
                 // if (result.getSendStatus() != SendStatus.SEND_OK) {
                 // 只要不等于 null 就是发送成功
                 if (result == null) {
@@ -162,7 +168,8 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private MQProducer getMQProducer() throws MQClientException {
+
+    protected MQProducer getMQProducer() throws MQClientException {
         if (mqProducer == null) {
             synchronized (this) {
                 if (mqProducer == null) {
@@ -174,7 +181,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private void createMqProducer() throws MQClientException {
+    protected void createMqProducer() throws MQClientException {
         DefaultMQProducer producer = new DefaultMQProducer(rocketmqConfig.getProducerGroup());
         producer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
 

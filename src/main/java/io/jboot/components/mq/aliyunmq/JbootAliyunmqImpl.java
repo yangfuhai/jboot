@@ -71,17 +71,27 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void enqueue(Object message, String toChannel) {
-        byte[] bytes = getSerializer().serialize(message);
-        Message onsMessage = new Message(toChannel, "*", bytes);
-        getProducer().send(onsMessage);
+        Message sendMsg = null;
+        if (message instanceof Message) {
+            sendMsg = (Message) message;
+        } else {
+            byte[] bytes = getSerializer().serialize(message);
+            sendMsg = new Message(toChannel, "*", bytes);
+        }
+        getProducer().send(sendMsg);
     }
 
 
     @Override
     public void publish(Object message, String toChannel) {
-        byte[] bytes = getSerializer().serialize(message);
-        Message onsMessage = new Message(aliyunmqConfig.getBroadcastChannelPrefix() + toChannel, "*", bytes);
-        getProducer().send(onsMessage);
+        Message sendMsg = null;
+        if (message instanceof Message) {
+            sendMsg = (Message) message;
+        } else {
+            byte[] bytes = getSerializer().serialize(message);
+            sendMsg = new Message(aliyunmqConfig.getBroadcastChannelPrefix() + toChannel, "*", bytes);
+        }
+        getProducer().send(sendMsg);
     }
 
 
