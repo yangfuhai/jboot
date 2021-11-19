@@ -18,9 +18,11 @@ package io.jboot.components.mq.rabbitmq;
 import com.rabbitmq.client.*;
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplicationConfig;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 
 import java.io.IOException;
@@ -42,8 +44,17 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
     public JbootRabbitmqImpl() {
         super();
-        rabbitmqConfig = Jboot.config(JbootRabbitmqConfig.class);
-        appConfig = Jboot.config(JbootApplicationConfig.class);
+
+        String typeName = config.getTypeName();
+        if (StrUtil.isNotBlank(typeName)) {
+            Map<String, JbootRabbitmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootRabbitmqConfig.class, "jboot.mq.rabbitmq");
+            if (!configModels.containsKey(typeName)) {
+                throw new JbootIllegalConfigException("Please config \"jboot.mq.rabbitmq." + typeName + ".host\" in your jboot.properties.");
+            }
+            rabbitmqConfig = configModels.get(typeName);
+        } else {
+            rabbitmqConfig = Jboot.config(JbootRabbitmqConfig.class);
+        }
 
         try {
             ConnectionFactory factory = new ConnectionFactory();

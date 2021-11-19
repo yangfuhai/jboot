@@ -17,8 +17,10 @@ package io.jboot.components.mq.rocketmq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -32,6 +34,8 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 
+import java.util.Map;
+
 
 public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
@@ -41,7 +45,17 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
     public JbootRocketmqImpl() {
         super();
-        rocketmqConfig = Jboot.config(JbootRocketmqConfig.class);
+
+        String typeName = config.getTypeName();
+        if (StrUtil.isNotBlank(typeName)) {
+            Map<String, JbootRocketmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootRocketmqConfig.class, "jboot.mq.rocket");
+            if (!configModels.containsKey(typeName)) {
+                throw new JbootIllegalConfigException("Please config \"jboot.mq.rocket." + typeName + ".namesrvAddr\" in your jboot.properties.");
+            }
+            rocketmqConfig = configModels.get(typeName);
+        } else {
+            rocketmqConfig = Jboot.config(JbootRocketmqConfig.class);
+        }
     }
 
     @Override
@@ -166,7 +180,6 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
             LOG.error("Rocketmq publish not success!");
         }
     }
-
 
 
     protected MQProducer getMQProducer() throws MQClientException {

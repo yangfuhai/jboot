@@ -17,9 +17,13 @@ package io.jboot.components.mq.aliyunmq;
 
 import com.aliyun.openservices.ons.api.*;
 import io.jboot.Jboot;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.utils.StrUtil;
 
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -31,7 +35,16 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
 
     public JbootAliyunmqImpl() {
         super();
-        aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
+        String typeName = config.getTypeName();
+        if (StrUtil.isNotBlank(typeName)) {
+            Map<String, JbootAliyunmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootAliyunmqConfig.class, "jboot.mq.aliyun");
+            if (!configModels.containsKey(typeName)) {
+                throw new JbootIllegalConfigException("Please config \"jboot.mq.aliyun." + typeName + ".addr\" in your jboot.properties.");
+            }
+            aliyunmqConfig = configModels.get(typeName);
+        } else {
+            aliyunmqConfig = Jboot.config(JbootAliyunmqConfig.class);
+        }
     }
 
 

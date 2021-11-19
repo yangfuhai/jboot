@@ -27,19 +27,21 @@ public class JbootmqConfig {
     public static final String TYPE_RABBITMQ = "rabbitmq";
     public static final String TYPE_ROCKETMQ = "rocketmq";
     public static final String TYPE_QPID = "qpid";
-    public static final String TYPE_LOCAL= "local";
+    public static final String TYPE_LOCAL = "local";
 
-    private String type;
-    private String channel;
+    private String name = "default";  // MQ 的名称，可以配置多个 MQ 实例，但是需要名称不能一样
+    private String type;  // MQ 的类型： redis、rocketmq 等
+    private String typeName; // MQ 相同的类型，可能有多一个实例，比如两个 redis，此时需要配置示例的名称
+    private String channel; // 发送的通道，或者是 topic，多个用英文逗号二开
     private String syncRecevieMessageChannel; //可同步接收消息的 channel 配置
-    private String serializer;
+    private String serializer; // MQ 默认的序列化方案
 
-    public String getChannel() {
-        return channel;
+    public String getName() {
+        return name;
     }
 
-    public void setChannel(String channel) {
-        this.channel = channel;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getType() {
@@ -50,13 +52,20 @@ public class JbootmqConfig {
         this.type = type;
     }
 
-
-    public String getSerializer() {
-        return serializer;
+    public String getTypeName() {
+        return typeName;
     }
 
-    public void setSerializer(String serializer) {
-        this.serializer = serializer;
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 
     public String getSyncRecevieMessageChannel() {
@@ -67,7 +76,15 @@ public class JbootmqConfig {
         this.syncRecevieMessageChannel = syncRecevieMessageChannel;
     }
 
-    public boolean isConfigOk(){
+    public String getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(String serializer) {
+        this.serializer = serializer;
+    }
+
+    public boolean isConfigOk() {
         return StrUtil.isNotEmpty(type);
     }
 }

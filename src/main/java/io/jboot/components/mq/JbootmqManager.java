@@ -16,6 +16,7 @@
 package io.jboot.components.mq;
 
 import io.jboot.Jboot;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.aliyunmq.JbootAliyunmqImpl;
 import io.jboot.components.mq.local.JbootLocalmqImpl;
 import io.jboot.components.mq.qpidmq.JbootQpidmqImpl;
@@ -23,7 +24,11 @@ import io.jboot.components.mq.rabbitmq.JbootRabbitmqImpl;
 import io.jboot.components.mq.redismq.JbootRedismqImpl;
 import io.jboot.components.mq.rocketmq.JbootRocketmqImpl;
 import io.jboot.core.spi.JbootSpiLoader;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class JbootmqManager {
@@ -37,15 +42,41 @@ public class JbootmqManager {
         return manager;
     }
 
+    private Map<String, Jbootmq> jbootmqMap = new ConcurrentHashMap<>();
 
-    private Jbootmq jbootmq;
 
     public Jbootmq getJbootmq() {
-        if (jbootmq == null) {
-            JbootmqConfig config = Jboot.config(JbootmqConfig.class);
-            jbootmq = getJbootmq(config);
+        Jbootmq defaultMq = jbootmqMap.get("default");
+        if (defaultMq == null) {
+            synchronized (this) {
+                defaultMq = jbootmqMap.get("default");
+                if (defaultMq == null) {
+                    JbootmqConfig config = Jboot.config(JbootmqConfig.class);
+                    defaultMq = getJbootmq(config);
+                    jbootmqMap.put("default", defaultMq);
+                }
+            }
         }
-        return jbootmq;
+        return getJbootmq("default");
+    }
+
+    public Jbootmq getJbootmq(String name) {
+        Jbootmq mq = jbootmqMap.get(name);
+        if (mq == null) {
+            synchronized (this) {
+                mq = jbootmqMap.get(name);
+                if (mq == null) {
+                    Map<String, JbootmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootmqConfig.class, "jboot.mq");
+                    if (!configModels.containsKey(name)) {
+                        throw new JbootIllegalConfigException("Please config \"jboot.mq." + name + ".type\" in your jboot.properties.");
+                    }
+                    mq = getJbootmq(configModels.get(name));
+                    jbootmqMap.put(name, mq);
+                }
+            }
+        }
+
+        return mq;
     }
 
     public Jbootmq getJbootmq(JbootmqConfig config) {

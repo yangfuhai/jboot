@@ -17,9 +17,11 @@ package io.jboot.components.mq.qpidmq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.exception.JbootException;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
 import org.apache.qpid.client.AMQAnyDestination;
@@ -27,6 +29,7 @@ import org.apache.qpid.client.AMQConnection;
 import org.apache.qpid.jms.Connection;
 
 import javax.jms.*;
+import java.util.Map;
 
 /**
  * @author 徐海峰 （27533892@qq.com）
@@ -41,7 +44,19 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
 
     public JbootQpidmqImpl() {
         super();
-        JbootQpidmqConfig qpidConfig = Jboot.config(JbootQpidmqConfig.class);
+        JbootQpidmqConfig qpidConfig = null;
+        String typeName = config.getTypeName();
+        if (StrUtil.isNotBlank(typeName)) {
+            Map<String, JbootQpidmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootQpidmqConfig.class, "jboot.mq.qpid");
+            if (!configModels.containsKey(typeName)) {
+                throw new JbootIllegalConfigException("Please config \"jboot.mq.qpid." + typeName + ".host\" in your jboot.properties.");
+            }
+            qpidConfig = configModels.get(typeName);
+        } else {
+            qpidConfig = Jboot.config(JbootQpidmqConfig.class);
+        }
+
+
         serializerEnable = qpidConfig.isSerializerEnable();
 
         try {

@@ -17,12 +17,16 @@ package io.jboot.components.mq.redismq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
+import io.jboot.utils.StrUtil;
 import redis.clients.jedis.BinaryJedisPubSub;
+
+import java.util.Map;
 
 
 public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
@@ -34,7 +38,19 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     public JbootRedismqImpl() {
         super();
-        JbootRedismqConfig redisConfig = Jboot.config(JbootRedismqConfig.class);
+
+        JbootRedismqConfig redisConfig = null;
+        String typeName = config.getTypeName();
+        if (StrUtil.isNotBlank(typeName)) {
+            Map<String, JbootRedismqConfig> configModels = JbootConfigUtil.getConfigModels(JbootRedismqConfig.class, "jboot.mq.redis");
+            if (!configModels.containsKey(typeName)) {
+                throw new JbootIllegalConfigException("Please config \"jboot.mq.redis." + typeName + ".host\" in your jboot.properties.");
+            }
+            redisConfig = configModels.get(typeName);
+        } else {
+            redisConfig = Jboot.config(JbootRedismqConfig.class);
+        }
+
         if (redisConfig.isConfigOk()) {
             redis = JbootRedisManager.me().getRedis(redisConfig);
         } else {
