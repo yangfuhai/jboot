@@ -20,6 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.components.mq.JbootmqConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -43,8 +44,8 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     private JbootRocketmqConfig rocketmqConfig;
     private MQProducer mqProducer;
 
-    public JbootRocketmqImpl() {
-        super();
+    public JbootRocketmqImpl(JbootmqConfig config) {
+        super(config);
 
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {

@@ -20,6 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.components.mq.JbootmqConfig;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ArrayUtil;
@@ -42,8 +43,8 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
     private Connection connection = null;
     private boolean serializerEnable = true;
 
-    public JbootQpidmqImpl() {
-        super();
+    public JbootQpidmqImpl(JbootmqConfig config) {
+        super(config);
         JbootQpidmqConfig qpidConfig = null;
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {

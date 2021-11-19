@@ -20,6 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.components.mq.JbootmqConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 
@@ -33,8 +34,8 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
     private Consumer consumer;
     private JbootAliyunmqConfig aliyunmqConfig;
 
-    public JbootAliyunmqImpl() {
-        super();
+    public JbootAliyunmqImpl(JbootmqConfig config) {
+        super(config);
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {
             Map<String, JbootAliyunmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootAliyunmqConfig.class, "jboot.mq.aliyun");

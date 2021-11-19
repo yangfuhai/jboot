@@ -17,9 +17,14 @@ package io.jboot.components.mq.activemq;
 
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.components.mq.JbootmqConfig;
 
 
 public class JbootActivemq extends JbootmqBase implements Jbootmq {
+
+    public JbootActivemq(JbootmqConfig config) {
+        super(config);
+    }
 
     @Override
     public void enqueue(Object message, String toChannel) {

@@ -21,6 +21,7 @@ import io.jboot.app.JbootApplicationConfig;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.components.mq.JbootmqConfig;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
@@ -42,8 +43,8 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     private JbootApplicationConfig appConfig;
 
 
-    public JbootRabbitmqImpl() {
-        super();
+    public JbootRabbitmqImpl(JbootmqConfig config) {
+        super(config);
 
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {

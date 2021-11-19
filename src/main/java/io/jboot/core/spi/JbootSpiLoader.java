@@ -48,6 +48,34 @@ public class JbootSpiLoader {
      * @param <T>
      * @return
      */
+    public static <T> T load(Class<T> clazz, String spiName, Object... paras) {
+        List<Class<T>> classes = ClassScanner.scanSubClass(clazz, true);
+        if (classes.isEmpty()) {
+            return null;
+        }
+
+        for (Class<T> c : classes) {
+            JbootSpi spiConfig = c.getAnnotation(JbootSpi.class);
+            if (spiConfig != null && spiName.equals(AnnotationUtil.get(spiConfig.value()))) {
+                return ClassUtil.newInstance(c, paras);
+            }
+            //support config class name
+            else if (spiName.equals(c.getName())) {
+                return ClassUtil.newInstance(c, paras);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 通过 SPI 去加载相应的扩展子类
+     *
+     * @param clazz
+     * @param spiName
+     * @param <T>
+     * @return
+     */
     public static <T> T load(Class<T> clazz, String spiName) {
         T returnObject = loadByServiceLoader(clazz, spiName);
         if (returnObject != null) {

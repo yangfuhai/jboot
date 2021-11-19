@@ -20,6 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.components.mq.JbootmqConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
@@ -36,8 +37,8 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     private JbootRedis redis;
     private Thread dequeueThread;
 
-    public JbootRedismqImpl() {
-        super();
+    public JbootRedismqImpl(JbootmqConfig config) {
+        super(config);
 
         JbootRedismqConfig redisConfig = null;
         String typeName = config.getTypeName();

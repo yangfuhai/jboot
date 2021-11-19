@@ -64,9 +64,9 @@ public class JbootCacheManager {
                     Map<String, JbootCacheConfig> configModels = JbootConfigUtil.getConfigModels(JbootCacheConfig.class, "jboot.cache");
                     JbootCacheConfig.TYPES.forEach(configModels::remove);
 
-                    configModels.putIfAbsent("default",new JbootCacheConfig());
+                    configModels.putIfAbsent("default", new JbootCacheConfig());
 
-                    if ( !configModels.containsKey(name)) {
+                    if (!configModels.containsKey(name)) {
                         throw new JbootIllegalConfigException("Please config \"jboot.cache." + name + ".type\" in your jboot.properties.");
                     }
 
@@ -99,7 +99,7 @@ public class JbootCacheManager {
             case JbootCacheConfig.TYPE_NONE:
                 return new NoneCacheImpl();
             default:
-                return JbootSpiLoader.load(JbootCache.class, config.getType());
+                return JbootSpiLoader.load(JbootCache.class, config.getType(), config);
         }
     }
 }

@@ -16,12 +16,17 @@
 package io.jboot.components.mq.local;
 
 import io.jboot.components.mq.JbootmqBase;
+import io.jboot.components.mq.JbootmqConfig;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/7
  */
 public class JbootLocalmqImpl extends JbootmqBase {
+
+    public JbootLocalmqImpl(JbootmqConfig config) {
+        super(config);
+    }
 
     @Override
     protected void onStartListening() {

@@ -38,7 +38,7 @@ public abstract class JbootmqBase implements Jbootmq {
 
     private List<JbootmqMessageListener> globalListeners = new CopyOnWriteArrayList<>();
     private Multimap<String, JbootmqMessageListener> channelListeners = ArrayListMultimap.create();
-    protected JbootmqConfig config = Jboot.config(JbootmqConfig.class);
+    protected final JbootmqConfig config ;
 
     protected Set<String> channels = Sets.newHashSet();
     protected Set<String> syncRecevieMessageChannels = Sets.newHashSet();
@@ -50,7 +50,8 @@ public abstract class JbootmqBase implements Jbootmq {
             new SynchronousQueue<>(), new NamedThreadFactory("jbootmq"));
 
 
-    public JbootmqBase() {
+    public JbootmqBase(JbootmqConfig config) {
+        this.config = config;
         String channelString = config.getChannel();
         if (StrUtil.isBlank(channelString)) {
             return;

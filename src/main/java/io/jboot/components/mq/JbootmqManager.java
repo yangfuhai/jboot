@@ -96,21 +96,21 @@ public class JbootmqManager {
 
         switch (config.getType()) {
             case JbootmqConfig.TYPE_REDIS:
-                return new JbootRedismqImpl();
+                return new JbootRedismqImpl(config);
             case JbootmqConfig.TYPE_ALIYUNMQ:
-                return new JbootAliyunmqImpl();
+                return new JbootAliyunmqImpl(config);
             case JbootmqConfig.TYPE_RABBITMQ:
-                return new JbootRabbitmqImpl();
+                return new JbootRabbitmqImpl(config);
             case JbootmqConfig.TYPE_ROCKETMQ:
-                return new JbootRocketmqImpl();
+                return new JbootRocketmqImpl(config);
             case JbootmqConfig.TYPE_QPID:
-                return new JbootQpidmqImpl();
+                return new JbootQpidmqImpl(config);
             case JbootmqConfig.TYPE_ACTIVEMQ:
                 throw new RuntimeException("not finished!!!!");
             case JbootmqConfig.TYPE_LOCAL:
-                return new JbootLocalmqImpl();
+                return new JbootLocalmqImpl(config);
             default:
-                return JbootSpiLoader.load(Jbootmq.class, config.getType());
+                return JbootSpiLoader.load(Jbootmq.class, config.getType(), config);
         }
 
     }
