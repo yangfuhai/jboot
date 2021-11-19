@@ -50,14 +50,16 @@ public class JbootSpiLoader {
      */
     public static <T> T load(Class<T> clazz, String spiName) {
         T returnObject = loadByServiceLoader(clazz, spiName);
-        if (returnObject != null) return returnObject;
+        if (returnObject != null) {
+            return returnObject;
+        }
 
         if (StrUtil.isBlank(spiName)) {
             return null;
         }
 
-        List<Class<T>> classes = ClassScanner.scanSubClass(clazz,true);
-        if (classes == null || classes.isEmpty()) {
+        List<Class<T>> classes = ClassScanner.scanSubClass(clazz, true);
+        if (classes.isEmpty()) {
             return null;
         }
 
@@ -66,7 +68,12 @@ public class JbootSpiLoader {
             if (spiConfig != null && spiName.equals(AnnotationUtil.get(spiConfig.value()))) {
                 return ClassUtil.newInstance(c);
             }
+            //support config class name
+            else if (spiName.equals(c.getName())) {
+                return ClassUtil.newInstance(c);
+            }
         }
+
         return null;
     }
 
