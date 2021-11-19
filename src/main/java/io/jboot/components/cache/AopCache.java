@@ -24,7 +24,7 @@ public class AopCache {
         if (aopCache == null) {
             synchronized (AopCache.class) {
                 if (aopCache == null) {
-                    aopCache = JbootCacheManager.me().getCache(JbootCacheConfig.getInstance().getAopCacheType());
+                    aopCache = JbootCacheManager.me().getCache(JbootAopCacheConfig.getInstance().getUseCacheName());
                 }
             }
         }

@@ -16,6 +16,7 @@
 package io.jboot.components.cache;
 
 import io.jboot.Jboot;
+import io.jboot.app.config.JbootConfigUtil;
 import io.jboot.components.cache.caffeine.CaffeineCacheImpl;
 import io.jboot.components.cache.caredis.JbootCaredisCacheImpl;
 import io.jboot.components.cache.ehcache.JbootEhcacheImpl;
@@ -24,6 +25,7 @@ import io.jboot.components.cache.j2cache.J2cacheImpl;
 import io.jboot.components.cache.none.NoneCacheImpl;
 import io.jboot.components.cache.redis.JbootRedisCacheImpl;
 import io.jboot.core.spi.JbootSpiLoader;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.StrUtil;
 
 import java.util.Map;
@@ -45,23 +47,30 @@ public class JbootCacheManager {
     }
 
     public JbootCache getCache() {
-        return getCache(defaultConfig.getType());
+        return getCache(defaultConfig.getName());
     }
 
-    public JbootCache getCache(String type) {
-        if (StrUtil.isBlank(type)) {
-            throw new IllegalArgumentException("type must not be null or blank.");
+    public JbootCache getCache(String name) {
+        if (StrUtil.isBlank(name)) {
+            throw new IllegalArgumentException("cache name must not be null or blank.");
         }
 
-        JbootCache cache = cacheMap.get(type);
+        JbootCache cache = cacheMap.get(name);
 
         if (cache == null) {
-            synchronized (type.intern()) {
+            synchronized (this) {
+                cache = cacheMap.get(name);
                 if (cache == null) {
-                    JbootCacheConfig cacheConfig = new JbootCacheConfig();
-                    cacheConfig.setType(type);
+                    Map<String, JbootCacheConfig> configModels = JbootConfigUtil.getConfigModels(JbootCacheConfig.class, "jboot.cache");
+                    JbootCacheConfig.TYPES.forEach(configModels::remove);
+
+                    if (!configModels.containsKey(name)) {
+                        throw new JbootIllegalConfigException("Please config \"jboot.cache." + name + ".type\" in your jboot.properties.");
+                    }
+
+                    JbootCacheConfig cacheConfig = configModels.get(name);
                     cache = buildCache(cacheConfig);
-                    cacheMap.put(type, cache);
+                    cacheMap.put(name, cache);
                 }
             }
         }
@@ -74,17 +83,17 @@ public class JbootCacheManager {
 
         switch (config.getType()) {
             case JbootCacheConfig.TYPE_EHCACHE:
-                return new JbootEhcacheImpl();
+                return new JbootEhcacheImpl(config);
             case JbootCacheConfig.TYPE_REDIS:
-                return new JbootRedisCacheImpl();
+                return new JbootRedisCacheImpl(config);
             case JbootCacheConfig.TYPE_EHREDIS:
-                return new JbootEhredisCacheImpl();
+                return new JbootEhredisCacheImpl(config);
             case JbootCacheConfig.TYPE_J2CACHE:
-                return new J2cacheImpl();
+                return new J2cacheImpl(config);
             case JbootCacheConfig.TYPE_CAFFEINE:
-                return new CaffeineCacheImpl();
+                return new CaffeineCacheImpl(config);
             case JbootCacheConfig.TYPE_CAREDIS:
-                return new JbootCaredisCacheImpl();
+                return new JbootCaredisCacheImpl(config);
             case JbootCacheConfig.TYPE_NONE:
                 return new NoneCacheImpl();
             default:

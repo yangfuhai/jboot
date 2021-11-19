@@ -16,9 +16,10 @@
 package io.jboot.components.cache;
 
 
-import io.jboot.app.config.JbootConfigManager;
+import com.google.common.collect.Sets;
 import io.jboot.app.config.annotation.ConfigModel;
-import io.jboot.utils.StrUtil;
+
+import java.util.Set;
 
 
 @ConfigModel(prefix = "jboot.cache")
@@ -32,24 +33,14 @@ public class JbootCacheConfig {
     public static final String TYPE_CAREDIS = "caredis";
     public static final String TYPE_NONE = "none";
 
+    public static final Set<String> TYPES = Sets.newHashSet(TYPE_EHCACHE, TYPE_REDIS, TYPE_EHREDIS, TYPE_J2CACHE, TYPE_CAFFEINE, TYPE_CAREDIS, TYPE_NONE);
 
-    private String type = TYPE_CAFFEINE;
     private String name = "default";
+    private String type = TYPE_CAFFEINE;
+    private String typeName;
+
     private String defaultCachePrefix;
 
-    // AOP 缓存的默认有效时间，0为永久有效，单位秒，
-    // 当 @Cacheable 和 @CachePut 注解不配置的时候默认用这个配置
-    private int aopCacheLiveSeconds = 0;
-    private String aopCacheType;
-    private String aopCacheDefaultCacheNamePrefix;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public String getName() {
         return name;
@@ -59,40 +50,29 @@ public class JbootCacheConfig {
         this.name = name;
     }
 
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
     public String getDefaultCachePrefix() {
         return defaultCachePrefix;
     }
 
     public void setDefaultCachePrefix(String defaultCachePrefix) {
         this.defaultCachePrefix = defaultCachePrefix;
-    }
-
-    public int getAopCacheLiveSeconds() {
-        return aopCacheLiveSeconds;
-    }
-
-    public void setAopCacheLiveSeconds(int aopCacheLiveSeconds) {
-        this.aopCacheLiveSeconds = aopCacheLiveSeconds;
-    }
-
-    public String getAopCacheType() {
-        if (StrUtil.isBlank(aopCacheType)){
-            aopCacheType = getType();
-        }
-        return aopCacheType;
-    }
-
-    public void setAopCacheType(String aopCacheType) {
-        this.aopCacheType = aopCacheType;
-    }
-
-    private static JbootCacheConfig me;
-
-    public static JbootCacheConfig getInstance() {
-        if (me == null) {
-            me = JbootConfigManager.me().get(JbootCacheConfig.class);
-        }
-        return me;
     }
 
 }

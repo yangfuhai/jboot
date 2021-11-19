@@ -20,6 +20,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.components.cache.JbootCacheBase;
+import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.caffeine.CaffeineCacheImpl;
 import io.jboot.components.cache.redis.JbootRedisCacheImpl;
 import io.jboot.components.serializer.JbootSerializer;
@@ -53,9 +54,10 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
             .build();
 
 
-    public JbootCaredisCacheImpl() {
-        this.caffeineCacheImpl = new CaffeineCacheImpl();
-        this.redisCacheImpl = new JbootRedisCacheImpl();
+    public JbootCaredisCacheImpl(JbootCacheConfig config) {
+        super(config);
+        this.caffeineCacheImpl = new CaffeineCacheImpl(config);
+        this.redisCacheImpl = new JbootRedisCacheImpl(config);
         this.clientId = StrUtil.uuid();
         this.serializer = Jboot.getSerializer();
         this.redis = redisCacheImpl.getRedis();

@@ -17,14 +17,17 @@ package io.jboot.components.cache.redis;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
+import io.jboot.components.cache.JbootCacheBase;
+import io.jboot.components.cache.JbootCacheConfig;
+import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
-import io.jboot.components.cache.JbootCacheBase;
-import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.RedisScanResult;
 import io.jboot.utils.StrUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 
 public class JbootRedisCacheImpl extends JbootCacheBase {
@@ -36,7 +39,8 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
     private String globalKeyPrefix = "";
 
 
-    public JbootRedisCacheImpl() {
+    public JbootRedisCacheImpl(JbootCacheConfig config) {
+        super(config);
         cacheConfig = Jboot.config(JbootRedisCacheConfig.class);
         if (StrUtil.isNotBlank(cacheConfig.getGlobalKeyPrefix())) {
             globalKeyPrefix = cacheConfig.getGlobalKeyPrefix() + ":";

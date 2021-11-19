@@ -18,6 +18,7 @@ package io.jboot.components.cache.caffeine;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.components.cache.JbootCacheBase;
+import io.jboot.components.cache.JbootCacheConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CaffeineCacheImpl extends JbootCacheBase {
 
     private Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
+
+    public CaffeineCacheImpl(JbootCacheConfig config) {
+        super(config);
+    }
 
     protected Cache getCacheOnly(String cacheName) {
         cacheName = buildCacheName(cacheName);

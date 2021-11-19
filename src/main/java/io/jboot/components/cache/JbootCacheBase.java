@@ -20,6 +20,12 @@ import io.jboot.utils.StrUtil;
 
 public abstract class JbootCacheBase implements JbootCache {
 
+    protected JbootCacheConfig config;
+
+    public JbootCacheBase(JbootCacheConfig config) {
+        this.config = config;
+    }
+
     private ThreadLocal<String> CACHE_NAME_PREFIX_TL = new ThreadLocal<>();
 
     @Override
@@ -41,7 +47,7 @@ public abstract class JbootCacheBase implements JbootCache {
     protected String buildCacheName(String cacheName) {
         String cacheNamePrefix = CACHE_NAME_PREFIX_TL.get();
         if (StrUtil.isBlank(cacheNamePrefix)) {
-            cacheNamePrefix = JbootCacheConfig.getInstance().getDefaultCachePrefix();
+            cacheNamePrefix = config.getDefaultCachePrefix();
         }
 
         if (StrUtil.isBlank(cacheNamePrefix)) {

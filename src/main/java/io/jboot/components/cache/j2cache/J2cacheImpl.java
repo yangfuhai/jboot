@@ -17,6 +17,7 @@ package io.jboot.components.cache.j2cache;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.components.cache.JbootCacheBase;
+import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.exception.JbootException;
 import net.oschina.j2cache.CacheChannel;
 import net.oschina.j2cache.CacheObject;
@@ -33,6 +34,10 @@ import java.util.stream.Collectors;
  * @version V1.0
  */
 public class J2cacheImpl extends JbootCacheBase {
+
+    public J2cacheImpl(JbootCacheConfig config) {
+        super(config);
+    }
 
     @Override
     public <T> T get(String cacheName, Object key) {

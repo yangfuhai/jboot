@@ -2,6 +2,7 @@ package io.jboot.test.ehcache;
 
 
 import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.ehcache.JbootEhcacheImpl;
 
 public class EhcacheTester {
@@ -9,7 +10,7 @@ public class EhcacheTester {
     private static final String CACHE_NAME = "test";
 
     public static void main(String[] args) throws Exception {
-        JbootCache cache = new JbootEhcacheImpl();
+        JbootCache cache = new JbootEhcacheImpl(new JbootCacheConfig());
 
         cache.put(CACHE_NAME, "key1", "value1");
         cache.put(CACHE_NAME, "key2", "value2", 2);

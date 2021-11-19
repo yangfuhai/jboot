@@ -19,11 +19,12 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
-import io.jboot.support.redis.JbootRedis;
 import io.jboot.components.cache.JbootCacheBase;
+import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.ehcache.JbootEhcacheImpl;
 import io.jboot.components.cache.redis.JbootRedisCacheImpl;
 import io.jboot.components.serializer.JbootSerializer;
+import io.jboot.support.redis.JbootRedis;
 import io.jboot.utils.StrUtil;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
@@ -57,11 +58,12 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
             .build(key -> null);
 
 
-    public JbootEhredisCacheImpl() {
-        this.ehcacheImpl = new JbootEhcacheImpl();
+    public JbootEhredisCacheImpl(JbootCacheConfig config) {
+        super(config);
+        this.ehcacheImpl = new JbootEhcacheImpl(config);
         this.ehcacheImpl.setCacheEventListener(this);
 
-        this.redisCacheImpl = new JbootRedisCacheImpl();
+        this.redisCacheImpl = new JbootRedisCacheImpl(config);
         this.clientId = StrUtil.uuid();
         this.serializer = Jboot.getSerializer();
 
