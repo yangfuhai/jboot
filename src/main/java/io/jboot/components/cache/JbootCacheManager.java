@@ -64,7 +64,9 @@ public class JbootCacheManager {
                     Map<String, JbootCacheConfig> configModels = JbootConfigUtil.getConfigModels(JbootCacheConfig.class, "jboot.cache");
                     JbootCacheConfig.TYPES.forEach(configModels::remove);
 
-                    if (!configModels.containsKey(name)) {
+                    configModels.putIfAbsent("default",new JbootCacheConfig());
+
+                    if ( !configModels.containsKey(name)) {
                         throw new JbootIllegalConfigException("Please config \"jboot.cache." + name + ".type\" in your jboot.properties.");
                     }
 

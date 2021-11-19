@@ -15,9 +15,7 @@
  */
 package io.jboot.web.session;
 
-import io.jboot.Jboot;
 import io.jboot.app.config.annotation.ConfigModel;
-import io.jboot.components.cache.JbootCacheConfig;
 
 @ConfigModel(prefix = "jboot.web.session")
 public class JbootSessionConfig {
@@ -36,7 +34,7 @@ public class JbootSessionConfig {
     private int cookieMaxAge = DEFAULT_COOKIE_MAX_AGE;
 
     private String cacheName = DEFAULT_SESSION_CACHE_NAME;
-    private String cacheType = Jboot.config(JbootCacheConfig.class).getType();
+    private String useCacheName = "default";
 
 
     public String getCookieName() {
@@ -87,12 +85,12 @@ public class JbootSessionConfig {
         this.cacheName = cacheName;
     }
 
-    public String getCacheType() {
-        return cacheType;
+    public String getUseCacheName() {
+        return useCacheName;
     }
 
-    public void setCacheType(String cacheType) {
-        this.cacheType = cacheType;
+    public void setUseCacheName(String useCacheName) {
+        this.useCacheName = useCacheName;
     }
 
 }

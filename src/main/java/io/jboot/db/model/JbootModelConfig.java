@@ -18,7 +18,6 @@ package io.jboot.db.model;
 import io.jboot.Jboot;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.cache.JbootCache;
-import io.jboot.components.cache.JbootCacheConfig;
 import io.jboot.components.cache.JbootCacheManager;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
@@ -65,7 +64,7 @@ public class JbootModelConfig {
     private boolean idCacheByCopyEnable = true;
 
 
-    private String idCacheType = Jboot.config(JbootCacheConfig.class).getType();
+    private String idCacheName = "default";
 
 
 
@@ -141,14 +140,9 @@ public class JbootModelConfig {
         this.idCacheByCopyEnable = idCacheByCopyEnable;
     }
 
-    public String getIdCacheType() {
-        return idCacheType;
+    public JbootModelConfig(String idCacheName) {
+        this.idCacheName = idCacheName;
     }
-
-    public void setIdCacheType(String idCacheType) {
-        this.idCacheType = idCacheType;
-    }
-
 
     private JbootModelFilter filter;
     public JbootModelFilter getFilter() {
@@ -206,7 +200,7 @@ public class JbootModelConfig {
 
     public JbootCache getIdCache() {
         if (idCache == null) {
-            idCache = JbootCacheManager.me().getCache(idCacheType);
+            idCache = JbootCacheManager.me().getCache(idCacheName);
         }
         return idCache;
     }
