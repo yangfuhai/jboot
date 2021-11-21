@@ -18,7 +18,7 @@ package io.jboot.components.mq.rabbitmq;
 import com.rabbitmq.client.*;
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplicationConfig;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.components.mq.JbootmqConfig;
@@ -48,7 +48,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {
-            Map<String, JbootRabbitmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootRabbitmqConfig.class, "jboot.mq.rabbitmq");
+            Map<String, JbootRabbitmqConfig> configModels = ConfigUtil.getConfigModels(JbootRabbitmqConfig.class);
             if (!configModels.containsKey(typeName)) {
                 throw new JbootIllegalConfigException("Please config \"jboot.mq.rabbitmq." + typeName + ".host\" in your jboot.properties.");
             }

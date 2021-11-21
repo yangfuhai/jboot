@@ -16,7 +16,7 @@
 package io.jboot.app.config.support.nacos;
 
 
-import io.jboot.app.config.ConfigUtil;
+import io.jboot.app.config.JbootConfigKit;
 import io.jboot.app.config.annotation.ConfigModel;
 
 import java.util.Properties;
@@ -250,6 +250,6 @@ public class NacosServerConfig {
 
 
     public boolean isConfigOk() {
-        return ConfigUtil.areNotBlank(serverAddr, dataId, group);
+        return JbootConfigKit.areNotBlank(serverAddr, dataId, group);
     }
 }

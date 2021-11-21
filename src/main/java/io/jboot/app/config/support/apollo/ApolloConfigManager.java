@@ -19,7 +19,7 @@ import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigChange;
-import io.jboot.app.config.ConfigUtil;
+import io.jboot.app.config.JbootConfigKit;
 import io.jboot.app.config.JbootConfigManager;
 
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public class ApolloConfigManager {
 
     private Config getDefaultConfig(JbootConfigManager configManager) {
         ApolloServerConfig apolloServerConfig = configManager.get(ApolloServerConfig.class);
-        if (ConfigUtil.isNotBlank(apolloServerConfig.getDefaultNamespace())) {
+        if (JbootConfigKit.isNotBlank(apolloServerConfig.getDefaultNamespace())) {
             return ConfigService.getConfig(apolloServerConfig.getDefaultNamespace());
         } else {
             return ConfigService.getAppConfig();

@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.app.config;
+package io.jboot.utils;
 
-import io.jboot.Jboot;
+
+import io.jboot.app.config.JbootConfigKit;
+import io.jboot.app.config.JbootConfigManager;
+import io.jboot.app.config.annotation.ConfigModel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -25,39 +28,46 @@ import java.util.*;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/3/19
  */
-public class JbootConfigUtil {
+public class ConfigUtil {
+
+    public static <T> Map<String, T> getConfigModels(Class<T> tClass) {
+        ConfigModel configModel = tClass.getAnnotation(ConfigModel.class);
+        if (configModel == null) {
+            throw new IllegalStateException("The Class \"" + tClass.getName() + "\" is not have @ConfigModel annotation");
+        }
+        return getConfigModels(tClass, configModel.prefix());
+    }
+
+
 
     public static <T> Map<String, T> getConfigModels(Class<T> tClass, String prefix) {
         Map<String, T> objMap = new HashMap<>();
 
-
         boolean initDefault = false;
-
 
         Set<String> objNames = new HashSet<>();
 
         String objPrefix = prefix + ".";
         int pointCount = StringUtils.countMatches(prefix, '.');
 
-
         Properties prop = JbootConfigManager.me().getProperties();
 
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-            if (entry.getKey() == null || ConfigUtil.isBlank(entry.getKey().toString())) {
+            if (entry.getKey() == null || JbootConfigKit.isBlank(entry.getKey().toString())) {
                 continue;
             }
 
             String key = entry.getKey().toString().trim();
 
             //配置来源于 Docker 的环境变量配置
-            if (key.contains("_") && Character.isUpperCase(key.charAt(0))){
-                key = key.toLowerCase().replace('_','.');
+            if (key.contains("_") && Character.isUpperCase(key.charAt(0))) {
+                key = key.toLowerCase().replace('_', '.');
             }
 
             //初始化默认的配置
             if (!initDefault && key.startsWith(prefix) && StringUtils.countMatches(key, '.') == pointCount + 1) {
                 initDefault = true;
-                T defaultObj = Jboot.config(tClass, prefix);
+                T defaultObj = JbootConfigManager.me().get(tClass, prefix, null);
                 objMap.put("default", defaultObj);
 
             }
@@ -71,7 +81,7 @@ public class JbootConfigUtil {
         }
 
         for (String name : objNames) {
-            T obj = Jboot.config(tClass, objPrefix + name);
+            T obj = JbootConfigManager.me().get(tClass, objPrefix + name, null);
             objMap.put(name, obj);
         }
 

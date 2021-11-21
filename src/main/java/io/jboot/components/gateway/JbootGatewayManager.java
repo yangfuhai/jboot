@@ -15,7 +15,7 @@
  */
 package io.jboot.components.gateway;
 
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.gateway.discovery.GatewayDiscovery;
 import io.jboot.components.gateway.discovery.GatewayDiscoveryManager;
 import io.jboot.components.gateway.discovery.GatewayInstance;
@@ -53,7 +53,7 @@ public class JbootGatewayManager {
     }
 
     private void initConfigs() {
-        Map<String, JbootGatewayConfig> configMap = JbootConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
+        Map<String, JbootGatewayConfig> configMap = ConfigUtil.getConfigModels(JbootGatewayConfig.class, "jboot.gateway");
         for (Map.Entry<String, JbootGatewayConfig> entry : configMap.entrySet()) {
             if ("discovery".equals(entry.getKey()) || "instance".equals(entry.getKey())) {
                 continue;

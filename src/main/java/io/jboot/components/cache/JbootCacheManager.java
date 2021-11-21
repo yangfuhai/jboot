@@ -16,7 +16,7 @@
 package io.jboot.components.cache;
 
 import io.jboot.Jboot;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.cache.caffeine.CaffeineCacheImpl;
 import io.jboot.components.cache.caredis.JbootCaredisCacheImpl;
 import io.jboot.components.cache.ehcache.JbootEhcacheImpl;
@@ -61,7 +61,7 @@ public class JbootCacheManager {
             synchronized (this) {
                 cache = cacheMap.get(name);
                 if (cache == null) {
-                    Map<String, JbootCacheConfig> configModels = JbootConfigUtil.getConfigModels(JbootCacheConfig.class, "jboot.cache");
+                    Map<String, JbootCacheConfig> configModels = ConfigUtil.getConfigModels(JbootCacheConfig.class);
                     JbootCacheConfig.TYPES.forEach(configModels::remove);
 
                     configModels.putIfAbsent("default", new JbootCacheConfig());

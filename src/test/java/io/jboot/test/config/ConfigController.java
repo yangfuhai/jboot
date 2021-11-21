@@ -15,7 +15,7 @@
  */
 package io.jboot.test.config;
 
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
@@ -27,6 +27,6 @@ import io.jboot.web.controller.annotation.RequestMapping;
 public class ConfigController extends JbootController {
 
     public void index(){
-        renderJson(JbootConfigUtil.getConfigModels(TestConfigModel.class,"config.test.test"));
+        renderJson(ConfigUtil.getConfigModels(TestConfigModel.class,"config.test.test"));
     }
 }

@@ -17,7 +17,7 @@ package io.jboot.components.gateway.discovery;
 
 
 import io.jboot.Jboot;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.NetUtil;
 
@@ -59,7 +59,7 @@ public class GatewayDiscoveryManager {
             return;
         }
 
-        Map<String, GatewayInstanceConfig> instanceConfigMap = JbootConfigUtil.getConfigModels(GatewayInstanceConfig.class, "jboot.gateway.instance");
+        Map<String, GatewayInstanceConfig> instanceConfigMap = ConfigUtil.getConfigModels(GatewayInstanceConfig.class, "jboot.gateway.instance");
         for (GatewayInstanceConfig instanceConfig : instanceConfigMap.values()) {
 
             GatewayInstance instance = new GatewayInstance();

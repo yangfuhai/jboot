@@ -1,7 +1,7 @@
 package io.jboot.utils;
 
 
-import io.jboot.app.config.ConfigUtil;
+import io.jboot.app.config.JbootConfigKit;
 
 public class AnnotationUtil {
 
@@ -11,7 +11,7 @@ public class AnnotationUtil {
 
     public static String get(String value, String defaultValue) {
         if (StrUtil.isNotBlank(value)) {
-            String ret = ConfigUtil.parseValue(value.trim());
+            String ret = JbootConfigKit.parseValue(value.trim());
             if (StrUtil.isNotBlank(ret)) {
                 return ret;
             }

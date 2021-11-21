@@ -17,7 +17,7 @@ package io.jboot.components.mq.redismq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.components.mq.JbootmqConfig;
@@ -43,7 +43,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         JbootRedismqConfig redisConfig = null;
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {
-            Map<String, JbootRedismqConfig> configModels = JbootConfigUtil.getConfigModels(JbootRedismqConfig.class, "jboot.mq.redis");
+            Map<String, JbootRedismqConfig> configModels = ConfigUtil.getConfigModels(JbootRedismqConfig.class);
             if (!configModels.containsKey(typeName)) {
                 throw new JbootIllegalConfigException("Please config \"jboot.mq.redis." + typeName + ".host\" in your jboot.properties.");
             }

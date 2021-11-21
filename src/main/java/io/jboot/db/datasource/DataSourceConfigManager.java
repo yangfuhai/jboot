@@ -16,7 +16,7 @@
 package io.jboot.db.datasource;
 
 import com.google.common.collect.Maps;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.Map;
@@ -36,7 +36,7 @@ public class DataSourceConfigManager {
 
     private DataSourceConfigManager() {
 
-        Map<String,DataSourceConfig> configMap = JbootConfigUtil.getConfigModels(DataSourceConfig.class,"jboot.datasource");
+        Map<String,DataSourceConfig> configMap = ConfigUtil.getConfigModels(DataSourceConfig.class,"jboot.datasource");
 
         for (Map.Entry<String,DataSourceConfig> entry : configMap.entrySet()){
             DataSourceConfig config = entry.getValue();

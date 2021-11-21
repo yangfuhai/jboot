@@ -16,14 +16,12 @@
 package io.jboot.app.config;
 
 
-
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConfigUtil {
+public class JbootConfigKit {
 
 
     public static <T> T newInstance(Class<T> clazz) {
@@ -55,7 +53,7 @@ public class ConfigUtil {
                 para.setStart(index - 1);
             } else if (c == '}' && para != null) {
                 para.setEnd(index);
-                if (paras == null){
+                if (paras == null) {
                     paras = new LinkedList<>();
                 }
                 paras.add(para);
@@ -159,21 +157,9 @@ public class ConfigUtil {
         return true;
     }
 
-    public static String map2string(Map map) {
-        if (map == null || map.isEmpty()) {
-            return "{ }";
-        }
-
-        StringJoiner joiner = new StringJoiner(", ", "{ ", " }");
-        for (Object key : map.keySet()) {
-            joiner.add(key + "='" + map.get(key) + "'");
-        }
-        return joiner.toString();
-    }
-
 
     static Properties readExternalProperties() {
-        String currentJarFilePath = ConfigUtil.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        String currentJarFilePath = JbootConfigKit.class.getProtectionDomain().getCodeSource().getLocation().getFile();
         File fileDir = new File(currentJarFilePath).getParentFile();
         File externalProperties = new File(fileDir, "jboot.properties");
         if (externalProperties.exists()) {
@@ -183,43 +169,11 @@ public class ConfigUtil {
     }
 
 
-    private static String rootClassPath;
-
-    public static String getRootClassPath() {
-        if (rootClassPath == null) {
-            try {
-                String path = getClassLoader().getResource("").toURI().getPath();
-                rootClassPath = new File(path).getAbsolutePath();
-            } catch (Exception e) {
-                try {
-                    String path = ConfigUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-                    path = java.net.URLDecoder.decode(path, "UTF-8");
-                    if (path.endsWith(File.separator)) {
-                        path = path.substring(0, path.length() - 1);
-                    }
-                    /**
-                     * Fix path 带有文件名
-                     */
-                    if (path.endsWith(".jar")) {
-                        path = path.substring(0, path.lastIndexOf("/") + 1);
-                    }
-                    rootClassPath = path;
-                } catch (UnsupportedEncodingException e1) {
-                    throw new RuntimeException(e1);
-                }
-            }
-        }
-        return rootClassPath;
-    }
-
-
     public static ClassLoader getClassLoader() {
         ClassLoader ret = Thread.currentThread().getContextClassLoader();
-        return ret != null ? ret : ConfigUtil.class.getClassLoader();
+        return ret != null ? ret : JbootConfigKit.class.getClassLoader();
     }
 
-    public static void doNothing(Throwable ex) {
-    }
 
     public static Object convert(Class<?> convertClass, String s, Type genericType) {
 

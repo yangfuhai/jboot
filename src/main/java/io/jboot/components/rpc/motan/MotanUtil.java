@@ -17,7 +17,7 @@ package io.jboot.components.rpc.motan;
 
 import com.weibo.api.motan.config.*;
 import com.weibo.api.motan.util.MotanFrameworkUtil;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.rpc.RPCUtil;
@@ -216,7 +216,7 @@ public class MotanUtil {
     }
 
     private static <T> Map<String, T> configs(Class<T> clazz, String prefix) {
-        Map<String, T> ret = JbootConfigUtil.getConfigModels(clazz, prefix);
+        Map<String, T> ret = ConfigUtil.getConfigModels(clazz, prefix);
 
         if (ret.size() > 0
                 && (clazz == BasicServiceInterfaceConfig.class || clazz == BasicRefererInterfaceConfig.class)

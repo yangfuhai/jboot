@@ -18,7 +18,7 @@ package io.jboot.components.rpc.dubbo;
 
 import io.jboot.Jboot;
 import io.jboot.app.config.JbootConfigManager;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
 import io.jboot.components.rpc.JbootrpcServiceConfig;
 import io.jboot.components.rpc.RPCUtil;
@@ -271,7 +271,7 @@ class DubboUtil {
 
 
     private static <T> Map<String, T> configs(Class<T> clazz, String prefix) {
-        Map<String, T> ret = JbootConfigUtil.getConfigModels(clazz, prefix);
+        Map<String, T> ret = ConfigUtil.getConfigModels(clazz, prefix);
 
         if (ret.size() > 0 && !RPCUtil.isDefaultConfigExist(clazz, ret)) {
             for (Map.Entry<String, T> entry : ret.entrySet()) {

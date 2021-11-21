@@ -31,7 +31,7 @@ class JbootProp {
         properties = new Properties();
         InputStream inputStream = null;
         try {
-            inputStream = ConfigUtil.getClassLoader().getResourceAsStream(fileName);
+            inputStream = JbootConfigKit.getClassLoader().getResourceAsStream(fileName);
             if (inputStream != null) {
                 properties.load(new InputStreamReader(inputStream, encoding));
             }

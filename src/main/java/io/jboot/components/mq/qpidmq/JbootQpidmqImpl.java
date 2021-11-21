@@ -17,7 +17,7 @@ package io.jboot.components.mq.qpidmq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.components.mq.JbootmqConfig;
@@ -48,7 +48,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         JbootQpidmqConfig qpidConfig = null;
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {
-            Map<String, JbootQpidmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootQpidmqConfig.class, "jboot.mq.qpid");
+            Map<String, JbootQpidmqConfig> configModels = ConfigUtil.getConfigModels(JbootQpidmqConfig.class);
             if (!configModels.containsKey(typeName)) {
                 throw new JbootIllegalConfigException("Please config \"jboot.mq.qpid." + typeName + ".host\" in your jboot.properties.");
             }

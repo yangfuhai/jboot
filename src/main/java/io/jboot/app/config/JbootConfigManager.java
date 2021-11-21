@@ -70,12 +70,12 @@ public class JbootConfigManager {
 
         String mode = getConfigValue("jboot.app.mode");
 
-        if (ConfigUtil.isNotBlank(mode)) {
+        if (JbootConfigKit.isNotBlank(mode)) {
             String modePropertiesName = "jboot-" + mode + ".properties";
             mainProperties.putAll(new JbootProp(modePropertiesName).getProperties());
         }
 
-        Properties externalProperties = ConfigUtil.readExternalProperties();
+        Properties externalProperties = JbootConfigKit.readExternalProperties();
         if (externalProperties != null && !externalProperties.isEmpty()) {
             mainProperties.putAll(externalProperties);
         }
@@ -93,11 +93,11 @@ public class JbootConfigManager {
     }
 
     public <T> T get(Class<T> clazz) {
-        ConfigModel propertyConfig = clazz.getAnnotation(ConfigModel.class);
-        if (propertyConfig == null) {
+        ConfigModel configModel = clazz.getAnnotation(ConfigModel.class);
+        if (configModel == null) {
             return get(clazz, null, null);
         }
-        return get(clazz, propertyConfig.prefix(), propertyConfig.file());
+        return get(clazz, configModel.prefix(), configModel.file());
     }
 
 
@@ -142,11 +142,11 @@ public class JbootConfigManager {
      * @return
      */
     public <T> T refreshAndGet(Class<T> clazz) {
-        ConfigModel propertyConfig = clazz.getAnnotation(ConfigModel.class);
-        if (propertyConfig == null) {
+        ConfigModel configModel = clazz.getAnnotation(ConfigModel.class);
+        if (configModel == null) {
             return refreshAndGet(clazz, null, null);
         }
-        return refreshAndGet(clazz, propertyConfig.prefix(), propertyConfig.file());
+        return refreshAndGet(clazz, configModel.prefix(), configModel.file());
     }
 
 
@@ -174,7 +174,7 @@ public class JbootConfigManager {
         mainProperties.putAll(properties);
 
         String mode = getConfigValue(properties, "jboot.app.mode");
-        if (ConfigUtil.isNotBlank(mode)) {
+        if (JbootConfigKit.isNotBlank(mode)) {
             String modePropertiesName = "jboot-" + mode + ".properties";
             mainProperties.putAll(new JbootProp(modePropertiesName).getProperties());
         }
@@ -191,21 +191,21 @@ public class JbootConfigManager {
      * @return
      */
     public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
-        T configObject = ConfigUtil.newInstance(clazz);
-        for (Method setterMethod : ConfigUtil.getClassSetMethods(clazz)) {
+        T configObject = JbootConfigKit.newInstance(clazz);
+        for (Method setterMethod : JbootConfigKit.getClassSetMethods(clazz)) {
             String key = buildKey(prefix, setterMethod);
             String value = getConfigValue(key);
 
-            if (ConfigUtil.isNotBlank(file)) {
+            if (JbootConfigKit.isNotBlank(file)) {
                 JbootProp prop = new JbootProp(file);
                 String filePropValue = getConfigValue(prop.getProperties(), key);
-                if (ConfigUtil.isNotBlank(filePropValue)) {
+                if (JbootConfigKit.isNotBlank(filePropValue)) {
                     value = filePropValue;
                 }
             }
 
-            if (ConfigUtil.isNotBlank(value)) {
-                Object val = ConfigUtil.convert(setterMethod.getParameterTypes()[0], value, setterMethod.getGenericParameterTypes()[0]);
+            if (JbootConfigKit.isNotBlank(value)) {
+                Object val = JbootConfigKit.convert(setterMethod.getParameterTypes()[0], value, setterMethod.getGenericParameterTypes()[0]);
                 if (val != null) {
                     try {
                         setterMethod.invoke(configObject, val);
@@ -221,8 +221,8 @@ public class JbootConfigManager {
 
 
     private String buildKey(String prefix, Method method) {
-        String key = ConfigUtil.firstCharToLowerCase(method.getName().substring(3));
-        if (ConfigUtil.isNotBlank(prefix)) {
+        String key = JbootConfigKit.firstCharToLowerCase(method.getName().substring(3));
+        if (JbootConfigKit.isNotBlank(prefix)) {
             key = prefix.trim() + "." + key;
         }
         return key;
@@ -235,13 +235,13 @@ public class JbootConfigManager {
 
 
     public String getConfigValue(Properties properties, String key) {
-        if (ConfigUtil.isBlank(key)) {
+        if (JbootConfigKit.isBlank(key)) {
             return "";
         }
         String originalValue = getOriginalConfigValue(properties, key);
         String stringValue = decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
 
-        return ConfigUtil.parseValue(stringValue);
+        return JbootConfigKit.parseValue(stringValue);
     }
 
 
@@ -258,20 +258,20 @@ public class JbootConfigManager {
         //优先读取分布式配置内容
         if (remoteProperties != null) {
             value = (String) remoteProperties.get(key);
-            if (ConfigUtil.isNotBlank(value)) {
+            if (JbootConfigKit.isNotBlank(value)) {
                 return value.trim();
             }
         }
 
         //boot arg
         value = getBootArg(key);
-        if (ConfigUtil.isNotBlank(value)) {
+        if (JbootConfigKit.isNotBlank(value)) {
             return value.trim();
         }
 
         //env
         value = System.getenv(key);
-        if (ConfigUtil.isNotBlank(value)) {
+        if (JbootConfigKit.isNotBlank(value)) {
             return value.trim();
         }
 
@@ -280,19 +280,19 @@ public class JbootConfigManager {
         // 例如：jboot.datasource.url 转换为 JBOOT_DATASOURCE_URL
         String tempKey = key.toUpperCase().replace('.', '_');
         value = System.getenv(tempKey);
-        if (ConfigUtil.isNotBlank(value)) {
+        if (JbootConfigKit.isNotBlank(value)) {
             return value.trim();
         }
 
         //system property
         value = System.getProperty(key);
-        if (ConfigUtil.isNotBlank(value)) {
+        if (JbootConfigKit.isNotBlank(value)) {
             return value.trim();
         }
 
         //user properties
         value = (String) properties.get(key);
-        if (ConfigUtil.isNotBlank(value)) {
+        if (JbootConfigKit.isNotBlank(value)) {
             return value.trim();
         }
 
@@ -377,7 +377,7 @@ public class JbootConfigManager {
         }
 
         String prefix = configModel.prefix();
-        List<Method> setterMethods = ConfigUtil.getClassSetMethods(forClass);
+        List<Method> setterMethods = JbootConfigKit.getClassSetMethods(forClass);
         if (setterMethods != null) {
             for (Method setterMethod : setterMethods) {
                 String key = buildKey(prefix, setterMethod);

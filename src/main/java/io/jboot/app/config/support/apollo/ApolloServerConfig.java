@@ -15,7 +15,7 @@
  */
 package io.jboot.app.config.support.apollo;
 
-import io.jboot.app.config.ConfigUtil;
+import io.jboot.app.config.JbootConfigKit;
 import io.jboot.app.config.annotation.ConfigModel;
 
 @ConfigModel(prefix = "jboot.config.apollo")
@@ -60,6 +60,6 @@ public class ApolloServerConfig {
     }
 
     public boolean isConfigOk() {
-        return ConfigUtil.areNotBlank(appId, meta);
+        return JbootConfigKit.areNotBlank(appId, meta);
     }
 }

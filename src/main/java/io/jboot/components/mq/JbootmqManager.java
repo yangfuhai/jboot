@@ -16,7 +16,7 @@
 package io.jboot.components.mq;
 
 import io.jboot.Jboot;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.aliyunmq.JbootAliyunmqImpl;
 import io.jboot.components.mq.local.JbootLocalmqImpl;
 import io.jboot.components.mq.qpidmq.JbootQpidmqImpl;
@@ -66,7 +66,7 @@ public class JbootmqManager {
             synchronized (this) {
                 mq = jbootmqMap.get(name);
                 if (mq == null) {
-                    Map<String, JbootmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootmqConfig.class, "jboot.mq");
+                    Map<String, JbootmqConfig> configModels = ConfigUtil.getConfigModels(JbootmqConfig.class);
                     JbootmqConfig.TYPES.forEach(configModels::remove);
 
                     if (!configModels.containsKey(name)) {

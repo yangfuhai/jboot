@@ -17,7 +17,7 @@ package io.jboot.components.mq.rocketmq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.components.mq.JbootmqConfig;
@@ -49,7 +49,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {
-            Map<String, JbootRocketmqConfig> configModels = JbootConfigUtil.getConfigModels(JbootRocketmqConfig.class, "jboot.mq.rocket");
+            Map<String, JbootRocketmqConfig> configModels = ConfigUtil.getConfigModels(JbootRocketmqConfig.class);
             if (!configModels.containsKey(typeName)) {
                 throw new JbootIllegalConfigException("Please config \"jboot.mq.rocket." + typeName + ".namesrvAddr\" in your jboot.properties.");
             }

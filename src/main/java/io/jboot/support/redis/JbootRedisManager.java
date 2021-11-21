@@ -17,7 +17,7 @@ package io.jboot.support.redis;
 
 
 import io.jboot.Jboot;
-import io.jboot.app.config.JbootConfigUtil;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.jedis.JbootJedisClusterImpl;
@@ -59,7 +59,7 @@ public class JbootRedisManager {
             synchronized (this) {
                 redis = jbootRedisMap.get(name);
                 if (redis == null) {
-                    Map<String, JbootRedisConfig> configModels = JbootConfigUtil.getConfigModels(JbootRedisConfig.class, "jboot.redis");
+                    Map<String, JbootRedisConfig> configModels = ConfigUtil.getConfigModels(JbootRedisConfig.class);
                     if (!configModels.containsKey(name)) {
                         throw new JbootIllegalConfigException("Please config \"jboot.redis." + name + ".host\" in your jboot.properties.");
                     }
