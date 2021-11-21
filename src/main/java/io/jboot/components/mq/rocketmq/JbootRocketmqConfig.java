@@ -30,6 +30,18 @@ public class JbootRocketmqConfig implements Serializable {
     private String broadcastChannelPrefix = "broadcast-";
 
     private String producerGroup = "jboot_default_producer_group";
+    private String instanceName;
+    private String clientIP;
+    private String createTopicKey;
+    private Boolean useTLS;
+
+    private Boolean sendLatencyFaultEnable;
+    private Boolean sendMessageWithVIPChannel;
+    private Integer sendMsgTimeout;
+
+    private Boolean retryAnotherBrokerWhenNotStoreOK;
+    private Integer retryTimesWhenSendAsyncFailed;
+    private Integer retryTimesWhenSendFailed;
 
     public String getNamesrvAddr() {
         return namesrvAddr;
@@ -77,5 +89,85 @@ public class JbootRocketmqConfig implements Serializable {
 
     public void setProducerGroup(String producerGroup) {
         this.producerGroup = producerGroup;
+    }
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+    public String getClientIP() {
+        return clientIP;
+    }
+
+    public void setClientIP(String clientIP) {
+        this.clientIP = clientIP;
+    }
+
+    public String getCreateTopicKey() {
+        return createTopicKey;
+    }
+
+    public void setCreateTopicKey(String createTopicKey) {
+        this.createTopicKey = createTopicKey;
+    }
+
+    public Boolean getUseTLS() {
+        return useTLS;
+    }
+
+    public void setUseTLS(Boolean useTLS) {
+        this.useTLS = useTLS;
+    }
+
+    public Boolean getSendLatencyFaultEnable() {
+        return sendLatencyFaultEnable;
+    }
+
+    public void setSendLatencyFaultEnable(Boolean sendLatencyFaultEnable) {
+        this.sendLatencyFaultEnable = sendLatencyFaultEnable;
+    }
+
+    public Boolean getSendMessageWithVIPChannel() {
+        return sendMessageWithVIPChannel;
+    }
+
+    public void setSendMessageWithVIPChannel(Boolean sendMessageWithVIPChannel) {
+        this.sendMessageWithVIPChannel = sendMessageWithVIPChannel;
+    }
+
+    public Integer getSendMsgTimeout() {
+        return sendMsgTimeout;
+    }
+
+    public void setSendMsgTimeout(Integer sendMsgTimeout) {
+        this.sendMsgTimeout = sendMsgTimeout;
+    }
+
+    public Boolean getRetryAnotherBrokerWhenNotStoreOK() {
+        return retryAnotherBrokerWhenNotStoreOK;
+    }
+
+    public void setRetryAnotherBrokerWhenNotStoreOK(Boolean retryAnotherBrokerWhenNotStoreOK) {
+        this.retryAnotherBrokerWhenNotStoreOK = retryAnotherBrokerWhenNotStoreOK;
+    }
+
+    public Integer getRetryTimesWhenSendAsyncFailed() {
+        return retryTimesWhenSendAsyncFailed;
+    }
+
+    public void setRetryTimesWhenSendAsyncFailed(Integer retryTimesWhenSendAsyncFailed) {
+        this.retryTimesWhenSendAsyncFailed = retryTimesWhenSendAsyncFailed;
+    }
+
+    public Integer getRetryTimesWhenSendFailed() {
+        return retryTimesWhenSendFailed;
+    }
+
+    public void setRetryTimesWhenSendFailed(Integer retryTimesWhenSendFailed) {
+        this.retryTimesWhenSendFailed = retryTimesWhenSendFailed;
     }
 }

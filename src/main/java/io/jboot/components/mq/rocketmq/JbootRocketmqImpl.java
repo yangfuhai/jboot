@@ -203,8 +203,48 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
             producer.setNamespace(rocketmqConfig.getNamespace());
         }
 
-        producer.start();
+        if (StrUtil.isNotBlank(rocketmqConfig.getInstanceName())) {
+            producer.setInstanceName(rocketmqConfig.getInstanceName());
+        }
+
+        if (StrUtil.isNotBlank(rocketmqConfig.getClientIP())) {
+            producer.setClientIP(rocketmqConfig.getClientIP());
+        }
+
+        if (StrUtil.isNotBlank(rocketmqConfig.getCreateTopicKey())) {
+            producer.setCreateTopicKey(rocketmqConfig.getCreateTopicKey());
+        }
+
+        if (rocketmqConfig.getUseTLS() != null) {
+            producer.setUseTLS(rocketmqConfig.getUseTLS());
+        }
+
+        if (rocketmqConfig.getSendLatencyFaultEnable() != null) {
+            producer.setSendLatencyFaultEnable(rocketmqConfig.getSendLatencyFaultEnable());
+        }
+
+        if (rocketmqConfig.getSendMessageWithVIPChannel() != null) {
+            producer.setSendMessageWithVIPChannel(rocketmqConfig.getSendMessageWithVIPChannel());
+        }
+
+        if (rocketmqConfig.getSendMsgTimeout() != null) {
+            producer.setSendMsgTimeout(rocketmqConfig.getSendMsgTimeout());
+        }
+
+        if (rocketmqConfig.getRetryAnotherBrokerWhenNotStoreOK() != null) {
+            producer.setRetryAnotherBrokerWhenNotStoreOK(rocketmqConfig.getRetryAnotherBrokerWhenNotStoreOK());
+        }
+
+        if (rocketmqConfig.getRetryTimesWhenSendAsyncFailed() != null) {
+            producer.setRetryTimesWhenSendAsyncFailed(rocketmqConfig.getRetryTimesWhenSendAsyncFailed());
+        }
+
+        if (rocketmqConfig.getRetryTimesWhenSendFailed() != null) {
+            producer.setRetryTimesWhenSendFailed(rocketmqConfig.getRetryTimesWhenSendFailed());
+        }
+
         mqProducer = producer;
+        producer.start();
     }
 }
 
