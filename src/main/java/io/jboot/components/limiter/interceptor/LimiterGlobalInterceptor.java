@@ -43,6 +43,9 @@ public class LimiterGlobalInterceptor extends  BaseLimiterInterceptor implements
             case LimitType.CONCURRENCY:
                 doInterceptForConcurrency(typeAndRate.getRate(), resource, null, inv);
                 break;
+            case LimitType.IP:
+                doInterceptForIpConcurrency(typeAndRate.getRate(), resource, null, inv);
+                break;
             case LimitType.TOKEN_BUCKET:
                 doInterceptForTokenBucket(typeAndRate.getRate(), resource, null, inv);
                 break;

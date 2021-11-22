@@ -16,6 +16,8 @@
 package io.jboot.components.limiter;
 
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.util.concurrent.RateLimiter;
 import com.jfinal.aop.Invocation;
 import io.jboot.Jboot;
@@ -25,6 +27,7 @@ import io.jboot.utils.StrUtil;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +38,11 @@ public class LimiterManager {
 
 
     private Map<String, Semaphore> semaphoreCache = new ConcurrentHashMap<>();
+
+    private Cache<String, Semaphore> ipSemaphoreCache = Caffeine.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build();
+
     private Map<String, RateLimiter> rateLimiterCache = new ConcurrentHashMap<>();
 
     private LimitConfig limitConfig = Jboot.config(LimitConfig.class);
@@ -131,7 +139,7 @@ public class LimiterManager {
         if (limiter == null || limiter.getRate() != rate) {
             synchronized (resource.intern()) {
                 limiter = rateLimiterCache.get(resource);
-                if (limiter == null) {
+                if (limiter == null || limiter.getRate() != rate) {
                     limiter = RateLimiter.create(rate);
                     rateLimiterCache.put(resource, limiter);
                 }
@@ -152,6 +160,10 @@ public class LimiterManager {
             }
         }
         return semaphore;
+    }
+
+    public Semaphore getOrCreateIpSemaphore(String ipKey, int rate) {
+        return ipSemaphoreCache.get(ipKey, s -> new Semaphore(rate));
     }
 
     public Set<String> getConfigPackageOrTargets() {
@@ -181,7 +193,9 @@ public class LimiterManager {
             return false;
         }
 
-        if (!LimitType.CONCURRENCY.equals(type) && !LimitType.TOKEN_BUCKET.equals(type)) {
+        if (!LimitType.CONCURRENCY.equals(type)
+                && !LimitType.TOKEN_BUCKET.equals(type)
+                && !LimitType.IP.equals(type)) {
             return false;
         }
 

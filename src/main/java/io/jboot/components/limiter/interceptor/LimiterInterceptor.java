@@ -53,6 +53,12 @@ public class LimiterInterceptor extends BaseLimiterInterceptor implements Interc
                     doInterceptForTokenBucket(enableLimit.rate(), resource, enableLimit.fallback(), inv);
                 }
                 break;
+            case LimitType.IP:
+                if (LimitScope.CLUSTER == enableLimit.scope()) {
+                    throw new IllegalArgumentException("Ip limit for cluster not implement!");
+                }
+                doInterceptForIpConcurrency(enableLimit.rate(), resource, enableLimit.fallback(), inv);
+                break;
         }
     }
 
