@@ -27,25 +27,23 @@ import io.jboot.utils.StrUtil;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LimiterManager {
 
-    private Set<String> configPackageOrTargets = new HashSet<>();
-    private Map<String, TypeAndRate> typeAndRateCache = new HashMap<>();
+    private HashSet<LimitConfigBean> limitConfigBeans = new HashSet<>();
     private LimitConfig limitConfig = Jboot.config(LimitConfig.class);
 
 
     private Cache<String, Semaphore> semaphoreCache = Caffeine.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
-            .expireAfterWrite(10,TimeUnit.MINUTES)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
             .build();
 
 
     private Cache<String, RateLimiter> rateLimiterCache = Caffeine.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
-            .expireAfterWrite(10,TimeUnit.MINUTES)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
             .build();
 
 
@@ -111,8 +109,7 @@ public class LimiterManager {
                     .replace(")", "\\)")
                     .replace("*", ".*");
 
-            configPackageOrTargets.add(packageOrTarget.trim());
-            typeAndRateCache.put(packageOrTarget.trim(), new TypeAndRate(type.trim(), Integer.valueOf(rate.trim())));
+            limitConfigBeans.add(new LimitConfigBean(packageOrTarget.trim(),type.trim(), Integer.valueOf(rate.trim())));
         }
     }
 
@@ -123,15 +120,15 @@ public class LimiterManager {
      * @param packageOrTarget
      * @return
      */
-    public TypeAndRate matchConfig(String packageOrTarget) {
+    public LimitConfigBean matchConfig(String packageOrTarget) {
 
-        if (!isEnable() || configPackageOrTargets.isEmpty()) {
+        if (!isEnable() || limitConfigBeans.isEmpty()) {
             return null;
         }
 
-        for (String configPackageOrTarget : configPackageOrTargets) {
-            if (match(packageOrTarget, configPackageOrTarget)) {
-                return typeAndRateCache.get(configPackageOrTarget);
+        for (LimitConfigBean value : limitConfigBeans) {
+            if (value.isMatched(packageOrTarget)){
+                return value;
             }
         }
 
@@ -140,7 +137,7 @@ public class LimiterManager {
 
 
     public RateLimiter getOrCreateRateLimiter(String resKey, int rate) {
-        return rateLimiterCache.get(resKey, s ->  RateLimiter.create(rate));
+        return rateLimiterCache.get(resKey, s -> RateLimiter.create(rate));
     }
 
 
@@ -148,18 +145,8 @@ public class LimiterManager {
         return semaphoreCache.get(resKey, s -> new Semaphore(rate));
     }
 
-    public Set<String> getConfigPackageOrTargets() {
-        return configPackageOrTargets;
-    }
-
-    public void setConfigPackageOrTargets(Set<String> configPackageOrTargets) {
-        this.configPackageOrTargets = configPackageOrTargets;
-    }
-
-    private static boolean match(String string, String regex) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(string);
-        return matcher.matches();
+    public HashSet<LimitConfigBean> getLimitConfigBeans() {
+        return limitConfigBeans;
     }
 
     /**
@@ -194,13 +181,27 @@ public class LimiterManager {
         fallbackProcesser.process(resource, fallback, inv);
     }
 
-    public static class TypeAndRate {
+    public static class LimitConfigBean {
+
+        private String packageOrTarget;
         private String type;
         private int rate;
+        private Pattern pattern;
 
-        public TypeAndRate(String type, int rate) {
+
+        public LimitConfigBean(String packageOrTarget, String type, int rate) {
+            this.packageOrTarget = packageOrTarget;
             this.type = type;
             this.rate = rate;
+            this.pattern = Pattern.compile(packageOrTarget);
+        }
+
+        public String getPackageOrTarget() {
+            return packageOrTarget;
+        }
+
+        public void setPackageOrTarget(String packageOrTarget) {
+            this.packageOrTarget = packageOrTarget;
         }
 
         public String getType() {
@@ -217,6 +218,10 @@ public class LimiterManager {
 
         public void setRate(int rate) {
             this.rate = rate;
+        }
+
+        public boolean isMatched(String packageOrTarget){
+            return pattern.matcher(packageOrTarget).matches();
         }
     }
 }

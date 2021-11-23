@@ -34,7 +34,7 @@ public class LimiterInterceptorBuilder implements InterceptorBuilder {
     @Override
     public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
 
-        if (manager.isEnable() && !manager.getConfigPackageOrTargets().isEmpty()) {
+        if (manager.isEnable() && !manager.getLimitConfigBeans().isEmpty()) {
             interceptors.add(LimiterGlobalInterceptor.class);
             return;
         }

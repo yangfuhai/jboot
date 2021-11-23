@@ -27,31 +27,31 @@ public class LimiterGlobalInterceptor extends BaseLimiterInterceptor implements 
     @Override
     public void intercept(Invocation inv) {
         String packageOrTarget = getPackageOrTarget(inv);
-        LimiterManager.TypeAndRate typeAndRate = LimiterManager.me().matchConfig(packageOrTarget);
+        LimiterManager.LimitConfigBean configBean = LimiterManager.me().matchConfig(packageOrTarget);
 
-        if (typeAndRate != null) {
-            doInterceptByTypeAndRate(typeAndRate, packageOrTarget, inv);
-        }else {
+        if (configBean != null) {
+            doInterceptByTypeAndRate(configBean, packageOrTarget, inv);
+        } else {
             inv.invoke();
         }
     }
 
 
-    private void doInterceptByTypeAndRate(LimiterManager.TypeAndRate typeAndRate, String resource, Invocation inv) {
-        switch (typeAndRate.getType()) {
+    private void doInterceptByTypeAndRate(LimiterManager.LimitConfigBean limitConfigBean, String resource, Invocation inv) {
+        switch (limitConfigBean.getType()) {
             case LimitType.CONCURRENCY:
-                doInterceptForConcurrency(typeAndRate.getRate(), resource, null, inv);
+                doInterceptForConcurrency(limitConfigBean.getRate(), resource, null, inv);
                 break;
             case LimitType.IP_CONCURRENCY:
                 String resKey1 = RequestUtil.getIpAddress(inv.getController().getRequest()) + ":" + resource;
-                doInterceptForConcurrency(typeAndRate.getRate(), resKey1, null, inv);
+                doInterceptForConcurrency(limitConfigBean.getRate(), resKey1, null, inv);
                 break;
             case LimitType.TOKEN_BUCKET:
-                doInterceptForTokenBucket(typeAndRate.getRate(), resource, null, inv);
+                doInterceptForTokenBucket(limitConfigBean.getRate(), resource, null, inv);
                 break;
             case LimitType.IP_TOKEN_BUCKET:
                 String resKey2 = RequestUtil.getIpAddress(inv.getController().getRequest()) + ":" + resource;
-                doInterceptForTokenBucket(typeAndRate.getRate(), resKey2, null, inv);
+                doInterceptForTokenBucket(limitConfigBean.getRate(), resKey2, null, inv);
                 break;
         }
     }
