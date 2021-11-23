@@ -1,8 +1,8 @@
 package io.jboot.test.codegen;
 
 
-import com.jfinal.kit.PathKit;
 import io.jboot.app.JbootApplication;
+import io.jboot.codegen.CodeGenHelpler;
 import io.jboot.codegen.model.JbootBaseModelGenerator;
 import io.jboot.codegen.model.JbootModelGenerator;
 import io.jboot.codegen.service.JbootServiceImplGenerator;
@@ -19,8 +19,8 @@ public class GenTester {
         String modelPackage = "io.jboot.test.codegen.model";
         String baseModelPackage = modelPackage + ".base";
 
-        String modelDir = PathKit.getWebRootPath() + "/src/test/java/" + modelPackage.replace(".", "/");
-        String baseModelDir = PathKit.getWebRootPath() + "/src/test/java/" + baseModelPackage.replace(".", "/");
+        String modelDir = CodeGenHelpler.getUserDir() + "/src/test/java/" + modelPackage.replace(".", "/");
+        String baseModelDir = CodeGenHelpler.getUserDir() + "/src/test/java/" + baseModelPackage.replace(".", "/");
 
         System.out.println("start generate...");
         System.out.println("generate dir:" + modelDir);
@@ -33,8 +33,8 @@ public class GenTester {
         String servicePackage = "io.jboot.test.codegen.service";
         String serviceImplPackage = "io.jboot.test.codegen.service.provider";
 
-        String serviceOutputDir = PathKit.getWebRootPath() + "/src/test/java/" + servicePackage.replace(".", "/");
-        String serviceImplOutputDir = PathKit.getWebRootPath() + "/src/test/java/" + serviceImplPackage.replace(".", "/");
+        String serviceOutputDir = CodeGenHelpler.getUserDir() + "/src/test/java/" + servicePackage.replace(".", "/");
+        String serviceImplOutputDir = CodeGenHelpler.getUserDir() + "/src/test/java/" + serviceImplPackage.replace(".", "/");
 
 
         new JbootServiceInterfaceGenerator(servicePackage, serviceOutputDir, modelPackage).generate();

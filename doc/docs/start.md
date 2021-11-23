@@ -226,8 +226,8 @@ public class CodeGenerator {
         String modelPackage = "io.jboot.test.codegen.model";
         String baseModelPackage = modelPackage + ".base";
 
-        String modelDir = PathKit.getWebRootPath() + "/src/main/java/" + modelPackage.replace(".", "/");
-        String baseModelDir = PathKit.getWebRootPath() + "/src/main/java/" + baseModelPackage.replace(".", "/");
+        String modelDir = CodeGenHelpler.getUserDir() + "/src/main/java/" + modelPackage.replace(".", "/");
+        String baseModelDir = CodeGenHelpler.getUserDir() + "/src/main/java/" + baseModelPackage.replace(".", "/");
 
         System.out.println("start generate...");
         System.out.println("generate dir:" + modelDir);
@@ -240,8 +240,8 @@ public class CodeGenerator {
         String servicePackage = "io.jboot.test.codegen.service";
         String serviceImplPackage = "io.jboot.test.codegen.service.impl";
 
-        String serviceOutputDir = PathKit.getWebRootPath() + "/src/main/java/" + servicePackage.replace(".", "/");
-        String serviceImplOutputDir = PathKit.getWebRootPath() + "/src/main/java/" + serviceImplPackage.replace(".", "/");
+        String serviceOutputDir = CodeGenHelpler.getUserDir() + "/src/main/java/" + servicePackage.replace(".", "/");
+        String serviceImplOutputDir = CodeGenHelpler.getUserDir() + "/src/main/java/" + serviceImplPackage.replace(".", "/");
 
         // 生成 Service 接口 及其 实现类
         new JbootServiceInterfaceGenerator(servicePackage, serviceOutputDir, modelPackage).generate();

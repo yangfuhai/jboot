@@ -30,8 +30,8 @@ public class GenTester {
         String baseModelPackage = "io.jboot.test.codegen.modelbase"; //生成的BaseModel的包名
 
         //Model存放的路径，一般情况下是 /src/main/java 下，如下是放在 test 目录下
-        String modelDir = PathKit.getWebRootPath() + "/src/test/java/" + modelPackage.replace(".", "/");
-        String baseModelDir = PathKit.getWebRootPath() + "/src/test/java/" + baseModelPackage.replace(".", "/");
+        String modelDir = CodeGenHelpler.getUserDir() + "/src/test/java/" + modelPackage.replace(".", "/");
+        String baseModelDir = CodeGenHelpler.getUserDir() + "/src/test/java/" + baseModelPackage.replace(".", "/");
 
         System.out.println("start generate...");
         System.out.println("generate dir:" + modelDir);
@@ -46,8 +46,8 @@ public class GenTester {
 
 
         //设置 service 层代码的存放目录
-        String serviceOutputDir = PathKit.getWebRootPath() + "/src/test/java/" + servicePackage.replace(".", "/");
-        String serviceImplOutputDir = PathKit.getWebRootPath() + "/src/test/java/" + serviceImplPackage.replace(".", "/");
+        String serviceOutputDir = CodeGenHelpler.getUserDir() + "/src/test/java/" + servicePackage.replace(".", "/");
+        String serviceImplOutputDir = CodeGenHelpler.getUserDir() + "/src/test/java/" + serviceImplPackage.replace(".", "/");
 
 
         //开始生成代码
