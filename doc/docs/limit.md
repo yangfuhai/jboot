@@ -33,7 +33,7 @@ Jboot 提供了两种方案：
 在 `jboot.properties` 文件中定义如下：
 ```
 jboot.limit.enable = true
-jboot.limit.rule = /user*:tb:1,io.jboot.aop*.get*(*):tb:1
+jboot.limit.rule = /user*:tb:1,/other*:iptb:1,io.jboot.aop*.get*(*):tb:1
 ```
 
 - jboot.limit.enable : 限流功能的开关
@@ -42,16 +42,18 @@ jboot.limit.rule = /user*:tb:1,io.jboot.aop*.get*(*):tb:1
 > 规则说明：
 > - 1、可以配置多个规则，每个规则用英文逗号隔开
 > - 2、规则分为三个部分，用冒号（:）隔开，分别是：资源、限流类型、限流参数值
-> - 3、限流的类型有2种、分别是：tb 和 cc。tb：TOKEN BUCKET（令牌桶），cc：CONCURRENCY（并发量）
+> - 3、限流的类型有4种、分别是：tb、cc、iptb 和 ipcc。tb：TOKEN BUCKET（令牌桶，每秒允许访问的数量），cc：CONCURRENCY（并发量），iptb:单个ip每秒允许访问的数量，ipcc:单个ip允许同时的并发量。
 > - 4、星号（*）匹配任意字符，也可以是空字符。
 
-在以上配置中，配置了两个规则，分别是：
+在以上配置中，配置了三个规则，分别是：
 
 - `/user*:tb:1`
+- `/other*:iptb:1`
 - `io.jboot.aop*.get*(*):cc:1`
 
-第一个规则：匹配 `/user` 开头的所有url地址，每个 url 地址，1秒钟之内只允许访问1次。
-第二个规则：匹配 `io.jboot.aop` 开头的所有包名，并且 `get` 开头的所有任意参数的方法。并发量为 1。
+第一个规则：匹配 `/user` 开头的所有url地址，每个 url 地址，1 秒钟之内只允许访问 1 次。
+第二个规则：匹配 `/other` 开头的所有url地址，每个 ip 地址在 1 秒钟之内只允许访问 1 次。
+第三个规则：匹配 `io.jboot.aop` 开头的所有包名，并且 `get` 开头的所有任意参数的方法。并发量为 1。
 
 **使用方案2：通过注解 `@EnableLimit`**
 
@@ -83,8 +85,9 @@ public class IndexController extends JbootController {
 
 ## 限流的实现
 上文中提到，Jboot 提供了两种限流类型，他们分别是：
-- TOKEN BUCKET ： 令牌桶
-- CONCURRENCY ： 并发量
+
+- TOKEN BUCKET ： 令牌桶，每秒允许访问的次数。
+- CONCURRENCY ： 并发量，和时间无关。
 
 TOKEN BUCKET 令牌桶，是通过 Google Guava 的 RateLimiter 来实现的。
 
