@@ -20,8 +20,9 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.components.limiter.LimitType;
 import io.jboot.components.limiter.LimiterManager;
+import io.jboot.utils.RequestUtil;
 
-public class LimiterGlobalInterceptor extends  BaseLimiterInterceptor implements  Interceptor {
+public class LimiterGlobalInterceptor extends BaseLimiterInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
@@ -30,11 +31,9 @@ public class LimiterGlobalInterceptor extends  BaseLimiterInterceptor implements
 
         if (typeAndRate != null) {
             doInterceptByTypeAndRate(typeAndRate, packageOrTarget, inv);
-            return;
+        }else {
+            inv.invoke();
         }
-
-
-        inv.invoke();
     }
 
 
@@ -43,19 +42,19 @@ public class LimiterGlobalInterceptor extends  BaseLimiterInterceptor implements
             case LimitType.CONCURRENCY:
                 doInterceptForConcurrency(typeAndRate.getRate(), resource, null, inv);
                 break;
-            case LimitType.IP:
-                doInterceptForIpConcurrency(typeAndRate.getRate(), resource, null, inv);
+            case LimitType.IP_CONCURRENCY:
+                String resKey1 = RequestUtil.getIpAddress(inv.getController().getRequest()) + ":" + resource;
+                doInterceptForConcurrency(typeAndRate.getRate(), resKey1, null, inv);
                 break;
             case LimitType.TOKEN_BUCKET:
                 doInterceptForTokenBucket(typeAndRate.getRate(), resource, null, inv);
                 break;
+            case LimitType.IP_TOKEN_BUCKET:
+                String resKey2 = RequestUtil.getIpAddress(inv.getController().getRequest()) + ":" + resource;
+                doInterceptForTokenBucket(typeAndRate.getRate(), resKey2, null, inv);
+                break;
         }
     }
-
-
-
-
-
 
 
 }

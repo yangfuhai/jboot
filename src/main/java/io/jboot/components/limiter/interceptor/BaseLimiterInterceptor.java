@@ -21,7 +21,6 @@ import com.jfinal.aop.Invocation;
 import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.limiter.redis.RedisRateLimitUtil;
 import io.jboot.utils.ClassUtil;
-import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,18 +31,6 @@ public abstract class BaseLimiterInterceptor {
 
     protected void doInterceptForConcurrency(int rate, String resource, String fallback, Invocation inv) {
         Semaphore semaphore = LimiterManager.me().getOrCreateSemaphore(resource, rate);
-        doInterceptorBySemaphore(resource, fallback, inv, semaphore);
-    }
-
-
-    protected void doInterceptForIpConcurrency(int rate, String resource, String fallback, Invocation inv) {
-        String ipKey = RequestUtil.getIpAddress(inv.getController().getRequest()) + ":" + resource;
-        Semaphore semaphore = LimiterManager.me().getOrCreateIpSemaphore(ipKey, rate);
-        doInterceptorBySemaphore(resource, fallback, inv, semaphore);
-    }
-
-
-    private void doInterceptorBySemaphore(String resource, String fallback, Invocation inv, Semaphore semaphore) {
         boolean acquire = false;
         try {
             acquire = semaphore.tryAcquire();

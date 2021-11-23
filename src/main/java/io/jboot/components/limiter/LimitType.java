@@ -15,6 +15,10 @@
  */
 package io.jboot.components.limiter;
 
+import com.google.common.collect.Sets;
+
+import java.util.Set;
+
 /**
  * 限制类型
  */
@@ -27,6 +31,12 @@ public class LimitType {
     public static final String TOKEN_BUCKET = "tb";
 
     /**
+     * IP 并发量限制，通过 RateLimiter 来实现
+     * 每个 ip 在每 1 秒内允许请求的数量
+     */
+    public static final String IP_TOKEN_BUCKET = "iptb";
+
+    /**
      * 并发量，通过 Semaphore 来实现
      * 和并发有关，和请求时间无关
      */
@@ -36,6 +46,10 @@ public class LimitType {
      * IP 并发量限制，通过 Semaphore 来实现
      * 和并发有关，和请求时间无关
      */
-    public static final String IP = "ip";
+    public static final String IP_CONCURRENCY = "ipcc";
+
+
+    public static Set<String> types = Sets.newHashSet(TOKEN_BUCKET, IP_TOKEN_BUCKET, CONCURRENCY, IP_CONCURRENCY);
+
 
 }

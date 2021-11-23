@@ -22,6 +22,7 @@ import io.jboot.components.limiter.LimitScope;
 import io.jboot.components.limiter.LimitType;
 import io.jboot.components.limiter.annotation.EnableLimit;
 import io.jboot.utils.AnnotationUtil;
+import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 
 public class LimiterInterceptor extends BaseLimiterInterceptor implements Interceptor {
@@ -46,6 +47,13 @@ public class LimiterInterceptor extends BaseLimiterInterceptor implements Interc
                 }
                 doInterceptForConcurrency(enableLimit.rate(), resource, enableLimit.fallback(), inv);
                 break;
+            case LimitType.IP_CONCURRENCY:
+                if (LimitScope.CLUSTER == enableLimit.scope()) {
+                    throw new IllegalArgumentException("Ip limit for cluster not implement!");
+                }
+                String resKey1 = RequestUtil.getIpAddress(inv.getController().getRequest()) + ":" + resource;
+                doInterceptForConcurrency(enableLimit.rate(), resKey1, enableLimit.fallback(), inv);
+                break;
             case LimitType.TOKEN_BUCKET:
                 if (LimitScope.CLUSTER == enableLimit.scope()) {
                     doInterceptForTokenBucketWithCluster(enableLimit.rate(), resource, enableLimit.fallback(), inv);
@@ -53,11 +61,13 @@ public class LimiterInterceptor extends BaseLimiterInterceptor implements Interc
                     doInterceptForTokenBucket(enableLimit.rate(), resource, enableLimit.fallback(), inv);
                 }
                 break;
-            case LimitType.IP:
+            case LimitType.IP_TOKEN_BUCKET:
+                String resKey2 = RequestUtil.getIpAddress(inv.getController().getRequest()) + ":" + resource;
                 if (LimitScope.CLUSTER == enableLimit.scope()) {
-                    throw new IllegalArgumentException("Ip limit for cluster not implement!");
+                    doInterceptForTokenBucketWithCluster(enableLimit.rate(), resKey2, enableLimit.fallback(), inv);
+                } else {
+                    doInterceptForTokenBucket(enableLimit.rate(), resKey2, enableLimit.fallback(), inv);
                 }
-                doInterceptForIpConcurrency(enableLimit.rate(), resource, enableLimit.fallback(), inv);
                 break;
         }
     }

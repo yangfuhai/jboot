@@ -25,7 +25,6 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -35,17 +34,21 @@ public class LimiterManager {
 
     private Set<String> configPackageOrTargets = new HashSet<>();
     private Map<String, TypeAndRate> typeAndRateCache = new HashMap<>();
+    private LimitConfig limitConfig = Jboot.config(LimitConfig.class);
 
 
-    private Map<String, Semaphore> semaphoreCache = new ConcurrentHashMap<>();
-
-    private Cache<String, Semaphore> ipSemaphoreCache = Caffeine.newBuilder()
+    private Cache<String, Semaphore> semaphoreCache = Caffeine.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
+            .expireAfterWrite(10,TimeUnit.MINUTES)
             .build();
 
-    private Map<String, RateLimiter> rateLimiterCache = new ConcurrentHashMap<>();
 
-    private LimitConfig limitConfig = Jboot.config(LimitConfig.class);
+    private Cache<String, RateLimiter> rateLimiterCache = Caffeine.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .expireAfterWrite(10,TimeUnit.MINUTES)
+            .build();
+
+
     private LimitFallbackProcesser fallbackProcesser;
 
     private static LimiterManager me = new LimiterManager();
@@ -102,6 +105,7 @@ public class LimiterManager {
             if (!ensureLegal(packageOrTarget, type, rate.trim())) {
                 continue;
             }
+
             packageOrTarget = packageOrTarget.replace(".", "\\.")
                     .replace("(", "\\(")
                     .replace(")", "\\)")
@@ -134,36 +138,14 @@ public class LimiterManager {
         return null;
     }
 
-    public RateLimiter getOrCreateRateLimiter(String resource, int rate) {
-        RateLimiter limiter = rateLimiterCache.get(resource);
-        if (limiter == null || limiter.getRate() != rate) {
-            synchronized (resource.intern()) {
-                limiter = rateLimiterCache.get(resource);
-                if (limiter == null || limiter.getRate() != rate) {
-                    limiter = RateLimiter.create(rate);
-                    rateLimiterCache.put(resource, limiter);
-                }
-            }
-        }
-        return limiter;
+
+    public RateLimiter getOrCreateRateLimiter(String resKey, int rate) {
+        return rateLimiterCache.get(resKey, s ->  RateLimiter.create(rate));
     }
 
-    public Semaphore getOrCreateSemaphore(String resource, int rate) {
-        Semaphore semaphore = semaphoreCache.get(resource);
-        if (semaphore == null) {
-            synchronized (resource.intern()) {
-                semaphore = semaphoreCache.get(resource);
-                if (semaphore == null) {
-                    semaphore = new Semaphore(rate);
-                    semaphoreCache.put(resource, semaphore);
-                }
-            }
-        }
-        return semaphore;
-    }
 
-    public Semaphore getOrCreateIpSemaphore(String ipKey, int rate) {
-        return ipSemaphoreCache.get(ipKey, s -> new Semaphore(rate));
+    public Semaphore getOrCreateSemaphore(String resKey, int rate) {
+        return semaphoreCache.get(resKey, s -> new Semaphore(rate));
     }
 
     public Set<String> getConfigPackageOrTargets() {
@@ -193,9 +175,7 @@ public class LimiterManager {
             return false;
         }
 
-        if (!LimitType.CONCURRENCY.equals(type)
-                && !LimitType.TOKEN_BUCKET.equals(type)
-                && !LimitType.IP.equals(type)) {
+        if (!LimitType.types.contains(type)) {
             return false;
         }
 
