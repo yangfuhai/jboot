@@ -24,15 +24,20 @@ import io.jboot.utils.RequestUtil;
 
 public class LimiterGlobalInterceptor extends BaseLimiterInterceptor implements Interceptor {
 
+
     @Override
     public void intercept(Invocation inv) {
-        String packageOrTarget = getPackageOrTarget(inv);
-        LimiterManager.LimitConfigBean configBean = LimiterManager.me().matchConfig(packageOrTarget);
-
-        if (configBean != null) {
-            doInterceptByTypeAndRate(configBean, packageOrTarget, inv);
-        } else {
+        LimiterManager manager = LimiterManager.me();
+        if (inv.isActionInvocation() && manager.isInIpWhitelist(RequestUtil.getIpAddress(inv.getController().getRequest()))) {
             inv.invoke();
+        } else {
+            String packageOrTarget = getPackageOrTarget(inv);
+            LimiterManager.LimitConfigBean configBean = manager.matchConfig(packageOrTarget);
+            if (configBean != null) {
+                doInterceptByTypeAndRate(configBean, packageOrTarget, inv);
+            } else {
+                inv.invoke();
+            }
         }
     }
 

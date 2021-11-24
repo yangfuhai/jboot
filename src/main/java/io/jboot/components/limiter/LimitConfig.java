@@ -37,6 +37,12 @@ public class LimitConfig {
      */
     private String rule;
 
+
+    /**
+     * IP 白名单，不受限流的配置
+     */
+    private String ipWhitelist;
+
     /**
      * 默认的降级处理器（被限流后的处理器）
      */
@@ -71,6 +77,14 @@ public class LimitConfig {
 
     public void setRule(String rule) {
         this.rule = rule;
+    }
+
+    public String getIpWhitelist() {
+        return ipWhitelist;
+    }
+
+    public void setIpWhitelist(String ipWhitelist) {
+        this.ipWhitelist = ipWhitelist;
     }
 
     public String getFallbackProcesser() {

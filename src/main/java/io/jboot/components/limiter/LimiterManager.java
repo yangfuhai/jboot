@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 public class LimiterManager {
 
     private HashSet<LimitConfigBean> limitConfigBeans = new HashSet<>();
+    private HashSet<String> ipWhitelist = new HashSet<>();
+
     private LimitConfig limitConfig = Jboot.config(LimitConfig.class);
 
 
@@ -61,6 +63,11 @@ public class LimiterManager {
     public void init() {
         doInitFallbackProcesser();
         doParseConfig();
+
+        Set<String> ips = StrUtil.splitToSetByComma(limitConfig.getIpWhitelist());
+        if (ips != null) {
+            ipWhitelist.addAll(ips);
+        }
     }
 
     private void doInitFallbackProcesser() {
@@ -135,6 +142,10 @@ public class LimiterManager {
         return null;
     }
 
+
+    public boolean isInIpWhitelist(String ip){
+        return !ipWhitelist.isEmpty() && ipWhitelist.contains(ip);
+    }
 
     public RateLimiter getOrCreateRateLimiter(String resKey, int rate) {
         return rateLimiterCache.get(resKey, s -> RateLimiter.create(rate));

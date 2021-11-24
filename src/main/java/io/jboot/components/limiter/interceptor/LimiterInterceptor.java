@@ -20,6 +20,7 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.components.limiter.LimitScope;
 import io.jboot.components.limiter.LimitType;
+import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.limiter.annotation.EnableLimit;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.RequestUtil;
@@ -29,12 +30,14 @@ public class LimiterInterceptor extends BaseLimiterInterceptor implements Interc
 
     @Override
     public void intercept(Invocation inv) {
-
-        String packageOrTarget = getPackageOrTarget(inv);
-        EnableLimit enableLimit = inv.getMethod().getAnnotation(EnableLimit.class);
-        String resource = StrUtil.obtainDefault(enableLimit.resource(), packageOrTarget);
-
-        doInterceptByLimitInfo(enableLimit, resource, inv);
+        if (inv.isActionInvocation() && LimiterManager.me().isInIpWhitelist(RequestUtil.getIpAddress(inv.getController().getRequest()))) {
+            inv.invoke();
+        } else {
+            String packageOrTarget = getPackageOrTarget(inv);
+            EnableLimit enableLimit = inv.getMethod().getAnnotation(EnableLimit.class);
+            String resource = StrUtil.obtainDefault(enableLimit.resource(), packageOrTarget);
+            doInterceptByLimitInfo(enableLimit, resource, inv);
+        }
     }
 
 
