@@ -5,6 +5,7 @@ logs
 *.log
 .logs
 *.iws
+*.report
 *.classpath
 .DS_Store
 .ossutil_checkpoint
