@@ -34,10 +34,13 @@ Jboot 提供了两种方案：
 ```
 jboot.limit.enable = true
 jboot.limit.rule = /user*:tb:1,/other*:iptb:1,io.jboot.aop*.get*(*):tb:1
+jboot.limit.ipWhitelist = 127.0.0.1
 ```
 
 - jboot.limit.enable : 限流功能的开关
 - jboot.limit.rule : 限流规则
+- jboot.limit.ipWhitelist : IP 白名单，多个 IP 用英文逗号隔开，此 IP 下的访问，将不受限流配置的影响
+
 
 > 规则说明：
 > - 1、可以配置多个规则，每个规则用英文逗号隔开
