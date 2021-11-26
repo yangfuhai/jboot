@@ -129,6 +129,17 @@ public class Jboot {
 
 
     /**
+     * 获取序列化对象
+     * @param name
+     * @return
+     */
+    public static JbootSerializer getSerializer(String name) {
+        return JbootSerializerManager.me().getSerializer(name);
+    }
+
+
+
+    /**
      * 获取配置信息
      *
      * @param clazz

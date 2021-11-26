@@ -17,9 +17,9 @@ package io.jboot.components.serializer;
 
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,17 +42,18 @@ public class JbootSerializerManager {
 
     public JbootSerializer getSerializer() {
         JbootSerializerConfig config = Jboot.config(JbootSerializerConfig.class);
+        if (StrUtil.isBlank(config.getType())) {
+            throw new JbootIllegalConfigException("can not get serializer config, please set jboot.serializer value to jboot.proerties");
+        }
         return getSerializer(config.getType());
     }
 
     public JbootSerializer getSerializer(String serializerName) {
-
         JbootSerializer serializer = serializerCaches.get(serializerName);
-
         if (serializer == null) {
-            synchronized (this){
+            synchronized (this) {
                 serializer = serializerCaches.get(serializerName);
-                if (serializer == null){
+                if (serializer == null) {
                     serializer = buildSerializer(serializerName);
                     serializerCaches.put(serializerName, serializer);
                 }
@@ -64,14 +65,14 @@ public class JbootSerializerManager {
 
     public JbootSerializer buildSerializer(String serializerName) {
 
-        if (serializerName == null){
-            throw new JbootException("can not get serializer config, please set jboot.serializer value to jboot.proerties");
+        if (serializerName == null) {
+            throw new NullPointerException("SerializerName must not be null");
         }
 
         //可能是某个类名
-        if (serializerName != null && serializerName.contains(".")) {
-            JbootSerializer serializer = ClassUtil.newInstance(serializerName,false);
-            if (serializer == null){
+        if (serializerName.contains(".")) {
+            JbootSerializer serializer = ClassUtil.newInstance(serializerName, false);
+            if (serializer == null) {
                 throw new JbootIllegalConfigException("can not new instance serializer by class: " + serializerName);
             }
         }
