@@ -15,9 +15,6 @@ Jboot 是一个基于 JFinal、Dubbo、Seata、Sentinel、ShardingSphere、Nacos
 - 10、Docker、K8S 友好
 
 
-> 另外：Jboot 目前已经开源超过了 5 年的时间，迭代了 200+ 个版本，已经被超过 10000+ 公司在使用，多个产品用户量超过 1 亿+ 。
-
-
 ## 开始
 
 **maven 依赖**
@@ -26,7 +23,7 @@ Jboot 是一个基于 JFinal、Dubbo、Seata、Sentinel、ShardingSphere、Nacos
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.11.4</version>
+    <version>3.12.0</version>
 </dependency>
 ```
 
