@@ -1,3 +1,19 @@
+jboot v3.12.0:
+新增：SPI 新增直接配置类名的功能
+新增：MQ 新增支持多个实例配置的功能支持
+新增：Redis 新增配置多个实例的支持
+新增：Cache 缓存新增配置多个实例的支持
+新增：限流组件新增 IP 限流功能
+新增：限流组件新增 IP 白名单功能
+优化：Rokect MQ 新增更多的配置支持
+优化：移动 AOP 的默认配置到 "jboot.aop.cache"
+优化："jboot.model.idCacheType" 配置名称修改为 "jboot.model.idCacheName"
+优化："jboot.web.session.cacheType" 配置名称修改为 "jboot.web.session.useCacheName"
+优化：重命名 JbootConfigUtil 为 ConfigUtil
+文档：修改文档错误已经添加部分文档
+
+
+
 jboot v3.11.4:
 新增：新增 DAO.distinct() 方法，用于对内容进行去重
 新增：MockMvc 新增 holdCookie 配置，用于在不同的测试用例里，保持 cookie 的功能
