@@ -60,7 +60,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
         Properties properties = createProperties();
         consumer = ONSFactory.createConsumer(properties);
         for (String channel : channels) {
-            consumer.subscribe(aliyunmqConfig.getBroadcastChannelPrefix() + channel, "*", (message, consumeContext) -> {
+            consumer.subscribe(aliyunmqConfig.getBroadcastChannelPrefix() + channel, aliyunmqConfig.getSubscribeSubExpression(), (message, consumeContext) -> {
                 notifyListeners(channel, getSerializer().deserialize(message.getBody()));
                 return Action.CommitMessage;
             });
@@ -74,7 +74,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
         properties.put(PropertyKeyConst.MessageModel, PropertyValueConst.BROADCASTING);
         consumer = ONSFactory.createConsumer(properties);
         for (String channel : channels) {
-            consumer.subscribe(channel, "*", (message, consumeContext) -> {
+            consumer.subscribe(channel, aliyunmqConfig.getSubscribeSubExpression(), (message, consumeContext) -> {
                 notifyListeners(channel, getSerializer().deserialize(message.getBody()));
                 return Action.CommitMessage;
             });
@@ -128,15 +128,17 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private Properties createProperties() {
-
+    protected Properties createProperties() {
 
         Properties properties = new Properties();
         properties.put(PropertyKeyConst.AccessKey, aliyunmqConfig.getAccessKey());//AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
         properties.put(PropertyKeyConst.SecretKey, aliyunmqConfig.getSecretKey());//SecretKey 阿里云身份验证，在阿里云服务器管理控制台创建
         properties.put(PropertyKeyConst.ProducerId, aliyunmqConfig.getProducerId());//您在控制台创建的Producer ID
         properties.put(PropertyKeyConst.NAMESRV_ADDR, aliyunmqConfig.getAddr());
+        properties.put(PropertyKeyConst.InstanceName, aliyunmqConfig.getInstanceName());
         properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, aliyunmqConfig.getSendMsgTimeoutMillis());//设置发送超时时间，单位毫秒
+
+
         return properties;
     }
 }
