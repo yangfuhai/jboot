@@ -28,6 +28,7 @@ public class JbootRocketmqConfig implements Serializable {
     private String consumerGroup = "jboot_default_consumer_group";
     private Integer consumeMessageBatchMaxSize;
     private String broadcastChannelPrefix = "broadcast-";
+    private String subscribeSubExpression = "*";
 
     private String producerGroup = "jboot_default_producer_group";
     private String instanceName;
@@ -81,6 +82,14 @@ public class JbootRocketmqConfig implements Serializable {
 
     public void setBroadcastChannelPrefix(String broadcastChannelPrefix) {
         this.broadcastChannelPrefix = broadcastChannelPrefix;
+    }
+
+    public String getSubscribeSubExpression() {
+        return subscribeSubExpression;
+    }
+
+    public void setSubscribeSubExpression(String subscribeSubExpression) {
+        this.subscribeSubExpression = subscribeSubExpression;
     }
 
     public String getProducerGroup() {

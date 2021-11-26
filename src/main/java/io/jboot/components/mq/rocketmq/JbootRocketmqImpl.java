@@ -87,7 +87,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
         }
 
         for (String channel : channels) {
-            consumer.subscribe(channel, "*");
+            consumer.subscribe(channel, rocketmqConfig.getSubscribeSubExpression());
         }
 
         // 注册回调实现类来处理从broker拉取回来的消息
@@ -126,7 +126,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
         }
 
         for (String channel : channels) {
-            consumer.subscribe(rocketmqConfig.getBroadcastChannelPrefix() + channel, "*");
+            consumer.subscribe(rocketmqConfig.getBroadcastChannelPrefix() + channel, rocketmqConfig.getSubscribeSubExpression());
         }
 
         final int len = rocketmqConfig.getBroadcastChannelPrefix().length();
