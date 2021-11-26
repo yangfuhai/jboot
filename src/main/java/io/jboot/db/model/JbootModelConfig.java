@@ -66,7 +66,8 @@ public class JbootModelConfig {
 
     private String idCacheName = "default";
 
-
+    public JbootModelConfig() {
+    }
 
     public String getScanPackage() {
         return scanPackage;
