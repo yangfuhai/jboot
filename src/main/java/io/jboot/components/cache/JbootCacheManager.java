@@ -72,7 +72,9 @@ public class JbootCacheManager {
 
                     JbootCacheConfig cacheConfig = configModels.get(name);
                     cache = buildCache(cacheConfig);
-                    cacheMap.put(name, cache);
+                    if (cache != null) {
+                        cacheMap.put(name, cache);
+                    }
                 }
             }
         }

@@ -16,7 +16,6 @@
 package io.jboot.components.mq;
 
 import io.jboot.Jboot;
-import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.aliyunmq.JbootAliyunmqImpl;
 import io.jboot.components.mq.local.JbootLocalmqImpl;
 import io.jboot.components.mq.qpidmq.JbootQpidmqImpl;
@@ -26,6 +25,7 @@ import io.jboot.components.mq.rocketmq.JbootRocketmqImpl;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.ConfigUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,7 +53,9 @@ public class JbootmqManager {
                 if (defaultMq == null) {
                     JbootmqConfig config = Jboot.config(JbootmqConfig.class);
                     defaultMq = getJbootmq(config);
-                    jbootmqMap.put("default", defaultMq);
+                    if (defaultMq != null) {
+                        jbootmqMap.put("default", defaultMq);
+                    }
                 }
             }
         }
@@ -73,7 +75,9 @@ public class JbootmqManager {
                         throw new JbootIllegalConfigException("Please config \"jboot.mq." + name + ".type\" in your jboot.properties.");
                     }
                     mq = getJbootmq(configModels.get(name));
-                    jbootmqMap.put(name, mq);
+                    if (mq != null) {
+                        jbootmqMap.put(name, mq);
+                    }
                 }
             }
         }

@@ -65,7 +65,9 @@ public class JbootRedisManager {
                     }
                     JbootRedisConfig jbootRedisConfig = configModels.get(name);
                     redis = getRedis(jbootRedisConfig);
-                    jbootRedisMap.put(name, redis);
+                    if (redis != null) {
+                        jbootRedisMap.put(name, redis);
+                    }
                 }
             }
         }
