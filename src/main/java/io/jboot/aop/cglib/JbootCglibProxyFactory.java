@@ -35,7 +35,7 @@ public class JbootCglibProxyFactory extends ProxyFactory {
     /**
      * 方便在单元测试的时候，可以对任意 class 进行 Mock
      */
-    private static Function<Class<?>,MethodInterceptor> methodInterceptor = aClass -> new JbootCglibCallback();
+    private static Function<Class<?>, MethodInterceptor> methodInterceptor = aClass -> new JbootCglibCallback();
 
     public static Function<Class<?>, MethodInterceptor> getMethodInterceptor() {
         return methodInterceptor;
@@ -47,7 +47,12 @@ public class JbootCglibProxyFactory extends ProxyFactory {
 
     @Override
     public <T> T get(Class<T> target) {
-        return (T) net.sf.cglib.proxy.Enhancer.create(target, methodInterceptor.apply(target));
+        try {
+            return (T) net.sf.cglib.proxy.Enhancer.create(target, methodInterceptor.apply(target));
+        } catch (Exception e) {
+            //原始的错误，无法给出哪个类无法被创建，错误信息不够友好
+            throw new RuntimeException("Can not create object for class:\"" + target.getName() + "\", cause：" + e.getMessage(), e);
+        }
     }
 
 
