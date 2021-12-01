@@ -46,21 +46,9 @@ public class JbootmqManager {
 
 
     public Jbootmq getJbootmq() {
-        Jbootmq defaultMq = jbootmqMap.get("default");
-        if (defaultMq == null) {
-            synchronized (this) {
-                defaultMq = jbootmqMap.get("default");
-                if (defaultMq == null) {
-                    JbootmqConfig config = Jboot.config(JbootmqConfig.class);
-                    defaultMq = getJbootmq(config);
-                    if (defaultMq != null) {
-                        jbootmqMap.put("default", defaultMq);
-                    }
-                }
-            }
-        }
         return getJbootmq("default");
     }
+
 
     public Jbootmq getJbootmq(String name) {
         Jbootmq mq = jbootmqMap.get(name);
@@ -71,9 +59,12 @@ public class JbootmqManager {
                     Map<String, JbootmqConfig> configModels = ConfigUtil.getConfigModels(JbootmqConfig.class);
                     JbootmqConfig.TYPES.forEach(configModels::remove);
 
+                    configModels.putIfAbsent("default", Jboot.config(JbootmqConfig.class));
+
                     if (!configModels.containsKey(name)) {
                         throw new JbootIllegalConfigException("Please config \"jboot.mq." + name + ".type\" in your jboot.properties.");
                     }
+
                     mq = getJbootmq(configModels.get(name));
                     if (mq != null) {
                         jbootmqMap.put(name, mq);
@@ -81,7 +72,6 @@ public class JbootmqManager {
                 }
             }
         }
-
         return mq;
     }
 

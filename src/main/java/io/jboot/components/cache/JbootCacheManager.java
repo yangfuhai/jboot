@@ -16,7 +16,6 @@
 package io.jboot.components.cache;
 
 import io.jboot.Jboot;
-import io.jboot.utils.ConfigUtil;
 import io.jboot.components.cache.caffeine.CaffeineCacheImpl;
 import io.jboot.components.cache.caredis.JbootCaredisCacheImpl;
 import io.jboot.components.cache.ehcache.JbootEhcacheImpl;
@@ -26,6 +25,7 @@ import io.jboot.components.cache.none.NoneCacheImpl;
 import io.jboot.components.cache.redis.JbootRedisCacheImpl;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.Map;
@@ -40,14 +40,13 @@ public class JbootCacheManager {
     }
 
     private Map<String, JbootCache> cacheMap = new ConcurrentHashMap<>();
-    private JbootCacheConfig defaultConfig = Jboot.config(JbootCacheConfig.class);
 
     public static JbootCacheManager me() {
         return me;
     }
 
     public JbootCache getCache() {
-        return getCache(defaultConfig.getName());
+        return getCache("default");
     }
 
     public JbootCache getCache(String name) {
@@ -64,7 +63,7 @@ public class JbootCacheManager {
                     Map<String, JbootCacheConfig> configModels = ConfigUtil.getConfigModels(JbootCacheConfig.class);
                     JbootCacheConfig.TYPES.forEach(configModels::remove);
 
-                    configModels.putIfAbsent("default", new JbootCacheConfig());
+                    configModels.putIfAbsent("default", Jboot.config(JbootCacheConfig.class));
 
                     if (!configModels.containsKey(name)) {
                         throw new JbootIllegalConfigException("Please config \"jboot.cache." + name + ".type\" in your jboot.properties.");

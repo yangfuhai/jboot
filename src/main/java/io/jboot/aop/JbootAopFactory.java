@@ -266,9 +266,9 @@ public class JbootAopFactory extends AopFactory {
             Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
             return jbootrpc.serviceObtain(fieldInjectedClass, referenceConfig);
         } catch (NullPointerException npe) {
-            LOG.error("Can not inject rpc service for \"" + field.getName() + "\" in " + ClassUtil.getUsefulClass(targetObject.getClass()) + ", because @RPCInject.check ==\"true\" and target is not available. \n" + rpcInject, npe);
+            LOG.error("Can not inject rpc service for \"" + field.getName() + "\" in class \"" + ClassUtil.getUsefulClass(targetObject.getClass()).getName() + "\", because @RPCInject.check ==\"true\" and target is not available. \n" + rpcInject, npe);
         } catch (Exception ex) {
-            LOG.error("Can not inject rpc service for \"" + field.getName() + "\" in " + ClassUtil.getUsefulClass(targetObject.getClass()) + " \n" + rpcInject, ex);
+            LOG.error("Can not inject rpc service for \"" + field.getName() + "\" in class \"" + ClassUtil.getUsefulClass(targetObject.getClass()).getName() + "\" \n" + rpcInject, ex);
         }
         return null;
     }
