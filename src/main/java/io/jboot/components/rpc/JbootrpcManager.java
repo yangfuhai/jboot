@@ -45,15 +45,17 @@ public class JbootrpcManager {
     private Jbootrpc jbootrpc;
     private JbootrpcConfig defaultConfig = Jboot.config(JbootrpcConfig.class);
 
+
     public Jbootrpc getJbootrpc() {
         if (jbootrpc == null) {
             if (!defaultConfig.isConfigOk()) {
-                throw new JbootRpcException("jboot rpc config is error, please set up jboot.rpc.type config value");
+                throw new JbootRpcException("Jboot RPC config is error, please set up \"jboot.rpc.type\" config value");
             }
-            jbootrpc = createJbootrpc(defaultConfig.getType());
+            jbootrpc = createJbootrpc(defaultConfig);
         }
         return jbootrpc;
     }
+
 
 
     private static Class<?>[] default_excludes = new Class[]{
@@ -94,7 +96,7 @@ public class JbootrpcManager {
             RPCBean rpcBean = clazz.getAnnotation(RPCBean.class);
             Class<?>[] inters = clazz.getInterfaces();
             if (inters.length == 0) {
-                throw new JbootException("@RPCBean can not use for class \""+ ClassUtil.getUsefulClass(clazz).getName() +"\", because it has no interface.");
+                throw new JbootException("@RPCBean can not use for class \"" + ClassUtil.getUsefulClass(clazz).getName() + "\", because it has no interface.");
             }
 
             //对某些系统的类 进行排除，例如：Serializable 等
@@ -118,9 +120,12 @@ public class JbootrpcManager {
     }
 
 
-    public Jbootrpc createJbootrpc(String type) {
+    public Jbootrpc createJbootrpc(JbootrpcConfig config) {
+        if(!config.isConfigOk()){
+            return null;
+        }
 
-        switch (type) {
+        switch (config.getType()) {
             case JbootrpcConfig.TYPE_DUBBO:
                 return new JbootDubborpc();
             case JbootrpcConfig.TYPE_MOTAN:
@@ -128,7 +133,7 @@ public class JbootrpcManager {
             case JbootrpcConfig.TYPE_LOCAL:
                 return new JbootLocalrpc();
             default:
-                return JbootSpiLoader.load(Jbootrpc.class, type);
+                return JbootSpiLoader.load(Jbootrpc.class, config.getType());
         }
     }
 

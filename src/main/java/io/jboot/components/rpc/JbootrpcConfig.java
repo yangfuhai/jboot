@@ -28,7 +28,10 @@ public class JbootrpcConfig {
     public static final String TYPE_MOTAN = "motan";
     public static final String TYPE_LOCAL = "local";
 
+
+    //使用的 RPC 类型
     private String type;
+
 
     //用于直连时的配置，直连一般只用于测试环境
     //com.service.AAAService:127.0.0.1:8080,com.service.XXXService:127.0.0.1:8080
@@ -56,7 +59,6 @@ public class JbootrpcConfig {
 
     //本地自动暴露 @RPCBean 的 service
     private boolean autoExportEnable = true;
-
 
     public String getType() {
         return type;
