@@ -21,6 +21,7 @@ import com.jfinal.log.Log;
 import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import io.jboot.app.JbootApplicationConfig;
 import io.jboot.components.valid.ValidErrorRender;
 import io.jboot.components.valid.ValidException;
 import io.jboot.components.valid.ValidUtil;
@@ -40,6 +41,7 @@ public class JbootActionHandler extends ActionHandler {
 
 
     private static final Log LOG = Log.getLog(JbootActionHandler.class);
+    private static final JbootApplicationConfig appConfig = JbootApplicationConfig.get();
 
     /**
      * 方便子类复写、从而可以实现 自定义 Action 的功能
@@ -95,6 +97,11 @@ public class JbootActionHandler extends ActionHandler {
         Action action = getAction(target, urlPara, request);
 
         if (action == null) {
+            if (!appConfig.isHandle404()) {
+                isHandled[0] = false;
+                return;
+            }
+
             if (LOG.isWarnEnabled()) {
                 String qs = request.getQueryString();
                 LOG.warn("404 Action Not Found: " + (qs == null ? target : target + "?" + qs));
@@ -102,8 +109,6 @@ public class JbootActionHandler extends ActionHandler {
             renderManager.getRenderFactory().getErrorRender(404).setContext(request, response).render();
             return;
         }
-
-
         Controller controller = null;
         try {
             controller = controllerFactory.getController(action.getControllerClass());
@@ -132,6 +137,10 @@ public class JbootActionHandler extends ActionHandler {
                 LOG.error(qs == null ? target : target + "?" + qs, e);
             }
         } catch (ActionException e) {
+            if (e.getErrorCode() == 404 && !appConfig.isHandle404()) {
+                isHandled[0] = false;
+                return;
+            }
             handleActionException(target, request, response, action, e);
         } catch (ValidException e) {
             handleValidException(target, request, response, action, e);
@@ -178,7 +187,13 @@ public class JbootActionHandler extends ActionHandler {
 
 
     /**
-     * 处理 Action（Controller的方法）执行错误
+     * 处理错误信息
+     *
+     * @param target
+     * @param request
+     * @param response
+     * @param action
+     * @param e
      */
     protected void handleActionException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ActionException e) {
         int errorCode = e.getErrorCode();

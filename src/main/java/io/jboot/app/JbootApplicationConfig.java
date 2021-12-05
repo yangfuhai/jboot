@@ -29,6 +29,7 @@ public class JbootApplicationConfig {
     private String bannerFile = "banner.txt";
     private String jfinalConfig = "io.jboot.core.JbootCoreConfig";
     private String listener = "*";
+    private boolean handle404 = true;
 
 
     public String getMode() {
@@ -77,6 +78,14 @@ public class JbootApplicationConfig {
 
     public void setListener(String listener) {
         this.listener = listener;
+    }
+
+    public boolean isHandle404() {
+        return handle404;
+    }
+
+    public void setHandle404(boolean handle404) {
+        this.handle404 = handle404;
     }
 
     private static JbootApplicationConfig instance;
