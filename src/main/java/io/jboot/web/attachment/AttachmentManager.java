@@ -216,7 +216,7 @@ public class AttachmentManager {
 
         //优先从 默认的 container 去获取
         File file = defaultContainer.getFile(relativePath);
-        if (file != null && file.exists()) {
+        if (file.exists()) {
             return file;
         }
 
@@ -230,7 +230,9 @@ public class AttachmentManager {
                 LOG.error("Get file error in container :" + container, ex);
             }
         }
-        return null;
+
+        //文件不存在，也返回该文件
+        return file;
     }
 
     /**
