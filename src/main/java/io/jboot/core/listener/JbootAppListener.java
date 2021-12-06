@@ -25,26 +25,28 @@ import io.jboot.aop.jfinal.JfinalPlugins;
 
 public interface JbootAppListener {
 
-    public void onInit();
+    default void onInit(){}
 
-    public void onConstantConfig(Constants constants);
+    default void onConstantConfigBefore(Constants constants){}
 
-    public void onRouteConfig(Routes routes);
+    default void onConstantConfig(Constants constants){}
 
-    public void onEngineConfig(Engine engine);
+    default void onRouteConfig(Routes routes){}
 
-    public void onPluginConfig(JfinalPlugins plugins);
+    default void onEngineConfig(Engine engine){}
 
-    public void onInterceptorConfig(Interceptors interceptors);
+    default void onPluginConfig(JfinalPlugins plugins){}
 
-    public void onHandlerConfig(JfinalHandlers handlers);
+    default void onInterceptorConfig(Interceptors interceptors){}
 
-    public void onStartBefore();
+    default void onHandlerConfig(JfinalHandlers handlers){}
 
-    public void onStart();
+    default void onStartBefore(){}
 
-    public void onStartFinish();
+    default void onStart(){}
 
-    public void onStop();
+    default void onStartFinish(){}
+
+    default void onStop(){}
 
 }

@@ -21,7 +21,6 @@ import com.jfinal.config.*;
 import com.jfinal.core.Controller;
 import com.jfinal.core.Path;
 import com.jfinal.core.converter.TypeConverter;
-import com.jfinal.json.JsonManager;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -145,6 +144,8 @@ public class JbootCoreConfig extends JFinalConfig {
     @Override
     public void configConstant(Constants constants) {
 
+        JbootAppListenerManager.me().onConstantConfigBefore(constants);
+
         constants.setRenderFactory(JbootRenderFactory.me());
         constants.setDevMode(Jboot.isDevMode());
 
@@ -160,6 +161,7 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setCaptchaCache(new JbootCaptchaCache());
 
         constants.setBaseUploadPath(LocalAttachmentContainerConfig.getInstance().buildUploadAbsolutePath());
+        constants.setJsonDatePattern(DateUtil.datetimePattern);
 
         if (JbootWebConfig.getInstance().isPathVariableEnable()){
             constants.setActionMapping(PathVariableActionMapping::new);
@@ -371,8 +373,6 @@ public class JbootCoreConfig extends JFinalConfig {
     public void onStart() {
 
         JbootAppListenerManager.me().onStartBefore();
-
-        JsonManager.me().setDefaultDatePattern(DateUtil.dateMillisecondPattern);
 
         // 初始化 Jboot 内置组件
         JbootrpcManager.me().init();

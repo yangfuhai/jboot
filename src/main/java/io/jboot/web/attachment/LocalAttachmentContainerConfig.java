@@ -25,7 +25,7 @@ import java.io.File;
  * @author michael yang (fuhai999@gmail.com)
  */
 @ConfigModel(prefix = "jboot.attachment")
-public class LocalAttachmentContainerConfig  {
+public class LocalAttachmentContainerConfig {
 
     private String rootPath = PathKit.getWebRootPath();
     private String targetPrefix = "/attachment";
@@ -46,11 +46,11 @@ public class LocalAttachmentContainerConfig  {
         this.targetPrefix = targetPrefix;
     }
 
-    public static  LocalAttachmentContainerConfig getInstance(){
+    public static LocalAttachmentContainerConfig getInstance() {
         return Jboot.config(LocalAttachmentContainerConfig.class);
     }
 
-    public String buildUploadAbsolutePath(){
-        return new File(rootPath,targetPrefix).getAbsolutePath();
+    public String buildUploadAbsolutePath() {
+        return new File(rootPath, targetPrefix).getAbsolutePath();
     }
 }
