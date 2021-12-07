@@ -1,3 +1,11 @@
+jboot v3.12.2:
+新增：是否处理 404 页面的配置支持，方便与其他 web 框架整合
+新增：JbootAppListener 新增 onConstantConfigBefore() 方法
+优化：AttachmentManager.java，使之 getFile 不返回 null
+优化：JsonManager.me().setDefaultDatePattern 的默认配置
+
+
+
 jboot v3.12.1:
 优化：当 cglib 创建对象出错时，错误信息不明确的问题
 优化：Cache、MQ、Redis 的 Manager 在某些情况下可能出现 NPE 的问题
