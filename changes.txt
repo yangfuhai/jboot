@@ -1,3 +1,8 @@
+jboot v3.12.3:
+新增：@FilterBy() 注解，用于对某些参数进行内容过滤
+
+
+
 jboot v3.12.2:
 新增：是否处理 404 页面的配置支持，方便与其他 web 框架整合
 新增：JbootAppListener 新增 onConstantConfigBefore() 方法
