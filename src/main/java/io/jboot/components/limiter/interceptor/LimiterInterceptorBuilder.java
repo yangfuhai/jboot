@@ -20,6 +20,7 @@ import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.components.limiter.LimiterManager;
 import io.jboot.components.limiter.annotation.EnableLimit;
+import io.jboot.core.weight.Weight;
 
 import java.lang.reflect.Method;
 
@@ -27,6 +28,7 @@ import java.lang.reflect.Method;
  * @author michael yang (fuhai999@gmail.com)
  */
 @AutoLoad
+@Weight(-1)
 public class LimiterInterceptorBuilder implements InterceptorBuilder {
 
     private LimiterManager manager = LimiterManager.me();
@@ -42,7 +44,6 @@ public class LimiterInterceptorBuilder implements InterceptorBuilder {
         if (Util.hasAnnotation(method, EnableLimit.class)) {
             interceptors.add(LimiterInterceptor.class);
         }
-
     }
 
 

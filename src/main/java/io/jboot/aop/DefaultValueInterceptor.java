@@ -19,12 +19,14 @@ import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.aop.annotation.AutoLoad;
 import io.jboot.aop.annotation.DefaultValue;
+import io.jboot.core.weight.Weight;
 import io.jboot.utils.ObjectUtil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 @AutoLoad
+@Weight(999)
 public class DefaultValueInterceptor implements Interceptor, InterceptorBuilder {
 
     @Override
