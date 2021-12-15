@@ -23,6 +23,6 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-public @interface Filter {
-    Class<? extends ValueFilter> value();
+public @interface FilterBy {
+    Class<? extends ValueFilter>[] value();
 }

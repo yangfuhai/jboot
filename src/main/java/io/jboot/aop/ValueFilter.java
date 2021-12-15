@@ -16,5 +16,5 @@
 package io.jboot.aop;
 
 public interface ValueFilter {
-    Object filter(Object orignal);
+    Object doFilter(Object orignal);
 }

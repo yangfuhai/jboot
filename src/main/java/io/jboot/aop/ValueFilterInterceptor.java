@@ -19,7 +19,7 @@ import com.jfinal.aop.Aop;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import io.jboot.aop.annotation.AutoLoad;
-import io.jboot.aop.annotation.Filter;
+import io.jboot.aop.annotation.FilterBy;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -31,13 +31,20 @@ public class ValueFilterInterceptor implements Interceptor, InterceptorBuilder {
     public void intercept(Invocation inv) {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
-            Filter filter = parameters[index].getAnnotation(Filter.class);
+            FilterBy filter = parameters[index].getAnnotation(FilterBy.class);
             if (filter != null) {
                 Object orignal = inv.getArg(index);
-                ValueFilter vf = Aop.get(filter.value());
-                inv.setArg(index, vf.filter(orignal));
+
+                Class<? extends ValueFilter>[] classes = filter.value();
+                for (Class<? extends ValueFilter> aClass : classes) {
+                    ValueFilter vf = Aop.get(aClass);
+                    orignal = vf.doFilter(orignal);
+                }
+
+                inv.setArg(index, orignal);
             }
         }
+
         inv.invoke();
     }
 
@@ -47,11 +54,10 @@ public class ValueFilterInterceptor implements Interceptor, InterceptorBuilder {
         Parameter[] parameters = method.getParameters();
         if (parameters != null && parameters.length > 0) {
             for (Parameter p : parameters) {
-                if (p.getAnnotation(Filter.class) != null) {
+                if (p.getAnnotation(FilterBy.class) != null) {
                     interceptors.addIfNotExist(this);
                 }
             }
         }
-
     }
 }
