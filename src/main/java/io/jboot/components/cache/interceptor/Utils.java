@@ -19,16 +19,18 @@ import com.jfinal.template.Engine;
 import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.JbootAopCacheConfig;
 import io.jboot.components.cache.annotation.CacheEvict;
+import io.jboot.db.model.Columns;
 import io.jboot.exception.JbootException;
-import io.jboot.utils.AnnotationUtil;
-import io.jboot.utils.ArrayUtil;
-import io.jboot.utils.ClassUtil;
-import io.jboot.utils.StrUtil;
+import io.jboot.utils.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,49 +69,46 @@ class Utils {
             return renderKey(key, method, arguments);
         }
 
-        StringBuilder keyBuilder = new StringBuilder(clazz.getName());
-        keyBuilder.append('#').append(method.getName());
+        StringBuilder keyBuilder = new StringBuilder(clazz.getSimpleName());
+        keyBuilder.append('.').append(method.getName());
 
         if (ArrayUtil.isNullOrEmpty(arguments)) {
-            return keyBuilder.toString();
+            return keyBuilder.append("()").toString();
         }
 
-        Class[] paramTypes = method.getParameterTypes();
+        Class<?>[] paramTypes = method.getParameterTypes();
         int index = 0;
         for (Object argument : arguments) {
-            String argString = converteToString(argument);
-            ensureArgumentNotNull(argString, method);
-
-            if (index > 0){
-                keyBuilder.append('-');
+            String argString = converteToString(argument, method);
+            if (index == 0) {
+                keyBuilder.append("(");
+            } else {
+                keyBuilder.append(", ");
             }
-            keyBuilder.append(paramTypes[index++].getClass().getName())
+            keyBuilder.append(paramTypes[index++].getSimpleName())
                     .append(':')
                     .append(argString);
+
+            if (index == arguments.length) {
+                keyBuilder.append(")");
+            }
         }
 
         return keyBuilder.toString();
     }
 
     private static String renderKey(String key, Method method, Object[] arguments) {
-        int indexOfStartFlag  = key.indexOf("#(");
-        if (indexOfStartFlag > -1){
+        int indexOfStartFlag = key.indexOf("#(");
+        if (indexOfStartFlag > -1) {
             int indexOfEndFlag = key.indexOf(")");
-            if (indexOfEndFlag > indexOfStartFlag){
-                return engineRender(key,method,arguments);
+            if (indexOfEndFlag > indexOfStartFlag) {
+                return engineRender(key, method, arguments);
             }
         }
 
         return key;
     }
 
-    public static void ensureArgumentNotNull(String argument, Method method) {
-        if (argument == null) {
-            throw new JbootException("not support empty key for annotation @Cacheable, @CacheEvict or @CachePut " +
-                    "at method[" + ClassUtil.buildMethodString(method) + "], " +
-                    "please config key properties in @Cacheable, @CacheEvict or @CachePut annotation.");
-        }
-    }
 
     public static void ensureCachenameAvailable(Method method, String cacheName) {
         if (StrUtil.isBlank(cacheName)) {
@@ -119,10 +118,12 @@ class Utils {
     }
 
 
-    static boolean isPrimitive(Class clazz) {
+    static boolean isSupportClass(Class<?> clazz) {
         return clazz == String.class
                 || clazz == Integer.class
                 || clazz == int.class
+                || clazz == Short.class
+                || clazz == short.class
                 || clazz == Long.class
                 || clazz == long.class
                 || clazz == Double.class
@@ -131,25 +132,89 @@ class Utils {
                 || clazz == float.class
                 || clazz == Boolean.class
                 || clazz == boolean.class
+                || clazz == char.class
                 || clazz == BigDecimal.class
                 || clazz == BigInteger.class
                 || clazz == java.util.Date.class
                 || clazz == java.sql.Date.class
                 || clazz == java.sql.Timestamp.class
-                || clazz == java.sql.Time.class;
+                || clazz == java.sql.Time.class
+                || clazz == LocalDate.class
+                || clazz == LocalDateTime.class
+                || clazz == LocalTime.class
+                || clazz.isArray()
+                || clazz.isAssignableFrom(Collection.class)
+                || clazz == Columns.class
+                ;
 
     }
 
-    static String converteToString(Object object) {
+    static String converteToString(Object object, Method method) {
         if (object == null) {
             return "null";
         }
-        if (!isPrimitive(object.getClass())) {
-            return null;
+
+        if (!isSupportClass(object.getClass())) {
+            String msg = "Unsupported empty key for annotation @Cacheable, @CacheEvict or @CachePut " +
+                    "at method[" + ClassUtil.buildMethodString(method) + "], " +
+                    "Please config key properties in the annotation.";
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (object.getClass().isArray()) {
+            StringBuilder ret = new StringBuilder();
+            Object[] values = (Object[]) object;
+            int index = 0;
+            for (Object value : values) {
+                if (index == 0) {
+                    ret.append('[');
+                }
+                ret.append(converteToString(value, method));
+                if (++index != values.length) {
+                    ret.append(',');
+                } else {
+                    ret.append(']');
+                }
+            }
+            return ret.toString();
+        }
+
+        if (object instanceof Collection) {
+            Collection c = (Collection) object;
+            StringBuilder ret = new StringBuilder();
+            int index = 0;
+            for (Object o : c) {
+                if (index == 0) {
+                    ret.append('[');
+                }
+                ret.append(converteToString(o, method));
+                if (++index != c.size()) {
+                    ret.append(',');
+                } else {
+                    ret.append(']');
+                }
+            }
+            return ret.toString();
         }
 
         if (object instanceof java.util.Date) {
             return String.valueOf(((java.util.Date) object).getTime());
+        }
+
+        if (object instanceof LocalDateTime) {
+            return String.valueOf(DateUtil.toDate((LocalDateTime) object).getTime());
+        }
+
+        if (object instanceof LocalDate) {
+            return String.valueOf(DateUtil.toDate((LocalDate) object).getTime());
+        }
+
+        if (object instanceof LocalTime) {
+            return String.valueOf(DateUtil.toDate((LocalTime) object).getTime());
+        }
+
+        if (object instanceof Columns) {
+            return ((Columns) object).getCacheKey();
         }
 
         return String.valueOf(object);
