@@ -359,7 +359,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         try {
-            M m = config.getIdCache().get(_getTableName()
+            M m = config.getIdCache().get(buildIdCacheName(_getTableName())
                     , buildIdCacheKey(idValues)
                     , () -> JbootModel.super.findByIds(idValues)
                     , config.getIdCacheTime());
@@ -387,10 +387,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     protected void safeDeleteCache(Object... idValues) {
         try {
-            config.getIdCache().remove(_getTableName()
+            config.getIdCache().remove(buildIdCacheName(_getTableName())
                     , buildIdCacheKey(idValues));
         } catch (Exception ex) {
-            LOG.error("Remove cache is error by name [" + _getTableName() + "] and key [" + buildIdCacheKey(idValues) + "]", ex);
+            LOG.error("Remove cache is error by name [" + buildIdCacheName(_getTableName()) + "] and key [" + buildIdCacheKey(idValues) + "]", ex);
         }
     }
 
@@ -486,6 +486,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         safeDeleteCache(idvalues);
     }
 
+
+    protected String buildIdCacheName(String orginal) {
+        return config.buildCacheName(orginal);
+    }
 
     protected String buildIdCacheKey(Object... idValues) {
         if (idValues == null || idValues.length == 0) {

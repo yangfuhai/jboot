@@ -26,6 +26,8 @@ public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache 
 
     public void removeCurrentCacheNamePrefix();
 
+    public JbootCacheConfig getConfig();
+
     @Override
     public <T> T get(String cacheName, Object key);
 

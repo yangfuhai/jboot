@@ -98,7 +98,7 @@ public class JbootCacheManager {
             case JbootCacheConfig.TYPE_CAREDIS:
                 return new JbootCaredisCacheImpl(config);
             case JbootCacheConfig.TYPE_NONE:
-                return new NoneCacheImpl();
+                return new NoneCacheImpl(config);
             default:
                 return JbootSpiLoader.load(JbootCache.class, config.getType(), config);
         }

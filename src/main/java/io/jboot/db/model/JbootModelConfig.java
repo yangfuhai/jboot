@@ -38,7 +38,7 @@ public class JbootModelConfig {
     /**
      * id 缓存的时间，默认为 1 个小时，单位：秒
      */
-    private int idCacheTime = 60 * 60 * 1;
+    private int idCacheTime = 60 * 60;
 
     /**
      * Model 过滤器，可以通过这个配置来防止 xss 等问题
@@ -65,6 +65,8 @@ public class JbootModelConfig {
 
 
     private String idCacheName = "default";
+
+    private String idCacheCachePrefix;
 
     public JbootModelConfig() {
     }
@@ -141,20 +143,49 @@ public class JbootModelConfig {
         this.idCacheByCopyEnable = idCacheByCopyEnable;
     }
 
+    public String getIdCacheCachePrefix() {
+        return idCacheCachePrefix;
+    }
+
+    public void setIdCacheCachePrefix(String idCacheCachePrefix) {
+        this.idCacheCachePrefix = idCacheCachePrefix;
+    }
+
+    private String defaultIdCachePrefix;
+
+    public String getIdCachePrefixOrDefault() {
+        if (StrUtil.isNotBlank(idCacheCachePrefix)) {
+            return idCacheCachePrefix;
+        }
+
+        if (defaultIdCachePrefix == null) {
+            synchronized (this) {
+                if (defaultIdCachePrefix == null) {
+                    defaultIdCachePrefix = JbootCacheManager.me().getCache().getConfig().getDefaultCachePrefix();
+                    if (defaultIdCachePrefix == null) {
+                        defaultIdCachePrefix = "";
+                    }
+                }
+            }
+        }
+        return defaultIdCachePrefix;
+    }
+
     public JbootModelConfig(String idCacheName) {
         this.idCacheName = idCacheName;
     }
 
     private JbootModelFilter filter;
+
     public JbootModelFilter getFilter() {
-        if (filter == null){
-            if (StrUtil.isNotBlank(filterClass)){
-                synchronized (this){
-                    if (filter == null){
+        if (filter == null) {
+            if (StrUtil.isNotBlank(filterClass)) {
+                synchronized (this) {
+                    if (filter == null) {
                         filter = ClassUtil.newInstance(filterClass);
                     }
                 }
-            }else {
+            } else {
                 filter = JbootModelFilter.DEFAULT;
             }
         }
@@ -167,15 +198,16 @@ public class JbootModelConfig {
 
 
     private PrimarykeyValueGenerator primarykeyValueGenerator;
+
     public PrimarykeyValueGenerator getPrimarykeyValueGenerator() {
-        if (primarykeyValueGenerator == null){
-            if (StrUtil.isNotBlank(primarykeyValueGeneratorClass)){
-                synchronized (this){
-                    if (primarykeyValueGenerator == null){
+        if (primarykeyValueGenerator == null) {
+            if (StrUtil.isNotBlank(primarykeyValueGeneratorClass)) {
+                synchronized (this) {
+                    if (primarykeyValueGenerator == null) {
                         primarykeyValueGenerator = ClassUtil.newInstance(primarykeyValueGeneratorClass);
                     }
                 }
-            }else {
+            } else {
                 primarykeyValueGenerator = PrimarykeyValueGenerator.DEFAULT;
             }
         }
@@ -209,4 +241,10 @@ public class JbootModelConfig {
     public void setIdCache(JbootCache idCache) {
         this.idCache = idCache;
     }
+
+    public String buildCacheName(String oraginalName) {
+        return getIdCachePrefixOrDefault() + ":" + oraginalName;
+    }
+
+
 }

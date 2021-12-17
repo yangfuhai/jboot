@@ -18,6 +18,7 @@ package io.jboot.components.cache.none;
 
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.components.cache.JbootCache;
+import io.jboot.components.cache.JbootCacheConfig;
 
 import java.util.List;
 
@@ -25,6 +26,13 @@ import java.util.List;
  * noneCache 存在的目的：方便通过配置文件的方式关闭缓存功能
  */
 public class NoneCacheImpl implements JbootCache {
+
+    private JbootCacheConfig config;
+
+    public NoneCacheImpl(JbootCacheConfig config) {
+        this.config = config;
+    }
+
     @Override
     public JbootCache setCurrentCacheNamePrefix(String cacheNamePrefix) {
         return this;
@@ -33,6 +41,11 @@ public class NoneCacheImpl implements JbootCache {
     @Override
     public void removeCurrentCacheNamePrefix() {
 
+    }
+
+    @Override
+    public JbootCacheConfig getConfig() {
+        return config;
     }
 
     @Override
