@@ -16,12 +16,13 @@
 package io.jboot.components.mq.aliyunmq;
 
 import com.aliyun.openservices.ons.api.*;
+import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.components.mq.JbootmqConfig;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.Properties;
 
 
 public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
+    private static final Log LOG = Log.getLog(JbootAliyunmqImpl.class);
 
     private Producer producer;
     private Consumer consumer;
@@ -96,7 +98,10 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
             byte[] bytes = getSerializer().serialize(message);
             sendMsg = new Message(toChannel, "*", bytes);
         }
-        getProducer().send(sendMsg);
+        SendResult result = getProducer().send(sendMsg);
+        if (result == null) {
+            LOG.warn("Rockect mq send message fail!!!");
+        }
     }
 
 
@@ -109,7 +114,10 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
             byte[] bytes = getSerializer().serialize(message);
             sendMsg = new Message(aliyunmqConfig.getBroadcastChannelPrefix() + toChannel, "*", bytes);
         }
-        getProducer().send(sendMsg);
+        SendResult result = getProducer().send(sendMsg);
+        if (result == null) {
+            LOG.warn("Rockect mq send message fail!!!");
+        }
     }
 
 

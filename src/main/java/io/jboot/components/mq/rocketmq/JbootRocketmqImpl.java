@@ -147,38 +147,33 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
     @Override
     public void enqueue(Object message, String toChannel) {
-        trySendMessage(message, toChannel, 1);
+        doSendMessage(message, toChannel);
     }
 
 
     @Override
     public void publish(Object message, String toChannel) {
-        trySendMessage(message, rocketmqConfig.getBroadcastChannelPrefix() + toChannel, 1);
+        doSendMessage(message, rocketmqConfig.getBroadcastChannelPrefix() + toChannel);
     }
 
 
-    public void trySendMessage(Object message, String topic, int tryTimes) {
-        if (tryTimes < 3) {
-            try {
-                Message sendMsg = null;
-                if (message instanceof Message) {
-                    sendMsg = (Message) message;
-                } else {
-                    sendMsg = new Message(topic, getSerializer().serialize(message));
-                }
-
-                SendResult result = getMQProducer().send(sendMsg);
-                // if (result.getSendStatus() != SendStatus.SEND_OK) {
-                // 只要不等于 null 就是发送成功
-                if (result == null) {
-                    trySendMessage(message, topic, ++tryTimes);
-                }
-            } catch (Exception e) {
-                trySendMessage(message, topic, ++tryTimes);
-                LOG.error(e.toString(), e);
+    public void doSendMessage(Object message, String topic) {
+        try {
+            Message sendMsg = null;
+            if (message instanceof Message) {
+                sendMsg = (Message) message;
+            } else {
+                sendMsg = new Message(topic, getSerializer().serialize(message));
             }
-        } else {
-            LOG.error("Rocketmq publish not success!");
+
+            SendResult result = getMQProducer().send(sendMsg);
+            // if (result.getSendStatus() != SendStatus.SEND_OK) {
+            // 只要不等于 null 就是发送成功
+            if (result == null) {
+                LOG.warn("Rockect mq send message fail!!!");
+            }
+        } catch (Exception e) {
+            LOG.error(e.toString(), e);
         }
     }
 
