@@ -214,7 +214,7 @@ public class JbootActionHandler extends ActionHandler {
                 if (LOG.isWarnEnabled()) {
                     String qs = request.getQueryString();
                     msg = msg + (qs == null ? target : target + "?" + qs);
-                    LOG.warn(msg, e);
+                    LOG.info(msg, e);
                 }
             } else {
                 if (LOG.isErrorEnabled()) {
