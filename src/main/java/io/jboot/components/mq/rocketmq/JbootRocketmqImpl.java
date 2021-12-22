@@ -17,14 +17,13 @@ package io.jboot.components.mq.rocketmq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.components.mq.JbootmqConfig;
 import io.jboot.exception.JbootIllegalConfigException;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.utils.StrUtil;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
@@ -92,13 +91,14 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
         // 注册回调实现类来处理从broker拉取回来的消息
         consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
-            if (msgs != null) {
+            RokectmqMessageInfo rokectMqMessageInfo = new RokectmqMessageInfo(this, msgs, context);
+            if (msgs != null && !msgs.isEmpty()) {
                 for (MessageExt messageExt : msgs) {
-                    notifyListeners(messageExt.getTopic(), getSerializer().deserialize(messageExt.getBody()));
+                    notifyListeners(messageExt.getTopic(), getSerializer().deserialize(messageExt.getBody()), rokectMqMessageInfo);
                 }
             }
-            // 标记该消息已经被成功消费
-            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+
+            return rokectMqMessageInfo.getReturnStatus();
         });
 
 
@@ -131,14 +131,14 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
         final int len = rocketmqConfig.getBroadcastChannelPrefix().length();
         consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
-            if (msgs != null) {
+            RokectmqMessageInfo rokectMqMessageInfo = new RokectmqMessageInfo(this, msgs, context);
+            if (msgs != null && !msgs.isEmpty()) {
                 for (MessageExt messageExt : msgs) {
                     String topic = messageExt.getTopic();
-                    notifyListeners(topic.substring(len), getSerializer().deserialize(messageExt.getBody()));
+                    notifyListeners(topic.substring(len), getSerializer().deserialize(messageExt.getBody()), rokectMqMessageInfo);
                 }
             }
-            // 标记该消息已经被成功消费
-            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            return rokectMqMessageInfo.getReturnStatus();
         });
 
         consumer.start();

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,9 +18,22 @@ package io.jboot.components.mq;
 
 public interface JbootmqMessageListener {
 
+
+    /**
+     * @param channel
+     * @param message
+     * @param messageInfo
+     */
+    default void onMessage(String channel, Object message, JbootMqMessageInfo messageInfo) {
+        this.onMessage(channel, message);
+    }
+
+
     /**
      * @param channel of topic
      * @param message topic message
      */
-    void onMessage(String channel, Object message);
+    @Deprecated
+    default void onMessage(String channel, Object message) {
+    }
 }

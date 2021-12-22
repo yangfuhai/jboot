@@ -42,10 +42,11 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
 
     private Connection connection = null;
     private boolean serializerEnable = true;
+    private JbootQpidmqConfig qpidConfig = null;
 
     public JbootQpidmqImpl(JbootmqConfig config) {
         super(config);
-        JbootQpidmqConfig qpidConfig = null;
+
         String typeName = config.getTypeName();
         if (StrUtil.isNotBlank(typeName)) {
             Map<String, JbootQpidmqConfig> configModels = ConfigUtil.getConfigModels(JbootQpidmqConfig.class);
@@ -100,9 +101,9 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
             producer.setTimeToLive(30000);
 
             Message sendMsg = null;
-            if (message instanceof Message){
+            if (message instanceof Message) {
                 sendMsg = (Message) message;
-            }else if (!serializerEnable) {
+            } else if (!serializerEnable) {
                 sendMsg = session.createTextMessage((String) message);
             } else {
                 byte[] data = getSerializer().serialize(message);
@@ -118,9 +119,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         }
     }
 
-    private String getConnectionUrl() {
-        JbootQpidmqConfig qpidConfig = Jboot.config(JbootQpidmqConfig.class);
-
+    public String getConnectionUrl() {
         StringBuffer url = new StringBuffer();
         url.append("amqp://");
         url.append(qpidConfig.getUsername());
@@ -146,7 +145,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         return url.toString();
     }
 
-    private String getQueueAddr(String channel) {
+    public String getQueueAddr(String channel) {
         StringBuffer addr = new StringBuffer();
         addr.append("ADDR:");
         addr.append(channel);
@@ -155,7 +154,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         return addr.toString();
     }
 
-    private String getTopicAddr(String channel) {
+    public String getTopicAddr(String channel) {
         StringBuffer addr = new StringBuffer();
         addr.append("ADDR:amq.topic/");
         addr.append(channel);
@@ -163,7 +162,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         return addr.toString();
     }
 
-    private void startReceiveMsgThread() throws Exception {
+    public void startReceiveMsgThread() throws Exception {
         if (ArrayUtil.isNullOrEmpty(this.channels)) {
             return;
         }
@@ -218,7 +217,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
                     }
 
                     if (object != null) {
-                        notifyListeners(channel, object);
+                        notifyListeners(channel, object, new QpidmqMessageInfo(JbootQpidmqImpl.this, message));
                     }
                 }
             } catch (Exception e) {

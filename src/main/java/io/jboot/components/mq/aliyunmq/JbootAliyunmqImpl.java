@@ -56,27 +56,31 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private void startQueueConsumer() {
+    public void startQueueConsumer() {
         Properties properties = createProperties();
         consumer = ONSFactory.createConsumer(properties);
         for (String channel : channels) {
             consumer.subscribe(aliyunmqConfig.getBroadcastChannelPrefix() + channel, aliyunmqConfig.getSubscribeSubExpression(), (message, consumeContext) -> {
-                notifyListeners(channel, getSerializer().deserialize(message.getBody()));
-                return Action.CommitMessage;
+                AliyunmqMessageInfo aliyunmqMessageInfo = new AliyunmqMessageInfo(this, message, consumeContext);
+                notifyListeners(channel, getSerializer().deserialize(message.getBody())
+                        , aliyunmqMessageInfo);
+                return aliyunmqMessageInfo.getReturnAction();
             });
         }
         consumer.start();
     }
 
 
-    private void startBroadCastConsumer() {
+    public void startBroadCastConsumer() {
         Properties properties = createProperties();
         properties.put(PropertyKeyConst.MessageModel, PropertyValueConst.BROADCASTING);
         consumer = ONSFactory.createConsumer(properties);
         for (String channel : channels) {
             consumer.subscribe(channel, aliyunmqConfig.getSubscribeSubExpression(), (message, consumeContext) -> {
-                notifyListeners(channel, getSerializer().deserialize(message.getBody()));
-                return Action.CommitMessage;
+                AliyunmqMessageInfo aliyunmqMessageInfo = new AliyunmqMessageInfo(this, message, consumeContext);
+                notifyListeners(channel, getSerializer().deserialize(message.getBody())
+                        , aliyunmqMessageInfo);
+                return aliyunmqMessageInfo.getReturnAction();
             });
         }
         consumer.start();
@@ -109,7 +113,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private Producer getProducer() {
+    public Producer getProducer() {
         if (producer == null) {
             synchronized (this) {
                 if (producer == null) {
@@ -121,14 +125,14 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private void createProducer() {
+    public void createProducer() {
         Properties properties = createProperties();
         producer = ONSFactory.createProducer(properties);
         producer.start();
     }
 
 
-    protected Properties createProperties() {
+    public Properties createProperties() {
 
         Properties properties = new Properties();
         properties.put(PropertyKeyConst.AccessKey, aliyunmqConfig.getAccessKey());//AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
