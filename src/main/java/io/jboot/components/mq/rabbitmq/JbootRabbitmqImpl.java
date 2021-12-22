@@ -101,7 +101,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     public void bindChannel(Channel channel, String name, String orginaChannelName) {
         if (channel != null) {
             try {
-                channel.basicConsume(name, true, new DefaultConsumer(channel) {
+                channel.basicConsume(name, rabbitmqConfig.isAutoAck(), new DefaultConsumer(channel) {
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                         Object o = getSerializer().deserialize(body);
@@ -122,7 +122,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             try {
                 channel = connection.createChannel();
 
-                //队列模式，值需要创建定义 队列就可以了，不需要定义交换机
+                //队列模式，只需要创建 队列就可以了，不需要定义交换机
                 if (queueMode) {
                     channel.queueDeclare(toChannel, true, false, false, null);
                 }
@@ -131,7 +131,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
                 else {
                     channel.queueDeclare(buildBroadcastChannelName(toChannel), false, false, true, null);
                     channel.exchangeDeclare(toChannel, BuiltinExchangeType.FANOUT, true);
-                    channel.queueBind(buildBroadcastChannelName(toChannel), toChannel, "");
+                    channel.queueBind(buildBroadcastChannelName(toChannel), toChannel, rabbitmqConfig.getBroadcastChannelRoutingKey());
                 }
 
             } catch (Exception ex) {

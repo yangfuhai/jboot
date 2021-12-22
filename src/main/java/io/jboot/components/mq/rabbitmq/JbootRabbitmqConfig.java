@@ -30,6 +30,10 @@ public class JbootRabbitmqConfig {
     private String virtualHost;
 
     private String broadcastChannelPrefix = "broadcast-";
+    private String broadcastChannelRoutingKey = "";
+
+    //若配置为 false，则需要在 OnMessage 里，调用 RabbitmqMessageInfo.getChannel().baseAck（或者baseNack）进行消费（或者标识消费失败）
+    private boolean autoAck = true;
 
 
     public String getUsername() {
@@ -78,5 +82,21 @@ public class JbootRabbitmqConfig {
 
     public void setBroadcastChannelPrefix(String broadcastChannelPrefix) {
         this.broadcastChannelPrefix = broadcastChannelPrefix;
+    }
+
+    public String getBroadcastChannelRoutingKey() {
+        return broadcastChannelRoutingKey;
+    }
+
+    public void setBroadcastChannelRoutingKey(String broadcastChannelRoutingKey) {
+        this.broadcastChannelRoutingKey = broadcastChannelRoutingKey;
+    }
+
+    public boolean isAutoAck() {
+        return autoAck;
+    }
+
+    public void setAutoAck(boolean autoAck) {
+        this.autoAck = autoAck;
     }
 }
