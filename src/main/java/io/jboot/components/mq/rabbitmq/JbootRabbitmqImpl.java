@@ -98,7 +98,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private void bindChannel(Channel channel, String name, String orginaChannelName) {
+    public void bindChannel(Channel channel, String name, String orginaChannelName) {
         if (channel != null) {
             try {
                 channel.basicConsume(name, true, new DefaultConsumer(channel) {
@@ -115,7 +115,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private synchronized Channel getChannel(String toChannel, boolean queueMode) {
+    public synchronized Channel getChannel(String toChannel, boolean queueMode) {
 
         Channel channel = channelMap.get(toChannel + queueMode);
         if (channel == null) {
@@ -146,7 +146,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
         return channel;
     }
 
-    private synchronized String buildBroadcastChannelName(String channel) {
+    public String buildBroadcastChannelName(String channel) {
         return rabbitmqConfig.getBroadcastChannelPrefix() + channel;
     }
 

@@ -69,7 +69,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private void startQueueConsumer() throws MQClientException {
+    public void startQueueConsumer() throws MQClientException {
         // 实例化消费者
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(rocketmqConfig.getConsumerGroup());
 
@@ -107,7 +107,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private void startBroadcastConsumer() throws MQClientException {
+    public void startBroadcastConsumer() throws MQClientException {
         // 实例化消费者
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(rocketmqConfig.getBroadcastChannelPrefix() + rocketmqConfig.getConsumerGroup());
 
@@ -157,7 +157,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    private void trySendMessage(Object message, String topic, int tryTimes) {
+    public void trySendMessage(Object message, String topic, int tryTimes) {
         if (tryTimes < 3) {
             try {
                 Message sendMsg = null;
@@ -183,7 +183,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    protected MQProducer getMQProducer() throws MQClientException {
+    public MQProducer getMQProducer() throws MQClientException {
         if (mqProducer == null) {
             synchronized (this) {
                 if (mqProducer == null) {
@@ -195,7 +195,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     }
 
 
-    protected void createMqProducer() throws MQClientException {
+    public void createMqProducer() throws MQClientException {
         DefaultMQProducer producer = new DefaultMQProducer(rocketmqConfig.getProducerGroup());
         producer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
 

@@ -105,7 +105,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         }
     }
 
-    private void doExecuteDequeue() {
+    public void doExecuteDequeue() {
         for (String channel : this.channels) {
             Object data = redis.lpop(channel);
             if (data != null) {
