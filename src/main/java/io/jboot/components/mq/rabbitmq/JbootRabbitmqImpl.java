@@ -139,7 +139,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
             }
 
             if (channel != null) {
-                channelMap.put(toChannel, channel);
+                channelMap.put(toChannel + queueMode, channel);
             }
         }
 
