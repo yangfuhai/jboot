@@ -3,6 +3,8 @@ package io.jboot.test.mq.rocketmq;
 
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplication;
+import io.jboot.components.mq.JbootMqMessageInfo;
+import io.jboot.components.mq.JbootmqMessageListener;
 
 public class RocketmqReceiver1 {
 
@@ -20,13 +22,19 @@ public class RocketmqReceiver1 {
         JbootApplication.run(args);
 
         //添加监听
-        Jboot.getMq().addMessageListener((channel, message) -> {
-            System.out.println("listener1 receive msg : " + message + ", from channel : " + channel);
+        Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
+            @Override
+            public void onMessage(String channel, Object message, JbootMqMessageInfo info) {
+                System.out.println("Receive msg: " + message + ", from channel: " + channel);
+            }
         });
 
         // 只监听 myChannel 这个通道
-        Jboot.getMq().addMessageListener((channel, message) -> {
-            System.out.println("listener2 receive msg : " + message + ", from channel : " + channel);
+        Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
+            @Override
+            public void onMessage(String channel, Object message, JbootMqMessageInfo info) {
+                System.out.println("Receive msg: " + message + ", from channel: " + channel);
+            }
         },"myChannel");
 
         Jboot.getMq().startListening();

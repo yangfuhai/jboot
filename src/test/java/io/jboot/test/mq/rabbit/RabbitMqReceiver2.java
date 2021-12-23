@@ -3,6 +3,8 @@ package io.jboot.test.mq.rabbit;
 
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplication;
+import io.jboot.components.mq.JbootMqMessageInfo;
+import io.jboot.components.mq.JbootmqMessageListener;
 
 /**
  * 开始之前 先通过通过 docker 把 rabbitmq 运行起来
@@ -36,8 +38,11 @@ public class RabbitMqReceiver2 {
 
 
         // 只监听 myChannel 这个通道
-        Jboot.getMq().addMessageListener((channel, message) -> {
-            System.out.println("Receive msg: " + message + ", from channel: " + channel);
+        Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
+            @Override
+            public void onMessage(String channel, Object message, JbootMqMessageInfo info) {
+                System.out.println("Receive msg: " + message + ", from channel: " + channel);
+            }
         },"channel2");
 
 
