@@ -20,6 +20,7 @@ import io.jboot.test.web.MockHttpServletResponse;
 import io.jboot.test.web.MockServletInputStream;
 import io.jboot.utils.StrUtil;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import java.util.*;
 import java.util.function.Consumer;
@@ -51,6 +52,15 @@ public class MockMvc {
         return holdCookies;
     }
 
+    public String getCookieValue(String name) {
+        for (Cookie holdCookie : holdCookies) {
+            if (holdCookie.getName().equals(name)) {
+                return holdCookie.getValue();
+            }
+        }
+        return null;
+    }
+
     public void setHoldCookies(Set<Cookie> holdCookies) {
         this.holdCookies = holdCookies;
     }
@@ -71,17 +81,27 @@ public class MockMvc {
         this.requestFinishedListener = requestFinishedListener;
     }
 
+
     public MockMvcResult get(String target) {
-        return get(target, null);
+        return get(target, null, null, null);
     }
 
 
     public MockMvcResult get(String target, Map<String, Object> paras) {
-        return get(target, paras, null);
+        return get(target, paras, null, null);
+    }
+
+
+    public MockMvcResult get(String target, Map<String, Object> p, Set<Cookie> cookies) {
+        return get(target, p, null, cookies);
     }
 
 
     public MockMvcResult get(String target, Map<String, Object> p, Map<String, String> headers) {
+        return get(target, p, headers, null);
+    }
+
+    public MockMvcResult get(String target, Map<String, Object> p, Map<String, String> headers, Set<Cookie> cookies) {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
 
@@ -103,28 +123,48 @@ public class MockMvc {
 
         paras.forEach(request::addParameter);
 
+        if (cookies != null) {
+            request.setCookies(cookies);
+        }
 
-        return doStartMockRequest(request);
+
+        return doMockRequest(request);
     }
 
     public MockMvcResult post(String target) {
-        return post(target, null, null, null);
+        return post(target, null, null, null, null);
     }
 
     public MockMvcResult post(String target, String postData) {
-        return post(target, null, null, postData);
+        return post(target, null, null, null, postData);
     }
 
-
     public MockMvcResult post(String target, Map<String, Object> paras) {
-        return post(target, paras, null, null);
+        return post(target, paras, null, null, null);
     }
 
     public MockMvcResult post(String target, Map<String, Object> paras, String postData) {
-        return post(target, paras, null, postData);
+        return post(target, paras, null, null, postData);
+    }
+
+    public MockMvcResult post(String target, Map<String, Object> paras, Map<String, String> headers) {
+        return post(target, paras, headers, null, null);
     }
 
     public MockMvcResult post(String target, Map<String, Object> paras, Map<String, String> headers, String postData) {
+        return post(target, paras, headers, null, postData);
+    }
+
+    public MockMvcResult post(String target, Map<String, Object> paras, Map<String, String> headers, Set<Cookie> cookies, String postData) {
+        MockServletInputStream inStream = null;
+        if (StrUtil.isNotBlank(postData)) {
+            inStream = new MockServletInputStream(postData);
+        }
+        return doPost(target, paras, headers, cookies, inStream);
+    }
+
+
+    public MockMvcResult doPost(String target, Map<String, Object> paras, Map<String, String> headers, Set<Cookie> cookies, ServletInputStream inStream) {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("POST");
 
@@ -148,28 +188,34 @@ public class MockMvc {
             paras.forEach(request::addParameter);
         }
 
-        if (StrUtil.isNotBlank(postData)) {
-            request.setInputStream(new MockServletInputStream(postData));
+        if (inStream != null) {
+            request.setInputStream(inStream);
         }
 
-        return doStartMockRequest(request);
+
+        if (cookies != null) {
+            request.setCookies(cookies);
+        }
+
+        return doMockRequest(request);
     }
 
 
-    private MockMvcResult doStartMockRequest(MockHttpServletRequest request) {
-
-
+    public MockMvcResult doMockRequest(MockHttpServletRequest request) {
         MockHttpServletResponse response = new MockHttpServletResponse();
         try {
             if (requestStartListener != null) {
                 requestStartListener.accept(request);
             }
 
+            Set<Cookie> cookies = new HashSet<>(Arrays.asList(request.getCookies()));
+
             //开启 cookie 保持, 用户未设置自己的 cookie, 上次的 cookie 有值
-            if (isHoldCookiesEnable() && request.getCookies().length == 0 && holdCookies.size() > 0) {
-                request.setCookies(holdCookies);
+            if (isHoldCookiesEnable()) {
+                cookies.addAll(holdCookies);
             }
 
+            request.setCookies(cookies);
             doSendRequest(request, response);
 
         } finally {
