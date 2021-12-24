@@ -15,6 +15,7 @@
  */
 package io.jboot.components.http.jboot;
 
+import io.jboot.components.http.HttpMimeTypes;
 import io.jboot.components.http.JbootHttp;
 import io.jboot.components.http.JbootHttpRequest;
 import io.jboot.components.http.JbootHttpResponse;
@@ -147,12 +148,11 @@ public class JbootHttpImpl implements JbootHttp {
                 checkFileNormal(file);
                 writeString(dos, request, startFlag + boundary + endFlag);
                 writeString(dos, request, "Content-Disposition: form-data; name=\"" + entry.getKey() + "\"; filename=\"" + file.getName() + "\"");
+                writeString(dos, request, endFlag + "Content-Type: " + HttpMimeTypes.getMimeType(file.getName()));
                 writeString(dos, request, endFlag + endFlag);
-                FileInputStream fStream = new FileInputStream(file);
-                byte[] buffer = new byte[2028];
-                for (int len = 0; (len = fStream.read(buffer)) > 0; ) {
-                    dos.write(buffer, 0, len);
-                }
+
+                writeFile(dos, file);
+
                 writeString(dos, request, endFlag);
             } else {
                 writeString(dos, request, startFlag + boundary + endFlag);
@@ -169,6 +169,15 @@ public class JbootHttpImpl implements JbootHttp {
 
     private void writeString(DataOutputStream dos, JbootHttpRequest request, String s) throws IOException {
         dos.write(s.getBytes(request.getCharset()));
+    }
+
+    private void writeFile(DataOutputStream dos, File file) throws IOException {
+        try (FileInputStream fStream = new FileInputStream(file)) {
+            byte[] buffer = new byte[2028];
+            for (int len = 0; (len = fStream.read(buffer)) > 0; ) {
+                dos.write(buffer, 0, len);
+            }
+        }
     }
 
     private static void checkFileNormal(File file) {
