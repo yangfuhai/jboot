@@ -16,6 +16,7 @@
 package io.jboot.test.web;
 
 import com.jfinal.kit.PathKit;
+import io.jboot.components.http.HttpMimeTypes;
 import io.jboot.test.MockExceptions;
 
 import javax.servlet.*;
@@ -72,7 +73,7 @@ public class MockServletContext implements ServletContext {
 
     @Override
     public String getMimeType(String file) {
-        throw MockExceptions.unsupported;
+        return HttpMimeTypes.getMimeType(file);
     }
 
     @Override

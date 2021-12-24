@@ -15,6 +15,7 @@
  */
 package io.jboot.test;
 
+import io.jboot.components.http.HttpMimeTypes;
 import io.jboot.test.web.MockHttpServletRequest;
 import io.jboot.test.web.MockHttpServletResponse;
 import io.jboot.test.web.MockServletInputStream;
@@ -22,6 +23,8 @@ import io.jboot.utils.StrUtil;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -161,6 +164,73 @@ public class MockMvc {
             inStream = new MockServletInputStream(postData);
         }
         return doPost(target, paras, headers, cookies, inStream);
+    }
+
+
+    public MockMvcResult upload(String target, Map<String, Object> paras, Map<String, String> headers, Set<Cookie> cookies) {
+
+
+        String endFlag = "\r\n";
+        String startFlag = "--";
+        String boundary = "------" + StrUtil.uuid();
+
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
+        headers.put("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if (paras != null) {
+            paras.forEach((key, value) -> {
+                if (value instanceof File) {
+                    File file = (File) value;
+                    writeString(baos, startFlag + boundary + endFlag);
+                    writeString(baos, "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + file.getName() + "\"");
+                    writeString(baos, endFlag + "Content-Type: " + HttpMimeTypes.getMimeType(file.getName()));
+                    writeString(baos, endFlag + endFlag);
+                    writeFile(baos, file);
+                    writeString(baos, endFlag);
+                } else {
+                    writeString(baos, startFlag + boundary + endFlag);
+                    writeString(baos, "Content-Disposition: form-data; name=\"" + key + "\"");
+                    writeString(baos, endFlag + endFlag);
+                    writeString(baos, String.valueOf(value));
+                    writeString(baos, endFlag);
+                }
+            });
+        }
+
+        writeString(baos, startFlag + boundary + startFlag + endFlag);
+        return doPost(target, paras, headers, cookies, new MockServletInputStream(baos.toByteArray()));
+    }
+
+    private void writeFile(ByteArrayOutputStream dos, File file) {
+        FileInputStream fStream = null;
+        try {
+            fStream = new FileInputStream(file);
+            byte[] buffer = new byte[2028];
+            for (int len = 0; (len = fStream.read(buffer)) > 0; ) {
+                dos.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fStream != null) {
+                try {
+                    fStream.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+
+    }
+
+    private void writeString(OutputStream dos, String s) {
+        try {
+            dos.write(s.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

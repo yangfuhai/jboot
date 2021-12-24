@@ -81,15 +81,17 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public String getHeader(String name) {
-        return headers.get(name);
+        return headers.get(name.toLowerCase());
     }
 
     public void setHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
+        if (headers != null) {
+            headers.forEach((s, s2) -> MockHttpServletRequest.this.headers.put(s.toLowerCase(), s2));
+        }
     }
 
     public void addHeader(String name, Object value) {
-        headers.put(name, value.toString());
+        headers.put(name.toLowerCase(), value.toString());
     }
 
     @Override
@@ -284,11 +286,23 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     @Override
     public int getContentLength() {
         String cl = this.getHeader("content-length");
-        try {
-            return Integer.parseInt(cl);
-        } catch (NumberFormatException e) {
-            return 0;
+        if (cl != null) {
+            try {
+                return Integer.parseInt(cl);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
         }
+
+        if (inputStream != null) {
+            try {
+                return inputStream.available();
+            } catch (IOException e) {
+                return 0;
+            }
+        }
+
+        return 0;
     }
 
     @Override
