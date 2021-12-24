@@ -47,14 +47,10 @@ public class JbootGatewayHealthChecker implements Runnable {
      * 开始健康检查
      * 多次执行，只会启动一次
      */
-    public void start() {
+    public synchronized void start() {
         if (fixedScheduler == null) {
-            synchronized (this) {
-                if (fixedScheduler == null) {
-                    fixedScheduler = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("jboot-gateway-health-check"));
-                    fixedScheduler.scheduleWithFixedDelay(this, fixedSchedulerInitialDelay, fixedSchedulerDelay, TimeUnit.SECONDS);
-                }
-            }
+            fixedScheduler = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("jboot-gateway-health-check"));
+            fixedScheduler.scheduleWithFixedDelay(this, fixedSchedulerInitialDelay, fixedSchedulerDelay, TimeUnit.SECONDS);
         }
     }
 

@@ -17,27 +17,24 @@ package io.jboot.components.rpc;
 
 import io.jboot.components.rpc.annotation.RPCInject;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ReferenceConfigCache {
 
-    private static Map<Integer, Serializable> configs = new ConcurrentHashMap<>();
+    private static Map<Integer, JbootrpcReferenceConfig> configs = new ConcurrentHashMap<>();
 
     public static JbootrpcReferenceConfig getReferenceConfig(RPCInject rpcInject) {
         int identityHashCode = System.identityHashCode(rpcInject);
-        JbootrpcReferenceConfig referenceConfig = (JbootrpcReferenceConfig) configs.get(identityHashCode);
+        JbootrpcReferenceConfig referenceConfig = configs.get(identityHashCode);
         if (referenceConfig == null) {
-            synchronized (rpcInject) {
-                referenceConfig = (JbootrpcReferenceConfig) configs.get(identityHashCode);
-                if (referenceConfig == null) {
-                    referenceConfig = new JbootrpcReferenceConfig();
-                    RPCUtil.appendAnnotation(RPCInject.class, rpcInject, referenceConfig);
-                    configs.put(identityHashCode, referenceConfig);
-                }
-            }
+            JbootrpcReferenceConfig config = new JbootrpcReferenceConfig();
+            RPCUtil.appendAnnotation(RPCInject.class, rpcInject, config);
+            configs.putIfAbsent(identityHashCode, config);
+
+            referenceConfig = configs.get(identityHashCode);
         }
+
         return referenceConfig;
     }
 }

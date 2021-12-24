@@ -258,11 +258,7 @@ public class JbootController extends Controller {
     @NotAction
     public Map getJwtParas() {
         if (jwtParas == null) {
-            synchronized (this) {
-                if (jwtParas == null) {
-                    jwtParas = JwtManager.me().parseJwtToken(this);
-                }
-            }
+            jwtParas = JwtManager.me().parseJwtToken(this);
         }
         return jwtParas;
     }

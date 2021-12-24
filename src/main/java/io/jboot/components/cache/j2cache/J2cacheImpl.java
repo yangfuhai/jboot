@@ -100,17 +100,15 @@ public class J2cacheImpl extends JbootCacheBase {
     private Method sendEvictCmdMethod;
 
     @Override
-    public void refresh(String cacheName, Object key) {
+    public synchronized void refresh(String cacheName, Object key) {
         cacheName = buildCacheName(cacheName);
         if (sendEvictCmdMethod == null) {
-            synchronized (this) {
-                if (sendEvictCmdMethod == null) {
-                    sendEvictCmdMethod = getSendEvictCmdMethod();
-                }
-            }
+            sendEvictCmdMethod = getSendEvictCmdMethod();
         }
         try {
-            sendEvictCmdMethod.invoke(J2Cache.getChannel(), cacheName, key);
+            if (sendClearCmdMethod != null) {
+                sendEvictCmdMethod.invoke(J2Cache.getChannel(), cacheName, key);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,17 +118,15 @@ public class J2cacheImpl extends JbootCacheBase {
     private Method sendClearCmdMethod;
 
     @Override
-    public void refresh(String cacheName) {
+    public synchronized void refresh(String cacheName) {
         cacheName = buildCacheName(cacheName);
         if (sendClearCmdMethod == null) {
-            synchronized (this) {
-                if (sendClearCmdMethod == null) {
-                    sendClearCmdMethod = getSendClearCmdMethod();
-                }
-            }
+            sendClearCmdMethod = getSendClearCmdMethod();
         }
         try {
-            sendClearCmdMethod.invoke(J2Cache.getChannel(), cacheName);
+            if (sendClearCmdMethod != null) {
+                sendClearCmdMethod.invoke(J2Cache.getChannel(), cacheName);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

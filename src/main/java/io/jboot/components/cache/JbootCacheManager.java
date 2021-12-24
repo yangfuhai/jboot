@@ -57,32 +57,29 @@ public class JbootCacheManager {
         JbootCache cache = cacheMap.get(name);
 
         if (cache == null) {
-            synchronized (this) {
-                cache = cacheMap.get(name);
-                if (cache == null) {
-                    Map<String, JbootCacheConfig> configModels = ConfigUtil.getConfigModels(JbootCacheConfig.class);
-                    JbootCacheConfig.TYPES.forEach(configModels::remove);
+            Map<String, JbootCacheConfig> configModels = ConfigUtil.getConfigModels(JbootCacheConfig.class);
+            JbootCacheConfig.TYPES.forEach(configModels::remove);
 
-                    configModels.putIfAbsent("default", Jboot.config(JbootCacheConfig.class));
+            configModels.putIfAbsent("default", Jboot.config(JbootCacheConfig.class));
 
-                    if (!configModels.containsKey(name)) {
-                        throw new JbootIllegalConfigException("Please config \"jboot.cache." + name + ".type\" in your jboot.properties.");
-                    }
-
-                    JbootCacheConfig cacheConfig = configModels.get(name);
-                    cache = buildCache(cacheConfig);
-                    if (cache != null) {
-                        cacheMap.put(name, cache);
-                    }
-                }
+            if (!configModels.containsKey(name)) {
+                throw new JbootIllegalConfigException("Please config \"jboot.cache." + name + ".type\" in your jboot.properties.");
             }
+
+            JbootCacheConfig cacheConfig = configModels.get(name);
+            JbootCache newCache = buildCache(cacheConfig);
+            if (newCache != null) {
+                cacheMap.putIfAbsent(name, newCache);
+            }
+
+            cache = cacheMap.get(name);
         }
 
         return cache;
     }
 
 
-    private JbootCache buildCache(JbootCacheConfig config) {
+    private synchronized JbootCache buildCache(JbootCacheConfig config) {
 
         switch (config.getType()) {
             case JbootCacheConfig.TYPE_EHCACHE:

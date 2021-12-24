@@ -316,20 +316,16 @@ public class JbootGatewayConfig implements Serializable {
 
     public GatewayInterceptor[] getGatewayInterceptors() {
         if (gatewayInterceptors == null) {
-            synchronized (this) {
-                if (gatewayInterceptors == null) {
-                    if (interceptors == null || interceptors.length == 0) {
-                        gatewayInterceptors = EMPTY_GATEWAY_INTERCEPTOR_ARRAY;
-                    } else {
-                        gatewayInterceptors = new GatewayInterceptor[interceptors.length];
-                        for (int i = 0; i < interceptors.length; i++) {
-                            GatewayInterceptor interceptor = ClassUtil.newInstance(interceptors[i]);
-                            if (interceptor == null) {
-                                throw new NullPointerException("can not new instance by class:" + interceptors[i]);
-                            }
-                            gatewayInterceptors[i] = interceptor;
-                        }
+            if (interceptors == null || interceptors.length == 0) {
+                gatewayInterceptors = EMPTY_GATEWAY_INTERCEPTOR_ARRAY;
+            } else {
+                gatewayInterceptors = new GatewayInterceptor[interceptors.length];
+                for (int i = 0; i < interceptors.length; i++) {
+                    GatewayInterceptor interceptor = ClassUtil.newInstance(interceptors[i]);
+                    if (interceptor == null) {
+                        throw new NullPointerException("can not new instance by class:" + interceptors[i]);
                     }
+                    gatewayInterceptors[i] = interceptor;
                 }
             }
         }
@@ -357,21 +353,16 @@ public class JbootGatewayConfig implements Serializable {
             return gatewayLoadBalanceStrategy;
         }
 
-        if (gatewayLoadBalanceStrategy == null) {
-            synchronized (this) {
-                if (gatewayLoadBalanceStrategy == null) {
-                    if (StrUtil.isBlank(loadBalanceStrategy)) {
-                        gatewayLoadBalanceStrategy = GatewayLoadBalanceStrategy.DEFAULT_STRATEGY;
-                    } else {
-                        GatewayLoadBalanceStrategy glbs = ClassUtil.newInstance(loadBalanceStrategy);
-                        if (glbs == null) {
-                            throw new NullPointerException("Can not new instance by class: " + loadBalanceStrategy);
-                        }
-                        gatewayLoadBalanceStrategy = glbs;
-                    }
-                }
+        if (StrUtil.isBlank(loadBalanceStrategy)) {
+            gatewayLoadBalanceStrategy = GatewayLoadBalanceStrategy.DEFAULT_STRATEGY;
+        } else {
+            GatewayLoadBalanceStrategy glbs = ClassUtil.newInstance(loadBalanceStrategy);
+            if (glbs == null) {
+                throw new NullPointerException("Can not new instance by class: " + loadBalanceStrategy);
             }
+            gatewayLoadBalanceStrategy = glbs;
         }
+
         return gatewayLoadBalanceStrategy;
     }
 

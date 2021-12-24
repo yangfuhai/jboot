@@ -67,7 +67,7 @@ public class FileUtil {
     }
 
     public static void writeString(File file, String string) {
-        if (!file.getParentFile().exists()){
+        if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
         FileOutputStream fos = null;
@@ -82,7 +82,7 @@ public class FileUtil {
     }
 
     public static void close(Closeable... closeable) {
-        if (closeable != null || closeable.length != 0) {
+        if (closeable != null && closeable.length != 0) {
             for (Closeable c : closeable) {
                 if (c != null) {
                     try {

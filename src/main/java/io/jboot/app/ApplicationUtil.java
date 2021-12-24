@@ -42,13 +42,10 @@ public class ApplicationUtil {
     }
 
     private static Boolean runInFatjar;
+
     public static boolean runInFatjar() {
-        if (runInFatjar == null){
-            synchronized (ApplicationUtil.class){
-                if (runInFatjar == null){
-                    runInFatjar = buildRunInFatjar();
-                }
-            }
+        if (runInFatjar == null) {
+            runInFatjar = buildRunInFatjar();
         }
         return runInFatjar;
     }
@@ -77,7 +74,6 @@ public class ApplicationUtil {
 
         return false;
     }
-
 
 
     static void printClassPath() {

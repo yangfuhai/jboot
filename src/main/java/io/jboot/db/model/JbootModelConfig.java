@@ -159,13 +159,9 @@ public class JbootModelConfig {
         }
 
         if (defaultIdCachePrefix == null) {
-            synchronized (this) {
-                if (defaultIdCachePrefix == null) {
-                    defaultIdCachePrefix = JbootCacheManager.me().getCache().getConfig().getDefaultCachePrefix();
-                    if (defaultIdCachePrefix == null) {
-                        defaultIdCachePrefix = "";
-                    }
-                }
+            defaultIdCachePrefix = JbootCacheManager.me().getCache().getConfig().getDefaultCachePrefix();
+            if (defaultIdCachePrefix == null) {
+                defaultIdCachePrefix = "";
             }
         }
         return defaultIdCachePrefix;
@@ -180,11 +176,7 @@ public class JbootModelConfig {
     public JbootModelFilter getFilter() {
         if (filter == null) {
             if (StrUtil.isNotBlank(filterClass)) {
-                synchronized (this) {
-                    if (filter == null) {
-                        filter = ClassUtil.newInstance(filterClass);
-                    }
-                }
+                filter = ClassUtil.newInstance(filterClass);
             } else {
                 filter = JbootModelFilter.DEFAULT;
             }
@@ -202,11 +194,7 @@ public class JbootModelConfig {
     public PrimarykeyValueGenerator getPrimarykeyValueGenerator() {
         if (primarykeyValueGenerator == null) {
             if (StrUtil.isNotBlank(primarykeyValueGeneratorClass)) {
-                synchronized (this) {
-                    if (primarykeyValueGenerator == null) {
-                        primarykeyValueGenerator = ClassUtil.newInstance(primarykeyValueGeneratorClass);
-                    }
-                }
+                primarykeyValueGenerator = ClassUtil.newInstance(primarykeyValueGeneratorClass);
             } else {
                 primarykeyValueGenerator = PrimarykeyValueGenerator.DEFAULT;
             }

@@ -73,15 +73,16 @@ public class NacosConfigManager {
 
     /**
      * 接收到 nacos 服务器消息
+     *
      * @param configManager
      * @param configInfo
      */
     public void onReceiveConfigInfo(JbootConfigManager configManager, String configInfo) {
         Properties properties = str2Properties(configInfo);
-        if (contentProperties == null) {
+        if (contentProperties == null && properties != null) {
             contentProperties = properties;
             configManager.setRemoteProperties(properties);
-        } else {
+        } else if (contentProperties != null && properties != null) {
             for (Object key : properties.keySet()) {
                 String newValue = properties.getProperty(key.toString());
                 String oldValue = contentProperties.getProperty(key.toString());
@@ -90,7 +91,7 @@ public class NacosConfigManager {
                     contentProperties.put(key, newValue);
                     configManager.setRemoteProperty(key.toString(), newValue);
 
-                    configManager.notifyChangeListeners(key.toString(),newValue,oldValue);
+                    configManager.notifyChangeListeners(key.toString(), newValue, oldValue);
                 }
             }
         }

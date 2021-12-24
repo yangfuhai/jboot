@@ -207,17 +207,16 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     @Override
     public List getKeys(String cacheName) {
         List list = keysCache.getIfPresent(cacheName);
-        if (list == null) {
-            list = redisCacheImpl.getKeys(cacheName);
-            if (list == null) {
-                synchronized (cacheName.intern()) {
-                    if (list == null) {
-                        list = new ArrayList();
-                    }
-                }
-            }
-            keysCache.put(cacheName, list);
+        if (list != null) {
+            return list;
         }
+
+        list = redisCacheImpl.getKeys(cacheName);
+        if (list == null) {
+            list = new ArrayList();
+        }
+        keysCache.put(cacheName, list);
+
         return list;
     }
 

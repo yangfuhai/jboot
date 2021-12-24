@@ -36,13 +36,8 @@ public class JbootLocalLock implements JbootLock {
     public JbootLocalLock(String name) {
         lock = LOCKS.get(name);
         if (lock == null) {
-            synchronized (JbootLocalLock.class) {
-                lock = LOCKS.get(name);
-                if (lock == null) {
-                    lock = new ReentrantLock();
-                    LOCKS.put(name, lock);
-                }
-            }
+            ReentrantLock newLock = new ReentrantLock();
+            LOCKS.putIfAbsent(name, newLock);
         }
     }
 
@@ -63,7 +58,7 @@ public class JbootLocalLock implements JbootLock {
 
     @Override
     public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-        return lock.tryLock(time,unit);
+        return lock.tryLock(time, unit);
     }
 
     @Override

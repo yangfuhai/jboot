@@ -122,12 +122,9 @@ public class JbootConfigManager {
         Object configObject = configCache.get(clazz.getName() + prefix);
 
         if (configObject == null) {
-            synchronized (clazz) {
-                if (configObject == null) {
-                    configObject = createConfigObject(clazz, prefix, file);
-                    configCache.put(clazz.getName() + prefix, configObject);
-                }
-            }
+            Object obj = createConfigObject(clazz, prefix, file);
+            configCache.putIfAbsent(clazz.getName() + prefix, obj);
+            configObject = configCache.get(clazz.getName() + prefix);
         }
 
         return (T) configObject;
@@ -190,7 +187,7 @@ public class JbootConfigManager {
      * @param <T>
      * @return
      */
-    public <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
+    public synchronized <T> T createConfigObject(Class<T> clazz, String prefix, String file) {
         T configObject = JbootConfigKit.newInstance(clazz);
         for (Method setterMethod : JbootConfigKit.getClassSetMethods(clazz)) {
             String key = buildKey(prefix, setterMethod);
@@ -339,13 +336,9 @@ public class JbootConfigManager {
     }
 
 
-    public void setRemoteProperty(String key, String value) {
+    public synchronized void setRemoteProperty(String key, String value) {
         if (remoteProperties == null) {
-            synchronized (this) {
-                if (remoteProperties == null) {
-                    remoteProperties = new ConcurrentHashMap();
-                }
-            }
+            remoteProperties = new ConcurrentHashMap();
         }
         remoteProperties.put(key, value);
     }
@@ -358,13 +351,9 @@ public class JbootConfigManager {
     }
 
 
-    public void setRemoteProperties(Map map) {
+    public synchronized void setRemoteProperties(Map map) {
         if (remoteProperties == null) {
-            synchronized (this) {
-                if (remoteProperties == null) {
-                    remoteProperties = new ConcurrentHashMap();
-                }
-            }
+            remoteProperties = new ConcurrentHashMap();
         }
         remoteProperties.putAll(map);
     }
@@ -501,12 +490,8 @@ public class JbootConfigManager {
 
     public boolean isDevMode() {
         if (devMode == null) {
-            synchronized (this) {
-                if (devMode == null) {
-                    String appMode = getConfigValue("jboot.app.mode");
-                    devMode = (null == appMode || "".equals(appMode.trim()) || "dev".equalsIgnoreCase(appMode.trim()));
-                }
-            }
+            String appMode = getConfigValue("jboot.app.mode");
+            devMode = (null == appMode || "".equals(appMode.trim()) || "dev".equalsIgnoreCase(appMode.trim()));
         }
         return devMode;
     }

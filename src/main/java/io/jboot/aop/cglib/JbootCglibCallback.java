@@ -46,16 +46,10 @@ public class JbootCglibCallback implements MethodInterceptor {
         InterceptorCache.MethodKey key = InterceptorCache.getMethodKey(targetClass, method);
         Interceptor[] inters = InterceptorCache.get(key);
         if (inters == null) {
-            synchronized (method) {
-                inters = InterceptorCache.get(key);
-                if (inters == null) {
+            inters = interManager.buildServiceMethodInterceptor(targetClass, method);
+            inters = builderManager.build(targetClass, method, inters);
 
-                    inters = interManager.buildServiceMethodInterceptor(targetClass, method);
-                    inters = builderManager.build(targetClass, method, inters);
-
-                    InterceptorCache.put(key, inters);
-                }
-            }
+            InterceptorCache.put(key, inters);
         }
 
         if (inters.length == 0) {

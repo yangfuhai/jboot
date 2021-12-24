@@ -22,6 +22,7 @@ import io.jboot.utils.StrUtil;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.ServiceLoader;
 
 /**
@@ -93,11 +94,11 @@ public class JbootSpiLoader {
 
         for (Class<T> c : classes) {
             JbootSpi spiConfig = c.getAnnotation(JbootSpi.class);
-            if (spiConfig != null && spiName.equals(AnnotationUtil.get(spiConfig.value()))) {
+            if (spiConfig != null && Objects.equals(spiName, AnnotationUtil.get(spiConfig.value()))) {
                 return ClassUtil.newInstance(c);
             }
             //support config class name
-            else if (spiName.equals(c.getName())) {
+            else if (Objects.equals(spiName, c.getName())) {
                 return ClassUtil.newInstance(c);
             }
         }

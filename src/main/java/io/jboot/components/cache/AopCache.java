@@ -22,11 +22,7 @@ public class AopCache {
 
     static JbootCache getAopCache() {
         if (aopCache == null) {
-            synchronized (AopCache.class) {
-                if (aopCache == null) {
-                    aopCache = JbootCacheManager.me().getCache(JbootAopCacheConfig.getInstance().getUseCacheName());
-                }
-            }
+            aopCache = JbootCacheManager.me().getCache(JbootAopCacheConfig.getInstance().getUseCacheName());
         }
         return aopCache;
     }

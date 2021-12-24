@@ -54,7 +54,6 @@ public class InterceptorCache {
     }
 
 
-
     public static class MethodKey {
         final int classHash;
         final int methodHash;
@@ -80,7 +79,7 @@ public class InterceptorCache {
         @Override
         public boolean equals(Object methodKey) {
             MethodKey mk = (MethodKey) methodKey;
-            return classHash == mk.classHash && methodHash == mk.methodHash && paraHash == mk.paraHash;
+            return mk != null && classHash == mk.classHash && methodHash == mk.methodHash && paraHash == mk.paraHash;
         }
 
         @Override

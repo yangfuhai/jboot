@@ -42,6 +42,7 @@ public class SizeInterceptor implements Interceptor {
                             + ", but current value is null at method: " + ClassUtil.buildMethodString(inv.getMethod());
                     Ret paras = Ret.by("max", size.max()).set("min", size.min());
                     ValidUtil.throwValidException(parameters[index].getName(), size.message(), paras, reason);
+                    return;
                 }
 
                 int len = getObjectLen(validObject);

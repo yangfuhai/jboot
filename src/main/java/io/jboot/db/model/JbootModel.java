@@ -220,20 +220,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private M use(String configName, boolean validateExist) {
         M newDao = this.get(DATASOURCE_CACHE_PREFIX + configName);
         if (newDao == null) {
-            synchronized (configName.intern()) {
-                newDao = this.get(DATASOURCE_CACHE_PREFIX + configName);
-                if (newDao == null) {
-                    newDao = this.copy()._setConfigName(configName);
-                    if (newDao._getConfig() == null) {
-                        if (validateExist) {
-                            throw new JbootIllegalConfigException("the datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
-                        } else {
-                            return null;
-                        }
-                    } else {
-                        this.put(DATASOURCE_CACHE_PREFIX + configName, newDao);
-                    }
+            newDao = this.copy()._setConfigName(configName);
+            if (newDao._getConfig() == null) {
+                if (validateExist) {
+                    throw new JbootIllegalConfigException("the datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
+                } else {
+                    return null;
                 }
+            } else {
+                this.put(DATASOURCE_CACHE_PREFIX + configName, newDao);
             }
         }
         return newDao;

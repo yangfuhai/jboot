@@ -87,22 +87,18 @@ public class JbootSeataManager {
 
     public FailureHandler getFailureHandler() {
         if (handler == null) {
-            synchronized (this) {
+            String failureHandlerClassOrSpiName = config.getFailureHandler();
+            if (StrUtil.isBlank(failureHandlerClassOrSpiName)) {
+                handler = new DefaultFailureHandlerImpl();
+            } else {
+                if (failureHandlerClassOrSpiName.contains(".")) {
+                    handler = ClassUtil.newInstance(failureHandlerClassOrSpiName);
+                }
                 if (handler == null) {
-                    String failureHandlerClassOrSpiName = config.getFailureHandler();
-                    if (StrUtil.isBlank(failureHandlerClassOrSpiName)) {
-                        handler = new DefaultFailureHandlerImpl();
-                    } else {
-                        if (failureHandlerClassOrSpiName.contains(".")) {
-                            handler = ClassUtil.newInstance(failureHandlerClassOrSpiName);
-                        }
-                        if (handler == null) {
-                            handler = JbootSpiLoader.load(FailureHandler.class, failureHandlerClassOrSpiName);
-                        }
-                        if (handler == null) {
-                            handler = new DefaultFailureHandlerImpl();
-                        }
-                    }
+                    handler = JbootSpiLoader.load(FailureHandler.class, failureHandlerClassOrSpiName);
+                }
+                if (handler == null) {
+                    handler = new DefaultFailureHandlerImpl();
                 }
             }
         }

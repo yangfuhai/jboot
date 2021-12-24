@@ -57,14 +57,9 @@ public class JbootActionInvocation extends Invocation {
         InterceptorCache.MethodKey key = InterceptorCache.getMethodKey(action.getControllerClass(), action.getMethod());
         Interceptor[] inters = InterceptorCache.get(key);
         if (inters == null) {
-            synchronized (action) {
-                inters = InterceptorCache.get(key);
-                if (inters == null) {
-                    inters = action.getInterceptors();
-                    inters = builderManager.build(action.getControllerClass(), action.getMethod(), inters);
-                    InterceptorCache.put(key, inters);
-                }
-            }
+            inters = action.getInterceptors();
+            inters = builderManager.build(action.getControllerClass(), action.getMethod(), inters);
+            InterceptorCache.put(key, inters);
         }
 
         return inters;
@@ -92,7 +87,6 @@ public class JbootActionInvocation extends Invocation {
             }
         }
     }
-
 
 
     @Override
