@@ -79,22 +79,26 @@ public class NacosConfigManager {
      */
     public void onReceiveConfigInfo(JbootConfigManager configManager, String configInfo) {
         Properties properties = str2Properties(configInfo);
-        if (contentProperties == null && properties != null) {
-            contentProperties = properties;
-            configManager.setRemoteProperties(properties);
-        } else if (contentProperties != null && properties != null) {
-            for (Object key : properties.keySet()) {
-                String newValue = properties.getProperty(key.toString());
-                String oldValue = contentProperties.getProperty(key.toString());
+        if (properties != null) {
+            if (contentProperties == null) {
+                contentProperties = properties;
+                configManager.setRemoteProperties(properties);
+            } else {
+                for (Object key : properties.keySet()) {
+                    String newValue = properties.getProperty(key.toString());
+                    String oldValue = contentProperties.getProperty(key.toString());
 
-                if (!Objects.equals(newValue, oldValue)) {
-                    contentProperties.put(key, newValue);
-                    configManager.setRemoteProperty(key.toString(), newValue);
+                    if (!Objects.equals(newValue, oldValue)) {
+                        contentProperties.put(key, newValue);
+                        configManager.setRemoteProperty(key.toString(), newValue);
 
-                    configManager.notifyChangeListeners(key.toString(), newValue, oldValue);
+                        configManager.notifyChangeListeners(key.toString(), newValue, oldValue);
+                    }
                 }
             }
         }
+
+
     }
 
 
