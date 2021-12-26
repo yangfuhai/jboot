@@ -19,9 +19,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.jboot.test.web.MockHttpServletResponse;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.Cookie;
+import java.util.*;
 
 public class MockMvcResult {
 
@@ -60,6 +59,19 @@ public class MockMvcResult {
             }
         }
         return headers;
+    }
+
+    public Set<Cookie> getCookies() {
+        return response.getCookies();
+    }
+
+    public String getCookie(String name) {
+        for (Cookie cookie : response.getCookies()) {
+            if (Objects.equals(name, cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 
 
