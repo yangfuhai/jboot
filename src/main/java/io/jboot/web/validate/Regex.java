@@ -59,7 +59,7 @@ public class Regex {
     /**
      * 密码长度 6~20 位数，字母、数字和下划线
      */
-    public static final String PASSWORD ="^[a-zA-Z0-9_]\\w{5,19}$";
+    public static final String CIPHER ="^[a-zA-Z0-9_]\\w{5,19}$";
 
 
     /**
@@ -172,8 +172,8 @@ public class Regex {
 
 
 
-        System.out.println("\"123\".matches(PASSWORD) ---> " + ("123".matches(PASSWORD)));
-        System.out.println("\"123456\".matches(PASSWORD) ---> " + ("123456".matches(PASSWORD)));
+        System.out.println("\"123\".matches(PASSWORD) ---> " + ("123".matches(CIPHER)));
+        System.out.println("\"123456\".matches(PASSWORD) ---> " + ("123456".matches(CIPHER)));
         System.out.println();
 
 

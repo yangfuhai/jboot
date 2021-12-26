@@ -15,6 +15,7 @@
  */
 package io.jboot.components.cache.j2cache;
 
+import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.components.cache.JbootCacheBase;
 import io.jboot.components.cache.JbootCacheConfig;
@@ -34,6 +35,8 @@ import java.util.stream.Collectors;
  * @version V1.0
  */
 public class J2cacheImpl extends JbootCacheBase {
+
+    private static final Log LOG = Log.getLog(J2cacheImpl.class);
 
     public J2cacheImpl(JbootCacheConfig config) {
         super(config);
@@ -106,11 +109,11 @@ public class J2cacheImpl extends JbootCacheBase {
             sendEvictCmdMethod = getSendEvictCmdMethod();
         }
         try {
-            if (sendClearCmdMethod != null) {
+            if (sendEvictCmdMethod != null) {
                 sendEvictCmdMethod.invoke(J2Cache.getChannel(), cacheName, key);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("refresh error!", e);
         }
     }
 
@@ -128,7 +131,7 @@ public class J2cacheImpl extends JbootCacheBase {
                 sendClearCmdMethod.invoke(J2Cache.getChannel(), cacheName);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("refresh error!", e);
         }
     }
 
