@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.13.0-SNAPSHOT</version>
+    <version>3.13.0</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -47,12 +47,12 @@
         <jfinal-weixin.version>3.3</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
-        <jackson.version>2.13.0</jackson.version>
+        <jackson.version>2.13.1</jackson.version>
         <mysql.version>5.1.49</mysql.version>
         <undertow.version>2.2.14.Final</undertow.version>
         <slf4j.version>1.7.32</slf4j.version>
         <fst.version>2.57</fst.version>
-        <fastjson.version>1.2.78</fastjson.version>
+        <fastjson.version>1.2.79</fastjson.version>
         <guava.version>31.0.1-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>3.7.1</jedis.version>
@@ -70,7 +70,7 @@
         <resteasy.version>3.13.2.Final</resteasy.version>
         <seata.version>1.4.2</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.2.5</metrics.version>
+        <metrics.version>4.2.7</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -276,7 +276,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.2.6</version>
+            <version>1.2.8</version>
             <scope>provided</scope>
         </dependency>
 

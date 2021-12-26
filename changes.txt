@@ -1,3 +1,12 @@
+jboot v3.13.0:
+新增：Jbootmq 的监听器（Listener）新增 MessageContext 参数，支持更多的消息配置
+新增：MockMvc 新增 upload 方法，用于对上传文件的测试
+优化：404 403 401 等错误输出 info 信息，而不是 warn
+优化：开放更多的 JbootMqImpl 方法
+优化：优化 Http 工具类，上传文件的时候添加 ContentType 信息
+
+
+
 jboot v3.12.5:
 新增：IdCache 默认的缓存前缀配置
 优化：AOP 缓存添加默认时间为 1 个小时
