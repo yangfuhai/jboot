@@ -38,4 +38,6 @@ public interface Jbootmq {
 
     public boolean startListening();
 
+    public JbootmqConfig getConfig();
+
 }

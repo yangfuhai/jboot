@@ -186,4 +186,9 @@ public abstract class JbootmqBase implements Jbootmq {
 
     protected abstract void onStartListening();
 
+
+    @Override
+    public JbootmqConfig getConfig() {
+        return config;
+    }
 }
