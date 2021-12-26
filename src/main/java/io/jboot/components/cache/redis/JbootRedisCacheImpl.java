@@ -35,7 +35,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     private JbootRedis redis;
     private JbootRedisCacheConfig cacheConfig;
-    private static String redisCacheNamesKey = "jboot_cache_names";
+    private String redisCacheNamesKey = "jboot_cache_names";
     private String globalKeyPrefix = "";
 
 

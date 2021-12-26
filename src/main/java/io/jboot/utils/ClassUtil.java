@@ -54,40 +54,30 @@ public class ClassUtil {
      * @param <T>
      * @return
      */
-    public static <T> T singleton(Class<T> clazz, boolean createByAop) {
+    public static synchronized <T> T singleton(Class<T> clazz, boolean createByAop) {
         Object ret = singletons.get(clazz);
         if (ret == null) {
-            synchronized (clazz) {
-                ret = singletons.get(clazz);
-                if (ret == null) {
-                    ret = newInstance(clazz, createByAop);
-                    if (ret != null) {
-                        singletons.put(clazz, ret);
-                    } else {
-                        LOG.error("cannot new newInstance!!!!");
-                    }
-                }
+            ret = newInstance(clazz, createByAop);
+            if (ret != null) {
+                singletons.put(clazz, ret);
+            } else {
+                LOG.error("cannot new newInstance!!!!");
             }
         }
         return (T) ret;
     }
 
-    public static <T> T singleton(Class<T> clazz, boolean createByAop, boolean inject) {
+    public static synchronized <T> T singleton(Class<T> clazz, boolean createByAop, boolean inject) {
         Object ret = singletons.get(clazz);
         if (ret == null) {
-            synchronized (clazz) {
-                ret = singletons.get(clazz);
-                if (ret == null) {
-                    ret = newInstance(clazz, createByAop);
-                    if (ret != null) {
-                        if (inject && !createByAop) {
-                            Aop.inject(ret);
-                        }
-                        singletons.put(clazz, ret);
-                    } else {
-                        LOG.error("cannot new newInstance!!!!");
-                    }
+            ret = newInstance(clazz, createByAop);
+            if (ret != null) {
+                if (inject && !createByAop) {
+                    Aop.inject(ret);
                 }
+                singletons.put(clazz, ret);
+            } else {
+                LOG.error("cannot new newInstance!!!!");
             }
         }
         return (T) ret;

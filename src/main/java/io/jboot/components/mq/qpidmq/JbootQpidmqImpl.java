@@ -196,7 +196,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         @Override
         public void run() {
             try {
-                for (; ; ) {
+                while (isStarted) {
                     Message message = consumer.receive();
                     if (message == null) {
                         continue;

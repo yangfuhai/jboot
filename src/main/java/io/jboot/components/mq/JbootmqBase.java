@@ -18,6 +18,7 @@ package io.jboot.components.mq;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.components.serializer.JbootSerializer;
@@ -157,11 +158,11 @@ public abstract class JbootmqBase implements Jbootmq {
     }
 
 
-    protected boolean isStartListen = false;
+    protected boolean isStarted = false;
 
     @Override
     public boolean startListening() {
-        if (isStartListen) {
+        if (isStarted) {
             throw new JbootException("jboot mq is started before.");
         }
 
@@ -169,8 +170,16 @@ public abstract class JbootmqBase implements Jbootmq {
             throw new JbootException("mq channels is null or empty, please config channels");
         }
 
-        onStartListening();
-        isStartListen = true;
+        try {
+            isStarted = true;
+            onStartListening();
+        } catch (Exception ex) {
+            LogKit.error("start mq fail!");
+            isStarted = false;
+            return false;
+        }
+
+
         return true;
     }
 

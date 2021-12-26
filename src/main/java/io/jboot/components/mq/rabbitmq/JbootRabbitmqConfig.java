@@ -22,8 +22,15 @@ import io.jboot.app.config.annotation.ConfigModel;
 public class JbootRabbitmqConfig {
 
 
-    private String username = "guest";
-    private String password = "guest";
+    /**
+     * 默认 username 为  guest
+     */
+    private String username;
+
+    /**
+     * 默认密码为 guest
+     */
+    private String password;
 
     private String host = "127.0.0.1";
     private int port = 5672;

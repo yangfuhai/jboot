@@ -19,10 +19,18 @@ import io.jboot.app.config.annotation.ConfigModel;
 
 @ConfigModel(prefix = "jboot.mq.qpid")
 public class JbootQpidmqConfig {
-    private String username = "admin";
-    private String password = "admin";
+    /**
+     * 默认账号 admin
+     */
+    private String username;
+
+    /**
+     * 默认密码 admin
+     */
+    private String password;
 
     private String host = "127.0.0.1:5672";
+
     private String virtualHost;
 
     private boolean serializerEnable = true;

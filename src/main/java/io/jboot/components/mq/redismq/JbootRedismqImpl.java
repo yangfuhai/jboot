@@ -95,7 +95,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     @Override
     public void run() {
-        for (; ; ) {
+        while (isStarted) {
             try {
                 doExecuteDequeue();
                 Thread.sleep(1);
