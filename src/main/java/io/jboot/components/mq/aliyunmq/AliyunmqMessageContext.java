@@ -3,16 +3,16 @@ package io.jboot.components.mq.aliyunmq;
 import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
-import io.jboot.components.mq.JbootMqMessageInfo;
+import io.jboot.components.mq.MessageContext;
 import io.jboot.components.mq.Jbootmq;
 
-public class AliyunmqMessageInfo extends JbootMqMessageInfo {
+public class AliyunmqMessageContext extends MessageContext {
 
     final Message orginalMessage;
     final ConsumeContext context;
     private Action returnAction = Action.CommitMessage;
 
-    public AliyunmqMessageInfo(Jbootmq mq, Message orginalMessage, ConsumeContext context) {
+    public AliyunmqMessageContext(Jbootmq mq, Message orginalMessage, ConsumeContext context) {
         super(mq);
         this.orginalMessage = orginalMessage;
         this.context = context;

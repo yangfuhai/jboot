@@ -105,7 +105,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                         Object o = getSerializer().deserialize(body);
-                        notifyListeners(orginaChannelName, o, new RabbitmqMessageInfo(JbootRabbitmqImpl.this, channel, consumerTag, envelope, properties));
+                        notifyListeners(orginaChannelName, o, new RabbitmqMessageContext(JbootRabbitmqImpl.this, channel, consumerTag, envelope, properties));
                     }
                 });
             } catch (IOException e) {

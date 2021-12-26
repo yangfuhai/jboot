@@ -22,9 +22,9 @@ public interface JbootmqMessageListener {
     /**
      * @param channel
      * @param message
-     * @param info
+     * @param context
      */
-    default void onMessage(String channel, Object message, JbootMqMessageInfo info) {
+    default void onMessage(String channel, Object message, MessageContext context) {
         this.onMessage(channel, message);
     }
 

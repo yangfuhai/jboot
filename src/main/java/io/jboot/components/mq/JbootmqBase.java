@@ -107,10 +107,10 @@ public abstract class JbootmqBase implements Jbootmq {
         return channelListeners.get(channel);
     }
 
-    public void notifyListeners(String channel, Object message, JbootMqMessageInfo messageInfo) {
+    public void notifyListeners(String channel, Object message, MessageContext context) {
 
-        boolean globalResult = notifyListeners(channel, message, messageInfo, globalListeners);
-        boolean channelResult = notifyListeners(channel, message, messageInfo, channelListeners.get(channel));
+        boolean globalResult = notifyListeners(channel, message, context, globalListeners);
+        boolean channelResult = notifyListeners(channel, message, context, channelListeners.get(channel));
 
         if (!globalResult && !channelResult) {
             LOG.error("Application has recevied mq message, But has no listener to process it. channel:" +
@@ -119,7 +119,7 @@ public abstract class JbootmqBase implements Jbootmq {
     }
 
 
-    protected boolean notifyListeners(String channel, Object message, JbootMqMessageInfo messageInfo, Collection<JbootmqMessageListener> listeners) {
+    protected boolean notifyListeners(String channel, Object message, MessageContext context, Collection<JbootmqMessageListener> listeners) {
         if (listeners == null || listeners.size() == 0) {
             return false;
         }
@@ -127,7 +127,7 @@ public abstract class JbootmqBase implements Jbootmq {
         if (syncRecevieMessageChannels.contains(channel)) {
             for (JbootmqMessageListener listener : listeners) {
                 try {
-                    listener.onMessage(channel, message, messageInfo);
+                    listener.onMessage(channel, message, context);
                 } catch (Throwable ex) {
                     LOG.warn("listener[" + listener.getClass().getName() + "] execute mq message is error. channel:" +
                             channel + "  message:" + message);
@@ -136,7 +136,7 @@ public abstract class JbootmqBase implements Jbootmq {
         } else {
             for (JbootmqMessageListener listener : listeners) {
                 threadPool.execute(() -> {
-                    listener.onMessage(channel, message, messageInfo);
+                    listener.onMessage(channel, message, context);
                 });
             }
         }

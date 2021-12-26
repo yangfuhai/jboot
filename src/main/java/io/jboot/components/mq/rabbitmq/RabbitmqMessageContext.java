@@ -3,17 +3,17 @@ package io.jboot.components.mq.rabbitmq;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Envelope;
-import io.jboot.components.mq.JbootMqMessageInfo;
+import io.jboot.components.mq.MessageContext;
 import io.jboot.components.mq.Jbootmq;
 
-public class RabbitmqMessageInfo extends JbootMqMessageInfo {
+public class RabbitmqMessageContext extends MessageContext {
 
     final Channel channel;
     final String consumerTag;
     final Envelope envelope;
     final AMQP.BasicProperties properties;
 
-    public RabbitmqMessageInfo(Jbootmq mq, Channel channel, String consumerTag, Envelope envelope, AMQP.BasicProperties properties) {
+    public RabbitmqMessageContext(Jbootmq mq, Channel channel, String consumerTag, Envelope envelope, AMQP.BasicProperties properties) {
         super(mq);
         this.channel = channel;
         this.consumerTag = consumerTag;

@@ -3,7 +3,7 @@ package io.jboot.test.mq.rabbit;
 
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplication;
-import io.jboot.components.mq.JbootMqMessageInfo;
+import io.jboot.components.mq.MessageContext;
 import io.jboot.components.mq.JbootmqMessageListener;
 
 /**
@@ -40,7 +40,7 @@ public class RabbitMqReceiver1 {
         // 只监听 myChannel 这个通道
         Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
             @Override
-            public void onMessage(String channel, Object message, JbootMqMessageInfo info) {
+            public void onMessage(String channel, Object message, MessageContext context) {
                 System.out.println("Receive msg: " + message + ", from channel: " + channel);
             }
         },"channel1");

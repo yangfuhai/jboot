@@ -217,7 +217,7 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
                     }
 
                     if (object != null) {
-                        notifyListeners(channel, object, new QpidmqMessageInfo(JbootQpidmqImpl.this, message));
+                        notifyListeners(channel, object, new QpidmqMessageContext(JbootQpidmqImpl.this, message));
                     }
                 }
             } catch (Exception e) {

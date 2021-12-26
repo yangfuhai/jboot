@@ -1,10 +1,10 @@
 package io.jboot.components.mq;
 
-public class JbootMqMessageInfo {
+public class MessageContext {
 
     final Jbootmq mq;
 
-    public JbootMqMessageInfo(Jbootmq mq) {
+    public MessageContext(Jbootmq mq) {
         this.mq = mq;
     }
 

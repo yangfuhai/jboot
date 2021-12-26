@@ -63,10 +63,10 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
         consumer = ONSFactory.createConsumer(properties);
         for (String channel : channels) {
             consumer.subscribe(aliyunmqConfig.getBroadcastChannelPrefix() + channel, aliyunmqConfig.getSubscribeSubExpression(), (message, consumeContext) -> {
-                AliyunmqMessageInfo aliyunmqMessageInfo = new AliyunmqMessageInfo(this, message, consumeContext);
+                AliyunmqMessageContext context = new AliyunmqMessageContext(this, message, consumeContext);
                 notifyListeners(channel, getSerializer().deserialize(message.getBody())
-                        , aliyunmqMessageInfo);
-                return aliyunmqMessageInfo.getReturnAction();
+                        , context);
+                return context.getReturnAction();
             });
         }
         consumer.start();
@@ -79,7 +79,7 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
         consumer = ONSFactory.createConsumer(properties);
         for (String channel : channels) {
             consumer.subscribe(channel, aliyunmqConfig.getSubscribeSubExpression(), (message, consumeContext) -> {
-                AliyunmqMessageInfo aliyunmqMessageInfo = new AliyunmqMessageInfo(this, message, consumeContext);
+                AliyunmqMessageContext aliyunmqMessageInfo = new AliyunmqMessageContext(this, message, consumeContext);
                 notifyListeners(channel, getSerializer().deserialize(message.getBody())
                         , aliyunmqMessageInfo);
                 return aliyunmqMessageInfo.getReturnAction();

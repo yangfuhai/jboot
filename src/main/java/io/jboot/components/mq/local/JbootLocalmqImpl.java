@@ -35,11 +35,11 @@ public class JbootLocalmqImpl extends JbootmqBase {
 
     @Override
     public void enqueue(Object message, String toChannel) {
-        notifyListeners(toChannel, message, new LocalmqMessageInfo(this));
+        notifyListeners(toChannel, message, new LocalmqMessageContext(this));
     }
 
     @Override
     public void publish(Object message, String toChannel) {
-        notifyListeners(toChannel, message, new LocalmqMessageInfo(this));
+        notifyListeners(toChannel, message, new LocalmqMessageContext(this));
     }
 }

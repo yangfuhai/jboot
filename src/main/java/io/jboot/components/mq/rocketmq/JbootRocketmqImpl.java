@@ -91,14 +91,14 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
         // 注册回调实现类来处理从broker拉取回来的消息
         consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
-            RokectmqMessageInfo rokectMqMessageInfo = new RokectmqMessageInfo(this, msgs, context);
+            RokectmqMessageContext msgContext = new RokectmqMessageContext(this, msgs, context);
             if (msgs != null && !msgs.isEmpty()) {
                 for (MessageExt messageExt : msgs) {
-                    notifyListeners(messageExt.getTopic(), getSerializer().deserialize(messageExt.getBody()), rokectMqMessageInfo);
+                    notifyListeners(messageExt.getTopic(), getSerializer().deserialize(messageExt.getBody()), msgContext);
                 }
             }
 
-            return rokectMqMessageInfo.getReturnStatus();
+            return msgContext.getReturnStatus();
         });
 
 
@@ -131,7 +131,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
 
         final int len = rocketmqConfig.getBroadcastChannelPrefix().length();
         consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
-            RokectmqMessageInfo rokectMqMessageInfo = new RokectmqMessageInfo(this, msgs, context);
+            RokectmqMessageContext rokectMqMessageInfo = new RokectmqMessageContext(this, msgs, context);
             if (msgs != null && !msgs.isEmpty()) {
                 for (MessageExt messageExt : msgs) {
                     String topic = messageExt.getTopic();
