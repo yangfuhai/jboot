@@ -15,13 +15,12 @@
  */
 package io.jboot.test.web;
 
-import io.jboot.test.MockProxy;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import com.jfinal.kit.LogKit;
 import io.jboot.utils.StrUtil;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
+import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +28,7 @@ import java.io.InputStreamReader;
 import java.security.Principal;
 import java.util.*;
 
-public class MockHttpServletRequest extends HttpServletRequestWrapper {
+public class MockHttpServletRequest implements HttpServletRequest {
 
     protected String contextPath;
     protected String method = "GET";
@@ -40,6 +39,13 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     protected String servletPath;
     protected String characterEncoding = "UTF-8";
     protected String protocol = "HTTP/1.1";
+
+    private String remoteAddr = "127.0.0.1";
+    private String remoteHost = "localhost";
+    private int remotePort = 80;
+    private String localName = "localhost";
+    private String localAddr = "127.0.0.1";
+    private int localPort = 80;
 
     protected String remoteUser;
     protected String authType;
@@ -61,9 +67,18 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     protected Set<Cookie> cookies = new HashSet<>();
     protected LinkedList<Locale> locales = new LinkedList<>();
 
+    private boolean requestedSessionIdValid = true;
+
+    private boolean requestedSessionIdFromCookie = true;
+
+    private boolean requestedSessionIdFromURL = false;
+
+    private final Set<String> userRoles = new HashSet<>();
+    private final Multimap<String, Part> parts = LinkedHashMultimap.create();
+
 
     public MockHttpServletRequest() {
-        super(MockProxy.create(HttpServletRequest.class));
+//        super(MockProxy.create(HttpServletRequest.class));
     }
 
     @Override
@@ -133,6 +148,16 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     @Override
     public String getRemoteUser() {
         return remoteUser;
+    }
+
+
+    public void addUserRole(String role) {
+        this.userRoles.add(role);
+    }
+
+    @Override
+    public boolean isUserInRole(String role) {
+        return userRoles.contains(role);
     }
 
     public void setRemoteUser(String remoteUser) {
@@ -474,6 +499,21 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     @Override
+    public AsyncContext startAsync() throws IllegalStateException {
+        return null;
+    }
+
+    @Override
+    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
+        return null;
+    }
+
+    @Override
+    public boolean isAsyncStarted() {
+        return false;
+    }
+
+    @Override
     public String getServerName() {
         return "localhost";
     }
@@ -488,34 +528,74 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 
+
+    public void setRemotePort(int remotePort) {
+        this.remotePort = remotePort;
+    }
+
     @Override
     public int getRemotePort() {
-        return 0;
+        return remotePort;
+    }
+
+    public void setRemoteAddr(String remoteAddr) {
+        this.remoteAddr = remoteAddr;
     }
 
     @Override
     public String getRemoteAddr() {
-        return "127.0.0.1";
+        return remoteAddr;
+    }
+
+    public void setRemoteHost(String remoteHost) {
+        this.remoteHost = remoteHost;
     }
 
     @Override
     public String getRemoteHost() {
-        return "localhost";
+        return remoteHost;
     }
 
     @Override
     public boolean isRequestedSessionIdFromURL() {
+        return requestedSessionIdFromURL;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromUrl() {
+        return requestedSessionIdFromURL;
+    }
+
+    public void setRequestedSessionIdFromURL(boolean requestedSessionIdFromURL) {
+        this.requestedSessionIdFromURL = requestedSessionIdFromURL;
+    }
+
+    @Override
+    public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
         return false;
     }
 
     @Override
+    public void login(String username, String password) throws ServletException {
+        LogKit.error("Unsupport login method!");
+    }
+
+    public void setRequestedSessionIdFromCookie(boolean requestedSessionIdFromCookie) {
+        this.requestedSessionIdFromCookie = requestedSessionIdFromCookie;
+    }
+
+    @Override
     public boolean isRequestedSessionIdFromCookie() {
-        return true;
+        return requestedSessionIdFromCookie;
+    }
+
+    public void setRequestedSessionIdValid(boolean requestedSessionIdValid) {
+        this.requestedSessionIdValid = requestedSessionIdValid;
     }
 
     @Override
     public boolean isRequestedSessionIdValid() {
-        return true;
+        return requestedSessionIdValid;
     }
 
     @Override
@@ -528,19 +608,31 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         return this.locales.getFirst();
     }
 
+    public void setLocalPort(int localPort) {
+        this.localPort = localPort;
+    }
+
     @Override
     public int getLocalPort() {
-        return 80;
+        return localPort;
+    }
+
+    public void setLocalAddr(String localAddr) {
+        this.localAddr = localAddr;
     }
 
     @Override
     public String getLocalAddr() {
-        return "127.0.0.1";
+        return localAddr;
+    }
+
+    public void setLocalName(String localName) {
+        this.localName = localName;
     }
 
     @Override
     public String getLocalName() {
-        return "localhost";
+        return localName;
     }
 
     @Override
@@ -549,8 +641,23 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     @Override
+    public AsyncContext getAsyncContext() {
+        return null;
+    }
+
+    @Override
     public boolean isSecure() {
         return false;
+    }
+
+    @Override
+    public RequestDispatcher getRequestDispatcher(String path) {
+        return null;
+    }
+
+    @Override
+    public String getRealPath(String path) {
+        return this.servletContext.getRealPath(path);
     }
 
     @Override
@@ -585,6 +692,31 @@ public class MockHttpServletRequest extends HttpServletRequestWrapper {
         this.userPrincipal = null;
         this.remoteUser = null;
         this.authType = null;
+    }
+
+    public void addPart(Part part) {
+        this.parts.put(part.getName(), part);
+    }
+
+    @Override
+    public Part getPart(String name) throws IOException, ServletException {
+        final Collection<Part> parts = this.parts.get(name);
+        for (Part part : parts) {
+            return part;
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        List<Part> result = new LinkedList<>(this.parts.values());
+        return result;
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
+        LogKit.error("Unsupport upgrade method!");
+        return null;
     }
 
     public void setServletContext(ServletContext servletContext) {
