@@ -31,22 +31,23 @@ public class JbootGatewayHandler extends Handler {
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
         JbootGatewayConfig config = JbootGatewayManager.me().matchingConfig(request);
-        if (config == null) {
+        if (config != null) {
+            try {
+                new GatewayInvocation(config, request, response).invoke();
+            } finally {
+                isHandled[0] = true;
+                flushBuffer(response);
+            }
+        } else {
             next.handle(target, request, response, isHandled);
-            return;
-        }
-
-        try {
-            new GatewayInvocation(config, request, response).invoke();
-        } finally {
-            isHandled[0] = true;
-            flushBuffer(response);
         }
     }
 
     private static void flushBuffer(HttpServletResponse resp) {
         try {
-            resp.flushBuffer();
+            if (!resp.isCommitted()) {
+                resp.flushBuffer();
+            }
         } catch (IOException e) {
             LogKit.error(e.toString(), e);
         }

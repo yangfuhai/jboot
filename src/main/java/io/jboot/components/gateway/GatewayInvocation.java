@@ -78,22 +78,20 @@ public class GatewayInvocation {
         //启用 Sentinel 限流
         if (config.isSentinelEnable()) {
             new GatewaySentinelProcesser().process(proxy, proxyUrl, config, request, response, skipExceptionRender);
-            return;
-        }
+        }else {
 
+            //未启用 Sentinel 的情况
+            proxy.sendRequest(proxyUrl, request, response);
 
-        //未启用 Sentinel 的情况
-        proxy.sendRequest(proxyUrl, request, response);
-
-
-        Exception exception = proxy.getException();
-        if (exception != null && !skipExceptionRender) {
-            if (exception instanceof ConnectException) {
-                Ret connectionError = Ret.fail().set("errorCode", 2).set("message", "Can not connect to target server: " + proxyUrl);
-                renderError(exception, connectionError, config, request, response);
-            } else {
-                Ret ret = Ret.fail().set("errorCode", 9).set("message", exception.getMessage());
-                renderError(exception, ret, config, request, response);
+            Exception exception = proxy.getException();
+            if (exception != null && !skipExceptionRender) {
+                if (exception instanceof ConnectException) {
+                    Ret connectionError = Ret.fail().set("errorCode", 2).set("message", "Can not connect to target server: " + proxyUrl);
+                    renderError(exception, connectionError, config, request, response);
+                } else {
+                    Ret ret = Ret.fail().set("errorCode", 9).set("message", exception.getMessage());
+                    renderError(exception, ret, config, request, response);
+                }
             }
         }
 
