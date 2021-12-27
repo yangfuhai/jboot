@@ -28,12 +28,12 @@ import java.util.*;
 
 public class MockHttpServletResponse extends HttpServletResponseWrapper {
 
+    protected String contentString;
     protected ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
     protected PrintWriter writer;
     protected Map<String, String> headers = new HashMap<>();
     protected Set<Cookie> cookies = new HashSet<>();
-    ;
 
     protected int status = 200;
     protected String statusMessage = "OK";
@@ -210,12 +210,15 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
     }
 
     public String getContentString() {
-        try {
-            getWriter().flush();
-            return stream.toString(characterEncoding);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (contentString == null) {
+            try {
+                getWriter().flush();
+                contentString = stream.toString(characterEncoding);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+        return contentString;
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.*;
 public class MockMvcResult {
 
     final MockHttpServletResponse response;
+    private JSONObject jsonObject;
 
     public MockMvcResult(MockHttpServletResponse response) {
         this.response = response;
@@ -35,7 +36,10 @@ public class MockMvcResult {
     }
 
     public JSONObject getContentAsJSONObject() {
-        return JSON.parseObject(getContent());
+        if (jsonObject == null) {
+            jsonObject = JSON.parseObject(getContent());
+        }
+        return jsonObject;
     }
 
     public String getContentType() {
