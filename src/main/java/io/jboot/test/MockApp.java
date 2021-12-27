@@ -83,6 +83,9 @@ class MockApp {
             if (testConfig != null) {
                 JbootConfigManager.parseArgs(testConfig.launchArgs());
                 JbootConfigManager.me().setDevMode(testConfig.devMode());
+                ClassScanner.setPrintScannerInfoEnable(testConfig.printScannerInfo());
+            } else {
+                ClassScanner.setPrintScannerInfoEnable(false);
             }
 
             doInitJFinalPathKit(testConfig);

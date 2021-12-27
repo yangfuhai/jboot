@@ -285,7 +285,9 @@ public class MockMvc {
                 cookies.addAll(holdCookies);
             }
 
-            cookies.addAll(Arrays.asList(request.getCookies()));
+            for (Cookie cookie : request.getCookies()) {
+                doSetCookie(cookie, cookies);
+            }
 
             request.setCookies(cookies);
             doSendRequest(request, response);
@@ -296,17 +298,17 @@ public class MockMvc {
             }
 
             if (isHoldCookiesEnable() && response.getCookies().size() > 0) {
-                response.getCookies().forEach(this::doSetCookie);
+                response.getCookies().forEach(cookie -> doSetCookie(cookie, holdCookies));
             }
         }
 
         return new MockMvcResult(response);
     }
 
-    public void doSetCookie(Cookie newCookie) {
-        holdCookies.removeIf(cookie -> Objects.equals(cookie.getName(), newCookie.getName()));
+    public void doSetCookie(Cookie newCookie, Set<Cookie> toCookies) {
+        toCookies.removeIf(cookie -> Objects.equals(cookie.getName(), newCookie.getName()));
         if (StrUtil.isNotEmpty(newCookie.getValue())) {
-            holdCookies.add(newCookie);
+            toCookies.add(newCookie);
         }
     }
 

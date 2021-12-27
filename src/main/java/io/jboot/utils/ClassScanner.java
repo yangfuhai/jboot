@@ -39,17 +39,15 @@ public class ClassScanner {
 
     public static final Set<String> scanClasses = new HashSet<>();
     public static final Set<String> excludeClasses = new HashSet<>();
+    private static boolean printScannerInfoEnable = JbootConfigManager.me().isDevMode();
 
-//    public static final Set<String> excludeFolderInjar = new HashSet<>();
-//
-//    static {
-//        excludeFolderInjar.add("webapp");
-//        excludeFolderInjar.add("template");
-//        excludeFolderInjar.add("assets");
-//        excludeFolderInjar.add("META-INF");
-//        excludeFolderInjar.add("schemaorg_apache_xmlbeans");
-//        excludeFolderInjar.add("rest-management-private-classpath");
-//    }
+    public static boolean isPrintScannerInfoEnable() {
+        return printScannerInfoEnable;
+    }
+
+    public static void setPrintScannerInfoEnable(boolean printScannerInfoEnable) {
+        ClassScanner.printScannerInfoEnable = printScannerInfoEnable;
+    }
 
 
     public static void addScanJarPrefix(String prefix) {
@@ -556,7 +554,6 @@ public class ClassScanner {
     }
 
 
-
     private static void initAppClasses() {
 
         Set<String> jarPaths = new HashSet<>();
@@ -586,7 +583,7 @@ public class ClassScanner {
                 continue;
             }
 
-            if (JbootConfigManager.me().isDevMode()) {
+            if (isPrintScannerInfoEnable()) {
                 System.out.println("Jboot Scan ClassPath: " + classPath);
             }
 
@@ -606,7 +603,7 @@ public class ClassScanner {
                 continue;
             }
 
-            if (JbootConfigManager.me().isDevMode()) {
+            if (isPrintScannerInfoEnable()) {
                 System.out.println("Jboot Scan Jar: " + jarPath);
             }
 

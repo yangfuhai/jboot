@@ -34,6 +34,8 @@ public @interface TestConfig {
     //配置 appMode
     boolean devMode() default true;
 
+    boolean printScannerInfo() default false;
+
     //配置启动参数
     String[] launchArgs() default "";
 
