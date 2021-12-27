@@ -425,6 +425,9 @@ public class AntPathMatcher {
      */
 
     public String extractPathWithinPattern(String pattern, String path) {
+        if (pattern == null){
+            return "";
+        }
         String[] patternParts = StringUtils.tokenizeToStringArray(pattern, this.pathSeparator, this.trimTokens, true);
         String[] pathParts = StringUtils.tokenizeToStringArray(path, this.pathSeparator, this.trimTokens, true);
         StringBuilder builder = new StringBuilder();
