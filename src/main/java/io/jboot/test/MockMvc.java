@@ -278,12 +278,14 @@ public class MockMvc {
                 requestStartListener.accept(request);
             }
 
-            Set<Cookie> cookies = new HashSet<>(Arrays.asList(request.getCookies()));
+            Set<Cookie> cookies = new HashSet<>();
 
             //开启 cookie 保持, 用户未设置自己的 cookie, 上次的 cookie 有值
             if (isHoldCookiesEnable()) {
                 cookies.addAll(holdCookies);
             }
+
+            cookies.addAll(Arrays.asList(request.getCookies()));
 
             request.setCookies(cookies);
             doSendRequest(request, response);
