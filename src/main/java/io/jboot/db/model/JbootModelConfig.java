@@ -66,7 +66,6 @@ public class JbootModelConfig {
 
     private String idCacheName = "default";
 
-    private String idCacheCachePrefix;
 
     public JbootModelConfig() {
     }
@@ -143,29 +142,6 @@ public class JbootModelConfig {
         this.idCacheByCopyEnable = idCacheByCopyEnable;
     }
 
-    public String getIdCacheCachePrefix() {
-        return idCacheCachePrefix;
-    }
-
-    public void setIdCacheCachePrefix(String idCacheCachePrefix) {
-        this.idCacheCachePrefix = idCacheCachePrefix;
-    }
-
-    private String defaultIdCachePrefix;
-
-    public String getIdCachePrefixOrDefault() {
-        if (StrUtil.isNotBlank(idCacheCachePrefix)) {
-            return idCacheCachePrefix;
-        }
-
-        if (defaultIdCachePrefix == null) {
-            defaultIdCachePrefix = JbootCacheManager.me().getCache().getConfig().getDefaultCachePrefix();
-            if (defaultIdCachePrefix == null) {
-                defaultIdCachePrefix = "";
-            }
-        }
-        return defaultIdCachePrefix;
-    }
 
     public JbootModelConfig(String idCacheName) {
         this.idCacheName = idCacheName;
@@ -228,10 +204,6 @@ public class JbootModelConfig {
 
     public void setIdCache(JbootCache idCache) {
         this.idCache = idCache;
-    }
-
-    public String buildCacheName(String oraginalName) {
-        return getIdCachePrefixOrDefault() + ":" + oraginalName;
     }
 
 

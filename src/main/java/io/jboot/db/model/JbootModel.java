@@ -483,7 +483,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     protected String buildIdCacheName(String orginal) {
-        return config.buildCacheName(orginal);
+        return orginal;
     }
 
     protected String buildIdCacheKey(Object... idValues) {
