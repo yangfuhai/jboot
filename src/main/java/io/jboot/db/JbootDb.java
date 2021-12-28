@@ -70,6 +70,17 @@ public class JbootDb extends Db {
     }
 
 
+    public static Record findFirst(String tableName, Columns columns) {
+        return findFirst(tableName, columns, null);
+    }
+
+
+    public static Record findFirst(String tableName, Columns columns, String orderBy) {
+        final List<Record> records = use().find(tableName, columns, orderBy, 1);
+        return records != null && !records.isEmpty() ? records.get(0) : null;
+    }
+
+
     public static int delete(String tableName, Columns columns) {
         return use().delete(tableName, columns);
     }
