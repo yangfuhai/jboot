@@ -1,3 +1,16 @@
+jboot v3.13.1:
+新增：JbootDb 新增支持 Columns 的 findFirst 方法
+新增：QuietlyUtil.java 工具类
+新增：ReflectUtil.java 的若干方法，反射调用更加简单
+优化：Redis 缓存，存入 null 时，直接对 key 进行移除
+优化：MockHttpServletRequest 直接实现 HttpServletRequest 接口，而非 HttpServletRequestWrapper 继承
+优化：@TestConfig() 注解新增 printScannerInfo 参数，默认为 false
+优化：MockMvcResult.java  提高性能
+优化：优化网关代码，使代码更加清晰
+修复：移除 JbootModelConfig.idCacheCachePrefix 配置，否则会造成重复配置的情况
+
+
+
 jboot v3.13.0:
 新增：Jbootmq 的监听器（Listener）新增 MessageContext 参数，支持更多的消息配置
 新增：MockMvc 新增 upload 方法，用于对上传文件的测试
