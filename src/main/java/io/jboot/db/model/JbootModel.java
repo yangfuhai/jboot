@@ -889,7 +889,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof JbootModel) {
+        if (!(o instanceof JbootModel)) {
             return false;
         }
 
@@ -898,8 +898,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return this == o;
         }
 
-        Object id = ((JbootModel) o)._getIdValue();
-        return id != null && id.equals(_getIdValue());
+        Object id = ((JbootModel<?>) o)._getIdValue();
+        return id != null && id.equals(this._getIdValue());
     }
 
 
