@@ -255,10 +255,10 @@ public class JbootActionReporter {
             }
             sb.append("Render      : ").append(text);
         } else if (render instanceof FileRender) {
-            File file = ReflectUtil.getFieldValue(FileRender.class, "file", render);
+            File file = ReflectUtil.getFieldValue(render, "file");
             sb.append("Render      : ").append(file);
         } else if (render instanceof RedirectRender) {
-            String url = ReflectUtil.getFieldValue(RedirectRender.class, "url", render);
+            String url = ReflectUtil.getFieldValue(render, "url");
             sb.append("Redirect    : ").append(url);
         } else if (render instanceof NullRender) {
             sb.append("Render      :  null");

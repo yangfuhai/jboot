@@ -47,6 +47,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             redisCacheNamesKey = globalKeyPrefix + redisCacheNamesKey;
         }
 
+
         if (cacheConfig.isConfigOk()) {
             redis = JbootRedisManager.me().getRedis(cacheConfig);
         } else {
@@ -67,17 +68,17 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
     @Override
     public void put(String cacheName, Object key, Object value) {
         if (value == null) {
-            // if value is null : java.lang.NullPointerException: null at redis.clients.jedis.Protocol.sendCommand(Protocol.java:99)
+            remove(cacheName, key);
             return;
         }
         redis.set(buildKey(cacheName, key), value);
-        redis.sadd(redisCacheNamesKey, cacheName);
+        redis.sadd(buildCacheName(redisCacheNamesKey), cacheName);
     }
 
     @Override
     public void put(String cacheName, Object key, Object value, int liveSeconds) {
         if (value == null) {
-            // if value is null : java.lang.NullPointerException: null at redis.clients.jedis.Protocol.sendCommand(Protocol.java:99)
+            remove(cacheName, key);
             return;
         }
         if (liveSeconds <= 0) {
@@ -86,7 +87,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         }
 
         redis.setex(buildKey(cacheName, key), liveSeconds, value);
-        redis.sadd(redisCacheNamesKey, cacheName);
+        redis.sadd(buildCacheName(redisCacheNamesKey), cacheName);
     }
 
 
@@ -115,7 +116,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             }
         } while (continueState);
 
-        redis.srem(redisCacheNamesKey, cacheName);
+        redis.srem(buildCacheName(redisCacheNamesKey), cacheName);
     }
 
 
@@ -178,7 +179,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     @Override
     public List getNames() {
-        Set set = redis.smembers(redisCacheNamesKey);
+        Set set = redis.smembers(buildCacheName(redisCacheNamesKey));
         return set == null ? null : new ArrayList(set);
     }
 

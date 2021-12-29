@@ -82,17 +82,7 @@ public class FileUtil {
     }
 
     public static void close(Closeable... closeable) {
-        if (closeable != null && closeable.length != 0) {
-            for (Closeable c : closeable) {
-                if (c != null) {
-                    try {
-                        c.close();
-                    } catch (IOException e) {
-                        LogKit.error(e.toString(), e);
-                    }
-                }
-            }
-        }
+        QuietlyUtil.quietlyClose(closeable);
     }
 
 
@@ -108,34 +98,40 @@ public class FileUtil {
 
 
     public static void unzip(String zipFilePath, String targetPath, boolean safeUnzip) throws IOException {
+        targetPath = getCanonicalPath(new File(targetPath));
         ZipFile zipFile = new ZipFile(zipFilePath);
         try {
             Enumeration<?> entryEnum = zipFile.entries();
-            if (null != entryEnum) {
-                while (entryEnum.hasMoreElements()) {
-                    OutputStream os = null;
-                    InputStream is = null;
-                    try {
-                        ZipEntry zipEntry = (ZipEntry) entryEnum.nextElement();
-                        if (!zipEntry.isDirectory()) {
-                            if (safeUnzip && isNotSafeFile(zipEntry.getName())) {
-                                continue;
-                            }
-                            File targetFile = new File(targetPath + File.separator + zipEntry.getName());
-                            if (!targetFile.getParentFile().exists()) {
-                                targetFile.getParentFile().mkdirs();
-                            }
-                            os = new BufferedOutputStream(new FileOutputStream(targetFile));
-                            is = zipFile.getInputStream(zipEntry);
-                            byte[] buffer = new byte[4096];
-                            int readLen = 0;
-                            while ((readLen = is.read(buffer, 0, 4096)) > 0) {
-                                os.write(buffer, 0, readLen);
-                            }
+            while (entryEnum.hasMoreElements()) {
+                OutputStream os = null;
+                InputStream is = null;
+                try {
+                    ZipEntry zipEntry = (ZipEntry) entryEnum.nextElement();
+                    if (!zipEntry.isDirectory()) {
+                        if (safeUnzip && isNotSafeFile(zipEntry.getName())) {
+                            //Unsafe
+                            continue;
                         }
-                    } finally {
-                        close(is, os);
+
+                        File targetFile = new File(targetPath + File.separator + zipEntry.getName());
+                        if (safeUnzip && !getCanonicalPath(targetFile).startsWith(targetPath)) {
+                            //Unsafe
+                            continue;
+                        }
+
+                        if (!targetFile.getParentFile().exists()) {
+                            targetFile.getParentFile().mkdirs();
+                        }
+                        os = new BufferedOutputStream(new FileOutputStream(targetFile));
+                        is = zipFile.getInputStream(zipEntry);
+                        byte[] buffer = new byte[4096];
+                        int readLen = 0;
+                        while ((readLen = is.read(buffer, 0, 4096)) > 0) {
+                            os.write(buffer, 0, readLen);
+                        }
                     }
+                } finally {
+                    close(is, os);
                 }
             }
         } finally {
@@ -145,7 +141,7 @@ public class FileUtil {
 
     private static boolean isNotSafeFile(String name) {
         name = name.toLowerCase();
-        return name.contains("..") || name.endsWith(".jsp") || name.endsWith(".jspx");
+        return name.endsWith(".jsp") || name.endsWith(".jspx");
     }
 
 

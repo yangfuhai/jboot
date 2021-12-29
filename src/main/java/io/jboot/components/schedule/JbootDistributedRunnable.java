@@ -18,6 +18,7 @@ package io.jboot.components.schedule;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.support.redis.JbootRedis;
+import io.jboot.utils.QuietlyUtil;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -169,11 +170,7 @@ public class JbootDistributedRunnable implements Runnable {
             millis = 1000;
         }
 
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        QuietlyUtil.quietlySleep(millis);
     }
 
     //for override

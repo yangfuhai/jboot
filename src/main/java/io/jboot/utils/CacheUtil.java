@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Usage：
  * 1、CacheUtil.get("cacheName","key")
- * 2、CacheUtil.use("redis").get("cacheName","key")
+ * 2、CacheUtil.use("default").get("cacheName","key")
  */
 public class CacheUtil {
 

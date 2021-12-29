@@ -108,7 +108,7 @@ class MockApp {
             }
 
             filter.init(new MockFilterConfig());
-            config = ReflectUtil.getFieldValue(JFinalFilter.class, "jfinalConfig", filter);
+            config = ReflectUtil.getFieldValue(filter, "jfinalConfig");
         } catch (ServletException e) {
             e.printStackTrace();
         }

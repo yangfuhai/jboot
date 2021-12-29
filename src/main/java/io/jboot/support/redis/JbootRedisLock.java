@@ -16,6 +16,7 @@
 package io.jboot.support.redis;
 
 import io.jboot.Jboot;
+import io.jboot.utils.QuietlyUtil;
 
 /**
  * Created by michael.
@@ -149,11 +150,7 @@ public class JbootRedisLock {
 
             if (timeout > 0) {
                 timeout -= 100;
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                QuietlyUtil.quietlySleep(100);
             }
 
         } while (timeout > 0);

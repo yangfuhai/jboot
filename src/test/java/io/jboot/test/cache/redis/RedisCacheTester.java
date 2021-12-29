@@ -33,9 +33,10 @@ public class RedisCacheTester {
 
     @Test
     public void testGet() {
-        Jboot.getCache().put("cachename", "key", "value");
+        Jboot.getCache().put("cachename", "key", "value1111");
         String value = Jboot.getCache().get("cachename", "key");
-        Assert.assertTrue("value".equals(value));
+        System.out.println("testGet:" + value);
+        Assert.assertTrue("value1111".equals(value));
     }
 
 

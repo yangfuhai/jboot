@@ -19,6 +19,7 @@ import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.jfinal.kit.LogKit;
 import io.jboot.utils.FileUtil;
+import io.jboot.utils.QuietlyUtil;
 
 import java.io.File;
 
@@ -50,11 +51,7 @@ public class FileDataSource<T> extends AbstractDataSource<String, T> {
                 } catch (Exception ex) {
                     LogKit.error(ex.toString(), ex);
                 }
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                QuietlyUtil.quietlySleep(5000);
             }
         }, "jboot-sentinel-file-reader").start();
     }

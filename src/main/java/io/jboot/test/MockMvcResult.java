@@ -120,9 +120,10 @@ public class MockMvcResult {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Headers:").append("\n").append(getHeaders()).append("\n\n");
-        builder.append("Status:").append("\n").append(getStatus()).append("\n\n");
-        builder.append("Content:").append("\n").append(getContent()).append("\n\n");
+        builder.append("Response:\n");
+        builder.append("Headers >>> ").append(getHeaders()).append("\n");
+        builder.append("Status  >>> ").append(getStatus()).append("\n");
+        builder.append("Content >>> ").append(getContent()).append("\n");
         return builder.toString();
     }
 }

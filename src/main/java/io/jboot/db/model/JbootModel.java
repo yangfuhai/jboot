@@ -26,7 +26,6 @@ import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -818,9 +817,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return get(_getPrimaryKey());
     }
 
-    public <T> T[] _getIdValues(Class<T> clazz) {
+    public Object[] _getIdValues() {
         String[] pkeys = _getPrimaryKeys();
-        T[] values = (T[]) Array.newInstance(clazz, pkeys.length);
+        Object[] values = new Object[pkeys.length];
 
         int i = 0;
         for (String key : pkeys) {
@@ -890,7 +889,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof JbootModel)) {
+        if (o instanceof JbootModel) {
             return false;
         }
 
@@ -904,11 +903,22 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    @Override
+    public int hashCode() {
+        //可能model在rpc的Controller层，没有映射到数据库
+        if (_getTable(false) == null) {
+            return Objects.hash(_getAttrValues());
+        }
+
+        final Object[] idValues = _getIdValues();
+        return idValues.length > 0 ? Objects.hash(idValues) : Objects.hash(_getAttrValues());
+    }
+
     public M preventXssAttack() {
         String[] attrNames = _getAttrNames();
         for (String attrName : attrNames) {
             Object value = get(attrName);
-            if (value == null || !(value instanceof String)) {
+            if (!(value instanceof String)) {
                 continue;
             }
 
@@ -922,7 +932,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         String[] attrNames = _getAttrNames();
         for (String attrName : attrNames) {
             Object value = get(attrName);
-            if (value == null || !(value instanceof String)) {
+            if (!(value instanceof String)) {
                 continue;
             }
 
@@ -934,9 +944,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                 }
             }
 
-            if (isIgnoreAttr) {
-                continue;
-            } else {
+            if (!isIgnoreAttr) {
                 set(attrName, StrUtil.escapeHtml((String) value));
             }
         }

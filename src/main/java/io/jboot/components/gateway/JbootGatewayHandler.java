@@ -16,11 +16,9 @@
 package io.jboot.components.gateway;
 
 import com.jfinal.handler.Handler;
-import com.jfinal.kit.LogKit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -32,24 +30,11 @@ public class JbootGatewayHandler extends Handler {
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
         JbootGatewayConfig config = JbootGatewayManager.me().matchingConfig(request);
         if (config != null) {
-            try {
-                new GatewayInvocation(config, request, response).invoke();
-            } finally {
-                isHandled[0] = true;
-                flushBuffer(response);
-            }
+            isHandled[0] = true;
+            new GatewayInvocation(config, request, response).invoke();
         } else {
             next.handle(target, request, response, isHandled);
         }
     }
 
-    private static void flushBuffer(HttpServletResponse resp) {
-        try {
-            if (!resp.isCommitted()) {
-                resp.flushBuffer();
-            }
-        } catch (IOException e) {
-            LogKit.error(e.toString(), e);
-        }
-    }
 }

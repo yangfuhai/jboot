@@ -20,6 +20,7 @@ import io.jboot.exception.JbootException;
 import io.jboot.support.redis.JbootRedisBase;
 import io.jboot.support.redis.JbootRedisConfig;
 import io.jboot.support.redis.RedisScanResult;
+import io.jboot.utils.QuietlyUtil;
 import io.jboot.utils.StrUtil;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.*;
@@ -1182,11 +1183,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
                         break;
                     } catch (JedisConnectionException e) {
                         LOG.error("failed connect to redis, reconnect it.", e);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ie) {
-                            break;
-                        }
+                        QuietlyUtil.quietlySleep(1000);
                     }
                 }
             }
@@ -1218,11 +1215,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
                         break;
                     } catch (Throwable e) {
                         LOG.error("failed connect to redis, reconnect it.", e);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ie) {
-                            break;
-                        }
+                        QuietlyUtil.quietlySleep(1000);
                     }
                 }
             }

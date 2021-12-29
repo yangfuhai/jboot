@@ -20,6 +20,7 @@ import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.JbootRedisBase;
 import io.jboot.support.redis.JbootRedisConfig;
 import io.jboot.support.redis.RedisScanResult;
+import io.jboot.utils.QuietlyUtil;
 import io.jboot.utils.StrUtil;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
@@ -1495,11 +1496,7 @@ public class JbootJedisImpl extends JbootRedisBase {
                         break;
                     } catch (JedisConnectionException e) {
                         LOG.error("Failed connect to redis, reconnect it.", e);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ie) {
-                            break;
-                        }
+                        QuietlyUtil.quietlySleep(1000);
                     } finally {
                         returnResource(jedis);
                     }
@@ -1538,11 +1535,7 @@ public class JbootJedisImpl extends JbootRedisBase {
                         break;
                     } catch (Throwable e) {
                         LOG.error("Failed connect to redis, reconnect it.", e);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ie) {
-                            break;
-                        }
+                        QuietlyUtil.quietlySleep(1000);
                     } finally {
                         if (jedis != null) {
                             returnResource(jedis);
