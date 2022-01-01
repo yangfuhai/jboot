@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.aop.cglib;
+package io.jboot.aop.javassist;
 
+import com.jfinal.kit.LogKit;
 import com.jfinal.proxy.ProxyFactory;
-import net.sf.cglib.proxy.MethodInterceptor;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyObject;
 
 import java.util.function.Function;
 
@@ -26,33 +28,40 @@ import java.util.function.Function;
  * <pre>
  * 配置方法：
  * public void configConstant(Constants me) {
- *     ProxyManager.me().setProxyFactory(new JbootCglibProxyFactory());
+ *     ProxyManager.me().setProxyFactory(new JbootJavassistProxyFactory());
  * }
  * </pre>
  */
-public class JbootCglibProxyFactory extends ProxyFactory {
+public class JbootJavassistProxyFactory extends ProxyFactory {
 
     /**
      * 方便在单元测试的时候，可以对任意 class 进行 Mock
      */
-    private static Function<Class<?>, MethodInterceptor> methodInterceptor = aClass -> new JbootCglibCallback();
+    private static Function<Class<?>, MethodHandler> methodInterceptor = aClass -> new JbootJavassistHandler();
 
-    public static Function<Class<?>, MethodInterceptor> getMethodInterceptor() {
+    public static Function<Class<?>, MethodHandler> getMethodInterceptor() {
         return methodInterceptor;
     }
 
-    public static void setMethodInterceptor(Function<Class<?>, MethodInterceptor> methodInterceptor) {
-        JbootCglibProxyFactory.methodInterceptor = methodInterceptor;
+    public static void setMethodInterceptor(Function<Class<?>, MethodHandler> methodInterceptor) {
+        JbootJavassistProxyFactory.methodInterceptor = methodInterceptor;
     }
 
     @Override
     public <T> T get(Class<T> target) {
+        javassist.util.proxy.ProxyFactory factory = new javassist.util.proxy.ProxyFactory();
+        factory.setSuperclass(target);
+        final Class<?> proxyClass = factory.createClass();
+
+        T proxyObject = null;
         try {
-            return (T) net.sf.cglib.proxy.Enhancer.create(target, methodInterceptor.apply(target));
+            proxyObject = (T) proxyClass.newInstance();
+            ((ProxyObject) proxyObject).setHandler(methodInterceptor.apply(target));
         } catch (Throwable e) {
-            //原始的错误，无法给出哪个类无法被创建，错误信息不够友好
-            throw new RuntimeException("Can not create object for class:\"" + target.getName() + "\", cause：" + e.getMessage(), e);
+            LogKit.error(e.toString(), e);
         }
+
+        return proxyObject;
     }
 
 

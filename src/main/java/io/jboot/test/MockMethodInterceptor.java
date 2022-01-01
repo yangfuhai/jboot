@@ -18,8 +18,10 @@ package io.jboot.test;
 import com.jfinal.kit.LogKit;
 import io.jboot.aop.InterceptorCache;
 import io.jboot.aop.cglib.JbootCglibCallback;
+import io.jboot.aop.javassist.JbootJavassistHandler;
 import io.jboot.service.JbootServiceBase;
 import io.jboot.utils.ClassUtil;
+import javassist.util.proxy.MethodHandler;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
@@ -29,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class MockMethodInterceptor extends JbootCglibCallback {
+class MockMethodInterceptor extends JbootCglibCallback implements MethodHandler {
 
     private static final Map<InterceptorCache.MethodKey, MockMethodInfo> METHOD_INFO_CACHE = new HashMap<>();
 
@@ -94,5 +96,43 @@ class MockMethodInterceptor extends JbootCglibCallback {
             }
         }
 
+    }
+
+
+    private static final JbootJavassistHandler orginalHandler = new JbootJavassistHandler();
+
+    @Override
+    public Object invoke(Object target, Method thisMethod, Method method, Object[] args) throws Throwable {
+        Class<?> targetClass = ClassUtil.getUsefulClass(target.getClass());
+
+        //对于接口而且没有实现类的情况，target 是一个 Object 类
+        if (targetClass == Object.class && method.getDeclaringClass() != Object.class) {
+            targetClass = method.getDeclaringClass();
+        }
+
+        InterceptorCache.MethodKey methodKey = InterceptorCache.getMethodKey(targetClass, method);
+
+        if (METHOD_INFO_CACHE.containsKey(methodKey)) {
+            MockMethodInfo methodInfo = METHOD_INFO_CACHE.get(methodKey);
+            return methodInfo.invokeMock(target, args);
+        }
+
+        if (autoMockInterface && Modifier.isInterface(targetClass.getModifiers())) {
+            if (!("toString".equals(method.getName()) && args.length == 0)) {
+                LogKit.warn("Return null for Mock Method: \"" + ClassUtil.buildMethodString(method) + "\", " +
+                        "Because the class \"" + targetClass.getName() + "\" is an interface and has no any implementation classes.");
+            }
+            return null;
+        }
+
+        try {
+            return orginalHandler.invoke(target, thisMethod, method, args);
+        } catch (Exception ex) {
+            if ("initDao".equals(method.getName()) && JbootServiceBase.class == method.getDeclaringClass()) {
+                return null;
+            } else {
+                throw ex;
+            }
+        }
     }
 }

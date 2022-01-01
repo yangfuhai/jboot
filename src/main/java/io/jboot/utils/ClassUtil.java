@@ -255,11 +255,21 @@ public class ClassUtil {
 
 
     private static final String ENHANCER_BY = "$$EnhancerBy";
+    private static final String JAVASSIST_BY = "_$$_";
 
     public static Class getUsefulClass(Class<?> clazz) {
         //ControllerTest$ServiceTest$$EnhancerByGuice$$40471411#hello
         //com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
-        return clazz.getName().indexOf(ENHANCER_BY) == -1 ? clazz : clazz.getSuperclass();
+        //io.jboot.test.app.TestAppListener_$$_jvstb9f_0  by:javassist
+
+        final String name = clazz.getName();
+        if (name.contains(ENHANCER_BY) || name.contains(JAVASSIST_BY)){
+            return clazz.getSuperclass();
+        }
+
+        return clazz;
+
+//        return clazz.getName().indexOf(ENHANCER_BY) == -1 ? clazz : clazz.getSuperclass();
     }
 
 

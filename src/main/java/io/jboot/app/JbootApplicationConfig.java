@@ -30,6 +30,7 @@ public class JbootApplicationConfig {
     private String jfinalConfig = "io.jboot.core.JbootCoreConfig";
     private String listener = "*";
     private boolean handle404 = true;
+    private String proxy = "cglib";
 
 
     public String getMode() {
@@ -88,6 +89,14 @@ public class JbootApplicationConfig {
         this.handle404 = handle404;
     }
 
+    public String getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
+    }
+
     private static JbootApplicationConfig instance;
 
     public static JbootApplicationConfig get() {
@@ -103,6 +112,7 @@ public class JbootApplicationConfig {
                 " name='" + name + '\'' +
                 ", mode='" + mode + '\'' +
                 ", version='" + version + '\'' +
+                ", proxy='" + proxy + '\'' +
                 ", config='" + jfinalConfig + '\'' +
                 ", listener='" + listener + '\'' +
                 " }";

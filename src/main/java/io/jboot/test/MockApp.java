@@ -20,6 +20,7 @@ import com.jfinal.core.JFinalFilter;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
+import io.jboot.aop.javassist.JbootJavassistProxyFactory;
 import io.jboot.app.PathKitExt;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.test.web.MockFilterChain;
@@ -92,7 +93,10 @@ class MockApp {
 
 
             boolean autoMockInterface = testConfig != null && testConfig.autoMockInterface();
+
+            //support cglib and javassist
             JbootCglibProxyFactory.setMethodInterceptor(aClass -> new MockMethodInterceptor(autoMockInterface));
+            JbootJavassistProxyFactory.setMethodInterceptor(aClass -> new MockMethodInterceptor(autoMockInterface));
 
             List<MockMethodInfo> mockMethodInfos = getMockMethodInfoList(testClass);
             if (!mockMethodInfos.isEmpty()) {

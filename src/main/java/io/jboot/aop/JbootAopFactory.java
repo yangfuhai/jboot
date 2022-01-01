@@ -24,6 +24,8 @@ import com.jfinal.proxy.Proxy;
 import com.jfinal.proxy.ProxyManager;
 import io.jboot.aop.annotation.*;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
+import io.jboot.aop.javassist.JbootJavassistProxyFactory;
+import io.jboot.app.JbootApplicationConfig;
 import io.jboot.app.config.JbootConfigKit;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
@@ -83,7 +85,13 @@ public class JbootAopFactory extends AopFactory {
 
 
     private JbootAopFactory() {
-        ProxyManager.me().setProxyFactory(new JbootCglibProxyFactory());
+
+        if ("javassist".equalsIgnoreCase(JbootApplicationConfig.get().getProxy())) {
+            ProxyManager.me().setProxyFactory(new JbootJavassistProxyFactory());
+        } else {
+            ProxyManager.me().setProxyFactory(new JbootCglibProxyFactory());
+        }
+
         setInjectSuperClass(true);
         initBeanMapping();
     }
