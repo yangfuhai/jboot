@@ -20,7 +20,6 @@ import com.jfinal.aop.InterceptorManager;
 import com.jfinal.aop.Invocation;
 import io.jboot.aop.InterceptorBuilderManager;
 import io.jboot.aop.InterceptorCache;
-import io.jboot.utils.ClassUtil;
 import javassist.util.proxy.MethodHandler;
 
 import java.lang.reflect.Method;
@@ -36,28 +35,29 @@ public class JbootJavassistHandler implements MethodHandler {
 
 
     @Override
-    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+    public Object invoke(Object self, Method originalMethod, Method proxyMethod, Object[] args) throws Throwable {
 
-        if (excludedMethodName.contains(proceed.getName())) {
-            return proceed.invoke(self, args);
+        if (excludedMethodName.contains(originalMethod.getName())) {
+            return proxyMethod.invoke(self, args);
         }
 
-        Class<?> targetClass = ClassUtil.getUsefulClass(self.getClass());
+        Class<?> targetClass = self.getClass().getSuperclass();
+        //ClassUtil.getUsefulClass(self.getClass());
 
-        InterceptorCache.MethodKey key = InterceptorCache.getMethodKey(targetClass, proceed);
+        InterceptorCache.MethodKey key = InterceptorCache.getMethodKey(targetClass, originalMethod);
         Interceptor[] inters = InterceptorCache.get(key);
         if (inters == null) {
-            inters = interManager.buildServiceMethodInterceptor(targetClass, proceed);
-            inters = builderManager.build(targetClass, proceed, inters);
+            inters = interManager.buildServiceMethodInterceptor(targetClass, originalMethod);
+            inters = builderManager.build(targetClass, originalMethod, inters);
 
             InterceptorCache.put(key, inters);
         }
 
         if (inters.length == 0) {
-            return proceed.invoke(self, args);
+            return proxyMethod.invoke(self, args);
         } else {
-            Invocation invocation = new Invocation(self, proceed, inters,
-                    x -> proceed.invoke(self, x), args);
+            Invocation invocation = new Invocation(self, originalMethod, inters,
+                    x -> proxyMethod.invoke(self, x), args);
             invocation.invoke();
             return invocation.getReturnValue();
         }
