@@ -84,6 +84,8 @@ public class JbootSerializerManager {
                 return new FstSerializer();
             case JbootSerializerConfig.FASTJSON:
                 return new FastJsonSerializer();
+//            case JbootSerializerConfig.JACKSON:
+//                return new JacksonSerializer();
             default:
                 return JbootSpiLoader.load(JbootSerializer.class, serializerName);
         }

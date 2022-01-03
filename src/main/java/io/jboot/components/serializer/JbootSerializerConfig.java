@@ -23,6 +23,7 @@ public class JbootSerializerConfig {
     
     public static final String FST = "fst";
     public static final String FASTJSON = "fastjson";
+    public static final String JACKSON = "jackson";
     public static final String KRYO = "kryo";
 
     public String type = FST;

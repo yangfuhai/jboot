@@ -16,10 +16,9 @@
 package io.jboot.components.serializer;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.jfinal.log.Log;
-
-import java.io.Serializable;
 
 
 public class FastJsonSerializer implements JbootSerializer {
@@ -31,9 +30,13 @@ public class FastJsonSerializer implements JbootSerializer {
         if (obj == null) {
             return null;
         }
-        FastJsonCacheObject object = new FastJsonCacheObject(obj.getClass(), obj);
-        String string = JSON.toJSONString(object);
-        return string.getBytes();
+
+        return JSON.toJSONBytes(obj
+                , SerializerFeature.WriteClassName
+                , SerializerFeature.SkipTransientField
+                , SerializerFeature.IgnoreErrorGetter
+//                , SerializerFeature.IgnoreNonFieldGetter
+        );
     }
 
     @Override
@@ -41,47 +44,14 @@ public class FastJsonSerializer implements JbootSerializer {
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-        String json = new String(bytes);
-        JSONObject jsonObject = null;
-        Class<?> clazz = null;
+
         try {
-            jsonObject = JSON.parseObject(json);
-            clazz = Class.forName(jsonObject.getString("clazz"));
+            return JSON.parse(bytes, Feature.SupportAutoType);
         } catch (Exception e) {
             LOG.error(e.toString(), e);
-            return null;
-        }
-        return jsonObject.getObject("object", clazz);
-    }
-
-
-    public static class FastJsonCacheObject implements Serializable {
-        private Class<?> clazz;
-        private Object object;
-
-        public FastJsonCacheObject() {
         }
 
-        public FastJsonCacheObject(Class<?> clazz, Object object) {
-            this.clazz = clazz;
-            this.object = object;
-        }
-
-        public Class<?> getClazz() {
-            return clazz;
-        }
-
-        public void setClazz(Class<?> clazz) {
-            this.clazz = clazz;
-        }
-
-        public Object getObject() {
-            return object;
-        }
-
-        public void setObject(Object object) {
-            this.object = object;
-        }
+        return null;
     }
 
 
