@@ -103,7 +103,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         int scanCount = 1000;
         boolean continueState = true;
         do {
-            RedisScanResult<String> redisScanResult = redis.scan(cacheName + ":*", cursor, scanCount);
+            RedisScanResult<String> redisScanResult = redis.scan(buildCacheName(cacheName) + ":*", cursor, scanCount);
             List<String> scanKeys = redisScanResult.getResults();
             cursor = redisScanResult.getCursor();
 
@@ -186,6 +186,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     @Override
     public List getKeys(String cacheName) {
+        cacheName = buildCacheName(cacheName);
         List<String> keys = new ArrayList<>();
         String cursor = "0";
         int scanCount = 1000;
