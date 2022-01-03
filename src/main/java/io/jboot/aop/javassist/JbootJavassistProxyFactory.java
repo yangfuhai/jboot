@@ -53,6 +53,7 @@ public class JbootJavassistProxyFactory extends ProxyFactory {
         factory.setSuperclass(target);
         final Class<?> proxyClass = factory.createClass();
 
+
         T proxyObject = null;
         try {
             proxyObject = (T) proxyClass.newInstance();

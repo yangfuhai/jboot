@@ -1,6 +1,3 @@
-package io.jboot.aop;
-
-import java.lang.reflect.Field;
 /**
  * Copyright (c) 2015-2021, Michael Yang 杨福海 (fuhai999@gmail.com).
  * <p>
@@ -16,7 +13,29 @@ import java.lang.reflect.Field;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public interface JbootLazyLoader {
+package io.jboot.aop.cglib;
 
-    Object loadLazyObject(Object targetObject, Field field) throws ReflectiveOperationException;
+import io.jboot.aop.JbootAopFactory;
+import net.sf.cglib.proxy.LazyLoader;
+
+import java.lang.reflect.Field;
+
+public class JbootCglibLazyLoader implements LazyLoader {
+
+    private static JbootAopFactory factory = JbootAopFactory.me();
+
+    private Object targetObject;
+    private Field field;
+
+    public JbootCglibLazyLoader(Object targetObject, Field field) {
+        this.targetObject = targetObject;
+        this.field = field;
+    }
+
+    @Override
+    public Object loadObject() throws Exception {
+        return factory.createFieldObjectNormal(targetObject, field);
+    }
+
+
 }

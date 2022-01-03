@@ -41,7 +41,6 @@ import io.jboot.exception.JbootException;
 import io.jboot.service.JbootServiceBase;
 import io.jboot.utils.*;
 import io.jboot.web.controller.JbootController;
-import net.sf.cglib.proxy.Enhancer;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
@@ -186,12 +185,12 @@ public class JbootAopFactory extends AopFactory {
     }
 
 
-    protected Object createFieldObjectLazy(Object targetObject, Field field) {
-        return Enhancer.create(field.getType(), new JbootLazyLoader(targetObject, field));
+    protected Object createFieldObjectLazy(Object targetObject, Field field) throws ReflectiveOperationException {
+        return JbootLazyLoaderFactory.me().getLoader().loadLazyObject(targetObject,field);
     }
 
 
-    protected Object createFieldObjectNormal(Object targetObject, Field field) throws ReflectiveOperationException {
+    public Object createFieldObjectNormal(Object targetObject, Field field) throws ReflectiveOperationException {
         Inject inject = field.getAnnotation(Inject.class);
         if (inject != null) {
             Bean bean = field.getAnnotation(Bean.class);
