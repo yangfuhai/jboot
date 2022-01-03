@@ -51,6 +51,7 @@
         <mysql.version>5.1.49</mysql.version>
         <undertow.version>2.2.14.Final</undertow.version>
         <slf4j.version>1.7.32</slf4j.version>
+<!--        <fst.version>3.0.3</fst.version>-->
         <fst.version>2.57</fst.version>
         <fastjson.version>1.2.79</fastjson.version>
         <guava.version>31.0.1-jre</guava.version>

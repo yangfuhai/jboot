@@ -30,7 +30,7 @@ public class JbootApplicationConfig {
     private String jfinalConfig = "io.jboot.core.JbootCoreConfig";
     private String listener = "*";
     private boolean handle404 = true;
-    private String proxy = "cglib";
+    private String proxy = "cglib";  //cglib or  javassist
 
 
     public String getMode() {

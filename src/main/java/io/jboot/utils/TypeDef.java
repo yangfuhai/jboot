@@ -21,7 +21,7 @@ public class TypeDef<T> {
 
 
     protected Type type;
-    protected Class defClass;
+    protected Class<?> defClass;
 
     protected TypeDef() {
         Type superClass = getClass().getGenericSuperclass();
@@ -33,10 +33,10 @@ public class TypeDef<T> {
         if (type instanceof ParameterizedType) {
             ParameterizedType paraType = (ParameterizedType) type;
             this.type = paraType;
-            this.defClass = (Class) paraType.getRawType();
+            this.defClass = (Class<?>) paraType.getRawType();
         } else {
             this.type = type;
-            this.defClass = (Class) type;
+            this.defClass = (Class<?>) type;
         }
     }
 
@@ -46,7 +46,7 @@ public class TypeDef<T> {
     }
 
 
-    public Class getDefClass() {
+    public Class<?> getDefClass() {
         return defClass;
     }
 

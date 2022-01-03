@@ -18,7 +18,7 @@ public class LazyController extends Controller {
     public void index1() {
         System.out.println("");
 //        System.out.println("userService ---->" + userService);
-//        System.out.println("bService ---->" + bService);
+        System.out.println("bService ---->" + bService);
 
         renderText("index1");
     }
