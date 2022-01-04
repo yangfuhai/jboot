@@ -1,3 +1,11 @@
+jboot v3.13.2:
+新增：AOP 新增 javassist 的实现，方便在 jdk17 去掉 cglib
+修复：在配置前缀的场景下，修复 redis 缓存 removeAll() 无法正确移除数据的问题
+修复：SharedEnumObject 在 jdk17 下无法正常运行的问题
+修复：Fastjson 对某些数据无法正确序列化的问题，升级 fastjson 到最新版本
+
+
+
 jboot v3.13.1:
 新增：JbootDb 新增支持 Columns 的 findFirst 方法
 新增：QuietlyUtil.java 工具类
