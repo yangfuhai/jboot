@@ -50,21 +50,10 @@ class JbootProp {
 
     public JbootProp(File file) {
         properties = new Properties();
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
-            if (inputStream != null) {
-                properties.load(new InputStreamReader(inputStream, DEFAULT_ENCODING));
-            }
+        try (InputStream inputStream = new FileInputStream(file)) {
+            properties.load(new InputStreamReader(inputStream, DEFAULT_ENCODING));
         } catch (Exception e) {
             System.err.println("Warning: Can not load properties file: " + file);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                }
-            }
         }
     }
 

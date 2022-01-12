@@ -65,17 +65,20 @@ public class JbootConfigManager {
 
 
     private void init() {
+        String fileName = getOriginalConfigValue(null, "jboot_properties_name");
+        if (fileName == null || fileName.length() == 0){
+            fileName = "jboot";
+        }
 
-        mainProperties = new JbootProp("jboot.properties").getProperties();
+        mainProperties = new JbootProp(fileName + ".properties").getProperties();
 
         String mode = getConfigValue("jboot.app.mode");
-
         if (JbootConfigKit.isNotBlank(mode)) {
-            String modePropertiesName = "jboot-" + mode + ".properties";
+            String modePropertiesName = fileName + "-" + mode + ".properties";
             mainProperties.putAll(new JbootProp(modePropertiesName).getProperties());
         }
 
-        Properties externalProperties = JbootConfigKit.readExternalProperties();
+        Properties externalProperties = JbootConfigKit.readExternalProperties(fileName);
         if (externalProperties != null && !externalProperties.isEmpty()) {
             mainProperties.putAll(externalProperties);
         }
@@ -288,9 +291,11 @@ public class JbootConfigManager {
         }
 
         //user properties
-        value = (String) properties.get(key);
-        if (JbootConfigKit.isNotBlank(value)) {
-            return value.trim();
+        if (properties != null) {
+            value = (String) properties.get(key);
+            if (JbootConfigKit.isNotBlank(value)) {
+                return value.trim();
+            }
         }
 
         return null;

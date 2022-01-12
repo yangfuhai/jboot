@@ -158,10 +158,10 @@ public class JbootConfigKit {
     }
 
 
-    static Properties readExternalProperties() {
+    static Properties readExternalProperties(String fileName) {
         String currentJarFilePath = JbootConfigKit.class.getProtectionDomain().getCodeSource().getLocation().getFile();
         File fileDir = new File(currentJarFilePath).getParentFile();
-        File externalProperties = new File(fileDir, "jboot.properties");
+        File externalProperties = new File(fileDir, fileName+".properties");
         if (externalProperties.exists()) {
             return new JbootProp(externalProperties).getProperties();
         }
