@@ -15,9 +15,6 @@
  */
 package io.jboot.components.mq;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
@@ -27,9 +24,7 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 
 
@@ -38,13 +33,13 @@ public abstract class JbootmqBase implements Jbootmq {
     private static final Log LOG = Log.getLog(JbootmqBase.class);
 
     private List<JbootmqMessageListener> globalListeners = new CopyOnWriteArrayList<>();
-    private Multimap<String, JbootmqMessageListener> channelListeners = ArrayListMultimap.create();
-    protected final JbootmqConfig config;
+    private Map<String, List<JbootmqMessageListener>> channelListeners = new ConcurrentHashMap<>();
 
-    protected Set<String> channels = Sets.newHashSet();
-    protected Set<String> syncRecevieMessageChannels = Sets.newHashSet();
+    protected Set<String> channels = new HashSet<>();
+    protected Set<String> syncRecevieMessageChannels = new HashSet<>();
     protected JbootSerializer serializer;
 
+    protected final JbootmqConfig config;
 
     private final ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
             60L, TimeUnit.SECONDS,
@@ -75,24 +70,35 @@ public abstract class JbootmqBase implements Jbootmq {
     public void addMessageListener(JbootmqMessageListener listener, String forChannel) {
         String[] forChannels = forChannel.split(",");
         for (String channel : forChannels) {
-            if (StrUtil.isBlank(channel)) {
-                continue;
-            }
-            channelListeners.put(channel.trim(), listener);
+            addChannelListener(channel, listener);
+        }
+    }
+
+    private synchronized void addChannelListener(String channel, JbootmqMessageListener listener) {
+        if (StrUtil.isNotBlank(channel)) {
+            channel = channel.trim();
+            List<JbootmqMessageListener> listeners = channelListeners.getOrDefault(channel, new CopyOnWriteArrayList<>());
+            listeners.add(listener);
+
+            channelListeners.put(channel, listeners);
         }
     }
 
     @Override
     public void removeListener(JbootmqMessageListener listener) {
         globalListeners.remove(listener);
-        for (String channel : channelListeners.keySet()) {
-            channelListeners.remove(channel, listener);
+        for (List<JbootmqMessageListener> listeners : channelListeners.values()) {
+            listeners.remove(listener);
         }
     }
 
     @Override
     public void removeAllListeners() {
         globalListeners.clear();
+
+        for (List<JbootmqMessageListener> listeners : channelListeners.values()) {
+            listeners.clear();
+        }
         channelListeners.clear();
     }
 
