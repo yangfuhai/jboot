@@ -27,7 +27,7 @@ public class DriverClassNames {
     private static final Map<String, String[]> driverClassNames = new HashMap<>();
 
     static {
-        driverClassNames.put(DataSourceConfig.TYPE_MYSQL, new String[]{"com.mysql.jdbc.Driver", "com.mysql.cj.jdbc.Driver"});
+        driverClassNames.put(DataSourceConfig.TYPE_MYSQL, new String[]{"com.mysql.cj.jdbc.Driver", "com.mysql.jdbc.Driver"});
         driverClassNames.put(DataSourceConfig.TYPE_ORACLE, new String[]{"oracle.jdbc.driver.OracleDriver", "oracle.jdbc.OracleDriver"});
         driverClassNames.put(DataSourceConfig.TYPE_SQLSERVER, new String[]{"com.microsoft.sqlserver.jdbc.SQLServerDriver"});
         driverClassNames.put(DataSourceConfig.TYPE_SQLITE, new String[]{"org.sqlite.JDBC"});
