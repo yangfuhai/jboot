@@ -179,16 +179,13 @@ public class SharedEnumObject extends LinkedHashMap<String, Object> {
             SharedEnumObject ret;
             String javaVersion = System.getProperty("java.version");
             if (javaVersion != null && javaVersion.startsWith("1.")) {
-                //jdk 1.x
+                // jdk 1.x
                 ret = (SharedEnumObject) newClass.toClass().newInstance();
-            } else if (javaVersion != null && javaVersion.startsWith("17")) {
-                //jdk 17
+            } else {
+                // jdk 17
                 // toClass() must add neighbor class in jdk17
                 // neighbor: A class belonging to the same package that this class belongs to
                 ret = (SharedEnumObject) newClass.toClass(SharedEnumObject.class).newInstance();
-            } else {
-                //other
-                ret = (SharedEnumObject) newClass.toClass().newInstance();
             }
             ret.init(enumClass, enumStaticMethods);
             return ret;
