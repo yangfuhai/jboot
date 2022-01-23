@@ -19,7 +19,6 @@ import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.components.serializer.JbootSerializer;
-import io.jboot.components.serializer.JbootSerializerManager;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
@@ -66,23 +65,26 @@ public abstract class JbootmqBase implements Jbootmq {
         globalListeners.add(listener);
     }
 
+
     @Override
     public void addMessageListener(JbootmqMessageListener listener, String forChannel) {
         String[] forChannels = forChannel.split(",");
         for (String channel : forChannels) {
-            addChannelListener(channel, listener);
+            if (StrUtil.isNotBlank(channel)) {
+                addChannelListener(channel.trim(), listener);
+            }
         }
     }
 
     private synchronized void addChannelListener(String channel, JbootmqMessageListener listener) {
-        if (StrUtil.isNotBlank(channel)) {
-            channel = channel.trim();
-            List<JbootmqMessageListener> listeners = channelListeners.getOrDefault(channel, new CopyOnWriteArrayList<>());
-            listeners.add(listener);
-
+        List<JbootmqMessageListener> listeners = channelListeners.get(channel);
+        if (listeners == null) {
+            listeners = new CopyOnWriteArrayList<>();
             channelListeners.put(channel, listeners);
         }
+        listeners.add(listener);
     }
+
 
     @Override
     public void removeListener(JbootmqMessageListener listener) {
@@ -95,10 +97,7 @@ public abstract class JbootmqBase implements Jbootmq {
     @Override
     public void removeAllListeners() {
         globalListeners.clear();
-
-        for (List<JbootmqMessageListener> listeners : channelListeners.values()) {
-            listeners.clear();
-        }
+        channelListeners.forEach((s, list) -> list.clear());
         channelListeners.clear();
     }
 
@@ -120,7 +119,7 @@ public abstract class JbootmqBase implements Jbootmq {
         boolean channelResult = notifyListeners(channel, message, context, channelListeners.get(channel));
 
         if (!globalResult && !channelResult) {
-            LOG.error("Application has recevied mq message, But has no listener to process it. channel:" +
+            LOG.warn("Jboot has recevied mq message, But it has no listener to process. channel:" +
                     channel + "  message:" + message);
         }
     }
@@ -154,11 +153,9 @@ public abstract class JbootmqBase implements Jbootmq {
 
     public JbootSerializer getSerializer() {
         if (serializer == null) {
-            if (StrUtil.isBlank(config.getSerializer())) {
-                serializer = Jboot.getSerializer();
-            } else {
-                serializer = JbootSerializerManager.me().getSerializer(config.getSerializer());
-            }
+            serializer = StrUtil.isNotBlank(config.getSerializer())
+                    ? Jboot.getSerializer(config.getSerializer())
+                    : Jboot.getSerializer();
         }
         return serializer;
     }
@@ -169,18 +166,18 @@ public abstract class JbootmqBase implements Jbootmq {
     @Override
     public boolean startListening() {
         if (isStarted) {
-            throw new JbootException("jboot mq is started before.");
+            throw new JbootException("Jboot MQ has started.");
         }
 
         if (channels == null || channels.isEmpty()) {
-            throw new JbootException("mq channels is null or empty, please config channels");
+            throw new JbootException("Jboot MQ's channels is null or empty, please config channels");
         }
 
         try {
             isStarted = true;
             onStartListening();
         } catch (Exception ex) {
-            LogKit.error("start mq fail!");
+            LogKit.error("Jboot MQ start fail!");
             isStarted = false;
             return false;
         }
