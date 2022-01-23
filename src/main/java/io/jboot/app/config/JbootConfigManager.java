@@ -65,12 +65,19 @@ public class JbootConfigManager {
 
 
     private void init() {
-        String fileName = getOriginalConfigValue(null, "jboot_properties_name");
-        if (fileName == null || fileName.length() == 0){
+        String fileName = getConfigValue(null, "jboot_properties_name");
+        if (fileName == null || fileName.length() == 0) {
             fileName = "jboot";
         }
 
-        mainProperties = new JbootProp(fileName + ".properties").getProperties();
+        String pathName = getConfigValue(null, "jboot_properties_path");
+        if (pathName == null || pathName.trim().length() == 0) {
+            mainProperties = new JbootProp(fileName + ".properties").getProperties();
+        }
+        //指定路径的场景
+        else {
+            mainProperties = new JbootProp(new File(pathName, fileName + ".properties")).getProperties();
+        }
 
         String mode = getConfigValue("jboot.app.mode");
         if (JbootConfigKit.isNotBlank(mode)) {
