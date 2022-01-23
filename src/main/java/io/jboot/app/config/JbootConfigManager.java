@@ -71,27 +71,38 @@ public class JbootConfigManager {
         }
 
         String pathName = getConfigValue(null, "jboot_properties_path");
-        if (pathName == null || pathName.trim().length() == 0) {
-            mainProperties = new JbootProp(fileName + ".properties").getProperties();
-        }
-        //指定路径的场景
-        else {
-            mainProperties = new JbootProp(new File(pathName, fileName + ".properties")).getProperties();
-        }
+        mainProperties = getProperties(pathName, fileName + ".properties");
+
 
         String mode = getConfigValue("jboot.app.mode");
         if (JbootConfigKit.isNotBlank(mode)) {
+            //开始加载 mode properties
+            //并全部添加覆盖掉掉 main properties
+
             String modePropertiesName = fileName + "-" + mode + ".properties";
-            mainProperties.putAll(new JbootProp(modePropertiesName).getProperties());
+            Properties modeProperties = getProperties(pathName, modePropertiesName);
+
+            mainProperties.putAll(modeProperties);
         }
+
 
         Properties externalProperties = JbootConfigKit.readExternalProperties(fileName);
         if (externalProperties != null && !externalProperties.isEmpty()) {
             mainProperties.putAll(externalProperties);
         }
 
+
         NacosConfigManager.me().init(this);
         ApolloConfigManager.me().init(this);
+    }
+
+
+    private Properties getProperties(String pathName, String name) {
+        if (pathName != null && pathName.trim().length() > 0) {
+            return new JbootProp(new File(pathName, name)).getProperties();
+        } else {
+            return new JbootProp(name).getProperties();
+        }
     }
 
     public JbootConfigDecryptor getDecryptor() {
