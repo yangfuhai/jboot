@@ -170,14 +170,14 @@ public abstract class JbootmqBase implements Jbootmq {
         }
 
         if (channels == null || channels.isEmpty()) {
-            throw new JbootException("Jboot MQ's channels is null or empty, please config channels");
+            throw new JbootException("Jboot MQ's channels is null or empty, Please config channels.");
         }
 
         try {
             isStarted = true;
             onStartListening();
         } catch (Exception ex) {
-            LogKit.error("Jboot MQ start fail!");
+            LogKit.error("Jboot MQ start fail!", ex);
             isStarted = false;
             return false;
         }
