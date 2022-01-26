@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.13.3-SNAPSHOT</version>
+    <version>3.13.3</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -50,7 +50,7 @@
         <jackson.version>2.13.1</jackson.version>
         <mysql.version>5.1.49</mysql.version>
         <undertow.version>2.2.14.Final</undertow.version>
-        <slf4j.version>1.7.32</slf4j.version>
+        <slf4j.version>1.7.33</slf4j.version>
 <!--        <fst.version>3.0.3</fst.version>-->
         <fst.version>2.57</fst.version>
         <fastjson.version>1.2.79</fastjson.version>
@@ -59,15 +59,15 @@
         <jedis.version>3.7.1</jedis.version>
         <jsoup.version>1.14.3</jsoup.version>
         <ehcache.version>2.10.9.2</ehcache.version>
-        <caffeine.version>2.9.1</caffeine.version>
+        <caffeine.version>2.9.3</caffeine.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-codec.version>1.15</commons-codec.version>
         <httpclient.version>4.5.12</httpclient.version>
         <httpcore.version>4.4.13</httpcore.version>
         <netty.version>4.1.52.Final</netty.version>
-        <sentinel.version>1.8.2</sentinel.version>
-        <dubbo.version>2.7.13</dubbo.version>
+        <sentinel.version>1.8.3</sentinel.version>
+        <dubbo.version>2.7.15</dubbo.version>
         <resteasy.version>3.13.2.Final</resteasy.version>
         <seata.version>1.4.2</seata.version>
         <motan.version>1.1.8</motan.version>
@@ -381,7 +381,7 @@
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
-            <version>2.0.3</version>
+            <version>2.0.4</version>
             <scope>provided</scope>
         </dependency>
 

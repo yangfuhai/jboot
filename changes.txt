@@ -1,3 +1,11 @@
+jboot v3.13.3:
+新增：配置文件可以指定自己的文件名和路径的支持
+优化：JbootmqBase，使之代码更加简洁
+优化：Mysql 驱动，默认优先使用 MySql8 驱动
+优化：升级相关依赖到最新版本
+
+
+
 jboot v3.13.2:
 新增：AOP 新增 javassist 的实现，方便在 jdk17 去掉 cglib
 修复：在配置前缀的场景下，修复 redis 缓存 removeAll() 无法正确移除数据的问题
