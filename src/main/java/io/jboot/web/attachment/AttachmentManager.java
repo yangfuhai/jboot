@@ -49,6 +49,7 @@ public class AttachmentManager {
         AttachmentManager manager = managers.get(name);
         if (manager == null) {
             synchronized (AttachmentManager.class) {
+                manager = managers.get(name);
                 if (manager == null) {
                     manager = new AttachmentManager(name);
                     managers.put(name, manager);
@@ -213,26 +214,43 @@ public class AttachmentManager {
      * @return
      */
     public File getFile(String relativePath) {
+        //优先从 默认的 container 去获取
+        return getFile(relativePath, true);
+    }
+
+
+    /**
+     * 通过相对路径获取文件
+     *
+     * @param relativePath
+     * @param localFirst
+     * @return
+     */
+    public File getFile(String relativePath, boolean localFirst) {
 
         //优先从 默认的 container 去获取
-        File file = defaultContainer.getFile(relativePath);
-        if (file.exists()) {
-            return file;
+        if (localFirst) {
+            File localFile = defaultContainer.getFile(relativePath);
+            if (localFile.exists()) {
+                return localFile;
+            }
         }
 
         for (AttachmentContainer container : containers) {
-            try {
-                file = container.getFile(relativePath);
-                if (file != null && file.exists()) {
-                    return file;
+            if (container != defaultContainer) {
+                try {
+                    File file = container.getFile(relativePath);
+                    if (file != null && file.exists()) {
+                        return file;
+                    }
+                } catch (Exception ex) {
+                    LOG.error("Get file error in container: " + container, ex);
                 }
-            } catch (Exception ex) {
-                LOG.error("Get file error in container :" + container, ex);
             }
         }
 
         //文件不存在，也返回该文件
-        return file;
+        return defaultContainer.getFile(relativePath);
     }
 
     /**
