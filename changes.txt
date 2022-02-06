@@ -1,3 +1,9 @@
+jboot v3.13.4:
+新增：AttachmentManager 新增 getFile(path,localFirst) 方法
+优化：升级相关依赖到最新版本
+
+
+
 jboot v3.13.3:
 新增：配置文件可以指定自己的文件名和路径的支持
 优化：JbootmqBase，使之代码更加简洁
