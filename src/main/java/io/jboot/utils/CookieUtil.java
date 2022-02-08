@@ -42,7 +42,13 @@ public class CookieUtil {
     private static String COOKIE_ENCRYPT_KEY = JbootWebConfig.getInstance().getCookieEncryptKey();
 
     // 2 days（单位：秒）
-    private static int COOKIE_MAX_AGE =  JbootWebConfig.getInstance().getCookieMaxAge();
+    private static int COOKIE_MAX_AGE = JbootWebConfig.getInstance().getCookieMaxAge();
+
+    // 默认的路径, null 默认路径 "/"
+    private static String defaultPath = null;
+
+    // 默认的域名, null 为当前域名
+    private static String defaultDomain = null;
 
 
     /**
@@ -64,22 +70,38 @@ public class CookieUtil {
     }
 
 
+    public static String getDefaultPath() {
+        return defaultPath;
+    }
+
+    public static void setDefaultPath(String defaultPath) {
+        CookieUtil.defaultPath = defaultPath;
+    }
+
+    public static String getDefaultDomain() {
+        return defaultDomain;
+    }
+
+    public static void setDefaultDomain(String defaultDomain) {
+        CookieUtil.defaultDomain = defaultDomain;
+    }
+
     public static void put(Controller ctr, String key, Object value) {
-        put(ctr, key, value, COOKIE_MAX_AGE, null, null, COOKIE_ENCRYPT_KEY);
+        put(ctr, key, value, COOKIE_MAX_AGE, defaultPath, defaultDomain, COOKIE_ENCRYPT_KEY);
     }
 
 
     public static void put(Controller ctr, String key, Object value, String secretKey) {
-        put(ctr, key, value, COOKIE_MAX_AGE, null, null, secretKey);
+        put(ctr, key, value, COOKIE_MAX_AGE, defaultPath, defaultDomain, secretKey);
     }
 
 
     public static void put(Controller ctr, String key, String value, int maxAgeInSeconds) {
-        put(ctr, key, value, maxAgeInSeconds, null, null, COOKIE_ENCRYPT_KEY);
+        put(ctr, key, value, maxAgeInSeconds, defaultPath, defaultDomain, COOKIE_ENCRYPT_KEY);
     }
 
     public static void put(Controller ctr, String key, String value, int maxAgeInSeconds, String secretKey) {
-        put(ctr, key, value, maxAgeInSeconds, null, null, secretKey);
+        put(ctr, key, value, maxAgeInSeconds, defaultPath, defaultDomain, secretKey);
     }
 
 
@@ -152,7 +174,7 @@ public class CookieUtil {
         }
 
         String[] cookieStrings = cookieValue.split(COOKIE_SEPARATOR);
-        if (cookieStrings == null || cookieStrings.length != 4) {
+        if (cookieStrings.length != 4) {
             return null;
         }
 
