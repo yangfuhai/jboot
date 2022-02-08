@@ -1,6 +1,7 @@
 package io.jboot.test.controller;
 
 import com.jfinal.kit.PathKit;
+import io.jboot.utils.RequestUtil;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.GetRequest;
 import io.jboot.web.controller.annotation.PostRequest;
@@ -49,6 +50,10 @@ public class IndexController extends JbootController {
     @PostRequest
     public void getpost(){
         renderText("get or post ok");
+    }
+
+    public void baseUrl(){
+        renderText(RequestUtil.getBaseUrl());
     }
 
 

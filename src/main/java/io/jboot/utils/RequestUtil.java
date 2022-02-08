@@ -162,12 +162,10 @@ public class RequestUtil {
 
     public static String getBaseUrl(HttpServletRequest request) {
         int port = request.getServerPort();
-        StringBuilder defaultDomain = new StringBuilder(request.getScheme());
-        defaultDomain.append("://")
-                .append(request.getServerName())
-                .append(port == 80 ? "" : ":" + port)
-                .append(request.getContextPath());
-        return defaultDomain.toString();
+        return request.getScheme() + "://" +
+                request.getServerName() +
+                (port == 80 || port == 443 ? "" : ":" + port) +
+                request.getContextPath();
     }
 
 
