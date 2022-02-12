@@ -183,7 +183,7 @@ public class RequestUtil {
 
     public static String getCurrentUrl(HttpServletRequest request) {
         String queryString = request.getQueryString();
-        String url = getBaseUrl(request) + request.getRequestURI();
+        String url = getBaseUrl(request) + request.getServletPath();
         if (StrUtil.isNotBlank(queryString)) {
             url = url.concat("?").concat(queryString);
         }

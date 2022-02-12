@@ -57,5 +57,10 @@ public class IndexController extends JbootController {
     }
 
 
+    public void currentUrl(){
+        renderText(RequestUtil.getCurrentUrl());
+    }
+
+
 
 }
