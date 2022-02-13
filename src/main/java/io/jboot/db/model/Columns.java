@@ -110,6 +110,29 @@ public class Columns implements Serializable {
     }
 
 
+
+
+    /**
+     * add new column in Columns
+     *
+     * @param column
+     */
+    public Columns addToFirst(Column column) {
+
+        //do not add null value column
+        if (column.hasPara() && column.getValue() == null) {
+            return this;
+        }
+
+        if (this.cols == null) {
+            this.cols = new LinkedList<>();
+        }
+
+        this.cols.add(0, column);
+        return this;
+    }
+
+
     /**
      * add Columns
      *
@@ -119,6 +142,23 @@ public class Columns implements Serializable {
     public Columns add(Columns columns) {
         return append(columns);
     }
+
+
+    /**
+     * add Columns To First
+     *
+     * @param columns
+     * @return
+     */
+    public Columns addToFirst(Columns columns) {
+        if (columns != null && !columns.isEmpty()) {
+            for (Column column : columns.getList()) {
+                addToFirst(column);
+            }
+        }
+        return this;
+    }
+
 
 
     /**
