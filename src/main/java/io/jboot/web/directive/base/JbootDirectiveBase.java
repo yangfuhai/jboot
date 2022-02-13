@@ -91,6 +91,38 @@ public abstract class JbootDirectiveBase extends Directive {
         return (T) (data == null ? defaultValue : data);
     }
 
+    public String getParaToString(String key, Scope scope) {
+        Object object = getPara(key, scope, null);
+        if (object == null || object instanceof String) {
+            return (String) object;
+        }
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : objStr;
+    }
+
+
+    public String getParaToString(String key, Scope scope, String defaultValue) {
+        String v = getParaToString(key, scope);
+        return v == null ? defaultValue : v;
+    }
+
+
+    public String getParaToString(int index, Scope scope) {
+        Object object = getPara(index, scope, null);
+        if (object == null || object instanceof String) {
+            return (String) object;
+        }
+        String objStr = object.toString();
+        return StrUtil.isBlank(objStr) ? null : objStr;
+    }
+
+
+    public String getParaToString(int index, Scope scope, String defaultValue) {
+        String v = getParaToString(index, scope);
+        return v == null ? defaultValue : v;
+    }
+
+
     public Integer getParaToInt(String key, Scope scope) {
         Object object = getPara(key, scope, null);
         if (object == null || object instanceof Integer) {
