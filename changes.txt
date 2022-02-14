@@ -1,3 +1,13 @@
+jboot v3.13.5:
+新增：CookieUtil 添加 "defaultPath" 和 "defaultDomain" 的配置
+新增：HttpUtil 添加 http 代理的配置支持
+新增：Columns.addToFirst() 方法
+新增：JbootDirectiveBase.getParaToString()
+优化：RequestUtil.java
+优化：升级 JFinal 到最新版本
+
+
+
 jboot v3.13.4:
 新增：AttachmentManager 新增 getFile(path,localFirst) 方法
 优化：升级相关依赖到最新版本
