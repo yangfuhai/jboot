@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.Proxy;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -79,6 +80,9 @@ public class JbootHttpRequest {
     // 自定义 sslContext
     private SSLContext sslContext;
 
+    // 自定义 http 代理
+    private HttpProxyInfo httpProxyInfo;
+
 
     public static JbootHttpRequest create(String url) {
         return new JbootHttpRequest(url);
@@ -116,6 +120,7 @@ public class JbootHttpRequest {
         this.readTimeOut = config.getReadTimeOut();
         this.connectTimeOut = config.getConnectTimeOut();
         this.contentType = config.getContentType();
+        this.httpProxyInfo = config.getHttpProxyInfo();
     }
 
     public JbootHttpRequest(String url) {
@@ -373,5 +378,17 @@ public class JbootHttpRequest {
 
     public void setSslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
+    }
+
+    public HttpProxyInfo getHttpProxyInfo() {
+        return httpProxyInfo;
+    }
+
+    public void setHttpProxyInfo(HttpProxyInfo httpProxyInfo) {
+        this.httpProxyInfo = httpProxyInfo;
+    }
+
+    public Proxy getProxy() {
+        return httpProxyInfo != null ? httpProxyInfo.getProxy() : null;
     }
 }

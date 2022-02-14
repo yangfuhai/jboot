@@ -130,7 +130,13 @@ public class OKHttpImpl implements JbootHttp {
             return getHttpsClient(request);
         }
 
-        return new OkHttpClient();
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if (request.getProxy() != null) {
+            builder.proxy(request.getProxy());
+        }
+
+        return builder.build();
     }
 
     public OkHttpClient getHttpsClient(JbootHttpRequest request) throws Exception {

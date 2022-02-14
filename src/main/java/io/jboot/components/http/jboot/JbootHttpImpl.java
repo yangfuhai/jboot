@@ -212,7 +212,7 @@ public class JbootHttpImpl implements JbootHttp {
     }
 
     private static HttpURLConnection getConnection(JbootHttpRequest request) throws Exception {
-        if (request.isPostRequest() == false) {
+        if (!request.isPostRequest()) {
             request.initGetUrl();
         }
         return request.isHttps() ? getHttpsConnection(request) : getHttpConnection(request);
@@ -220,13 +220,15 @@ public class JbootHttpImpl implements JbootHttp {
 
     private static HttpURLConnection getHttpConnection(JbootHttpRequest request) throws Exception {
         URL url = new URL(request.getRequestUrl());
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) (request.getProxy() != null
+                ? url.openConnection(request.getProxy()) : url.openConnection());
         return conn;
     }
 
     private static HttpsURLConnection getHttpsConnection(JbootHttpRequest request) throws Exception {
         URL url = new URL(request.getRequestUrl());
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        HttpsURLConnection conn = (HttpsURLConnection) (request.getProxy() != null
+                ? url.openConnection(request.getProxy()) : url.openConnection());
 
         //自定义 sslContext
         if (request.getSslContext() != null) {

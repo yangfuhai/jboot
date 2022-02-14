@@ -1,6 +1,7 @@
 package io.jboot.test.http;
 
 import com.jfinal.kit.JsonKit;
+import io.jboot.components.http.HttpProxyInfo;
 import io.jboot.components.http.JbootHttpManager;
 import io.jboot.components.http.JbootHttpRequest;
 import io.jboot.components.http.JbootHttpResponse;
@@ -17,6 +18,8 @@ public class HttpUtilTester {
     public static void main(String[] args) {
 
         JbootHttpRequest request = JbootHttpRequest.create("https://www.baidu.com", null, JbootHttpRequest.METHOD_GET);
+        request.setHttpProxyInfo(new HttpProxyInfo("127.0.0.1",8080));
+
         JbootHttpResponse response = JbootHttpManager.me().getJbootHttp().handle(request);
 
 //        System.out.println(response.getHeaders().get("Location").get(0));
@@ -32,7 +35,11 @@ public class HttpUtilTester {
         map.put("cc",null);
         map.put("你好","xx");
         System.out.println(StrUtil.mapToQueryString(map));
+
+
+
     }
+
 
 
 }
