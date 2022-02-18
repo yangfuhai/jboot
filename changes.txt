@@ -1,3 +1,10 @@
+jboot v3.13.6:
+优化：强化 Controller 返回值，自动匹配相应的 render
+优化：优化 JbootHttpImpl 和 JbootHttpResponse 代码，添加必要的日志输出
+优化：更新 Copyright
+
+
+
 jboot v3.13.5:
 新增：CookieUtil 添加 "defaultPath" 和 "defaultDomain" 的配置
 新增：HttpUtil 添加 http 代理的配置支持
