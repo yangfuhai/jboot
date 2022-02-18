@@ -17,8 +17,11 @@ package io.jboot.web.render;
 
 import com.jfinal.core.Action;
 import com.jfinal.kit.JsonKit;
-import com.jfinal.render.*;
+import com.jfinal.render.IRenderFactory;
+import com.jfinal.render.Render;
+import com.jfinal.render.RenderManager;
 import io.jboot.utils.DateUtil;
+import io.jboot.utils.StrUtil;
 import io.jboot.web.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +37,10 @@ import java.util.Date;
  */
 public class JbootReturnValueRender extends Render {
 
-    private Action action;
-    private Object value;
-    private Render render;
+    protected IRenderFactory factory = RenderManager.me().getRenderFactory();
+    protected Action action;
+    protected Object value;
+    protected Render render;
 
     public JbootReturnValueRender(Action action, Object returnValue) {
 
@@ -50,20 +54,41 @@ public class JbootReturnValueRender extends Render {
             this.value = returnValue;
         }
 
+        initRealRender();
+    }
+
+
+    protected void initRealRender() {
         if (this.value == null) {
-            this.render = new NullRender();
+            this.render = factory.getNullRender();
         } else if (this.value instanceof ResponseEntity) {
             this.render = new JbootResponseEntityRender((ResponseEntity) value);
         } else if (this.value instanceof String) {
-            this.render = new TextRender((String) value);
+            String newVal = ((String) value).toLowerCase();
+            if (newVal.endsWith(".html")) {
+                this.render = factory.getTemplateRender((String) value);
+            } else if (newVal.startsWith("error") && newVal.length() > 8) {
+                String trim = newVal.substring(5).trim();
+                if (trim.startsWith(":")) {
+                    String errorCodeStr = trim.substring(1).trim();
+                    if (StrUtil.isNumeric(errorCodeStr)) {
+                        this.render = factory.getErrorRender(Integer.parseInt(errorCodeStr));
+                    }
+                }
+                if (this.render == null) {
+                    this.render = factory.getTextRender((String) value);
+                }
+            } else {
+                this.render = factory.getTextRender((String) value);
+            }
         } else if (this.value instanceof Date) {
-            this.render = new TextRender(DateUtil.toDateTimeString((Date) value));
+            this.render = factory.getTextRender(DateUtil.toDateTimeString((Date) value));
         } else if (this.value instanceof File) {
-            this.render = new FileRender((File) value);
+            this.render = factory.getFileRender((File) value);
         } else if (this.value instanceof Render) {
             this.render = (Render) value;
         } else {
-            this.render = new JsonRender(JsonKit.toJson(value));
+            this.render = factory.getJsonRender(JsonKit.toJson(value));
         }
     }
 
@@ -86,7 +111,7 @@ public class JbootReturnValueRender extends Render {
     }
 
 
-    private boolean isBaseType(Object value) {
+    protected boolean isBaseType(Object value) {
         Class<?> c = value.getClass();
         return c == String.class || c == char.class
                 || c == Integer.class || c == int.class
@@ -97,4 +122,6 @@ public class JbootReturnValueRender extends Render {
                 || c == Short.class || c == short.class
                 || c == BigDecimal.class || c == BigInteger.class;
     }
+
+
 }
