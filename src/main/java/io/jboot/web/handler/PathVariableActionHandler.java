@@ -24,6 +24,7 @@ import com.jfinal.render.RenderException;
 import io.jboot.components.valid.ValidException;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.render.JbootRenderFactory;
+import io.jboot.web.render.JbootReturnValueRender;
 import io.jboot.web.session.JbootServletRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,11 +73,11 @@ public class PathVariableActionHandler extends JbootActionHandler {
             controller = controllerFactory.getController(action.getControllerClass());
             //controller.init(request, response, urlPara[0]);
             //存在封装的路径参数
-            if(urlPara[1] != null){
+            if (urlPara[1] != null) {
                 Map<String, String> params = Splitter.on("&").withKeyValueSeparator("=").split(urlPara[1]);
                 PathVariableWrappedRequest wrappedRequest = new PathVariableWrappedRequest(request, response, params);
                 CPI._init_(controller, action, wrappedRequest, response, urlPara[0]);
-            }else {
+            } else {
                 CPI._init_(controller, action, request, response, urlPara[0]);
             }
             JbootControllerContext.hold(controller);
@@ -132,9 +133,18 @@ public class PathVariableActionHandler extends JbootActionHandler {
                 handle(actionUrl, request, response, isHandled);
             }
         } else {
-            if (render == null && void.class != action.getMethod().getReturnType() && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
-                JbootRenderFactory jbootRenderFactory = (JbootRenderFactory) renderManager.getRenderFactory();
-                render = jbootRenderFactory.getReturnValueRender(action, invocation.getReturnValue());
+            if (render == null && void.class != action.getMethod().getReturnType()
+                    && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
+
+                JbootRenderFactory factory = (JbootRenderFactory) renderManager.getRenderFactory();
+                JbootReturnValueRender returnValueRender = factory.getReturnValueRender(action, invocation.getReturnValue());
+                String forwardTo = returnValueRender.getForwardTo();
+                if (forwardTo != null) {
+                    handle(getRealForwrdTo(forwardTo, target, action), request, response, isHandled);
+                    return;
+                } else {
+                    render = returnValueRender;
+                }
             }
 
             if (render == null) {
@@ -148,9 +158,10 @@ public class PathVariableActionHandler extends JbootActionHandler {
     /**
      * 请求包装类用于将路径变量的URL中的额外参数加入request中
      */
-    private class PathVariableWrappedRequest extends JbootServletRequestWrapper{
+    private class PathVariableWrappedRequest extends JbootServletRequestWrapper {
         private final Map<String, String[]> modifiableParameters;
         private Map<String, String[]> allParameters = null;
+
         public PathVariableWrappedRequest(HttpServletRequest request, HttpServletResponse response,
                                           Map<String, String> params) {
             super(request, response);

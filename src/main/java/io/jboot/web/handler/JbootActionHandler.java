@@ -29,6 +29,7 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.render.JbootErrorRender;
 import io.jboot.web.render.JbootRenderFactory;
+import io.jboot.web.render.JbootReturnValueRender;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -172,9 +173,19 @@ public class JbootActionHandler extends ActionHandler {
                 handle(actionUrl, request, response, isHandled);
             }
         } else {
-            if (render == null && void.class != action.getMethod().getReturnType() && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
-                JbootRenderFactory jbootRenderFactory = (JbootRenderFactory) renderManager.getRenderFactory();
-                render = jbootRenderFactory.getReturnValueRender(action, invocation.getReturnValue());
+            if (render == null && void.class != action.getMethod().getReturnType()
+                    && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
+
+                JbootRenderFactory factory = (JbootRenderFactory) renderManager.getRenderFactory();
+                JbootReturnValueRender returnValueRender = factory.getReturnValueRender(action, invocation.getReturnValue());
+
+                String forwardTo = returnValueRender.getForwardTo();
+                if (forwardTo != null) {
+                    handle(getRealForwrdTo(forwardTo, target, action), request, response, isHandled);
+                    return;
+                } else {
+                    render = returnValueRender;
+                }
             }
 
             if (render == null) {
@@ -183,6 +194,23 @@ public class JbootActionHandler extends ActionHandler {
 
             render.setContext(request, response, action.getViewPath()).render();
         }
+    }
+
+    public String getRealForwrdTo(String forwardTo, String currentTarget, Action action) {
+        if ("".equals(forwardTo)) {
+            throw new IllegalArgumentException(ClassUtil.buildMethodString(action.getMethod()) + ": The forward key can not be blank.");
+        }
+
+        if (forwardTo.startsWith("/")) {
+            return forwardTo;
+        }
+
+
+        if (forwardTo.startsWith("./")) {
+            return currentTarget.substring(0, currentTarget.lastIndexOf("/")) + forwardTo.substring(1);
+        }
+
+        return "/" + forwardTo;
     }
 
 

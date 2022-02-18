@@ -18,10 +18,12 @@ package io.jboot.web.render;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import io.jboot.utils.DateUtil;
 import io.jboot.web.ResponseEntity;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -53,9 +55,19 @@ public class JbootResponseEntityRender extends Render {
                 }
             }
 
-            String jsonText = responseEntity.getBody() == null ? "" : JsonKit.toJson(responseEntity.getBody());
+            Object body = responseEntity.getBody();
+            String bodyString = null;
+            if (body == null) {
+                bodyString = "";
+            } else if (body instanceof String) {
+                bodyString = (String) body;
+            } else if (body instanceof Date) {
+                bodyString = DateUtil.toDateTimeString((Date) body);
+            } else {
+                JsonKit.toJson(body);
+            }
             writer = response.getWriter();
-            writer.write(jsonText);
+            writer.write(bodyString);
             // writer.flush();
         } catch (IOException e) {
             throw new RenderException(e);

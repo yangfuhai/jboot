@@ -2,6 +2,7 @@ package io.jboot.test.controller;
 
 import com.jfinal.kit.PathKit;
 import io.jboot.utils.RequestUtil;
+import io.jboot.web.ResponseEntity;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.GetRequest;
 import io.jboot.web.controller.annotation.PostRequest;
@@ -13,6 +14,7 @@ public class IndexController extends JbootController {
     public void index() {
         render("/index.html");
     }
+
 
     public void classPath() {
         renderText(PathKit.getRootClassPath());
@@ -61,6 +63,63 @@ public class IndexController extends JbootController {
         renderText(RequestUtil.getCurrentUrl());
     }
 
+    public String r1(){
+        return "text....";
+    }
+
+    public String r2(){
+        return "error:404";
+    }
 
 
+    public String r3(){
+        return "error  : 404";
+    }
+
+    public String r4(){
+        return "error:500";
+    }
+
+
+    public String r5(){
+        return "error  : 500";
+    }
+
+
+    public String r6(){
+        return "index.html";
+    }
+
+    public ResponseEntity r7(){
+        return ResponseEntity.ok().body("aaa");
+    }
+
+
+
+    public String r8(){
+        return "redirect  : r1";
+    }
+
+
+    public String r9(){
+        return "redirect:r2";
+    }
+
+
+
+    public String r10(){
+        return "forward  : r3";
+    }
+
+
+    public String r11(){
+        return "forward:r4";
+    }
+
+    public String r12(){
+        return "forward:./r4";
+    }
+    public String r13(){
+        return "forward: ";
+    }
 }

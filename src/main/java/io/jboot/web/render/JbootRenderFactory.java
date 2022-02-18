@@ -132,7 +132,7 @@ public class JbootRenderFactory extends RenderFactory {
         return new JbootCaptchaRender();
     }
 
-    public Render getReturnValueRender(Action action, Object returnValue) {
+    public JbootReturnValueRender getReturnValueRender(Action action, Object returnValue) {
         return new JbootReturnValueRender(action, returnValue);
     }
 

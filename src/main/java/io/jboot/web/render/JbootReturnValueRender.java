@@ -42,6 +42,8 @@ public class JbootReturnValueRender extends Render {
     protected Object value;
     protected Render render;
 
+    protected String forwardTo;
+
     public JbootReturnValueRender(Action action, Object returnValue) {
 
         this.action = action;
@@ -65,9 +67,14 @@ public class JbootReturnValueRender extends Render {
             this.render = new JbootResponseEntityRender((ResponseEntity) value);
         } else if (this.value instanceof String) {
             String newVal = ((String) value).toLowerCase();
-            if (newVal.endsWith(".html")) {
+
+            //template
+            if (newVal.endsWith(".html") && !newVal.contains(":")) {
                 this.render = factory.getTemplateRender((String) value);
-            } else if (newVal.startsWith("error") && newVal.length() > 8) {
+            }
+
+            //error
+            else if (newVal.startsWith("error") && newVal.length() > 8) {
                 String trim = newVal.substring(5).trim();
                 if (trim.startsWith(":")) {
                     String errorCodeStr = trim.substring(1).trim();
@@ -78,7 +85,34 @@ public class JbootReturnValueRender extends Render {
                 if (this.render == null) {
                     this.render = factory.getTextRender((String) value);
                 }
-            } else {
+            }
+
+            //forward
+            else if (newVal.startsWith("forward")) {
+                String trim = newVal.substring(7).trim();
+                if (trim.startsWith(":")) {
+                    this.forwardTo = trim.substring(1).trim();
+                } else {
+                    this.render = factory.getTextRender((String) value);
+                }
+            }
+
+            //redirect
+            else if (newVal.startsWith("redirect")) {
+                String trim = newVal.substring(8).trim();
+                if (trim.startsWith(":")) {
+                    String redirectTo = trim.substring(1).trim();
+                    if (StrUtil.isNotBlank(redirectTo)) {
+                        this.render = factory.getRedirectRender(redirectTo);
+                    }
+                }
+                if (this.render == null) {
+                    this.render = factory.getTextRender((String) value);
+                }
+            }
+
+            //text
+            else {
                 this.render = factory.getTextRender((String) value);
             }
         } else if (this.value instanceof Date) {
@@ -123,5 +157,7 @@ public class JbootReturnValueRender extends Render {
                 || c == BigDecimal.class || c == BigInteger.class;
     }
 
-
+    public String getForwardTo() {
+        return forwardTo;
+    }
 }
