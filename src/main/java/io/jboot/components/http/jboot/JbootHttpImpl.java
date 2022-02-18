@@ -15,12 +15,14 @@
  */
 package io.jboot.components.http.jboot;
 
+import com.jfinal.log.Log;
 import io.jboot.components.http.HttpMimeTypes;
 import io.jboot.components.http.JbootHttp;
 import io.jboot.components.http.JbootHttpRequest;
 import io.jboot.components.http.JbootHttpResponse;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.ArrayUtil;
+import io.jboot.utils.QuietlyUtil;
 import io.jboot.utils.StrUtil;
 
 import javax.net.ssl.*;
@@ -36,6 +38,8 @@ import java.util.zip.GZIPInputStream;
 
 
 public class JbootHttpImpl implements JbootHttp {
+
+    private static final Log LOG = Log.getLog(JbootHttpImpl.class);
 
 
     @Override
@@ -105,20 +109,15 @@ public class JbootHttpImpl implements JbootHttp {
 
         } catch (Throwable ex) {
             response.setError(ex);
+            LOG.error(ex.toString(), ex);
         } finally {
-
-            response.close();
 
             if (connection != null) {
                 connection.disconnect();
             }
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+
+            QuietlyUtil.quietlyClose(inStream, response);
+
         }
     }
 

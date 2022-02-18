@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,25 +19,22 @@ import io.jboot.Jboot;
 import io.jboot.components.http.jboot.JbootHttpImpl;
 import io.jboot.components.http.okhttp.OKHttpImpl;
 import io.jboot.core.spi.JbootSpiLoader;
-import io.jboot.utils.ClassUtil;
 
 public class JbootHttpManager {
 
-    private static JbootHttpManager manager;
+    private static JbootHttpManager me = new JbootHttpManager();
+    private JbootHttp jbootHttp;
+    private JbootHttpConfig httpConfig;
 
 
     public static JbootHttpManager me() {
-        if (manager == null) {
-            manager = ClassUtil.singleton(JbootHttpManager.class);
-            manager.httpConfig = Jboot.config(JbootHttpConfig.class);
-
-        }
-        return manager;
+        return me;
     }
 
+    private JbootHttpManager() {
+        httpConfig = Jboot.config(JbootHttpConfig.class);
+    }
 
-    private JbootHttp jbootHttp;
-    private JbootHttpConfig httpConfig;
 
     public JbootHttp getJbootHttp() {
         if (jbootHttp == null) {
@@ -46,12 +43,13 @@ public class JbootHttpManager {
         return jbootHttp;
     }
 
+
     public JbootHttpConfig getHttpConfig() {
         return httpConfig;
     }
 
-    private JbootHttp buildJbootHttp() {
 
+    private JbootHttp buildJbootHttp() {
         switch (httpConfig.getType()) {
             case JbootHttpConfig.TYPE_DEFAULT:
                 return new JbootHttpImpl();

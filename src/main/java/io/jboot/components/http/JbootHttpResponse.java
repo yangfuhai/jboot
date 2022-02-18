@@ -21,8 +21,9 @@ import java.io.*;
 import java.util.List;
 import java.util.Map;
 
-public class JbootHttpResponse {
-    private static final Log log = Log.getLog(JbootHttpResponse.class);
+public class JbootHttpResponse implements Closeable {
+
+    private static final Log LOG = Log.getLog(JbootHttpResponse.class);
 
     private String content;
     private OutputStream contentStream;
@@ -37,12 +38,12 @@ public class JbootHttpResponse {
     }
 
     public JbootHttpResponse(File file) {
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            LOG.error("Can not mkdirs for: " + file.getParentFile());
         }
 
-        if (file.exists()) {
-            file.delete();
+        if (file.exists() && !file.delete()) {
+            LOG.error("Can not delete file: " + file);
         }
 
         try {
@@ -86,7 +87,7 @@ public class JbootHttpResponse {
                 contentStream.write(buffer, 0, len);
             }
         } catch (Throwable throwable) {
-            log.error(throwable.toString(), throwable);
+            LOG.error(throwable.toString(), throwable);
             setError(throwable);
         }
     }
@@ -94,13 +95,14 @@ public class JbootHttpResponse {
     /**
      * 结束response和释放资源
      */
+    @Override
     public void close() {
         if (contentStream != null) {
             try {
                 contentStream.flush();
                 contentStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error(e.toString(), e);
             }
         }
     }

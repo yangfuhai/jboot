@@ -56,7 +56,7 @@ public class ReflectUtil {
     }
 
     private static <T> T getFileValue(Object getFrom, Field field) {
-        final boolean accessible = field.isAccessible();
+        boolean accessible = field.isAccessible();
         try {
             field.setAccessible(true);
             return (T) field.get(getFrom);

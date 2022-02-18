@@ -34,6 +34,7 @@ public @interface TestConfig {
     //配置 appMode
     boolean devMode() default true;
 
+    //配置启动是否打印 class 扫描信息
     boolean printScannerInfo() default false;
 
     //配置启动参数

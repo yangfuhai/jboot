@@ -31,7 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClassUtil {
 
     private static Log LOG = Log.getLog(ClassUtil.class);
-    private static final Map<Class, Object> singletons = new ConcurrentHashMap<>();
+
+    private static final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
 
 
     /**
@@ -135,7 +136,7 @@ public class ClassUtil {
 
     public static <T> T newInstance(Class<T> clazz, boolean createByAop, Object... paras) {
         try {
-            Class[] classes = new Class[paras.length];
+            Class<?>[] classes = new Class[paras.length];
             for (int i = 0; i < paras.length; i++) {
                 Object data = paras[i];
                 if (data == null) {
@@ -173,17 +174,16 @@ public class ClassUtil {
         Method method = getStaticConstruct(staticConstruct.value(), clazz);
 
         if (method == null) {
-            throw new JbootException("can not new instance by static constrauct for class : " + clazz);
+            throw new JbootException("Can not new instance by static constrauct for class: " + clazz);
         }
 
         try {
             return (T) method.invoke(null, null);
         } catch (Exception e) {
 
-            LOG.error("can not invoke method:" + method.getName()
-                    + " in class : "
-                    + clazz + "\n"
-                    + e.toString(), e);
+            LOG.error("Can not invoke method:" + method.getName()
+                    + " in class : "+ clazz + "\n"
+                    + e, e);
 
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -194,7 +194,7 @@ public class ClassUtil {
     }
 
 
-    private static Method getStaticConstruct(String name, Class clazz) {
+    private static Method getStaticConstruct(String name, Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
             if (Modifier.isStatic(method.getModifiers())
