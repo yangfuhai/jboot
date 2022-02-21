@@ -1,3 +1,9 @@
+jboot v3.13.7:
+新增： MQ 新增 stopListening() 方法，可用于定制化关闭 MQ
+修复: Controller 返回值有大写可能不正确的问题
+
+
+
 jboot v3.13.6:
 优化：强化 Controller 返回值，自动匹配相应的 render
 优化：优化 JbootHttpImpl 和 JbootHttpResponse 代码，添加必要的日志输出
