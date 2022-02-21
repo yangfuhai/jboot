@@ -44,6 +44,9 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
     private boolean serializerEnable = true;
     private JbootQpidmqConfig qpidConfig = null;
 
+    private Thread queueThread;
+    private Thread topicThread;
+
     public JbootQpidmqImpl(JbootmqConfig config) {
         super(config);
 
@@ -78,6 +81,12 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
         } catch (Exception e) {
             throw new JbootException(e.toString(), e);
         }
+    }
+
+    @Override
+    protected void onStopListening() {
+        queueThread.interrupt();
+        topicThread.interrupt();
     }
 
 
@@ -173,12 +182,14 @@ public class JbootQpidmqImpl extends JbootmqBase implements Jbootmq {
             String queueAddr = getQueueAddr(channel);
             Destination queue = new AMQAnyDestination(queueAddr);
             MessageConsumer queueConsumer = session.createConsumer(queue);
-            new Thread(new ReceiveMsgThread(queueConsumer, channel, serializerEnable)).start();
+            queueThread = new Thread(new ReceiveMsgThread(queueConsumer, channel, serializerEnable));
+            queueThread.start();
 
             String topicAddr = getTopicAddr(channel);
             Destination topic = new AMQAnyDestination(topicAddr);
             MessageConsumer topicConsumer = session.createConsumer(topic);
-            new Thread(new ReceiveMsgThread(topicConsumer, channel, serializerEnable)).start();
+            topicThread = new Thread(new ReceiveMsgThread(topicConsumer, channel, serializerEnable));
+            topicThread.start();
         }
     }
 

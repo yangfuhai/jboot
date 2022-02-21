@@ -17,13 +17,13 @@ package io.jboot.components.mq.redismq;
 
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
-import io.jboot.utils.ConfigUtil;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.components.mq.JbootmqConfig;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
+import io.jboot.utils.ConfigUtil;
 import io.jboot.utils.StrUtil;
 import redis.clients.jedis.BinaryJedisPubSub;
 
@@ -36,6 +36,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     private JbootRedis redis;
     private Thread dequeueThread;
+    private BinaryJedisPubSub jedisPubSub;
 
     public JbootRedismqImpl(JbootmqConfig config) {
         super(config);
@@ -68,16 +69,26 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     protected void onStartListening() {
 
         String[] channels = this.channels.toArray(new String[]{});
-
-        redis.subscribe(new BinaryJedisPubSub() {
+        jedisPubSub = new BinaryJedisPubSub() {
             @Override
             public void onMessage(byte[] channel, byte[] message) {
-                notifyListeners(redis.bytesToKey(channel), getSerializer().deserialize(message), new RedismqMessageContext(JbootRedismqImpl.this));
+                notifyListeners(redis.bytesToKey(channel), getSerializer().deserialize(message)
+                        , new RedismqMessageContext(JbootRedismqImpl.this));
             }
-        }, redis.keysToBytesArray(channels));
+        };
+
+        redis.subscribe(jedisPubSub, redis.keysToBytesArray(channels));
 
         dequeueThread = new Thread(this, "redis-dequeue-thread");
         dequeueThread.start();
+    }
+
+    @Override
+    protected void onStopListening() {
+        if (jedisPubSub != null) {
+            jedisPubSub.unsubscribe();
+        }
+        dequeueThread.interrupt();
     }
 
 
@@ -99,7 +110,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
             try {
                 doExecuteDequeue();
                 Thread.sleep(1);
-            } catch (Throwable ex) {
+            } catch (Exception ex) {
                 LOG.error(ex.toString(), ex);
             }
         }

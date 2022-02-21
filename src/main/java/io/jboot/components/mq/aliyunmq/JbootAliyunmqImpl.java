@@ -57,6 +57,14 @@ public class JbootAliyunmqImpl extends JbootmqBase implements Jbootmq {
         startBroadCastConsumer();
     }
 
+    @Override
+    protected void onStopListening() {
+        if (consumer != null) {
+            consumer.shutdown();
+            consumer = null;
+        }
+    }
+
 
     public void startQueueConsumer() {
         Properties properties = createProperties();

@@ -186,8 +186,31 @@ public abstract class JbootmqBase implements Jbootmq {
         return true;
     }
 
+    @Override
+    public boolean stopListening() {
+        if (!isStarted) {
+            throw new JbootException("Jboot MQ has stoped.");
+        }
+
+        try {
+            isStarted = false;
+            onStopListening();
+        } catch (Exception ex) {
+            LogKit.error("Jboot MQ stop fail!", ex);
+            isStarted = true;
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isStarted() {
+        return isStarted;
+    }
 
     protected abstract void onStartListening();
+
+    protected abstract void onStopListening();
 
 
     @Override

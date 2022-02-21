@@ -42,6 +42,8 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
     private static final Log LOG = Log.getLog(JbootRocketmqImpl.class);
     private JbootRocketmqConfig rocketmqConfig;
     private MQProducer mqProducer;
+    private DefaultMQPushConsumer queueConsumer;
+    private DefaultMQPushConsumer broadcastConsumer;
 
     public JbootRocketmqImpl(JbootmqConfig config) {
         super(config);
@@ -68,29 +70,40 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
         }
     }
 
+    @Override
+    protected void onStopListening() {
+        if (queueConsumer != null) {
+            queueConsumer.shutdown();
+        }
+
+        if (broadcastConsumer != null) {
+            broadcastConsumer.shutdown();
+        }
+    }
+
 
     public void startQueueConsumer() throws MQClientException {
         // 实例化消费者
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(rocketmqConfig.getConsumerGroup());
+        queueConsumer = new DefaultMQPushConsumer(rocketmqConfig.getConsumerGroup());
 
         // 设置NameServer的地址
-        consumer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
-        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+        queueConsumer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
+        queueConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
 
         if (StrUtil.isNotBlank(rocketmqConfig.getNamespace())) {
-            consumer.setNamespace(rocketmqConfig.getNamespace());
+            queueConsumer.setNamespace(rocketmqConfig.getNamespace());
         }
 
         if (rocketmqConfig.getConsumeMessageBatchMaxSize() != null) {
-            consumer.setConsumeMessageBatchMaxSize(rocketmqConfig.getConsumeMessageBatchMaxSize());
+            queueConsumer.setConsumeMessageBatchMaxSize(rocketmqConfig.getConsumeMessageBatchMaxSize());
         }
 
         for (String channel : channels) {
-            consumer.subscribe(channel, rocketmqConfig.getSubscribeSubExpression());
+            queueConsumer.subscribe(channel, rocketmqConfig.getSubscribeSubExpression());
         }
 
         // 注册回调实现类来处理从broker拉取回来的消息
-        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
+        queueConsumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
             RokectmqMessageContext msgContext = new RokectmqMessageContext(this, msgs, context);
             if (msgs != null && !msgs.isEmpty()) {
                 for (MessageExt messageExt : msgs) {
@@ -102,35 +115,35 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
         });
 
 
-        consumer.start();
+        queueConsumer.start();
 
     }
 
 
     public void startBroadcastConsumer() throws MQClientException {
         // 实例化消费者
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(rocketmqConfig.getBroadcastChannelPrefix() + rocketmqConfig.getConsumerGroup());
+        broadcastConsumer = new DefaultMQPushConsumer(rocketmqConfig.getBroadcastChannelPrefix() + rocketmqConfig.getConsumerGroup());
 
         // 设置NameServer的地址
-        consumer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
+        broadcastConsumer.setNamesrvAddr(rocketmqConfig.getNamesrvAddr());
 
         if (StrUtil.isNotBlank(rocketmqConfig.getNamespace())) {
-            consumer.setNamespace(rocketmqConfig.getNamespace());
+            broadcastConsumer.setNamespace(rocketmqConfig.getNamespace());
         }
 
-        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
-        consumer.setMessageModel(MessageModel.BROADCASTING);
+        broadcastConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+        broadcastConsumer.setMessageModel(MessageModel.BROADCASTING);
 
         if (rocketmqConfig.getConsumeMessageBatchMaxSize() != null) {
-            consumer.setConsumeMessageBatchMaxSize(rocketmqConfig.getConsumeMessageBatchMaxSize());
+            broadcastConsumer.setConsumeMessageBatchMaxSize(rocketmqConfig.getConsumeMessageBatchMaxSize());
         }
 
         for (String channel : channels) {
-            consumer.subscribe(rocketmqConfig.getBroadcastChannelPrefix() + channel, rocketmqConfig.getSubscribeSubExpression());
+            broadcastConsumer.subscribe(rocketmqConfig.getBroadcastChannelPrefix() + channel, rocketmqConfig.getSubscribeSubExpression());
         }
 
         final int len = rocketmqConfig.getBroadcastChannelPrefix().length();
-        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
+        broadcastConsumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
             RokectmqMessageContext rokectMqMessageInfo = new RokectmqMessageContext(this, msgs, context);
             if (msgs != null && !msgs.isEmpty()) {
                 for (MessageExt messageExt : msgs) {
@@ -141,7 +154,7 @@ public class JbootRocketmqImpl extends JbootmqBase implements Jbootmq {
             return rokectMqMessageInfo.getReturnStatus();
         });
 
-        consumer.start();
+        broadcastConsumer.start();
     }
 
 

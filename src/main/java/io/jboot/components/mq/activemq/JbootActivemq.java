@@ -40,4 +40,9 @@ public class JbootActivemq extends JbootmqBase implements Jbootmq {
     protected void onStartListening() {
 
     }
+
+    @Override
+    protected void onStopListening() {
+
+    }
 }

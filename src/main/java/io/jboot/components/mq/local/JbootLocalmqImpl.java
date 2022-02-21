@@ -34,6 +34,11 @@ public class JbootLocalmqImpl extends JbootmqBase {
     }
 
     @Override
+    protected void onStopListening() {
+        //do nothing
+    }
+
+    @Override
     public void enqueue(Object message, String toChannel) {
         notifyListeners(toChannel, message, new LocalmqMessageContext(this));
     }

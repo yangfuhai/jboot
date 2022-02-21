@@ -97,6 +97,11 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
         }
     }
 
+    @Override
+    protected void onStopListening() {
+        connection.abort();
+    }
+
 
     public void bindChannel(Channel channel, String name, String orginaChannelName) {
         if (channel != null) {
