@@ -68,9 +68,13 @@ public class JbootReturnValueRender extends Render {
         } else if (this.value instanceof String) {
             String newVal = ((String) value).toLowerCase();
 
+            //template
+            if (newVal.endsWith(".html") && !newVal.contains(":")) {
+                this.render = factory.getTemplateRender((String) value);
+            }
 
             //error
-            if (newVal.startsWith("error") && newVal.length() > 8) {
+            else if (newVal.startsWith("error") && newVal.length() > 8) {
                 String trim = ((String) value).substring(5).trim();
                 if (trim.startsWith(":")) {
                     String errorCodeStr = trim.substring(1).trim();
@@ -105,11 +109,6 @@ public class JbootReturnValueRender extends Render {
                 if (this.render == null) {
                     this.render = factory.getTextRender((String) value);
                 }
-            }
-
-            //template
-            else if (newVal.endsWith(".html")) {
-                this.render = factory.getTemplateRender((String) value);
             }
 
             //text
