@@ -68,14 +68,10 @@ public class JbootReturnValueRender extends Render {
         } else if (this.value instanceof String) {
             String newVal = ((String) value).toLowerCase();
 
-            //template
-            if (newVal.endsWith(".html") && !newVal.contains(":")) {
-                this.render = factory.getTemplateRender((String) value);
-            }
 
             //error
-            else if (newVal.startsWith("error") && newVal.length() > 8) {
-                String trim = newVal.substring(5).trim();
+            if (newVal.startsWith("error") && newVal.length() > 8) {
+                String trim = ((String) value).substring(5).trim();
                 if (trim.startsWith(":")) {
                     String errorCodeStr = trim.substring(1).trim();
                     if (StrUtil.isNumeric(errorCodeStr)) {
@@ -89,7 +85,7 @@ public class JbootReturnValueRender extends Render {
 
             //forward
             else if (newVal.startsWith("forward")) {
-                String trim = newVal.substring(7).trim();
+                String trim = ((String) value).substring(7).trim();
                 if (trim.startsWith(":")) {
                     this.forwardTo = trim.substring(1).trim();
                 } else {
@@ -99,7 +95,7 @@ public class JbootReturnValueRender extends Render {
 
             //redirect
             else if (newVal.startsWith("redirect")) {
-                String trim = newVal.substring(8).trim();
+                String trim = ((String) value).substring(8).trim();
                 if (trim.startsWith(":")) {
                     String redirectTo = trim.substring(1).trim();
                     if (StrUtil.isNotBlank(redirectTo)) {
@@ -109,6 +105,11 @@ public class JbootReturnValueRender extends Render {
                 if (this.render == null) {
                     this.render = factory.getTextRender((String) value);
                 }
+            }
+
+            //template
+            else if (newVal.endsWith(".html")) {
+                this.render = factory.getTemplateRender((String) value);
             }
 
             //text
