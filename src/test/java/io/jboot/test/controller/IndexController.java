@@ -122,4 +122,11 @@ public class IndexController extends JbootController {
     public String r13(){
         return "forward: ";
     }
+
+    public String r14(){
+        return "forward: classPath";
+    }
+    public String r15(){
+        return "redirect: classPath";
+    }
 }
