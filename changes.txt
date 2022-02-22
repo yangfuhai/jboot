@@ -1,5 +1,11 @@
+jboot v3.13.8:
+修复：Junit 代码覆盖率测试可能出现多次启动的问题
+修复：JbootCron4jPlugin 停止后未移除已经停止任务的问题
+
+
+
 jboot v3.13.7:
-新增： MQ 新增 stopListening() 方法，可用于定制化关闭 MQ
+新增：MQ 新增 stopListening() 方法，可用于定制化关闭 MQ
 修复: Controller 返回值有大写可能不正确的问题
 
 
