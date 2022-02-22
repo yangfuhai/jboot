@@ -150,9 +150,8 @@ public class JbootCron4jPlugin implements IPlugin {
 
     @Override
     public boolean stop() {
-        for (JbootCron4jPlugin.TaskInfo taskInfo : taskInfoList) {
-            taskInfo.stop();
-        }
+        taskInfoList.forEach(TaskInfo::stop);
+        taskInfoList.clear();
         return true;
     }
 

@@ -17,6 +17,7 @@ package io.jboot.test;
 
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.core.JFinalFilter;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.cglib.JbootCglibProxyFactory;
@@ -52,6 +53,8 @@ class MockApp {
 
     private Object testInstance;
 
+    private boolean isInit = false;
+
 
     private MockApp() {
         filter = new MockJFinalFilter();
@@ -78,6 +81,13 @@ class MockApp {
     }
 
     void start(Class<?> testClass) {
+        if (!isInit) {
+            init(testClass);
+            isInit = true;
+        }
+    }
+
+    private void init(Class<?> testClass) {
         try {
             TestConfig testConfig = testClass.getAnnotation(TestConfig.class);
 
@@ -114,7 +124,7 @@ class MockApp {
             filter.init(new MockFilterConfig());
             config = ReflectUtil.getFieldValue(filter, "jfinalConfig");
         } catch (ServletException e) {
-            e.printStackTrace();
+            LogKit.error(e.toString(), e);
         }
     }
 
