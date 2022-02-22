@@ -46,7 +46,7 @@ public class Helloworld extends JbootController {
 
 ## 帮助文档
 
-- 文档请访问：[www.jboot.io](http://www.jboot.io)
+- 文档请访问：[www.jboot.com.cn](http://www.jboot.com.cn)
 - Demos 请访问：[这里](./src/test/java/io/jboot/test)
 
 
