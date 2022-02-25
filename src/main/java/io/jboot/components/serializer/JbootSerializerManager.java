@@ -64,18 +64,10 @@ public class JbootSerializerManager {
     }
 
     public JbootSerializer buildSerializer(String serializerName) {
-
         if (serializerName == null) {
             throw new NullPointerException("SerializerName must not be null");
         }
 
-        //可能是某个类名
-        if (serializerName.contains(".")) {
-            JbootSerializer serializer = ClassUtil.newInstance(serializerName, false);
-            if (serializer == null) {
-                throw new JbootIllegalConfigException("can not new instance serializer by class: " + serializerName);
-            }
-        }
 
         switch (serializerName.toLowerCase()) {
             case JbootSerializerConfig.KRYO:
@@ -84,8 +76,6 @@ public class JbootSerializerManager {
                 return new FstSerializer();
             case JbootSerializerConfig.FASTJSON:
                 return new FastJsonSerializer();
-//            case JbootSerializerConfig.JACKSON:
-//                return new JacksonSerializer();
             default:
                 return JbootSpiLoader.load(JbootSerializer.class, serializerName);
         }
