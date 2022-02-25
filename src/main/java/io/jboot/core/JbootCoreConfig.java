@@ -26,11 +26,13 @@ import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.app.ApplicationUtil;
+import io.jboot.components.cache.support.JbootAccessTokenCache;
 import io.jboot.components.cache.support.JbootCaptchaCache;
 import io.jboot.components.cache.support.JbootTokenCache;
 import io.jboot.components.gateway.JbootGatewayHandler;
@@ -163,10 +165,14 @@ public class JbootCoreConfig extends JFinalConfig {
         constants.setBaseUploadPath(LocalAttachmentContainerConfig.getInstance().buildUploadAbsolutePath());
         constants.setJsonDatePattern(DateUtil.datetimePattern);
 
-        if (JbootWebConfig.getInstance().isPathVariableEnable()){
+        if (JbootWebConfig.getInstance().isPathVariableEnable()) {
             constants.setActionMapping(PathVariableActionMapping::new);
-        }else {
+        } else {
             constants.setActionMapping(JbootActionMapping::new);
+        }
+
+        if (ClassUtil.hasClass("com.jfinal.weixin.sdk.api.ApiConfigKit")) {
+            ApiConfigKit.setAccessTokenCache(new JbootAccessTokenCache());
         }
 
         JbootAppListenerManager.me().onConstantConfig(constants);
@@ -360,9 +366,9 @@ public class JbootCoreConfig extends JFinalConfig {
 
         //若用户自己没配置 ActionHandler，默认使用 JbootActionHandler
         if (handlers.getActionHandler() == null) {
-            if (JbootWebConfig.getInstance().isPathVariableEnable()){
+            if (JbootWebConfig.getInstance().isPathVariableEnable()) {
                 handlers.setActionHandler(new PathVariableActionHandler());
-            }else {
+            } else {
                 handlers.setActionHandler(new JbootActionHandler());
             }
         }
@@ -400,8 +406,6 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootScheduleManager.me().stop();
         JbootSeataManager.me().stop();
         JbootrpcManager.me().stop();
-
-
     }
 
 

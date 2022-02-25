@@ -8,7 +8,7 @@ import java.util.List;
 
 public class JbootTokenCache implements ITokenCache {
 
-    static final String CACHE_NAME = "__jboot_token";
+    static final String CACHE_NAME = "jboot_tokens";
 
     @Override
     public void put(Token token) {

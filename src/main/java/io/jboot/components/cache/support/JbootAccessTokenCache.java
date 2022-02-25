@@ -6,7 +6,7 @@ import io.jboot.components.cache.CacheTime;
 
 public class JbootAccessTokenCache implements IAccessTokenCache {
 
-    static final String CACHE_NAME = "__jboot_wechat_access_tokens";
+    static final String CACHE_NAME = "wechat_access_tokens";
 
     @Override
     public String get(String key) {
