@@ -26,13 +26,11 @@ import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Engine;
-import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import io.jboot.Jboot;
 import io.jboot.aop.JbootAopFactory;
 import io.jboot.aop.jfinal.JfinalHandlers;
 import io.jboot.aop.jfinal.JfinalPlugins;
 import io.jboot.app.ApplicationUtil;
-import io.jboot.components.cache.support.JbootAccessTokenCache;
 import io.jboot.components.cache.support.JbootCaptchaCache;
 import io.jboot.components.cache.support.JbootTokenCache;
 import io.jboot.components.gateway.JbootGatewayHandler;
@@ -73,6 +71,7 @@ import io.jboot.web.handler.PathVariableActionHandler;
 import io.jboot.web.json.JbootJson;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.web.xss.XSSHandler;
+import io.jboot.wechat.WechatSupport;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -169,10 +168,6 @@ public class JbootCoreConfig extends JFinalConfig {
             constants.setActionMapping(PathVariableActionMapping::new);
         } else {
             constants.setActionMapping(JbootActionMapping::new);
-        }
-
-        if (ClassUtil.hasClass("com.jfinal.weixin.sdk.api.ApiConfigKit")) {
-            ApiConfigKit.setAccessTokenCache(new JbootAccessTokenCache());
         }
 
         JbootAppListenerManager.me().onConstantConfig(constants);
@@ -388,6 +383,10 @@ public class JbootCoreConfig extends JFinalConfig {
         LimiterManager.me().init();
         JbootSeataManager.me().init();
         JbootSentinelManager.me().init();
+
+        if (ClassUtil.hasClass("com.jfinal.weixin.sdk.api.ApiConfigKit")) {
+            new WechatSupport().autoSupport();
+        }
 
         JbootAppListenerManager.me().onStart();
 

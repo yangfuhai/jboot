@@ -30,10 +30,9 @@ public class WechatApiConfigInterceptor implements Interceptor {
             ApiConfig config = controller.getApiConfig();
 
             if (config == null) {
-                inv.getController().renderText("error : cannot get apiconfig,please config jboot.properties");
+                inv.getController().renderText("Error: Can not get apiconfig, please config jboot.properties");
                 return;
             }
-
             ApiConfigKit.setThreadLocalAppId(config.getAppId());
             inv.invoke();
         } finally {
