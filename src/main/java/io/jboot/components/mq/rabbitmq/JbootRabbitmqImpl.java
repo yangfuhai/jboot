@@ -121,7 +121,6 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
 
     public synchronized Channel getChannel(String toChannel, boolean queueMode) {
-
         Channel channel = channelMap.get(toChannel + queueMode);
         if (channel == null) {
             try {
@@ -129,13 +128,29 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
 
                 //队列模式，只需要创建 队列就可以了，不需要定义交换机
                 if (queueMode) {
-                    channel.queueDeclare(toChannel, true, false, false, null);
+                    channel.queueDeclare(toChannel
+                            , rabbitmqConfig.isQueueDeclareDurable()
+                            , rabbitmqConfig.isQueueDeclareExclusive()
+                            , rabbitmqConfig.isQueueDeclareAutoDelete()
+                            , null);
                 }
 
                 //广播模式，需要定义交换机，发送者直接把消息发送到交换机里
                 else {
-                    channel.queueDeclare(buildBroadcastChannelName(toChannel), false, false, true, null);
-                    channel.exchangeDeclare(toChannel, BuiltinExchangeType.FANOUT, true);
+                    channel.queueDeclare(buildBroadcastChannelName(toChannel)
+                            , rabbitmqConfig.isBroadcastQueueDeclareDurable()
+                            , rabbitmqConfig.isBroadcastQueueDeclareExclusive()
+                            , rabbitmqConfig.isBroadcastQueueDeclareAutoDelete()
+                            , null);
+
+
+                    BuiltinExchangeType exchangeType = BuiltinExchangeType.FANOUT;
+                    for (BuiltinExchangeType type : BuiltinExchangeType.values()) {
+                        if (type.getType().equals(rabbitmqConfig.getBroadcastExchangeDeclareExchangeType())) {
+                            exchangeType = type;
+                        }
+                    }
+                    channel.exchangeDeclare(toChannel, exchangeType, rabbitmqConfig.isBroadcastExchangeDeclareDurable());
                     channel.queueBind(buildBroadcastChannelName(toChannel), toChannel, rabbitmqConfig.getBroadcastChannelRoutingKey());
                 }
 
@@ -143,9 +158,7 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
                 throw new JbootException("Can not create rabbit mq channel.", ex);
             }
 
-            if (channel != null) {
-                channelMap.put(toChannel + queueMode, channel);
-            }
+            channelMap.put(toChannel + queueMode, channel);
         }
 
         return channel;

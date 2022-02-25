@@ -42,6 +42,17 @@ public class JbootRabbitmqConfig {
     //若配置为 false，则需要在 OnMessage 里，调用 MessageContext.getChannel().baseAck（或者baseNack）进行消费（或者标识消费失败）
     private boolean autoAck = true;
 
+    private boolean queueDeclareDurable = true;
+    private boolean queueDeclareExclusive = false;
+    private boolean queueDeclareAutoDelete = false;
+
+
+    private String broadcastExchangeDeclareExchangeType = "fanout";
+    private boolean broadcastExchangeDeclareDurable = false;
+
+    private boolean broadcastQueueDeclareDurable = false;
+    private boolean broadcastQueueDeclareExclusive = false;
+    private boolean broadcastQueueDeclareAutoDelete = true;
 
     public String getUsername() {
         return username;
@@ -105,5 +116,69 @@ public class JbootRabbitmqConfig {
 
     public void setAutoAck(boolean autoAck) {
         this.autoAck = autoAck;
+    }
+
+    public boolean isQueueDeclareDurable() {
+        return queueDeclareDurable;
+    }
+
+    public void setQueueDeclareDurable(boolean queueDeclareDurable) {
+        this.queueDeclareDurable = queueDeclareDurable;
+    }
+
+    public boolean isQueueDeclareExclusive() {
+        return queueDeclareExclusive;
+    }
+
+    public void setQueueDeclareExclusive(boolean queueDeclareExclusive) {
+        this.queueDeclareExclusive = queueDeclareExclusive;
+    }
+
+    public boolean isQueueDeclareAutoDelete() {
+        return queueDeclareAutoDelete;
+    }
+
+    public void setQueueDeclareAutoDelete(boolean queueDeclareAutoDelete) {
+        this.queueDeclareAutoDelete = queueDeclareAutoDelete;
+    }
+
+    public String getBroadcastExchangeDeclareExchangeType() {
+        return broadcastExchangeDeclareExchangeType;
+    }
+
+    public void setBroadcastExchangeDeclareExchangeType(String broadcastExchangeDeclareExchangeType) {
+        this.broadcastExchangeDeclareExchangeType = broadcastExchangeDeclareExchangeType;
+    }
+
+    public boolean isBroadcastExchangeDeclareDurable() {
+        return broadcastExchangeDeclareDurable;
+    }
+
+    public void setBroadcastExchangeDeclareDurable(boolean broadcastExchangeDeclareDurable) {
+        this.broadcastExchangeDeclareDurable = broadcastExchangeDeclareDurable;
+    }
+
+    public boolean isBroadcastQueueDeclareDurable() {
+        return broadcastQueueDeclareDurable;
+    }
+
+    public void setBroadcastQueueDeclareDurable(boolean broadcastQueueDeclareDurable) {
+        this.broadcastQueueDeclareDurable = broadcastQueueDeclareDurable;
+    }
+
+    public boolean isBroadcastQueueDeclareExclusive() {
+        return broadcastQueueDeclareExclusive;
+    }
+
+    public void setBroadcastQueueDeclareExclusive(boolean broadcastQueueDeclareExclusive) {
+        this.broadcastQueueDeclareExclusive = broadcastQueueDeclareExclusive;
+    }
+
+    public boolean isBroadcastQueueDeclareAutoDelete() {
+        return broadcastQueueDeclareAutoDelete;
+    }
+
+    public void setBroadcastQueueDeclareAutoDelete(boolean broadcastQueueDeclareAutoDelete) {
+        this.broadcastQueueDeclareAutoDelete = broadcastQueueDeclareAutoDelete;
     }
 }
