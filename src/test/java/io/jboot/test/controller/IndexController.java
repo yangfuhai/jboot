@@ -1,6 +1,7 @@
 package io.jboot.test.controller;
 
 import com.jfinal.kit.PathKit;
+import io.jboot.test.db.model.User;
 import io.jboot.utils.RequestUtil;
 import io.jboot.web.ResponseEntity;
 import io.jboot.web.controller.JbootController;
@@ -8,11 +9,11 @@ import io.jboot.web.controller.annotation.GetRequest;
 import io.jboot.web.controller.annotation.PostRequest;
 import io.jboot.web.controller.annotation.RequestMapping;
 
-@RequestMapping("/")
+@RequestMapping(value = "/")
 public class IndexController extends JbootController {
 
     public void index() {
-        render("/index.html");
+        render("index.html");
     }
 
 
@@ -21,7 +22,7 @@ public class IndexController extends JbootController {
     }
 
     public void error500(){
-
+        render("/xxx/xx/x/xxx/index.html");
     }
 
     public void csv(){
@@ -64,11 +65,12 @@ public class IndexController extends JbootController {
     }
 
     public String r1(){
+//        render("xxxx");
         return "text....";
     }
 
     public String r2(){
-        return "error:404";
+        return "error :  404";
     }
 
 
@@ -128,5 +130,11 @@ public class IndexController extends JbootController {
     }
     public String r15(){
         return "redirect: classPath";
+    }
+
+    public Object r16(){
+        User user = new User();
+        user.put("aaa",123);
+        return user;
     }
 }
