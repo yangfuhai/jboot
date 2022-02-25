@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jboot.db.tx;
+package io.jboot.db.transactional;
 
 
 import com.jfinal.aop.Interceptor;
@@ -24,10 +24,13 @@ import com.jfinal.plugin.activerecord.*;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
+import io.jboot.aop.annotation.Transactional;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.StrUtil;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
  * 缓存操作的拦截器
@@ -35,26 +38,38 @@ import java.lang.reflect.Method;
  * @author michael yang
  */
 @AutoLoad
-public class TxEnableInterceptor implements Interceptor, InterceptorBuilder {
+public class TransactionalInterceptor implements Interceptor, InterceptorBuilder {
 
 
     @Override
     public void intercept(Invocation inv) {
 
-        TxEnable txEnable = inv.getMethod().getAnnotation(TxEnable.class);
-        String configName = AnnotationUtil.get(txEnable.config());
+        Transactional transactional = inv.getMethod().getAnnotation(Transactional.class);
+        String configName = AnnotationUtil.get(transactional.config());
 
         DbPro dbPro = StrUtil.isBlank(configName) ? Db.use() : Db.use(configName);
         Config config = StrUtil.isBlank(configName) ? DbKit.getConfig() : DbKit.getConfig(configName);
 
-        int transactionLevel = txEnable.transactionLevel();
+        int transactionLevel = transactional.transactionLevel();
         if (transactionLevel == -1) {
             transactionLevel = config.getTransactionLevel();
         }
 
-        IAtom runnable = () -> {
 
-            inv.invoke();
+        IAtom runnable = () -> {
+            try {
+                inv.invoke();
+            } catch (Throwable ex) {
+                for (Class<? extends Throwable> forClass : transactional.noRollbackFor()) {
+                    if (ex.getClass().isAssignableFrom(forClass)) {
+                        LogKit.error(ex.toString(), ex);
+
+                        //允许事务提交
+                        return true;
+                    }
+                }
+                throw ex;
+            }
 
             //没有返回值的方法，只要没有异常就是提交事务
             if (inv.getMethod().getReturnType() == void.class) {
@@ -63,24 +78,31 @@ public class TxEnableInterceptor implements Interceptor, InterceptorBuilder {
 
             Object result = inv.getReturnValue();
 
-            if (result == null) {
+            if (result == null && transactional.rollbackForNull()) {
                 return false;
             }
 
-            if (result instanceof Boolean) {
-                return (boolean) result;
+            if (result instanceof Boolean && !(Boolean) result && transactional.rollbackForFalse()) {
+                return false;
             }
 
-            if (result instanceof Ret) {
-                return ((Ret) result).isOk();
+            if (result instanceof Ret && ((Ret) result).isFail() && transactional.rollbackForRetFail()) {
+                return false;
             }
 
             return true;
         };
 
-        if (txEnable.inNewThread()) {
+
+        if (transactional.inNewThread()) {
             try {
-                dbPro.txInNewThread(transactionLevel, runnable).get();
+                Future<Boolean> future = txInNewThread(inv, transactional.threadPoolName(), dbPro, transactionLevel, runnable);
+
+                //有返回值的场景下，需要等待返回值
+                //或者没有返回值，但是配置了 @Transacional(threadWithBlocked=ture) 的时候
+                if (inv.getMethod().getReturnType() != void.class || transactional.threadWithBlocked()) {
+                    Boolean success = future.get();
+                }
             } catch (Exception e) {
                 LogKit.error(e.toString(), e);
             }
@@ -91,9 +113,15 @@ public class TxEnableInterceptor implements Interceptor, InterceptorBuilder {
     }
 
 
+    public Future<Boolean> txInNewThread(Invocation inv, String name, DbPro dbPro, int transactionLevel, IAtom atom) {
+        Callable<Boolean> callable = () -> dbPro.tx(transactionLevel, atom);
+        return TransactionalManager.me().execute(inv, name, callable);
+    }
+
+
     @Override
     public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
-        if (Util.hasAnnotation(method, TxEnable.class)) {
+        if (Util.hasAnnotation(method, Transactional.class)) {
             interceptors.add(this);
         }
     }
