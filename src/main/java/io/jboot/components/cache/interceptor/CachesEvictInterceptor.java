@@ -62,20 +62,21 @@ public class CachesEvictInterceptor implements Interceptor {
             }
         }
 
-        Class targetClass = inv.getTarget().getClass();
+        Class<?> targetClass = inv.getTarget().getClass();
         try {
-            doCachesEvict(inv.getArgs(), targetClass, method, beforeInvocations);
+            doCachesEvict(inv.getArgs(), targetClass, method, beforeInvocations, inv.isActionInvocation());
             inv.invoke();
         } finally {
-            doCachesEvict(inv.getArgs(), targetClass, method, afterInvocations);
+            doCachesEvict(inv.getArgs(), targetClass, method, afterInvocations, inv.isActionInvocation());
         }
     }
 
 
     private void doCachesEvict(Object[] arguments
-            , Class targetClass
+            , Class<?> targetClass
             , Method method
-            , List<CacheEvict> cacheEvicts) {
+            , List<CacheEvict> cacheEvicts
+            , boolean isAction) {
 
         if (cacheEvicts == null || cacheEvicts.isEmpty()) {
             return;
@@ -83,7 +84,7 @@ public class CachesEvictInterceptor implements Interceptor {
 
         for (CacheEvict evict : cacheEvicts) {
             try {
-                Utils.doCacheEvict(arguments, targetClass, method, evict);
+                Utils.removeCache(arguments, targetClass, method, evict, isAction);
             } catch (Exception ex) {
                 LOG.error(ex.toString(), ex);
             }

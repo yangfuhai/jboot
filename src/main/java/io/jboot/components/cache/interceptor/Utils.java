@@ -16,8 +16,8 @@
 package io.jboot.components.cache.interceptor;
 
 import com.jfinal.template.Engine;
+import io.jboot.components.cache.ActionCache;
 import io.jboot.components.cache.AopCache;
-import io.jboot.components.cache.JbootAopCacheConfig;
 import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.db.model.Columns;
 import io.jboot.exception.JbootException;
@@ -38,6 +38,10 @@ class Utils {
 
     static final Engine ENGINE = new Engine("JbootCacheRender");
 
+    static {
+        ENGINE.addDirective("para", ParaDirective.class);
+    }
+
     /**
      * use jfinal engine render text
      *
@@ -47,7 +51,7 @@ class Utils {
      * @return
      */
     static String engineRender(String template, Method method, Object[] arguments) {
-        Map<String, Object> datas = new HashMap();
+        Map<String, Object> datas = new HashMap<>();
         int x = 0;
         for (Parameter p : method.getParameters()) {
             if (!p.isNamePresent()) {
@@ -61,8 +65,7 @@ class Utils {
 
     }
 
-    static String buildCacheKey(String key, Class clazz, Method method, Object[] arguments) {
-
+    static String buildCacheKey(String key, Class<?> clazz, Method method, Object[] arguments) {
         clazz = ClassUtil.getUsefulClass(clazz);
 
         if (StrUtil.isNotBlank(key)) {
@@ -79,7 +82,7 @@ class Utils {
         Class<?>[] paramTypes = method.getParameterTypes();
         int index = 0;
         for (Object argument : arguments) {
-            String argString = converteToString(argument, method);
+            String argString = convertToString(argument, method);
             if (index == 0) {
                 keyBuilder.append("(");
             } else {
@@ -98,7 +101,7 @@ class Utils {
     }
 
     private static String renderKey(String key, Method method, Object[] arguments) {
-        int indexOfStartFlag = key.indexOf("#(");
+        int indexOfStartFlag = key.indexOf("#");
         if (indexOfStartFlag > -1) {
             int indexOfEndFlag = key.indexOf(")");
             if (indexOfEndFlag > indexOfStartFlag) {
@@ -110,9 +113,9 @@ class Utils {
     }
 
 
-    public static void ensureCachenameAvailable(Method method, String cacheName) {
+    public static void ensureCacheNameNotBlank(Method method, String cacheName) {
         if (StrUtil.isBlank(cacheName)) {
-            throw new JbootException(String.format("CacheEvict.name() must not empty in method [%s].",
+            throw new JbootException(String.format("Cache name must not empty or blank in method: " +
                     ClassUtil.buildMethodString(method)));
         }
     }
@@ -149,7 +152,7 @@ class Utils {
 
     }
 
-    static String converteToString(Object object, Method method) {
+    static String convertToString(Object object, Method method) {
         if (object == null) {
             return "null";
         }
@@ -169,7 +172,7 @@ class Utils {
                 if (index == 0) {
                     ret.append('[');
                 }
-                ret.append(converteToString(value, method));
+                ret.append(convertToString(value, method));
                 if (++index != values.length) {
                     ret.append(',');
                 } else {
@@ -180,14 +183,14 @@ class Utils {
         }
 
         if (object instanceof Collection) {
-            Collection c = (Collection) object;
+            Collection<?> c = (Collection<?>) object;
             StringBuilder ret = new StringBuilder();
             int index = 0;
             for (Object o : c) {
                 if (index == 0) {
                     ret.append('[');
                 }
-                ret.append(converteToString(o, method));
+                ret.append(convertToString(o, method));
                 if (++index != c.size()) {
                     ret.append(',');
                 } else {
@@ -227,16 +230,12 @@ class Utils {
             return false;
         }
 
-        String template = new StringBuilder("#(")
-                .append(unlessString)
-                .append(")")
-                .toString();
-
+        String template = "#(" + unlessString + ")";
         return "true".equals(engineRender(template, method, arguments));
     }
 
 
-    static void doCacheEvict(Object[] arguments, Class targetClass, Method method, CacheEvict evict) {
+    static void removeCache(Object[] arguments, Class<?> targetClass, Method method, CacheEvict evict, boolean isAction) {
         String unless = AnnotationUtil.get(evict.unless());
         if (Utils.isUnless(unless, method, arguments)) {
             return;
@@ -250,23 +249,21 @@ class Utils {
 
         String cacheKey = AnnotationUtil.get(evict.key());
 
-        if (StrUtil.isBlank(cacheKey) || "*".equals(cacheKey)) {
-            AopCache.removeAll(cacheName);
+        if (StrUtil.isBlank(cacheKey) || "*".equals(cacheKey.trim())) {
+            if (isAction) {
+                ActionCache.removeAll(cacheName);
+            } else {
+                AopCache.removeAll(cacheName);
+            }
         } else {
             cacheKey = Utils.buildCacheKey(cacheKey, targetClass, method, arguments);
-            AopCache.remove(cacheName, cacheKey);
+            if (isAction) {
+                ActionCache.remove(cacheName, cacheKey);
+            } else {
+                AopCache.remove(cacheName, cacheKey);
+            }
         }
     }
 
-    private static final JbootAopCacheConfig CONFIG = JbootAopCacheConfig.getInstance();
-
-    static void putDataToCache(String cacheName, String cacheKey, Object data, int liveSeconds) {
-        liveSeconds = liveSeconds > 0 ? liveSeconds : CONFIG.getLiveSeconds();
-        if (liveSeconds > 0) {
-            AopCache.put(cacheName, cacheKey, data, liveSeconds);
-        } else {
-            AopCache.put(cacheName, cacheKey, data);
-        }
-    }
 
 }

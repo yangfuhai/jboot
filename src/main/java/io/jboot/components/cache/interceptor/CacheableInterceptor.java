@@ -18,8 +18,10 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.core.CPI;
+import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Page;
-import io.jboot.Jboot;
+import io.jboot.components.cache.ActionCache;
 import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.annotation.Cacheable;
 import io.jboot.db.model.JbootModel;
@@ -27,9 +29,13 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ModelUtil;
+import io.jboot.web.cached.CacheSupportResponseProxy;
+import io.jboot.web.cached.CachedContent;
 
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -40,7 +46,6 @@ import java.util.Set;
 public class CacheableInterceptor implements Interceptor {
 
     private static final String NULL_VALUE = "NULL_VALUE";
-    private static final boolean devMode = Jboot.isDevMode();
 
     @Override
     public void intercept(Invocation inv) {
@@ -52,15 +57,69 @@ public class CacheableInterceptor implements Interceptor {
             return;
         }
 
+        if (inv.isActionInvocation()) {
+            forController(inv, method, cacheable);
+        } else {
+            forService(inv, method, cacheable);
+        }
+    }
+
+
+    private void forController(Invocation inv, Method method, Cacheable cacheable) {
+
+        Class<?> targetClass = inv.getTarget().getClass();
+        String cacheName = AnnotationUtil.get(cacheable.name());
+        Utils.ensureCacheNameNotBlank(method, cacheName);
+        String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cacheable.key()), targetClass, method, inv.getArgs());
+
+        Controller controller = inv.getController();
+
+        CachedContent cachedContent = ActionCache.get(cacheName, cacheKey);
+        if (cachedContent != null) {
+            writeCachedContent(controller, cachedContent);
+            return;
+        }
+
+
+        CacheSupportResponseProxy responseProxy = new CacheSupportResponseProxy(controller.getResponse());
+        responseProxy.setCacheName(cacheName);
+        responseProxy.setCacheKey(cacheKey);
+        responseProxy.setCacheLiveSeconds(cacheable.liveSeconds());
+
+        //让 Controller 持有缓存的 responseProxy
+        CPI._init_(controller, CPI.getAction(controller), controller.getRequest(), responseProxy, controller.getPara());
+
+        inv.invoke();
+
+    }
+
+
+    private void writeCachedContent(Controller controller, CachedContent cachedContent) {
+        HttpServletResponse response = controller.getResponse();
+        Map<String, String> headers = cachedContent.getHeaders();
+        if (headers != null && !headers.isEmpty()) {
+            headers.forEach(response::addHeader);
+        }
+        controller.render(cachedContent.createRender());
+    }
+
+    /**
+     * Service 层的 Cacheable 使用
+     *
+     * @param inv
+     * @param method
+     * @param cacheable
+     */
+    private void forService(Invocation inv, Method method, Cacheable cacheable) {
         String unlessString = AnnotationUtil.get(cacheable.unless());
         if (Utils.isUnless(unlessString, method, inv.getArgs())) {
             inv.invoke();
             return;
         }
 
-        Class targetClass = inv.getTarget().getClass();
+        Class<?> targetClass = inv.getTarget().getClass();
         String cacheName = AnnotationUtil.get(cacheable.name());
-        Utils.ensureCachenameAvailable(method, cacheName);
+        Utils.ensureCacheNameNotBlank(method, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cacheable.key()), targetClass, method, inv.getArgs());
 
         Object data = AopCache.get(cacheName, cacheKey);
@@ -77,7 +136,7 @@ public class CacheableInterceptor implements Interceptor {
             data = inv.getReturnValue();
             if (data != null) {
 
-                Utils.putDataToCache(cacheName, cacheKey, data, cacheable.liveSeconds());
+                AopCache.putDataToCache(cacheName, cacheKey, data, cacheable.liveSeconds());
 
                 //当启用返回 copy 值的时候，返回的内容应该是一个进行copy之后的值
                 if (cacheable.returnCopyEnable()) {
@@ -85,7 +144,7 @@ public class CacheableInterceptor implements Interceptor {
                 }
 
             } else if (cacheable.nullCacheEnable()) {
-                Utils.putDataToCache(cacheName, cacheKey, NULL_VALUE, cacheable.liveSeconds());
+                AopCache.putDataToCache(cacheName, cacheKey, NULL_VALUE, cacheable.liveSeconds());
             }
         }
     }
@@ -110,7 +169,7 @@ public class CacheableInterceptor implements Interceptor {
 
 
     private JbootException newException(Exception ex, Invocation inv, Object data) {
-        String msg = "can not copy data for type [" + data.getClass().getName() + "] in method :"
+        String msg = "Can not copy data for type [" + data.getClass().getName() + "] in method :"
                 + ClassUtil.buildMethodString(inv.getMethod())
                 + " , can not use @Cacheable(returnCopyEnable=true) annotation";
 

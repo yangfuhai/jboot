@@ -22,10 +22,13 @@ import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.app.JbootApplicationConfig;
+import io.jboot.components.cache.ActionCache;
 import io.jboot.components.valid.ValidErrorRender;
 import io.jboot.components.valid.ValidException;
 import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
+import io.jboot.web.cached.CacheSupportResponseProxy;
+import io.jboot.web.cached.CachedContent;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.render.JbootErrorRender;
 import io.jboot.web.render.JbootRenderFactory;
@@ -124,13 +127,15 @@ public class JbootActionHandler extends ActionHandler {
             if (JbootActionReporter.isReportEnable()) {
                 long time = System.currentTimeMillis();
                 try {
-                    doStartRender(target, request, response, isHandled, action, controller, invocation);
+                    doStartRender(target, action, controller, invocation, isHandled);
                 } finally {
                     JbootActionReporter.report(target, controller, action, invocation, time);
                 }
             } else {
-                doStartRender(target, request, response, isHandled, action, controller, invocation);
+                doStartRender(target, action, controller, invocation, isHandled);
             }
+
+            doAfterRender(action, controller);
 
         } catch (RenderException e) {
             if (LOG.isErrorEnabled()) {
@@ -153,14 +158,22 @@ public class JbootActionHandler extends ActionHandler {
         }
     }
 
+    protected void doAfterRender(Action action, Controller controller) {
+        // Controller 缓存的支持，必须在 render() 执行之后，才能通过 response 获取缓存信息
+        if (controller.getResponse() instanceof CacheSupportResponseProxy) {
+            CacheSupportResponseProxy responseProxy = (CacheSupportResponseProxy) controller.getResponse();
+            CachedContent cachedContent = CachedContent.fromResponseProxy(responseProxy);
+            ActionCache.putDataToCache(responseProxy.getCacheName(), responseProxy.getCacheKey(),
+                    cachedContent, responseProxy.getCacheLiveSeconds());
+        }
+    }
 
-    private void doStartRender(String target
-            , HttpServletRequest request
-            , HttpServletResponse response
-            , boolean[] isHandled
+
+    protected void doStartRender(String target
             , Action action
             , Controller controller
-            , Invocation invocation) {
+            , Invocation invocation
+            , boolean[] isHandled) {
 
         invocation.invoke();
 
@@ -170,7 +183,7 @@ public class JbootActionHandler extends ActionHandler {
             if (target.equals(actionUrl)) {
                 throw new RuntimeException("The forward action url is the same as before.");
             } else {
-                handle(actionUrl, request, response, isHandled);
+                handle(actionUrl, controller.getRequest(), controller.getResponse(), isHandled);
             }
         } else {
             if (render == null && void.class != action.getMethod().getReturnType()
@@ -181,7 +194,7 @@ public class JbootActionHandler extends ActionHandler {
 
                 String forwardTo = returnValueRender.getForwardTo();
                 if (forwardTo != null) {
-                    handle(getRealForwrdTo(forwardTo, target, action), request, response, isHandled);
+                    handle(getRealForwrdTo(forwardTo, target, action), controller.getRequest(), controller.getResponse(), isHandled);
                     return;
                 } else {
                     render = returnValueRender;
@@ -192,7 +205,7 @@ public class JbootActionHandler extends ActionHandler {
                 render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
             }
 
-            render.setContext(request, response, action.getViewPath()).render();
+            render.setContext(controller.getRequest(), controller.getResponse(), action.getViewPath()).render();
         }
     }
 

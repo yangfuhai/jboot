@@ -17,14 +17,14 @@ package io.jboot.web.handler;
 
 import com.google.common.base.Splitter;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.*;
+import com.jfinal.core.Action;
+import com.jfinal.core.ActionException;
+import com.jfinal.core.CPI;
+import com.jfinal.core.Controller;
 import com.jfinal.log.Log;
-import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import io.jboot.components.valid.ValidException;
 import io.jboot.web.controller.JbootControllerContext;
-import io.jboot.web.render.JbootRenderFactory;
-import io.jboot.web.render.JbootReturnValueRender;
 import io.jboot.web.session.JbootServletRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,13 +88,15 @@ public class PathVariableActionHandler extends JbootActionHandler {
             if (JbootActionReporter.isReportEnable()) {
                 long time = System.currentTimeMillis();
                 try {
-                    doStartRender(target, request, response, isHandled, action, controller, invocation);
+                    doStartRender(target, action, controller, invocation, isHandled);
                 } finally {
                     JbootActionReporter.report(target, controller, action, invocation, time);
                 }
             } else {
-                doStartRender(target, request, response, isHandled, action, controller, invocation);
+                doStartRender(target, action, controller, invocation, isHandled);
             }
+
+            doAfterRender(action, controller);
 
         } catch (RenderException e) {
             if (LOG.isErrorEnabled()) {
@@ -114,46 +116,46 @@ public class PathVariableActionHandler extends JbootActionHandler {
     }
 
 
-    private void doStartRender(String target
-            , HttpServletRequest request
-            , HttpServletResponse response
-            , boolean[] isHandled
-            , Action action
-            , Controller controller
-            , Invocation invocation) {
-
-        invocation.invoke();
-
-        Render render = controller.getRender();
-        if (render instanceof ForwardActionRender) {
-            String actionUrl = ((ForwardActionRender) render).getActionUrl();
-            if (target.equals(actionUrl)) {
-                throw new RuntimeException("The forward action url is the same as before.");
-            } else {
-                handle(actionUrl, request, response, isHandled);
-            }
-        } else {
-            if (render == null && void.class != action.getMethod().getReturnType()
-                    && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
-
-                JbootRenderFactory factory = (JbootRenderFactory) renderManager.getRenderFactory();
-                JbootReturnValueRender returnValueRender = factory.getReturnValueRender(action, invocation.getReturnValue());
-                String forwardTo = returnValueRender.getForwardTo();
-                if (forwardTo != null) {
-                    handle(getRealForwrdTo(forwardTo, target, action), request, response, isHandled);
-                    return;
-                } else {
-                    render = returnValueRender;
-                }
-            }
-
-            if (render == null) {
-                render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
-            }
-
-            render.setContext(request, response, action.getViewPath()).render();
-        }
-    }
+//    private void doStartRender(String target
+//            , HttpServletRequest request
+//            , HttpServletResponse response
+//            , boolean[] isHandled
+//            , Action action
+//            , Controller controller
+//            , Invocation invocation) {
+//
+//        invocation.invoke();
+//
+//        Render render = controller.getRender();
+//        if (render instanceof ForwardActionRender) {
+//            String actionUrl = ((ForwardActionRender) render).getActionUrl();
+//            if (target.equals(actionUrl)) {
+//                throw new RuntimeException("The forward action url is the same as before.");
+//            } else {
+//                handle(actionUrl, request, response, isHandled);
+//            }
+//        } else {
+//            if (render == null && void.class != action.getMethod().getReturnType()
+//                    && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
+//
+//                JbootRenderFactory factory = (JbootRenderFactory) renderManager.getRenderFactory();
+//                JbootReturnValueRender returnValueRender = factory.getReturnValueRender(action, invocation.getReturnValue());
+//                String forwardTo = returnValueRender.getForwardTo();
+//                if (forwardTo != null) {
+//                    handle(getRealForwrdTo(forwardTo, target, action), request, response, isHandled);
+//                    return;
+//                } else {
+//                    render = returnValueRender;
+//                }
+//            }
+//
+//            if (render == null) {
+//                render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
+//            }
+//
+//            render.setContext(request, response, action.getViewPath()).render();
+//        }
+//    }
 
     /**
      * 请求包装类用于将路径变量的URL中的额外参数加入request中

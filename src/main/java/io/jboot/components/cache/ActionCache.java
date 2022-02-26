@@ -6,35 +6,35 @@ import com.jfinal.plugin.ehcache.IDataLoader;
 
 import java.util.List;
 
-public class AopCache {
+public class ActionCache {
 
-    private static final Log LOG = Log.getLog(AopCache.class);
+    private static final Log LOG = Log.getLog(ActionCache.class);
 
-    private static JbootCache aopCache;
+    private static JbootCache actionCache;
 
     public static JbootCache setCurrentPrefix(String cacheNamePrefix) {
-        return getAopCache().setCurrentCacheNamePrefix(cacheNamePrefix);
+        return getActionCache().setCurrentCacheNamePrefix(cacheNamePrefix);
     }
 
     public static void clearCurrentPrefix() {
-        getAopCache().removeCurrentCacheNamePrefix();
+        getActionCache().removeCurrentCacheNamePrefix();
     }
 
-    static JbootCache getAopCache() {
-        if (aopCache == null) {
-            aopCache = JbootCacheManager.me().getCache(AopCacheConfig.getInstance().getUseCacheName());
+    static JbootCache getActionCache() {
+        if (actionCache == null) {
+            actionCache = JbootCacheManager.me().getCache(AopCacheConfig.getInstance().getUseCacheName());
         }
-        return aopCache;
+        return actionCache;
     }
 
-    public static void setAopCache(JbootCache aopCache) {
-        AopCache.aopCache = aopCache;
+    public static void setActionCache(JbootCache actionCache) {
+        ActionCache.actionCache = actionCache;
     }
 
 
     public static void put(String cacheName, Object key, Object value) {
         try {
-            getAopCache().put(cacheName, key, value);
+            getActionCache().put(cacheName, key, value);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
         }
@@ -42,7 +42,7 @@ public class AopCache {
 
     public static void put(String cacheName, Object key, Object value, int liveSeconds) {
         try {
-            getAopCache().put(cacheName, key, value, liveSeconds);
+            getActionCache().put(cacheName, key, value, liveSeconds);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
         }
@@ -50,7 +50,7 @@ public class AopCache {
 
     public static List getKeys(String cacheName) {
         try {
-            return getAopCache().getKeys(cacheName);
+            return getActionCache().getKeys(cacheName);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
         }
@@ -59,7 +59,7 @@ public class AopCache {
 
     public static void remove(String cacheName, Object key) {
         try {
-            getAopCache().remove(cacheName, key);
+            getActionCache().remove(cacheName, key);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
         }
@@ -67,7 +67,7 @@ public class AopCache {
 
     public static void removeAll(String cacheName) {
         try {
-            getAopCache().removeAll(cacheName);
+            getActionCache().removeAll(cacheName);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
         }
@@ -75,7 +75,7 @@ public class AopCache {
 
     public static <T> T get(String cacheName, Object key) {
         try {
-            return getAopCache().get(cacheName, key);
+            return getActionCache().get(cacheName, key);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
             remove(cacheName, key);
@@ -86,7 +86,7 @@ public class AopCache {
 
     public static <T> T get(String cacheName, Object key, IDataLoader dataLoader) {
         try {
-            return getAopCache().get(cacheName, key, dataLoader);
+            return getActionCache().get(cacheName, key, dataLoader);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
             remove(cacheName, key);
@@ -97,7 +97,7 @@ public class AopCache {
 
     public static <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds) {
         try {
-            return getAopCache().get(cacheName, key, dataLoader, liveSeconds);
+            return getActionCache().get(cacheName, key, dataLoader, liveSeconds);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
             remove(cacheName, key);
@@ -108,7 +108,7 @@ public class AopCache {
 
     public static Integer getTtl(String cacheName, Object key) {
         try {
-            return getAopCache().getTtl(cacheName, key);
+            return getActionCache().getTtl(cacheName, key);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
         }
@@ -118,16 +118,15 @@ public class AopCache {
 
     public static void setTtl(String cacheName, Object key, int seconds) {
         try {
-            getAopCache().setTtl(cacheName, key, seconds);
+            getActionCache().setTtl(cacheName, key, seconds);
         } catch (Exception ex) {
             LOG.error(ex.toString(), ex);
         }
     }
 
+    private static final ActionCacheConfig CONFIG = ActionCacheConfig.getInstance();
 
-    private static final AopCacheConfig CONFIG = AopCacheConfig.getInstance();
-
-   public static void putDataToCache(String cacheName, String cacheKey, Object data, int liveSeconds) {
+    public static void putDataToCache(String cacheName, String cacheKey, Object data, int liveSeconds) {
         liveSeconds = liveSeconds > 0 ? liveSeconds : CONFIG.getLiveSeconds();
         if (liveSeconds > 0) {
             put(cacheName, cacheKey, data, liveSeconds);

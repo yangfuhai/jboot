@@ -18,8 +18,12 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.core.CPI;
+import com.jfinal.core.Controller;
+import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.annotation.CachePut;
 import io.jboot.utils.AnnotationUtil;
+import io.jboot.web.cached.CacheSupportResponseProxy;
 
 import java.lang.reflect.Method;
 
@@ -39,6 +43,41 @@ public class CachePutInterceptor implements Interceptor {
             return;
         }
 
+        if (inv.isActionInvocation()) {
+            forController(inv, method, cachePut);
+        } else {
+            forService(inv, method, cachePut);
+        }
+    }
+
+
+    private void forController(Invocation inv, Method method, CachePut cachePut) {
+
+        String unless = AnnotationUtil.get(cachePut.unless());
+        if (Utils.isUnless(unless, method, inv.getArgs())) {
+            return;
+        }
+
+        Class<?> targetClass = inv.getTarget().getClass();
+        String cacheName = AnnotationUtil.get(cachePut.name());
+        Utils.ensureCacheNameNotBlank(method, cacheName);
+        String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cachePut.key()), targetClass, method, inv.getArgs());
+
+        Controller controller = inv.getController();
+
+        CacheSupportResponseProxy responseProxy = new CacheSupportResponseProxy(controller.getResponse());
+        responseProxy.setCacheName(cacheName);
+        responseProxy.setCacheKey(cacheKey);
+        responseProxy.setCacheLiveSeconds(cachePut.liveSeconds());
+
+        //让 Controller 持有缓存的 responseProxy
+        CPI._init_(controller, CPI.getAction(controller), controller.getRequest(), responseProxy, controller.getPara());
+
+    }
+
+
+
+    private void forService(Invocation inv, Method method, CachePut cachePut) {
         Object data = inv.getReturnValue();
 
         String unless = AnnotationUtil.get(cachePut.unless());
@@ -46,12 +85,12 @@ public class CachePutInterceptor implements Interceptor {
             return;
         }
 
-        Class targetClass = inv.getTarget().getClass();
+        Class<?> targetClass = inv.getTarget().getClass();
         String cacheName = AnnotationUtil.get(cachePut.name());
-        Utils.ensureCachenameAvailable(method, cacheName);
+        Utils.ensureCacheNameNotBlank(method, cacheName);
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cachePut.key()), targetClass, method, inv.getArgs());
 
-        Utils.putDataToCache(cacheName, cacheKey, data, cachePut.liveSeconds());
+        AopCache.putDataToCache(cacheName, cacheKey, data, cachePut.liveSeconds());
     }
 
 
