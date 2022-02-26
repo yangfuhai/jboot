@@ -70,7 +70,8 @@ public @interface Transactional {
     Class<? extends Throwable>[] noRollbackFor() default {};
 
     /**
-     * 是否在新的线程里执行
+     * 是否在新的线程里执行，在 Controller 的 Action 方法下配置无效
+     * 在 Controller 里，不能以新的线程在运行
      *
      * @return
      */
@@ -85,7 +86,7 @@ public @interface Transactional {
 
     /**
      * 是否以阻塞的方式运行线程，这个配置只有在返回值 void 情况下配置生效
-     * 又返回的，默认都是阻塞运行线程
+     * 有返回值的，此配置无效，默认都是阻塞运行线程的方式运行
      *
      * @return
      */

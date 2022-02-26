@@ -71,7 +71,7 @@ public class TransactionalManager {
         this.runDefaultWithoutConfigName = runDefaultWithoutConfigName;
     }
 
-    public Future<Boolean> execute(Invocation inv, String byName, Callable<Boolean> callable) {
+    public Future<Boolean> execute(String byName, Callable<Boolean> callable, Invocation inv) {
         if (StrUtil.isBlank(byName)) {
             FutureTask<Boolean> task = new FutureTask<>(callable);
             threadFactory.newThread(task).start();

@@ -94,13 +94,14 @@ public class TransactionalInterceptor implements Interceptor, InterceptorBuilder
         };
 
 
-        if (transactional.inNewThread()) {
+        if (!inv.isActionInvocation() && transactional.inNewThread()) {
             try {
                 Future<Boolean> future = txInNewThread(inv, transactional.threadPoolName(), dbPro, transactionLevel, runnable);
 
                 //有返回值的场景下，需要等待返回值
                 //或者没有返回值，但是配置了 @Transacional(threadWithBlocked=ture) 的时候
-                if (inv.getMethod().getReturnType() != void.class || transactional.threadWithBlocked()) {
+                if (inv.getMethod().getReturnType() != void.class
+                        || transactional.threadWithBlocked()) {
                     Boolean success = future.get();
                 }
             } catch (Exception e) {
@@ -115,7 +116,7 @@ public class TransactionalInterceptor implements Interceptor, InterceptorBuilder
 
     public Future<Boolean> txInNewThread(Invocation inv, String name, DbPro dbPro, int transactionLevel, IAtom atom) {
         Callable<Boolean> callable = () -> dbPro.tx(transactionLevel, atom);
-        return TransactionalManager.me().execute(inv, name, callable);
+        return TransactionalManager.me().execute(name, callable, inv);
     }
 
 
