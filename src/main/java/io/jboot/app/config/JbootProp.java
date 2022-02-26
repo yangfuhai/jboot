@@ -34,6 +34,8 @@ class JbootProp {
             inputStream = JbootConfigKit.getClassLoader().getResourceAsStream(fileName);
             if (inputStream != null) {
                 properties.load(new InputStreamReader(inputStream, encoding));
+            } else {
+                System.err.println("Warning: Can not load properties file in classpath, file name: " + fileName);
             }
         } catch (Exception e) {
             System.err.println("Warning: Can not load properties file in classpath, file name: " + fileName);
