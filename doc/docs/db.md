@@ -26,6 +26,68 @@ Jboot 的数据库是依赖 JFinal 的 ORM 做基本的数据库操作，同时�
 - Apache Sharding-Sphere 文档：http://shardingsphere.io/document/current/cn/overview/
 - Seata 的帮助文档：https://github.com/seata/seata/wiki/Home_Chinese
 
+## 配置
+
+基本配置
+
+```properties
+jboot.datasource.type=mysql
+jboot.datasource.url=jdbc:mysql://127.0.0.1:3306/dbname
+jboot.datasource.user=root
+jboot.datasource.password=123456
+```
+
+更多配置
+```properties
+# 数据源名称
+jboot.datasource.name
+# 数据源类型，支持 mysql oracle sqlserver sqlite ansisql postgresql clickhouse 等
+jboot.datasource.type
+# 链接url
+jboot.datasource.url
+# 数据库登录账号
+jboot.datasource.user
+#数据库登录密码
+jboot.datasource.password
+#数据源驱动，一般只需要配置 type，程序自动会寻找适合的驱动
+jboot.datasource.driverClassName = com.mysql.jdbc.Driver
+jboot.datasource.connectionInitSql
+jboot.datasource.poolName
+jboot.datasource.cachePrepStmts = true
+jboot.datasource.prepStmtCacheSize = 500
+jboot.datasource.prepStmtCacheSqlLimit = 2048
+jboot.datasource.maximumPoolSize = 10
+jboot.datasource.maxLifetime
+jboot.datasource.idleTimeout
+jboot.datasource.minimumIdle = 0
+
+#sql 模板文件存放路径
+jboot.datasource.sqlTemplatePath
+# sql 模板文件的名称，多个模板文件使用英文都还隔开
+jboot.datasource.sqlTemplate
+
+#数据源创建的工厂类 DataSourceFactory
+jboot.datasource.factory
+#分布式分库分表的 sharding 配置文件
+jboot.datasource.shardingConfigYaml
+#jfinal 的 dbPro 的创建工厂类，该类需要实现 IDbProFactory 接口
+jboot.datasource.dbProFactory
+#jfinal ActiveRecordPlugin 插件里需要配置的 containerFactory，填写类名
+jboot.datasource.containerFactory
+#jfinal 默认配置的事务隔离级别
+jboot.datasource.transactionLevel
+# 此数据源包含哪些表
+jboot.datasource.table
+# 该数据源排除哪些表
+jboot.datasource.exTable 
+# 数据方言的 class
+jboot.datasource.dialectClass
+# 自定义的 activeRecordPlugin 类，该类需要继承 ActiveRecordPlugin
+jboot.datasource.activeRecordPluginClass
+# 是否需要添加到映射，当不添加映射的时候，只能通过 model.use("xxx").save()这种方式去调用该数据源
+jboot.datasource.needAddMapping = true
+```
+
 
 ## 基本增删改查
 
@@ -40,9 +102,9 @@ JFinal 操作数据库，提供了两种方式对数据库进行操作，他们�
 参考 JFinal 的文档：https://jfinal.com/doc/5-5
 
 
-### Model 映射方式
+### 使用 @Table 注解来玩喷子和 Model 映射
 
-Model是 MVC 模式中的 M 部分。以下是 Model 定义示例代码：
+Model 是 MVC 模式中的 M 部分。以下是 Model 定义示例代码：
 
 ```java
 @Table(tableName = "user", primaryKey = "id")
@@ -72,7 +134,7 @@ public abstract class BaseUser<M extends BaseUser<M>> extends JbootModel<M> impl
 需要注意的是：
 
 - 以上的 `User` 和 `BaseUser` 都是通过代码生成器自动生成的，无需手写。
-- 多次执行代码生成器，`User` 代码不会被覆盖，但是 `BaseUser` 会被重新覆盖，因此，请不要在 `BaseUser` 手写任何代码。
+- 多次执行代码生成器，`User` 代码不会被覆盖，但是 `BaseUser` 会被重新覆盖，因此，请不要在 `BaseUser` 手写任何代码。
 
 一般情况下，在正式的项目里，代码分层还需要 `Service` 层来对业务逻辑进行处理。
 
@@ -126,18 +188,6 @@ CREATE TABLE `user` (
   `email` varchar(64) DEFAULT NULL COMMENT '邮件',
   `mobile` varchar(32) DEFAULT NULL COMMENT '手机电话',
   `gender` varchar(16) DEFAULT NULL COMMENT '性别',
-  `signature` varchar(2048) DEFAULT NULL COMMENT '签名',
-  `birthday` datetime DEFAULT NULL COMMENT '生日',
-  `company` varchar(256) DEFAULT NULL COMMENT '公司',
-  `occupation` varchar(256) DEFAULT NULL COMMENT '职位、职业',
-  `address` varchar(256) DEFAULT NULL COMMENT '地址',
-  `zipcode` varchar(128) DEFAULT NULL COMMENT '邮政编码',
-  `site` varchar(256) DEFAULT NULL COMMENT '个人网址',
-  `graduateschool` varchar(256) DEFAULT NULL COMMENT '毕业学校',
-  `education` varchar(256) DEFAULT NULL COMMENT '学历',
-  `avatar` varchar(256) DEFAULT NULL COMMENT '头像',
-  `idcardtype` varchar(128) DEFAULT NULL COMMENT '证件类型：身份证 护照 军官证等',
-  `idcard` varchar(128) DEFAULT NULL COMMENT '证件号码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表，保存用户信息。';
 ```
@@ -176,8 +226,6 @@ public List<User> findListBy(int userAge,String articleTitle){
 ## 一对一、一对多、多对一、多对对
 
 在 Jboot 中，提供了 Join 系列方法，我们在 Service 层可以直接使用 Join 进行 一对一、一对多、多对一、多对对 的查询操作。
-
-
 
 假设存在这样的关系：一篇文章只有一个作者，一个作者可以写多篇文章，一篇文章可以归属多个文章分类、一个文章分类有可以包含多篇文章。
 
@@ -303,13 +351,17 @@ public class ArticleService extends JbootServiceBase<Article> {
     @Inject
     private CategoryService categoryService;
 
-    public List<Article> findListWithAuthorAndCategories(){
+  /**
+   * 查询出文章列表，并自动查询其归属的多个分类，已经文章的作者
+   * @return
+   */
+  public List<Article> findListWithAuthorAndCategories(){
         List<Article> articles = DAO.findAll();
       
-       // 查询出每篇文章的作者
+       // 查询出每篇文章的作者，关系字段的字段名称
         authorService.join(articles,"author_id"); 
       
-      // 查询文章的所属分类
+      // 查询文章的所属分类，三个参数分别是：中间表名称，article表对应的字段，分类表对应的字段
         categoryService.joinManyByTable(articles,"article_category","article_id","category_id");
       
         return articles;
@@ -322,86 +374,86 @@ ArticleService 输出的 Json 内容如下：
 ```json
 [
     {
-        "author":{
-            "nickname":"孙悟空",
-            "id":1,
-            "email":"swk@gmail.com"
-        },
-        "categoryList":[
-            {
-                "description":"文章分类描述111",
-                "id":1,
-                "title":"文章分类1"
-            },
-            {
-                "description":"文章分类描述222",
-                "id":2,
-                "title":"文章分类2"
-            }
-        ],
         "id":1,
         "authorId":1,
         "title":"文章1",
-        "content":"内容111"
-    },
-    {
+        "content":"内容111",
         "author":{
-            "nickname":"孙悟空",
-            "id":1,
-            "email":"swk@gmail.com"
+          "nickname":"孙悟空",
+          "id":1,
+          "email":"swk@gmail.com"
         },
         "categoryList":[
-            {
-                "description":"文章分类描述222",
-                "id":2,
-                "title":"文章分类2"
-            }
-        ],
+          {
+            "description":"文章分类描述111",
+            "id":1,
+            "title":"文章分类1"
+          },
+          {
+            "description":"文章分类描述222",
+            "id":2,
+            "title":"文章分类2"
+          }
+        ]
+    },
+    {
         "id":2,
         "authorId":1,
         "title":"文章2",
-        "content":"内容2222"
-    },
-    {
+        "content":"内容2222",
         "author":{
-            "nickname":"猪八戒",
-            "id":2,
-            "email":"zbj@gmail.com"
+          "nickname":"孙悟空",
+          "id":1,
+          "email":"swk@gmail.com"
         },
         "categoryList":[
-            {
-                "description":"文章分类描述111",
-                "id":1,
-                "title":"文章分类1"
-            },
-            {
-                "description":"文章分类描述222",
-                "id":2,
-                "title":"文章分类2"
-            }
-        ],
+          {
+            "description":"文章分类描述222",
+            "id":2,
+            "title":"文章分类2"
+          }
+        ]
+    },
+    {
         "id":3,
         "authorId":2,
         "title":"文章3",
-        "content":"内容333"
-    },
-    {
+        "content":"内容333",
         "author":{
-            "nickname":"猪八戒",
-            "id":2,
-            "email":"zbj@gmail.com"
+          "nickname":"猪八戒",
+          "id":2,
+          "email":"zbj@gmail.com"
         },
         "categoryList":[
-            {
-                "description":"文章分类描述111",
-                "id":1,
-                "title":"文章分类1"
-            }
-        ],
+          {
+            "description":"文章分类描述111",
+            "id":1,
+            "title":"文章分类1"
+          },
+          {
+            "description":"文章分类描述222",
+            "id":2,
+            "title":"文章分类2"
+          }
+        ]
+    },
+    {
         "id":4,
         "authorId":2,
         "title":"文章4",
-        "content":"内容444"
+        "content":"内容444",
+        "author":{
+          "nickname":"猪八戒",
+          "id":2,
+          "email":"zbj@gmail.com"
+        },
+        "categoryList":[
+          {
+            "description":"文章分类描述111",
+            "id":1,
+            "title":"文章分类1"
+          }
+        ]
     }
 ]
 ```
@@ -420,7 +472,7 @@ public class AuthorService extends JbootServiceBase<Author> {
     public List<Author> findListWithArticles(){
         List<Author> authors = DAO.findAll();
       
-      //查询每个作者的所有文章
+       //查询每个作者的所有文章，第二个参数是关系字段的名称
         articleService.joinMany(authors,"author_id");
       
         return authors;
@@ -433,42 +485,42 @@ AuthorService 输出的 Json 内容如下：
 ```json
 [
     {
-        "articleList":[
-            {
-                "id":1,
-                "authorId":1,
-                "title":"文章1",
-                "content":"内容111"
-            },
-            {
-                "id":2,
-                "authorId":1,
-                "title":"文章2",
-                "content":"内容2222"
-            }
-        ],
-        "nickname":"孙悟空",
         "id":1,
-        "email":"swk@gmail.com"
+        "nickname":"孙悟空",
+        "email":"swk@gmail.com",
+        "articleList":[
+          {
+            "id":1,
+            "authorId":1,
+            "title":"文章1",
+            "content":"内容111"
+          },
+          {
+            "id":2,
+            "authorId":1,
+            "title":"文章2",
+            "content":"内容2222"
+          }
+        ]
     },
     {
-        "articleList":[
-            {
-                "id":3,
-                "authorId":2,
-                "title":"文章3",
-                "content":"内容333"
-            },
-            {
-                "id":4,
-                "authorId":2,
-                "title":"文章4",
-                "content":"内容444"
-            }
-        ],
-        "nickname":"猪八戒",
         "id":2,
-        "email":"zbj@gmail.com"
+        "nickname":"猪八戒",
+        "email":"zbj@gmail.com",
+        "articleList":[
+          {
+            "id":3,
+            "authorId":2,
+            "title":"文章3",
+            "content":"内容333"
+          },
+          {
+            "id":4,
+            "authorId":2,
+            "title":"文章4",
+            "content":"内容444"
+          }
+        ]
     }
 ]
 ```
@@ -487,7 +539,7 @@ public class CategoryService extends JbootServiceBase<Category> {
     public List<Category> findListWithArticles(){
         List<Category> categories = DAO.findAll();
       
-      //查询每个分类的所有文章
+       //查询每个分类的所有文章
         articleService.joinManyByTable(categories,"article_category","category_id","article_id");
       
         return categories;
@@ -630,37 +682,121 @@ company.save();
 
 代码中不再需要 `use("a1")` 指定数据源，因为 `company` 表只有一个数据源。
 
-更多关于 datasource 的配置如下：
+## 事务以及 @Transactional 注解
 
+在 JFinal 中提供了一种使用 Db.tx(...) 的操作方式，具体参考：https://jfinal.com/doc/5-7 ，同时，Jboot 也提供了一个用于进行事务管理的注解
+@Transactional 。具体用法如下：
+
+实例1：出现异常时回滚
+```java
+@Transactional
+public void test1() {
+   //your code
+   throw new RuntimeException("...");     
+}
 ```
-jboot.datasource.name  //数据源名称
-jboot.datasource.type  //数据源类型
-jboot.datasource.url   //数据源URL地址
-jboot.datasource.user  
-jboot.datasource.password
-jboot.datasource.driverClassName = com.mysql.jdbc.Driver
-jboot.datasource.connectionInitSql
-jboot.datasource.poolName
-jboot.datasource.cachePrepStmts = true
-jboot.datasource.prepStmtCacheSize = 500
-jboot.datasource.prepStmtCacheSqlLimit = 2048
-jboot.datasource.maximumPoolSize = 10
-jboot.datasource.maxLifetime
-jboot.datasource.idleTimeout
-jboot.datasource.minimumIdle = 0
-jboot.datasource.sqlTemplatePath // sql 模板存放路径，用到 jfinal sql独立文件的时候
-jboot.datasource.sqlTemplate 
-jboot.datasource.factory
-jboot.datasource.shardingConfigYaml //分库分表的配置文件
-jboot.datasource.dbProFactory
-jboot.datasource.containerFactory
-jboot.datasource.transactionLevel
-jboot.datasource.table //此数据源包含哪些表
-jboot.datasource.exTable //该数据源排除哪些表
-jboot.datasource.dialectClass
-jboot.datasource.activeRecordPluginClass
-jboot.datasource.needAddMapping = true //是否需要添加到映射，当不添加映射的时候，只能通过 model.use("xxx").save()这种方式去调用该数据源
+
+实例2：返回值为 false 时回滚
+```java
+@Transactional(rollbackForFalse=true)
+public boolean test2() {
+   //your code
+   return false;
+}
 ```
+
+实例3：返回值为 Ret.fail() 时回滚
+```java
+@Transactional(rollbackForRetFail=true)
+public Ret test3() {
+   //your code
+   return Ret.fail("message...");
+}
+```
+
+实例4：返回值为 null 时回滚
+```java
+@Transactional(rollbackForNull=true)
+public Ret test3() {
+   //your code
+   return null;
+}
+```
+
+@Transactional 的更多配置：
+```java
+public @interface Transactional {
+
+    /**
+     * 使用哪个数据源
+     *
+     * @return
+     */
+    String config() default "";
+
+    /**
+     * 事务隔离级别
+     *
+     * @return
+     */
+    int transactionLevel() default -1;
+
+    /**
+     * return false 的时候，是否进行回滚
+     *
+     * @return
+     */
+    boolean rollbackForFalse() default false;
+
+    /**
+     * return ret.fail 的时候，是否进行回滚
+     *
+     * @return
+     */
+    boolean rollbackForRetFail() default false;
+
+
+    /**
+     * 返回 null 的时候，是否进行回滚
+     *
+     * @return
+     */
+    boolean rollbackForNull() default false;
+
+
+    /**
+     * 配置允许哪些异常不回滚
+     *
+     * @return
+     */
+    Class<? extends Throwable>[] noRollbackFor() default {};
+
+    /**
+     * 是否在新的线程里执行，在 Controller 的 Action 方法下配置无效
+     * 在 Controller 里，不能以新的线程在运行
+     *
+     * @return
+     */
+    boolean inNewThread() default false;
+
+    /**
+     * 使用哪个线程池来运行线程，需要在启动的时候，通过 TransactionalManager 来配置线程池及其名称
+     *
+     * @return
+     */
+    String threadPoolName() default "";
+
+    /**
+     * 是否以阻塞的方式运行线程，这个配置只有在返回值 void 情况下配置生效
+     * 有返回值的，此配置无效，默认都是阻塞运行线程的方式运行
+     *
+     * @return
+     */
+    boolean threadWithBlocked() default false;
+
+}
+```
+
 
 
 ## 读写分离
