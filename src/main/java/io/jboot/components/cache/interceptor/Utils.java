@@ -36,10 +36,11 @@ import java.util.Map;
 
 class Utils {
 
-    static final Engine ENGINE = new Engine("JbootCacheRender");
+    static final Engine ENGINE = new Engine("JbootCacheRenderEngine");
 
     static {
         ENGINE.addDirective("para", ParaDirective.class);
+        ENGINE.addSharedStaticMethod(ParaDirective.class);
     }
 
     /**
@@ -62,7 +63,6 @@ class Utils {
         }
 
         return ENGINE.getTemplateByString(template).renderToString(datas);
-
     }
 
     static String buildCacheKey(String key, Class<?> clazz, Method method, Object[] arguments) {
@@ -225,13 +225,15 @@ class Utils {
 
 
     static boolean isUnless(String unlessString, Method method, Object[] arguments) {
-
         if (StrUtil.isBlank(unlessString)) {
             return false;
         }
 
-        String template = "#(" + unlessString + ")";
-        return "true".equals(engineRender(template, method, arguments));
+//        if (!unlessString.contains("#")) {
+        unlessString = "#(" + unlessString + ")";
+//        }
+
+        return "true".equals(engineRender(unlessString, method, arguments));
     }
 
 

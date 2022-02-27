@@ -66,6 +66,11 @@ public class CacheableInterceptor implements Interceptor {
 
 
     private void forController(Invocation inv, Method method, Cacheable cacheable) {
+        String unlessString = AnnotationUtil.get(cacheable.unless());
+        if (Utils.isUnless(unlessString, method, inv.getArgs())) {
+            inv.invoke();
+            return;
+        }
 
         Class<?> targetClass = inv.getTarget().getClass();
         String cacheName = AnnotationUtil.get(cacheable.name());

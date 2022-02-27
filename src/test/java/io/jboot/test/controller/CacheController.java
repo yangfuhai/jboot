@@ -30,6 +30,17 @@ public class CacheController extends JbootController {
     }
 
 
+    @Cacheable(name = "aaa", liveSeconds = 10, unless = "para('unless')=='nocache'")
+    public void json2() {
+        System.out.println("json2() invoked!!!!!!!!!");
+        Map<String, Object> data = new HashMap<>();
+        data.put("age", 1);
+        data.put("name", "张三");
+        data.put("sex", 1);
+        renderJson(data);
+    }
+
+
     @Cacheable(name = "aaa", liveSeconds = 10)
     public void html() {
         System.out.println("html() invoked!!!!!!!!!");
@@ -49,12 +60,12 @@ public class CacheController extends JbootController {
                 "  <MsgId>1234567890123456</MsgId>\n" +
                 "</xml>";
 
-        renderText(xml,"xml");
+        renderText(xml, "xml");
     }
 
 
     @CacheEvict(name = "aaa")
-    public void removeAll(){
+    public void removeAll() {
         renderText("ok");
     }
 
