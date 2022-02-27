@@ -1,3 +1,16 @@
+jboot v3.14.0:
+新增：@Cacheable() 等系列缓存注解对 controller 的支持
+优化：优化 fastjson 序列化的功能，使用 config 而非 features
+优化：重命名注解 @TxEnable() 修改为 @Transactional()，并为  @Transactional() 添加更多的配置功能
+优化：为 RabbitMQ 添加更多的自定义配置
+优化：自动检测是否依赖 jfinal-wexin 并自动配置 JbootAccessTokenCache
+优化：删除 JacksonSerializer 等无用的代码文件
+优化：优化配置文件的的自动探测功能，防止在某些新手未编译直接运行找不到配置文件的问题
+优化：分布式任务注解 @EnableDistributedRunnable，并添加自定义的 redisKey 和 key 持有时间配置功能。
+文档：完善关于 Controller 和 数据库的相关文档
+
+
+
 jboot v3.13.8:
 修复：Junit 代码覆盖率测试可能出现多次启动的问题
 修复：JbootCron4jPlugin 停止后未移除已经停止任务的问题
