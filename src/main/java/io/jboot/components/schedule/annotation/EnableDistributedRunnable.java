@@ -21,4 +21,18 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface EnableDistributedRunnable {
+
+    /**
+     * 分布式任务用的 redisKey，不配置默认使用 Runnable 实现类的类名
+     *
+     * @return
+     */
+    String redisKey() default "";
+
+    /**
+     * redisKey 持有时间，不配置默认为 1 分钟
+     *
+     * @return
+     */
+    int expireSeconds() default 0;
 }

@@ -87,9 +87,11 @@ public class JbootScheduleManager {
         FixedDelay fixedDelayJob = runnableClass.getAnnotation(FixedDelay.class);
         if (fixedDelayJob != null) {
             Runnable runnable = ClassUtil.newInstance(runnableClass);
-            Runnable executeRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class) == null
+
+            EnableDistributedRunnable enableDistributedRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class);
+            Runnable executeRunnable = enableDistributedRunnable == null
                     ? runnable
-                    : new JbootDistributedRunnable(runnable, fixedDelayJob.period());
+                    : new JbootDistributedRunnable(runnable, AnnotationUtil.get(enableDistributedRunnable.redisKey()), enableDistributedRunnable.expireSeconds());
 
             // ScheduledThreadPoolExecutor 线程池在遇到未捕获的异常时会终止调度
             // JbootSafeRunnable 可以捕捉业务代码异常，防止线程池意外终止调度
@@ -107,9 +109,13 @@ public class JbootScheduleManager {
         FixedRate fixedRateJob = runnableClass.getAnnotation(FixedRate.class);
         if (fixedRateJob != null) {
             Runnable runnable = ClassUtil.newInstance(runnableClass);
-            Runnable executeRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class) == null
+
+            EnableDistributedRunnable enableDistributedRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class);
+            Runnable executeRunnable = enableDistributedRunnable == null
                     ? runnable
-                    : new JbootDistributedRunnable(runnable, fixedRateJob.period());
+                    : new JbootDistributedRunnable(runnable, AnnotationUtil.get(enableDistributedRunnable.redisKey()), enableDistributedRunnable.expireSeconds());
+
+
             executeRunnable = new JbootSafeRunnable(executeRunnable);
             try {
                 scheduleRunnableCache.put(runnableClass, executeRunnable);
@@ -126,9 +132,12 @@ public class JbootScheduleManager {
         if (cron != null) {
             String value = AnnotationUtil.get(cron.value());
             Runnable runnable = ClassUtil.newInstance(runnableClass);
-            Runnable executeRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class) == null
+
+            EnableDistributedRunnable enableDistributedRunnable = runnableClass.getAnnotation(EnableDistributedRunnable.class);
+            Runnable executeRunnable = enableDistributedRunnable == null
                     ? runnable
-                    : new JbootDistributedRunnable(runnable);
+                    : new JbootDistributedRunnable(runnable, AnnotationUtil.get(enableDistributedRunnable.redisKey()), enableDistributedRunnable.expireSeconds());
+
             scheduleRunnableCache.put(runnableClass, executeRunnable);
             cron4jPlugin.addTask(value, executeRunnable, cron.daemon());
         }
