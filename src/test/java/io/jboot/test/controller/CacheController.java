@@ -40,6 +40,16 @@ public class CacheController extends JbootController {
         renderJson(data);
     }
 
+    @Cacheable(name = "aaa", liveSeconds = 10, unless = "para('type')==1")
+    public void json3() {
+        System.out.println("json2() invoked!!!!!!!!!");
+        Map<String, Object> data = new HashMap<>();
+        data.put("age", 1);
+        data.put("name", "张三");
+        data.put("sex", 1);
+        renderJson(data);
+    }
+
 
     @Cacheable(name = "aaa", liveSeconds = 10)
     public void html() {

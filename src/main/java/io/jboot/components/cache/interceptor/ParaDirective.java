@@ -55,17 +55,27 @@ public class ParaDirective extends JbootDirectiveBase {
         }
     }
 
-    public static String para(String key) {
+    public static Object para(String key) {
         return para(key, null);
     }
 
-    public static String para(String key, String defaultValue) {
+    public static Object para(String key, Object defaultValue) {
         Controller controller = JbootControllerContext.get();
         if (controller == null) {
-            throw new IllegalStateException("para(...) method only use for controller." );
+            throw new IllegalStateException("para(...) method only use for controller.");
         }
 
-        return controller.get(key, defaultValue);
+        String value = controller.get(key);
+
+        if (StrUtil.isNumeric(value)) {
+            return Long.valueOf(value);
+        }
+
+        if (StrUtil.isDecimal(value)) {
+            return Double.parseDouble(value);
+        }
+
+        return StrUtil.isNotBlank(value) ? value : defaultValue;
     }
 }
 
