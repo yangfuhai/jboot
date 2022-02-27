@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -119,40 +119,49 @@ public class JbootRedisLock {
      */
     public boolean acquire() {
         long timeout = timeoutMsecs;
-
         do {
-            long expires = System.currentTimeMillis() + expireMsecs + 1;
+            try {
+                //超时时间
+                long expiredTime = System.currentTimeMillis() + expireMsecs + 1;
 
-            Long result = redis.setnx(lockName, expires);
-            if (result != null && result == 1) {
+                Long result = redis.setnx(lockName, expiredTime);
+
+                if (result == null) {
+                    continue;
+                }
+
                 // lock acquired
-                locked = true;
-                return true;
-            }
-
-            Long savedValue = redis.get(lockName);
-            if (savedValue != null && savedValue < System.currentTimeMillis()) {
-                // 判断是否为空，不为空的情况下，如果被其他线程设置了值，则第二个条件判断是过不去的
-                // lock is expired
-
-                Long oldValue = redis.getSet(lockName, expires);
-                //获取上一个锁到期时间，并设置现在的锁到期时间，
-                //只有一个线程才能获取上一个线上的设置时间，因为jedis.getSet是同步的
-
-                if (oldValue != null && oldValue.equals(savedValue)) {
-                    //如果这个时候，多个线程恰好都到了这里
-                    //只有一个线程的设置值和当前值相同，他才有权利获取锁
-                    //lock acquired
+                if (result == 1) {
                     locked = true;
                     return true;
                 }
-            }
 
-            if (timeout > 0) {
-                timeout -= 100;
-                QuietlyUtil.quietlySleep(100);
-            }
+                //之前的保存时间
+                Long savedValue = redis.get(lockName);
 
+                //这个锁已经过期了，此时可以去设置新的key
+                if (savedValue != null && savedValue < System.currentTimeMillis()) {
+
+
+                    //获取上一个锁到期时间，并设置现在的锁到期时间，
+                    //只有一获个线程才能取上一个线上的设置时间，因为jedis.getSet是同步的
+                    Long oldValue = redis.getSet(lockName, expiredTime);
+
+
+                    if (oldValue != null && oldValue.equals(savedValue)) {
+                        //如果这个时候，多个线程恰好都到了这里
+                        //只有一个线程的设置值和当前值相同，他才有权利获取锁
+                        //lock acquired
+                        locked = true;
+                        return true;
+                    }
+                }
+            } finally {
+                if (timeout > 0) {
+                    timeout -= 100;
+                    QuietlyUtil.quietlySleep(100);
+                }
+            }
         } while (timeout > 0);
 
         return false;
