@@ -464,7 +464,14 @@ public class JbootConfigManager {
         if (argMap == null) {
             argMap = new HashMap<>();
         }
-        argMap.put(key, value.toString());
+        if (key == null) {
+            return;
+        }
+        if (value == null || value.toString().trim().length() == 0) {
+            argMap.remove(key.trim());
+        } else {
+            argMap.put(key.trim(), value.toString().trim());
+        }
     }
 
     public static void setBootProperties(Properties properties) {
