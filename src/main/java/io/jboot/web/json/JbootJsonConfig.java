@@ -24,12 +24,26 @@ import io.jboot.app.config.annotation.ConfigModel;
 @ConfigModel(prefix = "jboot.json")
 public class JbootJsonConfig {
 
+    //model 和 record 是否自动转为驼峰格式
+    //当配置此项为 false 的时候，需要配置 skipBeanGetters 为 true，否则出现个别相同数据库字段输出两次的情况
     private boolean camelCaseJsonStyleEnable = true;
+
+    //是否把所有的信息都转为驼峰格式，包括 map
     private boolean camelCaseToLowerCaseAnyway = false;
+
+    //是否跳过 null 值
     private boolean skipNullValueField = true;
+
+    //是否跳过 model attrs，而只有使用 getter 来生成
     private boolean skipModelAttrs = false;
+
+    //是否跳过 getter 方法
     private boolean skipBeanGetters = false;
+
+    //时间格式化
     private String timestampPattern;
+
+    //转换深度，防止且套引用导致死循环转换
     private int depth = 16;
 
     public boolean isCamelCaseJsonStyleEnable() {

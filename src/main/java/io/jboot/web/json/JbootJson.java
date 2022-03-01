@@ -114,7 +114,7 @@ public class JbootJson extends JFinalJson {
             String originalField = wrapper.originalFields.get(i);
             toMap.remove(originalField);
 
-            Object value = invokeMethod(wrapper.methods.get(i), bean);
+            Object value = invokeGetterMethod(wrapper.getterMethods.get(i), bean);
             String field = wrapper.fields.get(i);
             toMap.put(field, value);
         }
@@ -125,7 +125,7 @@ public class JbootJson extends JFinalJson {
     protected void optimizeMapAttrs(Map<String, Object> map) {
     }
 
-    protected Object invokeMethod(Method method, Object bean) {
+    protected Object invokeGetterMethod(Method method, Object bean) {
         try {
             return method.invoke(bean);
         } catch (Exception ex) {
@@ -147,7 +147,7 @@ public class JbootJson extends JFinalJson {
         private static boolean hasFastJson = ClassUtil.hasClass("com.alibaba.fastjson.JSON");
 
         private List<String> fields = new LinkedList<>();
-        private List<Method> methods = new LinkedList<>();
+        private List<Method> getterMethods = new LinkedList<>();
         private List<String> originalFields = new LinkedList<>();
 
         //需要忽略的字段
@@ -173,7 +173,7 @@ public class JbootJson extends JFinalJson {
                     } else {
                         originalFields.add(attrName);
                         fields.add(getDefineName(method, attrName));
-                        methods.add(method);
+                        getterMethods.add(method);
                     }
                 }
 

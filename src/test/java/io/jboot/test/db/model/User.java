@@ -18,4 +18,9 @@ public class User extends JbootModel {
     public String getId(){
         return "111";
     }
+
+
+    public Integer getUserId(){
+        return (Integer) get("user_id");
+    }
 }
