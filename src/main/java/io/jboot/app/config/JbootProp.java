@@ -15,6 +15,8 @@
  */
 package io.jboot.app.config;
 
+import com.jfinal.kit.LogKit;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Properties;
@@ -32,7 +34,11 @@ class JbootProp {
         properties = new Properties();
         InputStream inputStream = null;
         try {
-            inputStream = JbootConfigKit.getClassLoader().getResourceAsStream(fileName);
+            inputStream = getResourceAsStreamByCurrentThread(fileName);
+
+            if (inputStream == null) {
+                inputStream = getResourceAsStreamByClassloader(fileName);
+            }
 
             // 当系统未编译的时候，开发环境下的 resources 目录下的 jboot.properties 文件不会自动被 copy 到 target/classes 目录下
             // 此时，需要主动去探测 resources 目录的文件
@@ -40,11 +46,22 @@ class JbootProp {
                 URL resourceURL = JbootProp.class.getResource("/");
                 if (resourceURL != null) {
                     String classPath = resourceURL.toURI().getPath();
+
                     if (removeSlashEnd(classPath).endsWith("classes")) {
-                        File resourcesDir = new File(classPath, "../../src/main/resources");
-                        File propFile = new File(resourcesDir, fileName);
+
+                        //from classes path
+                        File propFile = new File(classPath, fileName);
                         if (propFile.exists() && propFile.isFile()) {
                             inputStream = new FileInputStream(propFile);
+                        }
+
+                        //from resources path
+                        else {
+                            File resourcesDir = new File(classPath, "../../src/main/resources");
+                            propFile = new File(resourcesDir, fileName);
+                            if (propFile.exists() && propFile.isFile()) {
+                                inputStream = new FileInputStream(propFile);
+                            }
                         }
                     }
                 }
@@ -62,14 +79,26 @@ class JbootProp {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
+                    LogKit.logNothing(e);
                 }
             }
         }
     }
 
+    private InputStream getResourceAsStreamByCurrentThread(String fileName) {
+        ClassLoader ret = Thread.currentThread().getContextClassLoader();
+        return ret != null ? ret.getResourceAsStream(fileName) : null;
+    }
+
+
+    private InputStream getResourceAsStreamByClassloader(String fileName) {
+        ClassLoader ret = JbootProp.class.getClassLoader();
+        return ret != null ? ret.getResourceAsStream(fileName) : null;
+    }
+
 
     private static String removeSlashEnd(String path) {
-        if (path != null && path.endsWith(File.separator)) {
+        if (path != null && (path.endsWith("/") || path.endsWith("\\"))) {
             return path.substring(0, path.length() - 1);
         } else {
             return path;

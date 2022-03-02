@@ -169,12 +169,6 @@ public class JbootConfigKit {
     }
 
 
-    public static ClassLoader getClassLoader() {
-        ClassLoader ret = Thread.currentThread().getContextClassLoader();
-        return ret != null ? ret : JbootConfigKit.class.getClassLoader();
-    }
-
-
     public static Object convert(Class<?> convertClass, String s, Type genericType) {
 
         if (convertClass == String.class || s == null || convertClass == Object.class) {
