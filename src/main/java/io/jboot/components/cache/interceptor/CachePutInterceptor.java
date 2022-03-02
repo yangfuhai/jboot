@@ -34,18 +34,19 @@ public class CachePutInterceptor implements Interceptor {
 
     @Override
     public void intercept(Invocation inv) {
-        //先执行，之后再保存数据
-        inv.invoke();
 
         Method method = inv.getMethod();
         CachePut cachePut = method.getAnnotation(CachePut.class);
         if (cachePut == null) {
+            inv.invoke();
             return;
         }
 
         if (inv.isActionInvocation()) {
             forController(inv, method, cachePut);
+            inv.invoke();
         } else {
+            inv.invoke();
             forService(inv, method, cachePut);
         }
     }
@@ -74,7 +75,6 @@ public class CachePutInterceptor implements Interceptor {
         CPI._init_(controller, CPI.getAction(controller), controller.getRequest(), responseProxy, controller.getPara());
 
     }
-
 
 
     private void forService(Invocation inv, Method method, CachePut cachePut) {
