@@ -16,6 +16,8 @@
 package io.jboot.db.model;
 
 
+import io.jboot.utils.StrUtil;
+
 import java.io.Serializable;
 
 public class Column implements Serializable {
@@ -94,6 +96,13 @@ public class Column implements Serializable {
     public boolean hasPara() {
         return !LOGIC_IS_NULL.equals(getLogic())
                 && !LOGIC_IS_NOT_NULL.equals(getLogic());
+    }
+
+    public boolean checkAvailable() {
+        if (StrUtil.isBlank(getName())) {
+            return false;
+        }
+        return !hasPara() || getValue() != null;
     }
 
 }

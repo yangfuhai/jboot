@@ -155,7 +155,7 @@ class Util {
         if (columns.isUseSafeMode()) {
             for (Object obj : paras) {
                 if (obj == null) {
-                    throw new NullPointerException("column \"" + name + "\" para is null, Columns must has not null para value in safeMode.");
+                    throw new NullPointerException("Column \"" + name + "\" para is null, Columns must has not null para value in safeMode.");
                 }
             }
         }
@@ -171,7 +171,7 @@ class Util {
         }
     }
 
-    static void checkNullParas(Columns columns, Collection collection) {
+    static void checkNullParas(Columns columns, Collection<?> collection) {
         if (columns.isUseSafeMode()) {
             if (CollectionUtil.isEmpty(collection)) {
                 throw new NullPointerException("Columns must has not empty collection in safeMode.");

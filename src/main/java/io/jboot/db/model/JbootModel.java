@@ -523,11 +523,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public M findFirstByColumn(Column column) {
+        if (column == null || !column.checkAvailable()) {
+            throw new IllegalArgumentException("Column or value must not be null.");
+        }
         return findFirstByColumns(Columns.create(column));
     }
 
 
     public M findFirstByColumn(Column column, String orderBy) {
+        if (column == null || !column.checkAvailable()) {
+            throw new IllegalArgumentException("Column or value must not be null.");
+        }
         return findFirstByColumns(Columns.create(column), orderBy);
     }
 
