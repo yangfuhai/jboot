@@ -42,7 +42,7 @@ public class JbootRabbitmqConfig {
     //若配置为 false，则需要在 OnMessage 里，调用 MessageContext.getChannel().baseAck（或者baseNack）进行消费（或者标识消费失败）
     private boolean autoAck = true;
 
-    private boolean queueDeclareDurable = true;
+    private boolean queueDeclareDurable = false;
     private boolean queueDeclareExclusive = false;
     private boolean queueDeclareAutoDelete = false;
 
