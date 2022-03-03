@@ -15,6 +15,8 @@
  */
 package io.jboot.test.web;
 
+import io.jboot.core.JbootCoreConfig;
+
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import java.util.Collections;
@@ -28,9 +30,8 @@ public class MockFilterConfig implements FilterConfig {
     protected ServletContext servletContext = MockServletContext.DEFAULT;
 
     public MockFilterConfig() {
-        initParameters.put("configClass", MockCoreConfig.class.getName());
+        initParameters.put("configClass", JbootCoreConfig.class.getName());
     }
-
 
     @Override
     public String getFilterName() {
