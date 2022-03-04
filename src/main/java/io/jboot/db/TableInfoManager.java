@@ -24,9 +24,7 @@ import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassScanner;
 import io.jboot.utils.StrUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -45,46 +43,49 @@ public class TableInfoManager {
 
 
     /**
-     * 获取 某数据源 下匹配的表
+     * 初始化该数据下的 tableInfos 对象，其用来存储该数据源下有哪些表
      *
      * @param dataSourceConfig
-     * @return 该数据源下所有的表
      */
-    public List<TableInfo> getMatchTablesInfos(DataSourceConfig dataSourceConfig) {
+    public void initConfigMappingTables(DataSourceConfig dataSourceConfig) {
 
+        // 该数据源下配置的所有表
         Set<String> configTables = StrUtil.isNotBlank(dataSourceConfig.getTable())
-                ? StrUtil.splitToSet(dataSourceConfig.getTable(), ",")
+                ? StrUtil.splitToSetByComma(dataSourceConfig.getTable())
                 : null;
 
+        // 该数据源下排除的所有表
         Set<String> configExTables = StrUtil.isNotBlank(dataSourceConfig.getExTable())
-                ? StrUtil.splitToSet(dataSourceConfig.getExTable(), ",")
+                ? StrUtil.splitToSetByComma(dataSourceConfig.getExTable())
                 : null;
 
-        List<TableInfo> matchList = new ArrayList<>();
+        //所有的表信息
+        List<TableInfo> allTableInfos = getAllTableInfos();
 
-        for (TableInfo tableInfo : getAllTableInfos()) {
 
-            //说明该表已经被指定到 datasource 了
-            if (tableInfo.getDatasources() != null) {
-                continue;
-            }
+        for (TableInfo tableInfo : allTableInfos) {
 
-            // 如果 datasource.table 已经配置了，
-            // 就只用这个配置的，不是这个配置的都排除
-            if (configTables != null && !configTables.contains(tableInfo.getTableName())) {
-                continue;
-            }
-
-            //被指定排除的表进行排除了
+            // 排除配置 jboot.datasource.extable 包含了这个表
             if (configExTables != null && configExTables.contains(tableInfo.getTableName())) {
                 continue;
             }
 
-            tableInfo.setDatasources(dataSourceConfig.getName());
-            matchList.add(tableInfo);
+            if (configTables != null && configTables.contains(tableInfo.getTableName())) {
+                dataSourceConfig.addTableInfo(tableInfo, true);
+            }
+
+            if (tableInfo.getDatasourceNames().contains(dataSourceConfig.getName())) {
+                dataSourceConfig.addTableInfo(tableInfo, true);
+            }
+
+            // 注解 @Table 指定了数据源，而且当前数据源未匹配
+            if (!tableInfo.getDatasourceNames().isEmpty()) {
+                continue;
+            }
+
+            dataSourceConfig.addTableInfo(tableInfo, false);
         }
 
-        return matchList;
     }
 
     private List<TableInfo> getAllTableInfos() {
@@ -133,6 +134,7 @@ public class TableInfoManager {
         tableInfo.setModelClass(clazz);
         tableInfo.setPrimaryKey(AnnotationUtil.get(tb.primaryKey()));
         tableInfo.setTableName(AnnotationUtil.get(tb.tableName()));
+        tableInfo.setDatasource(AnnotationUtil.get(tb.datasource()));
 
         tableInfoList.add(tableInfo);
     }

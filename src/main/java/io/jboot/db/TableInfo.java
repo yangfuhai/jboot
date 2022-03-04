@@ -16,6 +16,13 @@
 package io.jboot.db;
 
 import com.jfinal.plugin.activerecord.Model;
+import io.jboot.db.datasource.DataSourceConfig;
+import io.jboot.utils.StrUtil;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -26,7 +33,10 @@ public class TableInfo {
     private String tableName;
     private String primaryKey;
     private Class<? extends Model> modelClass;
-    private String datasources;
+    private String datasource;
+    private Set<String> datasourceNames;
+
+    private List<DataSourceConfigWrapper> attachedDatasources;
 
 
     public String getTableName() {
@@ -53,11 +63,69 @@ public class TableInfo {
         this.modelClass = modelClass;
     }
 
-    public String getDatasources() {
-        return datasources;
+    public String getDatasource() {
+        return datasource;
     }
 
-    public void setDatasources(String datasources) {
-        this.datasources = datasources;
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
     }
+
+    public Set<String> getDatasourceNames() {
+        if (datasourceNames == null) {
+            datasourceNames = StrUtil.isNotBlank(datasource)
+                    ? StrUtil.splitToSetByComma(datasource)
+                    : new HashSet<>();
+        }
+        return datasourceNames;
+    }
+
+
+    /**
+     * 添加这个表存绑定的数据源
+     *
+     * @param dataSourceConfig
+     * @param fromDesignated   是否是通过 jboot.datasource.table 或者 @table(datasource="xxx") 来指定的
+     */
+    public boolean addAttachedDatasource(DataSourceConfig dataSourceConfig, boolean fromDesignated) {
+        if (this.attachedDatasources == null) {
+            this.attachedDatasources = new ArrayList<>();
+        }
+
+        //未指定数据源
+        if (!fromDesignated) {
+            for (DataSourceConfigWrapper dataSourceConfigWrapper : this.attachedDatasources) {
+                //若已经存在了指定的数据源，再无法添加未指定的数据源
+                if (dataSourceConfigWrapper.fromDesignated) {
+                    return false;
+                }
+            }
+        }
+
+        this.attachedDatasources.add(new DataSourceConfigWrapper(dataSourceConfig, fromDesignated));
+
+        // 通过配置指定的，那么需要移除哪些未指定的默认数据源
+        if (fromDesignated) {
+            for (DataSourceConfigWrapper dataSourceConfigWrapper : attachedDatasources) {
+                if (!dataSourceConfigWrapper.fromDesignated) {
+                    dataSourceConfigWrapper.dataSourceConfig.removeTableInfo(this);
+                }
+            }
+            attachedDatasources.removeIf(dataSourceConfigWrapper -> !dataSourceConfigWrapper.fromDesignated);
+        }
+
+        return true;
+    }
+
+
+    public static class DataSourceConfigWrapper {
+        private final DataSourceConfig dataSourceConfig;
+        private final boolean fromDesignated;
+
+        public DataSourceConfigWrapper(DataSourceConfig dataSourceConfig, boolean fromDesignated) {
+            this.dataSourceConfig = dataSourceConfig;
+            this.fromDesignated = fromDesignated;
+        }
+    }
+
 }

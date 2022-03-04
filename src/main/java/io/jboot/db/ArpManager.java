@@ -15,7 +15,10 @@
  */
 package io.jboot.db;
 
-import com.jfinal.plugin.activerecord.*;
+import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
+import com.jfinal.plugin.activerecord.IDbProFactory;
+import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.Jboot;
 import io.jboot.components.cache.JbootCache;
@@ -27,7 +30,6 @@ import io.jboot.db.dialect.*;
 import io.jboot.db.record.JbootRecordBuilder;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -79,13 +81,38 @@ public class ArpManager {
     }
 
     private void createRecordPlugin(Map<String, DataSourceConfig> mergeDatasourceConfigs) {
+        Map<Integer, DataSourceConfig> dataSourceConfigMap = new HashMap<>();
+
         for (Map.Entry<String, DataSourceConfig> entry : mergeDatasourceConfigs.entrySet()) {
             DataSourceConfig datasourceConfig = entry.getValue();
             if (datasourceConfig.isConfigOk()) {
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
+
+                dataSourceConfigMap.put(System.identityHashCode(activeRecordPlugin), datasourceConfig);
                 activeRecordPlugins.add(activeRecordPlugin);
             }
         }
+
+
+        for (ActiveRecordPlugin activeRecordPlugin : activeRecordPlugins) {
+            DataSourceConfig dataSourceConfig = dataSourceConfigMap.get(System.identityHashCode(activeRecordPlugin));
+
+            //获得该数据源匹配的表
+            List<TableInfo> tableInfos = dataSourceConfig.getTableInfos();
+
+            if (tableInfos != null) {
+                for (TableInfo table : tableInfos) {
+                    String tableName = StrUtil.isNotBlank(dataSourceConfig.getTablePrefix()) ? dataSourceConfig.getTablePrefix() + table.getTableName() : table.getTableName();
+                    if (StrUtil.isNotBlank(table.getPrimaryKey())) {
+                        activeRecordPlugin.addMapping(tableName, table.getPrimaryKey(), (Class<? extends Model<?>>) table.getModelClass());
+                    } else {
+                        activeRecordPlugin.addMapping(tableName, (Class<? extends Model<?>>) table.getModelClass());
+                    }
+                }
+            }
+        }
+
+
     }
 
 
@@ -98,7 +125,6 @@ public class ArpManager {
     public ActiveRecordPlugin createRecordPlugin(DataSourceConfig config) {
 
         ActiveRecordPlugin activeRecordPlugin = newRecordPlugin(config);
-
 
         if (StrUtil.isNotBlank(config.getDbProFactory())) {
             IDbProFactory dbProFactory = Objects.requireNonNull(ClassUtil.newInstance(config.getDbProFactory()),
@@ -131,30 +157,13 @@ public class ArpManager {
         activeRecordPlugin.getConfig().getDialect().setRecordBuilder(new JbootRecordBuilder());
 
         /**
-         * 不需要添加映射的直接返回
-         *
          * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了
          * 添加映射：默认为该 model 的数据源
          * 不添加映射：通过 model.use("xxx").save() 这种方式去调用该数据源
          * 不添加映射使用从场景一般是：读写分离时，用于读取只读数据库的数据
          */
-        if (!config.isNeedAddMapping()) {
-            return activeRecordPlugin;
-        }
-
-        //获得该数据源匹配的表
-        List<TableInfo> tableInfos = TableInfoManager.me().getMatchTablesInfos(config);
-        if (ArrayUtil.isNullOrEmpty(tableInfos)) {
-            return activeRecordPlugin;
-        }
-
-        for (TableInfo table : tableInfos) {
-            String tableName = StrUtil.isNotBlank(config.getTablePrefix()) ? config.getTablePrefix() + table.getTableName() : table.getTableName();
-            if (StrUtil.isNotBlank(table.getPrimaryKey())) {
-                activeRecordPlugin.addMapping(tableName, table.getPrimaryKey(), (Class<? extends Model<?>>) table.getModelClass());
-            } else {
-                activeRecordPlugin.addMapping(tableName, (Class<? extends Model<?>>) table.getModelClass());
-            }
+        if (config.isNeedAddMapping()) {
+            TableInfoManager.me().initConfigMappingTables(config);
         }
 
         return activeRecordPlugin;

@@ -26,4 +26,6 @@ public @interface Table {
 
     String primaryKey() default "";
 
+    String datasource() default "";
+
 }

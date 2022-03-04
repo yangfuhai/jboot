@@ -16,8 +16,12 @@
 package io.jboot.db.datasource;
 
 import com.jfinal.plugin.activerecord.DbKit;
+import io.jboot.db.TableInfo;
 import io.jboot.db.driver.DriverClassNames;
 import io.jboot.utils.StrUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DataSourceConfig {
@@ -87,6 +91,7 @@ public class DataSourceConfig {
      * 不添加映射：通过 model.use("xxx").save()这种方式去调用该数据源
      */
     private boolean needAddMapping = true;
+
 
     public String getName() {
         return name;
@@ -418,5 +423,35 @@ public class DataSourceConfig {
 
     public void setTestOnReturn(boolean testOnReturn) {
         this.testOnReturn = testOnReturn;
+    }
+
+
+    private List<TableInfo> tableInfos;
+
+    /**
+     * 添加表信息
+     *
+     * @param tableInfo      表信息
+     * @param fromDesignated 是否是通过 jboot.datasource.table 或者 @table(datasource="xxx") 来指定的
+     */
+    public void addTableInfo(TableInfo tableInfo, boolean fromDesignated) {
+        if (tableInfos == null) {
+            tableInfos = new ArrayList<>();
+        }
+
+        if (!tableInfos.contains(tableInfo) && tableInfo.addAttachedDatasource(this, fromDesignated)) {
+            tableInfos.add(tableInfo);
+        }
+    }
+
+    public void removeTableInfo(TableInfo tableInfo) {
+        if (tableInfos != null) {
+            tableInfos.remove(tableInfo);
+        }
+    }
+
+
+    public List<TableInfo> getTableInfos() {
+        return tableInfos;
     }
 }
