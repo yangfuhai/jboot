@@ -57,50 +57,32 @@ public class ArpManager {
     }
 
     private ArpManager() {
-
-        Map<String, DataSourceConfig> allDatasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
-
-        // 包含了指定表配置的数据源
-        Map<String, DataSourceConfig> hasTableDatasourceConfigs = new HashMap<>();
-
-
-        Iterator<Map.Entry<String, DataSourceConfig>> it = allDatasourceConfigs.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, DataSourceConfig> entry = it.next();
-            if (StrUtil.isNotBlank(entry.getValue().getTable())) {
-                hasTableDatasourceConfigs.put(entry.getKey(), entry.getValue());
-                it.remove();
-            }
-        }
-
-        // 优先创建有指定表的数据源的 activeRecordPlugin
-        // 表一旦附着到 activeRecordPlugin， 就不会被其他 activeRecordPlugin 包含了
-        createRecordPlugin(hasTableDatasourceConfigs);
-        createRecordPlugin(allDatasourceConfigs);
-
+        Map<String, DataSourceConfig> datasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
+        createRecordPlugin(datasourceConfigs);
     }
 
-    private void createRecordPlugin(Map<String, DataSourceConfig> mergeDatasourceConfigs) {
-        Map<Integer, DataSourceConfig> dataSourceConfigMap = new HashMap<>();
+    private void createRecordPlugin(Map<String, DataSourceConfig> allConfigs) {
 
-        for (Map.Entry<String, DataSourceConfig> entry : mergeDatasourceConfigs.entrySet()) {
+        Map<Integer, DataSourceConfig> arpDatasourceConfigs = new HashMap<>();
+
+        for (Map.Entry<String, DataSourceConfig> entry : allConfigs.entrySet()) {
             DataSourceConfig datasourceConfig = entry.getValue();
             if (datasourceConfig.isConfigOk()) {
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
 
-                dataSourceConfigMap.put(System.identityHashCode(activeRecordPlugin), datasourceConfig);
+                arpDatasourceConfigs.put(System.identityHashCode(activeRecordPlugin), datasourceConfig);
                 activeRecordPlugins.add(activeRecordPlugin);
             }
         }
 
 
+        // 添加 activeRecordPlugin 的表映射
         for (ActiveRecordPlugin activeRecordPlugin : activeRecordPlugins) {
-            DataSourceConfig dataSourceConfig = dataSourceConfigMap.get(System.identityHashCode(activeRecordPlugin));
+            DataSourceConfig dataSourceConfig = arpDatasourceConfigs.get(System.identityHashCode(activeRecordPlugin));
 
             //获得该数据源匹配的表
             List<TableInfo> tableInfos = dataSourceConfig.getTableInfos();
-
-            if (tableInfos != null) {
+            if (tableInfos != null && !tableInfos.isEmpty()) {
                 for (TableInfo table : tableInfos) {
                     String tableName = StrUtil.isNotBlank(dataSourceConfig.getTablePrefix()) ? dataSourceConfig.getTablePrefix() + table.getTableName() : table.getTableName();
                     if (StrUtil.isNotBlank(table.getPrimaryKey())) {
@@ -111,7 +93,6 @@ public class ArpManager {
                 }
             }
         }
-
 
     }
 
@@ -128,7 +109,7 @@ public class ArpManager {
 
         if (StrUtil.isNotBlank(config.getDbProFactory())) {
             IDbProFactory dbProFactory = Objects.requireNonNull(ClassUtil.newInstance(config.getDbProFactory()),
-                    "can not create dbProfactory by class : " + config.getDbProFactory());
+                    "Can not create dbProfactory by class : " + config.getDbProFactory());
             activeRecordPlugin.setDbProFactory(dbProFactory);
         } else {
             activeRecordPlugin.setDbProFactory(new JbootDbProFactory());

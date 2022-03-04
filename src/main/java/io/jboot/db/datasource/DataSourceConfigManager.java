@@ -15,16 +15,13 @@
  */
 package io.jboot.db.datasource;
 
-import com.google.common.collect.Maps;
 import io.jboot.utils.ConfigUtil;
 import io.jboot.utils.StrUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class DataSourceConfigManager {
-
-    private static final String DATASOURCE_PREFIX = "jboot.datasource.";
-
 
     private static DataSourceConfigManager manager = new DataSourceConfigManager();
 
@@ -32,19 +29,17 @@ public class DataSourceConfigManager {
         return manager;
     }
 
-    private Map<String, DataSourceConfig> datasourceConfigs = Maps.newHashMap();
+    private Map<String, DataSourceConfig> datasourceConfigs = new HashMap<>();
 
     private DataSourceConfigManager() {
-
-        Map<String,DataSourceConfig> configMap = ConfigUtil.getConfigModels(DataSourceConfig.class,"jboot.datasource");
-
-        for (Map.Entry<String,DataSourceConfig> entry : configMap.entrySet()){
+        Map<String, DataSourceConfig> configMap = ConfigUtil.getConfigModels(DataSourceConfig.class, "jboot.datasource");
+        for (Map.Entry<String, DataSourceConfig> entry : configMap.entrySet()) {
             DataSourceConfig config = entry.getValue();
 
             //默认数据源
-            if (entry.getKey().equals("default") && StrUtil.isBlank(config.getName())){
+            if ("default".equals(entry.getKey()) && StrUtil.isBlank(config.getName())) {
                 config.setName(DataSourceConfig.NAME_DEFAULT);
-            }else if (StrUtil.isBlank(config.getName())){
+            } else if (StrUtil.isBlank(config.getName())) {
                 config.setName(entry.getKey());
             }
 
