@@ -51,7 +51,7 @@ public class FileDataSource<T> extends AbstractDataSource<String, T> {
                 } catch (Exception ex) {
                     LogKit.error(ex.toString(), ex);
                 }
-                QuietlyUtil.quietlySleep(5000);
+                QuietlyUtil.sleepQuietly(5000);
             }
         }, "jboot-sentinel-file-reader").start();
     }

@@ -1183,7 +1183,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
                         break;
                     } catch (JedisConnectionException e) {
                         LOG.error("failed connect to redis, reconnect it.", e);
-                        QuietlyUtil.quietlySleep(1000);
+                        QuietlyUtil.sleepQuietly(1000);
                     }
                 }
             }
@@ -1215,7 +1215,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
                         break;
                     } catch (Throwable e) {
                         LOG.error("failed connect to redis, reconnect it.", e);
-                        QuietlyUtil.quietlySleep(1000);
+                        QuietlyUtil.sleepQuietly(1000);
                     }
                 }
             }

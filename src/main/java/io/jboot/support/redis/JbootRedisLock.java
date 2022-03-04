@@ -159,7 +159,7 @@ public class JbootRedisLock {
             } finally {
                 if (timeout > 0) {
                     timeout -= 100;
-                    QuietlyUtil.quietlySleep(100);
+                    QuietlyUtil.sleepQuietly(100);
                 }
             }
         } while (timeout > 0);

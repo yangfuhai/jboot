@@ -22,7 +22,7 @@ import java.io.IOException;
 
 public class QuietlyUtil {
 
-    public static void quietlyClose(Closeable... closeables) {
+    public static void closeQuietly(Closeable... closeables) {
         if (closeables != null) {
             for (Closeable closeable : closeables) {
                 if (closeable != null) {
@@ -36,7 +36,7 @@ public class QuietlyUtil {
         }
     }
 
-    public static void quietlySleep(long millis) {
+    public static void sleepQuietly(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {

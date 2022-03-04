@@ -116,7 +116,7 @@ public class JbootHttpImpl implements JbootHttp {
                 connection.disconnect();
             }
 
-            QuietlyUtil.quietlyClose(inStream, response);
+            QuietlyUtil.closeQuietly(inStream, response);
 
         }
     }

@@ -82,7 +82,7 @@ public class FileUtil {
     }
 
     public static void close(Closeable... closeable) {
-        QuietlyUtil.quietlyClose(closeable);
+        QuietlyUtil.closeQuietly(closeable);
     }
 
 

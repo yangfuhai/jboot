@@ -217,7 +217,7 @@ public class JbootDistributedRunnable implements Runnable {
             millis = 1000;
         }
 
-        QuietlyUtil.quietlySleep(millis);
+        QuietlyUtil.sleepQuietly(millis);
     }
 
 

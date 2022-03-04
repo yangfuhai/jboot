@@ -15,6 +15,7 @@
  */
 package io.jboot.components.gateway;
 
+import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.exception.JbootException;
 import io.jboot.utils.StrUtil;
@@ -160,12 +161,13 @@ public class GatewayHttpProxy {
     }
 
 
-    protected static void quetlyClose(Closeable... closeables) {
+    protected void quetlyClose(Closeable... closeables) {
         for (Closeable closeable : closeables) {
             if (closeable != null) {
                 try {
                     closeable.close();
                 } catch (IOException e) {
+                    LogKit.logNothing(e);
                 }
             }
         }

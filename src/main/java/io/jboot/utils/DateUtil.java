@@ -453,13 +453,13 @@ public class DateUtil {
     public static Date getStartOfThisQuarter() {
         Calendar cal = Calendar.getInstance();
         int currentMonth = cal.get(Calendar.MONTH) + 1;
-        if (currentMonth >= 1 && currentMonth <= 3) {
+        if (currentMonth <= 3) {
             cal.set(Calendar.MONTH, 0);
-        } else if (currentMonth >= 4 && currentMonth <= 6) {
+        } else if (currentMonth <= 6) {
             cal.set(Calendar.MONTH, 3);
-        } else if (currentMonth >= 7 && currentMonth <= 9) {
+        } else if (currentMonth <= 9) {
             cal.set(Calendar.MONTH, 6);
-        } else if (currentMonth >= 10 && currentMonth <= 12) {
+        } else if (currentMonth <= 12) {
             cal.set(Calendar.MONTH, 9);
         }
         cal.set(Calendar.DATE, 0);
@@ -494,7 +494,7 @@ public class DateUtil {
      */
     public static Date getStartOfQuarter(int quarterNumber) {
         if (quarterNumber < 1 || quarterNumber > 4) {
-            throw new IllegalArgumentException("quarterNumber must 1,2,3,4");
+            throw new IllegalArgumentException("quarterNumber must equals 1,2,3,4");
         }
         Calendar cal = Calendar.getInstance();
         if (quarterNumber == 1) {
