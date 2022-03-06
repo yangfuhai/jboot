@@ -70,10 +70,6 @@ public class ValidUtil {
             message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleContext(paras));
         }
 
-        if (fieldName != null) {
-            message = fieldName + message;
-        }
-
-        throw new ValidException(message, reason);
+        throw new ValidException(message, reason, fieldName);
     }
 }

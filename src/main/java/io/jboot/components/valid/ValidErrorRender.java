@@ -36,7 +36,7 @@ public class ValidErrorRender extends Render {
     protected static final String html_footer = "<hr>" + poweredBy + "</body></html>";
 
     protected int errorCode = ValidUtil.getErrorCode();
-    protected ValidException validException;
+    protected final ValidException validException;
 
     public ValidErrorRender(ValidException validException) {
         this.validException = validException;
@@ -45,8 +45,7 @@ public class ValidErrorRender extends Render {
     @Override
     public void render() {
         try {
-            boolean needRenderJson = RequestUtil.isJsonContentType(request) || RequestUtil.isAjaxRequest(request);
-            if (needRenderJson) {
+            if (RequestUtil.isJsonContentType(request) || RequestUtil.isAjaxRequest(request)) {
                 response.setStatus(200);
                 response.setContentType(jsonContentType);
                 response.getWriter().write(getErrorJson());
@@ -62,6 +61,7 @@ public class ValidErrorRender extends Render {
 
     public String getErrorHtml() {
         StringBuilder html = new StringBuilder(html_header);
+        html.append(validException.getFieldName() == null ? "" : (validException.getFieldName() + ": "));
         html.append(validException.getMessage()).append("<br />");
         return html.append(html_footer).toString();
     }
@@ -71,6 +71,7 @@ public class ValidErrorRender extends Render {
         ret.set("throwable", validException.getClass().getName() + ": " + this.validException.getMessage());
         ret.set("message", validException.getMessage());
         ret.set("errorMessage", validException.getReason());
+        ret.set("field", validException.getFieldName());
         return JsonKit.toJson(ret);
     }
 }

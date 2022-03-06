@@ -19,22 +19,41 @@ public class ValidException extends RuntimeException {
 
     private String message;
     private String reason;
+    private String fieldName;
 
     public ValidException() {
     }
 
 
-    public ValidException(String message, String reason) {
+    public ValidException(String message, String reason, String fieldName) {
         this.message = message;
         this.reason = reason;
+        this.fieldName = fieldName;
     }
+
 
     @Override
     public String getMessage() {
         return message;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public String getReason() {
         return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 }
