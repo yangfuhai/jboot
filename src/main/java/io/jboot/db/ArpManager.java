@@ -68,6 +68,9 @@ public class ArpManager {
         for (Map.Entry<String, DataSourceConfig> entry : allConfigs.entrySet()) {
             DataSourceConfig datasourceConfig = entry.getValue();
             if (datasourceConfig.isConfigOk()) {
+
+                // 执行 createRecordPlugin(...) 的时候，会同时完善 DataSourceConfig 里绑定的表数据
+                // createRecordPlugin完毕后，就可以通过  dataSourceConfig.getTableInfos() 去获取该数据源有哪些表
                 ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
 
                 arpDatasourceConfigs.put(System.identityHashCode(activeRecordPlugin), datasourceConfig);
@@ -76,11 +79,10 @@ public class ArpManager {
         }
 
 
-        // 添加 activeRecordPlugin 的表映射
+        // 为 activeRecordPlugin 添加 jfinal 的表映射
         for (ActiveRecordPlugin activeRecordPlugin : activeRecordPlugins) {
             DataSourceConfig dataSourceConfig = arpDatasourceConfigs.get(System.identityHashCode(activeRecordPlugin));
 
-            //获得该数据源匹配的表
             List<TableInfo> tableInfos = dataSourceConfig.getTableInfos();
             if (tableInfos != null && !tableInfos.isEmpty()) {
                 for (TableInfo table : tableInfos) {

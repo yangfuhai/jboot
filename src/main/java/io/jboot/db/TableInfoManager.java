@@ -78,7 +78,7 @@ public class TableInfoManager {
                 dataSourceConfig.addTableInfo(tableInfo, true);
             }
 
-            // 注解 @Table 指定了数据源，而且当前数据源未匹配
+            // 注解 @Table(datasource="xxxx") 指定了数据源，而且当前数据源未匹配
             if (!tableInfo.getDatasourceNames().isEmpty()) {
                 continue;
             }

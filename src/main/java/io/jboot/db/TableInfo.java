@@ -92,10 +92,10 @@ public class TableInfo {
             this.attachedDatasources = new ArrayList<>();
         }
 
-        //未指定数据源
-        if (!fromDesignated) {
+        // 若未指定数据源，且已经存在了指定数据源的 datasource
+        // 则不能再添加该数据源
+        if (!fromDesignated && !this.attachedDatasources.isEmpty()) {
             for (DataSourceConfigWrapper dataSourceConfigWrapper : this.attachedDatasources) {
-                //若已经存在了指定的数据源，再无法添加未指定的数据源
                 if (dataSourceConfigWrapper.fromDesignated) {
                     return false;
                 }
@@ -104,7 +104,7 @@ public class TableInfo {
 
         this.attachedDatasources.add(new DataSourceConfigWrapper(dataSourceConfig, fromDesignated));
 
-        // 通过配置指定的，那么需要移除哪些未指定的默认数据源
+        // 若数据源配置了指定的表（亦或者表配置了指定的数据源），那么需要移除哪些未指定的默认数据源
         if (fromDesignated) {
             for (DataSourceConfigWrapper dataSourceConfigWrapper : attachedDatasources) {
                 if (!dataSourceConfigWrapper.fromDesignated) {
