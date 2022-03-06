@@ -29,6 +29,7 @@ public class JbootApplicationConfig {
     private String bannerFile = "banner.txt";
     private String jfinalConfig = "io.jboot.core.JbootCoreConfig";
     private String listener = "*";
+    private String listenerPackage = "*";
     private boolean handle404 = true;
     private String proxy = "cglib";  //cglib or  javassist
 
@@ -81,6 +82,14 @@ public class JbootApplicationConfig {
         this.listener = listener;
     }
 
+    public String getListenerPackage() {
+        return listenerPackage;
+    }
+
+    public void setListenerPackage(String listenerPackage) {
+        this.listenerPackage = listenerPackage;
+    }
+
     public boolean isHandle404() {
         return handle404;
     }
@@ -115,6 +124,7 @@ public class JbootApplicationConfig {
                 ", proxy='" + proxy + '\'' +
                 ", config='" + jfinalConfig + '\'' +
                 ", listener='" + listener + '\'' +
+                ", listenerPackage='" + listenerPackage + '\'' +
                 " }";
     }
 }

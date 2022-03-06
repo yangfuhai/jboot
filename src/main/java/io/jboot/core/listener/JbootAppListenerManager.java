@@ -18,7 +18,6 @@ package io.jboot.core.listener;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Interceptors;
 import com.jfinal.config.Routes;
-import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.template.Engine;
 import io.jboot.aop.jfinal.JfinalHandlers;
@@ -30,14 +29,15 @@ import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class JbootAppListenerManager implements JbootAppListener {
-    private static Log log = Log.getLog(JbootAppListenerManager.class);
+    private static final Log LOG = Log.getLog(JbootAppListenerManager.class);
 
     private static JbootAppListenerManager me = new JbootAppListenerManager();
-
 
     public static JbootAppListenerManager me() {
         return me;
@@ -50,29 +50,51 @@ public class JbootAppListenerManager implements JbootAppListener {
 
         String listener = JbootApplicationConfig.get().getListener();
 
+        String listenerPackage = JbootApplicationConfig.get().getListenerPackage();
+        Set<String> packages = StrUtil.isNotBlank(listenerPackage) && !"*".equals(listenerPackage.trim())
+                ? StrUtil.splitToSet(listenerPackage, ";") : new HashSet<>();
+
         if (StrUtil.isBlank(listener) || "*".equals(listener.trim())) {
             List<Class<JbootAppListener>> allListeners = ClassScanner.scanSubClass(JbootAppListener.class, true);
             allListeners.removeIf((Predicate<Class<? extends JbootAppListener>>) c ->
                     c == JbootAppListenerManager.class || c == JbootAppListenerBase.class);
 
-            allListeners.forEach(c -> {
-                JbootAppListener l = ClassUtil.newInstance(c);
-                if (l != null) {
-                    listeners.add(l);
+            allListeners.forEach(clazz -> {
+                if (isMatchedPackage(packages, clazz.getCanonicalName())) {
+                    JbootAppListener appListener = ClassUtil.newInstance(clazz);
+                    if (appListener != null) {
+                        listeners.add(appListener);
+                    }
                 }
             });
         } else {
-            StrUtil.splitToSet(listener, ";").forEach(c -> {
-                JbootAppListener l = ClassUtil.newInstance(c);
-                if (l != null) {
-                    listeners.add(l);
-                } else {
-                    LogKit.warn("Can not create JbootAppListener by class: " + c);
+            StrUtil.splitToSet(listener, ";").forEach(className -> {
+                if (isMatchedPackage(packages, className)) {
+                    JbootAppListener appListener = ClassUtil.newInstance(className);
+                    if (appListener != null) {
+                        listeners.add(appListener);
+                    } else {
+                        LOG.warn("Can not create JbootAppListener by class: " + className);
+                    }
                 }
             });
         }
 
         WeightUtil.sort(listeners);
+    }
+
+    private boolean isMatchedPackage(Set<String> packages, String className) {
+        //matched all
+        if (packages == null || packages.isEmpty()) {
+            return true;
+        }
+
+        for (String packageString : packages) {
+            if (className.startsWith(packageString)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<JbootAppListener> getListeners() {
@@ -85,7 +107,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onInit();
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -96,7 +118,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onConstantConfigBefore(constants);
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -107,7 +129,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onConstantConfig(constants);
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -118,7 +140,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onRouteConfig(routes);
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -129,7 +151,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onEngineConfig(engine);
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -140,7 +162,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onPluginConfig(plugins);
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -151,7 +173,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onInterceptorConfig(interceptors);
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -163,7 +185,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onHandlerConfig(handlers);
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -174,7 +196,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onStartBefore();
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -185,7 +207,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onStart();
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -196,7 +218,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onStartFinish();
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
@@ -207,7 +229,7 @@ public class JbootAppListenerManager implements JbootAppListener {
             try {
                 listener.onStop();
             } catch (Throwable ex) {
-                log.error(ex.toString(), ex);
+                LOG.error(ex.toString(), ex);
             }
         }
     }
