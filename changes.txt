@@ -1,3 +1,19 @@
+jboot v3.14.1:
+新增：注解 @Table(datasource="xxx") 新增对数据源的配置支持
+新增：添加 jboo.app.listenerPackage 配置支持，用于只扫描哪些包的 listener
+优化：完善 JbootJson 更多的代码注释
+优化：优化 JbootConfigManager.java 代码，对添加 key 进行 trim()
+优化：进一步完善 jboot.properties 文件存放位置的探测
+优化：单元测试移除 mockHandler
+优化：DAO.findFirstByColumn()，当传入 null 应抛出错误，防止查询出错误的数据
+优化：rabbitmq.queueDeclareDurable 的配置默认设置为 false
+优化：对 QuietlyUtil 的方法进行重命名优化
+优化：ValidErrorRender 输出的 message 不带有 fieldName 信息
+优化：升级 Jfinal 等依赖到最新版本
+修复：@Cacheput() 注解在 Controller 上无效的问题
+
+
+
 jboot v3.14.0:
 新增：@Cacheable() 等系列缓存注解对 controller 的支持
 优化：优化 fastjson 序列化的功能，使用 config 而非 features

@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.14.1-SNAPSHOT</version>
+    <version>3.14.1</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -41,10 +41,10 @@
 
 
     <properties>
-        <jfinal.version>4.9.18</jfinal.version>
+        <jfinal.version>4.9.21</jfinal.version>
         <jfinal-cos.version>2022.2</jfinal-cos.version>
         <jfinal-undertow.version>2.8</jfinal-undertow.version>
-        <jfinal-weixin.version>3.3</jfinal-weixin.version>
+        <jfinal-weixin.version>3.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
         <jackson.version>2.13.1</jackson.version>
@@ -54,9 +54,9 @@
 <!--        <fst.version>3.0.3</fst.version>-->
         <fst.version>2.57</fst.version>
         <fastjson.version>1.2.79</fastjson.version>
-        <guava.version>31.0.1-jre</guava.version>
+        <guava.version>31.1-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
-        <jedis.version>3.7.1</jedis.version>
+        <jedis.version>3.8.0</jedis.version>
         <jsoup.version>1.14.3</jsoup.version>
         <ehcache.version>2.10.9.2</ehcache.version>
         <caffeine.version>2.9.3</caffeine.version>
@@ -728,7 +728,7 @@
         <dependency>
             <groupId>net.oschina.j2cache</groupId>
             <artifactId>j2cache-core</artifactId>
-            <version>2.8.2-release</version>
+            <version>2.8.4-release</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
