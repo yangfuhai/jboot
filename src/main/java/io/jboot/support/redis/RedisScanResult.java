@@ -1,6 +1,5 @@
 package io.jboot.support.redis;
 
-import redis.clients.jedis.ScanParams;
 
 import java.io.Serializable;
 import java.util.List;
