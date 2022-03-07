@@ -69,7 +69,7 @@ class JbootProp {
 
             if (inputStream != null) {
                 properties.load(new InputStreamReader(inputStream, encoding));
-            } else {
+            } else if (!fileName.contains("-")) {
                 System.err.println("Warning: Can not load properties file in classpath, file name: " + fileName);
             }
         } catch (Exception e) {
