@@ -62,7 +62,7 @@ public class ValidateController extends Controller {
     }
 
 
-    public void test10(@Max(10) int para1) {
+    public void test10(@Max(value = 10,message = "错误的 para1") int para1) {
         renderText("test10");
     }
 

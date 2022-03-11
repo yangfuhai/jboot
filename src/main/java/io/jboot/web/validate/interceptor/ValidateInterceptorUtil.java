@@ -56,7 +56,7 @@ public class ValidateInterceptorUtil {
 
 
     static void renderValidException(Controller controller, String renderType, String formName, String message, String redirectUrl, String htmlPath, int errorCode) {
-        String reason = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed!");
+        String reason = StrUtil.isNotBlank(message) ? (formName + " validate failed: " + message) : (formName + " validate failed.");
         switch (renderType) {
             case ValidateRenderType.DEFAULT:
                 if (RequestUtil.isAjaxRequest(controller.getRequest())
@@ -91,15 +91,13 @@ public class ValidateInterceptorUtil {
                 controller.renderText(message);
                 break;
             default:
-                throw new IllegalArgumentException("can not process render : " + renderType);
+                throw new IllegalArgumentException("Can not process render : " + renderType);
         }
     }
 
 
     public static interface ValidExceptionRetBuilder{
-
         ValidExceptionRetBuilder DEFAULT_BUILDER = ret -> ret;
-
         Ret build(Ret baseRet);
     }
 

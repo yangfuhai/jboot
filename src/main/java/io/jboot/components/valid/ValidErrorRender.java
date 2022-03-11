@@ -61,7 +61,7 @@ public class ValidErrorRender extends Render {
 
     public String getErrorHtml() {
         StringBuilder html = new StringBuilder(html_header);
-        html.append(validException.getFieldName() == null ? "" : (validException.getFieldName() + ": "));
+        html.append(validException.getFormName() == null ? "" : (validException.getFormName() + ": "));
         html.append(validException.getMessage()).append("<br />");
         return html.append(html_footer).toString();
     }
@@ -71,7 +71,7 @@ public class ValidErrorRender extends Render {
         ret.set("throwable", validException.getClass().getName() + ": " + this.validException.getMessage());
         ret.set("message", validException.getMessage());
         ret.set("errorMessage", validException.getReason());
-        ret.set("field", validException.getFieldName());
+        ret.set("formName", validException.getFormName());
         return JsonKit.toJson(ret);
     }
 }

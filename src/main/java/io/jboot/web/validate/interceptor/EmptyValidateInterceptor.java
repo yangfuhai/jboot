@@ -65,40 +65,40 @@ public class EmptyValidateInterceptor implements Interceptor {
         }
 
 
-        for (Form form : forms) {
-            String formName = AnnotationUtil.get(form.name());
-            String formType = AnnotationUtil.get(form.type());
+        for (Form formAnnotation : forms) {
+            String formName = AnnotationUtil.get(formAnnotation.name());
+            String formType = AnnotationUtil.get(formAnnotation.type());
             if (StrUtil.isBlank(formName)) {
                 throw new IllegalArgumentException("@Form.value must not be empty in " + inv.getController().getClass().getName() + "." + inv.getMethodName());
             }
-            String value = null;
+            String paraValue = null;
             if (FormType.FORM_DATA.equalsIgnoreCase(formType)) {
-                value = inv.getController().getPara(formName);
+                paraValue = inv.getController().getPara(formName);
             } else if (FormType.RAW_DATA.equalsIgnoreCase(formType)) {
                 try {
                     JSONObject json = JSON.parseObject(inv.getController().getRawData());
                     if (json != null) {
                         Object tmp = JSONPath.eval(json, "$." + formName);
                         if (tmp != null) {
-                            value = tmp.toString();
+                            paraValue = tmp.toString();
                         }
                     }
                 } catch (Exception e) {
-                    value = null;
+                    paraValue = null;
                 }
             } else {
                 throw new IllegalArgumentException("@EmptyValidate not support form type : " + formType + ", " +
                         "see : io.jboot.web.controller.validate.FormType");
             }
 
-            if (value == null || value.trim().length() == 0) {
+            if (paraValue == null || paraValue.trim().length() == 0) {
                 ValidateInterceptorUtil.renderValidException(inv.getController()
                         , AnnotationUtil.get(emptyParaValidate.renderType())
                         , formName
-                        , AnnotationUtil.get(form.message())
+                        , AnnotationUtil.get(formAnnotation.message())
                         , AnnotationUtil.get(emptyParaValidate.redirectUrl())
                         , AnnotationUtil.get(emptyParaValidate.htmlPath())
-                        , form.errorCode()
+                        , formAnnotation.errorCode()
                 );
                 return false;
             }

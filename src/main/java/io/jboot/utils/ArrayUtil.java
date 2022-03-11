@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class ArrayUtil {
 
-    public static boolean isNotEmpty(Collection list) {
+    public static boolean isNotEmpty(Collection<?> list) {
         return list != null && list.size() > 0;
     }
 
@@ -35,7 +35,7 @@ public class ArrayUtil {
         return objects != null && objects.length > 0;
     }
 
-    public static boolean isNullOrEmpty(Collection list) {
+    public static boolean isNullOrEmpty(Collection<?> list) {
         return list == null || list.size() == 0;
     }
 

@@ -19,7 +19,7 @@ public class ValidException extends RuntimeException {
 
     private String message;
     private String reason;
-    private String fieldName;
+    private String formName;
 
     public ValidException() {
     }
@@ -28,7 +28,7 @@ public class ValidException extends RuntimeException {
     public ValidException(String message, String reason, String fieldName) {
         this.message = message;
         this.reason = reason;
-        this.fieldName = fieldName;
+        this.formName = fieldName;
     }
 
 
@@ -49,11 +49,11 @@ public class ValidException extends RuntimeException {
         this.reason = reason;
     }
 
-    public String getFieldName() {
-        return fieldName;
+    public String getFormName() {
+        return formName;
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+    public void setFormName(String formName) {
+        this.formName = formName;
     }
 }
