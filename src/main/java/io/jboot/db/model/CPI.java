@@ -15,9 +15,54 @@
  */
 package io.jboot.db.model;
 
+import com.jfinal.plugin.activerecord.Config;
+import io.jboot.db.dialect.JbootDialect;
+
 public class CPI {
 
-    public static boolean hasAnyJoinEffective(JbootModel model){
-        return model.hasAnyJoinEffective();
+    public static boolean hasAnyJoinEffective(JbootModel dao) {
+        return dao.hasAnyJoinEffective();
     }
+
+
+    public static boolean hasColumn(JbootModel dao, String columnLabel) {
+        return dao._hasColumn(columnLabel);
+    }
+
+
+    public static JbootDialect getJbootDialect(JbootModel dao) {
+        return dao._getDialect();
+    }
+
+
+    public static Config getModelConfig(JbootModel dao) {
+        return dao._getConfig();
+    }
+
+
+    public static <M> M loadByCache(JbootModel dao, Object... idValues) {
+        return (M) dao.loadByCache(idValues);
+    }
+
+
+    public static void safeDeleteCache(JbootModel dao, Object... idValues) {
+        dao.safeDeleteCache(idValues);
+    }
+
+
+    public static Class<?> safeDeleteCache(JbootModel dao) {
+        return dao._getPrimaryType();
+    }
+
+
+    public static String buildIdCacheName(JbootModel dao, String name) {
+        return dao.buildIdCacheName(name);
+    }
+
+
+    public static String buildIdCacheKey(JbootModel dao, Object... idValues) {
+        return dao.buildIdCacheKey(idValues);
+    }
+
+
 }
