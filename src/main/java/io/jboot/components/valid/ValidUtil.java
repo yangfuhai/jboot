@@ -66,10 +66,16 @@ public class ValidUtil {
 
 
     public static void throwValidException(String fieldName, String message, Ret paras, String reason) {
-        if (message != null) {
-            message = Validation.buildDefaultValidatorFactory().getMessageInterpolator().interpolate(message, new SimpleContext(paras));
+        if (isParaMessage(message)) {
+            message = fieldName + " " + Validation.buildDefaultValidatorFactory().getMessageInterpolator()
+                    .interpolate(message, new SimpleContext(paras));
         }
 
         throw new ValidException(message, reason, fieldName);
+    }
+
+
+    private static boolean isParaMessage(String message) {
+        return message != null && message.startsWith("{") && message.endsWith("}");
     }
 }
