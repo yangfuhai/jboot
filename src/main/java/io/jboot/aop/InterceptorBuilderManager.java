@@ -94,7 +94,7 @@ public class InterceptorBuilderManager{
 
 
 
-    public Interceptor[] build(Class targetClass, Method method, Interceptor[] inters) {
+    public Interceptor[] build(Class<?> targetClass, Method method, Interceptor[] inters) {
         if (interceptorBuilders != null && interceptorBuilders.size() > 0) {
             Interceptors interceptors = new Interceptors(inters);
             for (InterceptorBuilder builder : interceptorBuilders) {
