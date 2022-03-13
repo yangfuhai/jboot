@@ -39,7 +39,9 @@ public class ClassScanner {
 
     public static final Set<String> scanClasses = new HashSet<>();
     public static final Set<String> excludeClasses = new HashSet<>();
-    private static boolean printScannerInfoEnable = JbootConfigManager.me().isDevMode();
+
+    // 默认关闭扫描信息的控制台输出
+    private static boolean printScannerInfoEnable = false;
 
     public static boolean isPrintScannerInfoEnable() {
         return printScannerInfoEnable;
