@@ -31,23 +31,26 @@ import java.lang.reflect.Method;
 @AutoLoad
 public class CacheInterceptorBuilder implements InterceptorBuilder {
 
+    // 缓存拦截器的权重
+    // 其他拦截器器的默认权重是 1+
+    public static final int INTERCEPTOR_WEIGHT = 100;
 
     @Override
     public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
-        if (Util.hasAnnotation(method,CacheEvict.class)) {
-            interceptors.add(CacheEvictInterceptor.class);
+        if (Util.hasAnnotation(method, CacheEvict.class)) {
+            interceptors.add(CacheEvictInterceptor.class, INTERCEPTOR_WEIGHT);
         }
 
-        if (Util.hasAnnotation(method,Cacheable.class)) {
-            interceptors.add(CacheableInterceptor.class);
+        if (Util.hasAnnotation(method, Cacheable.class)) {
+            interceptors.add(CacheableInterceptor.class, INTERCEPTOR_WEIGHT);
         }
 
-        if (Util.hasAnnotation(method,CachePut.class)) {
-            interceptors.add(CachePutInterceptor.class);
+        if (Util.hasAnnotation(method, CachePut.class)) {
+            interceptors.add(CachePutInterceptor.class, INTERCEPTOR_WEIGHT);
         }
 
-        if (Util.hasAnnotation(method,CachesEvict.class)) {
-            interceptors.add(CachesEvictInterceptor.class);
+        if (Util.hasAnnotation(method, CachesEvict.class)) {
+            interceptors.add(CachesEvictInterceptor.class, INTERCEPTOR_WEIGHT);
         }
     }
 

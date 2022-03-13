@@ -209,8 +209,10 @@ public class Interceptors {
 
 
     public List<Interceptor> toList() {
+        // 排序：weight 越小越靠前
         warppers.sort(Comparator.comparingInt(InterceptorWarpper::getWeight));
-        return warppers.stream().map(InterceptorWarpper::getInterceptor).collect(Collectors.toList());
+        return warppers.stream().map(InterceptorWarpper::getInterceptor)
+                .collect(Collectors.toList());
     }
 
 
@@ -218,7 +220,9 @@ public class Interceptors {
         if (warppers == null || warppers.size() == 0) {
             return InterceptorManager.NULL_INTERS;
         } else {
+            // 排序：weight 越小越靠前
             warppers.sort(Comparator.comparingInt(InterceptorWarpper::getWeight));
+
             Interceptor[] inters = new Interceptor[warppers.size()];
             for (int i = 0; i < warppers.size(); i++) {
                 inters[i] = warppers.get(i).getInterceptor();
@@ -261,9 +265,11 @@ public class Interceptors {
         return ClassUtil.singleton(interceptorClass, false, true);
     }
 
+    public List<InterceptorWarpper> getWarppers() {
+        return warppers;
+    }
 
     static class InterceptorWarpper {
-
         private Interceptor interceptor;
         private int weight;
 
