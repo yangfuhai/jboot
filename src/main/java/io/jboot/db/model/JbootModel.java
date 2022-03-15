@@ -330,6 +330,20 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return idCacheEnable ? loadByCache(idValue) : super.findById(idValue);
     }
 
+    /**
+     * 直接查询数据库，不走缓存
+     *
+     * @param idValue
+     * @return
+     */
+    public M findByIdWithoutCache(Object idValue) {
+        if (idValue == null) {
+            return null;
+        }
+        return super.findById(idValue);
+    }
+
+
     @Override
     public M findByIds(Object... idValues) {
         if (idValues == null) {
@@ -341,17 +355,24 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         return idCacheEnable ? loadByCache(idValues) : super.findByIds(idValues);
     }
 
-    protected M loadByCache(Object... idValues) {
-
-        //临时关闭 id 缓存的情况
-        if (JbootModelHintManager.me().isClosedIdCache(getClass())) {
-            try {
-                return JbootModel.super.findByIds(idValues);
-            } finally {
-                JbootModelHintManager.me().clearIdCacheFlag();
-            }
+    /**
+     * 直接查询数据库，不走缓存
+     *
+     * @param idValues
+     * @return
+     */
+    public M findByIdsWithoutCache(Object... idValues) {
+        if (idValues == null) {
+            return null;
         }
+        if (idValues.length != _getPrimaryKeys().length) {
+            throw new IllegalArgumentException("idValues.length != _getPrimaryKeys().length");
+        }
+        return super.findByIds(idValues);
+    }
 
+
+    protected M loadByCache(Object... idValues) {
         try {
             M m = config.getIdCache().get(buildIdCacheName(_getTableName())
                     , buildIdCacheKey(idValues)
@@ -364,18 +385,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         return JbootModel.super.findByIds(idValues);
-    }
-
-
-    /**
-     * 临时关闭 id 缓存，关闭后通过 findById 执行后又会开启了
-     * 一般情况下的使用方法是 DAO.closeIdCacheTemporary().findById(...)
-     *
-     * @return
-     */
-    public M closeIdCacheTemporary() {
-        JbootModelHintManager.me().closeIdCache(getClass());
-        return (M) this;
     }
 
 

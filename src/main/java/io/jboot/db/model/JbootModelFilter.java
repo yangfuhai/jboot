@@ -21,7 +21,8 @@ package io.jboot.db.model;
  */
 public interface JbootModelFilter {
 
-    static JbootModelFilter DEFAULT = (model, filterBy) -> {};
+    JbootModelFilter DEFAULT = (model, filterBy) -> {
+    };
 
-    public void filter(JbootModel model,int filterBy);
+    void filter(JbootModel<?> model, int filterBy);
 }
