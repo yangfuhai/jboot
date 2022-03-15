@@ -17,11 +17,14 @@ package io.jboot.app.config.support.nacos;
 
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
+import com.jfinal.log.Log;
 import io.jboot.app.config.JbootConfigKit;
 import io.jboot.app.config.JbootConfigManager;
+import io.jboot.utils.ConfigUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -31,6 +34,7 @@ import java.util.Properties;
  */
 public class NacosConfigManager {
 
+    private static final Log LOG = Log.getLog(NacosConfigManager.class);
     private static final NacosConfigManager ME = new NacosConfigManager();
 
     public static NacosConfigManager me() {
@@ -44,9 +48,14 @@ public class NacosConfigManager {
      * 初始化 nacos 配置监听
      */
     public void init(JbootConfigManager configManager) {
+        Map<String, NacosServerConfig> configModels = ConfigUtil.getConfigModels(configManager, NacosServerConfig.class);
+        configModels.forEach((s, nacosConfig) -> initConfig(configManager, nacosConfig));
+    }
 
-        NacosServerConfig nacosServerConfig = configManager.get(NacosServerConfig.class);
-        if (!nacosServerConfig.isEnable() || !nacosServerConfig.isConfigOk()) {
+    private void initConfig(JbootConfigManager configManager, NacosServerConfig nacosServerConfig) {
+        if (nacosServerConfig == null
+                || !nacosServerConfig.isEnable()
+                || !nacosServerConfig.isConfigOk()) {
             return;
         }
 
@@ -63,10 +72,11 @@ public class NacosConfigManager {
                 }
             }
 
-            new NacosConfigIniter(this, configManager).initListener(configService, nacosServerConfig);
+            new NacosConfigInitializer(this, configManager).initListener(configService, nacosServerConfig);
 
         } catch (Exception e) {
-            e.printStackTrace();
+
+            LOG.error(e.toString(), e);
         }
     }
 

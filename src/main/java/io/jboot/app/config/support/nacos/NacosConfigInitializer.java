@@ -25,13 +25,13 @@ import java.util.concurrent.Executor;
  * @author michael yang (fuhai999@gmail.com)
  * @Date: 2020/2/9
  */
-public class NacosConfigIniter {
+public class NacosConfigInitializer {
 
     private NacosConfigManager manager;
     private JbootConfigManager configManager;
 
 
-    public NacosConfigIniter(NacosConfigManager manager, JbootConfigManager configManager) {
+    public NacosConfigInitializer(NacosConfigManager manager, JbootConfigManager configManager) {
         this.manager = manager;
         this.configManager = configManager;
     }

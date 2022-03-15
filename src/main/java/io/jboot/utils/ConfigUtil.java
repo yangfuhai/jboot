@@ -39,8 +39,21 @@ public class ConfigUtil {
     }
 
 
-
     public static <T> Map<String, T> getConfigModels(Class<T> tClass, String prefix) {
+        return getConfigModels(JbootConfigManager.me(), tClass, prefix);
+    }
+
+
+    public static <T> Map<String, T> getConfigModels(JbootConfigManager configManager, Class<T> tClass) {
+        ConfigModel configModel = tClass.getAnnotation(ConfigModel.class);
+        if (configModel == null) {
+            throw new IllegalStateException("The Class \"" + tClass.getName() + "\" is not have @ConfigModel annotation");
+        }
+        return getConfigModels(configManager, tClass, configModel.prefix());
+    }
+
+
+    public static <T> Map<String, T> getConfigModels(JbootConfigManager configManager, Class<T> tClass, String prefix) {
         Map<String, T> objMap = new HashMap<>();
 
         boolean initDefault = false;
@@ -50,7 +63,7 @@ public class ConfigUtil {
         String objPrefix = prefix + ".";
         int pointCount = StringUtils.countMatches(prefix, '.');
 
-        Properties prop = JbootConfigManager.me().getProperties();
+        Properties prop = configManager.getProperties();
 
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
             if (entry.getKey() == null || JbootConfigKit.isBlank(entry.getKey().toString())) {
@@ -67,7 +80,7 @@ public class ConfigUtil {
             //初始化默认的配置
             if (!initDefault && key.startsWith(prefix) && StringUtils.countMatches(key, '.') == pointCount + 1) {
                 initDefault = true;
-                T defaultObj = JbootConfigManager.me().get(tClass, prefix, null);
+                T defaultObj = configManager.get(tClass, prefix, null);
                 objMap.put("default", defaultObj);
 
             }
@@ -81,7 +94,7 @@ public class ConfigUtil {
         }
 
         for (String name : objNames) {
-            T obj = JbootConfigManager.me().get(tClass, objPrefix + name, null);
+            T obj = configManager.get(tClass, objPrefix + name, null);
             objMap.put(name, obj);
         }
 
