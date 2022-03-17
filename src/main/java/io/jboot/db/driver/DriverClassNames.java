@@ -33,6 +33,7 @@ public class DriverClassNames {
         driverClassNames.put(DataSourceConfig.TYPE_SQLITE, new String[]{"org.sqlite.JDBC"});
         driverClassNames.put(DataSourceConfig.TYPE_POSTGRESQL, new String[]{"org.postgresql.Driver"});
         driverClassNames.put(DataSourceConfig.TYPE_CLICKHOUSE, new String[]{"com.github.housepower.jdbc.ClickHouseDriver", "ru.yandex.clickhouse.ClickHouseDriver"});
+        driverClassNames.put(DataSourceConfig.TYPE_INFORMIX, new String[]{"com.informix.jdbc.IfxDriver"});
     }
 
 

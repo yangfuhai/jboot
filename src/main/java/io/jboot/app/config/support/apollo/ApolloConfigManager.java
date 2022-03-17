@@ -61,7 +61,6 @@ public class ApolloConfigManager {
                 properties.put(name,value);
             }
             configManager.setRemoteProperties(properties);
-
         }
 
         config.addChangeListener(changeEvent -> {
@@ -81,8 +80,8 @@ public class ApolloConfigManager {
 
     private Config getDefaultConfig(JbootConfigManager configManager) {
         ApolloServerConfig apolloServerConfig = configManager.get(ApolloServerConfig.class);
-        if (JbootConfigKit.isNotBlank(apolloServerConfig.getDefaultNamespace())) {
-            return ConfigService.getConfig(apolloServerConfig.getDefaultNamespace());
+        if (JbootConfigKit.isNotBlank(apolloServerConfig.getNamespace())) {
+            return ConfigService.getConfig(apolloServerConfig.getNamespace());
         } else {
             return ConfigService.getAppConfig();
         }

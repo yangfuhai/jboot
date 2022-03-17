@@ -24,7 +24,7 @@ public class ApolloServerConfig {
     private boolean enable = false;
     private String meta;
     private String appId;
-    private String defaultNamespace;
+    private String namespace;
 
 
     public boolean isEnable() {
@@ -51,12 +51,12 @@ public class ApolloServerConfig {
         this.meta = meta;
     }
 
-    public String getDefaultNamespace() {
-        return defaultNamespace;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setDefaultNamespace(String defaultNamespace) {
-        this.defaultNamespace = defaultNamespace;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public boolean isConfigOk() {
