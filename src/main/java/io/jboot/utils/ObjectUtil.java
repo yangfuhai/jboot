@@ -139,8 +139,9 @@ public class ObjectUtil {
         if (value.getClass().isAssignableFrom(targetClass)) {
             return value;
         }
-
-        if (targetClass == Integer.class || targetClass == int.class) {
+        if (targetClass == String.class) {
+            return value.toString();
+        } else if (targetClass == Integer.class || targetClass == int.class) {
             if (value instanceof Number) {
                 return ((Number) value).intValue();
             }
@@ -198,7 +199,13 @@ public class ObjectUtil {
         if (value instanceof Number) {
             return new Date(((Number) value).longValue());
         }
-        return DateUtil.parseDate(value.toString());
+
+        String s = value.toString();
+        if (StrUtil.isNumeric(s)) {
+            return new Date(Long.parseLong(s));
+        }
+
+        return DateUtil.parseDate(s);
     }
 
     public static Object getPrimitiveDefaultValue(Class<?> paraClass) {

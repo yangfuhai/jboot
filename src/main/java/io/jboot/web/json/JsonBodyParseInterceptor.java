@@ -162,11 +162,16 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return paraClass.isPrimitive() ? ObjectUtil.getPrimitiveDefaultValue(paraClass) : null;
         }
 
+        if (paraClass == String.class && paraClass == paraType) {
+            return result.toString();
+        }
+
+        // JSONObject 类型
         if (result instanceof JSONObject) {
             return toJavaObject((JSONObject) result, paraClass, paraType);
-        } else {
-            return ObjectUtil.convert(result, paraClass);
         }
+
+        return ObjectUtil.convert(result, paraClass);
     }
 
 
@@ -225,6 +230,11 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
             return new HashSet<>(jsonArray);
         }
 
+        //直接获取 JsonArray
+        if (typeClass == type && typeClass == JSONArray.class) {
+            return jsonArray;
+        }
+
         return jsonArray.toJavaObject(type);
     }
 
@@ -270,7 +280,6 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
         int modifiers = clazz.getModifiers();
         return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
-
 
 
     @Override
