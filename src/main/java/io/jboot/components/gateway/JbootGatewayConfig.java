@@ -15,6 +15,7 @@
  */
 package io.jboot.components.gateway;
 
+import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
@@ -321,7 +322,8 @@ public class JbootGatewayConfig implements Serializable {
             } else {
                 gatewayInterceptors = new GatewayInterceptor[interceptors.length];
                 for (int i = 0; i < interceptors.length; i++) {
-                    GatewayInterceptor interceptor = ClassUtil.newInstance(interceptors[i]);
+//                    GatewayInterceptor interceptor = ClassUtil.newInstance(interceptors[i]);
+                    GatewayInterceptor interceptor = JbootSpiLoader.load(GatewayInterceptor.class, interceptors[i]);
                     if (interceptor == null) {
                         throw new NullPointerException("can not new instance by class:" + interceptors[i]);
                     }
