@@ -204,6 +204,13 @@ public class JbootCoreConfig extends JFinalConfig {
         routeList.addAll(routes.getRouteItemList());
     }
 
+    private String removeLastSlash(String path) {
+        while (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        return path;
+    }
+
     public static String[] getMappingAndViewPath(Class<? extends Controller> clazz) {
         RequestMapping rm = clazz.getAnnotation(RequestMapping.class);
         if (rm != null) {
@@ -236,6 +243,7 @@ public class JbootCoreConfig extends JFinalConfig {
             path = AnnotationUtil.get(path);
         }
 
+        path = removeLastSlash(path);
         viewPath = AnnotationUtil.get(viewPath);
 
         if (Path.NULL_VIEW_PATH.equals(viewPath)) {

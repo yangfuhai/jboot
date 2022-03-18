@@ -235,5 +235,16 @@ public class JsonUtil {
         return null;
     }
 
+    public static Object getJsonObjectOrArray(String json) {
+        if (StrUtil.isNotBlank(json)) {
+            try {
+                return JSON.parse(json);
+            } catch (Exception e) {
+                LogKit.error(e.toString(), e);
+            }
+        }
+        return null;
+    }
+
 
 }
