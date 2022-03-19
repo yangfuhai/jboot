@@ -25,6 +25,52 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+/**
+ * 基于 FastJson，方便解析 Json 内容
+ * <p>
+ * 例如：
+ * <p>
+ * {
+ *  "array": [
+ *          1,
+ *          2,
+ *          3
+ *      ],
+ *  "type": true,
+ *  "null": null,
+ *  "number": 123,
+ *  "object": {
+ *          "a": "b",
+ *          "c": "d",
+ *          "e":1
+ *  },
+ *  "key": "welcome to CodeFormat.CN"
+ *  }
+ *
+ * Boolean type = JsonUtil.getBool(json,"type");
+ * //type == true
+ *
+ * int e = JsonUtil.getInt(json,"object.e")
+ * // e == 1
+ *
+ * BigInteger n = JsonUtil.getBigInteger("number")
+ * // n == 123
+ *
+ * String[] array = JsonUtil.get(json,"array",String[].class)
+ * //array == ["1","2","3"]
+ *
+ * int[] array = JsonUtil.get(json,"array",int[].class)
+ *  //array == [1,2,3]
+ *
+ *  Map map = JsonUtil.get(json,"object",Map.class)
+ *  //map == {"a":"b","c":"d","e":1}
+ *
+ *  int x = JsonUtil.getInt(json,"array[1]");
+ *  // x == 2
+ *
+ *  String key = JsonUtil.getString(json,"key");
+ *  // key == "welcome to CodeFormat.CN"
+ */
 public class JsonUtil {
 
     public static String getString(String json, String key) {
@@ -44,6 +90,26 @@ public class JsonUtil {
         String value = getString(jsonObjectOrArray, key);
         return value != null ? value : defaultValue;
     }
+
+
+    public static Boolean getBool(String json, String key) {
+        return get(json, key, Boolean.class);
+    }
+
+    public static Boolean getBool(Object jsonObjectOrArray, String key) {
+        return get(jsonObjectOrArray, key, Boolean.class);
+    }
+
+    public static boolean getBool(String json, String key, boolean defaultValue) {
+        Boolean value = getBool(json, key);
+        return value != null ? value : defaultValue;
+    }
+
+    public static boolean getBool(Object jsonObjectOrArray, String key, boolean defaultValue) {
+        Boolean value = getBool(jsonObjectOrArray, key);
+        return value != null ? value : defaultValue;
+    }
+
 
     public static Integer getInt(String json, String key) {
         return get(json, key, Integer.class);
@@ -164,6 +230,16 @@ public class JsonUtil {
         return get(jsonObjectOrArray, key, Date.class);
     }
 
+    public static Date getDate(String json, String key, Date defaultValue) {
+        Date date = get(json, key, Date.class);
+        return date != null ? date : defaultValue;
+    }
+
+    public static Date getDate(Object jsonObjectOrArray, String key, Date defaultValue) {
+        Date date = get(jsonObjectOrArray, key, Date.class);
+        return date != null ? date : defaultValue;
+    }
+
 
     public static JSONObject getJSONObject(String json, String key) {
         return get(json, key, JSONObject.class);
@@ -172,7 +248,6 @@ public class JsonUtil {
     public static JSONObject getJSONObject(Object jsonObjectOrArray, String key) {
         return get(jsonObjectOrArray, key, JSONObject.class);
     }
-
 
     public static JSONArray getJSONArray(String json, String key) {
         return get(json, key, JSONArray.class);
@@ -184,16 +259,7 @@ public class JsonUtil {
 
 
     public static <T> T get(String json, String key, Class<T> clazz) {
-        if (StrUtil.isBlank(json)) {
-            return null;
-        }
-        try {
-            Object parse = JSON.parse(json);
-            return get(parse, key, clazz);
-        } catch (Exception e) {
-            LogKit.error(e.toString(), e);
-        }
-        return null;
+        return get(getJsonObjectOrArray(json), key, clazz);
     }
 
     public static <T> T get(Object jsonObjectOrArray, String key, Class<T> clazz) {
@@ -210,16 +276,7 @@ public class JsonUtil {
 
 
     public static <T> T get(String json, String key, TypeDef<?> typeDef) {
-        if (StrUtil.isBlank(json)) {
-            return null;
-        }
-        try {
-            Object parse = JSON.parse(json);
-            return get(parse, key, typeDef);
-        } catch (Exception e) {
-            LogKit.error(e.toString(), e);
-        }
-        return null;
+        return get(getJsonObjectOrArray(json), key, typeDef);
     }
 
 
