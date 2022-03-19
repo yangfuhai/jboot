@@ -205,7 +205,7 @@ public class JbootCoreConfig extends JFinalConfig {
     }
 
     private String removeLastSlash(String path) {
-        while (path.endsWith("/")) {
+        while (path.endsWith("/") && path.length() > 1) {
             path = path.substring(0, path.length() - 1);
         }
         return path;
