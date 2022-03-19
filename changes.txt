@@ -1,3 +1,16 @@
+jboot v3.14.2:
+新增：Informix 数据库方言，感谢 @xujianxie 同学
+新增：JbootModel 新增 findByIdWithoutCache() 方法
+新增：新增 JbootModel 的 CPI 类，用于开放保护方法
+新增：Nacos 远程配置中心添加多实例的配置支持
+新增：网关拦截器 GatewayConfig.interceptors 添加 SPI 名称配置的支持
+新增：JsonUtil.java 方便解析 Json 数据
+优化：ValidUtil.java，支持在非自定义消息的时候输出拦截的列名
+优化：ClassScanner.java 默认关闭 Class 扫描信息在控制台输出
+优化：修改缓存拦截器的默认权重为 100，当前情况下拦截器在最后执行。
+
+
+
 jboot v3.14.1:
 新增：注解 @Table(datasource="xxx") 新增对数据源的配置支持
 新增：添加 jboo.app.listenerPackage 配置支持，用于只扫描哪些包的 listener
