@@ -42,18 +42,15 @@ public class JbootRabbitmqConfig {
     //若配置为 false，则需要在 OnMessage 里，调用 MessageContext.getChannel().baseAck（或者baseNack）进行消费（或者标识消费失败）
     private boolean autoAck = true;
 
+    // 默认开启队列
+    private boolean queueEnable = true;
     private boolean queueDeclareDurable = false;
     private boolean queueDeclareExclusive = false;
     private boolean queueDeclareAutoDelete = false;
 
-    /**
-     * 使用队列
-     */
-    private boolean useQueue=true;
-    /**
-     * 使用广播
-     */
-    private boolean useBroadcast=true;
+
+    // 默认开启广播模式
+    private boolean broadcastEnable = true;
 
     private String broadcastExchangeDeclareExchangeType = "fanout";
     private boolean broadcastExchangeDeclareDurable = false;
@@ -190,19 +187,19 @@ public class JbootRabbitmqConfig {
         this.broadcastQueueDeclareAutoDelete = broadcastQueueDeclareAutoDelete;
     }
 
-    public boolean useQueue(){
-        return useQueue;
+    public boolean isQueueEnable() {
+        return queueEnable;
     }
 
-    public void setUseQueue(boolean useQueue) {
-        this.useQueue = useQueue;
+    public void setQueueEnable(boolean queueEnable) {
+        this.queueEnable = queueEnable;
     }
 
-    public boolean useBroadcast() {
-        return useBroadcast;
+    public boolean isBroadcastEnable() {
+        return broadcastEnable;
     }
 
-    public void setUseBroadcast(boolean useBroadcast) {
-        this.useBroadcast=useBroadcast;
+    public void setBroadcastEnable(boolean broadcastEnable) {
+        this.broadcastEnable = broadcastEnable;
     }
 }
