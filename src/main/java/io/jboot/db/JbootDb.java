@@ -28,7 +28,7 @@ public class JbootDb extends Db {
 
     private static ThreadLocal<String> CONFIG_NAME_TL = new ThreadLocal<>();
 
-    public static String getCurentConfigName() {
+    public static String getCurrentConfigName() {
         return CONFIG_NAME_TL.get();
     }
 
@@ -45,7 +45,7 @@ public class JbootDb extends Db {
     }
 
     public static JbootDbPro use() {
-        String currentConfigName = getCurentConfigName();
+        String currentConfigName = getCurrentConfigName();
         return StrUtil.isBlank(currentConfigName) ? (JbootDbPro) Db.use() : use(currentConfigName);
     }
 

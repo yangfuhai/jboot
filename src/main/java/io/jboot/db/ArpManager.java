@@ -18,6 +18,7 @@ package io.jboot.db;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.IDbProFactory;
+import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.Jboot;
 import io.jboot.components.cache.JbootCache;
@@ -57,44 +58,53 @@ public class ArpManager {
 
     private ArpManager() {
         Map<String, DataSourceConfig> datasourceConfigs = DataSourceConfigManager.me().getDatasourceConfigs();
-        createRecordPlugin(datasourceConfigs);
+        createdRecordPlugins(datasourceConfigs);
     }
 
-    private void createRecordPlugin(Map<String, DataSourceConfig> allConfigs) {
+    private void createdRecordPlugins(Map<String, DataSourceConfig> allConfigs) {
 
-        Map<Integer, DataSourceConfig> arpDatasourceConfigs = new HashMap<>();
+        Map<Integer, DataSourceConfig> dsCache = new HashMap<>();
 
+        // 优先初始化 默认数据源
+        DataSourceConfig mainDataSourceConfig = allConfigs.remove(DataSourceConfig.NAME_DEFAULT);
+        initRecordPlugin(dsCache, mainDataSourceConfig);
+
+
+        // 初始化默认数据源后，再开始初始化其他数据库
         for (Map.Entry<String, DataSourceConfig> entry : allConfigs.entrySet()) {
-            DataSourceConfig datasourceConfig = entry.getValue();
-            if (datasourceConfig.isConfigOk()) {
-
-                // 执行 createRecordPlugin(...) 的时候，会同时完善 DataSourceConfig 里绑定的表数据
-                // createRecordPlugin完毕后，就可以通过  dataSourceConfig.getTableInfos() 去获取该数据源有哪些表
-                ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
-
-                arpDatasourceConfigs.put(System.identityHashCode(activeRecordPlugin), datasourceConfig);
-                activeRecordPlugins.add(activeRecordPlugin);
-            }
+            initRecordPlugin(dsCache, entry.getValue());
         }
 
 
-        // 为 activeRecordPlugin 添加 jfinal 的表映射
+        // 为所有的 activeRecordPlugin 添加 jfinal 的表映射
         for (ActiveRecordPlugin activeRecordPlugin : activeRecordPlugins) {
-            DataSourceConfig dataSourceConfig = arpDatasourceConfigs.get(System.identityHashCode(activeRecordPlugin));
+            DataSourceConfig dataSourceConfig = dsCache.get(System.identityHashCode(activeRecordPlugin));
 
             List<TableInfo> tableInfos = dataSourceConfig.getTableInfos();
             if (tableInfos != null && !tableInfos.isEmpty()) {
                 for (TableInfo table : tableInfos) {
                     String tableName = StrUtil.isNotBlank(dataSourceConfig.getTablePrefix()) ? dataSourceConfig.getTablePrefix() + table.getTableName() : table.getTableName();
                     if (StrUtil.isNotBlank(table.getPrimaryKey())) {
-                        activeRecordPlugin.addMapping(tableName, table.getPrimaryKey(), table.getModelClass());
+                        activeRecordPlugin.addMapping(tableName, table.getPrimaryKey(), (Class<? extends Model<?>>) table.getModelClass());
                     } else {
-                        activeRecordPlugin.addMapping(tableName, table.getModelClass());
+                        activeRecordPlugin.addMapping(tableName, (Class<? extends Model<?>>) table.getModelClass());
                     }
                 }
             }
         }
 
+    }
+
+    private void initRecordPlugin(Map<Integer, DataSourceConfig> arpDatasourceConfigs, DataSourceConfig datasourceConfig) {
+        if (datasourceConfig != null && datasourceConfig.isConfigOk()) {
+
+            // 执行 createRecordPlugin(...) 的时候，会同时完善 DataSourceConfig 里绑定的表数据
+            // createRecordPlugin完毕后，就可以通过  dataSourceConfig.getTableInfos() 去获取该数据源有哪些表
+            ActiveRecordPlugin activeRecordPlugin = createRecordPlugin(datasourceConfig);
+
+            arpDatasourceConfigs.put(System.identityHashCode(activeRecordPlugin), datasourceConfig);
+            activeRecordPlugins.add(activeRecordPlugin);
+        }
     }
 
 

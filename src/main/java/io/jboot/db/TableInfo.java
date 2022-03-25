@@ -32,7 +32,7 @@ public class TableInfo {
 
     private String tableName;
     private String primaryKey;
-    private Class<? extends Model<?>> modelClass;
+    private Class<? extends Model> modelClass;
     private String datasource;
     private Set<String> datasourceNames;
 
@@ -55,11 +55,11 @@ public class TableInfo {
         this.primaryKey = primaryKey;
     }
 
-    public Class<? extends Model<?>> getModelClass() {
+    public Class<? extends Model> getModelClass() {
         return modelClass;
     }
 
-    public void setModelClass(Class<? extends Model<?>> modelClass) {
+    public void setModelClass(Class<? extends Model> modelClass) {
         this.modelClass = modelClass;
     }
 
@@ -92,26 +92,27 @@ public class TableInfo {
             this.attachedDatasources = new ArrayList<>();
         }
 
-        // 若当前表未指定数据源 （fromDesignated == false），且当前表已经存在了指定数据源的 datasource
-        // 则不能再添加该数据源
+        // 只能添加到一个数据源，若 fromDesignated == false 的时候，直接返回
         if (!fromDesignated && !this.attachedDatasources.isEmpty()) {
-            for (DataSourceConfigWrapper dataSourceConfigWrapper : this.attachedDatasources) {
-                if (dataSourceConfigWrapper.fromDesignated) {
-                    return false;
-                }
-            }
+            return false;
         }
 
-        this.attachedDatasources.add(new DataSourceConfigWrapper(dataSourceConfig, fromDesignated));
 
-        // 若新添加的数据源，是配置了指定的表（亦或者表配置了指定的数据源），那么需要移除哪些未指定的默认数据源
-        if (fromDesignated) {
+        // 若新添加的数据源，是配置了指定的表（亦或者表配置了指定的数据源），
+        // 那么需要移除那些未指定表的默认数据源
+        if (fromDesignated && !this.attachedDatasources.isEmpty()) {
             for (DataSourceConfigWrapper dataSourceConfigWrapper : attachedDatasources) {
                 if (!dataSourceConfigWrapper.fromDesignated) {
                     dataSourceConfigWrapper.dataSourceConfig.removeTableInfo(this);
                 }
             }
             attachedDatasources.removeIf(dataSourceConfigWrapper -> !dataSourceConfigWrapper.fromDesignated);
+        }
+
+
+        // 一张表只能绑定一个数据源，jfinal 的 TableMapping 决定的，默认情况下使用该数据源去进行增删改查
+        if (attachedDatasources.isEmpty()) {
+            this.attachedDatasources.add(new DataSourceConfigWrapper(dataSourceConfig, fromDesignated));
         }
 
         return true;

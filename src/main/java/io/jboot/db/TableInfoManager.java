@@ -78,6 +78,11 @@ public class TableInfoManager {
                 dataSourceConfig.addTableInfo(tableInfo, true);
             }
 
+            //排除所有表，但允许当前数据源自己指定的表，指定的表不被排除
+            if (configExTables != null && configExTables.contains("*")) {
+                continue;
+            }
+
             // 注解 @Table(datasource="xxxx") 指定了数据源，而且当前数据源未匹配
             if (!tableInfo.getDatasourceNames().isEmpty()) {
                 continue;
@@ -131,7 +136,7 @@ public class TableInfoManager {
 
     private void addTable(List<TableInfo> tableInfoList, Class<Model> modelClass, Table tb) {
         TableInfo tableInfo = new TableInfo();
-        tableInfo.setModelClass((Class<? extends Model<?>>) modelClass);
+        tableInfo.setModelClass(modelClass);
         tableInfo.setPrimaryKey(AnnotationUtil.get(tb.primaryKey()));
         tableInfo.setTableName(AnnotationUtil.get(tb.tableName()));
         tableInfo.setDatasource(AnnotationUtil.get(tb.datasource()));

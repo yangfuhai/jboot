@@ -15,6 +15,7 @@
  */
 package io.jboot.db.model;
 
+import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
@@ -190,7 +191,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     /**
-     * 修复 jfinal use 可能造成的线程安全问题
+     * 修复 JFinal use 造成的线程安全问题
      *
      * @param configName
      * @return
@@ -245,9 +246,14 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             return DbKit.getConfig(datasourceName);
         }
 
-        String currentConfigName = JbootDb.getCurentConfigName();
+        String currentConfigName = JbootDb.getCurrentConfigName();
         if (StrUtil.isNotBlank(currentConfigName)) {
-            return DbKit.getConfig(currentConfigName);
+            Config config = DbKit.getConfig(currentConfigName);
+            if (config == null) {
+                LogKit.error("Can not use the datasource: {}, user default to replace.", currentConfigName);
+            } else {
+                return config;
+            }
         }
 
         return DbKit.getConfig(_getUsefulClass());
@@ -525,9 +531,23 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected JbootDialect _getDialect() {
         Config config = _getConfig();
         if (config == null) {
-            throw new JbootException("class \"" + _getUsefulClass().getName() + "\" can not mapping to the table, maybe cannot connect to database. ");
+            return throwCannotMappingException();
         }
         return (JbootDialect) config.getDialect();
+    }
+
+
+    private JbootDialect throwCannotMappingException() {
+        io.jboot.db.annotation.Table annotation = this.getClass().getAnnotation(io.jboot.db.annotation.Table.class);
+        if (annotation != null && StrUtil.isNotBlank(annotation.datasource())) {
+            throw new JbootException(
+                    String.format("Model \"%s\" can not mapping to datasource: " + annotation.datasource()
+                            , _getUsefulClass().getName()));
+        } else {
+            throw new JbootException(
+                    String.format("Model \"%s\" can not mapping to database table, maybe application cannot connect to database. "
+                            , _getUsefulClass().getName()));
+        }
     }
 
 
@@ -876,9 +896,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (table == null) {
             table = super._getTable();
             if (table == null && validateMapping) {
-                throw new JbootException(
-                        String.format("class %s can not mapping to database table, maybe application cannot connect to database. "
-                                , _getUsefulClass().getName()));
+                throwCannotMappingException();
             }
         }
         return table;
