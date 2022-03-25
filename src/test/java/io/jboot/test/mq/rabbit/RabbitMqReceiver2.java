@@ -19,8 +19,9 @@ public class RabbitMqReceiver2 {
 
         //设置 mq 的相关信息
         JbootApplication.setBootArg("jboot.mq.type", "rabbitmq");
-        JbootApplication.setBootArg("jboot.mq.channel", "channel2");
-
+        JbootApplication.setBootArg("jboot.mq.channel", "channel1,channel2,myChannel");
+//        JbootApplication.setBootArg("jboot.mq.rabbitmq.useQueue", false);
+        JbootApplication.setBootArg("jboot.mq.rabbitmq.broadcastExchangeDeclareExchangeType", "direct");
 
         //以下可以不用配置，是默认信息
 //        JbootApplication.setBootArg("jboot.mq.rabbitmq.username", "guest");
@@ -30,7 +31,7 @@ public class RabbitMqReceiver2 {
 //        JbootApplication.setBootArg("jboot.mq.rabbitmq.virtualHost", "");
 
         //非常重要，多个应用如果同时接受同一个 channel 的广播，必须配置此项，而且必须不能相同，否则广播的时候只有一个应用能够接受到
-        JbootApplication.setBootArg("jboot.mq.rabbitmq.broadcastChannelPrefix", "app2");
+//        JbootApplication.setBootArg("jboot.mq.rabbitmq.broadcastChannelPrefix", "app2");
 
         //启动应用程序
         JbootApplication.run(args);
@@ -43,7 +44,7 @@ public class RabbitMqReceiver2 {
             public void onMessage(String channel, Object message, MessageContext context) {
                 System.out.println("Receive msg: " + message + ", from channel: " + channel);
             }
-        },"channel2");
+        });
 
 
         Jboot.getMq().startListening();

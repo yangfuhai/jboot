@@ -20,7 +20,7 @@ public class RabbitMqReceiver1 {
 
         //设置 mq 的相关信息
         JbootApplication.setBootArg("jboot.mq.type", "rabbitmq");
-        JbootApplication.setBootArg("jboot.mq.channel", "channel1");
+        JbootApplication.setBootArg("jboot.mq.channel", "channel1,channel2");
 
 
         //以下可以不用配置，是默认信息
