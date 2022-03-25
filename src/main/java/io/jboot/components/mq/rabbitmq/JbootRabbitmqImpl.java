@@ -89,11 +89,13 @@ public class JbootRabbitmqImpl extends JbootmqBase implements Jbootmq {
                 //广播通道
                 Channel broadcastChannel = getChannel(toChannel, false);
                 bindChannel(broadcastChannel, buildBroadcastChannelName(toChannel), toChannel);
+                System.out.println("广播通道");
             }
             if(rabbitmqConfig.useQueue()) {
                 //队列通道
                 final Channel queueChannel = getChannel(toChannel, true);
                 bindChannel(queueChannel, toChannel, toChannel);
+                System.out.println("队列通道");
             }
         }
     }

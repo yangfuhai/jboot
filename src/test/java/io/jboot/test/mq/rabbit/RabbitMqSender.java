@@ -17,6 +17,7 @@ public class RabbitMqSender {
 
         //设置 mq 的相关信息
         JbootApplication.setBootArg("jboot.mq.type", "rabbitmq");
+        JbootApplication.setBootArg("jboot.mq.rabbitmq.broadcastExchangeDeclareExchangeType", "direct");
 
         //以下可以不用配置，是默认信息
 //        JbootApplication.setBootArg("jboot.mq.rabbitmq.username", "guest");
