@@ -46,6 +46,14 @@ public class JbootRabbitmqConfig {
     private boolean queueDeclareExclusive = false;
     private boolean queueDeclareAutoDelete = false;
 
+    /**
+     * 使用队列
+     */
+    private boolean useQueue=true;
+    /**
+     * 使用广播
+     */
+    private boolean useBroadcast=true;
 
     private String broadcastExchangeDeclareExchangeType = "fanout";
     private boolean broadcastExchangeDeclareDurable = false;
@@ -180,5 +188,21 @@ public class JbootRabbitmqConfig {
 
     public void setBroadcastQueueDeclareAutoDelete(boolean broadcastQueueDeclareAutoDelete) {
         this.broadcastQueueDeclareAutoDelete = broadcastQueueDeclareAutoDelete;
+    }
+
+    public boolean useQueue(){
+        return useQueue;
+    }
+
+    public void setUseQueue(boolean useQueue) {
+        this.useQueue = useQueue;
+    }
+
+    public boolean useBroadcast() {
+        return useBroadcast;
+    }
+
+    public void setUseBroadcast(boolean useBroadcast) {
+        this.useBroadcast=useBroadcast;
     }
 }
