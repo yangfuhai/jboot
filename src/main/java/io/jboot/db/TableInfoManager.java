@@ -78,13 +78,18 @@ public class TableInfoManager {
                 dataSourceConfig.addTableInfo(tableInfo, true);
             }
 
-            //排除所有表，但允许当前数据源自己指定的表，指定的表不被排除
+            // 排除所有表，但允许当前数据源自己指定的表，指定的表不被排除
             if (configExTables != null && configExTables.contains("*")) {
                 continue;
             }
 
             // 注解 @Table(datasource="xxxx") 指定了数据源，而且当前数据源未匹配
             if (!tableInfo.getDatasourceNames().isEmpty()) {
+                continue;
+            }
+
+            // 如果当前的数据源已经配置了绑定的表，且未当前表未命中，不让其他表添加到当前数据源
+            if (configTables != null && !configTables.isEmpty()) {
                 continue;
             }
 
