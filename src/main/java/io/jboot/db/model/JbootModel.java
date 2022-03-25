@@ -427,16 +427,25 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public boolean deleteByColumn(Column column) {
+        if (column == null || !column.checkAvailable()) {
+            throw new IllegalArgumentException("Column or value must not be null.");
+        }
         return deleteByColumns(Arrays.asList(column));
     }
 
 
     public boolean deleteByColumns(Columns columns) {
+        if (columns == null || columns.isEmpty()) {
+            throw new IllegalArgumentException("Columns must not be null or empty.");
+        }
         return deleteByColumns(columns.getList());
     }
 
 
     public boolean deleteByColumns(List<Column> columns) {
+        if (columns == null || columns.isEmpty()) {
+            throw new IllegalArgumentException("Columns must not be null or empty.");
+        }
         String sql = _getDialect().forDeleteByColumns(alias, joins, _getTableName(), columns);
         return Db.use(_getConfig().getName()).update(sql, Util.getValueArray(columns)) >= 1;
     }
@@ -533,7 +542,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public M findFirstByColumn(Column column) {
         if (column == null || !column.checkAvailable()) {
-            throw new IllegalArgumentException("Column or value must not be null.");
+//            throw new IllegalArgumentException("Column or value must not be null.");
+            return null;
         }
         return findFirstByColumns(Columns.create(column));
     }
@@ -541,7 +551,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public M findFirstByColumn(Column column, String orderBy) {
         if (column == null || !column.checkAvailable()) {
-            throw new IllegalArgumentException("Column or value must not be null.");
+//            throw new IllegalArgumentException("Column or value must not be null.");
+            return null;
         }
         return findFirstByColumns(Columns.create(column), orderBy);
     }
@@ -652,6 +663,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public List<M> findListByColumn(Column column, String orderBy, Integer count) {
+        if (column == null || !column.checkAvailable()) {
+//            throw new IllegalArgumentException("Column or value must not be null.");
+            return null;
+        }
         return findListByColumns(Columns.create(column), orderBy, count);
     }
 
@@ -693,10 +708,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             loadColumns = this.loadColumns;
         }
         if (StrUtil.isBlank(loadColumns)) {
+            String distinctColumn = get(JbootModelExts.DISTINCT);
             //使用 distinct
-            if (hasAnyJoinEffective() && StrUtil.isNotBlank(get(JbootModelExts.DISTINCT))) {
-                loadColumns = "DISTINCT " + get(JbootModelExts.DISTINCT)
-                        + "," + (StrUtil.isNotBlank(alias) ? alias : _getTableName()) + ".*";
+            if (hasAnyJoinEffective() && StrUtil.isNotBlank(distinctColumn)) {
+                loadColumns = "DISTINCT " + distinctColumn + "," + (StrUtil.isNotBlank(alias) ? alias : _getTableName()) + ".*";
             }
             //未使用 distinct
             else {
@@ -770,10 +785,12 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
 
         if (StrUtil.isBlank(loadColumns)) {
+
+            String distinctColumn = get(JbootModelExts.DISTINCT);
+
             //使用 distinct
-            if (hasAnyJoinEffective() && StrUtil.isNotBlank(get(JbootModelExts.DISTINCT))) {
-                loadColumns = "DISTINCT " + get(JbootModelExts.DISTINCT)
-                        + "," + (StrUtil.isNotBlank(alias) ? alias : _getTableName()) + ".*";
+            if (hasAnyJoinEffective() && StrUtil.isNotBlank(distinctColumn)) {
+                loadColumns = "DISTINCT " + distinctColumn + "," + (StrUtil.isNotBlank(alias) ? alias : _getTableName()) + ".*";
             }
             //未使用 distinct
             else {
