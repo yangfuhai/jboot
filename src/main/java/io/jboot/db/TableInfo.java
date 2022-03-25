@@ -32,7 +32,7 @@ public class TableInfo {
 
     private String tableName;
     private String primaryKey;
-    private Class<? extends Model> modelClass;
+    private Class<? extends Model<?>> modelClass;
     private String datasource;
     private Set<String> datasourceNames;
 
@@ -55,11 +55,11 @@ public class TableInfo {
         this.primaryKey = primaryKey;
     }
 
-    public Class<? extends Model> getModelClass() {
+    public Class<? extends Model<?>> getModelClass() {
         return modelClass;
     }
 
-    public void setModelClass(Class<? extends Model> modelClass) {
+    public void setModelClass(Class<? extends Model<?>> modelClass) {
         this.modelClass = modelClass;
     }
 
@@ -82,7 +82,7 @@ public class TableInfo {
 
 
     /**
-     * 添加这个表存绑定的数据源
+     * 添加数据源：让此表绑定数据源
      *
      * @param dataSourceConfig
      * @param fromDesignated   是否是通过 jboot.datasource.table 或者 @table(datasource="xxx") 来指定的
@@ -92,7 +92,7 @@ public class TableInfo {
             this.attachedDatasources = new ArrayList<>();
         }
 
-        // 若未指定数据源，且已经存在了指定数据源的 datasource
+        // 若当前表未指定数据源 （fromDesignated == false），且当前表已经存在了指定数据源的 datasource
         // 则不能再添加该数据源
         if (!fromDesignated && !this.attachedDatasources.isEmpty()) {
             for (DataSourceConfigWrapper dataSourceConfigWrapper : this.attachedDatasources) {
@@ -104,7 +104,7 @@ public class TableInfo {
 
         this.attachedDatasources.add(new DataSourceConfigWrapper(dataSourceConfig, fromDesignated));
 
-        // 若数据源配置了指定的表（亦或者表配置了指定的数据源），那么需要移除哪些未指定的默认数据源
+        // 若新添加的数据源，是配置了指定的表（亦或者表配置了指定的数据源），那么需要移除哪些未指定的默认数据源
         if (fromDesignated) {
             for (DataSourceConfigWrapper dataSourceConfigWrapper : attachedDatasources) {
                 if (!dataSourceConfigWrapper.fromDesignated) {

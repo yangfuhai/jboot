@@ -129,9 +129,9 @@ public class TableInfoManager {
 
     }
 
-    private void addTable(List<TableInfo> tableInfoList, Class<Model> clazz, Table tb) {
+    private void addTable(List<TableInfo> tableInfoList, Class<Model> modelClass, Table tb) {
         TableInfo tableInfo = new TableInfo();
-        tableInfo.setModelClass(clazz);
+        tableInfo.setModelClass((Class<? extends Model<?>>) modelClass);
         tableInfo.setPrimaryKey(AnnotationUtil.get(tb.primaryKey()));
         tableInfo.setTableName(AnnotationUtil.get(tb.tableName()));
         tableInfo.setDatasource(AnnotationUtil.get(tb.datasource()));

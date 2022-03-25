@@ -18,7 +18,6 @@ package io.jboot.db;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.IDbProFactory;
-import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.Jboot;
 import io.jboot.components.cache.JbootCache;
@@ -88,9 +87,9 @@ public class ArpManager {
                 for (TableInfo table : tableInfos) {
                     String tableName = StrUtil.isNotBlank(dataSourceConfig.getTablePrefix()) ? dataSourceConfig.getTablePrefix() + table.getTableName() : table.getTableName();
                     if (StrUtil.isNotBlank(table.getPrimaryKey())) {
-                        activeRecordPlugin.addMapping(tableName, table.getPrimaryKey(), (Class<? extends Model<?>>) table.getModelClass());
+                        activeRecordPlugin.addMapping(tableName, table.getPrimaryKey(), table.getModelClass());
                     } else {
-                        activeRecordPlugin.addMapping(tableName, (Class<? extends Model<?>>) table.getModelClass());
+                        activeRecordPlugin.addMapping(tableName, table.getModelClass());
                     }
                 }
             }
@@ -111,7 +110,7 @@ public class ArpManager {
 
         if (StrUtil.isNotBlank(config.getDbProFactory())) {
             IDbProFactory dbProFactory = Objects.requireNonNull(ClassUtil.newInstance(config.getDbProFactory()),
-                    "Can not create dbProfactory by class : " + config.getDbProFactory());
+                    "Can not create dbProfactory by class: " + config.getDbProFactory());
             activeRecordPlugin.setDbProFactory(dbProFactory);
         } else {
             activeRecordPlugin.setDbProFactory(new JbootDbProFactory());
