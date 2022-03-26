@@ -59,7 +59,7 @@ public class TableInfoManager {
                 ? StrUtil.splitToSetByComma(dataSourceConfig.getExTable())
                 : null;
 
-        //所有的表信息
+        // 所有的表信息
         List<TableInfo> allTableInfos = getAllTableInfos();
 
 
@@ -84,12 +84,12 @@ public class TableInfoManager {
             }
 
             // 注解 @Table(datasource="xxxx") 指定了数据源，而且当前数据源未匹配
-            if (!tableInfo.getDatasourceNames().isEmpty()) {
+            if (tableInfo.getDatasourceNames().size() > 0) {
                 continue;
             }
 
             // 如果当前的数据源已经配置了绑定的表，且未当前表未命中，不让其他表添加到当前数据源
-            if (configTables != null && !configTables.isEmpty()) {
+            if (configTables != null && configTables.size() > 0) {
                 continue;
             }
 
