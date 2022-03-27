@@ -18,19 +18,19 @@ package io.jboot.web.cors;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.ext.cors.EnableCORS;
-import io.jboot.utils.AnnotationUtil;
-import io.jboot.utils.StrUtil;
+import io.jboot.aop.InterceptorBuilder;
+import io.jboot.aop.Interceptors;
+import io.jboot.aop.annotation.AutoLoad;
 
-import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  * @Title: CORS 处理相关 拦截器
  */
-public class CORSInterceptor implements Interceptor {
-
-    private static final String METHOD_OPTIONS = "OPTIONS";
+@AutoLoad
+public class CORSInterceptor implements Interceptor, InterceptorBuilder {
 
     @Override
     public void intercept(Invocation inv) {
@@ -42,16 +42,7 @@ public class CORSInterceptor implements Interceptor {
             return;
         }
 
-
-        doConfigCORS(inv, enableCORS);
-
-
-        String method = inv.getController().getRequest().getMethod();
-        if (METHOD_OPTIONS.equalsIgnoreCase(method)) {
-            inv.getController().renderText("");
-        } else {
-            inv.invoke();
-        }
+        new CORSProcesser(enableCORS).process(inv);
     }
 
 
@@ -61,41 +52,11 @@ public class CORSInterceptor implements Interceptor {
     }
 
 
-    private void doConfigCORS(Invocation inv, EnableCORS enableCORS) {
-
-        HttpServletResponse response = inv.getController().getResponse();
-
-        String allowOrigin = AnnotationUtil.get(enableCORS.allowOrigin());
-        String allowCredentials = AnnotationUtil.get(enableCORS.allowCredentials());
-        String allowHeaders = AnnotationUtil.get(enableCORS.allowHeaders());
-        String allowMethods = AnnotationUtil.get(enableCORS.allowMethods());
-        String exposeHeaders = AnnotationUtil.get(enableCORS.exposeHeaders());
-        String requestHeaders = AnnotationUtil.get(enableCORS.requestHeaders());
-        String requestMethod = AnnotationUtil.get(enableCORS.requestMethod());
-        String origin = AnnotationUtil.get(enableCORS.origin());
-        String maxAge = AnnotationUtil.get(enableCORS.maxAge());
-
-        response.setHeader("Access-Control-Allow-Origin", allowOrigin);
-        response.setHeader("Access-Control-Allow-Methods", allowMethods);
-        response.setHeader("Access-Control-Allow-Headers", allowHeaders);
-        response.setHeader("Access-Control-Max-Age", maxAge);
-        response.setHeader("Access-Control-Allow-Credentials", allowCredentials);
-
-        if (StrUtil.isNotBlank(exposeHeaders)) {
-            response.setHeader("Access-Control-Expose-Headers", exposeHeaders);
+    @Override
+    public void build(Class<?> targetClass, Method method, Interceptors interceptors) {
+        if (Util.isController(targetClass) && Util.hasAnnotation(targetClass, method, EnableCORS.class)) {
+            interceptors.addToFirstIfNotExist(CORSInterceptor.class);
         }
-
-        if (StrUtil.isNotBlank(requestHeaders)) {
-            response.setHeader("Access-Control-Request-Headers", requestHeaders);
-        }
-
-        if (StrUtil.isNotBlank(requestMethod)) {
-            response.setHeader("Access-Control-Request-Method", requestMethod);
-        }
-
-        if (StrUtil.isNotBlank(origin)) {
-            response.setHeader("Origin", origin);
-        }
-
     }
+
 }
