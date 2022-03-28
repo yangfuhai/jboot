@@ -15,41 +15,59 @@
  */
 package io.jboot.web.cors;
 
-import com.jfinal.aop.Invocation;
 import com.jfinal.ext.cors.EnableCORS;
 import io.jboot.utils.AnnotationUtil;
-import io.jboot.utils.StrUtil;
 
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class CORSProcesser {
+public class CORSConfig {
 
-    private static final String METHOD_OPTIONS = "OPTIONS";
-
+    private static final CORSConfig DEFAULT_CONFIG = new CORSConfig();
+    private static final Map<Integer, CORSConfig> cache = new ConcurrentHashMap<>();
 
     private String allowOrigin = "*";
     private String allowCredentials = "true";
     private String allowHeaders = "Origin,X-Requested-With,Content-Type,Accept,Authorization,Jwt";
     private String allowMethods = "GET,PUT,POST,DELETE,PATCH,OPTIONS";
-    private String exposeHeaders;
-    private String requestHeaders;
-    private String requestMethod;
-    private String origin;
+    private String exposeHeaders = "";
+    private String requestHeaders = "";
+    private String requestMethod = "";
+    private String origin = "";
     private String maxAge = "3600";
 
-    public CORSProcesser() {
+    public static CORSConfig getDefaultConfig() {
+        return DEFAULT_CONFIG;
     }
 
-    public CORSProcesser(String allowOrigin) {
+    public static CORSConfig fromAnnotation(EnableCORS enableCORS) {
+        int identityHashCode = System.identityHashCode(enableCORS);
+        CORSConfig corsConfig = cache.get(identityHashCode);
+        if (corsConfig == null) {
+            corsConfig = new CORSConfig(enableCORS);
+            if (corsConfig.equals(DEFAULT_CONFIG)) {
+                corsConfig = DEFAULT_CONFIG;
+            }
+            cache.put(identityHashCode, corsConfig);
+        }
+        return corsConfig;
+    }
+
+
+    public CORSConfig() {
+    }
+
+    public CORSConfig(String allowOrigin) {
         this.allowOrigin = allowOrigin;
     }
 
-    public CORSProcesser(String allowOrigin, String allowHeaders) {
+    public CORSConfig(String allowOrigin, String allowHeaders) {
         this.allowOrigin = allowOrigin;
         this.allowHeaders = allowHeaders;
     }
 
-    public CORSProcesser(String allowOrigin
+    public CORSConfig(String allowOrigin
             , String allowCredentials
             , String allowHeaders
             , String allowMethods
@@ -69,7 +87,7 @@ public class CORSProcesser {
         this.maxAge = maxAge;
     }
 
-    public CORSProcesser(EnableCORS enableCORS) {
+    public CORSConfig(EnableCORS enableCORS) {
         this.allowOrigin = AnnotationUtil.get(enableCORS.allowOrigin());
         this.allowCredentials = AnnotationUtil.get(enableCORS.allowCredentials());
         this.allowHeaders = AnnotationUtil.get(enableCORS.allowHeaders());
@@ -154,40 +172,28 @@ public class CORSProcesser {
         this.maxAge = maxAge;
     }
 
-    public void process(Invocation inv) {
-
-        //配置 http 头信息
-        configHeaders(inv.getController().getResponse());
-
-        String method = inv.getController().getRequest().getMethod();
-        if (METHOD_OPTIONS.equalsIgnoreCase(method)) {
-            inv.getController().renderText("");
-        } else {
-            inv.invoke();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CORSConfig that = (CORSConfig) o;
+        return Objects.equals(allowOrigin, that.allowOrigin)
+                && Objects.equals(allowCredentials, that.allowCredentials)
+                && Objects.equals(allowHeaders, that.allowHeaders)
+                && Objects.equals(allowMethods, that.allowMethods)
+                && Objects.equals(exposeHeaders, that.exposeHeaders)
+                && Objects.equals(requestHeaders, that.requestHeaders)
+                && Objects.equals(requestMethod, that.requestMethod)
+                && Objects.equals(origin, that.origin)
+                && Objects.equals(maxAge, that.maxAge);
     }
 
-    private void configHeaders(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", allowOrigin);
-        response.setHeader("Access-Control-Allow-Methods", allowMethods);
-        response.setHeader("Access-Control-Allow-Headers", allowHeaders);
-        response.setHeader("Access-Control-Max-Age", maxAge);
-        response.setHeader("Access-Control-Allow-Credentials", allowCredentials);
-
-        if (StrUtil.isNotBlank(exposeHeaders)) {
-            response.setHeader("Access-Control-Expose-Headers", exposeHeaders);
-        }
-
-        if (StrUtil.isNotBlank(requestHeaders)) {
-            response.setHeader("Access-Control-Request-Headers", requestHeaders);
-        }
-
-        if (StrUtil.isNotBlank(requestMethod)) {
-            response.setHeader("Access-Control-Request-Method", requestMethod);
-        }
-
-        if (StrUtil.isNotBlank(origin)) {
-            response.setHeader("Origin", origin);
-        }
+    @Override
+    public int hashCode() {
+        return Objects.hash(allowOrigin, allowCredentials, allowHeaders, allowMethods, exposeHeaders, requestHeaders, requestMethod, origin, maxAge);
     }
 }

@@ -21,7 +21,9 @@ import com.jfinal.ext.cors.EnableCORS;
 import io.jboot.aop.InterceptorBuilder;
 import io.jboot.aop.Interceptors;
 import io.jboot.aop.annotation.AutoLoad;
+import io.jboot.utils.StrUtil;
 
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
@@ -31,6 +33,9 @@ import java.lang.reflect.Method;
  */
 @AutoLoad
 public class CORSInterceptor implements Interceptor, InterceptorBuilder {
+
+    private static final String METHOD_OPTIONS = "OPTIONS";
+
 
     @Override
     public void intercept(Invocation inv) {
@@ -42,13 +47,51 @@ public class CORSInterceptor implements Interceptor, InterceptorBuilder {
             return;
         }
 
-        new CORSProcesser(enableCORS).process(inv);
+        process(inv, CORSConfig.fromAnnotation(enableCORS));
     }
 
 
     private EnableCORS getAnnotation(Invocation inv) {
         EnableCORS enableCORS = inv.getController().getClass().getAnnotation(EnableCORS.class);
         return enableCORS != null ? enableCORS : inv.getMethod().getAnnotation(EnableCORS.class);
+    }
+
+
+    public static void process(Invocation inv, CORSConfig config) {
+        //配置 http 头信息
+        configHeaders(inv.getController().getResponse(), config);
+
+        String method = inv.getController().getRequest().getMethod();
+        if (METHOD_OPTIONS.equalsIgnoreCase(method)) {
+            inv.getController().renderText("");
+        } else {
+            inv.invoke();
+        }
+    }
+
+
+    private static void configHeaders(HttpServletResponse response, CORSConfig config) {
+        response.setHeader("Access-Control-Allow-Origin", config.getAllowOrigin());
+        response.setHeader("Access-Control-Allow-Methods", config.getAllowMethods());
+        response.setHeader("Access-Control-Allow-Headers", config.getAllowHeaders());
+        response.setHeader("Access-Control-Max-Age", config.getMaxAge());
+        response.setHeader("Access-Control-Allow-Credentials", config.getAllowCredentials());
+
+        if (StrUtil.isNotBlank(config.getExposeHeaders())) {
+            response.setHeader("Access-Control-Expose-Headers", config.getExposeHeaders());
+        }
+
+        if (StrUtil.isNotBlank(config.getRequestHeaders())) {
+            response.setHeader("Access-Control-Request-Headers", config.getRequestHeaders());
+        }
+
+        if (StrUtil.isNotBlank(config.getRequestMethod())) {
+            response.setHeader("Access-Control-Request-Method", config.getRequestMethod());
+        }
+
+        if (StrUtil.isNotBlank(config.getOrigin())) {
+            response.setHeader("Origin", config.getOrigin());
+        }
     }
 
 
