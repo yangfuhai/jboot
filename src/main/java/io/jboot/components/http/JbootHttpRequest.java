@@ -282,6 +282,10 @@ public class JbootHttpRequest {
         return METHOD_POST.equalsIgnoreCase(method);
     }
 
+    public boolean isPutRequest() {
+        return METHOD_PUT.equalsIgnoreCase(method);
+    }
+
     public String getCharset() {
         return charset;
     }
@@ -316,7 +320,7 @@ public class JbootHttpRequest {
 
     public String getPostContent() {
         if (postContent != null) {
-            initGetUrl();
+            appendParasToUrl();
             return postContent;
         } else {
             return buildParams();
@@ -333,7 +337,7 @@ public class JbootHttpRequest {
     }
 
 
-    public void initGetUrl() {
+    public void appendParasToUrl() {
 
         String params = buildParams();
 

@@ -65,8 +65,8 @@ public class JbootHttpImpl implements JbootHttp {
             configConnection(connection, request);
 
 
-            //post 请求
-            if (request.isPostRequest()) {
+            //post 或者 put 请求
+            if (request.isPostRequest() || request.isPutRequest()) {
 
                 connection.setDoOutput(true);
 
@@ -211,8 +211,8 @@ public class JbootHttpImpl implements JbootHttp {
     }
 
     private static HttpURLConnection getConnection(JbootHttpRequest request) throws Exception {
-        if (!request.isPostRequest()) {
-            request.initGetUrl();
+        if (!request.isPostRequest() && !request.isPutRequest()) {
+            request.appendParasToUrl();
         }
         return request.isHttps() ? getHttpsConnection(request) : getHttpConnection(request);
     }

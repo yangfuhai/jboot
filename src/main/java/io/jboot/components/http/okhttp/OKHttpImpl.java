@@ -51,15 +51,15 @@ public class OKHttpImpl implements JbootHttp {
 
     private void doProcess(JbootHttpRequest request, JbootHttpResponse response) {
         try {
-            if (request.isPostRequest()) {
+
+            // post 请求 或者 put 请求
+            if (request.isPostRequest() || request.isPutRequest()) {
                 doProcessPostRequest(request, response);
             }
 
-            /**
-             * get 获取 其他 请求
-             */
+            // 其他非 post 和 put 请求
             else {
-                request.initGetUrl();
+                request.appendParasToUrl();
                 doProcessGetRequest(request, response);
             }
 
