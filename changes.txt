@@ -1,3 +1,13 @@
+jboot v3.14.3:
+优化：JbootModel.findByColumn 当传入 null 值 value 时，直接返回 null
+优化：Model 保存和之前版本一致的行为，只允许绑定到一个数据源
+优化：当 Model 配置指定数据源，但数据源不存在的时候，给出更为明确的错误提示
+优化：Rabbitmq 添加自由开启队列和广播的开关，默认全部开启
+优化：重构 CORS 模块，使之代码可以用户模块里进行 "复用"
+修复: HttpUtil 在 put 请求时，某些情况下无法正常提交数据的问题
+
+
+
 jboot v3.14.2:
 新增：Informix 数据库方言，感谢 @xujianxie 同学
 新增：JbootModel 新增 findByIdWithoutCache() 方法
@@ -7,7 +17,7 @@ jboot v3.14.2:
 新增：JsonUtil.java 方便解析 Json 数据
 优化：ValidUtil.java，支持在非自定义消息的时候输出拦截的列名
 优化：ClassScanner.java 默认关闭 Class 扫描信息在控制台输出
-优化：修改缓存拦截器的默认权重为 100，当前情况下拦截器在最后执行。
+优化：修改缓存拦截器的默认权重为 100，当前情况下拦截器在最后执行
 
 
 
