@@ -19,21 +19,27 @@ import com.jfinal.kit.Ret;
 import io.jboot.components.valid.interceptor.SimpleContext;
 import org.hibernate.validator.HibernateValidator;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import javax.validation.*;
 import java.util.Set;
 
 public class ValidUtil {
 
     /**
-     * 验证器：用于数据验证
+     * ValidatorFactory
      */
-    private static Validator validator = Validation.byProvider(HibernateValidator.class)
+    private static ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class)
             .configure()
             .failFast(true)
-            .buildValidatorFactory()
-            .getValidator();
+            .buildValidatorFactory();
+    /**
+     * 验证器：用于数据验证
+     */
+    private static Validator validator = validatorFactory.getValidator();
+
+    /**
+     * 消息处理器: 用于校验消息处理
+     */
+    private static MessageInterpolator messageInterpolator = validatorFactory.getMessageInterpolator();
 
     private static int errorCode = 400;
 
@@ -67,8 +73,7 @@ public class ValidUtil {
 
     public static void throwValidException(String fieldName, String message, Ret paras, String reason) {
         if (isParaMessage(message)) {
-            message = fieldName + " " + Validation.buildDefaultValidatorFactory().getMessageInterpolator()
-                    .interpolate(message, new SimpleContext(paras));
+            message = fieldName + " " + messageInterpolator.interpolate(message, new SimpleContext(paras));
         }
 
         throw new ValidException(message, reason, fieldName);
