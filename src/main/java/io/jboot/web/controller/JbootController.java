@@ -516,6 +516,26 @@ public class JbootController extends Controller {
 
 
     @NotAction
+    public String getUnescapePara(String name) {
+        String value = getTrimPara(name);
+        if (value == null || value.length() == 0) {
+            return null;
+        }
+        return StrUtil.unEscapeHtml(value);
+    }
+
+
+    @NotAction
+    public String getUnescapePara(String name, String defaultValue) {
+        String value = getTrimPara(name);
+        if (value == null || value.length() == 0) {
+            return defaultValue;
+        }
+        return StrUtil.unEscapeHtml(value);
+    }
+
+
+    @NotAction
     public String getOriginalPara(String name) {
         String value = getOrginalRequest().getParameter(name);
         if (value == null || value.length() == 0) {
