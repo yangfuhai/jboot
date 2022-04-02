@@ -69,7 +69,7 @@ public class JbootHttpRequest {
 
 
     private File downloadFile;
-    private String postContent;
+    private String bodyContent;
 
     // 如果某些时候只是为了去读取 http 头信息，而不需要 http body，可以配置为 false
     private boolean readBody = true;
@@ -286,6 +286,10 @@ public class JbootHttpRequest {
         return METHOD_PUT.equalsIgnoreCase(method);
     }
 
+    public boolean isPostOrPutRequest() {
+        return isPostRequest() || isPutRequest();
+    }
+
     public String getCharset() {
         return charset;
     }
@@ -318,17 +322,21 @@ public class JbootHttpRequest {
         this.contentType = contentType;
     }
 
-    public String getPostContent() {
-        if (postContent != null) {
-            appendParasToUrl();
-            return postContent;
+
+    public String getBodyContent() {
+        return bodyContent;
+    }
+
+    public String getUploadBodyString() {
+        if (bodyContent != null) {
+            return bodyContent;
         } else {
             return buildParams();
         }
     }
 
-    public void setPostContent(String postContent) {
-        this.postContent = postContent;
+    public void setBodyContent(String bodyContent) {
+        this.bodyContent = bodyContent;
     }
 
 
@@ -338,7 +346,6 @@ public class JbootHttpRequest {
 
 
     public void appendParasToUrl() {
-
         String params = buildParams();
 
         if (StrUtil.isBlank(params)) {

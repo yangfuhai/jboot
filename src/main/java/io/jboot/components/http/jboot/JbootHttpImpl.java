@@ -73,16 +73,16 @@ public class JbootHttpImpl implements JbootHttp {
                 //处理文件上传的post提交
                 if (request.isMultipartFormData()) {
                     if (ArrayUtil.isNotEmpty(request.getParams())) {
-                        uploadData(request, connection);
+                        uploadByMultipart(request, connection);
                     }
                 }
 
                 //处理正常的post提交
                 else {
-                    String postContent = request.getPostContent();
-                    if (StrUtil.isNotEmpty(postContent)) {
+                    String uploadBodyString = request.getUploadBodyString();
+                    if (StrUtil.isNotEmpty(uploadBodyString)) {
                         try (OutputStream outStream = connection.getOutputStream();) {
-                            outStream.write(postContent.getBytes(request.getCharset()));
+                            outStream.write(uploadBodyString.getBytes(request.getCharset()));
                             outStream.flush();
                         }
                     }
@@ -135,7 +135,7 @@ public class JbootHttpImpl implements JbootHttp {
 
     }
 
-    private void uploadData(JbootHttpRequest request, HttpURLConnection connection) throws IOException {
+    private void uploadByMultipart(JbootHttpRequest request, HttpURLConnection connection) throws IOException {
         String endFlag = "\r\n";
         String startFlag = "--";
         String boundary = "------" + StrUtil.uuid();
@@ -211,9 +211,12 @@ public class JbootHttpImpl implements JbootHttp {
     }
 
     private static HttpURLConnection getConnection(JbootHttpRequest request) throws Exception {
-        if (!request.isPostRequest() && !request.isPutRequest()) {
+
+        //get 请求 或者 带有body内容的 post 请求，需要在 url 追加参数
+        if (!request.isPostOrPutRequest() || request.getBodyContent() != null) {
             request.appendParasToUrl();
         }
+
         return request.isHttps() ? getHttpsConnection(request) : getHttpConnection(request);
     }
 

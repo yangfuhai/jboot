@@ -51,9 +51,11 @@ public class OKHttpImpl implements JbootHttp {
 
     private void doProcess(JbootHttpRequest request, JbootHttpResponse response) {
         try {
-
             // post 请求 或者 put 请求
-            if (request.isPostRequest() || request.isPutRequest()) {
+            if (request.isPostOrPutRequest()) {
+                if (request.getBodyContent() != null) {
+                    request.appendParasToUrl();
+                }
                 doProcessPostRequest(request, response);
             }
 
@@ -100,7 +102,7 @@ public class OKHttpImpl implements JbootHttp {
 //            requestBody = builder.build();
 
             MediaType mediaType = MediaType.parse(request.getContentType());
-            requestBody = RequestBody.create(mediaType, request.getPostContent());
+            requestBody = RequestBody.create(mediaType, request.getUploadBodyString());
         }
 
 

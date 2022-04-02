@@ -123,7 +123,7 @@ public class HttpUtil {
      */
     public static String httpPost(String url, Map<String, Object> paras, Map<String, String> headers, String postData) {
         JbootHttpRequest request = JbootHttpRequest.create(url, paras, JbootHttpRequest.METHOD_POST);
-        request.setPostContent(postData);
+        request.setBodyContent(postData);
         request.addHeaders(headers);
         JbootHttpResponse response = handle(request);
         return response.isError() ? null : response.getContent();
