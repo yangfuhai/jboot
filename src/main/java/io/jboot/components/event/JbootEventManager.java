@@ -27,19 +27,23 @@ import java.util.concurrent.*;
 
 public class JbootEventManager {
 
-    private final ExecutorService threadPool;
-    private final Map<String, List<JbootEventListener>> asyncListenerMap;
-    private final Map<String, List<JbootEventListener>> listenerMap;
-    private static final Log log = Log.getLog(JbootEventManager.class);
-
+    private static final Log LOG = Log.getLog(JbootEventManager.class);
     private static JbootEventManager manager;
 
+    private final Map<String, List<JbootEventListener>> asyncListenerMap;
+    private final Map<String, List<JbootEventListener>> listenerMap;
+
+
+    private ExecutorService threadPool;
+
+
     public JbootEventManager() {
+        asyncListenerMap = new ConcurrentHashMap<>();
+        listenerMap = new ConcurrentHashMap<>();
+
         threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                 60L, TimeUnit.SECONDS,
                 new SynchronousQueue<>(), new NamedThreadFactory("jboot-event"));
-        asyncListenerMap = new ConcurrentHashMap<>();
-        listenerMap = new ConcurrentHashMap<>();
 
         initListeners();
     }
@@ -67,7 +71,7 @@ public class JbootEventManager {
         deleteListner(asyncListenerMap, listenerClass);
 
         if (Jboot.isDevMode()) {
-            log.debug(String.format("listener[%s]-->>unRegisterListener.", listenerClass));
+            LOG.debug(String.format("listener[%s]-->>unRegisterListener.", listenerClass));
         }
 
     }
@@ -100,7 +104,7 @@ public class JbootEventManager {
 
         String[] actions = AnnotationUtil.get(listenerAnnotation.action());
         if (actions == null) {
-            log.warn("listenerClass[" + listenerAnnotation + "] register fail, because action is null or blank.");
+            LOG.warn("listenerClass[" + listenerAnnotation + "] register fail, because action is null or blank.");
             return;
         }
 
@@ -154,7 +158,7 @@ public class JbootEventManager {
         }
 
         if (Jboot.isDevMode()) {
-            log.debug(String.format("listener[%s]-->>registered.", eventListener));
+            LOG.debug(String.format("listener[%s]-->>registered.", eventListener));
         }
     }
 
@@ -199,7 +203,7 @@ public class JbootEventManager {
             try {
                 listener.onEvent(event);
             } catch (Throwable e) {
-                log.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
+                LOG.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
             }
         }
     }
@@ -210,7 +214,7 @@ public class JbootEventManager {
                 try {
                     listener.onEvent(event);
                 } catch (Throwable e) {
-                    log.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
+                    LOG.error(String.format("listener[%s] onEvent is error! ", listener.getClass()), e);
                 }
             });
         }
@@ -218,5 +222,9 @@ public class JbootEventManager {
 
     public ExecutorService getThreadPool() {
         return threadPool;
+    }
+
+    public void setThreadPool(ExecutorService threadPool) {
+        this.threadPool = threadPool;
     }
 }

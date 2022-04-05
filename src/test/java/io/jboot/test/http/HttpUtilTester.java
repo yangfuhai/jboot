@@ -5,6 +5,7 @@ import io.jboot.components.http.HttpProxyInfo;
 import io.jboot.components.http.JbootHttpManager;
 import io.jboot.components.http.JbootHttpRequest;
 import io.jboot.components.http.JbootHttpResponse;
+import io.jboot.utils.HttpUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.HashMap;
@@ -36,6 +37,18 @@ public class HttpUtilTester {
         map.put("你好","xx");
         System.out.println(StrUtil.mapToQueryString(map));
 
+
+        Map<String, Object> paras = new HashMap<>();
+        paras.put("key","value");
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("key","value");
+
+        String postData = "abc";
+
+
+        String s = HttpUtil.httpPost("https://www.baidu.com", paras, headers, postData);
+        System.out.println(s);
 
 
     }
