@@ -11,7 +11,7 @@ Jboot 数据库功能基于 JFinal 的 ActiveRecordPlugin 插件和 Apache shard
     - Columns 查询方式
 - 关联查询
 - 分页查询
-- 一对一、一对多、多对一、多对对
+- 一对一、一对多、多对一、多对多
 - 事务操作
 - 多数据源
 - 读写分离
@@ -223,9 +223,9 @@ public List<User> findListBy(int userAge,String articleTitle){
 
 
 
-## 一对一、一对多、多对一、多对对
+## 一对一、一对多、多对一、多对多
 
-在 Jboot 中，提供了 Join 系列方法，我们在 Service 层可以直接使用 Join 进行 一对一、一对多、多对一、多对对 的查询操作。
+在 Jboot 中，提供了 Join 系列方法，我们在 Service 层可以直接使用 Join 进行 一对一、一对多、多对一、多对多 的查询操作。
 
 假设存在这样的关系：一篇文章只有一个作者，一个作者可以写多篇文章，一篇文章可以归属多个文章分类、一个文章分类有可以包含多篇文章。
 
@@ -275,7 +275,7 @@ CREATE TABLE `category` (
 
 
 
-文章分类和分类的 多对对关系表： article_category：
+文章分类和分类的 多对多关系表： article_category：
 
 ```sql
 CREATE TABLE `article_category` (
