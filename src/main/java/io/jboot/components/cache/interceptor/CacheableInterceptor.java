@@ -47,6 +47,18 @@ public class CacheableInterceptor implements Interceptor {
 
     private static final String NULL_VALUE = "NULL_VALUE";
 
+    //是否开启 Controller 的 Action 缓存
+    //可用在 dev 模式下关闭，生产环境开启的场景，方便调试数据
+    private static boolean actionCacheEnable = true;
+
+    public static boolean isActionCacheEnable() {
+        return actionCacheEnable;
+    }
+
+    public static void setActionCacheEnable(boolean actionCacheEnable) {
+        CacheableInterceptor.actionCacheEnable = actionCacheEnable;
+    }
+
     @Override
     public void intercept(Invocation inv) {
 
@@ -58,7 +70,11 @@ public class CacheableInterceptor implements Interceptor {
         }
 
         if (inv.isActionInvocation()) {
-            forController(inv, method, cacheable);
+            if (actionCacheEnable) {
+                forController(inv, method, cacheable);
+            } else {
+                inv.invoke();
+            }
         } else {
             forService(inv, method, cacheable);
         }

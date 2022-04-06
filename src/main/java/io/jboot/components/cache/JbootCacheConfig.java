@@ -33,7 +33,8 @@ public class JbootCacheConfig {
     public static final String TYPE_CAREDIS = "caredis";
     public static final String TYPE_NONE = "none";
 
-    public static final Set<String> TYPES = Sets.newHashSet(TYPE_EHCACHE, TYPE_REDIS, TYPE_EHREDIS, TYPE_J2CACHE, TYPE_CAFFEINE, TYPE_CAREDIS, TYPE_NONE);
+    public static final Set<String> TYPES = Sets.newHashSet(TYPE_EHCACHE, TYPE_REDIS, TYPE_EHREDIS
+            , TYPE_J2CACHE, TYPE_CAFFEINE, TYPE_CAREDIS, TYPE_NONE);
 
     private String name = "default";
     private String type = TYPE_CAFFEINE;

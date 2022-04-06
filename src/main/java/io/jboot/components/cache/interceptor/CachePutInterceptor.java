@@ -43,7 +43,9 @@ public class CachePutInterceptor implements Interceptor {
         }
 
         if (inv.isActionInvocation()) {
-            forController(inv, method, cachePut);
+            if (CacheableInterceptor.isActionCacheEnable()) {
+                forController(inv, method, cachePut);
+            }
             inv.invoke();
         } else {
             inv.invoke();
