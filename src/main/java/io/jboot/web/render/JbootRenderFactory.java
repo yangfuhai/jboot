@@ -17,6 +17,7 @@ package io.jboot.web.render;
 
 import com.jfinal.core.Action;
 import com.jfinal.render.ContentType;
+import com.jfinal.render.ErrorRender;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderFactory;
 import io.jboot.components.valid.ValidErrorRender;
@@ -63,7 +64,7 @@ public class JbootRenderFactory extends RenderFactory {
 
     @Override
     public Render getErrorRender(int errorCode) {
-        return new JbootErrorRender(errorCode, constants.getErrorView(errorCode));
+        return new JbootErrorRender(errorCode, ErrorRender.getErrorView(errorCode));
     }
 
     @Override
