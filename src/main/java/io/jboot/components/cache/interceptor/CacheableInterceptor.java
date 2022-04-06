@@ -64,17 +64,13 @@ public class CacheableInterceptor implements Interceptor {
 
         Method method = inv.getMethod();
         Cacheable cacheable = method.getAnnotation(Cacheable.class);
-        if (cacheable == null) {
+        if (cacheable == null || (inv.isActionInvocation() && !actionCacheEnable)) {
             inv.invoke();
             return;
         }
 
         if (inv.isActionInvocation()) {
-            if (actionCacheEnable) {
-                forController(inv, method, cacheable);
-            } else {
-                inv.invoke();
-            }
+            forController(inv, method, cacheable);
         } else {
             forService(inv, method, cacheable);
         }

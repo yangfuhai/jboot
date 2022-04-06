@@ -37,25 +37,20 @@ public class CachePutInterceptor implements Interceptor {
 
         Method method = inv.getMethod();
         CachePut cachePut = method.getAnnotation(CachePut.class);
-        if (cachePut == null) {
+        if (cachePut == null || (inv.isActionInvocation() && !CacheableInterceptor.isActionCacheEnable())) {
             inv.invoke();
             return;
         }
 
         if (inv.isActionInvocation()) {
-            if (CacheableInterceptor.isActionCacheEnable()) {
-                forController(inv, method, cachePut);
-            }
-            inv.invoke();
+            forController(inv, method, cachePut);
         } else {
-            inv.invoke();
             forService(inv, method, cachePut);
         }
     }
 
 
     private void forController(Invocation inv, Method method, CachePut cachePut) {
-
         String unless = AnnotationUtil.get(cachePut.unless());
         if (Utils.isUnless(unless, method, inv.getArgs())) {
             return;
@@ -76,10 +71,14 @@ public class CachePutInterceptor implements Interceptor {
         //让 Controller 持有缓存的 responseProxy
         CPI._init_(controller, CPI.getAction(controller), controller.getRequest(), responseProxy, controller.getPara());
 
+        inv.invoke();
     }
 
 
     private void forService(Invocation inv, Method method, CachePut cachePut) {
+
+        inv.invoke();
+
         Object data = inv.getReturnValue();
 
         String unless = AnnotationUtil.get(cachePut.unless());
