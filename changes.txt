@@ -1,4 +1,5 @@
 jboot v3.14.4:
+新增：生产环境忽略模板指令渲染错误的功能，保证其他内容正常渲染
 新增：模板错误渲染器 TemplateErrorRender，用于追加模板指令错误内容
 新增：是否开启 Controller Action 缓存的开关，方便在不同的场景下进行开启或者关闭
 新增：JbootEventManager 可以设置自己的线程池

@@ -16,12 +16,14 @@
 package io.jboot.web.directive.base;
 
 import com.jfinal.aop.Aop;
+import com.jfinal.log.Log;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Env;
 import com.jfinal.template.TemplateException;
 import com.jfinal.template.expr.ast.ExprList;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
+import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
 
 import java.io.IOException;
@@ -34,6 +36,17 @@ import java.util.Map;
  */
 public abstract class JbootDirectiveBase extends Directive {
 
+    private static final Log LOG = Log.getLog(JbootDirectiveBase.class);
+
+    private static boolean devMode = Jboot.isDevMode();
+
+    public static boolean isDevMode() {
+        return devMode;
+    }
+
+    public static void setDevMode(boolean devMode) {
+        JbootDirectiveBase.devMode = devMode;
+    }
 
     public JbootDirectiveBase() {
         Aop.inject(this);
@@ -51,7 +64,19 @@ public abstract class JbootDirectiveBase extends Directive {
         scope = new Scope(scope);
         scope.getCtrl().setLocalAssignment();
         exprList.eval(scope);
-        onRender(env, scope, writer);
+
+        try {
+            onRender(env, scope, writer);
+        } catch (Throwable e) {
+            if (devMode) {
+                throw e;
+            }
+            // 生产环境下，忽略指令错误渲染
+            else {
+                LOG.error("Template Directive render error!!!", e);
+            }
+        }
+
     }
 
 
