@@ -15,13 +15,32 @@
  */
 package io.jboot.web.render;
 
-import com.jfinal.render.TextRender;
+import com.jfinal.render.Render;
+import com.jfinal.render.RenderException;
 import com.jfinal.template.TemplateException;
 
-public class TemplateErrorRender extends TextRender {
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class TemplateErrorRender extends Render {
+
+    private final TemplateException exception;
 
     public TemplateErrorRender(TemplateException e) {
-        super(e.getMessage());
+        this.exception = e;
     }
 
+    @Override
+    public void render() {
+        try {
+            PrintWriter writer = response.getWriter();
+            String message = exception.getMessage();
+            if (message != null) {
+                message = message.replace("\n", "<br />");
+            }
+            writer.write("TemplateException: " + message);
+        } catch (IOException e) {
+            throw new RenderException(e);
+        }
+    }
 }
