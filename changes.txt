@@ -1,3 +1,14 @@
+jboot v3.14.4:
+新增：模板错误渲染器 TemplateErrorRender，用于追加模板指令错误内容
+新增：是否开启 Controller Action 缓存的开关，方便在不同的场景下进行开启或者关闭
+新增：JbootEventManager 可以设置自己的线程池
+优化：ValidUtil 中ValidatorFactory初始化一次，供Validator、MessageInterpolator复用，感谢 @wtusrss
+优化：升级 JFinal/JFinal-Undertow 等到最新版本
+修复：HttpUtil 在 POST 的时候，添加了参数又设置 body 内容时，参数失效的问题
+文档：修改文档错别字
+
+
+
 jboot v3.14.3:
 优化：JbootModel.findByColumn 当传入 null 值 value 时，直接返回 null
 优化：Model 保存和之前版本一致的行为，只允许绑定到一个数据源
