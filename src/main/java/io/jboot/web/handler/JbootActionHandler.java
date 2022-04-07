@@ -21,6 +21,7 @@ import com.jfinal.log.Log;
 import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
+import com.jfinal.template.TemplateException;
 import io.jboot.app.JbootApplicationConfig;
 import io.jboot.components.cache.ActionCache;
 import io.jboot.components.valid.ValidErrorRender;
@@ -150,6 +151,8 @@ public class JbootActionHandler extends ActionHandler {
             handleActionException(target, request, response, action, e);
         } catch (ValidException e) {
             handleValidException(target, request, response, action, e);
+        } catch (TemplateException e) {
+            handleTemplateException(target, request, response, action, e);
         } catch (Exception e) {
             handleException(target, request, response, action, e);
         } finally {
@@ -298,13 +301,30 @@ public class JbootActionHandler extends ActionHandler {
     }
 
 
-    protected void handleException(String target, HttpServletRequest request, HttpServletResponse response, Action action, Exception e) {
-        if (LOG.isErrorEnabled()) {
-            String qs = request.getQueryString();
-            String targetInfo = qs == null ? target : target + "?" + qs;
-            String info = ClassUtil.buildMethodString(action.getMethod());
-            LOG.error(info + " \nQuery: " + targetInfo + "\n", e);
+    /**
+     * 处理模板错误
+     */
+    protected void handleTemplateException(String target, HttpServletRequest request, HttpServletResponse response, Action action, TemplateException e) {
+        String qs = request.getQueryString();
+        String targetInfo = qs == null ? target : target + "?" + qs;
+        String info = ClassUtil.buildMethodString(action.getMethod());
+        LOG.error(info + " \nQuery: " + targetInfo + "\n", e);
+
+        IRenderFactory factory = renderManager.getRenderFactory();
+        if (factory instanceof JbootRenderFactory) {
+            ((JbootRenderFactory) factory).getTemplateErrorRender(e).setContext(request, response, action.getViewPath()).render();
         }
+    }
+
+
+    /**
+     * 处理其他业务错误
+     */
+    protected void handleException(String target, HttpServletRequest request, HttpServletResponse response, Action action, Exception e) {
+        String qs = request.getQueryString();
+        String targetInfo = qs == null ? target : target + "?" + qs;
+        String info = ClassUtil.buildMethodString(action.getMethod());
+        LOG.error(info + " \nQuery: " + targetInfo + "\n", e);
         renderManager.getRenderFactory().getErrorRender(500).setContext(request, response, action.getViewPath()).render();
     }
 

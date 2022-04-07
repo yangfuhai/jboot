@@ -20,6 +20,7 @@ import com.jfinal.render.ContentType;
 import com.jfinal.render.ErrorRender;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderFactory;
+import com.jfinal.template.TemplateException;
 import io.jboot.components.valid.ValidErrorRender;
 import io.jboot.components.valid.ValidException;
 
@@ -137,8 +138,12 @@ public class JbootRenderFactory extends RenderFactory {
         return new JbootReturnValueRender(action, returnValue);
     }
 
-    public ValidErrorRender getValidErrorRender(ValidException validException){
+    public ValidErrorRender getValidErrorRender(ValidException validException) {
         return new ValidErrorRender(validException);
+    }
+
+    public TemplateErrorRender getTemplateErrorRender(TemplateException e) {
+        return new TemplateErrorRender(e);
     }
 
 
