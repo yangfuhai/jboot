@@ -24,6 +24,7 @@ import io.jboot.web.json.JsonBodyParseInterceptor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 基于 FastJson，方便解析 Json 内容
@@ -31,45 +32,45 @@ import java.util.Date;
  * 例如：
  * <p>
  * {
- *  "array": [
- *          1,
- *          2,
- *          3
- *      ],
- *  "type": true,
- *  "null": null,
- *  "number": 123,
- *  "object": {
- *          "a": "b",
- *          "c": "d",
- *          "e":1
- *  },
- *  "key": "welcome to CodeFormat.CN"
- *  }
- *
+ * "array": [
+ * 1,
+ * 2,
+ * 3
+ * ],
+ * "type": true,
+ * "null": null,
+ * "number": 123,
+ * "object": {
+ * "a": "b",
+ * "c": "d",
+ * "e":1
+ * },
+ * "key": "welcome to CodeFormat.CN"
+ * }
+ * <p>
  * Boolean type = JsonUtil.getBool(json,"type");
  * //type == true
- *
+ * <p>
  * int e = JsonUtil.getInt(json,"object.e")
  * // e == 1
- *
+ * <p>
  * BigInteger n = JsonUtil.getBigInteger("number")
  * // n == 123
- *
+ * <p>
  * String[] array = JsonUtil.get(json,"array",String[].class)
  * //array == ["1","2","3"]
- *
+ * <p>
  * int[] array = JsonUtil.get(json,"array",int[].class)
- *  //array == [1,2,3]
- *
- *  Map map = JsonUtil.get(json,"object",Map.class)
- *  //map == {"a":"b","c":"d","e":1}
- *
- *  int x = JsonUtil.getInt(json,"array[1]");
- *  // x == 2
- *
- *  String key = JsonUtil.getString(json,"key");
- *  // key == "welcome to CodeFormat.CN"
+ * //array == [1,2,3]
+ * <p>
+ * Map map = JsonUtil.get(json,"object",Map.class)
+ * //map == {"a":"b","c":"d","e":1}
+ * <p>
+ * int x = JsonUtil.getInt(json,"array[1]");
+ * // x == 2
+ * <p>
+ * String key = JsonUtil.getString(json,"key");
+ * // key == "welcome to CodeFormat.CN"
  */
 public class JsonUtil {
 
@@ -258,6 +259,16 @@ public class JsonUtil {
     }
 
 
+    public static <T> List<T> getList(String json, String key, Class<T> clazz) {
+        return getList(getJsonObjectOrArray(json), key, clazz);
+    }
+
+
+    public static <T> List<T> getList(Object jsonObjectOrArray, String key, Class<T> clazz) {
+        return get(jsonObjectOrArray, key, new TypeDef<List<T>>() {});
+    }
+
+
     public static <T> T get(String json, String key, Class<T> clazz) {
         return get(getJsonObjectOrArray(json), key, clazz);
     }
@@ -303,5 +314,11 @@ public class JsonUtil {
         return null;
     }
 
+
+    public static void main(String[] args) {
+        List<JsonUtil> list1 = getList("{}", "", JsonUtil.class);
+        List<JsonUtil> list2 = get("{}", "", new TypeDef<List<JsonUtil>>(){});
+
+    }
 
 }

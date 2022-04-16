@@ -178,44 +178,48 @@ public class JsonBodyParseInterceptor implements Interceptor, InterceptorBuilder
     private static Object parseArray(Object rawJsonObjectOrArray, Class<?> typeClass, Type type, String jsonKey) {
         JSONArray jsonArray = null;
         if (StrUtil.isBlank(jsonKey)) {
-            jsonArray = (JSONArray) rawJsonObjectOrArray;
+            if (rawJsonObjectOrArray instanceof JSONArray) {
+                jsonArray = (JSONArray) rawJsonObjectOrArray;
+            }
         } else {
-            JSONObject rawObject = (JSONObject) rawJsonObjectOrArray;
-            String[] keys = jsonKey.split("\\.");
-            for (int i = 0; i < keys.length; i++) {
-                if (rawObject == null || rawObject.isEmpty()) {
-                    break;
-                }
-                String key = keys[i].trim();
-                if (StrUtil.isNotBlank(key)) {
-                    //the last
-                    if (i == keys.length - 1) {
-                        if (key.endsWith(endOfArray) && key.contains(startOfArray)) {
-                            String realKey = key.substring(0, key.indexOf(startOfArray));
-                            JSONArray jarray = rawObject.getJSONArray(realKey.trim());
-                            if (jarray == null || jarray.isEmpty()) {
-                                return null;
-                            }
-                            String subKey = key.substring(key.indexOf(startOfArray) + 1, key.length() - 1).trim();
-                            if (StrUtil.isBlank(subKey)) {
-                                throw new IllegalStateException("Sub key can not empty: " + jsonKey);
-                            }
-
-                            JSONArray newJsonArray = new JSONArray();
-                            for (int j = 0; j < jarray.size(); j++) {
-                                Object value = jarray.getJSONObject(j).get(subKey);
-                                if (value != null) {
-                                    newJsonArray.add(value);
-                                }
-                            }
-                            jsonArray = newJsonArray;
-                        } else {
-                            jsonArray = rawObject.getJSONArray(key);
-                        }
+            if (rawJsonObjectOrArray instanceof JSONObject) {
+                JSONObject rawObject = (JSONObject) rawJsonObjectOrArray;
+                String[] keys = jsonKey.split("\\.");
+                for (int i = 0; i < keys.length; i++) {
+                    if (rawObject == null || rawObject.isEmpty()) {
+                        break;
                     }
-                    //not last
-                    else {
-                        rawObject = getJSONObjectByKey(rawObject, key);
+                    String key = keys[i].trim();
+                    if (StrUtil.isNotBlank(key)) {
+                        //the last
+                        if (i == keys.length - 1) {
+                            if (key.endsWith(endOfArray) && key.contains(startOfArray)) {
+                                String realKey = key.substring(0, key.indexOf(startOfArray));
+                                JSONArray jarray = rawObject.getJSONArray(realKey.trim());
+                                if (jarray == null || jarray.isEmpty()) {
+                                    return null;
+                                }
+                                String subKey = key.substring(key.indexOf(startOfArray) + 1, key.length() - 1).trim();
+                                if (StrUtil.isBlank(subKey)) {
+                                    throw new IllegalStateException("Sub key can not empty: " + jsonKey);
+                                }
+
+                                JSONArray newJsonArray = new JSONArray();
+                                for (int j = 0; j < jarray.size(); j++) {
+                                    Object value = jarray.getJSONObject(j).get(subKey);
+                                    if (value != null) {
+                                        newJsonArray.add(value);
+                                    }
+                                }
+                                jsonArray = newJsonArray;
+                            } else {
+                                jsonArray = rawObject.getJSONArray(key);
+                            }
+                        }
+                        //not last
+                        else {
+                            rawObject = getJSONObjectByKey(rawObject, key);
+                        }
                     }
                 }
             }

@@ -24,6 +24,7 @@ import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.CPI;
 import com.jfinal.plugin.activerecord.Model;
 import io.jboot.Jboot;
+import io.jboot.db.model.JbootModel;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
@@ -160,7 +161,11 @@ public class JbootJson extends JFinalJson {
                 if (method.getParameterCount() != 0
                         || method.getReturnType() == void.class
                         || !Modifier.isPublic(method.getModifiers())
-                        || "getClass".equals(method.getName())) {
+                        || "getClass".equals(method.getName())
+                        || method.getDeclaringClass() == JbootModel.class
+                        || method.getDeclaringClass() == Model.class
+                        || method.getDeclaringClass() == Object.class
+                ) {
                     continue;
                 }
 
