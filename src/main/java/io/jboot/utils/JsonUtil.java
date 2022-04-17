@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 基于 FastJson，方便解析 Json 内容
@@ -265,7 +266,17 @@ public class JsonUtil {
 
 
     public static <T> List<T> getList(Object jsonObjectOrArray, String key, Class<T> clazz) {
-        return get(jsonObjectOrArray, key, new TypeDef<List<T>>() {});
+        return get(jsonObjectOrArray, key, TypeDef.wrapper(List.class, clazz));
+    }
+
+
+    public static <T> Set<T> getSet(String json, String key, Class<T> clazz) {
+        return getSet(getJsonObjectOrArray(json), key, clazz);
+    }
+
+
+    public static <T> Set<T> getSet(Object jsonObjectOrArray, String key, Class<T> clazz) {
+        return get(jsonObjectOrArray, key, TypeDef.wrapper(Set.class, clazz));
     }
 
 
@@ -314,11 +325,5 @@ public class JsonUtil {
         return null;
     }
 
-
-    public static void main(String[] args) {
-        List<JsonUtil> list1 = getList("{}", "", JsonUtil.class);
-        List<JsonUtil> list2 = get("{}", "", new TypeDef<List<JsonUtil>>(){});
-
-    }
 
 }

@@ -2,6 +2,7 @@ package io.jboot.test.json;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
+import java.util.Objects;
 
 public class MyBean {
     private String id;
@@ -41,5 +42,15 @@ public class MyBean {
                 ", age=" + age +
                 ", amount=" + amount +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return id.equals(((MyBean)obj).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
