@@ -1,3 +1,10 @@
+jboot v3.14.5:
+新增：JsonUtil.getList 和 JsonUtil.getSet 方法
+新增：RSAUtil 非对称加解密工具类
+新增：DESUtil 对称加解密工具类
+
+
+
 jboot v3.14.4:
 新增：生产环境忽略模板指令渲染错误的功能，保证其他内容正常渲染
 新增：模板错误渲染器 TemplateErrorRender，用于追加模板指令错误内容
