@@ -27,15 +27,20 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class JbootLocalCounter implements JbootCounter {
 
-    private static Map<String, AtomicLong> atomicLongs = new HashMap<>();
+    private static Map<String, AtomicLong> ATOMICLONGS = new HashMap<>();
 
     private AtomicLong atomicLong;
 
     public JbootLocalCounter(String name) {
-        atomicLong = atomicLongs.get(name);
+        atomicLong = ATOMICLONGS.get(name);
         if (atomicLong == null) {
-            AtomicLong newAl = new AtomicLong();
-            atomicLong = atomicLongs.putIfAbsent(name, newAl);
+            synchronized (JbootLocalCounter.class) {
+                atomicLong = ATOMICLONGS.get(name);
+                if (atomicLong == null) {
+                    atomicLong = new AtomicLong();
+                    ATOMICLONGS.put(name, atomicLong);
+                }
+            }
         }
     }
 
