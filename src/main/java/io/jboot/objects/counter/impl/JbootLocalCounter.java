@@ -35,7 +35,7 @@ public class JbootLocalCounter implements JbootCounter {
         atomicLong = atomicLongs.get(name);
         if (atomicLong == null) {
             AtomicLong newAl = new AtomicLong();
-            atomicLongs.putIfAbsent(name, newAl);
+            atomicLong = atomicLongs.putIfAbsent(name, newAl);
         }
     }
 

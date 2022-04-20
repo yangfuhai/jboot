@@ -37,7 +37,7 @@ public class JbootLocalLock implements JbootLock {
         lock = LOCKS.get(name);
         if (lock == null) {
             ReentrantLock newLock = new ReentrantLock();
-            LOCKS.putIfAbsent(name, newLock);
+            lock = LOCKS.putIfAbsent(name, newLock);
         }
     }
 
