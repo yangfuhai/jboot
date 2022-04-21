@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.14.6</version>
+    <version>3.14.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -41,7 +41,7 @@
 
 
     <properties>
-        <jfinal.version>4.9.22</jfinal.version>
+        <jfinal.version>4.9.23</jfinal.version>
         <jfinal-cos.version>2022.2</jfinal-cos.version>
         <jfinal-undertow.version>2.9</jfinal-undertow.version>
         <jfinal-weixin.version>3.4</jfinal-weixin.version>
