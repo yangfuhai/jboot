@@ -1,3 +1,8 @@
+jboot v3.14.7:
+修复：Jboot AppListener 启动时的错误信息，无法正确输出的问题
+
+
+
 jboot v3.14.6:
 修复：JbootLockCounter  和 JbootLocalLock 不可用的问题
 优化：删除一些无用的类或者空实现的类
