@@ -57,7 +57,7 @@ public class DataSourceConfigManager {
 
 
     public Map<String, DataSourceConfig> getDatasourceConfigs() {
-        return datasourceConfigs;
+        return new HashMap<>(datasourceConfigs);
     }
 
     public DataSourceConfig getMainDatasourceConfig() {
