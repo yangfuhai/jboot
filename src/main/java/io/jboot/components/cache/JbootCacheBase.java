@@ -44,22 +44,26 @@ public abstract class JbootCacheBase implements JbootCache {
     }
 
     @Override
-    public void removeCurrentCacheNamePrefix(){
+    public void removeCurrentCacheNamePrefix() {
         CACHE_NAME_PREFIX_TL.remove();
     }
 
 
+    /**
+     * 构建缓存名称
+     *
+     * @param cacheName
+     * @return
+     */
     protected String buildCacheName(String cacheName) {
+
         String cacheNamePrefix = CACHE_NAME_PREFIX_TL.get();
 
         if (StrUtil.isBlank(cacheNamePrefix)) {
             cacheNamePrefix = config.getDefaultCachePrefix();
         }
 
-        if (StrUtil.isBlank(cacheNamePrefix)) {
-            return cacheName;
-        }
-        return cacheNamePrefix + ":" + cacheName;
+        return StrUtil.isNotBlank(cacheNamePrefix) ? (cacheNamePrefix + ":" + cacheName) : cacheName;
     }
 
 
