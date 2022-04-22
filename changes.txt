@@ -1,3 +1,9 @@
+jboot v3.14.8:
+修复：DataSourceConfigManager 里的数据源在 APP 启动成功后会被清空的问题
+修复：配置 redis GlobalKeyPrefix，CacheUtil.getKeys(cacheName) 无法正确获取 keys 的问题
+
+
+
 jboot v3.14.7:
 修复：Jboot AppListener 启动时的错误信息，无法正确输出的问题
 
