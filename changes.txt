@@ -1,3 +1,9 @@
+jboot v3.14.9:
+修复：在某些极端场景下，StrUtil.escapeHtml 无法通过 unEscapeHtml 还原的问题
+优化：删除某些无用的方法和类
+
+
+
 jboot v3.14.8:
 修复：DataSourceConfigManager 里的数据源在 APP 启动成功后会被清空的问题
 修复：配置 redis GlobalKeyPrefix，CacheUtil.getKeys(cacheName) 无法正确获取 keys 的问题
