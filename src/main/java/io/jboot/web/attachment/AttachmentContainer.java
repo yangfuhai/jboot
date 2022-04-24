@@ -30,7 +30,7 @@ public interface AttachmentContainer {
      * @param file
      * @return 返回文件的相对路径
      */
-    public String saveFile(File file);
+    String saveFile(File file);
 
 
     /**
@@ -39,7 +39,7 @@ public interface AttachmentContainer {
      * @param file
      * @return 返回文件的相对路径
      */
-    public String saveFile(File file, String toRelativePath);
+    String saveFile(File file, String toRelativePath);
 
     /**
      * 保存文件
@@ -47,7 +47,7 @@ public interface AttachmentContainer {
      * @param inputStream
      * @return
      */
-    public String saveFile(InputStream inputStream, String toRelativePath);
+    String saveFile(InputStream inputStream, String toRelativePath);
 
 
     /**
@@ -56,7 +56,7 @@ public interface AttachmentContainer {
      * @param relativePath
      * @return
      */
-    public boolean deleteFile(String relativePath);
+    boolean deleteFile(String relativePath);
 
 
     /**
@@ -65,7 +65,7 @@ public interface AttachmentContainer {
      * @param relativePath
      * @return
      */
-    public File getFile(String relativePath);
+    File getFile(String relativePath);
 
 
     /**
@@ -74,7 +74,7 @@ public interface AttachmentContainer {
      * @param file
      * @return
      */
-    public String getRelativePath(File file);
+    String getRelativePath(File file);
 
 
 }

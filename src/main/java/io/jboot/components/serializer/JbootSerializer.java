@@ -17,7 +17,7 @@ package io.jboot.components.serializer;
 
 public interface JbootSerializer {
 
-    public byte[] serialize(Object obj);
+    byte[] serialize(Object obj);
 
-    public Object deserialize(byte[] bytes);
+    Object deserialize(byte[] bytes);
 }

@@ -20,7 +20,6 @@ import com.jfinal.log.Log;
 import com.jfinal.render.IRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderManager;
-import io.jboot.utils.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -286,8 +285,7 @@ public class AttachmentManager {
      * @return true 渲染成功，false 不进行渲染
      */
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
-        if (StrUtil.isNotBlank(defaultContainer.getTargetPrefix())
-                && target.startsWith(defaultContainer.getTargetPrefix())
+        if (target.startsWith(defaultContainer.getTargetPrefix())
                 && target.lastIndexOf('.') != -1) {
             Render render = getFileRender(getFile(target));
             render.setContext(request, response).render();

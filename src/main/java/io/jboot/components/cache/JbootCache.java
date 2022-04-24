@@ -22,42 +22,42 @@ import java.util.List;
 
 public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache {
 
-    public JbootCache setCurrentCacheNamePrefix(String cacheNamePrefix);
+    JbootCache setCurrentCacheNamePrefix(String cacheNamePrefix);
 
-    public void removeCurrentCacheNamePrefix();
+    void removeCurrentCacheNamePrefix();
 
-    public JbootCacheConfig getConfig();
-
-    @Override
-    public <T> T get(String cacheName, Object key);
+    JbootCacheConfig getConfig();
 
     @Override
-    public void put(String cacheName, Object key, Object value);
+    <T> T get(String cacheName, Object key);
 
-    public void put(String cacheName, Object key, Object value, int liveSeconds);
+    @Override
+    void put(String cacheName, Object key, Object value);
+
+    void put(String cacheName, Object key, Object value, int liveSeconds);
 
 
     @Override
-    public void remove(String cacheName, Object key);
+    void remove(String cacheName, Object key);
 
     @Override
-    public void removeAll(String cacheName);
+    void removeAll(String cacheName);
 
-    public <T> T get(String cacheName, Object key, IDataLoader dataLoader);
+    <T> T get(String cacheName, Object key, IDataLoader dataLoader);
 
-    public <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds);
+    <T> T get(String cacheName, Object key, IDataLoader dataLoader, int liveSeconds);
 
-    public Integer getTtl(String cacheName, Object key);
+    Integer getTtl(String cacheName, Object key);
 
-    public void setTtl(String cacheName, Object key, int seconds);
+    void setTtl(String cacheName, Object key, int seconds);
 
-    public void refresh(String cacheName, Object key);
+    void refresh(String cacheName, Object key);
 
-    public void refresh(String cacheName);
+    void refresh(String cacheName);
 
 
-    public List getNames();
+    List getNames();
 
-    public List getKeys(String cacheName);
+    List getKeys(String cacheName);
 
 }
