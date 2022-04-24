@@ -323,7 +323,7 @@ public class StrUtil extends StrKit {
     private static final String[] escapeChars = {"&amp;", "&lt;", "&gt;", "&#39;", "&quot;"};
 
     public static String escapeHtml(String content) {
-        return isBlank(content) ? content : StringUtils.replaceEach(unEscapeHtml(content), htmlChars, escapeChars);
+        return isBlank(content) ? content : StringUtils.replaceEach(content, htmlChars, escapeChars);
     }
 
     public static String unEscapeHtml(String content) {
@@ -340,7 +340,7 @@ public class StrUtil extends StrKit {
 
             Object value = model.get(attr);
 
-            if (value != null && value instanceof String) {
+            if (value instanceof String) {
                 model.set(attr, escapeHtml(value.toString()));
             }
         }
@@ -353,7 +353,7 @@ public class StrUtil extends StrKit {
             return map;
         }
 
-        Set<? extends Object> keys = map.keySet();
+        Set<?> keys = map.keySet();
         for (Object key : keys) {
             if (ArrayUtils.contains(ignoreKeys, key)) {
                 continue;
@@ -361,7 +361,7 @@ public class StrUtil extends StrKit {
 
             Object value = map.get(key);
 
-            if (value != null && value instanceof String) {
+            if (value instanceof String) {
                 map.put(key, escapeHtml(value.toString()));
             }
         }
