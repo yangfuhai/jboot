@@ -67,9 +67,8 @@ public class ValidErrorRender extends Render {
     }
 
     public String getErrorJson() {
-        Ret ret = Ret.fail().set("errorCode", errorCode);
+        Ret ret = Ret.fail(validException.getMessage()).set("errorCode", errorCode);
         ret.set("throwable", validException.getClass().getName() + ": " + this.validException.getMessage());
-        ret.set("message", validException.getMessage());
         ret.set("errorMessage", validException.getReason());
         ret.set("formName", validException.getFormName());
         return JsonKit.toJson(ret);
