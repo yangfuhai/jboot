@@ -15,6 +15,7 @@
  */
 package io.jboot.aop;
 
+import com.jfinal.aop.Aop;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.InterceptorManager;
 import io.jboot.utils.ClassUtil;
@@ -262,7 +263,7 @@ public class Interceptors {
 
 
     private Interceptor singleton(Class<? extends Interceptor> interceptorClass) {
-        return ClassUtil.singleton(interceptorClass, false, true);
+        return ClassUtil.singleton(interceptorClass, false);
     }
 
     public List<InterceptorWarpper> getWarppers() {
@@ -270,11 +271,12 @@ public class Interceptors {
     }
 
     static class InterceptorWarpper {
+
         private Interceptor interceptor;
         private int weight;
 
         public InterceptorWarpper(Interceptor interceptor, int weight) {
-            this.interceptor = interceptor;
+            this.interceptor = Aop.inject(interceptor);
             this.weight = weight;
         }
 

@@ -37,17 +37,15 @@ public class InterceptorBuilderManager{
         return me;
     }
 
-    public InterceptorBuilderManager() {
+    private InterceptorBuilderManager() {
         List<Class<InterceptorBuilder>> builderClasses = ClassScanner.scanSubClass(InterceptorBuilder.class,true);
-        if (builderClasses != null){
-            for (Class<InterceptorBuilder> builderClass : builderClasses){
-                if (builderClass.getAnnotation(AutoLoad.class) != null){
-                    addInterceptorBuilder(ClassUtil.newInstance(builderClass,false));
-                }
+        for (Class<InterceptorBuilder> builderClass : builderClasses){
+            if (builderClass.getAnnotation(AutoLoad.class) != null){
+                addInterceptorBuilder(ClassUtil.newInstance(builderClass,false));
             }
-
-            InterceptorCache.clear();
         }
+
+        InterceptorCache.clear();
     }
 
     private List<InterceptorBuilder> interceptorBuilders = new CopyOnWriteArrayList();

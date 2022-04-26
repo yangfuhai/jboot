@@ -62,7 +62,7 @@ public class ClassUtil {
             if (ret != null) {
                 singletons.put(clazz, ret);
             } else {
-                LOG.error("cannot new newInstance!!!!");
+                LOG.error("Can not new newInstance for class: " + clazz.getName());
             }
         }
         return (T) ret;
@@ -78,7 +78,7 @@ public class ClassUtil {
                 }
                 singletons.put(clazz, ret);
             } else {
-                LOG.error("cannot new newInstance!!!!");
+                LOG.error("Can not new newInstance for class: " + clazz.getName());
             }
         }
         return (T) ret;
@@ -126,7 +126,7 @@ public class ClassUtil {
                 constructor.setAccessible(true);
                 return (T) constructor.newInstance();
             } catch (Exception e) {
-                LOG.error("can not newInstance class:" + clazz + "\n" + e.toString(), e);
+                LOG.error("Can not newInstance for class:" + clazz.getName() + "\n" + e, e);
             }
 
             return null;
@@ -152,7 +152,7 @@ public class ClassUtil {
             }
             return (T) ret;
         } catch (Exception e) {
-            LOG.error("can not newInstance class:" + clazz + "\n" + e.toString(), e);
+            LOG.error("Can not newInstance for class:" + clazz.getName() + "\n" + e, e);
         }
 
         return null;
@@ -174,7 +174,7 @@ public class ClassUtil {
         Method method = getStaticConstruct(staticConstruct.value(), clazz);
 
         if (method == null) {
-            throw new JbootException("Can not new instance by static constrauct for class: " + clazz);
+            throw new JbootException("Can not new instance by static constrauct for class: " + clazz.getName());
         }
 
         try {
@@ -182,8 +182,7 @@ public class ClassUtil {
         } catch (Exception e) {
 
             LOG.error("Can not invoke method:" + method.getName()
-                    + " in class : "+ clazz + "\n"
-                    + e, e);
+                    + " in class : " + clazz.getName() + "\n" + e, e);
 
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -247,7 +246,7 @@ public class ClassUtil {
             Class<T> clazz = (Class<T>) Class.forName(clazzName, false, classLoader);
             return newInstance(clazz, createByAop);
         } catch (Exception e) {
-            LOG.error("can not newInstance class:" + clazzName + "\n" + e.toString(), e);
+            LOG.error("can not newInstance for class:" + clazzName + "\n" + e.toString(), e);
         }
 
         return null;
@@ -263,7 +262,7 @@ public class ClassUtil {
         //io.jboot.test.app.TestAppListener_$$_jvstb9f_0  by:javassist
 
         final String name = clazz.getName();
-        if (name.contains(ENHANCER_BY) || name.contains(JAVASSIST_BY)){
+        if (name.contains(ENHANCER_BY) || name.contains(JAVASSIST_BY)) {
             return clazz.getSuperclass();
         }
 
@@ -326,7 +325,6 @@ public class ClassUtil {
 
 
     public static String buildMethodString(Method method) {
-
         StringBuilder sb = new StringBuilder()
                 .append(method.getDeclaringClass().getName())
                 .append(".")
