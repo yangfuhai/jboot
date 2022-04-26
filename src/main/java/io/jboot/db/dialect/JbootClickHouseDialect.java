@@ -168,7 +168,7 @@ public class JbootClickHouseDialect extends AnsiSqlDialect implements JbootDiale
     public String forPaginateTotalRow(String select, String sqlExceptSelect, Object ext) {
         if (ext instanceof Model) {
             if (io.jboot.db.model.CPI.hasAnyJoinEffective((JbootModel) ext)) {
-                String distinct = ((JbootModel<?>) ext).get(JbootModelExts.DISTINCT);
+                String distinct = JbootModelExts.getDistinctColumn((JbootModel) ext);
                 if (StrUtil.isNotBlank(distinct)) {
                     return "SELECT count(DISTINCT " + distinct + ") " + replaceOrderBy(sqlExceptSelect);
                 }

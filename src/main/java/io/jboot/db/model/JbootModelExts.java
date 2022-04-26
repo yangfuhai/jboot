@@ -15,8 +15,45 @@
  */
 package io.jboot.db.model;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class JbootModelExts {
 
-    public static final String DISTINCT = "__ext_distinct";
+    private static Map<Integer, Map<String, Object>> extAttrs = new ConcurrentHashMap<>();
+
+    private static final String DISTINCT = "distinct";
+
+
+    public static Object getExtAttr(Object holder, String attr) {
+        Map<String, Object> map = extAttrs.get(System.identityHashCode(holder));
+        return map != null ? map.get(attr) : null;
+    }
+
+
+    public static void setExtAttr(Object holder, String attr, Object value) {
+        Map<String, Object> map = extAttrs.get(System.identityHashCode(holder));
+        if (map == null) {
+            synchronized (holder) {
+                map = extAttrs.get(System.identityHashCode(holder));
+                if (map == null) {
+                    map = new ConcurrentHashMap<>();
+                    extAttrs.put(System.identityHashCode(holder), map);
+                }
+            }
+        }
+
+        map.put(attr, value);
+    }
+
+
+    public static void setDistinctColumn(JbootModel<?> holder, String column) {
+        setExtAttr(holder, DISTINCT, column);
+    }
+
+    public static String getDistinctColumn(JbootModel<?> holder) {
+        return (String) getExtAttr(holder, DISTINCT);
+    }
+
 
 }

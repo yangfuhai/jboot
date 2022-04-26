@@ -55,6 +55,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     String loadColumns = null;
     boolean isCopyModel = false;
 
+
     public Joiner<M> leftJoin(String table) {
         return joining(Join.TYPE_LEFT, table, true);
     }
@@ -135,9 +136,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             throw new IllegalArgumentException("distinctColumnName must not be null or empty.");
         }
         M model = getOrCopyModel();
-        model.put(JbootModelExts.DISTINCT, distinctColumnName);
+//        model._setExtAttr(JbootModelExts.DISTINCT, distinctColumnName);
+        JbootModelExts.setDistinctColumn(model, distinctColumnName);
         return model;
     }
+
 
     private M getOrCopyModel() {
         if (isCopyModel) {
@@ -724,19 +727,20 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count, String loadColumns) {
-        if (StrUtil.isBlank(loadColumns) && this.loadColumns != null) {
+        if (StrUtil.isBlank(loadColumns) && StrUtil.isNotBlank(this.loadColumns)) {
             loadColumns = this.loadColumns;
         }
-        if (StrUtil.isBlank(loadColumns)) {
-            String distinctColumn = get(JbootModelExts.DISTINCT);
-            //使用 distinct
-            if (hasAnyJoinEffective() && StrUtil.isNotBlank(distinctColumn)) {
+
+        //使用 distinct
+        if (StrUtil.isBlank(loadColumns) && hasAnyJoinEffective()) {
+            String distinctColumn = JbootModelExts.getDistinctColumn(this);
+            if (StrUtil.isNotBlank(distinctColumn)) {
                 loadColumns = "DISTINCT " + distinctColumn + "," + (StrUtil.isNotBlank(alias) ? alias : _getTableName()) + ".*";
             }
-            //未使用 distinct
-            else {
-                loadColumns = "*";
-            }
+        }
+
+        if (StrUtil.isBlank(loadColumns)) {
+            loadColumns = "*";
         }
 
 
@@ -800,23 +804,22 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy, String loadColumns) {
-        if (StrUtil.isBlank(loadColumns) && this.loadColumns != null) {
+        if (StrUtil.isBlank(loadColumns) && StrUtil.isNotBlank(this.loadColumns)) {
             loadColumns = this.loadColumns;
         }
 
-        if (StrUtil.isBlank(loadColumns)) {
-
-            String distinctColumn = get(JbootModelExts.DISTINCT);
-
-            //使用 distinct
-            if (hasAnyJoinEffective() && StrUtil.isNotBlank(distinctColumn)) {
+        //使用 distinct
+        if (StrUtil.isBlank(loadColumns) && hasAnyJoinEffective()) {
+            String distinctColumn = JbootModelExts.getDistinctColumn(this);
+            if (StrUtil.isNotBlank(distinctColumn)) {
                 loadColumns = "DISTINCT " + distinctColumn + "," + (StrUtil.isNotBlank(alias) ? alias : _getTableName()) + ".*";
             }
-            //未使用 distinct
-            else {
-                loadColumns = "*";
-            }
         }
+
+        if (StrUtil.isBlank(loadColumns)) {
+            loadColumns = "*";
+        }
+
 
         String selectPartSql = _getDialect().forPaginateSelect(loadColumns);
         String fromPartSql = _getDialect().forPaginateFrom(alias, joins, _getTableName(), columns.getList(), orderBy);
@@ -854,8 +857,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         String loadColumns = "*";
 
         //使用 distinct
-        if (hasAnyJoinEffective() && StrUtil.isNotBlank(get(JbootModelExts.DISTINCT))) {
-            loadColumns = "DISTINCT " + get(JbootModelExts.DISTINCT);
+        if (hasAnyJoinEffective()) {
+            String distinctColumn = JbootModelExts.getDistinctColumn(this);
+            if (StrUtil.isNotBlank(distinctColumn)) {
+                loadColumns = "DISTINCT " + distinctColumn;
+            }
         }
 
 

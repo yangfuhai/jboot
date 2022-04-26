@@ -6,7 +6,7 @@ import io.jboot.db.model.JbootModel;
 import io.jboot.web.json.JsonIgnore;
 
 @Table(tableName = "user",primaryKey = "id")
-public class User extends JbootModel {
+public class User extends JbootModel<User> {
 
     @JSONField(name = "sex")
     public String getSexString(){

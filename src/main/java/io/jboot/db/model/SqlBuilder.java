@@ -247,7 +247,7 @@ public class SqlBuilder {
 
     public static String forPaginateDistinctTotalRow(String select, String sqlExceptSelect, Object ext) {
         if (ext instanceof JbootModel && CPI.hasAnyJoinEffective((JbootModel) ext)) {
-            String distinct = ((JbootModel<?>) ext).get(JbootModelExts.DISTINCT);
+            String distinct = JbootModelExts.getDistinctColumn((JbootModel) ext);
             if (StrUtil.isNotBlank(distinct)) {
                 return "SELECT count(DISTINCT " + distinct + ") " + replaceOrderBy(sqlExceptSelect);
             }
