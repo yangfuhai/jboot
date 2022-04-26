@@ -56,7 +56,8 @@ import io.jboot.utils.*;
 import io.jboot.web.JbootActionMapping;
 import io.jboot.web.JbootWebConfig;
 import io.jboot.web.PathVariableActionMapping;
-import io.jboot.web.TypeConverterFunc;
+import io.jboot.web.converter.ArrayConverters;
+import io.jboot.web.converter.TypeConverterFunc;
 import io.jboot.web.attachment.AttachmentHandler;
 import io.jboot.web.attachment.LocalAttachmentContainerConfig;
 import io.jboot.web.controller.JbootControllerManager;
@@ -400,6 +401,7 @@ public class JbootCoreConfig extends JFinalConfig {
 
         //自定义参数转换方法
         TypeConverter.me().setConvertFunc(new TypeConverterFunc());
+        ArrayConverters.init();
 
 
         //使用场景：需要等所有组件 onStart() 完成之后，再去执行某些工作的时候
