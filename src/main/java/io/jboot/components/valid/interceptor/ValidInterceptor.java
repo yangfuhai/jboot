@@ -36,19 +36,21 @@ public class ValidInterceptor implements Interceptor {
         for (int index = 0; index < parameters.length; index++) {
             if (parameters[index].getAnnotation(Valid.class) != null) {
                 Object validObject = inv.getArg(index);
-                if (validObject != null) {
-                    Set<ConstraintViolation<Object>> constraintViolations = ValidUtil.validate(validObject);
-                    if (constraintViolations != null && constraintViolations.size() > 0) {
-                        StringBuilder msg = new StringBuilder();
-                        for (ConstraintViolation cv : constraintViolations) {
-                            msg.append(cv.getRootBeanClass().getName())
-                                    .append(".")
-                                    .append(cv.getPropertyPath())
-                                    .append(cv.getMessage());
-                        }
-                        String reason = parameters[index].getName() + " is valid failed at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                        ValidUtil.throwValidException(parameters[index].getName(), msg.toString(), reason);
+                if (validObject == null) {
+                    continue;
+                }
+                Set<ConstraintViolation<Object>> constraintViolations = ValidUtil.validate(validObject);
+                if (constraintViolations != null && constraintViolations.size() > 0) {
+                    StringBuilder msg = new StringBuilder();
+                    for (ConstraintViolation<?> cv : constraintViolations) {
+                        msg.append(cv.getRootBeanClass().getName())
+                                .append(".")
+                                .append(cv.getPropertyPath())
+                                .append(cv.getMessage());
                     }
+                    String reason = parameters[index].getName() + " is valid failed at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                    ValidUtil.throwValidException(parameters[index].getName(), msg.toString(), reason);
+
                 }
             }
         }

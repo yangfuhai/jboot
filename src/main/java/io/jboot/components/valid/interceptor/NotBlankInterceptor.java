@@ -31,12 +31,14 @@ public class NotBlankInterceptor implements Interceptor {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
             NotBlank notBlank = parameters[index].getAnnotation(NotBlank.class);
-            if (notBlank != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject == null || (validObject instanceof String && StrUtil.isBlank((String) validObject))) {
-                    String msg = parameters[index].getName() + " is blank at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.throwValidException(parameters[index].getName(), notBlank.message(), msg);
-                }
+            if (notBlank == null) {
+                continue;
+            }
+            Object validObject = inv.getArg(index);
+
+            if (validObject == null || (validObject instanceof String && StrUtil.isBlank((String) validObject))) {
+                String msg = parameters[index].getName() + " is blank at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                ValidUtil.throwValidException(parameters[index].getName(), notBlank.message(), msg);
             }
         }
 

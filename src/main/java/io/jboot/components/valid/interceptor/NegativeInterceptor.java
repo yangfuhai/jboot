@@ -30,12 +30,15 @@ public class NegativeInterceptor implements Interceptor {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
             Negative negative = parameters[index].getAnnotation(Negative.class);
-            if (negative != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject == null || ((Number) validObject).longValue() >= 0) {
-                    String reason = parameters[index].getName() + " is null or not negative at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.throwValidException(parameters[index].getName(), negative.message(), reason);
-                }
+            if (negative == null) {
+                continue;
+            }
+
+            Object validObject = inv.getArg(index);
+
+            if (!(validObject instanceof Number) || ((Number) validObject).longValue() >= 0) {
+                String reason = parameters[index].getName() + " is null or not negative at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                ValidUtil.throwValidException(parameters[index].getName(), negative.message(), reason);
             }
         }
 

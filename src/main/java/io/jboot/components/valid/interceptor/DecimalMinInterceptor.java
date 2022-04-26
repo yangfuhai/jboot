@@ -34,13 +34,14 @@ public class DecimalMinInterceptor implements Interceptor {
 
         for (int index = 0; index < parameters.length; index++) {
             DecimalMin decimalMin = parameters[index].getAnnotation(DecimalMin.class);
-            if (decimalMin != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject != null && !matches(decimalMin, validObject)) {
-                    String reason = parameters[index].getName() + " min value is " + decimalMin.value() + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("value", decimalMin.value());
-                    ValidUtil.throwValidException(parameters[index].getName(), decimalMin.message(), paras, reason);
-                }
+            if (decimalMin == null) {
+                continue;
+            }
+            Object validObject = inv.getArg(index);
+            if (validObject != null && !matches(decimalMin, validObject)) {
+                String reason = parameters[index].getName() + " min value is " + decimalMin.value() + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                Ret paras = Ret.by("value", decimalMin.value());
+                ValidUtil.throwValidException(parameters[index].getName(), decimalMin.message(), paras, reason);
             }
         }
 

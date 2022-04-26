@@ -32,12 +32,14 @@ public class EmailInterceptor implements Interceptor {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
             Email email = parameters[index].getAnnotation(Email.class);
-            if (email != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject == null || !matches(email, validObject.toString())) {
-                    String reason = parameters[index].getName() + " is not email at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.throwValidException(parameters[index].getName(), email.message(), reason);
-                }
+            if (email == null) {
+                continue;
+            }
+
+            Object validObject = inv.getArg(index);
+            if (validObject == null || !matches(email, validObject.toString())) {
+                String reason = parameters[index].getName() + " is not email at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                ValidUtil.throwValidException(parameters[index].getName(), email.message(), reason);
             }
         }
 

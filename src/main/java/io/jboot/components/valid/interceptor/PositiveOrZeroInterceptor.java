@@ -31,12 +31,13 @@ public class PositiveOrZeroInterceptor implements Interceptor {
 
         for (int index = 0; index < parameters.length; index++) {
             PositiveOrZero positiveOrZero = parameters[index].getAnnotation(PositiveOrZero.class);
-            if (positiveOrZero != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject == null || ((Number) validObject).longValue() < 0) {
-                    String reason = parameters[index].getName() + " is null or less than 0 at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.throwValidException(parameters[index].getName(), positiveOrZero.message(), reason);
-                }
+            if (positiveOrZero == null) {
+                continue;
+            }
+            Object validObject = inv.getArg(index);
+            if (!(validObject instanceof Number) || ((Number) validObject).longValue() < 0) {
+                String reason = parameters[index].getName() + " is null or less than 0 at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                ValidUtil.throwValidException(parameters[index].getName(), positiveOrZero.message(), reason);
             }
         }
 

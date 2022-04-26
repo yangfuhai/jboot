@@ -34,14 +34,16 @@ public class DecimalMaxInterceptor implements Interceptor {
 
         for (int index = 0; index < parameters.length; index++) {
             DecimalMax decimalMax = parameters[index].getAnnotation(DecimalMax.class);
-            if (decimalMax != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject != null && !matches(decimalMax, validObject)) {
-                    String reason = parameters[index].getName() + " max value is " + decimalMax.value()
-                            + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("value", decimalMax.value());
-                    ValidUtil.throwValidException(parameters[index].getName(), decimalMax.message(), paras, reason);
-                }
+            if (decimalMax == null) {
+                continue;
+            }
+            
+            Object validObject = inv.getArg(index);
+            if (validObject != null && !matches(decimalMax, validObject)) {
+                String reason = parameters[index].getName() + " max value is " + decimalMax.value()
+                        + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                Ret paras = Ret.by("value", decimalMax.value());
+                ValidUtil.throwValidException(parameters[index].getName(), decimalMax.message(), paras, reason);
             }
         }
 

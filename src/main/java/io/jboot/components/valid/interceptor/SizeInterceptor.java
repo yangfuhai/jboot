@@ -24,8 +24,6 @@ import io.jboot.utils.StrUtil;
 
 import javax.validation.constraints.Size;
 import java.lang.reflect.Parameter;
-import java.util.Collection;
-import java.util.Map;
 
 
 public class SizeInterceptor implements Interceptor {
@@ -55,7 +53,8 @@ public class SizeInterceptor implements Interceptor {
                 return;
             }
 
-            int len = getObjectLen(validObject);
+            long len = Util.getObjectLen(validObject);
+            
             if (len < size.min() || len > size.max()) {
                 String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
                         + ", but current value size (or length) is " + len + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
@@ -65,27 +64,6 @@ public class SizeInterceptor implements Interceptor {
         }
 
         inv.invoke();
-    }
-
-
-    private int getObjectLen(Object validObject) {
-        if (validObject instanceof Number) {
-            return ((Number) validObject).intValue();
-        }
-        if (validObject instanceof CharSequence) {
-            return ((CharSequence) validObject).length();
-        }
-        if (validObject instanceof Map) {
-            return ((Map<?, ?>) validObject).size();
-        }
-        if (validObject instanceof Collection) {
-            return ((Collection) validObject).size();
-        }
-        if (validObject.getClass().isArray()) {
-            return ((Object[]) validObject).length;
-        }
-
-        return -1;
     }
 
 

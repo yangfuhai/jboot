@@ -30,13 +30,17 @@ public class NegativeOrZeroInterceptor implements Interceptor {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
             NegativeOrZero negativeOrZero = parameters[index].getAnnotation(NegativeOrZero.class);
-            if (negativeOrZero != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject == null || ((Number) validObject).longValue() > 0) {
-                    String reason = parameters[index].getName() + " is null or greater than 0 at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    ValidUtil.throwValidException(parameters[index].getName(), negativeOrZero.message(), reason);
-                }
+            if (negativeOrZero == null) {
+                continue;
             }
+
+            Object validObject = inv.getArg(index);
+
+            if (!(validObject instanceof Number) || ((Number) validObject).longValue() > 0) {
+                String reason = parameters[index].getName() + " is null or greater than 0 at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                ValidUtil.throwValidException(parameters[index].getName(), negativeOrZero.message(), reason);
+            }
+
         }
 
         inv.invoke();

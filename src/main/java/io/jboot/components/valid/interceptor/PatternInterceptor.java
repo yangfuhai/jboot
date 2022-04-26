@@ -31,13 +31,15 @@ public class PatternInterceptor implements Interceptor {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
             Pattern pattern = parameters[index].getAnnotation(Pattern.class);
-            if (pattern != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject == null || !matches(pattern, validObject.toString())) {
-                    String reason = parameters[index].getName() + " is null or not matches the regex at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("regexp", pattern.regexp());
-                    ValidUtil.throwValidException(parameters[index].getName(), pattern.message(), paras, reason);
-                }
+            if (pattern == null) {
+                continue;
+            }
+
+            Object validObject = inv.getArg(index);
+            if (validObject == null || !matches(pattern, validObject.toString())) {
+                String reason = parameters[index].getName() + " is null or not matches the regex at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                Ret paras = Ret.by("regexp", pattern.regexp());
+                ValidUtil.throwValidException(parameters[index].getName(), pattern.message(), paras, reason);
             }
         }
 

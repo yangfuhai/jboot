@@ -31,13 +31,15 @@ public class DigitsInterceptor implements Interceptor {
         Parameter[] parameters = inv.getMethod().getParameters();
         for (int index = 0; index < parameters.length; index++) {
             Digits digits = parameters[index].getAnnotation(Digits.class);
-            if (digits != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject != null && !matchesDigits(digits, validObject)) {
-                    String reason = parameters[index].getName() + " not matches @Digits at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("integer", digits.integer()).set("fraction", digits.fraction());
-                    ValidUtil.throwValidException(parameters[index].getName(), digits.message(), paras, reason);
-                }
+            if (digits == null) {
+                continue;
+            }
+
+            Object validObject = inv.getArg(index);
+            if (validObject != null && !matchesDigits(digits, validObject)) {
+                String reason = parameters[index].getName() + " not matches @Digits at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                Ret paras = Ret.by("integer", digits.integer()).set("fraction", digits.fraction());
+                ValidUtil.throwValidException(parameters[index].getName(), digits.message(), paras, reason);
             }
         }
 

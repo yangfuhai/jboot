@@ -32,18 +32,28 @@ public class MaxInterceptor implements Interceptor {
 
         for (int index = 0; index < parameters.length; index++) {
             Max max = parameters[index].getAnnotation(Max.class);
-            if (max != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject != null && max.value() < ((Number) validObject).longValue()) {
-                    String reason = parameters[index].getName() + " max value is " + max.value() + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("value", max.value());
-                    ValidUtil.throwValidException(parameters[index].getName(), max.message(), paras, reason);
-                }
+            if (max == null) {
+                continue;
+            }
+
+            Object validObject = inv.getArg(index);
+            if (validObject == null) {
+                continue;
+            }
+
+            long objectLen = Util.getObjectLen(validObject);
+
+            if (max.value() < objectLen) {
+                String reason = parameters[index].getName() + " max value is " + max.value() + ", but current value is " + validObject + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                Ret paras = Ret.by("value", max.value());
+                ValidUtil.throwValidException(parameters[index].getName(), max.message(), paras, reason);
             }
         }
 
         inv.invoke();
     }
+
+
 
 
 }
