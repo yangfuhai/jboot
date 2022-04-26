@@ -20,6 +20,7 @@ import com.jfinal.aop.Invocation;
 import com.jfinal.kit.Ret;
 import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
+import io.jboot.utils.StrUtil;
 
 import javax.validation.constraints.Size;
 import java.lang.reflect.Parameter;
@@ -35,28 +36,37 @@ public class SizeInterceptor implements Interceptor {
 
         for (int index = 0; index < parameters.length; index++) {
             Size size = parameters[index].getAnnotation(Size.class);
-            if (size != null) {
-                Object validObject = inv.getArg(index);
-                if (validObject == null) {
-                    String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
-                            + ", but current value is null at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("max", size.max()).set("min", size.min());
-                    ValidUtil.throwValidException(parameters[index].getName(), size.message(), paras, reason);
-                    return;
-                }
+            if (size == null) {
+                continue;
+            }
 
-                int len = getObjectLen(validObject);
-                if (len < size.min() || len > size.max()) {
-                    String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
-                            + ", but current value size (or length) is " + len + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
-                    Ret paras = Ret.by("max", size.max()).set("min", size.min());
-                    ValidUtil.throwValidException(parameters[index].getName(), size.message(), paras, reason);
-                }
+            Object validObject = inv.getArg(index);
+
+            //不指定 @Size(min=xxx)，值配置了 max，则跳过空数据的内容
+            if (size.min() == 0 && (validObject == null || (validObject instanceof String && StrUtil.isBlank((String) validObject)))) {
+                continue;
+            }
+
+            if (validObject == null) {
+                String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
+                        + ", but current value is null at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                Ret paras = Ret.by("max", size.max()).set("min", size.min());
+                ValidUtil.throwValidException(parameters[index].getName(), size.message(), paras, reason);
+                return;
+            }
+
+            int len = getObjectLen(validObject);
+            if (len < size.min() || len > size.max()) {
+                String reason = parameters[index].getName() + " need size is " + size.min() + " ~ " + size.max()
+                        + ", but current value size (or length) is " + len + " at method: " + ClassUtil.buildMethodString(inv.getMethod());
+                Ret paras = Ret.by("max", size.max()).set("min", size.min());
+                ValidUtil.throwValidException(parameters[index].getName(), size.message(), paras, reason);
             }
         }
 
         inv.invoke();
     }
+
 
     private int getObjectLen(Object validObject) {
         if (validObject instanceof Number) {
