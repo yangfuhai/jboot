@@ -7,6 +7,8 @@ import io.jboot.test.db.model.User;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
+import java.util.List;
+
 @RequestMapping("/dao")
 public class DaoTester extends JbootController {
 
@@ -21,7 +23,6 @@ public class DaoTester extends JbootController {
         JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.db.model");
 
 
-
         //启动应用程序
         JbootApplication.run(args);
 
@@ -31,6 +32,24 @@ public class DaoTester extends JbootController {
     public void index() {
         User dao = new User().dao();
         renderJson(JSON.toJSON(dao.findCountByColumns(Columns.EMPTY)));
+    }
+
+    public void distinct() {
+        User dao = new User().dao();
+        List<User> users = dao.distinct("id").findAll();
+        renderJson(JSON.toJSON(users));
+    }
+
+    public void use() {
+        User dao = new User().dao();
+        List<User> users = dao.use("id").findAll();
+        renderJson(JSON.toJSON(users));
+    }
+
+    public void useFirst() {
+        User dao = new User().dao();
+        List<User> users = dao.useFirst("id").findAll();
+        renderJson(JSON.toJSON(users));
     }
 
 

@@ -98,14 +98,14 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (StrUtil.isBlank(alias)) {
             throw new IllegalArgumentException("alias must not be null or empty.");
         }
-        M model = getOrCopyModel();
+        M model = getOrCopyDao();
         model.alias = alias;
         return model;
     }
 
 
     protected Joiner<M> joining(String type, String table, boolean condition) {
-        M model = getOrCopyModel();
+        M model = getOrCopyDao();
         if (model.joins == null) {
             model.joins = new LinkedList<>();
         }
@@ -125,30 +125,30 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (StrUtil.isBlank(loadColumns)) {
             throw new IllegalArgumentException("loadColumns must not be null or empty.");
         }
-        M model = getOrCopyModel();
+        M model = getOrCopyDao();
         model.loadColumns = loadColumns;
         return model;
     }
 
 
-    public M distinct(String distinctColumnName) {
-        if (StrUtil.isBlank(distinctColumnName)) {
-            throw new IllegalArgumentException("distinctColumnName must not be null or empty.");
+    public M distinct(String columnName) {
+        if (StrUtil.isBlank(columnName)) {
+            throw new IllegalArgumentException("columnName must not be null or empty.");
         }
-        M model = getOrCopyModel();
+        M dao = getOrCopyDao();
 //        model._setExtAttr(JbootModelExts.DISTINCT, distinctColumnName);
-        JbootModelExts.setDistinctColumn(model, distinctColumnName);
-        return model;
+        JbootModelExts.setDistinctColumn(dao, columnName);
+        return dao;
     }
 
 
-    private M getOrCopyModel() {
+    private M getOrCopyDao() {
         if (isCopyModel) {
             return (M) this;
         } else {
-            M model = copy()._setConfigName(datasourceName);
-            model.isCopyModel = true;
-            return model;
+            M dao = copy(false)._setConfigName(datasourceName);
+            dao.isCopyModel = true;
+            return dao;
         }
     }
 
@@ -159,12 +159,25 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
      * @return
      */
     public M copy() {
+        return copy(true);
+    }
+
+
+    /**
+     * copy model with attrs or false
+     *
+     * @param withAttrs
+     * @return
+     */
+    private M copy(boolean withAttrs) {
         M m = null;
         try {
             m = (M) _getUsefulClass().newInstance();
-            m.put(_getAttrs());
-        } catch (Throwable e) {
-            e.printStackTrace();
+            if (withAttrs) {
+                m.put(_getAttrs());
+            }
+        } catch (Exception e) {
+            LOG.error(e.toString(), e);
         }
         return m;
     }
@@ -186,8 +199,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
                     m.set(attrKey, o);
                 }
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.error(e.toString(), e);
         }
         return m;
     }
@@ -205,9 +218,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    /**
+     * 优先使用哪个数据源进行查询
+     *
+     * @param configNames
+     * @return
+     */
     public M useFirst(String... configNames) {
         if (configNames == null || configNames.length == 0) {
-            throw new IllegalArgumentException("configNames must not empty.");
+            throw new IllegalArgumentException("configNames must not be null or empty.");
         }
 
         for (String name : configNames) {
@@ -220,18 +239,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
-    private M use(String configName, boolean validateExist) {
-        M newDao = this.get(DATASOURCE_CACHE_PREFIX + configName);
+    private M use(String configName, boolean validateDatasourceExist) {
+        M newDao = JbootModelExts.getDatasourceDAO(this, DATASOURCE_CACHE_PREFIX + configName);
         if (newDao == null) {
-            newDao = this.copy()._setConfigName(configName);
+            newDao = this.copy(false)._setConfigName(configName);
             if (newDao._getConfig() == null) {
-                if (validateExist) {
-                    throw new JbootIllegalConfigException("the datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
+                if (validateDatasourceExist) {
+                    throw new JbootIllegalConfigException("The datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
                 } else {
                     return null;
                 }
             } else {
-                this.put(DATASOURCE_CACHE_PREFIX + configName, newDao);
+                JbootModelExts.setDatasourceDAO(this, DATASOURCE_CACHE_PREFIX + configName, newDao);
             }
         }
         return newDao;
@@ -242,6 +261,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         this.datasourceName = configName;
         return (M) this;
     }
+
 
     @Override
     protected Config _getConfig() {
@@ -276,7 +296,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (_hasColumn(column_created) && get(column_created) == null) {
             set(column_created, new Date());
         }
-
 
         // 生成主键，只对单一主键的表生成，如果是多主键，不生成。
         String[] pkeys = _getPrimaryKeys();
