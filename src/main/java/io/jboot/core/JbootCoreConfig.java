@@ -108,9 +108,9 @@ public class JbootCoreConfig extends JFinalConfig {
      */
     private void initSystemProperties() {
         //加载 jboot-system.properties 代替启动参数的 -D 配置
-        File spf = new File(PathKit.getRootClassPath(), "jboot-system.properties");
-        if (spf.exists() && spf.isFile()) {
-            Properties properties = PropKit.use(spf).getProperties();
+        File systemPropFile = new File(PathKit.getRootClassPath(), "jboot-system.properties");
+        if (systemPropFile.exists() && systemPropFile.isFile()) {
+            Properties properties = PropKit.use(systemPropFile).getProperties();
             if (properties != null && !properties.isEmpty()) {
                 for (Object key : properties.keySet()) {
                     if (StrUtil.isNotBlank(key)) {
