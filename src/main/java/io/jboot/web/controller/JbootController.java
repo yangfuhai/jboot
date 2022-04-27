@@ -733,4 +733,20 @@ public class JbootController extends Controller {
     public BigDecimal getBigDecimal(String name, BigDecimal defaultValue) {
         return toBigDecimal(getTrimPara(name), defaultValue);
     }
+
+
+    /**
+     * 获取所有 attr 信息
+     *
+     * @return attrs map
+     */
+    @NotAction
+    public Map<String, Object> getAttrs() {
+        Map<String, Object> attrs = new HashMap<>();
+        for (Enumeration<String> names = getAttrNames(); names.hasMoreElements(); ) {
+            String attrName = names.nextElement();
+            attrs.put(attrName, getAttr(attrName));
+        }
+        return attrs;
+    }
 }
