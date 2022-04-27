@@ -1575,6 +1575,9 @@ public class JbootJedisImpl extends JbootRedisBase {
         }
     }
 
+    public JedisPool getJedisPool() {
+        return jedisPool;
+    }
 
     public void returnResource(Jedis jedis) {
         if (jedis != null) {

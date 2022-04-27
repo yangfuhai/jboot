@@ -300,6 +300,7 @@ public class ClassScanner {
         excludeJars.add("mybatis-");
         excludeJars.add("ip2region-");
         excludeJars.add("java-uuid-generator-");
+        excludeJars.add("quartz-");
     }
 
 
