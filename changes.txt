@@ -1,3 +1,13 @@
+jboot v3.15.0:
+优化：ValidErrorRender 使用 Ret.fail() 来创建，方便统一定义 message 字段
+优化：InterceptorBuilderManager 默认对所有 Interceptor 进行注入
+优化：Controller 新增 getAttrs() 和 renderToStringWithAttrs() 方法
+修复：Controller 接收 int[] 时，使用 @Size 等注解验证时出错的问题
+修复：Model.dao() 查询在某些情况下出错的问题
+修复：注解 @Size(max=xxx) 拦截错误的问题
+
+
+
 jboot v3.14.9:
 修复：在某些极端场景下，StrUtil.escapeHtml 无法通过 unEscapeHtml 还原的问题
 优化：删除某些无用的方法和类
