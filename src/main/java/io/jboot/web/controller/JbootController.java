@@ -749,4 +749,26 @@ public class JbootController extends Controller {
         }
         return attrs;
     }
+    
+
+    @NotAction
+    public String renderToStringWithAttrs(String template) {
+        return super.renderToString(template, getAttrs());
+    }
+
+
+    @NotAction
+    public String renderToStringWithAttrs(String template, Map data) {
+        if (data == null) {
+            data = getAttrs();
+        } else {
+            for (Enumeration<String> names = getAttrNames(); names.hasMoreElements(); ) {
+                String attrName = names.nextElement();
+                if (!data.containsKey(attrName)) {
+                    data.put(attrName, getAttr(attrName));
+                }
+            }
+        }
+        return super.renderToString(template, data);
+    }
 }
