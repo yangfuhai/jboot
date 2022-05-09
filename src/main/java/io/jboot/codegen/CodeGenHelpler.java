@@ -99,6 +99,9 @@ public class CodeGenHelpler {
             case DataSourceConfig.TYPE_POSTGRESQL:
                 metaBuilder.setDialect(new PostgreSqlDialect());
                 break;
+            case DataSourceConfig.TYPE_INFORMIX:
+                metaBuilder.setDialect(new InformixDialect());
+                break;                
             default:
                 throw new JbootIllegalConfigException("only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql and postgresql, please check your jboot.properties. ");
         }
