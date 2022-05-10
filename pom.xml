@@ -41,9 +41,9 @@
 
 
     <properties>
-        <jfinal.version>4.9.23</jfinal.version>
+        <jfinal.version>5.0.0</jfinal.version>
         <jfinal-cos.version>2022.2</jfinal-cos.version>
-        <jfinal-undertow.version>2.9</jfinal-undertow.version>
+        <jfinal-undertow.version>3.0</jfinal-undertow.version>
         <jfinal-weixin.version>3.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>

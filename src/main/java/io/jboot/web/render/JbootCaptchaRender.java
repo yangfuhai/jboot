@@ -2,9 +2,11 @@ package io.jboot.web.render;
 
 import com.jfinal.captcha.CaptchaRender;
 import com.jfinal.kit.StrKit;
+
 import java.awt.*;
 import java.awt.geom.QuadCurve2D;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class JbootCaptchaRender extends CaptchaRender {
 
@@ -27,10 +29,11 @@ public class JbootCaptchaRender extends CaptchaRender {
     protected String getRandomString() {
         char[] randomChars = new char[4];
         for (int i = 0; i < randomChars.length; i++) {
-            randomChars[i] = charArray[random.nextInt(charArray.length)];
+            randomChars[i] = charArray[ThreadLocalRandom.current().nextInt(charArray.length)];
         }
         return String.valueOf(randomChars);
     }
+
 
     @Override
     protected void drawGraphic(String randomString, BufferedImage image) {
@@ -43,14 +46,16 @@ public class JbootCaptchaRender extends CaptchaRender {
         // 字体抗锯齿
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
         // 设定背景色
-        g.setColor(getRandColor(210, 250));
+        g.setColor(getRandomColor(210, 250, random));
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
         //绘制小字符背景
         Color color = null;
         for (int i = 0; i < 20; i++) {
-            color = getRandColor(120, 200);
+            color = getRandomColor(120, 200, random);
             g.setColor(color);
             String rand = String.valueOf(charArray[random.nextInt(charArray.length)]);
             g.drawString(rand, random.nextInt(WIDTH), random.nextInt(HEIGHT));
@@ -71,7 +76,7 @@ public class JbootCaptchaRender extends CaptchaRender {
             //旋转区域
             g.rotate(Math.toRadians(degree), x, y);
             //设定字体颜色
-            color = getRandColor(20, 130);
+            color = getRandomColor(20, 130, random);
             g.setColor(color);
             //将认证码显示到图象中
             g.drawString(String.valueOf(randomString.charAt(i)), x + 8, y + 10);
