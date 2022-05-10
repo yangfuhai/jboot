@@ -35,10 +35,10 @@ import java.util.Set;
  */
 public class CodeGenHelpler {
 
+
     public static String getUserDir() {
         return System.getProperty("user.dir");
     }
-
 
 
     /**
@@ -101,9 +101,10 @@ public class CodeGenHelpler {
                 break;
             case DataSourceConfig.TYPE_INFORMIX:
                 metaBuilder.setDialect(new InformixDialect());
-                break;                
+                break;
             default:
-                throw new JbootIllegalConfigException("only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql and postgresql, please check your jboot.properties. ");
+                throw new JbootIllegalConfigException("Only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql、postgresql and infomix" +
+                        ", please check your jboot.properties. ");
         }
 
         return metaBuilder;
