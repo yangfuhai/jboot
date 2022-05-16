@@ -64,6 +64,7 @@ import io.jboot.web.controller.JbootControllerManager;
 import io.jboot.web.controller.annotation.GetMapping;
 import io.jboot.web.controller.annotation.PostMapping;
 import io.jboot.web.controller.annotation.RequestMapping;
+import io.jboot.web.directive.JbootOutputDirectiveFactory;
 import io.jboot.web.directive.SharedEnumObject;
 import io.jboot.web.directive.annotation.*;
 import io.jboot.web.handler.JbootActionHandler;
@@ -257,6 +258,8 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void configEngine(Engine engine) {
+
+        engine.setOutputDirectiveFactory(JbootOutputDirectiveFactory.me);
 
         //通过 java -jar xxx.jar 在单独的jar里运行
         if (ApplicationUtil.runInFatjar()) {
