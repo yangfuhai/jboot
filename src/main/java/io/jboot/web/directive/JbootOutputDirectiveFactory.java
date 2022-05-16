@@ -25,12 +25,22 @@ import com.jfinal.template.stat.Scope;
 import com.jfinal.template.stat.ast.Output;
 import io.jboot.Jboot;
 
+/**
+ * 主要作用：在生产环境下，忽略模板引擎的错误输出。
+ */
 public class JbootOutputDirectiveFactory extends OutputDirectiveFactory {
 
     public static final JbootOutputDirectiveFactory me = new JbootOutputDirectiveFactory();
 
     private boolean ignoreTemplateException = !Jboot.isDevMode();
 
+    public boolean isIgnoreTemplateException() {
+        return ignoreTemplateException;
+    }
+
+    public void setIgnoreTemplateException(boolean ignoreTemplateException) {
+        this.ignoreTemplateException = ignoreTemplateException;
+    }
 
     @Override
     public Output getOutputDirective(ExprList exprList, Location location) {
