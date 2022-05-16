@@ -1,3 +1,10 @@
+jboot v3.15.1:
+新增：JbootOutputDirectiveFactory，用于忽略在生产环境下，模板引擎执行的错误输出
+新增：CodeGenHelpler 新增对 infomix 数据库的支持，感谢 @xujianxie
+优化：升级 JFinal 到 v5.0 最新版本，其他相关依赖也升级到新版本
+
+
+
 jboot v3.15.0:
 优化：ValidErrorRender 使用 Ret.fail() 来创建，方便统一定义 message 字段
 优化：InterceptorBuilderManager 默认对所有 Interceptor 进行注入

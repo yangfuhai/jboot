@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.15.1-SNAPSHOT</version>
+    <version>3.15.1</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -47,7 +47,7 @@
         <jfinal-weixin.version>3.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
-        <jackson.version>2.13.2</jackson.version>
+        <jackson.version>2.13.3</jackson.version>
         <mysql.version>5.1.49</mysql.version>
         <undertow.version>2.2.17.Final</undertow.version>
         <slf4j.version>1.7.36</slf4j.version>
@@ -57,7 +57,7 @@
         <guava.version>31.1-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>3.8.0</jedis.version>
-        <jsoup.version>1.14.3</jsoup.version>
+        <jsoup.version>1.15.1</jsoup.version>
         <ehcache.version>2.10.9.2</ehcache.version>
         <caffeine.version>2.9.3</caffeine.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -200,7 +200,7 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.28.0-GA</version>
+            <version>3.29.0-GA</version>
         </dependency>
 
 
