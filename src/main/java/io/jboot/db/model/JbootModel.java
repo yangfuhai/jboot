@@ -769,7 +769,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
                 //用户配置的 loadColumns 未包含 distinct 关键字
                 if (!loadColumns.toLowerCase().contains("distinct ")) {
-                    loadColumns = "DISTINCT " + distinctColumn + "," + loadColumns;
+                    loadColumns = "DISTINCT " + distinctColumn + ", " + loadColumns;
                 }
             }
         }
