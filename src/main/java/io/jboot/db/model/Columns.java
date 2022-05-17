@@ -110,8 +110,6 @@ public class Columns implements Serializable {
     }
 
 
-
-
     /**
      * add new column in Columns
      *
@@ -158,7 +156,6 @@ public class Columns implements Serializable {
         }
         return this;
     }
-
 
 
     /**
@@ -818,7 +815,8 @@ public class Columns implements Serializable {
 
     @Override
     public String toString() {
-        return getCacheKey();
+        String cacheKey = getCacheKey();
+        return StrUtil.isNotBlank(cacheKey) ? cacheKey : "{}";
     }
 
 
