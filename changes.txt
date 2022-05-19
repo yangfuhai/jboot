@@ -1,3 +1,9 @@
+jboot v3.15.2:
+修复：DAO 配置了 loadColumns 时又配置了 distinct 时，无法获得正确结果的问题
+优化：优化 Columns.toString() 方法，防止在开发工具 debug 下显示 "null" 的问题
+
+
+
 jboot v3.15.1:
 新增：JbootOutputDirectiveFactory，用于忽略在生产环境下，模板引擎执行的错误输出
 新增：CodeGenHelpler 新增对 infomix 数据库的支持，感谢 @xujianxie
