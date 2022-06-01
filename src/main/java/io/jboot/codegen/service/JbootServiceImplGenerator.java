@@ -89,7 +89,13 @@ public class JbootServiceImplGenerator {
         return this;
     }
 
-
+    public JbootServiceImplGenerator addWhitelist(String... tableNames) {
+        if (tableNames != null) {
+            this.metaBuilder.addWhitelist(tableNames);
+        }
+        return this;
+    }
+    
     public JbootServiceImplGenerator setGenerateRemarks(boolean generateRemarks) {
         metaBuilder.setGenerateRemarks(generateRemarks);
         return this;
