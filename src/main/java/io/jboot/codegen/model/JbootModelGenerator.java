@@ -55,6 +55,11 @@ public class JbootModelGenerator extends ModelGenerator {
         metaBuilder.setGenerateRemarks(generateRemarks);
         return this;
     }
-
-
+    //增加白名单功能
+    public JbootModelGenerator addWhitelist(String... tableNames) {
+        if (tableNames != null) {
+            this.metaBuilder.addWhitelist(tableNames);
+        }
+        return this;
+    }
 }
