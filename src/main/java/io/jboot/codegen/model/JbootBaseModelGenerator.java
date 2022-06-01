@@ -59,6 +59,11 @@ public class JbootBaseModelGenerator extends BaseModelGenerator {
         metaBuilder.setGenerateRemarks(generateRemarks);
         return this;
     }
-
+    public JbootBaseModelGenerator addWhitelist(String... tableNames) {
+        if (tableNames != null) {
+            this.metaBuilder.addWhitelist(tableNames);
+        }
+        return this;
+    }
 
 }
