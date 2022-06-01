@@ -1,3 +1,9 @@
+jboot v3.15.3:
+新增：代码生成器新增 白名单 配置的支持，感谢 @xujianxie
+优化：升级 FastJson 到最新版本
+
+
+
 jboot v3.15.2:
 修复：DAO 配置了 loadColumns 时又配置了 distinct 时，无法获得正确结果的问题
 优化：优化 Columns.toString() 方法，防止在开发工具 debug 下显示 "null" 的问题

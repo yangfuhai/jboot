@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.15.2</version>
+    <version>3.15.3</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -53,7 +53,7 @@
         <slf4j.version>1.7.36</slf4j.version>
 <!--        <fst.version>3.0.3</fst.version>-->
         <fst.version>2.57</fst.version>
-        <fastjson.version>1.2.80</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <guava.version>31.1-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>3.8.0</jedis.version>
