@@ -148,6 +148,11 @@ public class JbootServiceInterfaceGenerator extends BaseModelGenerator {
             osw.write(tableMeta.baseModelContent);
         }
     }
-
+    public JbootServiceInterfaceGenerator addWhitelist(String... tableNames) {
+        if (tableNames != null) {
+            this.metaBuilder.addWhitelist(tableNames);
+        }
+        return this;
+    }
 
 }
