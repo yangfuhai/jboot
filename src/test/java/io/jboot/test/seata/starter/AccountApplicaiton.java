@@ -25,7 +25,7 @@ public class AccountApplicaiton {
         JbootApplication.setBootArg("jboot.datasource.type", "mysql");
         JbootApplication.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/mini?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull");
         JbootApplication.setBootArg("jboot.datasource.user", "root");
-        JbootApplication.setBootArg("jboot.datasource.password", "zhang123");
+        JbootApplication.setBootArg("jboot.datasource.password", "zxn123");
         JbootApplication.setBootArg("jboot.model.unscanPackage", "*");
         JbootApplication.setBootArg("jboot.model.scanPackage", "io.jboot.test.seata.commons");
 
