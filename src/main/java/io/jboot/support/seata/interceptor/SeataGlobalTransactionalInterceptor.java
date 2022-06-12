@@ -72,7 +72,7 @@ public class SeataGlobalTransactionalInterceptor implements Interceptor {
             @Override
             public GlobalLockConfig getGlobalLockConfig() {
                 GlobalLockConfig config = new GlobalLockConfig();
-                config.setLockRetryInterval(globalLockAnno.lockRetryInternal());
+                config.setLockRetryInterval(globalLockAnno.lockRetryInterval());
                 config.setLockRetryTimes(globalLockAnno.lockRetryTimes());
                 return config;
             }

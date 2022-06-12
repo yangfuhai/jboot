@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface SeataGlobalLock {
 
-    int lockRetryInternal() default 0;
+    int lockRetryInterval() default 0;
 
     int lockRetryTimes() default -1;
 
