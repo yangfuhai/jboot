@@ -22,7 +22,7 @@ public class TccActionOneServiceImpl implements TccActionOneService {
     private IAccountService accountService;
 
     @Override
-    @TwoPhaseBusinessAction(name = "TccActionOne" , commitMethod = "commit", rollbackMethod = "rollback")
+    @TwoPhaseBusinessAction(name = "TccActionOne" , commitMethod = "commit", rollbackMethod = "rollback", useTCCFence = true)
     public boolean prepare(BusinessActionContext actionContext, String account,int money, boolean flag) {
         System.out.println("actionContext获取Xid prepare>>> "+actionContext.getXid());
         System.out.println("actionContext获取TCC参数 prepare>>> "+actionContext.getActionContext("account"));

@@ -26,8 +26,12 @@ import io.seata.core.model.BranchType;
 import io.seata.rm.DefaultResourceManager;
 import io.seata.rm.tcc.TCCResource;
 import io.seata.rm.tcc.api.BusinessActionContext;
+import io.seata.rm.tcc.api.BusinessActionContextParameter;
+import io.seata.rm.tcc.api.BusinessActionContextUtil;
 import io.seata.rm.tcc.api.TwoPhaseBusinessAction;
+import io.seata.rm.tcc.interceptor.ActionContextUtil;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
@@ -40,7 +44,6 @@ import java.util.Map;
  * @author zhangsen/菜农 commit: https://gitee.com/fuhai/jboot/commit/55564bfd9e6eebfc39263291d89592cd16f77498
  */
 public class ActionInterceptorHandler {
-
     private static final Log LOGGER = Log.getLog(TccActionInterceptor.class);
 
     /**
@@ -50,10 +53,9 @@ public class ActionInterceptorHandler {
      * @param arguments      the arguments
      * @param businessAction the business action
      * @return map map
-     * @throws Throwable the throwable
      */
     public void proceed(Method method, Object[] arguments, String xid, TwoPhaseBusinessAction businessAction,
-                                       Invocation invocation)  {
+                        Invocation invocation) {
 
         //TCC name
         String actionName = businessAction.name();
@@ -79,8 +81,30 @@ public class ActionInterceptorHandler {
             e.printStackTrace();
         }
         actionContext.setBranchId(branchId);
-
-        invocation.invoke();
+        // save the previous action context
+        BusinessActionContext previousActionContext = BusinessActionContextUtil.getContext();
+        try {
+            //share actionContext implicitly
+            BusinessActionContextUtil.setContext(actionContext);
+            if (businessAction.useTCCFence()) {
+                // Use TCC Fence, and return the business result
+                TCCFenceHandler.prepareFence(xid, Long.valueOf(branchId), actionName);
+            }
+            invocation.invoke();
+        } finally {
+            try {
+                //to report business action context finally if the actionContext.getUpdated() is true
+                BusinessActionContextUtil.reportContext(actionContext);
+            } finally {
+                if (previousActionContext != null) {
+                    // recovery the previous action context
+                    BusinessActionContextUtil.setContext(previousActionContext);
+                } else {
+                    // clear the action context
+                    BusinessActionContextUtil.clear();
+                }
+            }
+        }
     }
 
     /**
@@ -153,6 +177,7 @@ public class ActionInterceptorHandler {
             context.put(Constants.COMMIT_METHOD, businessAction.commitMethod());
             context.put(Constants.ROLLBACK_METHOD, businessAction.rollbackMethod());
             context.put(Constants.ACTION_NAME, businessAction.name());
+            context.put(Constants.USE_TCC_FENCE, businessAction.useTCCFence());
         }
     }
 
@@ -193,10 +218,42 @@ public class ActionInterceptorHandler {
             tccResource.setRollbackMethod(ReflectionUtil
                     .getMethod(interfaceClass.getClass(), businessAction.rollbackMethod(),
                             new Class[] {BusinessActionContext.class}));
+            // set argsClasses
+            tccResource.setCommitArgsClasses(businessAction.commitArgsClasses());
+            tccResource.setRollbackArgsClasses(businessAction.rollbackArgsClasses());
+            // set phase two method's keys
+            tccResource.setPhaseTwoCommitKeys(this.getTwoPhaseArgs(tccResource.getCommitMethod(),
+                    businessAction.commitArgsClasses()));
+            tccResource.setPhaseTwoRollbackKeys(this.getTwoPhaseArgs(tccResource.getRollbackMethod(),
+                    businessAction.rollbackArgsClasses()));
             //registry tcc resource
             DefaultResourceManager.get().registerResource(tccResource);
         }
     }
 
-
+    protected String[] getTwoPhaseArgs(Method method, Class<?>[] argsClasses) {
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        String[] keys = new String[parameterAnnotations.length];
+        /*
+         * get parameter's key
+         * if method's parameter list is like
+         * (BusinessActionContext, @BusinessActionContextParameter("a") A a, @BusinessActionContextParameter("b") B b)
+         * the keys will be [null, a, b]
+         */
+        for (int i = 0; i < parameterAnnotations.length; i++) {
+            for (int j = 0; j < parameterAnnotations[i].length; j++) {
+                if (parameterAnnotations[i][j] instanceof BusinessActionContextParameter) {
+                    BusinessActionContextParameter param = (BusinessActionContextParameter)parameterAnnotations[i][j];
+                    String key = ActionContextUtil.getParamNameFromAnnotation(param);
+                    keys[i] = key;
+                    break;
+                }
+            }
+            if (keys[i] == null && !(argsClasses[i].equals(BusinessActionContext.class))) {
+                throw new IllegalArgumentException("non-BusinessActionContext parameter should use annotation " +
+                        "BusinessActionContextParameter");
+            }
+        }
+        return keys;
+    }
 }

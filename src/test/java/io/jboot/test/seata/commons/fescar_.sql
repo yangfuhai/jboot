@@ -49,3 +49,15 @@ CREATE TABLE `undo_log` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tcc_fence_log` (
+  `xid` varchar(128) NOT NULL COMMENT 'global id',
+  `branch_id` bigint NOT NULL COMMENT 'branch id',
+  `action_name` varchar(64) NOT NULL COMMENT 'action name',
+  `status` tinyint NOT NULL COMMENT 'status(tried:1;committed:2;rollbacked:3;suspended:4)',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'update time',
+   PRIMARY KEY (`xid`,`branch_id`),
+   KEY `idx_gmt_modified` (`gmt_modified`),
+   KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
