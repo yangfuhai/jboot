@@ -45,3 +45,5 @@ https://dubbo.apache.org/zh/docs/examples/service-discovery/#%E4%BB%80%E4%B9%88%
 
 ## 参考代码
 
+https://gitee.com/JbootProjects/jboot/tree/master/src/test/java/io/jboot/test/rpc/dubbo3
+
