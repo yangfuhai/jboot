@@ -58,10 +58,6 @@ public class Helloworld extends JbootController {
 ![](./doc/docs/static/images/jboot-wechat-group.png)
 
 
-## 赞助
-
-![](./doc/docs/static/images/donate.png)
-
 ## JbootAdmin 
 
 JbootAdmin 是 Jboot 官方推出的、收费的、企业级快速开发框架，真诚的为各位开发者提供一站式、保姆式的开发服务。
