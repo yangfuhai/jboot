@@ -1,3 +1,10 @@
+jboot v3.15.4:
+优化：升级适配 Seata 到最新版本 1.5.1，感谢 @扫地猿
+优化：CookieUtil，方便在 Handler 里对 Cookie 进行操作
+文档：新增 dubbo2 升级到 dubbo3 的升级文档，感谢 @自由领主
+
+
+
 jboot v3.15.3:
 新增：代码生成器新增 白名单 配置的支持，感谢 @xujianxie
 优化：升级 FastJson 到最新版本
