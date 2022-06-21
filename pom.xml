@@ -71,7 +71,7 @@
         <resteasy.version>3.14.0.Final</resteasy.version>
         <seata.version>1.5.1</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.2.10</metrics.version>
+        <metrics.version>4.2.9</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>

@@ -6,7 +6,7 @@ import io.jboot.test.rpc.dubbo3.service.BlogService;
 import io.jboot.web.controller.JbootController;
 import io.jboot.web.controller.annotation.RequestMapping;
 
-@RequestMapping("/dubbo")
+@RequestMapping("/dubbo3")
 public class DubboClient extends JbootController {
 
     @RPCInject
