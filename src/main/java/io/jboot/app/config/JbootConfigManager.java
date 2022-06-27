@@ -71,20 +71,19 @@ public class JbootConfigManager {
         }
 
         String pathName = getConfigValue(null, "jboot_properties_path");
-        mainProperties = getProperties(pathName, fileName + ".properties");
+        mainProperties = JbootConfigKit.readProperties(pathName, fileName);
 
 
         String mode = getConfigValue("jboot.app.mode");
         if (JbootConfigKit.isNotBlank(mode)) {
+
             //开始加载 mode properties
             //并全部添加覆盖掉掉 main properties
-
-            String modePropertiesName = fileName + "-" + mode + ".properties";
-            Properties modeProperties = getProperties(pathName, modePropertiesName);
+            String modePropertiesName = fileName + "-" + mode;
+            Properties modeProperties = JbootConfigKit.readProperties(pathName, modePropertiesName);
 
             mainProperties.putAll(modeProperties);
         }
-
 
 
         //通过启动参数 --config=./xxx.properties 来指定配置文件启动
@@ -108,14 +107,6 @@ public class JbootConfigManager {
         ApolloConfigManager.me().init(this);
     }
 
-
-    private Properties getProperties(String pathName, String name) {
-        if (pathName != null && pathName.trim().length() > 0) {
-            return new JbootProp(new File(pathName, name)).getProperties();
-        } else {
-            return new JbootProp(name).getProperties();
-        }
-    }
 
     public JbootConfigDecryptor getDecryptor() {
         return decryptor;
