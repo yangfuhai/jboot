@@ -86,9 +86,21 @@ public class JbootConfigManager {
         }
 
 
-        Properties externalProperties = JbootConfigKit.readExternalProperties(fileName);
-        if (externalProperties != null && !externalProperties.isEmpty()) {
-            mainProperties.putAll(externalProperties);
+
+        //通过启动参数 --config=./xxx.properties 来指定配置文件启动
+        String configFile = getConfigValue(null, "config");
+        Properties configFileProperties = null;
+        if (configFile != null && configFile.startsWith("./")) {
+            configFileProperties = JbootConfigKit.readExternalProperties(configFile.substring(2));
+        } else if (configFile != null) {
+            configFileProperties = JbootConfigKit.readPropertiesFile(new File(configFile));
+        } else {
+            //通过在 fatjar 的相同目录下，创建 jboot.properties 配置文件来启动
+            configFileProperties = JbootConfigKit.readExternalProperties(fileName);
+        }
+
+        if (configFileProperties != null && !configFileProperties.isEmpty()) {
+            mainProperties.putAll(configFileProperties);
         }
 
 

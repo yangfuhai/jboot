@@ -161,15 +161,28 @@ public class JbootConfigKit {
     }
 
 
-    static Properties readExternalProperties(String fileName) {
+
+    static Properties readExternalProperties(String propFileName) {
+        if (!propFileName.endsWith(".properties")){
+            propFileName = propFileName + ".properties";
+        }
+
         String currentJarFilePath = JbootConfigKit.class.getProtectionDomain().getCodeSource().getLocation().getFile();
         File fileDir = new File(currentJarFilePath).getParentFile();
-        File externalProperties = new File(fileDir, fileName + ".properties");
-        if (externalProperties.exists()) {
-            return new JbootProp(externalProperties).getProperties();
+        File externalProperties = new File(fileDir, propFileName);
+        return readPropertiesFile(externalProperties);
+    }
+
+
+
+    static Properties readPropertiesFile(File propertiesFile) {
+        if (propertiesFile.exists()) {
+            return new JbootProp(propertiesFile).getProperties();
         }
         return null;
     }
+
+
 
 
     public static Object convert(Class<?> convertClass, String s, Type genericType) {
