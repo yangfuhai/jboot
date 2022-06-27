@@ -74,11 +74,14 @@ public class JbootConfigKit {
 
 
     public static String parseValue(String value) {
+        return parseValue(JbootConfigManager.me(), value);
+    }
+
+    public static String parseValue(JbootConfigManager manager, String value) {
         List<ConfigPara> paras = parseParas(value);
         if (paras == null || paras.size() == 0) {
             return value;
         }
-        JbootConfigManager manager = JbootConfigManager.me();
         StringBuilder retBuilder = new StringBuilder(value.length());
         int index = 0;
         for (ConfigPara para : paras) {
@@ -161,7 +164,7 @@ public class JbootConfigKit {
     static Properties readExternalProperties(String fileName) {
         String currentJarFilePath = JbootConfigKit.class.getProtectionDomain().getCodeSource().getLocation().getFile();
         File fileDir = new File(currentJarFilePath).getParentFile();
-        File externalProperties = new File(fileDir, fileName+".properties");
+        File externalProperties = new File(fileDir, fileName + ".properties");
         if (externalProperties.exists()) {
             return new JbootProp(externalProperties).getProperties();
         }

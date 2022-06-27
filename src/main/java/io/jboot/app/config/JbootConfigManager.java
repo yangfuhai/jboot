@@ -259,7 +259,7 @@ public class JbootConfigManager {
         String originalValue = getOriginalConfigValue(properties, key);
         String stringValue = decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
 
-        return JbootConfigKit.parseValue(stringValue);
+        return JbootConfigKit.parseValue(this, stringValue);
     }
 
 
