@@ -161,13 +161,14 @@ public class JbootConfigKit {
     }
 
 
-    static Properties readProperties(String pathName, String fileName) {
-        fileName = fileName.trim();
-        if (!fileName.endsWith(".properties")){
-            fileName = fileName + ".properties";
-        }
-        if (pathName != null && pathName.trim().length() > 0) {
-            return new JbootProp(new File(pathName, fileName)).getProperties();
+    static Properties readProperties(String fileName) {
+        return readProperties(null,fileName);
+    }
+
+    static Properties readProperties(String path, String fileName) {
+        fileName = appendSuffixIfNecessary(fileName);
+        if (path != null && path.trim().length() > 0) {
+            return new JbootProp(new File(path, fileName)).getProperties();
         } else {
             return new JbootProp(fileName).getProperties();
         }
@@ -175,27 +176,26 @@ public class JbootConfigKit {
 
 
     static Properties readExternalProperties(String fileName) {
-        fileName = fileName.trim();
-        if (!fileName.endsWith(".properties")){
-            fileName = fileName + ".properties";
-        }
-
-        String currentJarFilePath = JbootConfigKit.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-        File fileDir = new File(currentJarFilePath).getParentFile();
-        File externalProperties = new File(fileDir, fileName);
+        fileName = appendSuffixIfNecessary(fileName);
+        String jarPath = JbootConfigKit.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        File parentPath = new File(jarPath).getParentFile();
+        File externalProperties = new File(parentPath, fileName);
         return readPropertiesFile(externalProperties);
     }
 
+
+    private static String appendSuffixIfNecessary(String fileName) {
+        fileName = fileName.trim();
+        return fileName.endsWith(".properties") ? fileName : fileName + ".properties";
+    }
 
 
     static Properties readPropertiesFile(File propFile) {
         if (propFile.exists()) {
             return new JbootProp(propFile).getProperties();
         }
-        return null;
+        return new Properties();
     }
-
-
 
 
     public static Object convert(Class<?> convertClass, String s, Type genericType) {

@@ -79,8 +79,8 @@ public class JbootConfigManager {
 
             //开始加载 mode properties
             //并全部添加覆盖掉掉 main properties
-            String modePropertiesName = fileName + "-" + mode;
-            Properties modeProperties = JbootConfigKit.readProperties(pathName, modePropertiesName);
+            String modeFileName = fileName + "-" + mode;
+            Properties modeProperties = JbootConfigKit.readProperties(pathName, modeFileName);
 
             mainProperties.putAll(modeProperties);
         }
@@ -191,13 +191,12 @@ public class JbootConfigManager {
 
     private void refreshMainProperties() {
 
-        Properties properties = new JbootProp("jboot.properties").getProperties();
-        mainProperties.putAll(properties);
+        mainProperties.putAll(JbootConfigKit.readProperties("jboot"));
 
-        String mode = getConfigValue(properties, "jboot.app.mode");
+        String mode = getConfigValue(mainProperties, "jboot.app.mode");
         if (JbootConfigKit.isNotBlank(mode)) {
-            String modePropertiesName = "jboot-" + mode + ".properties";
-            mainProperties.putAll(new JbootProp(modePropertiesName).getProperties());
+            String modeFileName = "jboot-" + mode;
+            mainProperties.putAll(JbootConfigKit.readProperties(modeFileName));
         }
     }
 
