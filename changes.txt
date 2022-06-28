@@ -1,3 +1,9 @@
+jboot v3.15.5:
+修复：当开启 nacos 配置中心，有启用带参数内容 ${} 时，出现 StackOverFlow 的问题
+修复：HttpUtil 获取 GBK 网址内容时，出现乱码的问题
+
+
+
 jboot v3.15.4:
 优化：升级适配 Seata 到最新版本 1.5.1，感谢 @扫地猿
 优化：CookieUtil，方便在 Handler 里对 Cookie 进行操作
