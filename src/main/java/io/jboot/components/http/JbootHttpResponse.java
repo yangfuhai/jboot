@@ -25,6 +25,7 @@ public class JbootHttpResponse implements Closeable {
 
     private static final Log LOG = Log.getLog(JbootHttpResponse.class);
 
+    private final JbootHttpRequest request;
     private String content;
     private OutputStream contentStream;
     private File file;
@@ -33,24 +34,26 @@ public class JbootHttpResponse implements Closeable {
     private int responseCode;
     private String contentType;
 
-    public JbootHttpResponse() {
-        this.contentStream = new ByteArrayOutputStream();
-    }
+    public JbootHttpResponse(JbootHttpRequest request) {
+        this.request = request;
 
-    public JbootHttpResponse(File file) {
-        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-            LOG.error("Can not mkdirs for: " + file.getParentFile());
-        }
+        if (request.getDownloadFile() != null) {
+            if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+                LOG.error("Can not mkdirs for: " + file.getParentFile());
+            }
 
-        if (file.exists() && !file.delete()) {
-            LOG.error("Can not delete file: " + file);
-        }
+            if (file.exists() && !file.delete()) {
+                LOG.error("Can not delete file: " + file);
+            }
 
-        try {
-            this.file = file;
-            this.contentStream = new FileOutputStream(file);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            try {
+                this.file = request.getDownloadFile();
+                this.contentStream = new FileOutputStream(file);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            this.contentStream = new ByteArrayOutputStream();
         }
     }
 
@@ -61,14 +64,28 @@ public class JbootHttpResponse implements Closeable {
      * @return
      */
     public String getContent() {
+        return getContent(request.getCharset());
+    }
+
+    /**
+     * 获取数据内容
+     *
+     * @return
+     */
+    public String getContent(String charset) {
         if (content != null) {
             return content;
         }
         if (contentStream != null && contentStream instanceof ByteArrayOutputStream) {
-            return new String(((ByteArrayOutputStream) contentStream).toByteArray());
+            try {
+                return ((ByteArrayOutputStream) contentStream).toString(charset);
+            } catch (UnsupportedEncodingException e) {
+                LOG.error(e.toString(), e);
+            }
         }
         return null;
     }
+
 
     public void setContent(String content) {
         this.content = content;

@@ -39,12 +39,8 @@ public class OKHttpImpl implements JbootHttp {
 
     @Override
     public JbootHttpResponse handle(JbootHttpRequest request) {
-
-        JbootHttpResponse response = request.getDownloadFile() == null
-                ? new JbootHttpResponse()
-                : new JbootHttpResponse(request.getDownloadFile());
+        JbootHttpResponse response = new JbootHttpResponse(request);
         doProcess(request, response);
-
         return response;
     }
 
