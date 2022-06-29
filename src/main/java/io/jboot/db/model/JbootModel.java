@@ -136,7 +136,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
             throw new IllegalArgumentException("columnName must not be null or empty.");
         }
         M dao = getOrCopyDao();
-//        model._setExtAttr(JbootModelExts.DISTINCT, distinctColumnName);
         JbootModelExts.setDistinctColumn(dao, columnName);
         return dao;
     }
@@ -146,7 +145,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (isCopyModel) {
             return (M) this;
         } else {
-            M dao = copy(false)._setConfigName(datasourceName);
+            M dao = copy()._setConfigName(datasourceName);
             dao.isCopyModel = true;
             return dao;
         }
@@ -154,28 +153,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     /**
-     * copy new model with all attrs
+     * copy model with attrs or false
      *
      * @return
      */
     public M copy() {
-        return copy(true);
-    }
-
-
-    /**
-     * copy model with attrs or false
-     *
-     * @param withAttrs
-     * @return
-     */
-    private M copy(boolean withAttrs) {
         M m = null;
         try {
             m = (M) _getUsefulClass().newInstance();
-            if (withAttrs) {
-                m.put(_getAttrs());
-            }
+            m.put(_getAttrs());
         } catch (Exception e) {
             LOG.error(e.toString(), e);
         }
@@ -242,7 +228,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     private M use(String configName, boolean validateDatasourceExist) {
         M newDao = JbootModelExts.getDatasourceDAO(this, DATASOURCE_CACHE_PREFIX + configName);
         if (newDao == null) {
-            newDao = this.copy(false)._setConfigName(configName);
+            newDao = this.copy()._setConfigName(configName);
             if (newDao._getConfig() == null) {
                 if (validateDatasourceExist) {
                     throw new JbootIllegalConfigException("The datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
@@ -893,6 +879,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public <T> T _getIdValue() {
         return get(_getPrimaryKey());
     }
+
+
 
     public Object[] _getIdValues() {
         String[] pkeys = _getPrimaryKeys();
