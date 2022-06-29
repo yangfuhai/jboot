@@ -31,6 +31,8 @@ public abstract class JbootmqBase implements Jbootmq {
 
     private static final Log LOG = Log.getLog(JbootmqBase.class);
 
+    protected final JbootmqConfig config;
+
     private List<JbootmqMessageListener> globalListeners = new CopyOnWriteArrayList<>();
     private Map<String, List<JbootmqMessageListener>> channelListeners = new ConcurrentHashMap<>();
 
@@ -38,9 +40,8 @@ public abstract class JbootmqBase implements Jbootmq {
     protected Set<String> syncRecevieMessageChannels = new HashSet<>();
     protected JbootSerializer serializer;
 
-    protected final JbootmqConfig config;
 
-    private final ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+    private ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
             60L, TimeUnit.SECONDS,
             new SynchronousQueue<>(), new NamedThreadFactory("jbootmq"));
 
@@ -216,5 +217,17 @@ public abstract class JbootmqBase implements Jbootmq {
     @Override
     public JbootmqConfig getConfig() {
         return config;
+    }
+
+    public void setSerializer(JbootSerializer serializer) {
+        this.serializer = serializer;
+    }
+
+    public ExecutorService getThreadPool() {
+        return threadPool;
+    }
+
+    public void setThreadPool(ExecutorService threadPool) {
+        this.threadPool = threadPool;
     }
 }
