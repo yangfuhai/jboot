@@ -428,10 +428,6 @@ public class JbootConfigManager {
         }
 
         Collection<JbootConfigChangeListener> listeners = listenersMultimap.get(key);
-        if (listeners == null || listeners.isEmpty()) {
-            return;
-        }
-
         for (JbootConfigChangeListener listener : listeners) {
             try {
                 listener.onChange(key, newValue, oldValue);
