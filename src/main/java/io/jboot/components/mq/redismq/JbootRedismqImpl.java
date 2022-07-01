@@ -37,6 +37,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     private JbootRedis redis;
     private Thread dequeueThread;
     private BinaryJedisPubSub jedisPubSub;
+    private long interval = 100L;
 
     public JbootRedismqImpl(JbootmqConfig config) {
         super(config);
@@ -109,7 +110,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         while (isStarted) {
             try {
                 doExecuteDequeue();
-                Thread.sleep(1);
+                Thread.sleep(interval);
             } catch (Exception ex) {
                 LOG.error(ex.toString(), ex);
             }
@@ -118,10 +119,18 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     public void doExecuteDequeue() {
         for (String channel : this.channels) {
-            Object data = redis.lpop(channel);
+            Object data = redis.rpop(channel);
             if (data != null) {
                 notifyListeners(channel, data, new RedismqMessageContext(JbootRedismqImpl.this));
             }
         }
+    }
+
+    public long getInterval() {
+        return interval;
+    }
+
+    public void setInterval(long interval) {
+        this.interval = interval;
     }
 }
