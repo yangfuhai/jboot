@@ -735,6 +735,18 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     protected void processColumns(Columns columns, String action) {
     }
 
+    @Override
+    protected Class<? extends Model> _getUsefulClass() {
+        Class c = getClass();
+        // guice : Model$$EnhancerByGuice$$40471411
+        // cglib : com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
+        // return c.getName().indexOf("EnhancerByCGLIB") == -1 ? c : c.getSuperclass();
+        // return c.getName().indexOf("$$EnhancerBy") == -1 ? c : c.getSuperclass();
+
+        //不支持匿名类，匿名无法被创建
+        return c.getName().indexOf("$") == -1 ? c : c.getSuperclass();
+    }
+
     private String getLoadColumns(String loadColumns) {
         if (StrUtil.isBlank(loadColumns) && StrUtil.isNotBlank(this.loadColumns)) {
             loadColumns = this.loadColumns;
