@@ -1,3 +1,13 @@
+jboot v3.15.6:
+新增：JbootmqBase 添加自定义线程池的接口方法
+新增：JbootModel.processColumns() 方法，在某些场景下用于对 Columns 进行二次加工
+优化：Redis MQ 的 lpush 对应应该是 rpop 的问题，同时添加 interval 设置方法
+优化：JbootPaginateDirective 添加自动从 scope 获取 Page 对象的方法
+优化：移除 JbootModel 的 getBigInteger 和 getBigDecimal 方法，新版本的 JFinal 已经实现了
+修复：修复 Model.use("datasource").save() 的时候无法正确保存数据的问题
+
+
+
 jboot v3.15.5:
 修复：当开启 nacos 配置中心，有启用带参数内容 ${} 时，出现 StackOverFlow 的问题
 修复：HttpUtil 获取 GBK 网址内容时，出现乱码的问题
