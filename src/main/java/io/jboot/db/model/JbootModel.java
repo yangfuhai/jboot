@@ -27,8 +27,6 @@ import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -444,24 +442,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         if (column == null || !column.checkAvailable()) {
             throw new IllegalArgumentException("Column or value must not be null.");
         }
-        return deleteByColumns(Arrays.asList(column));
+        return deleteByColumns(Columns.create(column));
     }
 
 
     public boolean deleteByColumns(Columns columns) {
+        columnsProcess(columns, "delete");
         if (columns == null || columns.isEmpty()) {
             throw new IllegalArgumentException("Columns must not be null or empty.");
         }
-        return deleteByColumns(columns.getList());
-    }
-
-
-    public boolean deleteByColumns(List<Column> columns) {
-        if (columns == null || columns.isEmpty()) {
-            throw new IllegalArgumentException("Columns must not be null or empty.");
-        }
-        String sql = _getDialect().forDeleteByColumns(alias, joins, _getTableName(), columns);
-        return Db.use(_getConfig().getName()).update(sql, Util.getValueArray(columns)) >= 1;
+        String sql = _getDialect().forDeleteByColumns(alias, joins, _getTableName(), columns.getList());
+        return Db.use(_getConfig().getName()).update(sql, Util.getValueArray(columns.getList())) >= 1;
     }
 
 
@@ -596,6 +587,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public M findFirstByColumns(Columns columns, String orderby, String loadColumns) {
+        columnsProcess(columns, "findfirst");
         if (StrUtil.isBlank(loadColumns) && this.loadColumns != null) {
             loadColumns = this.loadColumns;
         }
@@ -692,7 +684,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
     public List<M> findListByColumn(Column column, String orderBy, Integer count) {
         if (column == null || !column.checkAvailable()) {
-//            throw new IllegalArgumentException("Column or value must not be null.");
             return null;
         }
         return findListByColumns(Columns.create(column), orderBy, count);
@@ -732,11 +723,16 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count, String loadColumns) {
+        columnsProcess(columns, "findlist");
         loadColumns = getLoadColumns(loadColumns);
         String sql = _getDialect().forFindByColumns(alias, joins, _getTableName(), loadColumns, columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
 
+
+    //方便在某些场景下，对 columns 进行二次加工
+    protected void columnsProcess(Columns columns, String action) {
+    }
 
     private String getLoadColumns(String loadColumns) {
         if (StrUtil.isBlank(loadColumns) && StrUtil.isNotBlank(this.loadColumns)) {
@@ -879,7 +875,6 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     public <T> T _getIdValue() {
         return get(_getPrimaryKey());
     }
-
 
 
     public Object[] _getIdValues() {
@@ -1041,37 +1036,4 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }, config, sql, paras);
     }
 
-
-    //////
-
-    @Override
-    public BigInteger getBigInteger(String attr) {
-        Object data = _getAttrs().get(attr);
-        if (data instanceof BigInteger) {
-            return (BigInteger) data;
-        }
-        //数据类型 id(19 number)在 Oracle Jdbc 下对应的是 BigDecimal,
-        //但是在 MySql 下对应的是 BigInteger，这会导致在 MySql 下生成的代码无法在 Oracle 数据库中使用
-        //此处是为了解决这个问题的
-        else if (data instanceof BigDecimal) {
-            return ((BigDecimal) data).toBigInteger();
-        } else if (data instanceof Number) {
-            return BigInteger.valueOf(((Number) data).longValue());
-        }
-        //可能会抛出异常，应该让其抛出
-        return (BigInteger) data;
-    }
-
-
-    @Override
-    public BigDecimal getBigDecimal(String attr) {
-        Object data = _getAttrs().get(attr);
-        if (data instanceof BigDecimal) {
-            return (BigDecimal) data;
-        } else if (data instanceof Number) {
-            return new BigDecimal(data.toString());
-        }
-        //可能会抛出异常，应该让其抛出
-        return (BigDecimal) data;
-    }
 }
