@@ -430,7 +430,7 @@ public void array() {
 }
 ```
 
-此处要注意，如果我们想获取一个泛型 List<MyBean>，需要使用如下方法：
+此处要注意，如果我们想获取一个泛型 `List<MyBean>`，需要使用如下方法：
 
 ```java
 public void array() {
