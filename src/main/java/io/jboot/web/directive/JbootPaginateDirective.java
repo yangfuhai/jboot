@@ -26,6 +26,7 @@ import io.jboot.web.directive.base.PaginateDirectiveBase;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
+import java.util.Map;
 
 public class JbootPaginateDirective extends PaginateDirectiveBase {
 
@@ -116,6 +117,16 @@ public class JbootPaginateDirective extends PaginateDirectiveBase {
                 }
             }
         }
+
+        Map rootData = scope.getRootData();
+        if (rootData != null){
+            for (Object data : rootData.values()) {
+                if (data instanceof Page){
+                    return (Page<?>) data;
+                }
+            }
+        }
+
         return null;
     }
 
