@@ -447,8 +447,9 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public boolean deleteByColumns(Columns columns) {
-        columnsProcess(columns, "delete");
-        if (columns == null || columns.isEmpty()) {
+        processColumns(columns, "delete");
+
+        if (columns.isEmpty()) {
             throw new IllegalArgumentException("Columns must not be null or empty.");
         }
         String sql = _getDialect().forDeleteByColumns(alias, joins, _getTableName(), columns.getList());
@@ -587,7 +588,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public M findFirstByColumns(Columns columns, String orderby, String loadColumns) {
-        columnsProcess(columns, "findfirst");
+        processColumns(columns, "findFirst");
         if (StrUtil.isBlank(loadColumns) && this.loadColumns != null) {
             loadColumns = this.loadColumns;
         }
@@ -723,7 +724,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count, String loadColumns) {
-        columnsProcess(columns, "findlist");
+        processColumns(columns, "findList");
         loadColumns = getLoadColumns(loadColumns);
         String sql = _getDialect().forFindByColumns(alias, joins, _getTableName(), loadColumns, columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
@@ -731,7 +732,7 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     //方便在某些场景下，对 columns 进行二次加工
-    protected void columnsProcess(Columns columns, String action) {
+    protected void processColumns(Columns columns, String action) {
     }
 
     private String getLoadColumns(String loadColumns) {
@@ -819,6 +820,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public Page<M> paginateByColumns(int pageNumber, int pageSize, Columns columns, String orderBy, String loadColumns) {
+        processColumns(columns, "paginate");
+
         loadColumns = getLoadColumns(loadColumns);
 
 
@@ -855,6 +858,8 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     public long findCountByColumns(Columns columns) {
+        processColumns(columns, "findCount");
+
         String loadColumns = "*";
 
         //使用 distinct
