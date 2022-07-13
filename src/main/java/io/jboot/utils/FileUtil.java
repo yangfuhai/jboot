@@ -43,6 +43,14 @@ public class FileUtil {
     }
 
 
+    public static String removeSuffix(String src, String suffix) {
+        if (src != null && src.endsWith(suffix)) {
+            return src.substring(0, suffix.length());
+        }
+        return src;
+    }
+
+
     public static String removeRootPath(String src) {
         return removePrefix(src, PathKit.getWebRootPath());
     }

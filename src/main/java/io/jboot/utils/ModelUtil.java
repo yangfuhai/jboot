@@ -15,6 +15,7 @@
  */
 package io.jboot.utils;
 
+import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
@@ -138,10 +139,18 @@ public class ModelUtil {
         try {
             return clazz.newInstance();
         } catch (Exception e) {
-            throw new JbootException("can not newInstance class:" + clazz + "\n" + e, e);
+            throw new JbootException("Can not newInstance with class: " + clazz.getName() + "\n" + e, e);
         }
     }
 
+
+    public static void keep(List<Model> models, String... attrs) {
+        if (models == null || models.isEmpty()) {
+            return;
+        }
+
+        models.forEach(model -> model.keep(attrs));
+    }
 
 
 }
