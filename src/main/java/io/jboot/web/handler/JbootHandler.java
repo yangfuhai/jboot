@@ -22,11 +22,40 @@ import io.jboot.web.session.JbootServletRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 用于对 request 封装 和 CPATH 的设置
  */
 public class JbootHandler extends Handler {
+
+    private static boolean blockedSuffixEnable = false;
+    private static Set<String> blockedSuffixes = new HashSet<>();
+
+    static {
+        blockedSuffixes.add(".asp");
+        blockedSuffixes.add(".aspx");
+        blockedSuffixes.add(".php");
+        blockedSuffixes.add(".jsp");
+        blockedSuffixes.add(".jspx");
+    }
+
+    public static boolean isBlockedSuffixEnable() {
+        return blockedSuffixEnable;
+    }
+
+    public static void setBlockedSuffixEnable(boolean blockedSuffixEnable) {
+        JbootHandler.blockedSuffixEnable = blockedSuffixEnable;
+    }
+
+    public static Set<String> getBlockedSuffixes() {
+        return blockedSuffixes;
+    }
+
+    public static void addBlockedSuffix(String suffix) {
+        blockedSuffixes.add(suffix.trim().toLowerCase());
+    }
 
 
     @Override
@@ -40,10 +69,24 @@ public class JbootHandler extends Handler {
         }
     }
 
+
     private void doHandle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
         request.setAttribute(JbootConsts.ATTR_REQUEST, request);
         request.setAttribute(JbootConsts.ATTR_CONTEXT_PATH, request.getContextPath());
+
         next.handle(target, request, response, isHandled);
+
+
+        // 让脚本页面使用 Error Render 来渲染
+        if (isHandled[0] == false && blockedSuffixEnable) {
+            int indexOf = target.lastIndexOf(".");
+            if (indexOf > 0) {
+                String suffix = target.substring(indexOf);
+                if (blockedSuffixes.contains(suffix.trim().toLowerCase())) {
+                    com.jfinal.kit.HandlerKit.renderError404(request, response, isHandled);
+                }
+            }
+        }
     }
 
 
