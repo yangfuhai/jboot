@@ -15,18 +15,15 @@
  */
 package io.jboot.utils;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
- * @Date: 2020/3/20
  */
 public class CollectionUtil {
 
-    public static Map<String,String> string2Map(String s){
-        Map<String,String> map =  new HashMap();
+    public static Map<String, String> string2Map(String s) {
+        Map<String, String> map = new LinkedHashMap<>();
         String[] strings = s.split(",");
         for (String kv : strings) {
             if (kv != null && kv.contains(":")) {
@@ -39,7 +36,18 @@ public class CollectionUtil {
         return map;
     }
 
-    public static boolean isEmpty(Collection<?> collection){
+    public static boolean isEmpty(Collection<?> collection) {
         return collection == null || collection.isEmpty();
+    }
+
+
+    public static String toString(Collection<?> collection, String delimiter) {
+        StringJoiner sb = new StringJoiner(delimiter);
+        if (collection != null) {
+            for (Object o : collection) {
+                sb.add(String.valueOf(o));
+            }
+        }
+        return sb.toString();
     }
 }
