@@ -35,13 +35,13 @@ public class NetUtil {
                     address = addresses.nextElement();
 
                     if (!address.isSiteLocalAddress() && !address.isLoopbackAddress()
-                            && address.getHostAddress().indexOf(":") == -1) {// 外网IP
+                            && !address.getHostAddress().contains(":")) { // 外网IP
                         siteLocalIpAddress = address.getHostAddress();
                         findSiteLocalIpAddress = true;
                         break;
                     } else if (address.isSiteLocalAddress()
                             && !address.isLoopbackAddress()
-                            && address.getHostAddress().indexOf(":") == -1) {// 内网IP
+                            && !address.getHostAddress().contains(":")) { // 内网IP
                         hostIpAddress = address.getHostAddress();
                     }
                 }

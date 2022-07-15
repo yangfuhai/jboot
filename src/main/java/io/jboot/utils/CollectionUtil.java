@@ -29,7 +29,7 @@ public class CollectionUtil {
             if (kv != null && kv.contains(":")) {
                 String[] keyValue = kv.split(":");
                 if (keyValue.length == 2) {
-                    map.put(keyValue[0], keyValue[1]);
+                    map.put(keyValue[0].trim(), keyValue[1].trim());
                 }
             }
         }

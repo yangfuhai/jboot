@@ -55,7 +55,13 @@ public class FileUtil {
         return removePrefix(src, PathKit.getWebRootPath());
     }
 
+
     public static String readString(File file) {
+        return readString(file, JFinal.me().getConstants().getEncoding());
+    }
+
+
+    public static String readString(File file, String charsetName) {
         ByteArrayOutputStream baos = null;
         FileInputStream fis = null;
         try {
@@ -65,7 +71,7 @@ public class FileUtil {
             for (int len = 0; (len = fis.read(buffer)) > 0; ) {
                 baos.write(buffer, 0, len);
             }
-            return new String(baos.toByteArray(), JFinal.me().getConstants().getEncoding());
+            return baos.toString(charsetName);
         } catch (Exception e) {
             LogKit.error(e.toString(), e);
         } finally {
@@ -74,14 +80,19 @@ public class FileUtil {
         return null;
     }
 
-    public static void writeString(File file, String string) {
+    public static void writeString(File file, String content) {
+        writeString(file, content, JFinal.me().getConstants().getEncoding());
+    }
+
+
+    public static void writeString(File file, String content, String charsetName) {
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(file, false);
-            fos.write(string.getBytes(JFinal.me().getConstants().getEncoding()));
+            fos.write(content.getBytes(charsetName));
         } catch (Exception e) {
             LogKit.error(e.toString(), e);
         } finally {
