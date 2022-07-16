@@ -89,6 +89,7 @@ public class FileUtil {
         return null;
     }
 
+
     public static void writeString(File file, String content) {
         writeString(file, content, JFinal.me().getConstants().getEncoding());
     }

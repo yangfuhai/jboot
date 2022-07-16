@@ -15,10 +15,7 @@
  */
 package io.jboot.utils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 public class ArrayUtil {
@@ -88,6 +85,17 @@ public class ArrayUtil {
         }
 
         return false;
+    }
+
+
+    public static String toString(Object[] strings, String delimiter) {
+        StringJoiner sb = new StringJoiner(delimiter);
+        if (strings != null) {
+            for (Object o : strings) {
+                sb.add(String.valueOf(o));
+            }
+        }
+        return sb.toString();
     }
 
 }
