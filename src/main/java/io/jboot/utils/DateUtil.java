@@ -31,6 +31,7 @@ public class DateUtil {
     public static String datePatternWithoutDividing = "yyyyMMdd";
     public static String datePattern = "yyyy-MM-dd";
     public static final String dateMinutePattern = "yyyy-MM-dd HH:mm";
+    public static final String dateMinutePattern2 = "yyyy-MM-dd'T'HH:mm";
     public static String datetimePattern = "yyyy-MM-dd HH:mm:ss";
     public static final String dateMillisecondPattern = "yyyy-MM-dd HH:mm:ss SSS";
     public static final String dateCSTPattern = "EEE MMM dd HH:mm:ss zzz yyyy";
@@ -134,6 +135,9 @@ public class DateUtil {
         } else if (length == datePattern.length()) {
             return datePattern;
         } else if (length == dateMinutePattern.length()) {
+            if (dateString.contains("T")) {
+                return dateMinutePattern2;
+            }
             return dateMinutePattern;
         } else if (length == dateMillisecondPattern.length()) {
             return dateMillisecondPattern;
@@ -1034,6 +1038,9 @@ public class DateUtil {
         System.out.println("第4季度：" + toDateTimeString(getEndOfQuarter(4)));
         System.out.println("本季度：" + toDateTimeString(getStartOfThisQuarter()));
         System.out.println("本季度：" + toDateTimeString(getEndOfThisQuarter()));
+
+
+        System.out.println("datetime-local解析：" + parseDate("2022-12-03T16:00"));
 
     }
 }

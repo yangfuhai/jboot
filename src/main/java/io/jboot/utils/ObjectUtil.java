@@ -163,9 +163,9 @@ public class ObjectUtil {
             return Float.parseFloat(value.toString());
         } else if (targetClass == Boolean.class || targetClass == boolean.class) {
             String v = value.toString().toLowerCase();
-            if ("1".equals(v) || "true".equals(v)) {
+            if ("1".equals(v) || "true".equalsIgnoreCase(v)) {
                 return Boolean.TRUE;
-            } else if ("0".equals(v) || "false".equals(v)) {
+            } else if ("0".equals(v) || "false".equalsIgnoreCase(v)) {
                 return Boolean.FALSE;
             } else {
                 throw new RuntimeException("Can not parse to boolean type of value: \"" + value + "\"");
