@@ -35,17 +35,26 @@ public class FileUtil {
     }
 
 
-    public static String removePrefix(String src, String prefix) {
-        if (src != null && src.startsWith(prefix)) {
-            return src.substring(prefix.length());
+    public static String removePrefix(String src, String... prefixes) {
+        if (src != null) {
+            for (String prefix : prefixes) {
+                if (src.startsWith(prefix)) {
+                    return src.substring(prefix.length());
+                }
+            }
         }
+
         return src;
     }
 
 
-    public static String removeSuffix(String src, String suffix) {
-        if (src != null && src.endsWith(suffix)) {
-            return src.substring(0, suffix.length());
+    public static String removeSuffix(String src, String... suffixes) {
+        if (src != null) {
+            for (String suffix : suffixes) {
+                if (src.endsWith(suffix)) {
+                    return src.substring(0, suffix.length());
+                }
+            }
         }
         return src;
     }
@@ -99,6 +108,7 @@ public class FileUtil {
             close(fos);
         }
     }
+
 
     public static void close(Closeable... closeable) {
         QuietlyUtil.closeQuietly(closeable);
@@ -158,6 +168,7 @@ public class FileUtil {
         }
     }
 
+
     private static boolean isNotSafeFile(String name) {
         name = name.toLowerCase();
         return name.endsWith(".jsp") || name.endsWith(".jspx");
@@ -167,6 +178,7 @@ public class FileUtil {
     public static boolean isAbsolutePath(String path) {
         return StrUtil.isNotBlank(path) && (path.startsWith("/") || path.indexOf(":") > 0);
     }
+
 
     public static String getCanonicalPath(File file) {
         try {
