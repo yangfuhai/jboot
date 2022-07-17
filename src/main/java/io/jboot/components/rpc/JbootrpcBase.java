@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class JbootrpcBase implements Jbootrpc {
 
-    protected static final Map<String, Object> objectCache = new ConcurrentHashMap<>();
+    protected static final Map<String, Object> serviceCache = new ConcurrentHashMap<>();
     protected static JbootrpcConfig rpcConfig = Jboot.config(JbootrpcConfig.class);
     private boolean started = false;
 
@@ -31,24 +31,24 @@ public abstract class JbootrpcBase implements Jbootrpc {
     @Override
     public <T> T serviceObtain(Class<T> interfaceClass, JbootrpcReferenceConfig config) {
         String key = buildKey(interfaceClass, config);
-        T object = (T) objectCache.get(key);
-        if (object == null) {
+        T service = (T) serviceCache.get(key);
+        if (service == null) {
             synchronized (this) {
-                object = (T) objectCache.get(key);
-                if (object == null) {
+                service = (T) serviceCache.get(key);
+                if (service == null) {
                     // onStart 方法是在 app 启动完成后，Jboot 主动去调用的
                     // 但是，在某些场景可能存在没有等 app 启动完成就去获取 Service 的情况
                     // 此时，需要主动先调用下 onStart 方法
                     invokeOnStartIfNecessary();
 
-                    object = onServiceCreate(interfaceClass, config);
-                    if (object != null) {
-                        objectCache.put(key, object);
+                    service = onServiceCreate(interfaceClass, config);
+                    if (service != null) {
+                        serviceCache.put(key, service);
                     }
                 }
             }
         }
-        return object;
+        return service;
     }
 
     protected String buildKey(Class<?> interfaceClass, JbootrpcReferenceConfig config) {
