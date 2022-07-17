@@ -34,7 +34,7 @@ import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.components.rpc.Jbootrpc;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.rpc.JbootrpcReferenceConfig;
-import io.jboot.components.rpc.ReferenceConfigCache;
+import io.jboot.components.rpc.RPCUtil;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
@@ -186,7 +186,7 @@ public class JbootAopFactory extends AopFactory {
 
 
     protected Object createFieldObjectLazy(Object targetObject, Field field) throws ReflectiveOperationException {
-        return JbootLazyLoaderFactory.me().getLoader().loadLazyObject(targetObject,field);
+        return JbootLazyLoaderFactory.me().getLoader().loadLazyObject(targetObject, field);
     }
 
 
@@ -269,9 +269,12 @@ public class JbootAopFactory extends AopFactory {
     private Object createFieldObjectByRPCComponent(Object targetObject, Field field, RPCInject rpcInject) {
         try {
             Class<?> fieldInjectedClass = field.getType();
-            JbootrpcReferenceConfig referenceConfig = ReferenceConfigCache.getReferenceConfig(rpcInject);
+
+            JbootrpcReferenceConfig config = new JbootrpcReferenceConfig();
+            RPCUtil.appendAnnotation(RPCInject.class, rpcInject, config);
+
             Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
-            return jbootrpc.serviceObtain(fieldInjectedClass, referenceConfig);
+            return jbootrpc.serviceObtain(fieldInjectedClass, config);
         } catch (NullPointerException npe) {
             LOG.error("Can not inject rpc service for \"" + field.getName() + "\" in class \"" + ClassUtil.getUsefulClass(targetObject.getClass()).getName() + "\", because @RPCInject.check ==\"true\" and target is not available. \n" + rpcInject, npe);
         } catch (Exception ex) {
