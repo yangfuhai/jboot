@@ -31,10 +31,7 @@ import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
 import io.jboot.components.event.JbootEventListener;
 import io.jboot.components.mq.JbootmqMessageListener;
-import io.jboot.components.rpc.Jbootrpc;
-import io.jboot.components.rpc.JbootrpcManager;
-import io.jboot.components.rpc.JbootrpcReferenceConfig;
-import io.jboot.components.rpc.RPCUtil;
+import io.jboot.components.rpc.*;
 import io.jboot.components.rpc.annotation.RPCInject;
 import io.jboot.db.model.JbootModel;
 import io.jboot.exception.JbootException;
@@ -270,9 +267,7 @@ public class JbootAopFactory extends AopFactory {
         try {
             Class<?> fieldInjectedClass = field.getType();
 
-            JbootrpcReferenceConfig config = new JbootrpcReferenceConfig();
-            RPCUtil.appendAnnotation(RPCInject.class, rpcInject, config);
-
+            JbootrpcReferenceConfig config = ReferenceConfigCache.get(fieldInjectedClass, rpcInject);
             Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
             return jbootrpc.serviceObtain(fieldInjectedClass, config);
         } catch (NullPointerException npe) {

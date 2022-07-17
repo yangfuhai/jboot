@@ -52,7 +52,7 @@ public abstract class JbootrpcBase implements Jbootrpc {
     }
 
     protected String buildKey(Class<?> interfaceClass, JbootrpcReferenceConfig config) {
-        return interfaceClass + "@" + config.hashCode();
+        return interfaceClass.getName() + "@" + config.hashCode();
     }
 
     protected synchronized void invokeOnStartIfNecessary() {
