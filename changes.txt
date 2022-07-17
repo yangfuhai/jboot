@@ -1,3 +1,13 @@
+jboot v3.15.7:
+修复：RPC 的 Reference 缓存 key 构建错误导致无法命中缓存的问题
+新增：FileUtil.removeSuffix() 方法
+新增：ModelUtil.key(List<Model> models) 方法
+新增：CollectionUtil.toString() 方法
+新增：ArrayUtil.toString() 方法
+新增：DateUtil 解析 datetime-local 方法
+
+
+
 jboot v3.15.6:
 新增：JbootmqBase 添加自定义线程池的接口方法
 新增：JbootModel.processColumns() 方法，在某些场景下用于对 Columns 进行二次加工
