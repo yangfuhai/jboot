@@ -29,5 +29,9 @@ Jboot 是一个基于 JFinal、Dubbo、Seata、Sentinel、ShardingSphere、Nacos
 
 ## QQ群
 
-群1: 601440615（已满）
-群2: 719614554
+- 群1: 601440615（已满）
+- 群2: 719614554
+
+## 备案信息
+
+<a href="https://beian.miit.gov.cn/" target="_blank">黔ICP备19009310号-7</a> © 2021-2022 Jboot.COM.CN ALLRIGHT RESERVER
