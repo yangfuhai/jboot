@@ -251,6 +251,9 @@ public class ArpManager {
             case DataSourceConfig.TYPE_POSTGRESQL:
                 activeRecordPlugin.setDialect(new JbootPostgreSqlDialect());
                 break;
+            case DataSourceConfig.TYPE_DM:
+                activeRecordPlugin.setDialect(new JbootDmDialect());
+                break;
             case DataSourceConfig.TYPE_CLICKHOUSE:
                 activeRecordPlugin.setDialect(new JbootClickHouseDialect());
                 break;
