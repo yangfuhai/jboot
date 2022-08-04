@@ -172,7 +172,7 @@ public class FileUtil {
 
     private static boolean isNotSafeFile(String name) {
         name = name.toLowerCase();
-        return name.endsWith(".jsp") || name.endsWith(".jspx");
+        return name.endsWith(".jsp") || name.endsWith(".jspx") || name.contains("..");
     }
 
 
@@ -186,6 +186,16 @@ public class FileUtil {
             return file.getCanonicalPath();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void delete(File file) {
+        if (file == null) {
+            return;
+        }
+
+        if (!file.delete()) {
+            LogKit.error("file {} can not deleted!", getCanonicalPath(file));
         }
     }
 

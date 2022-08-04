@@ -21,7 +21,9 @@ import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import com.jfinal.kit.StrKit;
 import com.jfinal.render.RenderManager;
+import com.jfinal.upload.UploadFile;
 import io.jboot.support.jwt.JwtManager;
+import io.jboot.utils.FileUtil;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.utils.TypeDef;
@@ -31,10 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class JbootController extends Controller {
@@ -749,7 +748,44 @@ public class JbootController extends Controller {
         }
         return attrs;
     }
-    
+
+
+    /**
+     * 建议使用 getFirstFileOnly，否则可能会有安全问题
+     * @return
+     */
+    @NotAction
+    @Deprecated
+    @Override
+    public UploadFile getFile() {
+        return super.getFile();
+    }
+
+
+    /**
+     * 只获取第一个文件，若上传多个文件，则删除其他文件
+     * @return
+     */
+    @NotAction
+    public UploadFile getFirstFileOnly() {
+        List<UploadFile> uploadFiles = getFiles();
+        if (uploadFiles == null || uploadFiles.isEmpty()){
+            return null;
+        }
+
+        if (uploadFiles.size() == 1){
+            return uploadFiles.get(0);
+        }
+
+        for (int i = 1; i < uploadFiles.size(); i++) {
+            UploadFile uploadFile = uploadFiles.get(i);
+            FileUtil.delete(uploadFile.getFile());
+        }
+
+        return uploadFiles.get(0);
+    }
+
+
 
     @NotAction
     public String renderToStringWithAttrs(String template) {
