@@ -25,7 +25,6 @@ import io.jboot.JbootConsts;
 public class JbootJsonRender extends JsonRender {
 
     static {
-        excludedAttrs.add(JbootConsts.ATTR_REQUEST);
         excludedAttrs.add(JbootConsts.ATTR_CONTEXT_PATH);
     }
 

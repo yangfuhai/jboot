@@ -42,8 +42,9 @@ public class JbootHandler extends Handler {
 
 
     private void doHandle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
-        request.setAttribute(JbootConsts.ATTR_REQUEST, request);
-        request.setAttribute(JbootConsts.ATTR_CONTEXT_PATH, request.getContextPath());
+        if (request.getAttribute(JbootConsts.ATTR_CONTEXT_PATH) == null) {
+            request.setAttribute(JbootConsts.ATTR_CONTEXT_PATH, request.getContextPath());
+        }
 
         next.handle(target, request, response, isHandled);
     }
