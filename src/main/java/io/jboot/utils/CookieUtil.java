@@ -109,6 +109,10 @@ public class CookieUtil {
         put(response, key, value, COOKIE_MAX_AGE, defaultPath, defaultDomain, COOKIE_ENCRYPT_KEY);
     }
 
+    public static void put(HttpServletResponse response, String key, Object value, int maxAgeInSeconds) {
+        put(response, key, value, maxAgeInSeconds, defaultPath, defaultDomain, COOKIE_ENCRYPT_KEY);
+    }
+
 
     public static void put(Controller ctr, String key, Object value, String secretKey) {
         put(ctr, key, value, COOKIE_MAX_AGE, defaultPath, defaultDomain, secretKey);
