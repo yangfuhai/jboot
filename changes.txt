@@ -1,7 +1,15 @@
+jboot v3.15.8:
+新增：FileUtil.delete 方法
+新增：JbootController.getFirstFileOnly() 方法
+优化：JbootController.getFile() 设置为删除方法
+优化：升级 JFinal 到最新版本
+
+
+
 jboot v3.15.7:
 修复：RPC 的 Reference 缓存 key 构建错误导致无法命中缓存的问题
 新增：FileUtil.removeSuffix() 方法
-新增：ModelUtil.key(List<Model> models) 方法
+新增：ModelUtil.keep(List<Model> models) 方法
 新增：CollectionUtil.toString() 方法
 新增：ArrayUtil.toString() 方法
 新增：DateUtil 解析 datetime-local 方法
