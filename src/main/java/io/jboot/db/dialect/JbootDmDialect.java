@@ -27,6 +27,11 @@ import java.util.List;
  */
 public class JbootDmDialect extends MysqlDialect implements JbootDialect {
 
+    public JbootDmDialect() {
+        throw new IllegalStateException("Not finished!");
+    }
+
+
     @Override
     public String forFindByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, Object limit) {
         StringBuilder sqlBuilder = SqlBuilder.forFindByColumns(alias, joins, table, loadColumns, columns, orderBy, '`');
