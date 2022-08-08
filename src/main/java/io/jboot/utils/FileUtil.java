@@ -143,7 +143,11 @@ public class FileUtil {
                             continue;
                         }
 
-                        File targetFile = new File(targetPath + File.separator + zipEntry.getName());
+                        File targetFile = new File(targetPath, zipEntry.getName());
+
+                        if (!targetFile.toPath().normalize().startsWith(targetPath)) {
+                            throw new RuntimeException("Bad zip entry");
+                        }
                         if (safeUnzip && !getCanonicalPath(targetFile).startsWith(targetPath)) {
                             //Unsafe
                             continue;
