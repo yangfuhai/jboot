@@ -148,14 +148,11 @@ public class FileUtil {
                         if (!targetFile.toPath().normalize().startsWith(targetPath)) {
                             throw new RuntimeException("Bad zip entry");
                         }
-                        if (safeUnzip && !getCanonicalPath(targetFile).startsWith(targetPath)) {
-                            //Unsafe
-                            continue;
+
+                        if (!targetFile.getParentFile().exists() && !targetFile.getParentFile().mkdirs()) {
+                            throw new IOException("Can not mkdirs for file: " + targetFile.getParentFile());
                         }
 
-                        if (!targetFile.getParentFile().exists()) {
-                            targetFile.getParentFile().mkdirs();
-                        }
                         os = new BufferedOutputStream(new FileOutputStream(targetFile));
                         is = zipFile.getInputStream(zipEntry);
                         byte[] buffer = new byte[4096];
@@ -176,7 +173,7 @@ public class FileUtil {
 
     private static boolean isNotSafeFile(String name) {
         name = name.toLowerCase();
-        return name.endsWith(".jsp") || name.endsWith(".jspx") || name.contains("..");
+        return name.endsWith(".jsp") || name.endsWith(".jspx");
     }
 
 
