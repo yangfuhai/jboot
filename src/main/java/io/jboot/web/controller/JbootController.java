@@ -752,6 +752,7 @@ public class JbootController extends Controller {
 
     /**
      * 建议使用 getFirstFileOnly，否则可能会有安全问题
+     *
      * @return
      */
     @NotAction
@@ -764,16 +765,17 @@ public class JbootController extends Controller {
 
     /**
      * 只获取第一个文件，若上传多个文件，则删除其他文件
+     *
      * @return
      */
     @NotAction
     public UploadFile getFirstFileOnly() {
         List<UploadFile> uploadFiles = getFiles();
-        if (uploadFiles == null || uploadFiles.isEmpty()){
+        if (uploadFiles == null || uploadFiles.isEmpty()) {
             return null;
         }
 
-        if (uploadFiles.size() == 1){
+        if (uploadFiles.size() == 1) {
             return uploadFiles.get(0);
         }
 
@@ -785,6 +787,61 @@ public class JbootController extends Controller {
         return uploadFiles.get(0);
     }
 
+
+    /**
+     * 值返回特定文件，其他文件则删除
+     *
+     * @param name
+     * @return
+     */
+    @NotAction
+    public UploadFile getFileOnly(String name) {
+        List<UploadFile> uploadFiles = getFiles();
+        if (uploadFiles == null || uploadFiles.isEmpty()) {
+            return null;
+        }
+
+        UploadFile ret = getFile(name);
+        for (UploadFile uploadFile : uploadFiles) {
+            if (uploadFile != ret) {
+                FileUtil.delete(uploadFile.getFile());
+            }
+        }
+
+        return uploadFiles.get(0);
+    }
+
+
+    /**
+     * 只返回特定的名称的文件，其他文件则删除
+     *
+     * @param names
+     * @return
+     */
+    @NotAction
+    public List<UploadFile> getFilesOnly(String... names) {
+        List<UploadFile> uploadFiles = getFiles();
+        if (uploadFiles == null || uploadFiles.isEmpty()) {
+            return null;
+        }
+
+        Map<String, UploadFile> filesMap = new HashMap<>();
+        for (String name : names) {
+            for (UploadFile uploadFile : uploadFiles) {
+                if (uploadFile.getParameterName().equals(name) && !filesMap.containsKey(name)) {
+                    filesMap.put(name, uploadFile);
+                }
+            }
+        }
+
+        for (UploadFile uploadFile : uploadFiles) {
+            if (!filesMap.containsValue(uploadFile)) {
+                FileUtil.delete(uploadFile.getFile());
+            }
+        }
+
+        return new ArrayList<>(filesMap.values());
+    }
 
 
     @NotAction
