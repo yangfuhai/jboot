@@ -16,6 +16,7 @@
 package io.jboot.web.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Sets;
 import com.jfinal.core.ActionException;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
@@ -819,28 +820,29 @@ public class JbootController extends Controller {
      * @return
      */
     @NotAction
-    public List<UploadFile> getFilesOnly(String... names) {
+    public Map<String, UploadFile> getFilesOnly(String... names) {
+        if (names == null || names.length == 0) {
+            throw new IllegalArgumentException("names can not be null or empty.");
+        }
+
         List<UploadFile> uploadFiles = getFiles();
         if (uploadFiles == null || uploadFiles.isEmpty()) {
             return null;
         }
 
+        Set<String> keys = Sets.newHashSet(names);
         Map<String, UploadFile> filesMap = new HashMap<>();
-        for (String name : names) {
-            for (UploadFile uploadFile : uploadFiles) {
-                if (uploadFile.getParameterName().equals(name) && !filesMap.containsKey(name)) {
-                    filesMap.put(name, uploadFile);
-                }
-            }
-        }
 
         for (UploadFile uploadFile : uploadFiles) {
-            if (!filesMap.containsValue(uploadFile)) {
+            String name = uploadFile.getParameterName();
+            if (keys.contains(name) && !filesMap.containsKey(name)) {
+                filesMap.put(name, uploadFile);
+            } else {
                 FileUtil.delete(uploadFile.getFile());
             }
         }
 
-        return new ArrayList<>(filesMap.values());
+        return filesMap;
     }
 
 
