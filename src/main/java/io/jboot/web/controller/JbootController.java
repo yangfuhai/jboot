@@ -857,6 +857,7 @@ public class JbootController extends Controller {
         if (data == null) {
             data = getAttrs();
         } else {
+           data = new HashMap(data);
             for (Enumeration<String> names = getAttrNames(); names.hasMoreElements(); ) {
                 String attrName = names.nextElement();
                 if (!data.containsKey(attrName)) {
@@ -864,6 +865,7 @@ public class JbootController extends Controller {
                 }
             }
         }
+
         return super.renderToString(template, data);
     }
 }
