@@ -76,7 +76,12 @@ public class Reader {
             //如果有ActionKey注解的URL路径,则使用该路径而不是方法名
             ActionKey actionKeyAnnotation = ReflectionUtils.getAnnotation(method, ActionKey.class);
             if(actionKeyAnnotation != null && !actionKeyAnnotation.value().isEmpty()){
-                operationPath = actionKeyAnnotation.value();
+                if (StringUtils.startsWith(actionKeyAnnotation.value(), "./")) {
+                    String actionName = StringUtils.substringAfter(actionKeyAnnotation.value(), "./");
+                    operationPath = JbootControllerManager.me().getPathByController((Class<? extends Controller>) context.getCls()) + "/" + actionName;
+                } else {
+                    operationPath = actionKeyAnnotation.value();
+                }
             }
             String httpMethod = extension.getHttpMethod(context, method);
 
