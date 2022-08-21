@@ -835,10 +835,17 @@ public class JbootController extends Controller {
 
         for (UploadFile uploadFile : uploadFiles) {
             String name = uploadFile.getParameterName();
+            if (StrUtil.isBlank(name)) {
+                FileUtil.delete(uploadFile);
+                continue;
+            }
+
+            name = name.trim();
+
             if (keys.contains(name) && !filesMap.containsKey(name)) {
                 filesMap.put(name, uploadFile);
             } else {
-                FileUtil.delete(uploadFile.getFile());
+                FileUtil.delete(uploadFile);
             }
         }
 
@@ -857,7 +864,7 @@ public class JbootController extends Controller {
         if (data == null) {
             data = getAttrs();
         } else {
-           data = new HashMap(data);
+            data = new HashMap(data);
             for (Enumeration<String> names = getAttrNames(); names.hasMoreElements(); ) {
                 String attrName = names.nextElement();
                 if (!data.containsKey(attrName)) {
