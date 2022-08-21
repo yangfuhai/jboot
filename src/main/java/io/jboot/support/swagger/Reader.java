@@ -75,10 +75,11 @@ public class Reader {
             String operationPath = JbootControllerManager.me().getPathByController((Class<? extends Controller>) context.getCls()) + methodPath;
             //如果有ActionKey注解的URL路径,则使用该路径而不是方法名
             ActionKey actionKeyAnnotation = ReflectionUtils.getAnnotation(method, ActionKey.class);
-            if(actionKeyAnnotation != null && !actionKeyAnnotation.value().isEmpty()){
-                if (StringUtils.startsWith(actionKeyAnnotation.value(), "./")) {
-                    String actionName = StringUtils.substringAfter(actionKeyAnnotation.value(), "./");
-                    operationPath = JbootControllerManager.me().getPathByController((Class<? extends Controller>) context.getCls()) + "/" + actionName;
+            if (actionKeyAnnotation != null && !actionKeyAnnotation.value().isEmpty()) {
+                if (actionKeyAnnotation.value().startsWith("./")) {
+                    String actionName = actionKeyAnnotation.value().substring(2);
+                    String pathByController = JbootControllerManager.me().getPathByController((Class<? extends Controller>) context.getCls());
+                    operationPath = pathByController.endsWith("/") ? (pathByController + actionName) : (pathByController + "/" + actionName);
                 } else {
                     operationPath = actionKeyAnnotation.value();
                 }
