@@ -1,3 +1,10 @@
+jboot v3.15.9:
+新增：Controller.getFileOnly(name) 和 getFilesOnly(names)
+优化：升级 Jsoup 等相关依赖到最新版本
+修复：当 ActionKey 注解使用 ./ 相对路径时，swagger文档中的 path 会生成包含 ./ 的错误API路径的问题
+
+
+
 jboot v3.15.8:
 新增：FileUtil.delete 方法
 新增：JbootController.getFirstFileOnly() 方法
