@@ -266,7 +266,6 @@ public class JbootAopFactory extends AopFactory {
     private Object createFieldObjectByRPCComponent(Object targetObject, Field field, RPCInject rpcInject) {
         try {
             Class<?> fieldInjectedClass = field.getType();
-
             JbootrpcReferenceConfig config = ReferenceConfigCache.get(fieldInjectedClass, rpcInject);
             Jbootrpc jbootrpc = JbootrpcManager.me().getJbootrpc();
             return jbootrpc.serviceObtain(fieldInjectedClass, config);
