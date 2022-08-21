@@ -18,9 +18,11 @@ package io.jboot.utils;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
+import com.jfinal.upload.UploadFile;
 
 import java.io.*;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -198,6 +200,23 @@ public class FileUtil {
         if (!file.delete()) {
             LogKit.error("file {} can not deleted!", getCanonicalPath(file));
         }
+    }
+
+    public static void delete(UploadFile file) {
+        if (file == null) {
+            return;
+        }
+
+        delete(file.getFile());
+    }
+
+
+    public static void delete(List<UploadFile> files) {
+        if (files == null) {
+            return;
+        }
+
+        files.forEach(FileUtil::delete);
     }
 
 }
