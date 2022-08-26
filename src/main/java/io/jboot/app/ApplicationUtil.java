@@ -18,8 +18,10 @@ package io.jboot.app;
 import io.jboot.app.config.JbootConfigManager;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 public class ApplicationUtil {
 
@@ -68,7 +70,13 @@ public class ApplicationUtil {
 
         // 在某些情况下 通过 java -jar 运行时，会以 /config/ 结束
         if (urlStr.endsWith("/config/")) {
-            File urlPath = new File(url.getPath());
+            File urlPath;
+            try {
+                //中文目录乱码的问题
+                urlPath = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                urlPath = new File(url.getPath());
+            }
             return !urlPath.exists() || !urlPath.isDirectory();
         }
 
