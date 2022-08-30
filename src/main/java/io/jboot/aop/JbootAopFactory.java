@@ -362,7 +362,7 @@ public class JbootAopFactory extends AopFactory {
         for (Class<?> configurationClass : configurationClasses) {
             Object configurationObj = ClassUtil.newInstance(configurationClass, false);
             if (configurationObj == null) {
-                throw new NullPointerException("can not newInstance for class : " + configurationClass);
+                throw new NullPointerException("Can not new instance for class: " + configurationClass.getName());
             }
             Method[] methods = configurationClass.getDeclaredMethods();
             for (Method method : methods) {
@@ -375,8 +375,8 @@ public class JbootAopFactory extends AopFactory {
 
                     String beanName = StrUtil.obtainDefault(AnnotationUtil.get(beanAnnotation.name()), method.getName());
                     if (beansCache.containsKey(beanName)) {
-                        throw new JbootException("application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
-                                + ", can not add again by method: " + ClassUtil.buildMethodString(method));
+                        throw new JbootException("Application has contains beanName \"" + beanName + "\" for " + getBean(beanName)
+                                + ", Can not add again by method: " + ClassUtil.buildMethodString(method));
                     }
 
                     try {
