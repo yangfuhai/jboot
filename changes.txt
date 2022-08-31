@@ -1,3 +1,10 @@
+jboot v3.15.10:
+优化：增强 http 工具类，默认支持携带 cookie 重定向
+优化：升级 Jsoup 到 v1.15.3 最新版本
+修复：对在中文目录下部署时，可能对环境判断错误的问题
+
+
+
 jboot v3.15.9:
 新增：Controller.getFileOnly(name) 和 getFilesOnly(names)
 优化：升级 Jsoup 等相关依赖到最新版本

@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.15.10-SNAPSHOT</version>
+    <version>3.15.10</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
