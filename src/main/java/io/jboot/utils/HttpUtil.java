@@ -118,6 +118,19 @@ public class HttpUtil {
      * @param url
      * @param paras
      * @param headers
+     * @return
+     */
+    public static String httpPost(String url, Map<String, Object> paras, Map<String, String> headers) {
+        return httpPost(url, paras, headers, null);
+    }
+
+
+    /**
+     * Http post 操作
+     *
+     * @param url
+     * @param paras
+     * @param headers
      * @param postData
      * @return
      */
@@ -205,7 +218,6 @@ public class HttpUtil {
      * @return
      */
     public static String upload(String url, Map<String, Object> paras, Map<String, String> headers, File file) {
-
         Map<String, Object> newParas = new HashMap();
         if (paras != null) {
             newParas.putAll(paras);
@@ -223,7 +235,6 @@ public class HttpUtil {
     public static JbootHttpResponse handle(JbootHttpRequest request) {
         return JbootHttpManager.me().getJbootHttp().handle(request);
     }
-
 
 
 }

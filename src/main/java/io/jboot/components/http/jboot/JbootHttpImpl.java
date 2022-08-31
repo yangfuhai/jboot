@@ -27,12 +27,14 @@ import io.jboot.utils.StrUtil;
 
 import javax.net.ssl.*;
 import java.io.*;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -78,8 +80,14 @@ public class JbootHttpImpl implements JbootHttp {
                 else {
                     String uploadBodyString = request.getUploadBodyString();
                     if (StrUtil.isNotEmpty(uploadBodyString)) {
+                        byte[] bytes = uploadBodyString.getBytes(request.getCharset());
+
+                        if (StrUtil.isBlank(request.getHeader("Content-Length"))) {
+                            connection.setRequestProperty("Content-Length", String.valueOf(bytes.length));
+                        }
+
                         try (OutputStream outStream = connection.getOutputStream();) {
-                            outStream.write(uploadBodyString.getBytes(request.getCharset()));
+                            outStream.write(bytes);
                             outStream.flush();
                         }
                     }
@@ -88,12 +96,19 @@ public class JbootHttpImpl implements JbootHttp {
 
             //get 请求
             else {
-                connection.setInstanceFollowRedirects(request.isInstanceFollowRedirects());
                 connection.connect();
             }
 
+            int responseCode = connection.getResponseCode();
 
-            inStream = getInputStream(connection);
+            //自动重定向
+            if (responseCode >= 300 && responseCode < 400 && request.isAutoRedirect()) {
+                processRedirect(request, response, connection);
+                return;
+            }
+
+
+            inStream = getInputStream(connection, responseCode);
 
             response.setContentType(connection.getContentType());
             response.setResponseCode(connection.getResponseCode());
@@ -114,16 +129,58 @@ public class JbootHttpImpl implements JbootHttp {
             }
 
             QuietlyUtil.closeQuietly(inStream, response);
-
         }
     }
 
-    private InputStream getInputStream(HttpURLConnection connection) throws IOException {
 
-        InputStream stream = connection.getResponseCode() >= 400
-                ? connection.getErrorStream()
-                : connection.getInputStream();
+    /**
+     * 手动重定向
+     *
+     * @param request
+     * @param response
+     * @param connection
+     */
+    private void processRedirect(JbootHttpRequest request, JbootHttpResponse response, HttpURLConnection connection) throws IOException {
+        if (request.getCurrentRedirectCount() > request.getMaxRedirectCount()) {
+            throw new IOException("Exceeded redirect count.");
+        }
 
+
+        String location = connection.getHeaderField("Location");
+        request.setCurrentRedirectCount(request.getCurrentRedirectCount() + 1);
+
+        //绝对路径
+        if (location.startsWith("/")) {
+            int firstSlash = request.getRequestUrl().indexOf("/", 8); // 8  == "https://".length()
+            location = request.getRequestUrl().substring(0, firstSlash) + location;
+        }
+
+        //相对路径
+        else if (!location.toLowerCase().startsWith("http")) {
+            int lastSlash = request.getRequestUrl().lastIndexOf("/");
+            location = request.getRequestUrl().substring(0, lastSlash + 1) + location;
+        }
+
+        //携带 cookie
+        String responseCookieString = connection.getHeaderField("Set-Cookie");
+        if (StrUtil.isNotBlank(responseCookieString)) {
+            List<HttpCookie> cookies = HttpCookie.parse(responseCookieString);
+            StringBuilder cookie = new StringBuilder(StrUtil.obtainDefault(request.getHeader("Cookie"), ""));
+            for (HttpCookie httpCookie : cookies) {
+                cookie.append(httpCookie.getName()).append("=").append(httpCookie.getValue()).append("; ");
+            }
+            request.addHeader("Cookie", cookie.toString());
+        }
+
+        request.setRequestUrl(location);
+        request.setMethod(JbootHttpRequest.METHOD_GET);
+
+        doProcess(request, response);
+    }
+
+
+    private InputStream getInputStream(HttpURLConnection connection, int responseCode) throws IOException {
+        InputStream stream = responseCode >= 400 ? connection.getErrorStream() : connection.getInputStream();
         if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
             return new GZIPInputStream(stream);
         } else {
@@ -131,6 +188,7 @@ public class JbootHttpImpl implements JbootHttp {
         }
 
     }
+
 
     private void uploadByMultipart(JbootHttpRequest request, HttpURLConnection connection) throws IOException {
         String endFlag = "\r\n";
@@ -196,6 +254,7 @@ public class JbootHttpImpl implements JbootHttp {
         connection.setReadTimeout(request.getReadTimeOut());
         connection.setConnectTimeout(request.getConnectTimeOut());
         connection.setRequestMethod(request.getMethod());
+        connection.setInstanceFollowRedirects(request.isInstanceFollowRedirects());
 
         //如果 reqeust 的 header 不配置 content-Type, 使用默认的
         connection.setRequestProperty("Content-Type", request.getContentType());

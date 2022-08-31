@@ -75,13 +75,22 @@ public class JbootHttpRequest {
     private boolean readBody = true;
 
     // 遇到重定向是否自动跟随
-    private boolean instanceFollowRedirects = true;
+    private boolean instanceFollowRedirects = false;
 
     // 自定义 sslContext
     private SSLContext sslContext;
 
     // 自定义 http 代理
     private HttpProxyInfo httpProxyInfo;
+
+    // 是否自动重定向（手动实现的，而非）
+    private boolean autoRedirect = true;
+
+    // 最大的重定向次数
+    private int maxRedirectCount = 3;
+
+    // 当前的重定向次数
+    private int currentRedirectCount = 0;
 
 
     public static JbootHttpRequest create(String url) {
@@ -235,6 +244,10 @@ public class JbootHttpRequest {
 
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    public String getHeader(String name){
+        return headers != null ? headers.get(name) : null;
     }
 
     public void setHeaders(Map<String, String> headers) {
@@ -401,5 +414,29 @@ public class JbootHttpRequest {
 
     public Proxy getProxy() {
         return httpProxyInfo != null ? httpProxyInfo.getProxy() : null;
+    }
+
+    public boolean isAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
+    }
+
+    public int getMaxRedirectCount() {
+        return maxRedirectCount;
+    }
+
+    public void setMaxRedirectCount(int maxRedirectCount) {
+        this.maxRedirectCount = maxRedirectCount;
+    }
+
+    public int getCurrentRedirectCount() {
+        return currentRedirectCount;
+    }
+
+    public void setCurrentRedirectCount(int currentRedirectCount) {
+        this.currentRedirectCount = currentRedirectCount;
     }
 }
