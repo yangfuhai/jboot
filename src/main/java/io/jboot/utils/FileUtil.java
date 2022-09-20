@@ -21,6 +21,8 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.upload.UploadFile;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -120,18 +122,18 @@ public class FileUtil {
 
     public static void unzip(String zipFilePath) throws IOException {
         String targetPath = zipFilePath.substring(0, zipFilePath.lastIndexOf("."));
-        unzip(zipFilePath, targetPath, true);
+        unzip(zipFilePath, targetPath, true, StandardCharsets.UTF_8);
     }
 
 
     public static void unzip(String zipFilePath, String targetPath) throws IOException {
-        unzip(zipFilePath, targetPath, true);
+        unzip(zipFilePath, targetPath, true, StandardCharsets.UTF_8);
     }
 
 
-    public static void unzip(String zipFilePath, String targetPath, boolean safeUnzip) throws IOException {
+    public static void unzip(String zipFilePath, String targetPath, boolean safeUnzip, Charset charset) throws IOException {
         targetPath = getCanonicalPath(new File(targetPath));
-        ZipFile zipFile = new ZipFile(zipFilePath);
+        ZipFile zipFile = new ZipFile(zipFilePath, charset);
         try {
             Enumeration<?> entryEnum = zipFile.entries();
             while (entryEnum.hasMoreElements()) {
