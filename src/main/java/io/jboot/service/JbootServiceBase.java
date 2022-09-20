@@ -16,9 +16,7 @@
 package io.jboot.service;
 
 import com.jfinal.kit.LogKit;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Model;
-import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.*;
 import io.jboot.db.model.Columns;
 import io.jboot.db.model.JbootModel;
 import io.jboot.utils.ClassUtil;
@@ -56,13 +54,28 @@ public class JbootServiceBase<M extends JbootModel<M>>
      * @return
      */
     protected M initDao() {
-        Type type = ClassUtil.getUsefulClass(getClass()).getGenericSuperclass();
+        Class<?> usefulClass = ClassUtil.getUsefulClass(getClass());
+        return createDao(usefulClass);
+    }
+
+
+    private M createDao(Class<?> usefulClass) {
+        Type type = usefulClass.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             Class<M> modelClass = (Class<M>) ((ParameterizedType) type).getActualTypeArguments()[0];
             return ClassUtil.newInstance(modelClass, false);
         }
+        //from child class
+        else if (type instanceof Class) {
+            Class<?> typeClass = (Class<?>) type;
+            if (typeClass != JbootServiceBase.class
+                    && typeClass != Object.class
+            ) {
+                return createDao(typeClass);
+            }
+        }
 
-        LogKit.warn("Not define Model class in Servlce: " + ClassUtil.getUsefulClass(getClass()));
+        LogKit.warn("Not define Model class in service: " +usefulClass);
         return null;
     }
 
