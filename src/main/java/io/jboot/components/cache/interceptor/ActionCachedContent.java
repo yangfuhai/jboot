@@ -145,8 +145,6 @@ class ActionCachedContent implements Serializable {
         switch (renderType) {
             case RENDER_TEMPLATE:
                 return renderFactory.getTemplateRender(viewOrText);
-            case RENDER_XML:
-                return renderFactory.getXmlRender(viewOrText);
             case RENDER_JSON:
                 JsonRender jsonRender;
                 if (otherPara.get("jsonText") != null) {
@@ -162,8 +160,10 @@ class ActionCachedContent implements Serializable {
                 return jsonRender;
             case RENDER_TEXT:
                 return renderFactory.getTextRender(viewOrText, contentType);
+            case RENDER_XML:
+                return renderFactory.getXmlRender(viewOrText);
             default:
-                throw new IllegalArgumentException("@Cacheable can not support the renderType of the value: " + renderType);
+                throw new IllegalStateException("@Cacheable can not support the renderType of the value: " + renderType);
         }
     }
 }

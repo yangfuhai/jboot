@@ -132,14 +132,27 @@ public class CacheableInterceptor implements Interceptor {
     private void renderActionCachedContent(Controller controller, ActionCachedContent actionCachedContent) {
         Map<String, Object> attrs = actionCachedContent.getAttrs();
         if (attrs != null) {
-            attrs.forEach(controller::setAttr);
+            HttpServletRequest request = controller.getRequest();
+            attrs.forEach((key, value) -> {
+                Object existValue = request.getAttribute(key);
+                if (existValue != null) {
+                    value = existValue;
+                }
+                request.setAttribute(key, value);
+            });
         }
 
 
         Map<String, String> headers = actionCachedContent.getHeaders();
         if (headers != null) {
             HttpServletResponse response = controller.getResponse();
-            headers.forEach(response::addHeader);
+            headers.forEach((name, value) -> {
+                String existValue = response.getHeader(name);
+                if (existValue != null) {
+                    value = existValue;
+                }
+                response.setHeader(name, value);
+            });
         }
 
         controller.render(actionCachedContent.createRender());
