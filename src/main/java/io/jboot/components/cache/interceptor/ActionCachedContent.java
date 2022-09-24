@@ -16,21 +16,26 @@
 package io.jboot.components.cache.interceptor;
 
 import com.jfinal.render.*;
+import io.jboot.web.render.JbootRender;
 import io.jboot.web.render.JbootTemplateRender;
 import io.jboot.web.render.JbootXmlRender;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-class ActionCachedContent implements Serializable {
+public class ActionCachedContent implements Serializable {
 
-    private static final int RENDER_TEMPLATE = 0;
-    private static final int RENDER_XML = 1;
-    private static final int RENDER_JSON = 2;
-    private static final int RENDER_TEXT = 3;
+    private static final int RENDER_DEFAULT = 0;
+    private static final int RENDER_TEMPLATE = 1;
+    private static final int RENDER_XML = 2;
+    private static final int RENDER_JSON = 3;
+    private static final int RENDER_TEXT = 4;
 
     private static IRenderFactory renderFactory = RenderManager.me().getRenderFactory();
+    private static final Set<String> ignoreAttrs = new HashSet<>();
 
 
     private Map<String, String> headers;
@@ -40,6 +45,14 @@ class ActionCachedContent implements Serializable {
     private Integer renderType;
     private String viewOrText;
     private Map<String, Object> otherPara = null;
+
+    public static Set<String> getIgnoreAttrs() {
+        return ignoreAttrs;
+    }
+
+    public static void addIgnoreAttr(String attrName) {
+        ignoreAttrs.add(attrName);
+    }
 
     public ActionCachedContent(Render render) {
         if (render == null) {
@@ -56,6 +69,12 @@ class ActionCachedContent implements Serializable {
         else if (render instanceof JbootTemplateRender) {
             renderType = RENDER_TEMPLATE;
             contentType = ((JbootTemplateRender) render).getContentType();
+            viewOrText = render.getView();
+        }
+        // default
+        else if (render instanceof JbootRender) {
+            renderType = RENDER_DEFAULT;
+            contentType = ((JbootRender) render).getContentType();
             viewOrText = render.getView();
         }
         // text
@@ -92,9 +111,17 @@ class ActionCachedContent implements Serializable {
 
     public void setAttrs(Map<String, Object> attrs) {
         this.attrs = attrs;
+        if (this.attrs != null) {
+            for (String ignoreAttr : ignoreAttrs) {
+                this.attrs.remove(ignoreAttr);
+            }
+        }
     }
 
     public void addAttr(String key, Object value) {
+        if (ignoreAttrs.contains(key)) {
+            return;
+        }
         if (this.attrs == null) {
             this.attrs = new HashMap<>();
         }
@@ -143,6 +170,8 @@ class ActionCachedContent implements Serializable {
 
     public Render createRender() {
         switch (renderType) {
+            case RENDER_DEFAULT:
+                return renderFactory.getRender(viewOrText);
             case RENDER_TEMPLATE:
                 return renderFactory.getTemplateRender(viewOrText);
             case RENDER_JSON:

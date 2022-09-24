@@ -41,6 +41,7 @@ import java.util.*;
 public class CacheableInterceptor implements Interceptor {
 
     private static final String NULL_VALUE = "NULL_VALUE";
+    public static final String IGNORE_CACHED_ATTRS = "__ignore_cached_attrs";
 
     //是否开启 Controller 的 Action 缓存
     //可用在 dev 模式下关闭，生产环境开启的场景，方便调试数据
@@ -109,10 +110,18 @@ public class CacheableInterceptor implements Interceptor {
 
         ActionCachedContent cachedContent = new ActionCachedContent(controller.getRender());
 
+        // 忽略的缓存配置
+        Set<String> ignoreCachedAttrs = controller.getAttr(IGNORE_CACHED_ATTRS);
+        if (ignoreCachedAttrs != null) {
+            ignoreCachedAttrs.add(IGNORE_CACHED_ATTRS);
+        }
+
         HttpServletRequest request = controller.getRequest();
         for (Enumeration<String> names = request.getAttributeNames(); names.hasMoreElements(); ) {
             String name = names.nextElement();
-            cachedContent.addAttr(name, request.getAttribute(name));
+            if (ignoreCachedAttrs == null || !ignoreCachedAttrs.contains(name)) {
+                cachedContent.addAttr(name, request.getAttribute(name));
+            }
         }
 
         HttpServletResponse response = controller.getResponse();
