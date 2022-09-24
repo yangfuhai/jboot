@@ -130,15 +130,14 @@ public class CacheableInterceptor implements Interceptor {
      * @param actionCachedContent
      */
     private void renderActionCachedContent(Controller controller, ActionCachedContent actionCachedContent) {
-        Map<String, Object> attrs = actionCachedContent.getAttrs();
-        if (attrs != null) {
+        Map<String, Object> cachedAttrs = actionCachedContent.getAttrs();
+        if (cachedAttrs != null) {
             HttpServletRequest request = controller.getRequest();
-            attrs.forEach((key, value) -> {
-                Object existValue = request.getAttribute(key);
-                if (existValue != null) {
-                    value = existValue;
+            Set<String> existAttrNames = getRequestAttrNames(request);
+            cachedAttrs.forEach((cachedAttrName, value) -> {
+                if (!existAttrNames.contains(cachedAttrName)) {
+                    request.setAttribute(cachedAttrName, value);
                 }
-                request.setAttribute(key, value);
             });
         }
 
@@ -147,9 +146,9 @@ public class CacheableInterceptor implements Interceptor {
         if (headers != null) {
             HttpServletResponse response = controller.getResponse();
             headers.forEach((name, value) -> {
-                String existValue = response.getHeader(name);
-                if (existValue != null) {
-                    value = existValue;
+                String existHeaderValue = response.getHeader(name);
+                if (existHeaderValue != null) {
+                    value = existHeaderValue;
                 }
                 response.setHeader(name, value);
             });
@@ -158,6 +157,14 @@ public class CacheableInterceptor implements Interceptor {
         controller.render(actionCachedContent.createRender());
     }
 
+
+    private Set<String> getRequestAttrNames(HttpServletRequest request) {
+        Set<String> ret = new HashSet<>();
+        for (Enumeration<String> attrNames = request.getAttributeNames(); attrNames.hasMoreElements(); ) {
+            ret.add(attrNames.nextElement());
+        }
+        return ret;
+    }
 
     /**
      * Service 层的 Cacheable 使用
