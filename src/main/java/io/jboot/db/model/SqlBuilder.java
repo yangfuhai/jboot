@@ -36,10 +36,9 @@ public class SqlBuilder {
 
     public static String forDeleteByColumns(String alias, List<Join> joins, String table, List<Column> columns, char separator) {
         StringBuilder sqlBuilder = new StringBuilder(45);
-        sqlBuilder.append("DELETE FROM ")
-                .append(separator)
-                .append(table)
-                .append(separator);
+        sqlBuilder.append("DELETE FROM ");
+
+        appendTextWithSeparator(sqlBuilder, table, separator);
 
         buildAlias(sqlBuilder, alias);
         buildJoinSql(sqlBuilder, joins, separator);
@@ -131,19 +130,10 @@ public class SqlBuilder {
 
 
     private static void appendColumnName(StringBuilder sqlBuilder, Column column, char separator) {
-        if (column.getName().contains(".")) {
-            sqlBuilder.append(column.getName())
-                    .append(' ')
-                    .append(column.getLogic())
-                    .append(' ');
-        } else {
-            sqlBuilder.append(separator)
-                    .append(column.getName())
-                    .append(separator)
-                    .append(' ')
-                    .append(column.getLogic())
-                    .append(' ');
-        }
+        appendTextWithSeparator(sqlBuilder, column.getName(), separator);
+        sqlBuilder.append(' ')
+                .append(column.getLogic())
+                .append(' ');
     }
 
 
@@ -208,22 +198,26 @@ public class SqlBuilder {
 
 
     public static void appendBetweenLogic(StringBuilder sqlBuilder, Column column, char separator) {
-        sqlBuilder.append(separator)
-                .append(column.getName())
-                .append(separator)
-                .append(' ')
-                .append(column.getLogic());
-
+        appendTextWithSeparator(sqlBuilder, column.getName(), separator);
+        sqlBuilder.append(' ').append(column.getLogic());
         sqlBuilder.append(" ? AND ?");
     }
+
+
+    public static void appendTextWithSeparator(StringBuilder sqlBuilder, String text, char separator) {
+        if (text.indexOf(".") > 0) {
+            sqlBuilder.append(text);
+        } else {
+            sqlBuilder.append(separator).append(text).append(separator);
+        }
+    }
+
 
     public static StringBuilder forFindByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns, String orderBy, char separator) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT ");
         sqlBuilder.append(loadColumns)
-                .append(" FROM ")
-                .append(separator)
-                .append(table)
-                .append(separator);
+                .append(" FROM ");
+        appendTextWithSeparator(sqlBuilder, table, separator);
 
         buildAlias(sqlBuilder, alias);
         buildJoinSql(sqlBuilder, joins, separator);
@@ -257,10 +251,8 @@ public class SqlBuilder {
 
 
     public static String forPaginateFrom(String alias, List<Join> joins, String table, List<Column> columns, String orderBy, char separator) {
-        StringBuilder sqlBuilder = new StringBuilder(" FROM ")
-                .append(separator)
-                .append(table)
-                .append(separator);
+        StringBuilder sqlBuilder = new StringBuilder(" FROM ");
+        appendTextWithSeparator(sqlBuilder, table, separator);
 
         buildAlias(sqlBuilder, alias);
         buildJoinSql(sqlBuilder, joins, separator);
@@ -273,6 +265,7 @@ public class SqlBuilder {
         return sqlBuilder.toString();
     }
 
+
     public static void buildJoinSql(StringBuilder sqlBuilder, List<Join> joins, char separator) {
         if (joins == null || joins.isEmpty()) {
             return;
@@ -282,10 +275,8 @@ public class SqlBuilder {
                 continue;
             }
 
-            sqlBuilder.append(join.getType())
-                    .append(separator)
-                    .append(join.getTable())
-                    .append(separator);
+            sqlBuilder.append(join.getType());
+            appendTextWithSeparator(sqlBuilder, join.getTable(), separator);
 
             buildAlias(sqlBuilder, join.getAs());
 
@@ -303,10 +294,8 @@ public class SqlBuilder {
 
 
     public static String forFindCountByColumns(String alias, List<Join> joins, String table, String loadColumns, List<Column> columns, char separator) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT count(" + loadColumns + ") FROM ")
-                .append(separator)
-                .append(table)
-                .append(separator);
+        StringBuilder sqlBuilder = new StringBuilder("SELECT count(" + loadColumns + ") FROM ");
+        appendTextWithSeparator(sqlBuilder, table, separator);
 
         buildAlias(sqlBuilder, alias);
         buildJoinSql(sqlBuilder, joins, separator);
