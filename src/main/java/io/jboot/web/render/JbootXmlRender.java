@@ -19,7 +19,7 @@ package io.jboot.web.render;
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
  * @version V1.0
  */
-public class JbootXmlRender extends JbootRender {
+public class JbootXmlRender extends JbootTemplateRender {
 
     private static final String contentType = "text/xml; charset=" + getEncoding();
 

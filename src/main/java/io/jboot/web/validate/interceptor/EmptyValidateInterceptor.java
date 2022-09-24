@@ -88,7 +88,7 @@ public class EmptyValidateInterceptor implements Interceptor {
                 }
             } else {
                 throw new IllegalArgumentException("@EmptyValidate not support form type : " + formType + ", " +
-                        "see : io.jboot.web.controller.validate.FormType");
+                        "see: io.jboot.web.controller.validate.FormType");
             }
 
             if (paraValue == null || paraValue.trim().length() == 0) {
@@ -100,6 +100,7 @@ public class EmptyValidateInterceptor implements Interceptor {
                         , AnnotationUtil.get(emptyParaValidate.htmlPath())
                         , formAnnotation.errorCode()
                 );
+
                 return false;
             }
         }

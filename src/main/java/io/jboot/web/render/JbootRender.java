@@ -34,7 +34,7 @@ import java.util.Map;
 public class JbootRender extends Render {
 
     private static Engine engine;
-    private static final String contentType = "text/html; charset=" + getEncoding();
+    private static String contentType = "text/html; charset=" + getEncoding();
     private static JbootWebCdnConfig cdnConfig = Jboot.config(JbootWebCdnConfig.class);
 
     private Engine getEngine() {

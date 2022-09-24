@@ -42,7 +42,6 @@ public class ValidateInterceptorUtil {
     }
 
 
-
     static String buildErrorMessage(Invocation inv, String annotation) {
         StringBuilder sb = new StringBuilder();
         sb.append("method \"").append(inv.getController().getClass().getName())
@@ -74,7 +73,7 @@ public class ValidateInterceptorUtil {
                 }
                 break;
             case ValidateRenderType.JSON:
-                Ret baseRet =  Ret.fail("message", message)
+                Ret baseRet = Ret.fail("message", message)
                         .set("reason", reason)
                         .set("errorCode", errorCode)
                         .setIfNotNull("formName", formName);
@@ -96,8 +95,10 @@ public class ValidateInterceptorUtil {
     }
 
 
-    public static interface ValidExceptionRetBuilder{
+    public static interface ValidExceptionRetBuilder {
+
         ValidExceptionRetBuilder DEFAULT_BUILDER = ret -> ret;
+
         Ret build(Ret baseRet);
     }
 

@@ -23,13 +23,10 @@ import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import com.jfinal.template.TemplateException;
 import io.jboot.app.JbootApplicationConfig;
-import io.jboot.components.cache.ActionCache;
 import io.jboot.components.valid.ValidErrorRender;
 import io.jboot.components.valid.ValidException;
 import io.jboot.components.valid.ValidUtil;
 import io.jboot.utils.ClassUtil;
-import io.jboot.web.cached.CacheSupportResponseProxy;
-import io.jboot.web.cached.CachedContent;
 import io.jboot.web.controller.JbootControllerContext;
 import io.jboot.web.render.JbootErrorRender;
 import io.jboot.web.render.JbootRenderFactory;
@@ -162,13 +159,6 @@ public class JbootActionHandler extends ActionHandler {
     }
 
     protected void doAfterRender(Action action, Controller controller) {
-        // Controller 缓存的支持，必须在 render() 执行之后，才能通过 response 获取缓存信息
-        if (controller.getResponse() instanceof CacheSupportResponseProxy) {
-            CacheSupportResponseProxy responseProxy = (CacheSupportResponseProxy) controller.getResponse();
-            CachedContent cachedContent = CachedContent.fromResponseProxy(responseProxy);
-            ActionCache.putDataToCache(responseProxy.getCacheName(), responseProxy.getCacheKey(),
-                    cachedContent, responseProxy.getCacheLiveSeconds());
-        }
     }
 
 

@@ -18,12 +18,10 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.CPI;
 import com.jfinal.core.Controller;
 import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.annotation.CachePut;
 import io.jboot.utils.AnnotationUtil;
-import io.jboot.web.cached.CacheSupportResponseProxy;
 
 import java.lang.reflect.Method;
 
@@ -63,15 +61,9 @@ public class CachePutInterceptor implements Interceptor {
 
         Controller controller = inv.getController();
 
-        CacheSupportResponseProxy responseProxy = new CacheSupportResponseProxy(controller.getResponse());
-        responseProxy.setCacheName(cacheName);
-        responseProxy.setCacheKey(cacheKey);
-        responseProxy.setCacheLiveSeconds(cachePut.liveSeconds());
-
-        //让 Controller 持有缓存的 responseProxy
-        CPI._init_(controller, CPI.getAction(controller), controller.getRequest(), responseProxy, controller.getPara());
-
         inv.invoke();
+
+        CacheableInterceptor.cacheActionContent(cacheName, cacheKey, cachePut.liveSeconds(), controller);
     }
 
 

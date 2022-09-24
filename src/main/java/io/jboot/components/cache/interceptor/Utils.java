@@ -115,8 +115,8 @@ class Utils {
 
     public static void ensureCacheNameNotBlank(Method method, String cacheName) {
         if (StrUtil.isBlank(cacheName)) {
-            throw new JbootException(String.format("Cache name must not empty or blank in method: " +
-                    ClassUtil.buildMethodString(method)));
+            throw new IllegalStateException("Cache Name must not empty or blank in method: " +
+                    ClassUtil.buildMethodString(method));
         }
     }
 

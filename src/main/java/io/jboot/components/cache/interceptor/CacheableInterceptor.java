@@ -18,10 +18,8 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
-import com.jfinal.core.CPI;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Page;
-import io.jboot.components.cache.ActionCache;
 import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.annotation.Cacheable;
 import io.jboot.db.model.JbootModel;
@@ -29,14 +27,11 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ModelUtil;
-import io.jboot.web.cached.CacheSupportResponseProxy;
-import io.jboot.web.cached.CachedContent;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 缓存操作的拦截器
@@ -91,34 +86,65 @@ public class CacheableInterceptor implements Interceptor {
 
         Controller controller = inv.getController();
 
-        CachedContent cachedContent = ActionCache.get(cacheName, cacheKey);
-        if (cachedContent != null) {
-            writeCachedContent(controller, cachedContent);
+        ActionCachedContent actionCachedContent = AopCache.get(cacheName, cacheKey);
+        if (actionCachedContent != null) {
+            renderActionCachedContent(controller, actionCachedContent);
             return;
         }
 
-
-        CacheSupportResponseProxy responseProxy = new CacheSupportResponseProxy(controller.getResponse());
-        responseProxy.setCacheName(cacheName);
-        responseProxy.setCacheKey(cacheKey);
-        responseProxy.setCacheLiveSeconds(cacheable.liveSeconds());
-
-        //让 Controller 持有缓存的 responseProxy
-        CPI._init_(controller, CPI.getAction(controller), controller.getRequest(), responseProxy, controller.getPara());
-
         inv.invoke();
-
+        cacheActionContent(cacheName, cacheKey, cacheable.liveSeconds(), controller);
     }
 
 
-    private void writeCachedContent(Controller controller, CachedContent cachedContent) {
+    /**
+     * 对 action 内容进行缓存
+     *
+     * @param cacheName
+     * @param cacheKey
+     * @param liveSeconds
+     * @param controller
+     */
+    public static void cacheActionContent(String cacheName, String cacheKey, int liveSeconds, Controller controller) {
+
+        ActionCachedContent cachedContent = new ActionCachedContent(controller.getRender());
+
+        HttpServletRequest request = controller.getRequest();
+        for (Enumeration<String> names = request.getAttributeNames(); names.hasMoreElements(); ) {
+            String name = names.nextElement();
+            cachedContent.addAttr(name, request.getAttribute(name));
+        }
+
         HttpServletResponse response = controller.getResponse();
-        Map<String, String> headers = cachedContent.getHeaders();
-        if (headers != null && !headers.isEmpty()) {
+        Collection<String> headerNames = response.getHeaderNames();
+        headerNames.forEach(name -> cachedContent.addHeader(name, response.getHeader(name)));
+
+        AopCache.putDataToCache(cacheName, cacheKey, cachedContent, liveSeconds);
+    }
+
+
+    /**
+     * 渲染缓存的 ActionCachedContent
+     *
+     * @param controller
+     * @param actionCachedContent
+     */
+    private void renderActionCachedContent(Controller controller, ActionCachedContent actionCachedContent) {
+        Map<String, Object> attrs = actionCachedContent.getAttrs();
+        if (attrs != null) {
+            attrs.forEach(controller::setAttr);
+        }
+
+
+        Map<String, String> headers = actionCachedContent.getHeaders();
+        if (headers != null) {
+            HttpServletResponse response = controller.getResponse();
             headers.forEach(response::addHeader);
         }
-        controller.render(cachedContent.createRender());
+
+        controller.render(actionCachedContent.createRender());
     }
+
 
     /**
      * Service 层的 Cacheable 使用
