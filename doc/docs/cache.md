@@ -28,7 +28,7 @@ Jboot 定位为高性能的微服务框架，然而高性能离不开合理的�
 
 默认情况下，用户无需做任何配置就可以使用 Jboot 的缓存功能，默认情况下 Jboot 是使用 `caffeine` 作为 Jboot 的缓存方案。
 
-如果需要修把 `caffeine` 方案修改为使用 `redis` ，则可以添加如下的配置：
+如需把 `caffeine` 方案修改为使用 `redis` ，则可以添加如下的配置：
 
 ```properties
 jboot.cache.type = redis
@@ -194,3 +194,59 @@ public class CommentServiceImpl implements CommentService {
 - `getCommentByIdWithCacheTime` 使用 `@Cacheable` 注解，但是添加了 `5秒` 的时间限制，因此，在 5秒钟内，无论调用多少次，返回的随机数都是一样的，5秒之后缓存被删除，再次调用之后会是一个新的随机数，新的随机数会继续缓存 5秒钟。
 - `updateCache` 使用了注解 `@CachePut` ，每次调用此方法之后，会更新掉该 id 值的缓存
 - `delCache` 使用了 `@CacheEvict` 注解，每次调用会删除该 id 值的缓存
+
+**@Cacheable 在 Controller 中使用时注意事项**
+
+默认情况下，@Cacheable 在 Controller 中使用时，系统会缓存 Request 的所有 Attributes 内容，这些内容可能来源于
+Controller 的 Action 通过 setAttr 进行设置，也可能来源于 Interceptor 设置。
+
+当下次请求的时候，Jboot 会直接使用缓存的数据进行直接渲染，而不再次执行 Controller 的 Action。
+
+但是，在很多时候，我们并不希望 Jboot 缓存所有的数据，比如：用户的登录状态。此时，我们可以通过如下的方法过滤掉缓存数据,
+保证每个请求都是最新的，而非缓存的数据。
+
+```java
+ActionCachedContent.addIgnoreAttr("ACCOUNT")
+```
+
+通过这个配置后，我们在拦截器 Interceptor 中添加的 ACCOUNT 属性，不会进行缓存。从而达到每次请求，都是都是最新的 ACCOUNT
+数据。
+
+```java
+class AccountInterceptor extends Interceptor {
+    
+    public void intercept(Invocation inv) {
+        Accont account = accountService.findBy....
+        inv.getController().setAttr("ACCOUNT",account);
+        
+        //....
+    }
+}
+```
+
+此时，虽然我们给 Controller 添加了 @Cacheable 属性，但是 ACCOUNT 的数据每个请求都是最新的。值得一提的是：
+
+```java
+ActionCachedContent.addIgnoreAttr("ACCOUNT")
+```
+是全局配置的，如果我们想要单独为每个请求配置不缓存的 attribute 时，可以在通过如下方式添加
+
+```java
+class AccountInterceptor extends Interceptor {
+
+    public void intercept(Invocation inv) {
+        Set<String> ignoreAttrs = new HashSet<>();
+        ignoreAttrs.add("attr1");
+        ignoreAttrs.add("attr2");
+        ignoreAttrs.add("attr...");
+
+        //设置当前请求不进行缓存的 attr 属性
+        inv.getController().set(CacheableInterceptor.IGNORE_CACHED_ATTRS,ignoreAttrs);
+
+        Accont account = accountService.findBy....
+        inv.getController().setAttr("ACCOUNT", account);
+
+        //....
+    }
+}
+```
