@@ -1,3 +1,12 @@
+jboot v3.16.0:
+优化：重构 @Cacheable 在 Controller 中的使用，使之更加灵活方便
+优化：FileUtil.unzip 方法，添加可以指定解压缩编码的参数
+优化：升级 JFinal、 jackson-core 等到最新版本
+修复：JbootServiceBase.initDao 在非泛型子类时初始化出错的问题
+修复：sqlbuilder 在使用别名 + between 时，生成的 SQL 出错的问题
+
+
+
 jboot v3.15.10:
 优化：增强 http 工具类，默认支持携带 cookie 重定向
 优化：升级 Jsoup 到 v1.15.3 最新版本

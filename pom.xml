@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.15.11-SNAPSHOT</version>
+    <version>3.16.0</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -41,13 +41,13 @@
 
 
     <properties>
-        <jfinal.version>5.0.2</jfinal.version>
+        <jfinal.version>5.0.3</jfinal.version>
         <jfinal-cos.version>2022.2</jfinal-cos.version>
         <jfinal-undertow.version>3.1</jfinal-undertow.version>
         <jfinal-weixin.version>3.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
-        <jackson.version>2.13.3</jackson.version>
+        <jackson.version>2.13.4</jackson.version>
         <mysql.version>5.1.49</mysql.version>
         <undertow.version>2.2.19.Final</undertow.version>
         <slf4j.version>1.7.36</slf4j.version>
@@ -72,7 +72,7 @@
         <resteasy.version>3.14.0.Final</resteasy.version>
         <seata.version>1.5.1</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.2.11</metrics.version>
+        <metrics.version>4.2.12</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -201,7 +201,7 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.29.1-GA</version>
+            <version>3.29.2-GA</version>
         </dependency>
 
 
