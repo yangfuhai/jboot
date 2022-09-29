@@ -752,15 +752,14 @@ public class JbootController extends Controller {
 
 
     /**
-     * 建议使用 getFirstFileOnly，否则可能会有安全问题
+     * 使用 getFirstFileOnly，否则恶意上传的安全问题
      *
      * @return
      */
     @NotAction
-    @Deprecated
     @Override
     public UploadFile getFile() {
-        return super.getFile();
+        return getFirstFileOnly();
     }
 
 
@@ -782,7 +781,7 @@ public class JbootController extends Controller {
 
         for (int i = 1; i < uploadFiles.size(); i++) {
             UploadFile uploadFile = uploadFiles.get(i);
-            FileUtil.delete(uploadFile.getFile());
+            FileUtil.delete(uploadFile);
         }
 
         return uploadFiles.get(0);
@@ -802,14 +801,16 @@ public class JbootController extends Controller {
             return null;
         }
 
-        UploadFile ret = getFile(name);
+        UploadFile ret = null;
         for (UploadFile uploadFile : uploadFiles) {
-            if (uploadFile != ret) {
-                FileUtil.delete(uploadFile.getFile());
+            if (ret == null && name.equals(uploadFile.getParameterName())) {
+                ret = uploadFile;
+            } else {
+                FileUtil.delete(uploadFile);
             }
         }
 
-        return uploadFiles.get(0);
+        return ret;
     }
 
 
@@ -834,16 +835,16 @@ public class JbootController extends Controller {
         Map<String, UploadFile> filesMap = new HashMap<>();
 
         for (UploadFile uploadFile : uploadFiles) {
-            String name = uploadFile.getParameterName();
-            if (StrUtil.isBlank(name)) {
+            String parameterName = uploadFile.getParameterName();
+            if (StrUtil.isBlank(parameterName)) {
                 FileUtil.delete(uploadFile);
                 continue;
             }
 
-            name = name.trim();
+            parameterName = parameterName.trim();
 
-            if (keys.contains(name) && !filesMap.containsKey(name)) {
-                filesMap.put(name, uploadFile);
+            if (keys.contains(parameterName) && !filesMap.containsKey(parameterName)) {
+                filesMap.put(parameterName, uploadFile);
             } else {
                 FileUtil.delete(uploadFile);
             }
