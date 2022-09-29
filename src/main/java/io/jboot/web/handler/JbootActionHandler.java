@@ -191,11 +191,17 @@ public class JbootActionHandler extends ActionHandler {
                     return;
                 } else {
                     render = returnValueRender;
+
+                    //重新设置到 Controller，JbootActionReporter 才能 Controller 获取 render 判断 render 类型
+                    controller.render(render);
                 }
             }
 
             if (render == null) {
                 render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
+
+                //重新设置到 Controller，JbootActionReporter 才能 Controller 获取 render 判断 render 类型
+                controller.render(render);
             }
 
             render.setContext(controller.getRequest(), controller.getResponse(), action.getViewPath()).render();

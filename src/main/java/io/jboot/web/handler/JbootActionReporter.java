@@ -31,6 +31,7 @@ import io.jboot.utils.ReflectUtil;
 import io.jboot.utils.RequestUtil;
 import io.jboot.utils.StrUtil;
 import io.jboot.web.controller.JbootController;
+import io.jboot.web.render.JbootReturnValueRender;
 import javassist.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +56,7 @@ public class JbootActionReporter {
     private static ActionReporter actionReporter = JFinal.me().getConstants().getActionReporter();
     private static boolean reportEnable = Jboot.isDevMode();
     private static boolean colorRenderEnable = true;
+    private static boolean reportAllText = false;
 
     private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
@@ -83,6 +85,14 @@ public class JbootActionReporter {
 
     public static void setReportEnable(boolean reportEnable) {
         JbootActionReporter.reportEnable = reportEnable;
+    }
+
+    public static boolean isReportAllText() {
+        return reportAllText;
+    }
+
+    public static void setReportAllText(boolean reportAllText) {
+        JbootActionReporter.reportAllText = reportAllText;
     }
 
     public static boolean isColorRenderEnable() {
@@ -219,15 +229,14 @@ public class JbootActionReporter {
             }
         }
 
-        appendRenderMessage(controller, sb);
+        appendRenderMessage(controller.getRender(), sb);
 
         sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n\n\n");
 
         writer.write(sb.toString());
     }
 
-    private static void appendRenderMessage(Controller controller, StringBuilder sb) {
-        Render render = controller.getRender();
+    private static void appendRenderMessage(Render render, StringBuilder sb) {
         if (render == null) {
             return;
         }
@@ -240,20 +249,14 @@ public class JbootActionReporter {
                 jsontext = "";
             }
             jsontext = jsontext.replace("\n", "");
-            if (jsontext.length() > 100) {
-                jsontext = jsontext.substring(0, 100) + "...";
-            }
-            sb.append("Render      : ").append(jsontext);
+            sb.append("Render      : ").append(getRenderText(jsontext));
         } else if (render instanceof TextRender) {
             String text = ((TextRender) render).getText();
             if (text == null) {
                 text = "";
             }
             text = text.replace("\n", "");
-            if (text.length() > 100) {
-                text = text.substring(0, 100) + "...";
-            }
-            sb.append("Render      : ").append(text);
+            sb.append("Render      : ").append(getRenderText(text));
         } else if (render instanceof FileRender) {
             File file = ReflectUtil.getFieldValue(render, "file");
             sb.append("Render      : ").append(file);
@@ -262,10 +265,25 @@ public class JbootActionReporter {
             sb.append("Redirect    : ").append(url);
         } else if (render instanceof NullRender) {
             sb.append("Render      :  null");
+        } else if (render instanceof JbootReturnValueRender) {
+            appendRenderMessage(((JbootReturnValueRender) render).getRealRender(), sb);
         } else {
             sb.append("Render      : ").append(ClassUtil.getUsefulClass(render.getClass()).getName());
         }
         sb.append("\n");
+    }
+
+
+    private static String getRenderText(String orignalText) {
+        if (StrUtil.isBlank(orignalText)) {
+            return "";
+        }
+
+        if (!reportAllText && orignalText.length() > 100) {
+            return orignalText.substring(0, 100) + "...";
+        }
+
+        return orignalText;
     }
 
 

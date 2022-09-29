@@ -157,6 +157,10 @@ public class JbootReturnValueRender extends Render {
                 || c == BigDecimal.class || c == BigInteger.class;
     }
 
+    public Render getRealRender(){
+        return render;
+    }
+
     public String getForwardTo() {
         return forwardTo;
     }
