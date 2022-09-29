@@ -100,17 +100,22 @@ public class FileUtil {
 
 
     public static void writeString(File file, String content, String charsetName) {
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }
         FileOutputStream fos = null;
         try {
+            ensuresParentExists(file);
             fos = new FileOutputStream(file, false);
             fos.write(content.getBytes(charsetName));
         } catch (Exception e) {
             LogKit.error(e.toString(), e);
         } finally {
             close(fos);
+        }
+    }
+
+    public static void ensuresParentExists(File currentFile) throws IOException {
+        if (!currentFile.getParentFile().exists()
+                && !currentFile.getParentFile().mkdirs()) {
+            throw new IOException("Can not mkdirs for file: " + currentFile.getParentFile());
         }
     }
 
@@ -149,12 +154,10 @@ public class FileUtil {
 
                         File targetFile = new File(targetPath, zipEntry.getName());
 
-                        if (!targetFile.toPath().normalize().startsWith(targetPath)) {
-                            throw new RuntimeException("Bad zip entry");
-                        }
+                        ensuresParentExists(targetFile);
 
-                        if (!targetFile.getParentFile().exists() && !targetFile.getParentFile().mkdirs()) {
-                            throw new IOException("Can not mkdirs for file: " + targetFile.getParentFile());
+                        if (!targetFile.toPath().normalize().startsWith(targetPath)) {
+                            throw new IOException("Bad zip entry");
                         }
 
                         os = new BufferedOutputStream(new FileOutputStream(targetFile));
@@ -200,7 +203,7 @@ public class FileUtil {
         }
 
         if (!file.delete()) {
-            LogKit.error("file {} can not deleted!", getCanonicalPath(file));
+            LogKit.error("File {} can not deleted!", getCanonicalPath(file));
         }
     }
 
