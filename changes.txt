@@ -1,9 +1,18 @@
+jboot v3.16.1:
+新增：APP 在启动的时候，输出 Local URL，方便通过控制台启动浏览器
+新增：FileUtil.ensuresParentExists() 方法
+新增：DAO.deleteAll() 方法
+修复：Controller 通过 return 渲染 Json 数据时，控制台不输出 Render 信息的问题
+修复：JbootController.getFileOnly(name) 返回的数据不正确
+
+
+
 jboot v3.16.0:
 优化：重构 @Cacheable 在 Controller 中的使用，使之更加灵活方便
 优化：FileUtil.unzip 方法，添加可以指定解压缩编码的参数
 优化：升级 JFinal、 jackson-core 等到最新版本
 修复：JbootServiceBase.initDao 在非泛型子类时初始化出错的问题
-修复：sqlbuilder 在使用别名 + between 时，生成的 SQL 出错的问题
+修复：Sqlbuilder 在使用别名 + between 时，生成的 SQL 出错的问题
 
 
 
