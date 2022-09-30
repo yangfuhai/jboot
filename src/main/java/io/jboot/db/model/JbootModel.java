@@ -457,6 +457,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
 
+    public boolean deleteAll() {
+        Columns columns = Columns.create();
+
+        //通过 processColumns 可以重构 deleteAll 的行为
+        processColumns(columns, "deleteAll");
+
+        String sql = _getDialect().forDeleteByColumns(alias, joins, _getTableName(), columns.getList());
+        return Db.use(_getConfig().getName()).update(sql, Util.getValueArray(columns.getList())) >= 1;
+    }
+
+
     public boolean batchDeleteByIds(Object... idValues) {
         if (idValues == null || idValues.length == 0) {
             return false;
