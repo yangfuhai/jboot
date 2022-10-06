@@ -107,8 +107,6 @@ public class JbootApplication {
         ApplicationUtil.printApplicationInfo(appConfig);
         ApplicationUtil.printClassPath();
 
-        printLocalURL(undertowConfig);
-
         return new JbootUndertowServer(undertowConfig)
                 .configWeb(webBuilder -> {
                     tryAddContenTypes(webBuilder);
@@ -120,22 +118,6 @@ public class JbootApplication {
                     }
                 }).onStart(builder);
     }
-
-
-    private static void printLocalURL(UndertowConfig config) {
-        String localUrlMsg = "JbootApplication Local URL: http://localhost:" + config.getPort() + getContextPathInfo(config);
-        if (config.isSslEnable()) {
-            localUrlMsg = localUrlMsg + ", https://localhost:" + config.getSslConfig().getPort() + getContextPathInfo(config);
-        }
-
-        System.out.println(localUrlMsg);
-    }
-
-
-    private static String getContextPathInfo(UndertowConfig config) {
-        return "/".equals(config.getContextPath()) ? "" : config.getContextPath();
-    }
-
 
 
     public static UndertowConfig createUndertowConfig(JbootApplicationConfig appConfig) {
