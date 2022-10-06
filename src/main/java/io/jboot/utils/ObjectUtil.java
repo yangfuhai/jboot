@@ -225,4 +225,19 @@ public class ObjectUtil {
         }
     }
 
+
+    public static <T> T obtainNotNull(T ... ts){
+        if (ts == null || ts.length == 0){
+            throw new IllegalArgumentException("Arguments is null or empty.");
+        }
+
+        for (T t : ts) {
+            if (t != null){
+                return t;
+            }
+        }
+
+        return null;
+    }
+
 }

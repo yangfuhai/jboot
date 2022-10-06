@@ -160,6 +160,21 @@ public class StrUtil extends StrKit {
         return isBlank(value) ? defaultValue : value;
     }
 
+
+    public static String obtainNotBlank(String... values) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Arguments is null or empty.");
+        }
+
+        for (String value : values) {
+            if (isNotBlank(value)) {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * 不是空数据，注意：空格不是空数据
      *
@@ -184,10 +199,11 @@ public class StrUtil extends StrKit {
 
     /**
      * null 或者 空内容字符串
-     *
+     * 使用 isBlank 代替
      * @param str
      * @return
      */
+    @Deprecated
     public static boolean isNullOrBlank(String str) {
         return isBlank(str);
     }
