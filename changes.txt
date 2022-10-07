@@ -1,3 +1,10 @@
+jboot v3.16.2 2022-10-07:
+新增：ObjectUtil.obtainNotNull 方法
+新增：StrUtil.obtainNotBlank 方法
+优化：升级 jfinal-undertow 到最新版本并移除 JbootApplication 的 URL 打印功功能。
+
+
+
 jboot v3.16.1:
 新增：APP 在启动的时候，输出 Local URL，方便通过控制台启动浏览器
 新增：FileUtil.ensuresParentExists() 方法
