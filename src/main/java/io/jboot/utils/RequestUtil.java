@@ -147,6 +147,10 @@ public class RequestUtil {
             }
         }
 
+        if ("0:0:0:0:0:0:0:1".equals(ip)) {
+            ip = "127.0.0.1";
+        }
+
         return ip;
     }
 
