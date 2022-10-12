@@ -41,6 +41,10 @@ public interface InterceptorBuilder {
 
     class Util {
 
+        public static boolean isChildClassOf(Class<?> childClass, Class<?> parentClass) {
+            return parentClass.isAssignableFrom(childClass);
+        }
+
         public static boolean isController(Class<?> serviceClass) {
             return Controller.class.isAssignableFrom(serviceClass);
         }
