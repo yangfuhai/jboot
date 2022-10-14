@@ -60,12 +60,14 @@ public class JbootResourceLoader {
             List<File> resourcesDirs = new ArrayList<>();
             findResourcesPath(srcRootPath, resourcesDirs);
 
+            String targetPath = classPath.endsWith("/config")
+                    ? new File(classPath,"..").getCanonicalPath() : classPath;
             for (File resourcesDir : resourcesDirs) {
-                startNewScanner(resourcesDir.getCanonicalFile(), classPath);
+                startNewScanner(resourcesDir.getCanonicalFile(), targetPath);
             }
 
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> JbootResourceLoader.this.stop()));
-            System.err.println("JbootResourceLoader started, Watched resource path name : " + resourcePathName);
+            Runtime.getRuntime().addShutdownHook(new Thread(JbootResourceLoader.this::stop));
+            System.err.println("JbootResourceLoader is started, and watching resource dir: " + resourcePathName);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,12 +75,12 @@ public class JbootResourceLoader {
     }
 
     public void stop() {
-        scanners.forEach(fileScanner -> fileScanner.stop());
-        System.out.println("JbootResourceLoader stoped ......");
+        scanners.forEach(FileScanner::stop);
+        System.out.println("JbootResourceLoader has stopped.");
     }
 
     private void findResourcesPath(File root, List<File> resourcesDirs) {
-        File[] dirs = root.listFiles(pathname -> pathname.isDirectory());
+        File[] dirs = root.listFiles(File::isDirectory);
         if (dirs == null || dirs.length == 0) {
             return;
         }
@@ -90,7 +92,7 @@ public class JbootResourceLoader {
             }
 
             if (dir.getName().equals(resourcePathName)
-                    && parentFile.getName().equals("main")) {
+                    && "main".equals(parentFile.getName())) {
                 resourcesDirs.add(dir);
             } else {
                 findResourcesPath(dir, resourcesDirs);
@@ -116,14 +118,16 @@ public class JbootResourceLoader {
 
                 //文件删除
                 if (FileScanner.ACTION_DELETE.equals(action)) {
-                    target.delete();
+                    if (!target.delete()){
+                        System.err.println("JbootResourceLoader can not delete file: " + target);
+                    }
                 }
                 //新增文件 或 修改文件
                 else {
                     try {
                         FileUtils.copyFile(new File(file), target);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.err.println("JbootResourceLoader copy file error: " + e.getMessage());
                     }
                 }
             }
