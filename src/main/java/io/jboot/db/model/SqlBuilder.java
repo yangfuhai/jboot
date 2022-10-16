@@ -15,6 +15,7 @@
  */
 package io.jboot.db.model;
 
+import com.jfinal.kit.LogKit;
 import io.jboot.utils.ArrayUtil;
 import io.jboot.utils.StrUtil;
 
@@ -223,6 +224,7 @@ public class SqlBuilder {
         buildJoinSql(sqlBuilder, joins, separator);
         buildWhereSql(sqlBuilder, columns, separator);
 
+        orderBy = escapeOrderBySql(orderBy);
         if (StrUtil.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
         }
@@ -257,6 +259,8 @@ public class SqlBuilder {
         buildAlias(sqlBuilder, alias);
         buildJoinSql(sqlBuilder, joins, separator);
         buildWhereSql(sqlBuilder, columns, separator);
+
+        orderBy = escapeOrderBySql(orderBy);
 
         if (StrUtil.isNotBlank(orderBy)) {
             sqlBuilder.append(" ORDER BY ").append(orderBy);
@@ -302,5 +306,24 @@ public class SqlBuilder {
         buildWhereSql(sqlBuilder, columns, separator);
 
         return sqlBuilder.toString();
+    }
+
+
+    public static String escapeOrderBySql(String orignalOrderBy) {
+        if (StrUtil.isNotBlank(orignalOrderBy) && !isValidOrderBySql(orignalOrderBy)) {
+            LogKit.error("Sql Error: order_by value has inject chars: " + orignalOrderBy);
+            return "";
+        }
+        return orignalOrderBy;
+    }
+
+
+    /**
+     * 仅支持字母、数字、下划线、空格、逗号、小数点（支持多个字段排序）
+     */
+    private static String SQL_ORDER_BY_PATTERN = "[a-zA-Z0-9_\\ \\,\\.]+";
+
+    private static boolean isValidOrderBySql(String value) {
+        return value.matches(SQL_ORDER_BY_PATTERN);
     }
 }
