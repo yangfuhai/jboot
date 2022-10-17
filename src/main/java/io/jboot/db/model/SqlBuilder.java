@@ -311,7 +311,7 @@ public class SqlBuilder {
 
     public static String escapeOrderBySql(String orignalOrderBy) {
         if (StrUtil.isNotBlank(orignalOrderBy) && !isValidOrderBySql(orignalOrderBy)) {
-            LogKit.error("Sql Error: order_by value has inject chars: " + orignalOrderBy);
+            LogKit.warn("Sql Warn: order_by value has inject chars and be filtered, order_by value: " + orignalOrderBy);
             return "";
         }
         return orignalOrderBy;
