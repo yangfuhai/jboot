@@ -619,6 +619,18 @@ public class JbootController extends Controller {
     }
 
 
+    @NotAction
+    public BigInteger getParaToBigInteger(int index) {
+        return toBigInteger(getTrimPara(index), null);
+    }
+
+
+    @NotAction
+    public BigInteger getParaToBigInteger(int index, BigInteger defaultValue) {
+        return toBigInteger(getTrimPara(index), defaultValue);
+    }
+
+
     /**
      * Returns the value of a request parameter and convert to BigInteger.
      *
@@ -649,6 +661,18 @@ public class JbootController extends Controller {
     @NotAction
     public BigInteger getBigInteger(String name, BigInteger defaultValue) {
         return toBigInteger(getTrimPara(name), defaultValue);
+    }
+
+
+    @NotAction
+    public BigInteger getBigInteger(int index) {
+        return toBigInteger(getTrimPara(index), null);
+    }
+
+
+    @NotAction
+    public BigInteger getBigInteger(int index, BigInteger defaultValue) {
+        return toBigInteger(getTrimPara(index), defaultValue);
     }
 
 
