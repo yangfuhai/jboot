@@ -1,3 +1,12 @@
+jboot v3.16.3 2022-10-17:
+新增：SqlBuilder.escapeOrderBySql 用于过滤 Order By 参数
+新增：InterceptorBuilder.Util.isChildClassOf 方法
+新增：JbootController.getParaToBigInteger(index) 方法
+优化：RequestUtil.getIpAddress() 对 127.0.0.1 的处理
+优化：JbootResourceLoader 的日志输出和目标路径的优化
+
+
+
 jboot v3.16.2 2022-10-07:
 新增：ObjectUtil.obtainNotNull 方法
 新增：StrUtil.obtainNotBlank 方法
