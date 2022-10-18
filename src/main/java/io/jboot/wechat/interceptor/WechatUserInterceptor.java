@@ -61,7 +61,7 @@ public class WechatUserInterceptor implements Interceptor {
             return;
         }
 
-        controller.doNotAlloVisitRedirect();
+        controller.doNotAllowVisitRedirect();
 
     }
 

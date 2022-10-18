@@ -192,7 +192,7 @@ public abstract class JbootWechatController extends JbootController {
     }
 
     @NotAction
-    public void doNotAlloVisitRedirect() {
+    public void doNotAllowVisitRedirect() {
         /**
          * 一般情况下，此方法是为了调整到其他页面，比如让用户扫描二维码之类的
          * 由子类去实现
