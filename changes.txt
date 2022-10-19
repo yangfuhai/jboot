@@ -1,3 +1,10 @@
+jboot v3.16.4 2022-10-19:
+优化：doNotAlloVisitRedirect 错别字
+优化：修改 CacheUtil.setCurrentPrefix() 方法为 setThreadCacheNamePrefix
+新增：添加 JbootCache.addThreadCacheNamePrefixIngore() 方法
+
+
+
 jboot v3.16.3 2022-10-17:
 新增：SqlBuilder.escapeOrderBySql 用于过滤 Order By 参数
 新增：InterceptorBuilder.Util.isChildClassOf 方法
