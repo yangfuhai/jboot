@@ -33,12 +33,12 @@ public class CacheUtil {
         return JbootCacheManager.me().getCache(name);
     }
 
-    public static JbootCache setCurrentPrefix(String cacheNamePrefix) {
-        return JbootCacheManager.me().getCache().setCurrentCacheNamePrefix(cacheNamePrefix);
+    public static JbootCache setThreadCacheNamePrefix(String cacheNamePrefix) {
+        return JbootCacheManager.me().getCache().setThreadCacheNamePrefix(cacheNamePrefix);
     }
 
-    public static void clearCurrentPrefix() {
-        JbootCacheManager.me().getCache().removeCurrentCacheNamePrefix();
+    public static void clearThreadCacheNamePrefix() {
+        JbootCacheManager.me().getCache().clearThreadCacheNamePrefix();
     }
 
     public static <T> T get(String cacheName, Object key) {

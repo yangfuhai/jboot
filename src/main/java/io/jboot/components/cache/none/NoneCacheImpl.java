@@ -34,13 +34,23 @@ public class NoneCacheImpl implements JbootCache {
     }
 
     @Override
-    public JbootCache setCurrentCacheNamePrefix(String cacheNamePrefix) {
+    public JbootCache setThreadCacheNamePrefix(String cacheNamePrefix) {
         return this;
     }
 
     @Override
-    public void removeCurrentCacheNamePrefix() {
+    public void clearThreadCacheNamePrefix() {
 
+    }
+
+    @Override
+    public boolean addThreadCacheNamePrefixIngore(String cacheName) {
+        return true;
+    }
+
+    @Override
+    public boolean removeThreadCacheNamePrefixIngore(String cacheName) {
+        return true;
     }
 
     @Override

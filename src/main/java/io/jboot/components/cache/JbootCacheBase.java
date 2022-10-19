@@ -18,6 +18,9 @@ package io.jboot.components.cache;
 
 import io.jboot.utils.StrUtil;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 public abstract class JbootCacheBase implements JbootCache {
 
     protected JbootCacheConfig config;
@@ -26,6 +29,7 @@ public abstract class JbootCacheBase implements JbootCache {
         this.config = config;
     }
 
+    private Set<String> ignoreThreadCacheNames = ConcurrentHashMap.newKeySet();
     private ThreadLocal<String> CACHE_NAME_PREFIX_TL = new ThreadLocal<>();
 
     @Override
@@ -34,7 +38,7 @@ public abstract class JbootCacheBase implements JbootCache {
     }
 
     @Override
-    public JbootCache setCurrentCacheNamePrefix(String cacheNamePrefix) {
+    public JbootCache setThreadCacheNamePrefix(String cacheNamePrefix) {
         if (StrUtil.isNotBlank(cacheNamePrefix)) {
             CACHE_NAME_PREFIX_TL.set(cacheNamePrefix);
         } else {
@@ -44,10 +48,20 @@ public abstract class JbootCacheBase implements JbootCache {
     }
 
     @Override
-    public void removeCurrentCacheNamePrefix() {
+    public void clearThreadCacheNamePrefix() {
         CACHE_NAME_PREFIX_TL.remove();
     }
 
+
+    @Override
+    public boolean addThreadCacheNamePrefixIngore(String cacheName) {
+        return ignoreThreadCacheNames.add(cacheName);
+    }
+
+    @Override
+    public boolean removeThreadCacheNamePrefixIngore(String cacheName) {
+        return ignoreThreadCacheNames.remove(cacheName);
+    }
 
     /**
      * 构建缓存名称
@@ -57,7 +71,11 @@ public abstract class JbootCacheBase implements JbootCache {
      */
     protected String buildCacheName(String cacheName) {
 
-        String cacheNamePrefix = CACHE_NAME_PREFIX_TL.get();
+        String cacheNamePrefix = null;
+
+        if (!ignoreThreadCacheNames.contains(cacheName)){
+            cacheNamePrefix = CACHE_NAME_PREFIX_TL.get();
+        }
 
         if (StrUtil.isBlank(cacheNamePrefix)) {
             cacheNamePrefix = config.getDefaultCachePrefix();

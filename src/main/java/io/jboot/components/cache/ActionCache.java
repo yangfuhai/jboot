@@ -12,12 +12,12 @@ public class ActionCache {
 
     private static JbootCache actionCache;
 
-    public static JbootCache setCurrentPrefix(String cacheNamePrefix) {
-        return getActionCache().setCurrentCacheNamePrefix(cacheNamePrefix);
+    public static JbootCache setThreadCacheNamePrefix(String cacheNamePrefix) {
+        return getActionCache().setThreadCacheNamePrefix(cacheNamePrefix);
     }
 
-    public static void clearCurrentPrefix() {
-        getActionCache().removeCurrentCacheNamePrefix();
+    public static void clearThreadCacheNamePrefix() {
+        getActionCache().clearThreadCacheNamePrefix();
     }
 
     static JbootCache getActionCache() {

@@ -22,9 +22,24 @@ import java.util.List;
 
 public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache {
 
-    JbootCache setCurrentCacheNamePrefix(String cacheNamePrefix);
+    //设置当前 线程 的缓存前缀
+    JbootCache setThreadCacheNamePrefix(String cacheNamePrefix);
 
-    void removeCurrentCacheNamePrefix();
+    //清除当前 线程 的缓存前缀
+    void clearThreadCacheNamePrefix();
+
+    //配置哪些缓存名称可以忽略线程前缀的影响
+    boolean addThreadCacheNamePrefixIngore(String cacheName);
+
+    default void addThreadCacheNamePrefixIngores(String... cacheNames) {
+        for (String cacheName : cacheNames) {
+            addThreadCacheNamePrefixIngore(cacheName);
+        }
+    }
+
+    //移除对 addThreadCacheNamePrefixIngore 的配置
+    boolean removeThreadCacheNamePrefixIngore(String cacheName);
+
 
     JbootCacheConfig getConfig();
 
