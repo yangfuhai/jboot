@@ -1,5 +1,6 @@
 package io.jboot.test.controller;
 
+import io.jboot.aop.annotation.DefaultValue;
 import io.jboot.components.cache.annotation.CacheEvict;
 import io.jboot.components.cache.annotation.Cacheable;
 import io.jboot.web.controller.JbootController;
@@ -32,6 +33,16 @@ public class CacheController extends JbootController {
 
     @Cacheable(name = "json99", liveSeconds = 3)
     public Map<String, Object> json99() {
+        System.out.println("json99() invoked!!!!!!!!!");
+        Map<String, Object> data = new HashMap<>();
+        data.put("age", 1);
+        data.put("name", "张三");
+        data.put("sex", 1);
+        return data;
+    }
+
+    @Cacheable(name = "json88", liveSeconds = 10)
+    public Map<String, Object> json88(@DefaultValue("3")Integer age) {
         System.out.println("json99() invoked!!!!!!!!!");
         Map<String, Object> data = new HashMap<>();
         data.put("age", 1);
