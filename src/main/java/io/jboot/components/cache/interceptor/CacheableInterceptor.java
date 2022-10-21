@@ -18,8 +18,12 @@ package io.jboot.components.cache.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.core.Action;
+import com.jfinal.core.CPI;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.render.Render;
+import com.jfinal.render.RenderManager;
 import io.jboot.components.cache.AopCache;
 import io.jboot.components.cache.annotation.Cacheable;
 import io.jboot.db.model.JbootModel;
@@ -27,6 +31,8 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ModelUtil;
+import io.jboot.web.render.JbootRenderFactory;
+import io.jboot.web.render.JbootReturnValueRender;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,7 +100,7 @@ public class CacheableInterceptor implements Interceptor {
         }
 
         inv.invoke();
-        cacheActionContent(cacheName, cacheKey, cacheable.liveSeconds(), controller);
+        cacheActionContent(cacheName, cacheKey, cacheable.liveSeconds(), inv, method);
     }
 
 
@@ -104,11 +110,20 @@ public class CacheableInterceptor implements Interceptor {
      * @param cacheName
      * @param cacheKey
      * @param liveSeconds
-     * @param controller
+     * @param inv
+     * @param method
      */
-    public static void cacheActionContent(String cacheName, String cacheKey, int liveSeconds, Controller controller) {
+    public static void cacheActionContent(String cacheName, String cacheKey, int liveSeconds, Invocation inv, Method method) {
 
-        ActionCachedContent cachedContent = new ActionCachedContent(controller.getRender());
+        Render render = getControllerRender(inv, method);
+
+        if (render == null){
+            return;
+        }
+
+        ActionCachedContent cachedContent = new ActionCachedContent(render);
+
+        Controller controller = inv.getController();
 
         // 忽略的缓存配置
         Set<String> ignoreCachedAttrs = controller.getAttr(IGNORE_CACHED_ATTRS);
@@ -129,6 +144,28 @@ public class CacheableInterceptor implements Interceptor {
         headerNames.forEach(name -> cachedContent.addHeader(name, response.getHeader(name)));
 
         AopCache.putDataToCache(cacheName, cacheKey, cachedContent, liveSeconds);
+    }
+
+
+    protected static final RenderManager renderManager = RenderManager.me();
+
+    private static Render getControllerRender(Invocation inv, Method method) {
+        Render render = inv.getController().getRender();
+        if (render == null && void.class != method.getReturnType()
+                && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
+
+            JbootRenderFactory factory = (JbootRenderFactory) renderManager.getRenderFactory();
+            JbootReturnValueRender returnValueRender = factory.getReturnValueRender(inv.getReturnValue());
+
+            //有可能为 null，比如 Forward 的情况
+            render = returnValueRender.getRealRender();
+
+        }else if (render == null) {
+            Action action = CPI.getAction(inv.getController());
+            render = renderManager.getRenderFactory().getDefaultRender(action.getViewPath() + action.getMethodName());
+        }
+
+        return render;
     }
 
 

@@ -183,7 +183,7 @@ public class JbootActionHandler extends ActionHandler {
                     && renderManager.getRenderFactory() instanceof JbootRenderFactory) {
 
                 JbootRenderFactory factory = (JbootRenderFactory) renderManager.getRenderFactory();
-                JbootReturnValueRender returnValueRender = factory.getReturnValueRender(action, invocation.getReturnValue());
+                JbootReturnValueRender returnValueRender = factory.getReturnValueRender(invocation.getReturnValue());
 
                 String forwardTo = returnValueRender.getForwardTo();
                 if (forwardTo != null) {
@@ -191,7 +191,6 @@ public class JbootActionHandler extends ActionHandler {
                     return;
                 } else {
                     render = returnValueRender;
-
                     //重新设置到 Controller，JbootActionReporter 才能 Controller 获取 render 判断 render 类型
                     controller.render(render);
                 }

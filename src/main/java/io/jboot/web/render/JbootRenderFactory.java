@@ -15,7 +15,6 @@
  */
 package io.jboot.web.render;
 
-import com.jfinal.core.Action;
 import com.jfinal.render.ContentType;
 import com.jfinal.render.ErrorRender;
 import com.jfinal.render.Render;
@@ -134,8 +133,8 @@ public class JbootRenderFactory extends RenderFactory {
         return new JbootCaptchaRender();
     }
 
-    public JbootReturnValueRender getReturnValueRender(Action action, Object returnValue) {
-        return new JbootReturnValueRender(action, returnValue);
+    public JbootReturnValueRender getReturnValueRender(Object returnValue) {
+        return new JbootReturnValueRender(returnValue);
     }
 
     public ValidErrorRender getValidErrorRender(ValidException validException) {

@@ -63,7 +63,7 @@ public class CachePutInterceptor implements Interceptor {
 
         inv.invoke();
 
-        CacheableInterceptor.cacheActionContent(cacheName, cacheKey, cachePut.liveSeconds(), controller);
+        CacheableInterceptor.cacheActionContent(cacheName, cacheKey, cachePut.liveSeconds(), inv , method);
     }
 
 
