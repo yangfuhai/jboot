@@ -1,3 +1,9 @@
+jboot v3.16.5 2022-10-23:
+修复：Controller 使用返回值渲染并使用 cacheable 注解对其缓存时出错的问题
+修复：ObjectUtil.convert() 在某些极端情况下错误的问题
+
+
+
 jboot v3.16.4 2022-10-19:
 优化：doNotAlloVisitRedirect 错别字
 优化：修改 CacheUtil.setCurrentPrefix() 方法为 setThreadCacheNamePrefix
