@@ -15,6 +15,7 @@
  */
 package io.jboot.utils;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -199,7 +200,18 @@ public class ObjectUtil {
         if (value instanceof Number) {
             return new Date(((Number) value).longValue());
         }
-
+        if (value instanceof Timestamp) {
+            return new Date(((Timestamp) value).getTime());
+        }
+        if (value instanceof LocalDate) {
+            return DateUtil.toDate((LocalDate) value);
+        }
+        if (value instanceof LocalDateTime) {
+            return DateUtil.toDate((LocalDateTime) value);
+        }
+        if (value instanceof LocalTime) {
+            return DateUtil.toDate((LocalTime) value);
+        }
         String s = value.toString();
         if (StrUtil.isNumeric(s)) {
             return new Date(Long.parseLong(s));
@@ -226,13 +238,13 @@ public class ObjectUtil {
     }
 
 
-    public static <T> T obtainNotNull(T ... ts){
-        if (ts == null || ts.length == 0){
+    public static <T> T obtainNotNull(T... ts) {
+        if (ts == null || ts.length == 0) {
             throw new IllegalArgumentException("Arguments is null or empty.");
         }
 
         for (T t : ts) {
-            if (t != null){
+            if (t != null) {
                 return t;
             }
         }
