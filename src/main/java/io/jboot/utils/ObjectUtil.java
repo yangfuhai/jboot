@@ -15,7 +15,6 @@
  */
 package io.jboot.utils;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -178,13 +177,13 @@ public class ObjectUtil {
         } else if (targetClass == byte[].class) {
             return value.toString().getBytes();
         } else if (targetClass == Date.class) {
-            return parseDate(value);
+            return DateUtil.parseDate(value);
         } else if (targetClass == LocalDateTime.class) {
-            return DateUtil.toLocalDateTime(parseDate(value));
+            return DateUtil.toLocalDateTime(DateUtil.parseDate(value));
         } else if (targetClass == LocalDate.class) {
-            return DateUtil.toLocalDate(parseDate(value));
+            return DateUtil.toLocalDate(DateUtil.parseDate(value));
         } else if (targetClass == LocalTime.class) {
-            return DateUtil.toLocalTime(parseDate(value));
+            return DateUtil.toLocalTime(DateUtil.parseDate(value));
         } else if (targetClass == Short.class || targetClass == short.class) {
             if (value instanceof Number) {
                 return ((Number) value).shortValue();
@@ -195,30 +194,6 @@ public class ObjectUtil {
         throw new RuntimeException("\"" + targetClass.getName() + "\" can not be parsed.");
     }
 
-
-    private static Date parseDate(Object value) {
-        if (value instanceof Number) {
-            return new Date(((Number) value).longValue());
-        }
-        if (value instanceof Timestamp) {
-            return new Date(((Timestamp) value).getTime());
-        }
-        if (value instanceof LocalDate) {
-            return DateUtil.toDate((LocalDate) value);
-        }
-        if (value instanceof LocalDateTime) {
-            return DateUtil.toDate((LocalDateTime) value);
-        }
-        if (value instanceof LocalTime) {
-            return DateUtil.toDate((LocalTime) value);
-        }
-        String s = value.toString();
-        if (StrUtil.isNumeric(s)) {
-            return new Date(Long.parseLong(s));
-        }
-
-        return DateUtil.parseDate(s);
-    }
 
     public static Object getPrimitiveDefaultValue(Class<?> paraClass) {
         if (paraClass == int.class || paraClass == long.class || paraClass == float.class || paraClass == double.class) {

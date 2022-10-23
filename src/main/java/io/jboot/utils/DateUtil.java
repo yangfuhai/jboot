@@ -17,6 +17,7 @@ package io.jboot.utils;
 
 import com.jfinal.kit.SyncWriteMap;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -102,6 +103,30 @@ public class DateUtil {
 
     public static String toString(LocalTime localTime, String pattern) {
         return localTime.format(getDateTimeFormatter(pattern));
+    }
+
+
+    public static Date parseDate(Object value) {
+        if (value instanceof Number) {
+            return new Date(((Number) value).longValue());
+        }
+        if (value instanceof Timestamp) {
+            return new Date(((Timestamp) value).getTime());
+        }
+        if (value instanceof LocalDate) {
+            return DateUtil.toDate((LocalDate) value);
+        }
+        if (value instanceof LocalDateTime) {
+            return DateUtil.toDate((LocalDateTime) value);
+        }
+        if (value instanceof LocalTime) {
+            return DateUtil.toDate((LocalTime) value);
+        }
+        String s = value.toString();
+        if (StrUtil.isNumeric(s)) {
+            return new Date(Long.parseLong(s));
+        }
+        return DateUtil.parseDate(s);
     }
 
 
