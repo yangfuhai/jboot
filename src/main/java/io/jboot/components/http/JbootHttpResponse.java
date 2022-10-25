@@ -37,17 +37,17 @@ public class JbootHttpResponse implements Closeable {
     public JbootHttpResponse(JbootHttpRequest request) {
         this.request = request;
 
-        if (request.getDownloadFile() != null) {
-            if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-                LOG.error("Can not mkdirs for: " + file.getParentFile());
-            }
+        File downloadToFile = request.getDownloadFile();
 
-            if (file.exists() && !file.delete()) {
-                LOG.error("Can not delete file: " + file);
+        if (downloadToFile != null) {
+            if (!downloadToFile.getParentFile().exists() && !downloadToFile.getParentFile().mkdirs()) {
+                LOG.error("Can not mkdirs for: " + downloadToFile.getParentFile());
             }
-
+            if (downloadToFile.exists() && !downloadToFile.delete()) {
+                LOG.error("Can not delete file: " + downloadToFile);
+            }
             try {
-                this.file = request.getDownloadFile();
+                this.file = downloadToFile;
                 this.contentStream = new FileOutputStream(file);
             } catch (Exception e) {
                 throw new RuntimeException(e);
