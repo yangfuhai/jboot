@@ -111,6 +111,11 @@ public class JbootResourceLoader {
                     return;
                 }
 
+                //忽略掉 windows 下的临时文件
+                if(file.endsWith("~")){
+                    return;
+                }
+
                 int indexOf = file.indexOf(path);
 
                 File target = new File(classPath, resourcePathName + File.separator + file.substring(indexOf + path.length()));
