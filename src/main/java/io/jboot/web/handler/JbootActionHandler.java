@@ -276,20 +276,21 @@ public class JbootActionHandler extends ActionHandler {
     /**
      * 处理参数验证错误
      */
-    protected void handleValidException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ValidException e) {
+    protected void handleValidException(String target, HttpServletRequest request, HttpServletResponse response, Action action, ValidException validException) {
         if (LOG.isErrorEnabled()) {
-            String qs = request.getQueryString();
-            String targetInfo = qs == null ? target : target + "?" + qs;
-            LOG.error(e.getReason() + " : " + targetInfo, e);
+//            String qs = request.getQueryString();
+//            String targetInfo = qs == null ? target : target + "?" + qs;
+//            LOG.error(validException.getReason() + " : " + targetInfo, validException);
+            LOG.error("Invalid parameter: " + validException.getReason());
         }
         IRenderFactory factory = renderManager.getRenderFactory();
         if (factory instanceof JbootRenderFactory) {
-            ValidErrorRender render = ((JbootRenderFactory) factory).getValidErrorRender(e);
+            ValidErrorRender render = ((JbootRenderFactory) factory).getValidErrorRender(validException);
             render.setContext(request, response, action.getViewPath()).render();
         } else {
             Render render = renderManager.getRenderFactory().getErrorRender(ValidUtil.getErrorCode());
             if (render instanceof JbootErrorRender) {
-                ((JbootErrorRender) render).setThrowable(e);
+                ((JbootErrorRender) render).setThrowable(validException);
             }
             render.setContext(request, response, action.getViewPath()).render();
         }

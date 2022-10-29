@@ -28,8 +28,8 @@ public class ValidErrorRender extends Render {
 
     protected static final String htmlContentType = "text/html;charset=" + getEncoding();
     protected static final String jsonContentType = "application/json;charset=" + getEncoding();
-    protected static final String html_header = "<html><head><title>Parameter Valid Error</title></head>" +
-            "<body bgcolor='white'><center><h1>Parameter Valid Error</h1></center>" +
+    protected static final String html_header = "<html><head><title>Invalid parameter</title></head>" +
+            "<body bgcolor='white'><center><h1>Invalid parameter</h1></center>" +
             "<hr>";
 
     protected static final String poweredBy = "<center><a href='http://jboot.io' target='_blank'><b>Powered by Jboot</b></a></center>";
