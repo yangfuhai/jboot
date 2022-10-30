@@ -3,12 +3,17 @@ package io.jboot.components.cache.support;
 import com.jfinal.token.ITokenCache;
 import com.jfinal.token.Token;
 import io.jboot.Jboot;
+import io.jboot.components.cache.JbootCacheManager;
 
 import java.util.List;
 
 public class JbootTokenCache implements ITokenCache {
 
     static final String CACHE_NAME = "jboot_tokens";
+
+    public JbootTokenCache() {
+        JbootCacheManager.me().getCache().addThreadCacheNamePrefixIngore(CACHE_NAME);
+    }
 
     @Override
     public void put(Token token) {

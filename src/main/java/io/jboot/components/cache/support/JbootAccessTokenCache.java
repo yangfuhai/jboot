@@ -3,10 +3,16 @@ package io.jboot.components.cache.support;
 import com.jfinal.weixin.sdk.cache.IAccessTokenCache;
 import io.jboot.Jboot;
 import io.jboot.components.cache.CacheTime;
+import io.jboot.components.cache.JbootCacheManager;
 
 public class JbootAccessTokenCache implements IAccessTokenCache {
 
     static final String CACHE_NAME = "wechat_access_tokens";
+
+    public JbootAccessTokenCache() {
+        JbootCacheManager.me().getCache()
+                .addThreadCacheNamePrefixIngore(CACHE_NAME);
+    }
 
     @Override
     public String get(String key) {

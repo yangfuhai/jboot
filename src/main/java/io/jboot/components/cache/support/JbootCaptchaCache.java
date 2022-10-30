@@ -3,11 +3,16 @@ package io.jboot.components.cache.support;
 import com.jfinal.captcha.Captcha;
 import com.jfinal.captcha.ICaptchaCache;
 import io.jboot.Jboot;
+import io.jboot.components.cache.JbootCacheManager;
 import io.jboot.utils.StrUtil;
 
 public class JbootCaptchaCache implements ICaptchaCache {
 
     public static final String CACHE_NAME = "jboot_captchas";
+
+    public JbootCaptchaCache() {
+        JbootCacheManager.me().getCache().addThreadCacheNamePrefixIngore(CACHE_NAME);
+    }
 
     @Override
     public void put(Captcha captcha) {
