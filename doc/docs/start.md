@@ -51,7 +51,7 @@ IntelliJ IDEA 下载地址：https://www.jetbrains.com/idea/ ，下载完成后�
 <dependency>
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>3.16.6</version>
+    <version>3.16.7</version>
 </dependency>
 ```
 
@@ -113,7 +113,7 @@ public class IndexController extends JbootController {
                                     
 
 
-JbootApplication { mode='dev', version='3.16.6', jfinalConfig='io.jboot.core.JbootCoreConfig' }
+JbootApplication { mode='dev', version='3.16.7', jfinalConfig='io.jboot.core.JbootCoreConfig' }
 Classpath : /Users/michael/git/jboot/target/test-classes/
 Starting JFinal 4.2 -> http://127.0.0.1:8080
 Info: jfinal-undertow 1.6, undertow 2.0.19.Final, jvm 1.8.0_201
