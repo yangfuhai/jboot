@@ -63,6 +63,7 @@ public abstract class JbootCacheBase implements JbootCache {
         return ignoreThreadCacheNames.remove(cacheName);
     }
 
+
     /**
      * 构建缓存名称
      *
@@ -93,5 +94,12 @@ public abstract class JbootCacheBase implements JbootCache {
     @Override
     public void refresh(String cacheName) {
 
+    }
+
+
+    protected void println(String debugInfo){
+        if (config.isDevMode()) {
+            JbootCacheManager.me().getPrinter().println(debugInfo);
+        }
     }
 }

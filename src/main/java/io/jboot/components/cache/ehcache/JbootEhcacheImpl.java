@@ -47,8 +47,8 @@ public class JbootEhcacheImpl extends JbootCacheBase {
             cacheManager = CacheManager.create();
         } else {
             String configPath = ehconfig.getConfigFileName();
-            if (!configPath.startsWith("/")){
-                configPath = PathKit.getRootClassPath()+"/"+configPath;
+            if (!configPath.startsWith("/")) {
+                configPath = PathKit.getRootClassPath() + "/" + configPath;
             }
             cacheManager = CacheManager.create(configPath);
         }
@@ -85,12 +85,20 @@ public class JbootEhcacheImpl extends JbootCacheBase {
     @Override
     public <T> T get(String cacheName, Object key) {
         Element element = getOrAddCache(cacheName).get(key);
-        return element != null ? (T) element.getObjectValue() : null;
+        if (element == null) {
+            return null;
+        }
+
+        Object objectValue = element.getObjectValue();
+        println("Ehcache GET: cacheName[" + cacheName + "] CacheKey[" + key + "] value:" + objectValue);
+        return (T) objectValue;
+
     }
 
     @Override
     public void put(String cacheName, Object key, Object value) {
         getOrAddCache(cacheName).put(new Element(key, value));
+        println("Ehcache PUT: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + value);
     }
 
     @Override
@@ -102,17 +110,20 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         Element element = new Element(key, value);
         element.setTimeToLive(liveSeconds);
         getOrAddCache(cacheName).put(element);
+        println("Ehcache PUT: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + value);
     }
 
     @Override
     public void remove(String cacheName, Object key) {
         getOrAddCache(cacheName).remove(key);
+        println("Ehcache REMOVE: cacheName[" +cacheName+ "] CacheKey["+key+"]");
     }
 
     @Override
     public void removeAll(String cacheName) {
         getOrAddCache(cacheName).removeAll();
         cacheManager.removeCache(cacheName);
+        println("Ehcache REMOVEALL: cacheName[" +cacheName+ "]");
     }
 
     @Override
@@ -122,6 +133,7 @@ public class JbootEhcacheImpl extends JbootCacheBase {
             data = dataLoader.load();
             put(cacheName, key, data);
         }
+        println("Ehcache GET: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + data);
         return (T) data;
     }
 
@@ -135,6 +147,7 @@ public class JbootEhcacheImpl extends JbootCacheBase {
             data = dataLoader.load();
             put(cacheName, key, data, liveSeconds);
         }
+        println("Ehcache GET: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + data);
         return (T) data;
     }
 
@@ -154,6 +167,7 @@ public class JbootEhcacheImpl extends JbootCacheBase {
 
         element.setTimeToLive(seconds);
         getOrAddCache(cacheName).put(element);
+        println("Ehcache SETTTL: cacheName[" +cacheName+ "] CacheKey["+key+"] seconds:" + seconds);
     }
 
     @Override
@@ -165,7 +179,6 @@ public class JbootEhcacheImpl extends JbootCacheBase {
     public List getKeys(String cacheName) {
         return getOrAddCache(cacheName).getKeys();
     }
-
 
 
     public CacheManager getCacheManager() {

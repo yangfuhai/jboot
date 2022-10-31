@@ -62,7 +62,9 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     @Override
     public <T> T get(String cacheName, Object key) {
-        return redis.get(buildKey(cacheName, key));
+        T value = redis.get(buildKey(cacheName, key));
+        println("RedisCache GET: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + value);
+        return value;
     }
 
     @Override
@@ -73,6 +75,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         }
         redis.set(buildKey(cacheName, key), value);
         redis.sadd(buildCacheName(redisCacheNamesKey), cacheName);
+        println("RedisCache PUT: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + value);
     }
 
     @Override
@@ -88,12 +91,14 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
         redis.setex(buildKey(cacheName, key), liveSeconds, value);
         redis.sadd(buildCacheName(redisCacheNamesKey), cacheName);
+        println("RedisCache PUT: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + value);
     }
 
 
     @Override
     public void remove(String cacheName, Object key) {
         redis.del(buildKey(cacheName, key));
+        println("RedisCache REMOVE: cacheName[" +cacheName+ "] CacheKey["+key+"]");
     }
 
 
@@ -118,6 +123,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         } while (continueState);
 
         redis.srem(buildCacheName(redisCacheNamesKey), cacheName);
+        println("RedisCache REMOVEALL: cacheName[" +cacheName+ "]");
     }
 
 
@@ -128,6 +134,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             data = dataLoader.load();
             put(cacheName, key, data);
         }
+        println("RedisCache GET: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + data);
         return (T) data;
     }
 
@@ -161,6 +168,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             data = dataLoader.load();
             put(cacheName, key, data, liveSeconds);
         }
+        println("RedisCache GET: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + data);
         return (T) data;
     }
 
@@ -175,6 +183,7 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
     @Override
     public void setTtl(String cacheName, Object key, int seconds) {
         redis.expire(buildKey(cacheName, key), seconds);
+        println("RedisCache SETTTL: cacheName[" +cacheName+ "] CacheKey["+key+"] seconds:" + seconds);
     }
 
 

@@ -22,6 +22,8 @@ import java.util.List;
 
 public interface JbootCache extends com.jfinal.plugin.activerecord.cache.ICache {
 
+
+
     //设置当前 线程 的缓存前缀
     JbootCache setThreadCacheNamePrefix(String cacheNamePrefix);
 

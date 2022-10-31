@@ -158,7 +158,7 @@ class Utils {
         }
 
         if (!isSupportClass(object.getClass())) {
-            String msg = "Unsupported empty key for annotation @Cacheable, @CacheEvict or @CachePut " +
+            String msg = "Unsupport empty key for annotation @Cacheable, @CacheEvict or @CachePut " +
                     "at method[" + ClassUtil.buildMethodString(method) + "], " +
                     "Please config key properties in the annotation.";
             throw new IllegalArgumentException(msg);
@@ -229,10 +229,7 @@ class Utils {
             return false;
         }
 
-//        if (!unlessString.contains("#")) {
         unlessString = "#(" + unlessString + ")";
-//        }
-
         return "true".equals(engineRender(unlessString, method, arguments));
     }
 

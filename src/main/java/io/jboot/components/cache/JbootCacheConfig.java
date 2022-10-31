@@ -17,6 +17,7 @@ package io.jboot.components.cache;
 
 
 import com.google.common.collect.Sets;
+import io.jboot.Jboot;
 import io.jboot.app.config.annotation.ConfigModel;
 
 import java.util.Set;
@@ -41,6 +42,7 @@ public class JbootCacheConfig {
     private String typeName;
 
     private String defaultCachePrefix;
+    private Boolean devMode;
 
 
     public String getName() {
@@ -76,4 +78,11 @@ public class JbootCacheConfig {
         this.defaultCachePrefix = defaultCachePrefix;
     }
 
+    public boolean isDevMode() {
+        return devMode == null ? Jboot.isDevMode() : devMode;
+    }
+
+    public void setDevMode(Boolean devMode) {
+        this.devMode = devMode;
+    }
 }
