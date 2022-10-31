@@ -90,7 +90,9 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         }
 
         Object objectValue = element.getObjectValue();
-        println("Ehcache GET: cacheName[" + cacheName + "] CacheKey[" + key + "] value:" + objectValue);
+        if (config.isDevMode()) {
+            println("Ehcache GET: cacheName[" + buildCacheName(cacheName) + "] cacheKey[" + key + "] value:" + objectValue);
+        }
         return (T) objectValue;
 
     }
@@ -98,7 +100,10 @@ public class JbootEhcacheImpl extends JbootCacheBase {
     @Override
     public void put(String cacheName, Object key, Object value) {
         getOrAddCache(cacheName).put(new Element(key, value));
-        println("Ehcache PUT: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + value);
+
+        if (config.isDevMode()) {
+            println("Ehcache PUT: cacheName[" +buildCacheName(cacheName)+ "] cacheKey["+key+"] value:" + value);
+        }
     }
 
     @Override
@@ -110,20 +115,29 @@ public class JbootEhcacheImpl extends JbootCacheBase {
         Element element = new Element(key, value);
         element.setTimeToLive(liveSeconds);
         getOrAddCache(cacheName).put(element);
-        println("Ehcache PUT: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + value);
+
+        if (config.isDevMode()) {
+            println("Ehcache PUT: cacheName[" +buildCacheName(cacheName)+ "] cacheKey["+key+"] value:" + value);
+        }
     }
 
     @Override
     public void remove(String cacheName, Object key) {
         getOrAddCache(cacheName).remove(key);
-        println("Ehcache REMOVE: cacheName[" +cacheName+ "] CacheKey["+key+"]");
+
+        if (config.isDevMode()) {
+            println("Ehcache REMOVE: cacheName[" +buildCacheName(cacheName)+ "] cacheKey["+key+"]");
+        }
     }
 
     @Override
     public void removeAll(String cacheName) {
         getOrAddCache(cacheName).removeAll();
         cacheManager.removeCache(cacheName);
-        println("Ehcache REMOVEALL: cacheName[" +cacheName+ "]");
+
+        if (config.isDevMode()) {
+            println("Ehcache REMOVEALL: cacheName[" +buildCacheName(cacheName)+ "]");
+        }
     }
 
     @Override
@@ -133,7 +147,10 @@ public class JbootEhcacheImpl extends JbootCacheBase {
             data = dataLoader.load();
             put(cacheName, key, data);
         }
-        println("Ehcache GET: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + data);
+
+        if (config.isDevMode()) {
+            println("Ehcache GET: cacheName[" +buildCacheName(cacheName)+ "] cacheKey["+key+"] value:" + data);
+        }
         return (T) data;
     }
 
@@ -147,7 +164,11 @@ public class JbootEhcacheImpl extends JbootCacheBase {
             data = dataLoader.load();
             put(cacheName, key, data, liveSeconds);
         }
-        println("Ehcache GET: cacheName[" +cacheName+ "] CacheKey["+key+"] value:" + data);
+
+        if (config.isDevMode()) {
+            println("Ehcache GET: cacheName[" +buildCacheName(cacheName)+ "] cacheKey["+key+"] value:" + data);
+        }
+
         return (T) data;
     }
 
@@ -167,7 +188,10 @@ public class JbootEhcacheImpl extends JbootCacheBase {
 
         element.setTimeToLive(seconds);
         getOrAddCache(cacheName).put(element);
-        println("Ehcache SETTTL: cacheName[" +cacheName+ "] CacheKey["+key+"] seconds:" + seconds);
+
+        if (config.isDevMode()) {
+            println("Ehcache SETTTL: cacheName[" +buildCacheName(cacheName)+ "] cacheKey["+key+"] seconds:" + seconds);
+        }
     }
 
     @Override

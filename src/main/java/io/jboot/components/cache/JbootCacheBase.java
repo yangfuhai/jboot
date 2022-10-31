@@ -74,7 +74,7 @@ public abstract class JbootCacheBase implements JbootCache {
 
         String cacheNamePrefix = null;
 
-        if (!ignoreThreadCacheNames.contains(cacheName)){
+        if (!ignoreThreadCacheNames.contains(cacheName)) {
             cacheNamePrefix = CACHE_NAME_PREFIX_TL.get();
         }
 
@@ -97,9 +97,7 @@ public abstract class JbootCacheBase implements JbootCache {
     }
 
 
-    protected void println(String debugInfo){
-        if (config.isDevMode()) {
-            JbootCacheManager.me().getPrinter().println(debugInfo);
-        }
+    protected void println(String debugInfo) {
+        JbootCacheManager.me().getPrinter().println(debugInfo);
     }
 }
