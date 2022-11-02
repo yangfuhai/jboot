@@ -841,24 +841,37 @@ public class JbootController extends Controller {
     /**
      * 只返回特定的名称的文件，其他文件则删除
      *
-     * @param names
+     * @param paraNames
      * @return
      */
     @NotAction
-    public Map<String, UploadFile> getFilesOnly(String... names) {
-        if (names == null || names.length == 0) {
+    public Map<String, UploadFile> getFilesOnly(String... paraNames) {
+        if (paraNames == null || paraNames.length == 0) {
+            throw new IllegalArgumentException("names can not be null or empty.");
+        }
+        return getFilesOnly(Sets.newHashSet(paraNames));
+    }
+
+
+    /**
+     * 只返回特定的名称的文件，其他文件则删除
+     * @param paraNames
+     * @return
+     */
+    @NotAction
+    public Map<String, UploadFile> getFilesOnly(Set<String> paraNames) {
+        if (paraNames == null || paraNames.size() == 0) {
             throw new IllegalArgumentException("names can not be null or empty.");
         }
 
-        List<UploadFile> uploadFiles = getFiles();
-        if (uploadFiles == null || uploadFiles.isEmpty()) {
+        List<UploadFile> allUploadFiles = getFiles();
+        if (allUploadFiles == null || allUploadFiles.isEmpty()) {
             return null;
         }
 
-        Set<String> keys = Sets.newHashSet(names);
         Map<String, UploadFile> filesMap = new HashMap<>();
 
-        for (UploadFile uploadFile : uploadFiles) {
+        for (UploadFile uploadFile : allUploadFiles) {
             String parameterName = uploadFile.getParameterName();
             if (StrUtil.isBlank(parameterName)) {
                 FileUtil.delete(uploadFile);
@@ -867,7 +880,7 @@ public class JbootController extends Controller {
 
             parameterName = parameterName.trim();
 
-            if (keys.contains(parameterName) && !filesMap.containsKey(parameterName)) {
+            if (paraNames.contains(parameterName) && !filesMap.containsKey(parameterName)) {
                 filesMap.put(parameterName, uploadFile);
             } else {
                 FileUtil.delete(uploadFile);
