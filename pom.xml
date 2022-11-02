@@ -41,15 +41,15 @@
 
 
     <properties>
-        <jfinal.version>5.0.5</jfinal.version>
+        <jfinal.version>5.0.6</jfinal.version>
         <jfinal-cos.version>2022.2</jfinal-cos.version>
-        <jfinal-undertow.version>3.2</jfinal-undertow.version>
+        <jfinal-undertow.version>3.3</jfinal-undertow.version>
         <jfinal-weixin.version>3.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
         <jackson.version>2.13.4</jackson.version>
         <mysql.version>5.1.49</mysql.version>
-        <undertow.version>2.2.19.Final</undertow.version>
+        <undertow.version>2.3.0.Final</undertow.version>
         <slf4j.version>1.7.36</slf4j.version>
 <!--        <fst.version>3.0.3</fst.version>-->
         <fst.version>2.57</fst.version>
