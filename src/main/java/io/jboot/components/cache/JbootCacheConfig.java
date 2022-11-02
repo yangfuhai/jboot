@@ -42,7 +42,7 @@ public class JbootCacheConfig {
     private String typeName;
 
     private String defaultCachePrefix;
-    private Boolean devMode;
+    private Boolean devMode = false;
 
 
     public String getName() {
