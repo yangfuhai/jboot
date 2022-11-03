@@ -46,10 +46,13 @@ import io.jboot.utils.QuietlyUtil;
  */
 public class JbootRedisLock {
 
-    long expireMsecs = 1000 * 60;// 60 秒 expireMsecs 锁持有超时，防止线程在入锁以后，无限的执行下去，让锁无法释放
-    long timeoutMsecs = 0;// 锁等待超时
+    // 60 秒 expireMsecs 锁持有超时，防止线程在入锁以后，无限的执行下去，让锁无法释放
+    long expireMsecs = 1000 * 60;
 
-    private String lockName;
+    // 锁等待超时
+    long timeoutMsecs = 0;
+
+    private final String lockName;
     private boolean locked = false;
     private JbootRedis redis;
 
@@ -60,7 +63,7 @@ public class JbootRedisLock {
      */
     public JbootRedisLock(String lockName) {
         if (lockName == null) {
-            throw new NullPointerException("lockName must not null !");
+            throw new NullPointerException("lockName must not be null.");
         }
         this.lockName = lockName;
         this.redis = Jboot.getRedis();
@@ -74,12 +77,30 @@ public class JbootRedisLock {
      */
     public JbootRedisLock(String lockName, long timeoutMsecs) {
         if (lockName == null) {
-            throw new NullPointerException("lockName must not null !");
+            throw new NullPointerException("lockName must not be null.");
         }
         this.lockName = lockName;
         this.timeoutMsecs = timeoutMsecs;
         this.redis = Jboot.getRedis();
     }
+
+
+    /**
+     * @param lockName     锁名称
+     * @param timeoutMsecs 获取锁的时候，等待时长
+     * @param expireMsecs  超时时长
+     */
+    public JbootRedisLock(String lockName, long timeoutMsecs, long expireMsecs) {
+        if (lockName == null) {
+            throw new NullPointerException("lockName must not be null.");
+        }
+        this.lockName = lockName;
+        this.timeoutMsecs = timeoutMsecs;
+        this.expireMsecs = expireMsecs;
+
+        this.redis = Jboot.getRedis();
+    }
+
 
     public long getTimeoutMsecs() {
         return timeoutMsecs;
