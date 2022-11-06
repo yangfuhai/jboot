@@ -1,3 +1,9 @@
+jboot v3.16.8 2022-11-06:
+新增：Controller.getFilesOnly(Set<String> paraNames) 方法
+优化：默认关闭缓存日志
+
+
+
 jboot v3.16.7 2022-10-31:
 新增：添加 CachePrinter 的支持，方便把缓存信息输出在控制台或者日志上
 优化：JbootResourceLoader 优化过滤掉 Windows 的临时文件
