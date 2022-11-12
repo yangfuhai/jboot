@@ -38,7 +38,7 @@ public class JbootmqConfig {
 
     private String name = "default";  // MQ 的名称，可以配置多个 MQ 实例，但是需要名称不能一样
     private String type;  // MQ 的类型： redis、rocketmq 等
-    private String typeName; // MQ 相同的类型，可能有多一个实例，比如两个 redis，此时需要配置示例的名称
+    private String typeName; // MQ 相同的类型，可能有多一个实例，比如两个 redis，此时需要配置实例的名称
     private String channel; // 发送的通道，或者是 topic，多个用英文逗号二开
     private String syncRecevieMessageChannel; //可同步接收消息的 channel 配置
     private String serializer; // MQ 默认的序列化方案

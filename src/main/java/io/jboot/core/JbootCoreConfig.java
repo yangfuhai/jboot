@@ -36,6 +36,7 @@ import io.jboot.components.cache.support.JbootTokenCache;
 import io.jboot.components.gateway.JbootGatewayHandler;
 import io.jboot.components.gateway.JbootGatewayManager;
 import io.jboot.components.limiter.LimiterManager;
+import io.jboot.components.mq.JbootmqManager;
 import io.jboot.components.rpc.JbootrpcManager;
 import io.jboot.components.schedule.JbootScheduleManager;
 import io.jboot.core.listener.JbootAppListenerManager;
@@ -406,9 +407,14 @@ public class JbootCoreConfig extends JFinalConfig {
         TypeConverter.me().setConvertFunc(new TypeConverterFunc());
         ArrayConverters.init();
 
+        //一般情况下，各个模块会在 onStart 进行添加监听器
+        //此时可以主动去启动下 mq
+        JbootmqManager.me().init();
 
         //使用场景：需要等所有组件 onStart() 完成之后，再去执行某些工作的时候
         JbootAppListenerManager.me().onStartFinish();
+
+
     }
 
     @Override
@@ -418,6 +424,8 @@ public class JbootCoreConfig extends JFinalConfig {
         JbootScheduleManager.me().stop();
         JbootSeataManager.me().stop();
         JbootrpcManager.me().stop();
+
+        JbootmqManager.me().stop();
     }
 
 

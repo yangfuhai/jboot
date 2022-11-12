@@ -44,7 +44,6 @@ public class JbootmqManager {
 
     private Map<String, Jbootmq> jbootmqMap = new ConcurrentHashMap<>();
 
-
     public Jbootmq getJbootmq() {
         return getJbootmq("default");
     }
@@ -107,5 +106,14 @@ public class JbootmqManager {
                 return JbootSpiLoader.load(Jbootmq.class, config.getType(), config);
         }
 
+    }
+
+
+    public void init() {
+        jbootmqMap.values().forEach(Jbootmq::startListening);
+    }
+
+    public void stop() {
+        jbootmqMap.values().forEach(Jbootmq::stopListening);
     }
 }

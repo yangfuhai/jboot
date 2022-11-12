@@ -19,7 +19,6 @@ import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.components.serializer.JbootSerializer;
-import io.jboot.exception.JbootException;
 import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
 
@@ -84,6 +83,7 @@ public abstract class JbootmqBase implements Jbootmq {
             channelListeners.put(channel, listeners);
         }
         listeners.add(listener);
+        channels.add(channel);
     }
 
 
@@ -167,11 +167,13 @@ public abstract class JbootmqBase implements Jbootmq {
     @Override
     public boolean startListening() {
         if (isStarted) {
-            throw new JbootException("Jboot MQ has started.");
+            return true;
         }
 
         if (channels == null || channels.isEmpty()) {
-            throw new JbootException("Jboot MQ's channels is null or empty, Please config channels.");
+            LogKit.warn("Jboot MQ started fail. because it's channels is empty, please config channels. " +
+                    "MQ name: {}, type:{}", config.getName(), config.getType());
+            return false;
         }
 
         try {
@@ -183,14 +185,14 @@ public abstract class JbootmqBase implements Jbootmq {
             return false;
         }
 
-
         return true;
     }
+
 
     @Override
     public boolean stopListening() {
         if (!isStarted) {
-            throw new JbootException("Jboot MQ has stoped.");
+            return true;
         }
 
         try {
