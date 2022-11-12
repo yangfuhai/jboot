@@ -31,6 +31,7 @@ import io.jboot.exception.JbootException;
 import io.jboot.utils.AnnotationUtil;
 import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ModelUtil;
+import io.jboot.utils.StrUtil;
 import io.jboot.web.render.JbootRenderFactory;
 import io.jboot.web.render.JbootReturnValueRender;
 
@@ -52,6 +53,8 @@ public class CacheableInterceptor implements Interceptor {
     //是否开启 Controller 的 Action 缓存
     //可用在 dev 模式下关闭，生产环境开启的场景，方便调试数据
     private static boolean actionCacheEnable = true;
+    private static String actionCacheRefreshKey;
+    private static String actionCacheRefreshValue = "1";
 
     public static boolean isActionCacheEnable() {
         return actionCacheEnable;
@@ -59,6 +62,25 @@ public class CacheableInterceptor implements Interceptor {
 
     public static void setActionCacheEnable(boolean actionCacheEnable) {
         CacheableInterceptor.actionCacheEnable = actionCacheEnable;
+    }
+
+    public static String getActionCacheRefreshKey() {
+        return actionCacheRefreshKey;
+    }
+
+    public static void setActionCacheRefreshKey(String actionCacheRefreshKey) {
+        CacheableInterceptor.actionCacheRefreshKey = actionCacheRefreshKey;
+    }
+
+    public static String getActionCacheRefreshValue() {
+        return actionCacheRefreshValue;
+    }
+
+    public static void setActionCacheRefreshValue(String actionCacheRefreshValue) {
+        if (actionCacheRefreshValue == null || actionCacheRefreshValue.trim().length() == 0){
+            throw new NullPointerException("actionCacheRefresValue can not be null or empty.");
+        }
+        CacheableInterceptor.actionCacheRefreshValue = actionCacheRefreshValue;
     }
 
     @Override
@@ -92,6 +114,14 @@ public class CacheableInterceptor implements Interceptor {
         String cacheKey = Utils.buildCacheKey(AnnotationUtil.get(cacheable.key()), targetClass, method, inv.getArgs());
 
         Controller controller = inv.getController();
+
+        //刷新当前页面缓存
+        if (StrUtil.isNotBlank(actionCacheRefreshKey)
+                && actionCacheRefreshValue.equals(inv.getController().getPara(actionCacheRefreshKey))){
+            inv.invoke();
+            cacheActionContent(cacheName, cacheKey, cacheable.liveSeconds(), inv, method);
+            return;
+        }
 
         ActionCachedContent actionCachedContent = AopCache.get(cacheName, cacheKey);
         if (actionCachedContent != null) {
