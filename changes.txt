@@ -1,5 +1,7 @@
-jboot v3.16.9 2022-11-12:
-新增：自定义 Controller 缓存查询 key 的功能
+jboot v3.17.0 2022-11-12:
+新增：自定义 Controller 缓存刷新 key 的功能
+优化：Jboot MQ 在启动和停止的时候，不对已启动进行错误抛出，方便多模块可以自由启动或停止
+优化：Jboot MQ 添加监听器的时候，自动添加 channel 信息
 优化：升级 jackson-core 等到最新版本
 
 
