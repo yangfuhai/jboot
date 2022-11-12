@@ -3,8 +3,8 @@ package io.jboot.test.mq.rabbit;
 
 import io.jboot.Jboot;
 import io.jboot.app.JbootApplication;
-import io.jboot.components.mq.MessageContext;
 import io.jboot.components.mq.JbootmqMessageListener;
+import io.jboot.components.mq.MessageContext;
 
 /**
  * 开始之前 先通过通过 docker 把 rabbitmq 运行起来
@@ -33,11 +33,8 @@ public class RabbitMqReceiver1 {
         //非常重要，多个应用如果同时接受同一个 channel 的广播，必须配置此项，而且必须不能相同，否则广播的时候只有一个应用能够接受到
         JbootApplication.setBootArg("jboot.mq.rabbitmq.broadcastChannelPrefix", "app1");
 
-        //启动应用程序
-        JbootApplication.run(args);
 
-
-        // 只监听 myChannel 这个通道
+        // 只监听 channel1 这个通道
         Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
             @Override
             public void onMessage(String channel, Object message, MessageContext context) {
@@ -46,7 +43,12 @@ public class RabbitMqReceiver1 {
         },"channel1");
 
 
-        Jboot.getMq().startListening();
+
+
+        //启动应用程序
+        JbootApplication.run(args);
+
+
 
         System.out.println("RabbitMqReceiver1 started.");
     }

@@ -18,8 +18,6 @@ public class RedisMqReceiver2 {
         JbootApplication.setBootArg("jboot.mq.channel", "channel1,channel2,myChannel");
         JbootApplication.setBootArg("jboot.mq.redis.host", "127.0.0.1");
 
-        //启动应用程序
-        JbootApplication.run(args);
 
         //添加监听
         Jboot.getMq().addMessageListener(new JbootmqMessageListener() {
@@ -37,7 +35,12 @@ public class RedisMqReceiver2 {
             }
         },"myChannel");
 
-        Jboot.getMq().startListening();
+
+
+        //启动应用程序
+        JbootApplication.run(args);
+
+
 
         System.out.println("RedisMqReceiver1 started.");
     }
