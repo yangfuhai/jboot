@@ -1,3 +1,9 @@
+jboot v3.16.9 2022-11-12:
+新增：自定义 Controller 缓存查询 key 的功能
+优化：升级 jackson-core 等到最新版本
+
+
+
 jboot v3.16.8 2022-11-06:
 新增：Controller.getFilesOnly(Set<String> paraNames) 方法
 优化：默认关闭缓存日志
