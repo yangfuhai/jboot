@@ -275,8 +275,8 @@ public class Columns implements Serializable {
      * @param condition
      * @return
      */
-    public Columns isNullIf(String name, boolean condition) {
-        if (condition) {
+    public Columns isNullIf(String name, Boolean condition) {
+        if (condition != null && condition) {
             add(Column.create(name, null, Column.LOGIC_IS_NULL));
         }
         return this;
@@ -301,8 +301,8 @@ public class Columns implements Serializable {
      * @param condition
      * @return
      */
-    public Columns isNotNullIf(String name, boolean condition) {
-        if (condition) {
+    public Columns isNotNullIf(String name, Boolean condition) {
+        if (condition != null && condition) {
             add(Column.create(name, null, Column.LOGIC_IS_NOT_NULL));
         }
         return this;
@@ -415,11 +415,11 @@ public class Columns implements Serializable {
      * @param conditon
      * @return
      */
-    public Columns groupIf(Columns columns, boolean conditon) {
+    public Columns groupIf(Columns columns, Boolean conditon) {
         if (columns == this) {
             throw new IllegalArgumentException("Columns.group(...) need a new Columns");
         }
-        if (conditon && !columns.isEmpty()) {
+        if ( conditon != null && conditon && !columns.isEmpty()) {
             add(new Group(columns));
         }
         return this;
@@ -499,8 +499,8 @@ public class Columns implements Serializable {
      * @param condition
      * @return
      */
-    public Columns sqlPartIf(String sql, boolean condition) {
-        if (condition && StrUtil.isNotBlank(sql)) {
+    public Columns sqlPartIf(String sql, Boolean condition) {
+        if (condition != null && condition && StrUtil.isNotBlank(sql)) {
             add(new SqlPart(sql));
         }
         return this;
@@ -514,9 +514,9 @@ public class Columns implements Serializable {
      * @param paras
      * @return
      */
-    public Columns sqlPartIf(String sql, boolean condition, Object... paras) {
+    public Columns sqlPartIf(String sql, Boolean condition, Object... paras) {
         Util.checkNullParas(this, paras);
-        if (condition && StrUtil.isNotBlank(sql)) {
+        if (condition != null && condition && StrUtil.isNotBlank(sql)) {
             add(new SqlPart(sql, paras));
         }
         return this;
@@ -557,8 +557,8 @@ public class Columns implements Serializable {
      * @param condition
      * @return
      */
-    public Columns sqlPartWithoutLinkIf(String sql, boolean condition) {
-        if (condition && StrUtil.isNotBlank(sql)) {
+    public Columns sqlPartWithoutLinkIf(String sql, Boolean condition) {
+        if (condition != null && condition && StrUtil.isNotBlank(sql)) {
             add(new SqlPart(sql, true));
         }
         return this;
@@ -572,9 +572,9 @@ public class Columns implements Serializable {
      * @param paras
      * @return
      */
-    public Columns sqlPartWithoutLinkIf(String sql, boolean condition, Object... paras) {
+    public Columns sqlPartWithoutLinkIf(String sql, Boolean condition, Object... paras) {
         Util.checkNullParas(this, paras);
-        if (condition && StrUtil.isNotBlank(sql)) {
+        if (condition != null && condition && StrUtil.isNotBlank(sql)) {
             add(new SqlPart(sql, paras, true));
         }
         return this;
@@ -629,8 +629,8 @@ public class Columns implements Serializable {
      * @param columns
      * @return
      */
-    public Columns appendIf(Columns columns, boolean condition) {
-        if (condition) {
+    public Columns appendIf(Columns columns, Boolean condition) {
+        if (condition != null && condition) {
             append(columns);
         }
         return this;
