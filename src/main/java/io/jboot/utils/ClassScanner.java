@@ -44,7 +44,7 @@ public class ClassScanner {
 
     public static final Set<String> scanClasses = new HashSet<>();
     public static final Set<String> excludeClasses = new HashSet<>();
-	// dev模式打开扫描信息打印
+    // dev模式打开扫描信息打印
     private static boolean printScannerInfoEnable = JbootConfigManager.me().isDevMode();
 
     public static boolean isPrintScannerInfoEnable() {
@@ -669,10 +669,10 @@ public class ClassScanner {
                             innerEntry = jarIS.getNextJarEntry();
                         }
                         if (jarIS != null) {
-                        	jarIS.close();
+                            jarIS.close();
                         }
-//                		addClassesFromJar(nestedJarPath);
-                	}
+//                        addClassesFromJar(nestedJarPath);
+                    }
                 }
             }
         } catch (IOException e1) {
@@ -687,8 +687,8 @@ public class ClassScanner {
     }
 
 //    public static void main(String[] args) {
-//    	String filePath = "D:\\test\\springbootest.jar";
-//    	addClassesFromJar(filePath);
+//        String filePath = "D:\\test\\springbootest.jar";
+//        addClassesFromJar(filePath);
 //    }
 
     private static void addClassesFromClassPath(String classPath) {
@@ -748,10 +748,10 @@ public class ClassScanner {
                     }
 
                     if (!path.toLowerCase().endsWith(".jar")) {
-                    	if(path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) { }
-                    	else{
+                        if(path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) { }
+                        else{
                             classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
-                    	}
+                        }
                     } else {
                         jarPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                     }
@@ -788,7 +788,7 @@ public class ClassScanner {
             }
             try {
                 if (!path.toLowerCase().endsWith(".jar") && !jarPaths.contains(path)) {
-                	if (path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) {}
+                    if (path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) {}
                     else{
                         classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                     }
