@@ -20,6 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.components.mq.Jbootmq;
 import io.jboot.components.mq.JbootmqBase;
 import io.jboot.components.mq.JbootmqConfig;
+import io.jboot.components.mq.JbootmqMessageListener;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.support.redis.JbootRedis;
 import io.jboot.support.redis.JbootRedisManager;
@@ -27,6 +28,7 @@ import io.jboot.utils.ConfigUtil;
 import io.jboot.utils.StrUtil;
 import redis.clients.jedis.BinaryJedisPubSub;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -38,6 +40,8 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
     private Thread dequeueThread;
     private BinaryJedisPubSub jedisPubSub;
     private long interval = 100L;
+
+    private Integer database = 0;
 
     public JbootRedismqImpl(JbootmqConfig config) {
         super(config);
@@ -53,7 +57,9 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         } else {
             redisConfig = Jboot.config(JbootRedismqConfig.class);
         }
-
+        
+        database = redisConfig.getDatabase();
+        
         if (redisConfig.isConfigOk()) {
             redis = JbootRedisManager.me().getRedis(redisConfig);
         } else {
@@ -66,18 +72,28 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
         }
     }
 
+    private Map<String, String> outterChannelMap = new HashMap<>();
+    
     @Override
     protected void onStartListening() {
-
         String[] channels = this.channels.toArray(new String[]{});
         jedisPubSub = new BinaryJedisPubSub() {
             @Override
             public void onMessage(byte[] channel, byte[] message) {
-                notifyListeners(redis.bytesToKey(channel), getSerializer().deserialize(message)
+                String thisChannel = redis.bytesToKey(channel);
+                String realChannel = outterChannelMap.get(thisChannel);
+                if (realChannel == null) {
+                    LOG.warn("Jboot has recevied mq message, But it has no listener to process. channel:" + thisChannel);
+                }
+				notifyListeners(realChannel, getSerializer().deserialize(message)
                         , new RedismqMessageContext(JbootRedismqImpl.this));
             }
         };
 
+        for (int i = 0; i< channels.length; i++) {
+        	outterChannelMap.put(channels[i] + "_" + database, channels[i]);
+        	channels[i] =  channels[i] + "_" + database;
+        }
         redis.subscribe(jedisPubSub, redis.keysToBytesArray(channels));
 
         dequeueThread = new Thread(this, "redis-dequeue-thread");
@@ -95,15 +111,14 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     @Override
     public void enqueue(Object message, String toChannel) {
-        redis.lpush(toChannel, message);
+        redis.lpush(toChannel + "_" + database, message);
     }
 
 
     @Override
     public void publish(Object message, String toChannel) {
-        redis.publish(redis.keyToBytes(toChannel), getSerializer().serialize(message));
+        redis.publish(redis.keyToBytes(toChannel + "_" + database), getSerializer().serialize(message));
     }
-
 
     @Override
     public void run() {
@@ -119,7 +134,7 @@ public class JbootRedismqImpl extends JbootmqBase implements Jbootmq, Runnable {
 
     public void doExecuteDequeue() {
         for (String channel : this.channels) {
-            Object data = redis.rpop(channel);
+            Object data = redis.lpop(channel + "_" + database);
             if (data != null) {
                 notifyListeners(channel, data, new RedismqMessageContext(JbootRedismqImpl.this));
             }

@@ -76,7 +76,7 @@ public abstract class JbootmqBase implements Jbootmq {
         }
     }
 
-    private synchronized void addChannelListener(String channel, JbootmqMessageListener listener) {
+    public final synchronized void addChannelListener(String channel, JbootmqMessageListener listener) {
         List<JbootmqMessageListener> listeners = channelListeners.get(channel);
         if (listeners == null) {
             listeners = new CopyOnWriteArrayList<>();
