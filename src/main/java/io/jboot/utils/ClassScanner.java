@@ -15,8 +15,6 @@
  */
 package io.jboot.utils;
 
-import io.jboot.app.config.JbootConfigManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -24,24 +22,30 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
+
+import io.jboot.app.config.JbootConfigManager;
 
 public class ClassScanner {
 
-    private static final Set<Class> appClassesCache = new HashSet<>();
+    private static final Set<Class<?>> appClassesCache = new HashSet<>();
 
     public static final Set<String> scanJars = new HashSet<>();
     public static final Set<String> excludeJars = new HashSet<>();
 
     public static final Set<String> scanClasses = new HashSet<>();
     public static final Set<String> excludeClasses = new HashSet<>();
-
-    // 默认关闭扫描信息的控制台输出
-    private static boolean printScannerInfoEnable = false;
+	// dev模式打开扫描信息打印
+    private static boolean printScannerInfoEnable = JbootConfigManager.me().isDevMode();
 
     public static boolean isPrintScannerInfoEnable() {
         return printScannerInfoEnable;
@@ -623,12 +627,52 @@ public class ClassScanner {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
-                if (!jarEntry.isDirectory()) {
+                if (jarEntry.isDirectory()) {
+                    String entryName = jarEntry.getName();
+                    if (isPrintScannerInfoEnable()) {
+                        System.out.println("Jboot Scan entryName: " + entryName);
+                    }
+
+                    if (entryName.startsWith("BOOT-INF/classes/")) {
+                        if (entryName.endsWith(".class")) {
+                            String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+                            addClass(classForName(className));
+                        }
+                    }
+                }
+                else {
                     String entryName = jarEntry.getName();
                     if (entryName.endsWith(".class")) {
                         String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
                         addClass(classForName(className));
                     }
+                    else if (entryName.startsWith("BOOT-INF/lib/") && entryName.endsWith(".jar")) {
+                        if (!isIncludeJar(entryName)) {
+                            continue;
+                        }
+
+                        if (isPrintScannerInfoEnable()) {
+                            System.out.println("Jboot Scan Jar: " + entryName);
+                        }
+                        JarInputStream jarIS = new JarInputStream(jarFile
+                                .getInputStream(jarEntry));
+
+                        JarEntry innerEntry = jarIS.getNextJarEntry();
+                        while (innerEntry != null) {
+                            if (!innerEntry.isDirectory()) {
+                                String nestedEntryName = innerEntry.getName();
+                                if (nestedEntryName.endsWith(".class")) {
+                                    String className = nestedEntryName.replace("/", ".").substring(0, nestedEntryName.length() - 6);
+                                    addClass(classForName(className));
+                                }
+                            }
+                            innerEntry = jarIS.getNextJarEntry();
+                        }
+                        if (jarIS != null) {
+                        	jarIS.close();
+                        }
+//                		addClassesFromJar(nestedJarPath);
+                	}
                 }
             }
         } catch (IOException e1) {
@@ -642,6 +686,10 @@ public class ClassScanner {
         }
     }
 
+//    public static void main(String[] args) {
+//    	String filePath = "D:\\test\\springbootest.jar";
+//    	addClassesFromJar(filePath);
+//    }
 
     private static void addClassesFromClassPath(String classPath) {
 
@@ -700,7 +748,10 @@ public class ClassScanner {
                     }
 
                     if (!path.toLowerCase().endsWith(".jar")) {
-                        classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
+                    	if(path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) { }
+                    	else{
+                            classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
+                    	}
                     } else {
                         jarPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                     }
@@ -737,7 +788,10 @@ public class ClassScanner {
             }
             try {
                 if (!path.toLowerCase().endsWith(".jar") && !jarPaths.contains(path)) {
-                    classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
+                	if (path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) {}
+                    else{
+                        classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
+                    }
                 } else {
                     jarPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                 }
