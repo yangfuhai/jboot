@@ -1,3 +1,10 @@
+jboot v3.17.1 2022-11-13:
+优化：Columns.java 对空条件的判断
+优化：ClassScanner.java 支持扫描 jar 包里的 jar 包，感谢 @陈立刚
+优化：Redis 消息队列设置支持多个 database，感谢 @陈立刚
+
+
+
 jboot v3.17.0 2022-11-12:
 新增：自定义 Controller 缓存刷新 key 的功能
 优化：Jboot MQ 在启动和停止的时候，不对已启动进行错误抛出，方便多模块可以自由启动或停止
