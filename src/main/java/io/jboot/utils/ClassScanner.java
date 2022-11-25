@@ -15,6 +15,8 @@
  */
 package io.jboot.utils;
 
+import io.jboot.app.config.JbootConfigManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -22,18 +24,12 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
-
-import io.jboot.app.config.JbootConfigManager;
 
 public class ClassScanner {
 
@@ -45,7 +41,7 @@ public class ClassScanner {
     public static final Set<String> scanClasses = new HashSet<>();
     public static final Set<String> excludeClasses = new HashSet<>();
     // dev模式打开扫描信息打印
-    private static boolean printScannerInfoEnable = JbootConfigManager.me().isDevMode();
+    private static boolean printScannerInfoEnable = false;
 
     public static boolean isPrintScannerInfoEnable() {
         return printScannerInfoEnable;
@@ -627,26 +623,22 @@ public class ClassScanner {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
-                if (jarEntry.isDirectory()) {
-                    String entryName = jarEntry.getName();
+                String entryName = jarEntry.getName();
+                if (jarEntry.isDirectory() && entryName.startsWith("BOOT-INF/classes/")) {
+
                     if (isPrintScannerInfoEnable()) {
                         System.out.println("Jboot Scan entryName: " + entryName);
                     }
 
-                    if (entryName.startsWith("BOOT-INF/classes/")) {
-                        if (entryName.endsWith(".class")) {
-                            String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                            addClass(classForName(className));
-                        }
-                    }
-                }
-                else {
-                    String entryName = jarEntry.getName();
                     if (entryName.endsWith(".class")) {
                         String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
                         addClass(classForName(className));
                     }
-                    else if (entryName.startsWith("BOOT-INF/lib/") && entryName.endsWith(".jar")) {
+                } else {
+                    if (entryName.endsWith(".class")) {
+                        String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+                        addClass(classForName(className));
+                    } else if (entryName.startsWith("BOOT-INF/lib/") && entryName.endsWith(".jar")) {
                         if (!isIncludeJar(entryName)) {
                             continue;
                         }
@@ -654,24 +646,21 @@ public class ClassScanner {
                         if (isPrintScannerInfoEnable()) {
                             System.out.println("Jboot Scan Jar: " + entryName);
                         }
-                        JarInputStream jarIS = new JarInputStream(jarFile
-                                .getInputStream(jarEntry));
 
-                        JarEntry innerEntry = jarIS.getNextJarEntry();
-                        while (innerEntry != null) {
-                            if (!innerEntry.isDirectory()) {
-                                String nestedEntryName = innerEntry.getName();
-                                if (nestedEntryName.endsWith(".class")) {
-                                    String className = nestedEntryName.replace("/", ".").substring(0, nestedEntryName.length() - 6);
-                                    addClass(classForName(className));
+                        try (JarInputStream jarStream = new JarInputStream(jarFile
+                                .getInputStream(jarEntry));){
+                            JarEntry innerEntry = jarStream.getNextJarEntry();
+                            while (innerEntry != null) {
+                                if (!innerEntry.isDirectory()) {
+                                    String nestedEntryName = innerEntry.getName();
+                                    if (nestedEntryName.endsWith(".class")) {
+                                        String className = nestedEntryName.replace("/", ".").substring(0, nestedEntryName.length() - 6);
+                                        addClass(classForName(className));
+                                    }
                                 }
+                                innerEntry = jarStream.getNextJarEntry();
                             }
-                            innerEntry = jarIS.getNextJarEntry();
                         }
-                        if (jarIS != null) {
-                            jarIS.close();
-                        }
-//                        addClassesFromJar(nestedJarPath);
                     }
                 }
             }
@@ -686,10 +675,6 @@ public class ClassScanner {
         }
     }
 
-//    public static void main(String[] args) {
-//        String filePath = "D:\\test\\springbootest.jar";
-//        addClassesFromJar(filePath);
-//    }
 
     private static void addClassesFromClassPath(String classPath) {
 
@@ -748,8 +733,8 @@ public class ClassScanner {
                     }
 
                     if (!path.toLowerCase().endsWith(".jar")) {
-                        if(path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) { }
-                        else{
+                        if (path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) {
+                        } else {
                             classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                         }
                     } else {
@@ -788,8 +773,8 @@ public class ClassScanner {
             }
             try {
                 if (!path.toLowerCase().endsWith(".jar") && !jarPaths.contains(path)) {
-                    if (path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) {}
-                    else{
+                    if (path.toLowerCase().endsWith("!/") || path.toLowerCase().endsWith("!")) {
+                    } else {
                         classPaths.add(new File(path).getCanonicalPath().replace('\\', '/'));
                     }
                 } else {
