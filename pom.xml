@@ -542,7 +542,7 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
-            <version>${metrics.version}</version>
+            <version>4.2.12</version>
         </dependency>
 
 
