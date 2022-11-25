@@ -60,11 +60,23 @@ public class JbootmqManager {
 
                     configModels.putIfAbsent("default", Jboot.config(JbootmqConfig.class));
 
+                    JbootmqConfig mqConfig = null;
                     if (!configModels.containsKey(name)) {
-                        throw new JbootIllegalConfigException("Please config \"jboot.mq." + name + ".type\" in your jboot.properties.");
+                        for (JbootmqConfig config : configModels.values()) {
+                        	if (name.equals(config.getTypeName())) {
+                        		mqConfig = config;
+                        		break;
+                        	}
+                        }
+                        if (mqConfig == null) {
+                            throw new JbootIllegalConfigException("Please config \"jboot.mq.other" + name + ".type\" in your jboot.properties.");
+                        }
+                    }
+                    else {
+                    	mqConfig = configModels.get(name);
                     }
 
-                    mq = getJbootmq(configModels.get(name));
+                    mq = getJbootmq(mqConfig);
                     if (mq != null) {
                         jbootmqMap.put(name, mq);
                     }
