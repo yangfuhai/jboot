@@ -30,9 +30,9 @@ public class SecurityFileNamePolicy extends DefaultFileRenamePolicy {
 
         int lastIndexOf = name.lastIndexOf(".");
         if (lastIndexOf > 0) {
-            String suffix = name.substring(lastIndexOf).toLowerCase();
+            String suffix = name.substring(lastIndexOf).toLowerCase().trim();
             if (".jsp".equals(suffix) || ".jspx".equals(suffix)) {
-                File safeFile = new File(f.getParentFile(), name + ".keepsafe");
+                File safeFile = new File(f.getParentFile(), name + "_unsafe");
                 return super.rename(safeFile);
             }
         }
