@@ -18,6 +18,7 @@ package io.jboot.app;
 import io.jboot.JbootConsts;
 import io.jboot.app.config.JbootConfigManager;
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.utils.StrUtil;
 
 @ConfigModel(prefix = "jboot.app")
 public class JbootApplicationConfig {
@@ -31,7 +32,7 @@ public class JbootApplicationConfig {
     private String listener = "*";
     private String listenerPackage = "*";
     private boolean handle404 = true;
-    private String proxy = "cglib";  //cglib or  javassist
+    private String proxy;  //cglib or  javassist
 
 
     public String getMode() {
@@ -99,7 +100,16 @@ public class JbootApplicationConfig {
     }
 
     public String getProxy() {
+        if (StrUtil.isBlank(proxy)) {
+            proxy = initProxy();
+        }
         return proxy;
+    }
+
+
+    private String initProxy() {
+        ///cglib  javassist
+        return JdkUtil.isJdk11To19() ? "javassist" : "cglib";
     }
 
     public void setProxy(String proxy) {

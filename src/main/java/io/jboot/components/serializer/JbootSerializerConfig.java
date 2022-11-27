@@ -15,7 +15,9 @@
  */
 package io.jboot.components.serializer;
 
+import io.jboot.app.JdkUtil;
 import io.jboot.app.config.annotation.ConfigModel;
+import io.jboot.utils.StrUtil;
 
 
 @ConfigModel(prefix = "jboot.serializer")
@@ -25,11 +27,20 @@ public class JbootSerializerConfig {
     public static final String FASTJSON = "fastjson";
     public static final String KRYO = "kryo";
 
-    public String type = FST;
+    public String type;
+
 
     public String getType() {
+        if (StrUtil.isBlank(type)){
+            type = initType();
+        }
         return type;
     }
+
+    private String initType() {
+        return JdkUtil.isJdk11To19() ? FASTJSON : FST;
+    }
+
 
     public void setType(String type) {
         this.type = type;
