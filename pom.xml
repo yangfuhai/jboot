@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>4.0.0-snapshot</version>
+    <version>4.0.0</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -542,7 +542,7 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
-            <version>4.2.12</version>
+            <version>${metrics.version}</version>
         </dependency>
 
 
