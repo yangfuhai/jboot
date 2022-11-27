@@ -57,15 +57,14 @@ import io.jboot.utils.*;
 import io.jboot.web.JbootActionMapping;
 import io.jboot.web.JbootWebConfig;
 import io.jboot.web.PathVariableActionMapping;
-import io.jboot.web.attachment.SecurityFileNamePolicy;
-import io.jboot.web.converter.ArrayConverters;
-import io.jboot.web.converter.TypeConverterFunc;
 import io.jboot.web.attachment.AttachmentHandler;
 import io.jboot.web.attachment.LocalAttachmentContainerConfig;
 import io.jboot.web.controller.JbootControllerManager;
 import io.jboot.web.controller.annotation.GetMapping;
 import io.jboot.web.controller.annotation.PostMapping;
 import io.jboot.web.controller.annotation.RequestMapping;
+import io.jboot.web.converter.ArrayConverters;
+import io.jboot.web.converter.TypeConverterFunc;
 import io.jboot.web.directive.JbootOutputDirectiveFactory;
 import io.jboot.web.directive.SharedEnumObject;
 import io.jboot.web.directive.annotation.*;
@@ -148,8 +147,6 @@ public class JbootCoreConfig extends JFinalConfig {
 
     @Override
     public void configConstant(Constants constants) {
-
-        SecurityFileNamePolicy.init();
 
         JbootAppListenerManager.me().onConstantConfigBefore(constants);
 

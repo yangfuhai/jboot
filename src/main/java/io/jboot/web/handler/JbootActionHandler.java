@@ -91,10 +91,6 @@ public class JbootActionHandler extends ActionHandler {
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
         if (target.lastIndexOf('.') != -1) {
-            if (isJspTarget(target)) {
-                isHandled[0] = true;
-                renderManager.getRenderFactory().getErrorRender(404).setContext(request, response).render();
-            }
             return;
         }
 
