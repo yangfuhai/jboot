@@ -144,7 +144,7 @@ public class ModelUtil {
     }
 
 
-    public static void keep(List<Model> models, String... attrs) {
+    public static void keep(List<? extends Model> models, String... attrs) {
         if (models == null || models.isEmpty()) {
             return;
         }

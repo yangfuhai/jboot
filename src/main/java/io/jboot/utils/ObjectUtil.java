@@ -135,7 +135,12 @@ public class ObjectUtil {
     }
 
 
-    public static Object convert(Object value, Class<?> targetClass) {
+    public static <T> Object convert(Object value, Class<?> targetClass) {
+        if (value == null || (value.getClass() == String.class && StrUtil.isBlank((String) value)
+                && targetClass != String.class)) {
+            return null;
+        }
+
         if (value.getClass().isAssignableFrom(targetClass)) {
             return value;
         }
