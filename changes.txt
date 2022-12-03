@@ -1,6 +1,15 @@
+jboot v4.0.1 2022-12-03:
+新增：新增可以通过配置取消 AOP 缓存的功能
+新增：新增 jboot.cache.useFirstLevelOnly 配置的功能，可以在分布式下只开启 1 级缓存
+优化：修改 aop action 等默认缓存时间为 10 分钟
+优化：ModelUtil.keep 方法
+优化：ObjectUti.convert 方法
+修复：new Model().use("ds").update() 在某些场景下出错的问题
+
+
+
 jboot v4.0.0 2022-11-27:
 优化：正式支持 jdk 17.x
-
 
 
 ===================== v3.x =========================
