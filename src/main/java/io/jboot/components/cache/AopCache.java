@@ -131,8 +131,14 @@ public class AopCache {
         liveSeconds = liveSeconds > 0 ? liveSeconds : CONFIG.getLiveSeconds();
         if (liveSeconds > 0) {
             put(cacheName, cacheKey, data, liveSeconds);
-        } else {
+        }
+        //永久有效
+        else if (liveSeconds == 0){
             put(cacheName, cacheKey, data);
+        }
+        // -1 负数，取消 AOP 缓存
+        else {
+            // do nothing
         }
     }
 }
