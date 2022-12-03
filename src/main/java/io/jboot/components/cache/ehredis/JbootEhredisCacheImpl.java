@@ -80,7 +80,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     @Override
     public <T> T get(String cacheName, Object key) {
         T value = ehcacheImpl.get(cacheName, key);
-        if (value == null) {
+        if (value == null && !config.isUseFirstLevelOnly()) {
             value = redisCacheImpl.get(cacheName, key);
             if (value != null) {
                 Integer ttl = redisCacheImpl.getTtl(cacheName, key);
@@ -98,7 +98,9 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     public void put(String cacheName, Object key, Object value) {
         try {
             ehcacheImpl.put(cacheName, key, value);
-            redisCacheImpl.put(cacheName, key, value);
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.put(cacheName, key, value);
+            }
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_PUT, cacheName, key);
         }
@@ -113,7 +115,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
         }
         try {
             ehcacheImpl.put(cacheName, key, value, liveSeconds);
-            redisCacheImpl.put(cacheName, key, value, liveSeconds);
+
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.put(cacheName, key, value, liveSeconds);
+            }
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_PUT, cacheName, key);
         }
@@ -123,7 +128,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     public void remove(String cacheName, Object key) {
         try {
             ehcacheImpl.remove(cacheName, key);
-            redisCacheImpl.remove(cacheName, key);
+
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.remove(cacheName, key);
+            }
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_REMOVE, cacheName, key);
         }
@@ -133,7 +141,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     public void removeAll(String cacheName) {
         try {
             ehcacheImpl.removeAll(cacheName);
-            redisCacheImpl.removeAll(cacheName);
+
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.removeAll(cacheName);
+            }
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_REMOVE_ALL, cacheName, null);
         }
@@ -174,7 +185,7 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     @Override
     public Integer getTtl(String cacheName, Object key) {
         Integer ttl = ehcacheImpl.getTtl(cacheName, key);
-        if (ttl == null) {
+        if (ttl == null && !config.isUseFirstLevelOnly()) {
             ttl = redisCacheImpl.getTtl(cacheName, key);
         }
         return ttl;
@@ -185,7 +196,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
     public void setTtl(String cacheName, Object key, int seconds) {
         try {
             ehcacheImpl.setTtl(cacheName, key, seconds);
-            redisCacheImpl.setTtl(cacheName, key, seconds);
+
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.setTtl(cacheName, key, seconds);
+            }
         } finally {
             publishMessage(JbootEhredisMessage.ACTION_REMOVE, cacheName, key);
         }
@@ -216,13 +230,13 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
 
     @Override
     public List getNames() {
-        return redisCacheImpl.getNames();
+        return config.isUseFirstLevelOnly() ? null : redisCacheImpl.getNames();
     }
 
     @Override
     public List getKeys(String cacheName) {
         List list = keysCache.getIfPresent(cacheName);
-        if (list == null) {
+        if (list == null && !config.isUseFirstLevelOnly()) {
             list = redisCacheImpl.getKeys(cacheName);
             if (list == null) {
                 list = new ArrayList();

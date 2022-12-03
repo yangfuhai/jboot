@@ -74,7 +74,7 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     @Override
     public <T> T get(String cacheName, Object key) {
         T value = caffeineCacheImpl.get(cacheName, key);
-        if (value == null) {
+        if (value == null && !config.isUseFirstLevelOnly()) {
             value = redisCacheImpl.get(cacheName, key);
             if (value != null) {
                 Integer ttl = redisCacheImpl.getTtl(cacheName, key);
@@ -92,7 +92,9 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     public void put(String cacheName, Object key, Object value) {
         try {
             caffeineCacheImpl.put(cacheName, key, value);
-            redisCacheImpl.put(cacheName, key, value);
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.put(cacheName, key, value);
+            }
         } finally {
             publishMessage(JbootCaredisMessage.ACTION_PUT, cacheName, key);
         }
@@ -107,7 +109,9 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
         }
         try {
             caffeineCacheImpl.put(cacheName, key, value, liveSeconds);
-            redisCacheImpl.put(cacheName, key, value, liveSeconds);
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.put(cacheName, key, value, liveSeconds);
+            }
         } finally {
             publishMessage(JbootCaredisMessage.ACTION_PUT, cacheName, key);
         }
@@ -117,7 +121,9 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     public void remove(String cacheName, Object key) {
         try {
             caffeineCacheImpl.remove(cacheName, key);
-            redisCacheImpl.remove(cacheName, key);
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.remove(cacheName, key);
+            }
         } finally {
             publishMessage(JbootCaredisMessage.ACTION_REMOVE, cacheName, key);
         }
@@ -127,7 +133,9 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     public void removeAll(String cacheName) {
         try {
             caffeineCacheImpl.removeAll(cacheName);
-            redisCacheImpl.removeAll(cacheName);
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.removeAll(cacheName);
+            }
         } finally {
             publishMessage(JbootCaredisMessage.ACTION_REMOVE_ALL, cacheName, null);
         }
@@ -168,7 +176,7 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     @Override
     public Integer getTtl(String cacheName, Object key) {
         Integer ttl = caffeineCacheImpl.getTtl(cacheName, key);
-        if (ttl == null) {
+        if (ttl == null && !config.isUseFirstLevelOnly()) {
             ttl = redisCacheImpl.getTtl(cacheName, key);
         }
         return ttl;
@@ -179,7 +187,10 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
     public void setTtl(String cacheName, Object key, int seconds) {
         try {
             caffeineCacheImpl.setTtl(cacheName, key, seconds);
-            redisCacheImpl.setTtl(cacheName, key, seconds);
+
+            if (!config.isUseFirstLevelOnly()) {
+                redisCacheImpl.setTtl(cacheName, key, seconds);
+            }
         } finally {
             publishMessage(JbootCaredisMessage.ACTION_REMOVE, cacheName, key);
         }
@@ -200,7 +211,7 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
 
     @Override
     public List getNames() {
-        return redisCacheImpl.getNames();
+        return config.isUseFirstLevelOnly() ? null : redisCacheImpl.getNames();
     }
 
 
@@ -211,11 +222,13 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
             return list;
         }
 
-        list = redisCacheImpl.getKeys(cacheName);
-        if (list == null) {
-            list = new ArrayList();
+        if (!config.isUseFirstLevelOnly()) {
+            list = redisCacheImpl.getKeys(cacheName);
+            if (list == null) {
+                list = new ArrayList();
+            }
+            keysCache.put(cacheName, list);
         }
-        keysCache.put(cacheName, list);
 
         return list;
     }

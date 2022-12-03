@@ -44,6 +44,10 @@ public class JbootCacheConfig {
     private String defaultCachePrefix;
     private Boolean devMode = false;
 
+    //只启用一级缓存，针对分布式场景下，redis 有关闭了 scan keys 等指令的时候
+    //可以使用 redis 的消息机制做缓存同步
+    private boolean useFirstLevelOnly = false;
+
 
     public String getName() {
         return name;
@@ -84,5 +88,13 @@ public class JbootCacheConfig {
 
     public void setDevMode(Boolean devMode) {
         this.devMode = devMode;
+    }
+
+    public boolean isUseFirstLevelOnly() {
+        return useFirstLevelOnly;
+    }
+
+    public void setUseFirstLevelOnly(boolean useFirstLevelOnly) {
+        this.useFirstLevelOnly = useFirstLevelOnly;
     }
 }
