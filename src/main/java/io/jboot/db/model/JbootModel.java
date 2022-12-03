@@ -149,6 +149,17 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         }
     }
 
+    @Override
+    public M dao() {
+        put("__is_dao", true);
+        return (M) this;
+    }
+
+
+    private boolean isDaoModel() {
+        Boolean flag = getBoolean("__is_dao");
+        return flag != null && flag;
+    }
 
     /**
      * copy model with attrs or false
@@ -228,15 +239,35 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     private M use(String configName, boolean validateDatasourceExist) {
-        M newModel = copy()._setConfigName(configName);
-        if (newModel._getConfig() == null) {
-            if (validateDatasourceExist) {
+
+        //非 service 的 dao，例如 new User().user('ds').save()/upate()
+        if (!isDaoModel()) {
+            _setConfigName(configName);
+            return validDatasourceExist((M) this, validateDatasourceExist, configName);
+        }
+
+        //定义在 service 中的 DAO
+        M newDao = JbootModelExts.getDatasourceDAO(this, DATASOURCE_CACHE_PREFIX + configName);
+        if (newDao == null) {
+            newDao = this.copy()._setConfigName(configName);
+            newDao = validDatasourceExist(newDao, validateDatasourceExist, configName);
+            if (newDao != null) {
+                JbootModelExts.setDatasourceDAO(this, DATASOURCE_CACHE_PREFIX + configName, newDao);
+            }
+        }
+        return newDao;
+    }
+
+
+    private M validDatasourceExist(M model, boolean valid, String configName) {
+        if (model._getConfig() == null) {
+            if (valid) {
                 throw new JbootIllegalConfigException("The datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
             } else {
                 return null;
             }
         }
-        return newModel;
+        return model;
     }
 
 

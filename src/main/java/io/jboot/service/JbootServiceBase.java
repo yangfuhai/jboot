@@ -63,7 +63,7 @@ public class JbootServiceBase<M extends JbootModel<M>>
         Type type = usefulClass.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             Class<M> modelClass = (Class<M>) ((ParameterizedType) type).getActualTypeArguments()[0];
-            return ClassUtil.newInstance(modelClass, false);
+            return ClassUtil.newInstance(modelClass, false).dao();
         }
         //from child class
         else if (type instanceof Class) {
