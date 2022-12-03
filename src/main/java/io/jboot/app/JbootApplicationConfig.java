@@ -131,7 +131,7 @@ public class JbootApplicationConfig {
                 " name='" + name + '\'' +
                 ", mode='" + mode + '\'' +
                 ", version='" + version + '\'' +
-                ", proxy='" + proxy + '\'' +
+                ", proxy='" + getProxy() + '\'' +
 //                ", config='" + jfinalConfig + '\'' +
                 ", listener='" + listener + '\'' +
                 ", listenerPackage='" + listenerPackage + '\'' +
