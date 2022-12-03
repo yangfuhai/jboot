@@ -267,8 +267,6 @@ public class ClassUtil {
         }
 
         return clazz;
-
-//        return clazz.getName().indexOf(ENHANCER_BY) == -1 ? clazz : clazz.getSuperclass();
     }
 
 

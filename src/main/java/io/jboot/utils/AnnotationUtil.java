@@ -34,43 +34,6 @@ public class AnnotationUtil {
         return defaultValue;
     }
 
-
-    public static Integer getInt(String value) {
-        String intValue = get(value);
-        if (intValue == null) return null;
-        return Integer.valueOf(intValue);
-    }
-
-    public static Integer getInt(String value, int defaultValue) {
-        String intValue = get(value);
-        if (intValue == null) return defaultValue;
-        return Integer.valueOf(intValue);
-    }
-
-    public static Long getLong(String value) {
-        String longValue = get(value);
-        if (longValue == null) return null;
-        return Long.valueOf(longValue);
-    }
-
-    public static Long getLong(String value, long defaultValue) {
-        String longValue = get(value);
-        if (longValue == null) return defaultValue;
-        return Long.valueOf(longValue);
-    }
-
-    public static Boolean getBool(String value) {
-        String boolValue = get(value);
-        if (boolValue == null) return null;
-        return Boolean.valueOf(boolValue);
-    }
-
-    public static Boolean getBool(String value, boolean defaultValue) {
-        String boolValue = get(value);
-        if (boolValue == null) return defaultValue;
-        return Boolean.valueOf(boolValue);
-    }
-
     public static String[] get(String[] value) {
         if (ArrayUtil.isNullOrEmpty(value)) {
             return null;
@@ -82,6 +45,39 @@ public class AnnotationUtil {
         }
         return rets;
     }
+
+
+
+    public static Integer getInt(String value) {
+        String intValue = get(value);
+        return intValue == null ? null : Integer.parseInt(intValue);
+    }
+
+    public static Integer getInt(String value, int defaultValue) {
+        String intValue = get(value);
+        return intValue == null ? defaultValue : Integer.parseInt(intValue);
+    }
+
+    public static Long getLong(String value) {
+        String longValue = get(value);
+        return longValue == null ? null : Long.parseLong(longValue);
+    }
+
+    public static Long getLong(String value, long defaultValue) {
+        String longValue = get(value);
+        return longValue == null ? defaultValue : Long.parseLong(longValue);
+    }
+
+    public static Boolean getBool(String value) {
+        String boolValue = get(value);
+        return boolValue == null ? null : Boolean.parseBoolean(boolValue);
+    }
+
+    public static Boolean getBool(String value, boolean defaultValue) {
+        String boolValue = get(value);
+        return boolValue == null ? defaultValue : Boolean.parseBoolean(boolValue);
+    }
+
 
 
 }
