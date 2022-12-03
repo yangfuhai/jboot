@@ -160,6 +160,10 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
         try {
             m = (M) _getUsefulClass().newInstance();
             m.put(_getAttrs());
+
+            for (String attr : _getModifyFlag()) {
+                m._getModifyFlag().add(attr);
+            }
         } catch (Exception e) {
             LOG.error(e.toString(), e);
         }
@@ -224,20 +228,15 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
 
 
     private M use(String configName, boolean validateDatasourceExist) {
-        M newDao = JbootModelExts.getDatasourceDAO(this, DATASOURCE_CACHE_PREFIX + configName);
-        if (newDao == null) {
-            newDao = this.copy()._setConfigName(configName);
-            if (newDao._getConfig() == null) {
-                if (validateDatasourceExist) {
-                    throw new JbootIllegalConfigException("The datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
-                } else {
-                    return null;
-                }
+        M newModel = copy()._setConfigName(configName);
+        if (newModel._getConfig() == null) {
+            if (validateDatasourceExist) {
+                throw new JbootIllegalConfigException("The datasource \"" + configName + "\" not config well, please config it in jboot.properties.");
             } else {
-                JbootModelExts.setDatasourceDAO(this, DATASOURCE_CACHE_PREFIX + configName, newDao);
+                return null;
             }
         }
-        return newDao;
+        return newModel;
     }
 
 

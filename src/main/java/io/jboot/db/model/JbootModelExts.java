@@ -56,13 +56,4 @@ public class JbootModelExts {
     }
 
 
-    public static void setDatasourceDAO(JbootModel<?> holder, String key, JbootModel datasourceDAO) {
-        setExtAttr(holder, key, datasourceDAO);
-    }
-
-    public static <T> T getDatasourceDAO(JbootModel<?> holder, String key) {
-        return (T) getExtAttr(holder, key);
-    }
-
-
 }
