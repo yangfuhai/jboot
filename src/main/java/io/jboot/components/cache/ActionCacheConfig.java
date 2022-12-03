@@ -25,7 +25,8 @@ public class ActionCacheConfig {
 
     // AOP 缓存的默认有效时间，0为永久有效，单位秒，
     // 当 @Cacheable 和 @CachePut 注解不配置的时候默认用这个配置
-    private int liveSeconds = 60 * 60; //默认为 1 个小时
+
+    private int liveSeconds = 60 * 10; //默认为 10 分钟
     private String useCacheName = "default";
 
     public int getLiveSeconds() {
