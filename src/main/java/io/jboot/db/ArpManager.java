@@ -27,7 +27,6 @@ import io.jboot.db.datasource.DataSourceConfig;
 import io.jboot.db.datasource.DataSourceConfigManager;
 import io.jboot.db.dbpro.JbootDbProFactory;
 import io.jboot.db.dialect.*;
-import io.jboot.db.record.JbootRecordBuilder;
 import io.jboot.exception.JbootException;
 import io.jboot.exception.JbootIllegalConfigException;
 import io.jboot.utils.ClassUtil;
@@ -144,9 +143,6 @@ public class ArpManager {
 
         configSqlTemplate(activeRecordPlugin, config);
         configDialect(activeRecordPlugin, config);
-
-        //配置 Record 构建器
-        activeRecordPlugin.getConfig().getDialect().setRecordBuilder(new JbootRecordBuilder());
 
         /**
          * 在一个表有多个数据源的情况下，应该只需要添加一个映射就可以了
