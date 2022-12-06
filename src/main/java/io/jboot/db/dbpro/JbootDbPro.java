@@ -15,20 +15,16 @@
  */
 package io.jboot.db.dbpro;
 
-import com.jfinal.plugin.activerecord.Config;
-import com.jfinal.plugin.activerecord.DbPro;
-import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
 import io.jboot.db.dialect.JbootDialect;
 import io.jboot.db.model.Columns;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -116,5 +112,41 @@ public class JbootDbPro extends DbPro {
         return columns.isEmpty() ? delete(sql) : delete(sql, columns.getValueArray());
     }
 
+    @Override
+    public void each(Function<Record, Boolean> func, String sql, Object... paras) {
+        //Connection conn = null;
+        //		try {
+        //			conn = config.getConnection();
+        //
+        //			try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        //				config.dialect.fillStatement(pst, paras);
+        //				ResultSet rs = pst.executeQuery();
+        //				config.dialect.eachRecord(config, rs, func);
+        //				DbKit.close(rs);
+        //			}
+        //
+        //		} catch (Exception e) {
+        //			throw new ActiveRecordException(e);
+        //		} finally {
+        //			config.close(conn);
+        //		}
 
+        Dialect dialect = config.getDialect();
+        try {
+            SqlDebugger.run(() -> {
+                try (Connection conn = config.getConnection();
+                     PreparedStatement pst = conn.prepareStatement(sql)) {
+
+                    dialect.fillStatement(pst, paras);
+
+                    try (ResultSet rs = pst.executeQuery();) {
+                        dialect.eachRecord(config, rs, func);
+                    }
+                }
+                return true;
+            }, config, sql, paras);
+        } catch (Exception e) {
+            throw new ActiveRecordException(e);
+        }
+    }
 }

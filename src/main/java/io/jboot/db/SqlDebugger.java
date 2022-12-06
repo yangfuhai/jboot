@@ -90,7 +90,7 @@ public class SqlDebugger {
     }
 
 
-    public static interface SqlDebugPrinter {
+    public interface SqlDebugPrinter {
 
         SqlDebugPrinter DEFAULT_PRINTER = new SqlDebugPrinter() {
 
@@ -148,7 +148,7 @@ public class SqlDebugger {
         void print(String sql, Long takedTimeMillis);
     }
 
-    public static interface SqlRunner<V> {
+    public interface SqlRunner<V> {
         V run() throws SQLException;
     }
 }
