@@ -41,7 +41,7 @@
 
 
     <properties>
-        <jfinal.version>5.0.7</jfinal.version>
+        <jfinal.version>5.0.8</jfinal.version>
         <jfinal-cos.version>2022.2</jfinal-cos.version>
         <jfinal-undertow.version>3.3</jfinal-undertow.version>
         <jfinal-weixin.version>3.4</jfinal-weixin.version>
