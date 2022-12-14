@@ -464,6 +464,7 @@ public class JbootController extends Controller {
     }
 
 
+
     @NotAction
     public Map<String, String> getParas() {
         Map<String, String> map = null;
@@ -479,19 +480,44 @@ public class JbootController extends Controller {
     }
 
 
+    @Override
+    public String getPara() {
+        return tryToTrim(super.getPara());
+    }
+
+
+    @Override
+    public String getPara(String name) {
+        return tryToTrim(super.getPara(name));
+    }
+
+
+    @Override
+    public String getPara(int index, String defaultValue) {
+        return tryToTrim(super.getPara(index, defaultValue));
+    }
+
+
+    @Override
+    public String getPara(String name, String defaultValue) {
+        return tryToTrim(super.getPara(name, defaultValue));
+    }
+
+
     @NotAction
     public String getTrimPara(String name) {
-        String value = super.getPara(name);
-        value = (value == null ? null : value.trim());
-        return "".equals(value) ? null : value;
+        return getPara(name);
     }
 
 
     @NotAction
     public String getTrimPara(int index) {
-        String value = super.getPara(index);
-        value = (value == null ? null : value.trim());
-        return "".equals(value) ? null : value;
+        return getPara(index);
+    }
+
+
+    private String tryToTrim(String value){
+        return value != null ? value.trim() : null;
     }
 
 
