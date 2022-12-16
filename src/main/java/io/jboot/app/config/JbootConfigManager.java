@@ -75,8 +75,15 @@ public class JbootConfigManager {
 
 
         //可以直接在 默认目录下的 jboot.properties 再次指定外部目录
-        fileName = getConfigValue(mainProperties, "jboot_properties_name");
-        pathName = getConfigValue(mainProperties, "jboot_properties_path");
+        String newFileName = getConfigValue(mainProperties, "jboot_properties_name");
+        if (newFileName != null && newFileName.trim().length() > 0 && "jboot".equals(fileName)) {
+            fileName = newFileName;
+        }
+
+        String newPathName = getConfigValue(mainProperties, "jboot_properties_path");
+        if (newPathName != null && newPathName.trim().length() > 0 && (pathName == null || pathName.trim().length() == 0)) {
+            pathName = newPathName;
+        }
 
 
         String mode = getConfigValue("jboot.app.mode");
