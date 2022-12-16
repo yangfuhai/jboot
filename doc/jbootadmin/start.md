@@ -113,7 +113,7 @@ starter-cms/src/main/io.jboot.cms.admin.CmsStarter
  \____||_____| \___/  \___/   |__|  
                                     
 
-JbootApplication { name='jboot', mode='dev', version='4.0.1', config='io.jboot.core.JbootCoreConfig' }
+JbootApplication { name='jboot', mode='dev', version='4.0.2', config='io.jboot.core.JbootCoreConfig' }
 Classpath : /Users/michael/work/git/JbootAdmin/starter-cms/target/classes/
 Starting JFinal 4.9.01 -> http://0.0.0.0:8003
 Info: jfinal-undertow 2.1, undertow 2.0.30.Final, jvm 1.8.0_261
@@ -126,7 +126,7 @@ ClassScanner scan classpath : /Users/michael/work/git/JbootAdmin/core-framework/
 ClassScanner scan classpath : /Users/michael/work/git/JbootAdmin/module-cms/module-cms-web/target/classes
 ClassScanner scan classpath : /Users/michael/work/git/JbootAdmin/core-commons/target/classes
 ClassScanner scan classpath : /Users/michael/work/git/JbootAdmin/core-framework/core-framework-service/target/classes
-ClassScanner scan jar : /Users/michael/.m2/repository/io/jboot/jboot/4.0.1/jboot-4.0.1.jar
+ClassScanner scan jar : /Users/michael/.m2/repository/io/jboot/jboot/4.0.2/jboot-4.0.2.jar
 
 Starting Complete in 2.3 seconds. Welcome To The JFinal World (^_^)
 
