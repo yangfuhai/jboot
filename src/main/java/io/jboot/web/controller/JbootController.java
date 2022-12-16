@@ -481,24 +481,28 @@ public class JbootController extends Controller {
 
 
     @Override
+    @NotAction
     public String getPara() {
         return tryToTrim(super.getPara());
     }
 
 
     @Override
+    @NotAction
     public String getPara(String name) {
         return tryToTrim(super.getPara(name));
     }
 
 
     @Override
+    @NotAction
     public String getPara(int index, String defaultValue) {
         return tryToTrim(super.getPara(index, defaultValue));
     }
 
 
     @Override
+    @NotAction
     public String getPara(String name, String defaultValue) {
         return tryToTrim(super.getPara(name, defaultValue));
     }
@@ -516,6 +520,7 @@ public class JbootController extends Controller {
     }
 
 
+    @NotAction
     private String tryToTrim(String value){
         return value != null ? value.trim() : null;
     }
