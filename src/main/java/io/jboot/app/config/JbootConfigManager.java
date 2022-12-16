@@ -66,7 +66,7 @@ public class JbootConfigManager {
 
     private void init() {
         String fileName = getConfigValue(null, "jboot_properties_name");
-        if (fileName == null || fileName.length() == 0) {
+        if (fileName == null || fileName.trim().length() == 0) {
             fileName = "jboot";
         }
 
