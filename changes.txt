@@ -1,3 +1,11 @@
+jboot v4.0.2 2022-12-16:
+新增：db.each 的 sql 打印输出
+新增：通过 Controller 获取参数时，自动对参数进行 trim 操作
+新增：配置文件可以外部的任意目录
+优化：升级 jfinal 到最新版本
+
+
+
 jboot v4.0.1 2022-12-03:
 新增：新增可以通过配置取消 AOP 缓存的功能
 新增：新增 jboot.cache.useFirstLevelOnly 配置的功能，可以在分布式下只开启 1 级缓存
