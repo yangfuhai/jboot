@@ -24,7 +24,6 @@ import io.jboot.components.mq.redismq.JbootRedismqImpl;
 import io.jboot.components.mq.rocketmq.JbootRocketmqImpl;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.ClassUtil;
 import io.jboot.utils.ConfigUtil;
 
 import java.util.Map;
@@ -33,12 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JbootmqManager {
 
-    private static JbootmqManager manager;
+    private static JbootmqManager manager = new JbootmqManager();
+
+    private JbootmqManager(){}
 
     public static JbootmqManager me() {
-        if (manager == null) {
-            manager = ClassUtil.singleton(JbootmqManager.class);
-        }
         return manager;
     }
 
