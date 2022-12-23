@@ -18,7 +18,6 @@ package io.jboot.components.serializer;
 import io.jboot.Jboot;
 import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootIllegalConfigException;
-import io.jboot.utils.ClassUtil;
 import io.jboot.utils.StrUtil;
 
 import java.util.Map;
@@ -28,14 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JbootSerializerManager {
 
 
-    private static JbootSerializerManager me;
+    private static JbootSerializerManager me = new JbootSerializerManager();
 
     private static Map<String, JbootSerializer> serializerCaches = new ConcurrentHashMap<>();
 
     public static JbootSerializerManager me() {
-        if (me == null) {
-            me = ClassUtil.singleton(JbootSerializerManager.class);
-        }
         return me;
     }
 
@@ -47,6 +43,7 @@ public class JbootSerializerManager {
         }
         return getSerializer(config.getType());
     }
+
 
     public JbootSerializer getSerializer(String serializerName) {
         JbootSerializer serializer = serializerCaches.get(serializerName);
