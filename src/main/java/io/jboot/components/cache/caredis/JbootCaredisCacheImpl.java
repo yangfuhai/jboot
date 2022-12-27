@@ -60,8 +60,12 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
         this.redisCacheImpl = new JbootRedisCacheImpl(config);
         this.clientId = StrUtil.uuid();
         this.serializer = Jboot.getSerializer();
-        this.redis = redisCacheImpl.getRedis();
 
+        if (StrUtil.isNotBlank(config.getCacheSyncMqChannel())){
+            this.channel = config.getCacheSyncMqChannel();
+        }
+
+        this.redis = redisCacheImpl.getRedis();
         this.redis.subscribe(new BinaryJedisPubSub() {
             @Override
             public void onMessage(byte[] channel, byte[] message) {

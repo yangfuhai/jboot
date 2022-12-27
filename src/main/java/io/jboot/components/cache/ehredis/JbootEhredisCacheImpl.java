@@ -67,6 +67,10 @@ public class JbootEhredisCacheImpl extends JbootCacheBase implements CacheEventL
         this.clientId = StrUtil.uuid();
         this.serializer = Jboot.getSerializer();
 
+        if (StrUtil.isNotBlank(config.getCacheSyncMqChannel())){
+            this.channel = config.getCacheSyncMqChannel();
+        }
+
         this.redis = redisCacheImpl.getRedis();
         this.redis.subscribe(new BinaryJedisPubSub() {
             @Override

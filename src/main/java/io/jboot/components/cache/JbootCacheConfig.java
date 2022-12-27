@@ -48,6 +48,8 @@ public class JbootCacheConfig {
     //可以使用 redis 的消息机制做缓存同步
     private boolean useFirstLevelOnly = false;
 
+    private String cacheSyncMqChannel;
+
 
     public String getName() {
         return name;
@@ -96,5 +98,13 @@ public class JbootCacheConfig {
 
     public void setUseFirstLevelOnly(boolean useFirstLevelOnly) {
         this.useFirstLevelOnly = useFirstLevelOnly;
+    }
+
+    public String getCacheSyncMqChannel() {
+        return cacheSyncMqChannel;
+    }
+
+    public void setCacheSyncMqChannel(String cacheSyncMqChannel) {
+        this.cacheSyncMqChannel = cacheSyncMqChannel;
     }
 }
