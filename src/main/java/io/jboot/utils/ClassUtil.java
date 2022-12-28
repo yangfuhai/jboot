@@ -21,6 +21,7 @@ import io.jboot.aop.annotation.StaticConstruct;
 import io.jboot.exception.JbootException;
 
 import java.lang.reflect.*;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,7 +63,7 @@ public class ClassUtil {
             if (ret != null) {
                 singletons.put(clazz, ret);
             } else {
-                LOG.error("Can not new newInstance for class: " + clazz.getName());
+                LOG.error("Can not new instance for class: " + clazz.getName());
             }
         }
         return (T) ret;
@@ -78,7 +79,7 @@ public class ClassUtil {
                 }
                 singletons.put(clazz, ret);
             } else {
-                LOG.error("Can not new newInstance for class: " + clazz.getName());
+                LOG.error("Can not new instance for class: " + clazz.getName());
             }
         }
         return (T) ret;
@@ -126,7 +127,7 @@ public class ClassUtil {
                 constructor.setAccessible(true);
                 return (T) constructor.newInstance();
             } catch (Exception e) {
-                LOG.error("Can not newInstance for class:" + clazz.getName() + "\n" + e, e);
+                LOG.error("Can not new instance for class:" + clazz.getName() + "\n" + e, e);
             }
 
             return null;
@@ -136,26 +137,51 @@ public class ClassUtil {
 
     public static <T> T newInstance(Class<T> clazz, boolean createByAop, Object... paras) {
         try {
-            Class<?>[] classes = new Class[paras.length];
-            for (int i = 0; i < paras.length; i++) {
-                Object data = paras[i];
-                if (data == null) {
-                    throw new IllegalArgumentException("paras must not null");
+            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+            for (Constructor<?> constructor : constructors) {
+                if (isConstructorMatchedParas(constructor, paras)) {
+//                    constructor.setAccessible(true);
+                    Object ret = constructor.newInstance(paras);
+                    if (createByAop) {
+                        Aop.inject(ret);
+                    }
+                    return (T) ret;
                 }
-                classes[i] = data.getClass();
             }
-            Constructor constructor = clazz.getDeclaredConstructor(classes);
-            constructor.setAccessible(true);
-            Object ret = constructor.newInstance(paras);
-            if (createByAop) {
-                Aop.inject(ret);
-            }
-            return (T) ret;
+
+            throw new IllegalArgumentException("Can not matched constructor by paras: " + Arrays.toString(paras) + " in class: " + clazz.getName());
         } catch (Exception e) {
-            LOG.error("Can not newInstance for class:" + clazz.getName() + "\n" + e, e);
+            LOG.error("Can not new instance for class: " + clazz.getName() + "\n" + e, e);
         }
 
         return null;
+    }
+
+
+    private static boolean isConstructorMatchedParas(Constructor<?> constructor, Object[] paras) {
+        if (constructor.getParameterCount() == 0 && (paras == null || paras.length == 0)) {
+            return true;
+        }
+
+        if (constructor.getParameterCount() == 0 && paras != null && paras.length > 0) {
+            return false;
+        }
+
+        if (constructor.getParameterCount() > 0
+                && (paras == null || paras.length != constructor.getParameterCount())) {
+            return false;
+        }
+
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Class<?> parameterType = parameterTypes[i];
+            Object paraObject = paras[i];
+            if (paraObject != null && !parameterType.isAssignableFrom(paraObject.getClass())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -174,15 +200,15 @@ public class ClassUtil {
         Method method = getStaticConstruct(staticConstruct.value(), clazz);
 
         if (method == null) {
-            throw new JbootException("Can not new instance by static constrauct for class: " + clazz.getName());
+            throw new JbootException("Can not new instance by static construct for class: " + clazz.getName());
         }
 
         try {
             return (T) method.invoke(null, null);
         } catch (Exception e) {
 
-            LOG.error("Can not invoke method:" + method.getName()
-                    + " in class : " + clazz.getName() + "\n" + e, e);
+            LOG.error("Can not invoke method: " + method.getName()
+                    + " in class: " + clazz.getName() + "\n" + e, e);
 
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -246,7 +272,7 @@ public class ClassUtil {
             Class<T> clazz = (Class<T>) Class.forName(clazzName, false, classLoader);
             return newInstance(clazz, createByAop);
         } catch (Exception e) {
-            LOG.error("can not newInstance for class:" + clazzName + "\n" + e.toString(), e);
+            LOG.error("Can not new instance for class: " + clazzName + "\n" + e.toString(), e);
         }
 
         return null;
