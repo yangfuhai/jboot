@@ -41,7 +41,9 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
 
     public JbootRedisCacheImpl(JbootCacheConfig config) {
         super(config);
+
         cacheConfig = Jboot.config(JbootRedisCacheConfig.class);
+
         if (StrUtil.isNotBlank(cacheConfig.getGlobalKeyPrefix())) {
             globalKeyPrefix = cacheConfig.getGlobalKeyPrefix() + ":";
             redisCacheNamesKey = globalKeyPrefix + redisCacheNamesKey;
@@ -55,7 +57,8 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
         }
 
         if (redis == null) {
-            throw new JbootIllegalConfigException("can not get redis, please check your jboot.properties , please correct config jboot.cache.redis.host or jboot.redis.host ");
+            throw new JbootIllegalConfigException("Can not get redis component in JbootRedisCacheImpl, Please check your jboot.properties " +
+                    "and config jboot.cache.redis.host or jboot.redis.host correct.");
         }
     }
 

@@ -61,6 +61,7 @@ public class JbootCaredisCacheImpl extends JbootCacheBase {
         this.clientId = StrUtil.uuid();
         this.serializer = Jboot.getSerializer();
 
+        //在某些场景下，多个应用使用同一个 redis 实例，此时可以通过配置 cacheSyncMqChannel 来解决缓存冲突的问题
         if (StrUtil.isNotBlank(config.getCacheSyncMqChannel())){
             this.channel = config.getCacheSyncMqChannel();
         }
