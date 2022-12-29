@@ -159,12 +159,8 @@ public class ClassUtil {
 
 
     private static boolean isConstructorMatchedParas(Constructor<?> constructor, Object[] paras) {
-        if (constructor.getParameterCount() == 0 && (paras == null || paras.length == 0)) {
-            return true;
-        }
-
-        if (constructor.getParameterCount() == 0 && paras != null && paras.length > 0) {
-            return false;
+        if (constructor.getParameterCount() == 0) {
+            return paras == null || paras.length == 0;
         }
 
         if (constructor.getParameterCount() > 0
