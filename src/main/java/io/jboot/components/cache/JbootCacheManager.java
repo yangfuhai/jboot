@@ -57,7 +57,7 @@ public class JbootCacheManager {
 
     public JbootCache getCache(String name) {
         if (StrUtil.isBlank(name)) {
-            throw new IllegalArgumentException("cache name must not be null or blank.");
+            throw new IllegalArgumentException("Cache name must not be null or blank.");
         }
 
         JbootCache cache = cacheMap.get(name);

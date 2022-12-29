@@ -16,7 +16,6 @@
 package io.jboot.components.cache.ehcache;
 
 import com.jfinal.kit.PathKit;
-import com.jfinal.log.Log;
 import com.jfinal.plugin.ehcache.IDataLoader;
 import io.jboot.Jboot;
 import io.jboot.components.cache.JbootCacheBase;
@@ -35,8 +34,6 @@ public class JbootEhcacheImpl extends JbootCacheBase {
 
     private CacheManager cacheManager;
     private static Object locker = new Object();
-
-    private static final Log log = Log.getLog(JbootEhcacheImpl.class);
 
     private CacheEventListener cacheEventListener;
 
