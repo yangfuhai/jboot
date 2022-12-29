@@ -1,3 +1,14 @@
+jboot v4.0.5 2022-12-29:
+新增：jboot.cache.cacheSyncMqChannel 的配置，用于对分布式缓存的 channel 进行自定义
+优化：JbootRedisCacheImpl 初始化的错误提示内容
+优化：ClassUtil.newInstance() 方法，方便对构造器进行传参
+优化：删除无用的 GenTester.java 文件
+优化：不再对 JbootSerializerManager 进行 Aop 增强
+优化：不再对 JbootmqManager 进行 Aop 增强
+优化：不再对 JbootEventManager 进行 Aop 增强
+
+
+
 jboot v4.0.2 2022-12-16:
 新增：db.each 的 sql 打印输出
 新增：通过 Controller 获取参数时，自动对参数进行 trim 操作
