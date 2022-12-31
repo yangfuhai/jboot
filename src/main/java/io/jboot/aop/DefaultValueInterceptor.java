@@ -65,6 +65,7 @@ public class DefaultValueInterceptor implements Interceptor, InterceptorBuilder 
             for (Parameter p : parameters) {
                 if (p.getAnnotation(DefaultValue.class) != null) {
                     interceptors.addIfNotExist(this);
+                    break;
                 }
             }
         }

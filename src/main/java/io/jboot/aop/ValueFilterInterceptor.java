@@ -33,15 +33,15 @@ public class ValueFilterInterceptor implements Interceptor, InterceptorBuilder {
         for (int index = 0; index < parameters.length; index++) {
             FilterBy filter = parameters[index].getAnnotation(FilterBy.class);
             if (filter != null) {
-                Object orignal = inv.getArg(index);
+                Object original = inv.getArg(index);
 
                 Class<? extends ValueFilter>[] classes = filter.value();
                 for (Class<? extends ValueFilter> aClass : classes) {
                     ValueFilter vf = Aop.get(aClass);
-                    orignal = vf.doFilter(orignal);
+                    original = vf.doFilter(original);
                 }
 
-                inv.setArg(index, orignal);
+                inv.setArg(index, original);
             }
         }
 
@@ -56,6 +56,7 @@ public class ValueFilterInterceptor implements Interceptor, InterceptorBuilder {
             for (Parameter p : parameters) {
                 if (p.getAnnotation(FilterBy.class) != null) {
                     interceptors.addIfNotExist(this);
+                    break;
                 }
             }
         }

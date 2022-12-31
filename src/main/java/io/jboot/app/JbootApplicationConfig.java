@@ -32,7 +32,7 @@ public class JbootApplicationConfig {
     private String listener = "*";
     private String listenerPackage = "*";
     private boolean handle404 = true;
-    private String proxy;  //cglib or  javassist
+    private String proxy;  //cglib or javassist
 
 
     public String getMode() {
