@@ -88,7 +88,7 @@ public class ApplicationUtil {
             if (runInFatjar()) {
                 System.out.println("JbootApplication is running in fatjar.");
             } else {
-                String path = ApplicationUtil.class.getResource("/").toURI().getPath();
+                String path = ApplicationUtil.class.getResource("/").getPath();
                 // 例如： /D:/JAVA/workSpace_idea/...
                 if (path.indexOf(":") == 2) {
                     path = path.substring(1);
