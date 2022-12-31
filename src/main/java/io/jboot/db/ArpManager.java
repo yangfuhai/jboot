@@ -219,7 +219,7 @@ public class ArpManager {
         if (datasourceConfig.getDialectClass() != null) {
             Dialect dialect = ClassUtil.newInstance(datasourceConfig.getDialectClass(), false);
             if (dialect == null) {
-                throw new NullPointerException("can not new instance by class:" + datasourceConfig.getDialectClass());
+                throw new JbootIllegalConfigException("Can not new instance by class: " + datasourceConfig.getDialectClass());
             }
             activeRecordPlugin.setDialect(dialect);
             return;
@@ -257,7 +257,7 @@ public class ArpManager {
                 activeRecordPlugin.setDialect(new JbootInformixDialect());
                 break;
             default:
-                throw new JbootIllegalConfigException("only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql、postgresql and clickhouse, please check your jboot.properties. ");
+                throw new JbootIllegalConfigException("only support datasource type: mysql、orcale、sqlserver、sqlite、ansisql、postgresql and clickhouse, please check your jboot.properties. ");
         }
     }
 

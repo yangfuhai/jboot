@@ -103,7 +103,7 @@ public class CodeGenHelpler {
                 metaBuilder.setDialect(new InformixDialect());
                 break;
             default:
-                throw new JbootIllegalConfigException("Only support datasource type : mysql、orcale、sqlserver、sqlite、ansisql、postgresql and infomix" +
+                throw new JbootIllegalConfigException("Only support datasource type: mysql、orcale、sqlserver、sqlite、ansisql、postgresql and infomix" +
                         ", please check your jboot.properties. ");
         }
 
@@ -123,7 +123,7 @@ public class CodeGenHelpler {
             Set<String> excludeTableSet = StrUtil.splitToSet(excludeTables.toLowerCase(), ",");
             for (TableMeta tableMeta : list) {
                 if (excludeTableSet.contains(tableMeta.name.toLowerCase())) {
-                    System.out.println("exclude table : " + tableMeta.name);
+                    System.out.println("exclude table: " + tableMeta.name);
                     continue;
                 }
                 newTableMetaList.add(tableMeta);
