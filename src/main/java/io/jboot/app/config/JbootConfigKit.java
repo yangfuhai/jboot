@@ -186,7 +186,7 @@ public class JbootConfigKit {
 
     private static String appendSuffixIfNecessary(String fileName) {
         fileName = fileName.trim();
-        return fileName.endsWith(".properties") ? fileName : fileName + ".properties";
+        return fileName.toLowerCase().endsWith(".properties") ? fileName : fileName + ".properties";
     }
 
 
