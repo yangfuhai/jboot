@@ -89,9 +89,13 @@ public class ApplicationUtil {
             if (runInFatjar()) {
                 System.out.println("JbootApplication is running in fatjar.");
             } else {
-                System.out.println("JbootApplication ClassPath: " + ApplicationUtil.class.getResource("/").toURI().getPath());
+                String path = ApplicationUtil.class.getResource("/").toURI().getPath();
+                if (path.indexOf(":") == 2) {
+                    path = path.substring(1);
+                }
+                System.out.println("JbootApplication ClassPath: " + path);
             }
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
