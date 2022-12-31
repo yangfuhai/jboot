@@ -22,7 +22,7 @@ package io.jboot;
  */
 public class JbootConsts {
 
-    public static String VERSION = "4.0.5";
+    public static String VERSION = "4.0.6";
 
 
     public static final String ATTR_CONTEXT_PATH = "CPATH";
