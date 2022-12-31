@@ -1,3 +1,11 @@
+jboot v4.0.6 2022-12-31:
+修复：缓存注解自动生成 key 无法支持集合参数的问题
+优化：ApplicationUtil.java 使其在 window 下输出正确的 classpath 路径
+优化：修改 ValueFilterInterceptor.java 里的错别字
+优化：JbootConfigManager.java 配置独立目录时，再次读取 jboot.properties 文件
+
+
+
 jboot v4.0.5 2022-12-29:
 新增：jboot.cache.cacheSyncMqChannel 的配置，用于对分布式缓存的 channel 进行自定义
 优化：JbootRedisCacheImpl 初始化的错误提示内容
