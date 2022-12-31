@@ -66,7 +66,7 @@ public class JbootConfigManager {
 
     private void init() {
         String fileName = getConfigValue(null, "jboot_properties_name");
-        if (fileName == null || fileName.trim().length() == 0) {
+        if (fileName == null || fileName.length() == 0) {
             fileName = "jboot";
         }
 
@@ -76,19 +76,25 @@ public class JbootConfigManager {
 
         //可以直接在 默认目录下的 jboot.properties 再次指定外部目录
         String newFileName = getConfigValue(mainProperties, "jboot_properties_name");
-        if (newFileName != null && newFileName.trim().length() > 0 && "jboot".equals(fileName)) {
+        if (newFileName != null && newFileName.length() > 0 && "jboot".equals(fileName)) {
             fileName = newFileName;
         }
 
         String newPathName = getConfigValue(mainProperties, "jboot_properties_path");
-        if (newPathName != null && newPathName.trim().length() > 0 && (pathName == null || pathName.trim().length() == 0)) {
+        if (newPathName != null && newPathName.length() > 0 && (pathName == null || pathName.length() == 0)) {
             pathName = newPathName;
+        }
+
+
+        //配置了 pathName，需要再去 path 读取 jboot.properties 文件
+        if (pathName != null && pathName.length() > 0) {
+            Properties newMainProperties = JbootConfigKit.readProperties(pathName, fileName);
+            mainProperties.putAll(newMainProperties);
         }
 
 
         String mode = getConfigValue("jboot.app.mode");
         if (JbootConfigKit.isNotBlank(mode)) {
-
             //开始加载 mode properties
             //并全部添加覆盖掉掉 main properties
             String modeFileName = fileName + "-" + mode;
@@ -268,12 +274,12 @@ public class JbootConfigManager {
 
     public String getConfigValue(Properties properties, String key) {
         if (JbootConfigKit.isBlank(key)) {
-            return "";
+            return null;
         }
         String originalValue = getOriginalConfigValue(properties, key);
-        String stringValue = decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
-
-        return JbootConfigKit.parseValue(this, stringValue);
+        String decryptValue = decryptor != null ? decryptor.decrypt(key, originalValue) : originalValue;
+        String parseValue = JbootConfigKit.parseValue(this, decryptValue);
+        return parseValue == null || parseValue.trim().length() == 0 ? null : parseValue.trim();
     }
 
 
