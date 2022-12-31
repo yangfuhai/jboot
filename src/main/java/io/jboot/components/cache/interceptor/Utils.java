@@ -146,7 +146,7 @@ class Utils {
                 || clazz == LocalDateTime.class
                 || clazz == LocalTime.class
                 || clazz.isArray()
-                || clazz.isAssignableFrom(Collection.class)
+                || Collection.class.isAssignableFrom(clazz)
                 || clazz == Columns.class
                 ;
 
@@ -159,8 +159,8 @@ class Utils {
 
         if (!isSupportClass(object.getClass())) {
             String msg = "Unsupport empty key for annotation @Cacheable, @CacheEvict or @CachePut " +
-                    "at method[" + ClassUtil.buildMethodString(method) + "], " +
-                    "Please config key properties in the annotation.";
+                    "at method [" + ClassUtil.buildMethodString(method) + "], " +
+                    "please config key in the annotation.";
             throw new IllegalArgumentException(msg);
         }
 
