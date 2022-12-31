@@ -19,7 +19,6 @@ import io.jboot.app.config.JbootConfigManager;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -90,10 +89,11 @@ public class ApplicationUtil {
                 System.out.println("JbootApplication is running in fatjar.");
             } else {
                 String path = ApplicationUtil.class.getResource("/").toURI().getPath();
+                // 例如： /D:/JAVA/workSpace_idea/...
                 if (path.indexOf(":") == 2) {
                     path = path.substring(1);
                 }
-                System.out.println("JbootApplication ClassPath: " + path);
+                System.out.println("JbootApplication classpath: " + path);
             }
         } catch (Exception e) {
             e.printStackTrace();
