@@ -230,7 +230,7 @@ public class AttachmentManager {
         //优先从 默认的 container 去获取
         if (localFirst) {
             File localFile = defaultContainer.getFile(relativePath);
-            if (localFile.exists()) {
+            if (localFile.exists() && localFile.length() > 0) {
                 return localFile;
             }
         }
@@ -239,7 +239,7 @@ public class AttachmentManager {
             if (container != defaultContainer) {
                 try {
                     File file = container.getFile(relativePath);
-                    if (file != null && file.exists()) {
+                    if (file != null && file.exists() && file.length() > 0) {
                         return file;
                     }
                 } catch (Exception ex) {
@@ -287,7 +287,13 @@ public class AttachmentManager {
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith(defaultContainer.getTargetPrefix())
                 && target.lastIndexOf('.') != -1) {
-            Render render = getFileRender(getFile(target));
+            Render render = null;
+            if (target.contains("..")) {
+                render = renderFactory.getErrorRender(404);
+            } else {
+                File file = getFile(target);
+                render = getFileRender(file);
+            }
             render.setContext(request, response).render();
             return true;
         } else {
