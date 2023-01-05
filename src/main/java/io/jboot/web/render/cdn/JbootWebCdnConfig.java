@@ -37,6 +37,10 @@ public class JbootWebCdnConfig {
     }
 
     public void setDomain(String domain) {
+        if (domain.endsWith("/")) {
+            domain = domain.substring(0, domain.length() - 1);
+        }
         this.domain = domain;
     }
+
 }

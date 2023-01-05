@@ -16,6 +16,7 @@
 package io.jboot.web.render.cdn;
 
 import com.jfinal.core.JFinal;
+import io.jboot.Jboot;
 import io.jboot.utils.StrUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,11 +33,27 @@ import java.util.Iterator;
  */
 public class CdnUtil {
 
-    private static String charSet =  JFinal.me().getConstants().getEncoding();
+    private static String charSet = JFinal.me().getConstants().getEncoding();
+    private static JbootWebCdnConfig cdnConfig = Jboot.config(JbootWebCdnConfig.class);
+
+    public static String appendCdnDomain(String path) {
+        if (StrUtil.isBlank(path)) {
+            return path;
+        }
+
+        if (cdnConfig.isEnable() && StrUtil.isNotBlank(cdnConfig.getDomain())) {
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+            return cdnConfig.getDomain() + path;
+        }
+
+        return path;
+    }
 
 
     public static String toHtml(InputStream content, String domain) throws IOException {
-        Document doc = Jsoup.parse(content,charSet,"");
+        Document doc = Jsoup.parse(content, charSet, "");
 
         Elements jsElements = doc.select("script[src]");
         replace(jsElements, "src", domain);
