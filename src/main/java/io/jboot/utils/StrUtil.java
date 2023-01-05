@@ -136,6 +136,20 @@ public class StrUtil extends StrKit {
         return false;
     }
 
+    public static boolean isStartsWithAny(String str, String... prefixes) {
+        if (isBlank(str) || prefixes == null || prefixes.length == 0) {
+            return false;
+        }
+
+        for (String prefix : prefixes) {
+            if (str.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public static String requireNonBlank(String str) {
         if (isBlank(str)) {
             throw new NullPointerException();
@@ -200,6 +214,7 @@ public class StrUtil extends StrKit {
     /**
      * null 或者 空内容字符串
      * 使用 isBlank 代替
+     *
      * @param str
      * @return
      */
