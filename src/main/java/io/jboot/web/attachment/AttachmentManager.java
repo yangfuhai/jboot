@@ -37,7 +37,6 @@ public class AttachmentManager {
 
     private static final Log LOG = Log.getLog(AttachmentManager.class);
 
-
     private static Map<String, AttachmentManager> managers = new HashMap<>();
 
     public static AttachmentManager me() {
@@ -58,29 +57,39 @@ public class AttachmentManager {
         return manager;
     }
 
-    private AttachmentManager(String name) {
+    /**
+     * 通过这个方式可以来更改 manager 包括默认的 manager
+     *
+     * @param manager
+     */
+    public static void setManager(AttachmentManager manager) {
+        managers.put(manager.name, manager);
+    }
+
+
+    public AttachmentManager(String name) {
         this.name = name;
     }
 
     /**
      * 默认的 附件容器
      */
-    private LocalAttachmentContainer defaultContainer = new LocalAttachmentContainer();
+    protected LocalAttachmentContainer defaultContainer = new LocalAttachmentContainer();
 
     /**
      * 其他附件容器
      */
-    private List<AttachmentContainer> containers = new CopyOnWriteArrayList<>();
+    protected List<AttachmentContainer> containers = new CopyOnWriteArrayList<>();
 
     /**
      * 自定义文件渲染器
      */
-    private IRenderFactory renderFactory = RenderManager.me().getRenderFactory();
+    protected IRenderFactory renderFactory = RenderManager.me().getRenderFactory();
 
     /**
      * manager  的名称
      */
-    private final String name;
+    protected final String name;
 
 
     public String getName() {
@@ -135,7 +144,7 @@ public class AttachmentManager {
                     container.saveFile(defaultContainerFile);
                 }
             } catch (Exception ex) {
-                LOG.error("Save file error in container :" + container, ex);
+                LOG.error("Save file error in container: " + container, ex);
             }
         }
         return relativePath.replace("\\", "/");
@@ -159,7 +168,7 @@ public class AttachmentManager {
                     container.saveFile(defaultContainerFile, toRelativePath);
                 }
             } catch (Exception ex) {
-                LOG.error("Save file error in container :" + container, ex);
+                LOG.error("Save file error in container: " + container, ex);
             }
         }
         return relativePath.replace("\\", "/");
@@ -182,7 +191,7 @@ public class AttachmentManager {
                     container.saveFile(defaultContainerFile, toRelativePath);
                 }
             } catch (Exception ex) {
-                LOG.error("Save file error in container :" + container, ex);
+                LOG.error("Save file error in container: " + container, ex);
             }
         }
         return relativePath.replace("\\", "/");
@@ -200,7 +209,7 @@ public class AttachmentManager {
             try {
                 container.deleteFile(relativePath);
             } catch (Exception ex) {
-                LOG.error("Delete file error in container :" + container, ex);
+                LOG.error("Delete file error in container: " + container, ex);
             }
         }
         return defaultContainer.deleteFile(relativePath);
@@ -226,11 +235,10 @@ public class AttachmentManager {
      * @return
      */
     public File getFile(String relativePath, boolean localFirst) {
-
         //优先从 默认的 container 去获取
         if (localFirst) {
             File localFile = defaultContainer.getFile(relativePath);
-            if (localFile.exists() && localFile.length() > 0) {
+            if (localFile.exists()) {
                 return localFile;
             }
         }
@@ -239,7 +247,7 @@ public class AttachmentManager {
             if (container != defaultContainer) {
                 try {
                     File file = container.getFile(relativePath);
-                    if (file != null && file.exists() && file.length() > 0) {
+                    if (file != null && file.exists()) {
                         return file;
                     }
                 } catch (Exception ex) {
@@ -287,7 +295,7 @@ public class AttachmentManager {
     public boolean renderFile(String target, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith(defaultContainer.getTargetPrefix())
                 && target.lastIndexOf('.') != -1) {
-            Render render = null;
+            Render render;
             if (target.contains("..")) {
                 render = renderFactory.getErrorRender(404);
             } else {
@@ -301,7 +309,8 @@ public class AttachmentManager {
         }
     }
 
-    private Render getFileRender(File file) {
+
+    protected Render getFileRender(File file) {
         return file == null || !file.isFile()
                 ? renderFactory.getErrorRender(404)
                 : renderFactory.getFileRender(file);

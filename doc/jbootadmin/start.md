@@ -113,7 +113,7 @@ starter-cms/src/main/io.jboot.cms.admin.CmsStarter
  \____||_____| \___/  \___/   |__|  
                                     
 
-JbootApplication { name='jboot', mode='dev', version='4.0.6', config='io.jboot.core.JbootCoreConfig' }
+JbootApplication { name='jboot', mode='dev', version='4.0.7', config='io.jboot.core.JbootCoreConfig' }
 Classpath : /Users/michael/work/git/JbootAdmin/starter-cms/target/classes/
 Starting JFinal 4.9.01 -> http://0.0.0.0:8003
 Info: jfinal-undertow 2.1, undertow 2.0.30.Final, jvm 1.8.0_261
