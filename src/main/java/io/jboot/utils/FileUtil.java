@@ -38,7 +38,7 @@ public class FileUtil {
      * 获取文件后缀
      *
      * @param fileName eg: jboot.jpg
-     * @return suffix .jpg
+     * @return suffix eg: .jpg
      */
     public static String getSuffix(String fileName) {
         if (fileName != null && fileName.contains(".")) {
@@ -156,11 +156,11 @@ public class FileUtil {
 
 
     private static String getFileMD5(File file, boolean withBase64) {
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+        try (FileInputStream fiStream = new FileInputStream(file)) {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             byte[] buffer = new byte[8192];
             int length;
-            while ((length = fileInputStream.read(buffer)) != -1) {
+            while ((length = fiStream.read(buffer)) != -1) {
                 digest.update(buffer, 0, length);
             }
             return withBase64 ? Base64Kit.encode(digest.digest()) : HashKit.toHex(digest.digest());
