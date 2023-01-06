@@ -1,3 +1,11 @@
+jboot v4.0.7 2023-01-06:
+优化：重构 AttachmentManager 使之更加灵活易用
+新增：StrUtil.isStartsWithAny() 方法
+新增：FileUtil.getFileMD5() 等方法
+新增：CdnUtil.appendCdnDomain() 方法
+
+
+
 jboot v4.0.6 2022-12-31:
 修复：缓存注解自动生成 key 无法支持集合参数的问题
 优化：ApplicationUtil.java 使其在 window 下输出正确的 classpath 路径
