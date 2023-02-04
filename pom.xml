@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>4.0.7</version>
+    <version>4.0.8-snapshot</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -516,21 +516,13 @@
             <scope>provided</scope>
         </dependency>
 
-
-<!--        <dependency>-->
-<!--            <groupId>org.apache.kafka</groupId>-->
-<!--            <artifactId>kafka-clients</artifactId>-->
-<!--            <version>2.7.0</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-
-
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>sharding-jdbc-core</artifactId>
-            <version>4.1.1</version>
+            <artifactId>shardingsphere-jdbc-core</artifactId>
+            <version>5.3.1</version>
             <scope>provided</scope>
         </dependency>
+
 
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
