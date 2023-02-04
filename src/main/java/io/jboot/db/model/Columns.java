@@ -318,6 +318,11 @@ public class Columns implements Serializable {
      */
     public Columns in(String name, Object... arrays) {
         Util.checkNullParas(this, name, arrays);
+
+        //忽略 columns.in("name", null) 达到情况
+        if (arrays != null && arrays.length == 1 && arrays[0] == null) {
+            return this;
+        }
         return add(Column.create(name, arrays, Column.LOGIC_IN));
     }
 
@@ -346,6 +351,11 @@ public class Columns implements Serializable {
      */
     public Columns notIn(String name, Object... arrays) {
         Util.checkNullParas(this, name, arrays);
+
+        //忽略 columns.notIn("name", null) 达到情况
+        if (arrays != null && arrays.length == 1 && arrays[0] == null) {
+            return this;
+        }
         return add(Column.create(name, arrays, Column.LOGIC_NOT_IN));
     }
 
@@ -419,7 +429,7 @@ public class Columns implements Serializable {
         if (columns == this) {
             throw new IllegalArgumentException("Columns.group(...) need a new Columns");
         }
-        if ( conditon != null && conditon && !columns.isEmpty()) {
+        if (conditon != null && conditon && !columns.isEmpty()) {
             add(new Group(columns));
         }
         return this;
