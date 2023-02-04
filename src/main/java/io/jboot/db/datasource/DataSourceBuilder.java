@@ -20,7 +20,7 @@ import io.jboot.core.spi.JbootSpiLoader;
 import io.jboot.exception.JbootException;
 import io.jboot.support.seata.JbootSeataManager;
 import io.jboot.utils.StrUtil;
-import org.apache.shardingsphere.shardingjdbc.api.yaml.YamlShardingDataSourceFactory;
+import org.apache.shardingsphere.driver.api.yaml.YamlShardingSphereDataSourceFactory;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -50,7 +50,8 @@ public class DataSourceBuilder {
                 : new File(PathKit.getRootClassPath(), shardingConfigYaml);
 
         try {
-            return YamlShardingDataSourceFactory.createDataSource(yamlFile);
+//            return YamlShardingDataSourceFactory.createDataSource(yamlFile);
+            return YamlShardingSphereDataSourceFactory.createDataSource(yamlFile);
         } catch (Exception e) {
             throw new JbootException(e);
         }
