@@ -1,3 +1,10 @@
+jboot v4.0.8 2023-02-05:
+优化：升级 ShardingJDBC 到 5.x 最新版本
+优化：升级 Columns.in 和 notIn 等方法和错别字
+优化：升级 jfinal-undertow、jackson、metrics 等到最新版本
+
+
+
 jboot v4.0.7 2023-01-06:
 优化：重构 AttachmentManager 使之更加灵活易用
 新增：StrUtil.isStartsWithAny() 方法
