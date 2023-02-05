@@ -149,7 +149,7 @@ public class ClassUtil {
                 }
             }
 
-            throw new IllegalArgumentException("Can not matched constructor by paras: " + Arrays.toString(paras) + " in class: " + clazz.getName());
+            throw new IllegalArgumentException("Can not matched constructor by paras" + Arrays.toString(paras) + " for class: " + clazz.getName());
         } catch (Exception e) {
             LOG.error("Can not new instance for class: " + clazz.getName() + "\n" + e, e);
         }

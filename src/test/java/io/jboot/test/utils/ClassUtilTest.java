@@ -1,6 +1,5 @@
 package io.jboot.test.utils;
 
-import io.jboot.utils.ClassUtil;
 import org.junit.Test;
 
 public class ClassUtilTest {
@@ -48,9 +47,9 @@ public class ClassUtilTest {
 //
 //        TestObject testObject4 = ClassUtil.newInstance(TestObject.class,null,"bbb");
 //        System.out.println(testObject4);
-
-        TestObject testObject5 = ClassUtil.newInstance(TestObject.class,null,"bbb","ccc");
-        System.out.println(testObject5);
+//
+//        TestObject testObject5 = ClassUtil.newInstance(TestObject.class,null,"bbb","ccc");
+//        System.out.println(testObject5);
     }
 
 
