@@ -319,7 +319,7 @@ public class Columns implements Serializable {
     public Columns in(String name, Object... arrays) {
         Util.checkNullParas(this, name, arrays);
 
-        //忽略 columns.in("name", null) 达到情况
+        //忽略 columns.in("name", null) 的情况
         if (arrays != null && arrays.length == 1 && arrays[0] == null) {
             return this;
         }
@@ -328,13 +328,13 @@ public class Columns implements Serializable {
 
 
     /**
-     * in list
+     * in Collection
      *
      * @param name
      * @param collection
      * @return
      */
-    public Columns in(String name, Collection collection) {
+    public Columns in(String name, Collection<?> collection) {
         Util.checkNullParas(this, collection);
         if (collection != null && !collection.isEmpty()) {
             in(name, collection.toArray());
@@ -352,7 +352,7 @@ public class Columns implements Serializable {
     public Columns notIn(String name, Object... arrays) {
         Util.checkNullParas(this, name, arrays);
 
-        //忽略 columns.notIn("name", null) 达到情况
+        //忽略 columns.notIn("name", null) 的情况
         if (arrays != null && arrays.length == 1 && arrays[0] == null) {
             return this;
         }
@@ -361,13 +361,13 @@ public class Columns implements Serializable {
 
 
     /**
-     * not in list
+     * not in Collection
      *
      * @param name
      * @param collection
      * @return
      */
-    public Columns notIn(String name, Collection collection) {
+    public Columns notIn(String name, Collection<?> collection) {
         Util.checkNullParas(this, collection);
         if (collection != null && !collection.isEmpty()) {
             notIn(name, collection.toArray());
@@ -422,14 +422,14 @@ public class Columns implements Serializable {
 
     /**
      * @param columns
-     * @param conditon
+     * @param condition
      * @return
      */
-    public Columns groupIf(Columns columns, Boolean conditon) {
+    public Columns groupIf(Columns columns, Boolean condition) {
         if (columns == this) {
             throw new IllegalArgumentException("Columns.group(...) need a new Columns");
         }
-        if (conditon != null && conditon && !columns.isEmpty()) {
+        if (condition != null && condition && !columns.isEmpty()) {
             add(new Group(columns));
         }
         return this;
