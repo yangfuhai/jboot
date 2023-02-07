@@ -180,7 +180,7 @@ public class JbootEventManager {
         return false;
     }
 
-    public void pulish(final JbootEvent event) {
+    public void publish(final JbootEvent event) {
         String action = event.getAction();
 
         List<JbootEventListener> syncListeners = listenerMap.get(action);

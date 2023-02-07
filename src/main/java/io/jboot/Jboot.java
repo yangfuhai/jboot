@@ -230,7 +230,7 @@ public class Jboot {
      * @param event
      */
     public static void sendEvent(JbootEvent event) {
-        JbootEventManager.me().pulish(event);
+        JbootEventManager.me().publish(event);
     }
 
     /**
