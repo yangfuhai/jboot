@@ -111,15 +111,15 @@ public class JbootResourceLoader {
                     return;
                 }
 
-                //忽略掉 windows 下的临时文件
-                if(file.endsWith("~")){
+                //忽略掉 windows 和 mac 下的临时文件
+                if(file.endsWith("~") || file.endsWith(".DS_Store")){
                     return;
                 }
 
                 int indexOf = file.indexOf(path);
 
                 File target = new File(classPath, resourcePathName + File.separator + file.substring(indexOf + path.length()));
-                System.err.println("JbootResourceLoader " + action + " : " + target);
+                System.err.println("JbootResourceLoader " + action + ": " + target);
 
                 //文件删除
                 if (FileScanner.ACTION_DELETE.equals(action)) {
