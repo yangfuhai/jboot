@@ -85,35 +85,35 @@ public class SqlBuilder {
         for (int i = 0; i < columns.size(); i++) {
 
             Column before = i > 0 ? columns.get(i - 1) : null;
-            Column curent = columns.get(i);
+            Column current = columns.get(i);
 
-            if (curent instanceof Or) {
+            if (current instanceof Or) {
                 continue;
             }
             // sqlPart
-            else if (curent instanceof SqlPart) {
-                appendSqlPartLogic(sqlBuilder, before, (SqlPart) curent, separator);
+            else if (current instanceof SqlPart) {
+                appendSqlPartLogic(sqlBuilder, before, (SqlPart) current, separator);
             }
             // group
-            else if (curent instanceof Group) {
-                appendGroupLogic(sqlBuilder, before, (Group) curent, separator);
+            else if (current instanceof Group) {
+                appendGroupLogic(sqlBuilder, before, (Group) current, separator);
             }
             // in logic
-            else if (Column.LOGIC_IN.equals(curent.getLogic()) || Column.LOGIC_NOT_IN.equals(curent.getLogic())) {
+            else if (Column.LOGIC_IN.equals(current.getLogic()) || Column.LOGIC_NOT_IN.equals(current.getLogic())) {
                 appendLinkString(sqlBuilder, before);
-                appendInLogic(sqlBuilder, curent, separator);
+                appendInLogic(sqlBuilder, current, separator);
             }
             // between logic
-            else if (Column.LOGIC_BETWEEN.equals(curent.getLogic()) || Column.LOGIC_NOT_BETWEEN.equals(curent.getLogic())) {
+            else if (Column.LOGIC_BETWEEN.equals(current.getLogic()) || Column.LOGIC_NOT_BETWEEN.equals(current.getLogic())) {
                 appendLinkString(sqlBuilder, before);
-                appendBetweenLogic(sqlBuilder, curent, separator);
+                appendBetweenLogic(sqlBuilder, current, separator);
             }
             // others
             else {
                 appendLinkString(sqlBuilder, before);
-                appendColumnName(sqlBuilder, curent, separator);
+                appendColumnName(sqlBuilder, current, separator);
 
-                if (curent.hasPara()) {
+                if (current.hasPara()) {
                     sqlBuilder.append('?');
                 }
             }
