@@ -599,16 +599,19 @@ public class Columns implements Serializable {
 
     public Columns ors(String name, String logic, Object... values) {
         Util.checkNullParas(this, name, values);
+
+        Columns columns = new Columns();
         for (int i = 0; i < values.length; i++) {
             Object value = values[i];
             if (value != null) {
-                add(Column.create(name, value, logic));
+                columns.add(Column.create(name, value, logic));
                 if (i != values.length - 1) {
-                    add(new Or());
+                    columns.add(new Or());
                 }
             }
         }
-        return this;
+
+        return group(columns);
     }
 
 
