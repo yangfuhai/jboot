@@ -16,11 +16,11 @@
 package io.jboot.wechat;
 
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
-import io.jboot.components.cache.support.JbootAccessTokenCache;
+import io.jboot.components.cache.support.WechatAccessTokenCache;
 
 public class WechatSupport {
 
     public void autoSupport() {
-        ApiConfigKit.setAccessTokenCache(new JbootAccessTokenCache());
+        ApiConfigKit.setAccessTokenCache(new WechatAccessTokenCache());
     }
 }
