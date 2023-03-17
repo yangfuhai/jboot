@@ -102,137 +102,103 @@ public class JbootAppListenerManager implements JbootAppListener {
 
     @Override
     public void onInit() {
-        for (JbootAppListener listener : listeners) {
-            try {
+        eachListeners(new TriggerThrowable() {
+            @Override
+            public void trigger(JbootAppListener listener) {
                 listener.onInit();
-            } catch (Throwable ex) {
-                //在 init 的时候， log 组件未初始化，无法使用
+            }
+
+            @Override
+            public void throwable(Throwable ex) {
+                //在 onConstantConfigBefore 的时候， log 组件未初始化，无法使用
                 ex.printStackTrace();
             }
-        }
+        });
     }
 
     @Override
     public void onConstantConfigBefore(Constants constants) {
-        for (JbootAppListener listener : listeners) {
-            try {
+        eachListeners(new TriggerThrowable() {
+            @Override
+            public void trigger(JbootAppListener listener) {
                 listener.onConstantConfigBefore(constants);
-            } catch (Throwable ex) {
+            }
+
+            @Override
+            public void throwable(Throwable ex) {
                 //在 onConstantConfigBefore 的时候， log 组件未初始化，无法使用
                 ex.printStackTrace();
             }
-        }
+        });
     }
 
     @Override
     public void onConstantConfig(Constants constants) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onConstantConfig(constants);
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(listener -> listener.onConstantConfig(constants));
     }
 
     @Override
     public void onRouteConfig(Routes routes) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onRouteConfig(routes);
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(listener -> listener.onRouteConfig(routes));
     }
 
     @Override
     public void onEngineConfig(Engine engine) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onEngineConfig(engine);
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(listener -> listener.onEngineConfig(engine));
     }
 
     @Override
     public void onPluginConfig(JfinalPlugins plugins) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onPluginConfig(plugins);
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(listener -> listener.onPluginConfig(plugins));
     }
 
     @Override
     public void onInterceptorConfig(Interceptors interceptors) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onInterceptorConfig(interceptors);
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(listener -> listener.onInterceptorConfig(interceptors));
     }
 
 
     @Override
     public void onHandlerConfig(JfinalHandlers handlers) {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onHandlerConfig(handlers);
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(listener -> listener.onHandlerConfig(handlers));
     }
 
     @Override
     public void onStartBefore() {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onStartBefore();
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(JbootAppListener::onStartBefore);
     }
 
     @Override
     public void onStart() {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onStart();
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(JbootAppListener::onStart);
     }
 
     @Override
     public void onStartFinish() {
-        for (JbootAppListener listener : listeners) {
-            try {
-                listener.onStartFinish();
-            } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
-            }
-        }
+        eachListeners(JbootAppListener::onStartFinish);
     }
 
     @Override
     public void onStop() {
+        eachListeners(JbootAppListener::onStop);
+    }
+
+    private void eachListeners(TriggerThrowable triggerThrowable) {
         for (JbootAppListener listener : listeners) {
             try {
-                listener.onStop();
+                triggerThrowable.trigger(listener);
             } catch (Throwable ex) {
-                LogKit.error(ex.toString(), ex);
+                triggerThrowable.throwable(ex);
             }
         }
     }
 
+    @FunctionalInterface
+    private interface TriggerThrowable {
+        void trigger(JbootAppListener listener);
+
+        default void throwable(Throwable ex) {
+            LogKit.error(ex.toString(), ex);
+        }
+    }
 }
