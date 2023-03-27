@@ -20,6 +20,7 @@ import com.jfinal.ext.kit.DateKit;
 import io.jboot.utils.CollectionUtil;
 import io.jboot.utils.StrUtil;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -47,12 +48,16 @@ class Util {
                 if (value.getClass().isArray()) {
                     Object[] values = (Object[]) value;
                     for (Object v : values) {
-                        if (v.getClass() == int[].class) {
-                            addAll(paras, (int[]) v);
-                        } else if (v.getClass() == long[].class) {
-                            addAll(paras, (long[]) v);
-                        } else if (v.getClass() == short[].class) {
-                            addAll(paras, (short[]) v);
+                        if (v != null && (
+                                v.getClass() == int[].class
+                                        || v.getClass() == long[].class
+                                        || v.getClass() == short[].class
+                                        || v.getClass() == float[].class
+                                        || v.getClass() == double[].class
+                        )) {
+                            for (int i = 0; i < Array.getLength(v); i++) {
+                                paras.add(Array.get(v, i));
+                            }
                         } else {
                             paras.add(v);
                         }
@@ -66,25 +71,6 @@ class Util {
         return paras.isEmpty() ? NULL_PARA_ARRAY : paras.toArray();
     }
 
-
-    private static void addAll(List<Object> paras, int[] ints) {
-        for (int i : ints) {
-            paras.add(i);
-        }
-    }
-
-    private static void addAll(List<Object> paras, long[] longs) {
-        for (long i : longs) {
-            paras.add(i);
-        }
-    }
-
-
-    private static void addAll(List<Object> paras, short[] shorts) {
-        for (short i : shorts) {
-            paras.add(i);
-        }
-    }
 
 
     static String replaceSqlPara(String sql, Object value) {
