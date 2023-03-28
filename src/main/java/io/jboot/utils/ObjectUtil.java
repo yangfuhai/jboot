@@ -135,7 +135,7 @@ public class ObjectUtil {
     }
 
 
-    public static <T> Object convert(Object value, Class<?> targetClass) {
+    public static Object convert(Object value, Class<?> targetClass) {
         if (value == null || (value.getClass() == String.class && StrUtil.isBlank((String) value)
                 && targetClass != String.class)) {
             return null;

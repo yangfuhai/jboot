@@ -44,13 +44,13 @@ public class DateUtil {
 
     private static final ThreadLocal<HashMap<String, SimpleDateFormat>> TL = ThreadLocal.withInitial(() -> new HashMap<>());
 
-    private static final Map<String, DateTimeFormatter> datetimeFormaters = new SyncWriteMap<>();
+    private static final Map<String, DateTimeFormatter> dateTimeFormatters = new SyncWriteMap<>();
 
     public static DateTimeFormatter getDateTimeFormatter(String pattern) {
-        DateTimeFormatter ret = datetimeFormaters.get(pattern);
+        DateTimeFormatter ret = dateTimeFormatters.get(pattern);
         if (ret == null) {
             ret = DateTimeFormatter.ofPattern(pattern);
-            datetimeFormaters.put(pattern, ret);
+            dateTimeFormatters.put(pattern, ret);
         }
         return ret;
     }
