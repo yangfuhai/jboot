@@ -46,6 +46,19 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
         super(MockProxy.create(HttpServletResponse.class));
     }
 
+    public MockHttpServletResponse(ByteArrayOutputStream stream) {
+        super(MockProxy.create(HttpServletResponse.class));
+        this.stream = stream;
+    }
+
+    public MockHttpServletResponse(HttpServletResponse response) {
+        super(response);
+    }
+
+    public MockHttpServletResponse(HttpServletResponse response, ByteArrayOutputStream stream) {
+        super(response);
+        this.stream = stream;
+    }
 
     @Override
     public void addCookie(Cookie cookie) {

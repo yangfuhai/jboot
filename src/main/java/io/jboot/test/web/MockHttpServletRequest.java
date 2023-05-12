@@ -55,7 +55,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     protected HttpSession session;
     protected ServletInputStream inputStream;
 
-    private byte[] content;
+    protected byte[] content;
 
 
     protected ServletContext servletContext = MockServletContext.DEFAULT;
@@ -67,14 +67,14 @@ public class MockHttpServletRequest implements HttpServletRequest {
     protected Set<Cookie> cookies = new HashSet<>();
     protected LinkedList<Locale> locales = new LinkedList<>();
 
-    private boolean requestedSessionIdValid = true;
+    protected boolean requestedSessionIdValid = true;
 
-    private boolean requestedSessionIdFromCookie = true;
+    protected boolean requestedSessionIdFromCookie = true;
 
-    private boolean requestedSessionIdFromURL = false;
+    protected boolean requestedSessionIdFromURL = false;
 
-    private final Set<String> userRoles = new HashSet<>();
-    private final Multimap<String, Part> parts = LinkedHashMultimap.create();
+    protected final Set<String> userRoles = new HashSet<>();
+    protected final Multimap<String, Part> parts = LinkedHashMultimap.create();
 
 
     public MockHttpServletRequest() {

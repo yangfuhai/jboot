@@ -17,8 +17,11 @@ package io.jboot.app.undertow;
 
 import com.jfinal.server.undertow.UndertowConfig;
 import com.jfinal.server.undertow.UndertowServer;
+import io.jboot.app.config.JbootConfigManager;
+import io.undertow.servlet.Servlets;
 
-import javax.servlet.ServletException;
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
 
 
 public class JbootUndertowServer extends UndertowServer {
@@ -27,17 +30,27 @@ public class JbootUndertowServer extends UndertowServer {
         super(undertowConfig);
     }
 
+    /**
+     * 添加 自定义 filter 的支持
+     */
     @Override
-    protected void init() {
-        super.init();
-
-        //让 undertow 支持 音视频在线播放
-//        HttpContentTypes.init(deploymentInfo);
+    protected void configJFinalFilter() {
+        deploymentInfo.addFilter(
+                Servlets.filter("jfinal", getJFinalFilter()).addInitParam("configClass", config.getJFinalConfig())
+        ).addFilterUrlMapping("jfinal", "/*", DispatcherType.REQUEST);
     }
 
-    @Override
-    protected void doStop() throws ServletException {
-        super.doStop();
+
+    private Class<? extends Filter> getJFinalFilter() {
+        try {
+            String jfinalFilter = JbootConfigManager.me().getConfigValue("undertow.jfinalFilter");
+            if (jfinalFilter == null || jfinalFilter.trim().length() == 0){
+                jfinalFilter = "com.jfinal.core.JFinalFilter";
+            }
+            return (Class<? extends Filter>)config.getClassLoader().loadClass(jfinalFilter);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
