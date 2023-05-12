@@ -41,9 +41,9 @@
 
 
     <properties>
-        <jfinal.version>5.0.8</jfinal.version>
+        <jfinal.version>5.1.0</jfinal.version>
         <jfinal-cos.version>2022.2</jfinal-cos.version>
-        <jfinal-undertow.version>3.4</jfinal-undertow.version>
+        <jfinal-undertow.version>3.5</jfinal-undertow.version>
         <jfinal-weixin.version>3.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
@@ -58,7 +58,7 @@
         <guava.version>31.1-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>3.8.0</jedis.version>
-        <jsoup.version>1.15.3</jsoup.version>
+        <jsoup.version>1.16.1</jsoup.version>
         <ehcache.version>2.10.9.2</ehcache.version>
         <caffeine.version>2.9.3</caffeine.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -72,7 +72,7 @@
         <resteasy.version>3.14.0.Final</resteasy.version>
         <seata.version>1.5.1</seata.version>
         <motan.version>1.1.8</motan.version>
-        <metrics.version>4.2.15</metrics.version>
+        <metrics.version>4.2.18</metrics.version>
 
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
