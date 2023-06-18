@@ -23,7 +23,10 @@ import io.jboot.utils.NamedThreadFactory;
 import io.jboot.utils.StrUtil;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public abstract class JbootmqBase implements Jbootmq {
@@ -36,13 +39,11 @@ public abstract class JbootmqBase implements Jbootmq {
     private Map<String, List<JbootmqMessageListener>> channelListeners = new ConcurrentHashMap<>();
 
     protected Set<String> channels = new HashSet<>();
-    protected Set<String> syncRecevieMessageChannels = new HashSet<>();
+    protected Set<String> syncReceiveMessageChannels = new HashSet<>();
     protected JbootSerializer serializer;
 
-
-    private ExecutorService threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-            60L, TimeUnit.SECONDS,
-            new SynchronousQueue<>(), new NamedThreadFactory("jbootmq"));
+    private int executorThreads = Runtime.getRuntime().availableProcessors();
+    private ExecutorService threadPool = Executors.newFixedThreadPool(executorThreads, new NamedThreadFactory("jbootmq"));
 
 
     public JbootmqBase(JbootmqConfig config) {
@@ -55,7 +56,7 @@ public abstract class JbootmqBase implements Jbootmq {
         this.channels.addAll(StrUtil.splitToSet(channelString, ","));
 
         if (StrUtil.isNotBlank(config.getSyncRecevieMessageChannel())) {
-            this.syncRecevieMessageChannels.addAll(StrUtil.splitToSet(config.getSyncRecevieMessageChannel(), ","));
+            this.syncReceiveMessageChannels.addAll(StrUtil.splitToSet(config.getSyncRecevieMessageChannel(), ","));
         }
     }
 
@@ -120,7 +121,7 @@ public abstract class JbootmqBase implements Jbootmq {
         boolean channelResult = notifyListeners(channel, message, context, channelListeners.get(channel));
 
         if (!globalResult && !channelResult) {
-            LOG.warn("Jboot has recevied mq message, But it has no listener to process. channel:" +
+            LOG.warn("Jboot has received mq message, But it has no listener to process. channel:" +
                     channel + "  message:" + message);
         }
     }
@@ -131,7 +132,7 @@ public abstract class JbootmqBase implements Jbootmq {
             return false;
         }
 
-        if (syncRecevieMessageChannels.contains(channel)) {
+        if (syncReceiveMessageChannels.contains(channel)) {
             for (JbootmqMessageListener listener : listeners) {
                 try {
                     listener.onMessage(channel, message, context);
