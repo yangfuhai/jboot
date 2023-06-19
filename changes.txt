@@ -1,3 +1,9 @@
+jboot v4.1.1 2023-06-19:
+修复：修复 MQ 通知线程在高并发场景下无法及时回收的问题
+优化：升级 JFinal 等依赖到最新版本
+
+
+
 jboot v4.1.0 2023-05-12:
 新增：自定义 JFinalFilter 的支持
 优化：重命名 JbootAccessTokenCache 为 WechatAccessTokenCache

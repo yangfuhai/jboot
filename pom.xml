@@ -6,7 +6,7 @@
 
     <groupId>io.jboot</groupId>
     <artifactId>jboot</artifactId>
-    <version>4.1.0</version>
+    <version>4.1.1</version>
     <packaging>jar</packaging>
 
     <name>jboot</name>
@@ -41,13 +41,13 @@
 
 
     <properties>
-        <jfinal.version>5.1.0</jfinal.version>
+        <jfinal.version>5.1.1</jfinal.version>
         <jfinal-cos.version>2022.2</jfinal-cos.version>
         <jfinal-undertow.version>3.5</jfinal-undertow.version>
         <jfinal-weixin.version>3.4</jfinal-weixin.version>
         <cglib.version>3.3.0</cglib.version>
         <HikariCP.version>4.0.3</HikariCP.version>
-        <jackson.version>2.14.2</jackson.version>
+        <jackson.version>2.15.2</jackson.version>
         <mysql.version>5.1.49</mysql.version>
         <undertow.version>2.2.19.Final</undertow.version>
         <slf4j.version>1.7.36</slf4j.version>
@@ -55,7 +55,7 @@
         <fst.version>2.57</fst.version>
         <fastjson.version>1.2.83</fastjson.version>
 <!--        <fastjson.version>2.0.12</fastjson.version>-->
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>32.0.1-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>3.8.0</jedis.version>
         <jsoup.version>1.16.1</jsoup.version>
@@ -68,7 +68,7 @@
         <httpcore.version>4.4.13</httpcore.version>
         <netty.version>4.1.52.Final</netty.version>
         <sentinel.version>1.8.3</sentinel.version>
-        <dubbo.version>2.7.15</dubbo.version>
+        <dubbo.version>2.7.23</dubbo.version>
         <resteasy.version>3.14.0.Final</resteasy.version>
         <seata.version>1.5.1</seata.version>
         <motan.version>1.1.8</motan.version>
