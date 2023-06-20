@@ -15,6 +15,7 @@
  */
 package io.jboot.db.dbpro;
 
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.activerecord.dialect.Dialect;
 import io.jboot.db.SqlDebugger;
@@ -31,6 +32,7 @@ import java.util.function.Function;
  * @version V1.0
  */
 public class JbootDbPro extends DbPro {
+    private static final String[] NO_PRIMARY_KEYS = new String[0];
 
     public JbootDbPro() {
     }
@@ -61,7 +63,7 @@ public class JbootDbPro extends DbPro {
 
     @Override
     protected boolean save(Config config, Connection conn, String tableName, String primaryKey, Record record) throws SQLException {
-        String[] pKeys = primaryKey.split(",");
+        String[] pKeys = StrKit.notBlank(primaryKey) ? primaryKey.split(",") : NO_PRIMARY_KEYS;
         List<Object> paras = new ArrayList<Object>();
         StringBuilder sql = new StringBuilder();
 
