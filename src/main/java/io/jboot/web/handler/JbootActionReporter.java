@@ -231,7 +231,7 @@ public class JbootActionReporter {
 
         appendRenderMessage(controller.getRender(), sb);
 
-        sb.append("----------------------------------- taked " + (System.currentTimeMillis() - time) + " ms --------------------------------\n\n\n");
+        sb.append("----------------------------------- took " + (System.currentTimeMillis() - time) + " ms --------------------------------\n\n\n");
 
         writer.write(sb.toString());
     }
