@@ -40,10 +40,7 @@ public class JbootEventManager {
     private JbootEventManager() {
         asyncListenerMap = new ConcurrentHashMap<>();
         listenerMap = new ConcurrentHashMap<>();
-
-        threadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-                60L, TimeUnit.SECONDS,
-                new SynchronousQueue<>(), new NamedThreadFactory("jboot-event"));
+        threadPool = NamedThreadPools.newFixedThreadPool("jboot-event");
 
         initListeners();
     }

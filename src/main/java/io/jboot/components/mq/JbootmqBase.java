@@ -19,14 +19,13 @@ import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.Jboot;
 import io.jboot.components.serializer.JbootSerializer;
-import io.jboot.utils.NamedThreadFactory;
+import io.jboot.utils.NamedThreadPools;
 import io.jboot.utils.StrUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public abstract class JbootmqBase implements Jbootmq {
@@ -42,9 +41,7 @@ public abstract class JbootmqBase implements Jbootmq {
     protected Set<String> syncReceiveMessageChannels = new HashSet<>();
     protected JbootSerializer serializer;
 
-    private int executorThreads = Runtime.getRuntime().availableProcessors();
-    private ExecutorService threadPool = Executors.newFixedThreadPool(executorThreads, new NamedThreadFactory("jbootmq"));
-
+    private ExecutorService threadPool = NamedThreadPools.newFixedThreadPool("jbootmq");
 
     public JbootmqBase(JbootmqConfig config) {
         this.config = config;

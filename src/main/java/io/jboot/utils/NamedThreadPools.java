@@ -23,16 +23,14 @@ import java.util.concurrent.*;
  */
 public class NamedThreadPools {
 
-    public static ExecutorService newFixedThreadPool(int nThreads, String name) {
-        return newFixedThreadPool(nThreads, new NamedThreadFactory(name));
+    public static ExecutorService newFixedThreadPool(String prefix) {
+        int nThreads = Runtime.getRuntime().availableProcessors();
+        return newFixedThreadPool(nThreads, prefix);
     }
 
 
-    public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
-        return new ThreadPoolExecutor(nThreads, nThreads,
-                0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
-                threadFactory);
+    public static ExecutorService newFixedThreadPool(int nThreads, String name) {
+        return Executors.newFixedThreadPool(nThreads, new NamedThreadFactory(name));
     }
 
 
