@@ -40,6 +40,7 @@ public class ClassScanner {
 
     public static final Set<String> scanClasses = new HashSet<>();
     public static final Set<String> excludeClasses = new HashSet<>();
+
     // dev模式打开扫描信息打印
     private static boolean printScannerInfoEnable = false;
 
@@ -301,6 +302,49 @@ public class ClassScanner {
         excludeJars.add("ip2region-");
         excludeJars.add("java-uuid-generator-");
         excludeJars.add("quartz-");
+        excludeJars.add("elasticjob-");
+        excludeJars.add("reflections-");
+        excludeJars.add("jts-");
+        excludeJars.add("json-");
+        excludeJars.add("httpclient5-");
+        excludeJars.add("httpcore5-");
+        excludeJars.add("jul-to-");
+        excludeJars.add("calcite-");
+        excludeJars.add("avatica-");
+        excludeJars.add("encoder-");
+        excludeJars.add("aggdesigner-");
+        excludeJars.add("uzaygezen-");
+        excludeJars.add("memory-");
+        excludeJars.add("commons-");
+        excludeJars.add("accessors-");
+        excludeJars.add("sketches-");
+        excludeJars.add("h2-");
+        excludeJars.add("cosid-");
+        excludeJars.add("mchange-");
+        excludeJars.add("janino-");
+        excludeJars.add("jnanoid-");
+        excludeJars.add("proj4j-");
+        excludeJars.add("sparsebitset-");
+        excludeJars.add("captcha-");
+        excludeJars.add("cryptokit");
+        excludeJars.add("isec-");
+        excludeJars.add("jurt-");
+        excludeJars.add("minio-");
+        excludeJars.add("logging-");
+        excludeJars.add("simple-xml-");
+        excludeJars.add("jodconverter-");
+        excludeJars.add("credentials-");
+        excludeJars.add("unoil-");
+        excludeJars.add("endpoint-");
+        excludeJars.add("ridl-");
+        excludeJars.add("tencentcloud-");
+        excludeJars.add("yauaa-");
+        excludeJars.add("tea-");
+        excludeJars.add("fr.");
+        excludeJars.add("vod20");
+        excludeJars.add("juh-");
+        excludeJars.add("prefixmap-");
+        excludeJars.add("dmjdbcdriver");
     }
 
 
@@ -648,7 +692,7 @@ public class ClassScanner {
                         }
 
                         try (JarInputStream jarStream = new JarInputStream(jarFile
-                                .getInputStream(jarEntry));){
+                                .getInputStream(jarEntry));) {
                             JarEntry innerEntry = jarStream.getNextJarEntry();
                             while (innerEntry != null) {
                                 if (!innerEntry.isDirectory()) {
