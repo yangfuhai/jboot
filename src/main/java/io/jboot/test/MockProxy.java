@@ -15,14 +15,16 @@
  */
 package io.jboot.test;
 
+
 import io.jboot.utils.ClassUtil;
-import net.sf.cglib.proxy.MethodInterceptor;
+
+import java.lang.reflect.Proxy;
 
 public class MockProxy {
 
     public static <T> T create(Class<T> target) {
-        return (T) net.sf.cglib.proxy.Enhancer.create(target, (MethodInterceptor) (obj, method, args, proxy) -> {
-            throw new IllegalAccessException("Cant not invoke this mock method: " + ClassUtil.buildMethodString(method));
+        return (T) Proxy.newProxyInstance(target.getClassLoader(), new Class[]{target}, (proxy, method, args) -> {
+            throw new IllegalAccessException("Can not invoke this mock method: " + ClassUtil.buildMethodString(method));
         });
     }
 }
