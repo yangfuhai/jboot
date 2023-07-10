@@ -55,14 +55,14 @@
         <fst.version>2.57</fst.version>
         <fastjson.version>1.2.83</fastjson.version>
 <!--        <fastjson.version>2.0.12</fastjson.version>-->
-        <guava.version>32.0.1-jre</guava.version>
+        <guava.version>32.1.1-jre</guava.version>
         <cron4j.version>2.2.5</cron4j.version>
         <jedis.version>3.8.0</jedis.version>
         <jsoup.version>1.16.1</jsoup.version>
         <ehcache.version>2.10.9.2</ehcache.version>
         <caffeine.version>2.9.3</caffeine.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
-        <commons-io.version>2.11.0</commons-io.version>
+        <commons-io.version>2.13.0</commons-io.version>
         <commons-codec.version>1.15</commons-codec.version>
         <httpclient.version>4.5.12</httpclient.version>
         <httpcore.version>4.4.13</httpcore.version>
