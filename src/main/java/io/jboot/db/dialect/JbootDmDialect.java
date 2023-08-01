@@ -34,7 +34,7 @@ public class JbootDmDialect extends OracleDialect implements JbootDialect {
 
     private static final char separator = '"';
 
-    private String wrap(String wrap) {
+    public String wrap(String wrap) {
         return "\"" + wrap.toUpperCase() + "\"";
     }
 
@@ -211,7 +211,7 @@ public class JbootDmDialect extends OracleDialect implements JbootDialect {
         // Record 新增支持 modifyFlag
         Set<String> modifyFlag = CPI.getModifyFlag(record);
 
-        sql.append("update ").append(tableName).append(" set ");
+        sql.append("update ").append(wrap(tableName)).append(" set ");
         for (Map.Entry<String, Object> e : record.getColumns().entrySet()) {
             String colName = e.getKey();
             if (modifyFlag.contains(colName) && !isPrimaryKey(colName, pKeys)) {
@@ -284,7 +284,7 @@ public class JbootDmDialect extends OracleDialect implements JbootDialect {
         return toUpperCase(distinctSql != null ? distinctSql : super.forPaginateTotalRow(select, sqlExceptSelect, ext));
     }
 
-    private static String toUpperCase(String sql) {
+    public  String toUpperCase(String sql) {
         return sql.toUpperCase();
     }
 }
