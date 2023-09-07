@@ -56,6 +56,13 @@ public class HikariDataSourceFactory implements DataSourceFactory {
             hikariConfig.setConnectionInitSql(config.getConnectionInitSql());
         }
 
+        if(config.getKeepaliveTime() != null){
+            hikariConfig.setKeepaliveTime(config.getKeepaliveTime());
+        }
+
+        if(config.getValidationQuery() != null){
+            hikariConfig.setConnectionTestQuery(config.getValidationQuery());
+        }
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
