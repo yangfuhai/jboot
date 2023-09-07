@@ -50,7 +50,7 @@ public class SentinelInterceptor extends AbstractSentinelInterceptor implements 
                 inv.setReturnValue(handleBlockException(inv, annotation, ex));
             } catch (Throwable throwable) {
                 if (inv.isActionInvocation()) {
-                    inv.getController().renderText("Blocked by Sentinel " + ex.getRule());
+                    SentinelUtil.blockRequest(inv.getController().getRequest(), inv.getController().getResponse());
                 } else {
                     throwable.printStackTrace();
                 }
