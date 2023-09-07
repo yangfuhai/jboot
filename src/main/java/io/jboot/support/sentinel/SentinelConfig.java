@@ -103,6 +103,10 @@ public class SentinelConfig {
         this.ruleFile = ruleFile;
     }
 
+    public static void set(SentinelConfig sentinelConfig) {
+        SentinelConfig.sentinelConfig = sentinelConfig;
+    }
+
     private static SentinelConfig sentinelConfig;
 
     public static SentinelConfig get() {
