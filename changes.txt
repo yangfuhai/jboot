@@ -1,3 +1,13 @@
+jboot v4.1.5 2023-09-08:
+优化：MockProxy 由 Java Proxy 替换 cblib
+优化：增加 Hikari 连接池配置参数 keepaliveTime 配置功能，感谢 @赵锋
+优化：设置 SentinelInterceptor 返回自定义的 json 串，感谢 @caoyuan
+优化：SentinelConfig 新增 set 方法，方便用户自己通过代码注入，感谢 @caoyuan
+优化：修改方法的 wrap 与 toUpperCase 方法为public ，方便重写时决定SQL是否需要加引号与大小写，感谢 @HingLo-C
+优化：升级相关依赖到最新版本
+
+
+
 jboot v4.1.3 2023-06-21:
 优化：线程池同一使用 NamedThreadPools.java 进行构建
 优化：修改版错别字 taked 为 took
