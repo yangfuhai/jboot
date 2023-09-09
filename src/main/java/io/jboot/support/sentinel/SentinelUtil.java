@@ -15,15 +15,17 @@
  */
 package io.jboot.support.sentinel;
 
-import com.alibaba.csp.sentinel.util.StringUtil;
-import com.jfinal.kit.JsonKit;
-import com.jfinal.kit.LogKit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.csp.sentinel.util.StringUtil;
+import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.LogKit;
+import com.jfinal.log.Log;
 
 /**
  * @author michael yang (fuhai999@gmail.com)
@@ -172,13 +174,24 @@ public class SentinelUtil {
         resp.setContentType(contentType);
         PrintWriter out = resp.getWriter();
         out.print(JsonKit.toJson(map));
+        close(out);
     }
 
+     private static void close(AutoCloseable autoCloseable) {
+        if (autoCloseable != null) {
+            try {
+                autoCloseable.close();
+            } catch (Exception e) {
+                Log.getLog(SentinelUtil.class).error(e.getMessage(), e);
+            }
+        }
+    }
 
     public static void writeDefaultBlockedPage(HttpServletResponse resp) throws IOException {
         resp.setStatus(200);
         PrintWriter out = resp.getWriter();
         out.print("Blocked by Sentinel (flow limiting) in Jboot");
+        close(out);
     }
 
 
