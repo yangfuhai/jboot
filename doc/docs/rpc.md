@@ -242,6 +242,15 @@ public class DubboClient extends JbootController{
 }
 ```
 
+自定义Dubbo异常处理
+resouces下创建 META-INF.dubbo文件夹，并创建org.apache.dubbo.rpc.Filter文件
+增加配置代码： 
+```java
+##覆盖dubbo默认的异常拦截
+#exception=org.apache.dubbo.rpc.filter.ExceptionFilter
+exception=com.sample.dubbo.CustomRpcExceptionFilter
+```
+
 ### Motan
 
 **Motan 服务端**
