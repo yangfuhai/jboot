@@ -234,6 +234,9 @@ public class DubboClient extends JbootController{
 
     @RPCInject
     private  BlogService blogService;
+    //当不在controller的生命周期中调用RPC接口时，用Jboot.service系列方法
+    //@RPCInject
+    //private  BlogService blogService = Jboot.service(BlogService.class);
 
     public void index() {
         System.out.println(blogService);
