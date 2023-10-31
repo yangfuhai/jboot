@@ -26,6 +26,6 @@ public class J2CacheTester {
 
     @Before
     public void config() {
-        JbootApplication.setBootArg("jboot.cache.type", "j2cache");
+        JbootApplication.setBootArg("jboot.cache.type", "ehcache");
     }
 }

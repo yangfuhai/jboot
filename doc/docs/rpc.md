@@ -234,12 +234,24 @@ public class DubboClient extends JbootController{
 
     @RPCInject
     private  BlogService blogService;
+    //当不在controller的生命周期中调用RPC接口时，用Jboot.service系列方法
+    //@RPCInject
+    //private  BlogService blogService = Jboot.service(BlogService.class);
 
     public void index() {
         System.out.println(blogService);
         renderText("blogId : " + blogService.findById());
     }
 }
+```
+
+自定义Dubbo异常处理
+resouces下创建 META-INF.dubbo文件夹，并创建org.apache.dubbo.rpc.Filter文件
+增加配置代码： 
+```java
+##覆盖dubbo默认的异常拦截
+#exception=org.apache.dubbo.rpc.filter.ExceptionFilter
+exception=com.sample.dubbo.CustomRpcExceptionFilter
 ```
 
 ### Motan
