@@ -267,10 +267,9 @@ public class ArpManager {
     }
 
     public ActiveRecordPlugin getActiveRecordPlugin(String configName) {
- 
-        for (ActiveRecordPlugin  arpTmp:activeRecordPlugins) {
-            if (configName.equals(arpTmp.getConfig().getName())) {
-              return arpTmp;
+        for (ActiveRecordPlugin arp : activeRecordPlugins) {
+            if (configName.equals(arp.getConfig().getName())) {
+                return arp;
             }
         }
         return null;
