@@ -103,7 +103,7 @@ public class CodeGenHelpler {
                 metaBuilder.setDialect(new InformixDialect());
                 break;
             default:
-                throw new JbootIllegalConfigException("Only support datasource type: mysql、orcale、sqlserver、sqlite、ansisql、postgresql and infomix" +
+                throw new JbootIllegalConfigException("Only support datasource type: mysql、oracle、sqlserver、sqlite、ansisql、postgresql and infomix" +
                         ", please check your jboot.properties. ");
         }
 
