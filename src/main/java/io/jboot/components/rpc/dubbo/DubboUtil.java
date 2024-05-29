@@ -73,7 +73,7 @@ class DubboUtil {
         dubboBootstrap.monitor(monitorConfig);
 
 
-        //monitor 配置
+        //metrics 配置
         MetricsConfig metricsConfig = config(MetricsConfig.class, "jboot.rpc.dubbo.metrics");
         dubboBootstrap.metrics(metricsConfig);
 
