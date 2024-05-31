@@ -422,17 +422,17 @@ public class JbootLettuceImpl implements JbootRedis {
     }
 
     @Override
-    public Set zrange(Object key, long start, long end) {
+    public List zrange(Object key, long start, long end) {
         return null;
     }
 
     @Override
-    public Set zrevrange(Object key, long start, long end) {
+    public List zrevrange(Object key, long start, long end) {
         return null;
     }
 
     @Override
-    public Set zrangeByScore(Object key, double min, double max) {
+    public List zrangeByScore(Object key, double min, double max) {
         return null;
     }
 
