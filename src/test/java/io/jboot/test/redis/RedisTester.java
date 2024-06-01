@@ -17,6 +17,7 @@ public class RedisTester {
     @Before
     public void config() {
         JbootApplication.setBootArg("jboot.redis.host", "127.0.0.1");
+        JbootApplication.setBootArg("jboot.redis.password", "123456");
         JbootApplication.setBootArg("jboot.redis.port", "6379");
     }
 
@@ -26,6 +27,7 @@ public class RedisTester {
         String key = "JbootRedisValue";
         Assert.assertEquals("OK", redis.set(key, "10"));
         Assert.assertEquals("10", redis.get(key));
+        System.out.println(redis.ttl(key));
         redis.del(key);
     }
 

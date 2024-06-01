@@ -24,9 +24,12 @@ import io.jboot.utils.QuietlyUtil;
 import io.jboot.utils.StrUtil;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+import redis.clients.jedis.params.ScanParams;
+import redis.clients.jedis.resps.ScanResult;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * 参考： com.jfinal.plugin.redis
@@ -993,7 +996,7 @@ public class JbootJedisImpl extends JbootRedisBase {
     public List blpop(Object... keys) {
         Jedis jedis = getJedis();
         try {
-            List<byte[]> data = jedis.blpop(keysToBytesArray(keys));
+            List<byte[]> data = jedis.blpop(this.config.getTimeout(),keysToBytesArray(keys));
             return valueListFromBytesList(data);
         } finally {
             returnResource(jedis);
@@ -1039,7 +1042,7 @@ public class JbootJedisImpl extends JbootRedisBase {
     public List brpop(Object... keys) {
         Jedis jedis = getJedis();
         try {
-            List<byte[]> data = jedis.brpop(keysToBytesArray(keys));
+            List<byte[]> data = jedis.brpop(this.config.getTimeout(),keysToBytesArray(keys));
             return valueListFromBytesList(data);
         } finally {
             returnResource(jedis);
@@ -1329,12 +1332,11 @@ public class JbootJedisImpl extends JbootRedisBase {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    public Set zrange(Object key, long start, long end) {
+    public List zrange(Object key, long start, long end) {
         Jedis jedis = getJedis();
         try {
-            Set<byte[]> data = jedis.zrange(keyToBytes(key), start, end);
-            Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-            valueSetFromBytesSet(data, result);
+            List<byte[]> data = jedis.zrange(keyToBytes(key), start, end);
+            List<Object> result = data.stream().map(d->valueFromBytes(d)).collect(Collectors.toList());    // 有序集合必须 LinkedHashSet
             return result;
         } finally {
             returnResource(jedis);
@@ -1349,12 +1351,11 @@ public class JbootJedisImpl extends JbootRedisBase {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    public Set zrevrange(Object key, long start, long end) {
+    public List zrevrange(Object key, long start, long end) {
         Jedis jedis = getJedis();
         try {
-            Set<byte[]> data = jedis.zrevrange(keyToBytes(key), start, end);
-            Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-            valueSetFromBytesSet(data, result);
+            List<byte[]> data = jedis.zrevrange(keyToBytes(key), start, end);
+            List<Object> result = data.stream().map(d->valueFromBytes(d)).collect(Collectors.toList());    // 有序集合必须 LinkedHashSet
             return result;
         } finally {
             returnResource(jedis);
@@ -1367,12 +1368,11 @@ public class JbootJedisImpl extends JbootRedisBase {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    public Set zrangeByScore(Object key, double min, double max) {
+    public List zrangeByScore(Object key, double min, double max) {
         Jedis jedis = getJedis();
         try {
-            Set<byte[]> data = jedis.zrangeByScore(keyToBytes(key), min, max);
-            Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-            valueSetFromBytesSet(data, result);
+            List<byte[]> data = jedis.zrangeByScore(keyToBytes(key), min, max);
+            List<Object> result = data.stream().map(d->valueFromBytes(d)).collect(Collectors.toList());    // 有序集合必须 LinkedHashSet
             return result;
         } finally {
             returnResource(jedis);

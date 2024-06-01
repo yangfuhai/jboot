@@ -553,7 +553,7 @@ public interface JbootRedis {
      * 具有相同 score 值的成员按字典序(lexicographical order )来排列。
      * 如果你需要成员按 score 值递减(从大到小)来排列，请使用 ZREVRANGE 命令。
      */
-    Set zrange(Object key, long start, long end);
+    List zrange(Object key, long start, long end);
 
     /**
      * 返回有序集 key 中，指定区间内的成员。
@@ -561,13 +561,13 @@ public interface JbootRedis {
      * 具有相同 score 值的成员按字典序的逆序(reverse lexicographical order)排列。
      * 除了成员按 score 值递减的次序排列这一点外， ZREVRANGE 命令的其他方面和 ZRANGE 命令一样。
      */
-    Set zrevrange(Object key, long start, long end);
+    List zrevrange(Object key, long start, long end);
 
     /**
      * 返回有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。
      * 有序集成员按 score 值递增(从小到大)次序排列。
      */
-    Set zrangeByScore(Object key, double min, double max);
+    List zrangeByScore(Object key, double min, double max);
 
     /**
      * 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递增(从小到大)顺序排列。

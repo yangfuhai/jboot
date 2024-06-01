@@ -25,9 +25,12 @@ import io.jboot.utils.StrUtil;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+import redis.clients.jedis.params.ScanParams;
+import redis.clients.jedis.resps.ScanResult;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * 参考： com.jfinal.plugin.redis
@@ -219,16 +222,17 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
     @Override
     public Set<String> keys(String pattern) {
         HashSet<String> keys = new HashSet<>();
-        Map<String, JedisPool> clusterNodes = jedisCluster.getClusterNodes();
+        Map<String, ConnectionPool> clusterNodes = jedisCluster.getClusterNodes();
         for (String k : clusterNodes.keySet()) {
-            JedisPool jp = clusterNodes.get(k);
-            Jedis jedis = jp.getResource();
+            ConnectionPool cp = clusterNodes.get(k);
+            Connection conn = cp.getResource();
             try {
-                keys.addAll(jedis.keys(pattern));
+                keys.addAll(conn.executeCommand(new ClusterCommandObjects().keys(pattern)));
             } catch (Exception e) {
                 LOG.error(e.toString(), e);
             } finally {
-                jedis.close(); //用完一定要close这个链接！！！
+                conn.close();
+                cp.close(); //用完一定要close这个链接！！！
             }
         }
         return keys;
@@ -913,13 +917,12 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 //        jedisCluster.getClusterNodes().get("aa").getResource().ping
 //        return jedisCluster..ping();
 
-        Map<String, JedisPool> nodes = jedisCluster.getClusterNodes();
+        Map<String, ConnectionPool> nodes = jedisCluster.getClusterNodes();
         if (nodes != null) {
-            for (JedisPool pool : nodes.values()) {
-                try (Jedis node = pool.getResource()) {
-                    String ret = node.ping();
-                    if (ret != null) {
-                        return ret;
+            for (ConnectionPool pool : nodes.values()) {
+                try (Connection node = pool.getResource()) {
+                    if (node.ping()) {
+                        return "PONG";
                     }
                 }
             }
@@ -1129,11 +1132,10 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    public Set zrange(Object key, long start, long end) {
+    public List zrange(Object key, long start, long end) {
 
-        Set<byte[]> data = jedisCluster.zrange(keyToBytes(key), start, end);
-        Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-        valueSetFromBytesSet(data, result);
+        List<byte[]> data = jedisCluster.zrange(keyToBytes(key), start, end);
+        List<Object> result = data.stream().map(d->valueFromBytes(d)).collect(Collectors.toList());    // 有序集合必须 LinkedHashSet
         return result;
 
     }
@@ -1146,11 +1148,10 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    public Set zrevrange(Object key, long start, long end) {
+    public List zrevrange(Object key, long start, long end) {
 
-        Set<byte[]> data = jedisCluster.zrevrange(keyToBytes(key), start, end);
-        Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-        valueSetFromBytesSet(data, result);
+        List<byte[]> data = jedisCluster.zrevrange(keyToBytes(key), start, end);
+        List<Object> result = data.stream().map(d->valueFromBytes(d)).collect(Collectors.toList());    // 有序集合必须 LinkedHashSet
         return result;
 
     }
@@ -1161,11 +1162,10 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    public Set zrangeByScore(Object key, double min, double max) {
+    public List zrangeByScore(Object key, double min, double max) {
 
-        Set<byte[]> data = jedisCluster.zrangeByScore(keyToBytes(key), min, max);
-        Set<Object> result = new LinkedHashSet<Object>();    // 有序集合必须 LinkedHashSet
-        valueSetFromBytesSet(data, result);
+        List<byte[]> data = jedisCluster.zrangeByScore(keyToBytes(key), min, max);
+        List<Object> result = data.stream().map(d->valueFromBytes(d)).collect(Collectors.toList());    // 有序集合必须 LinkedHashSet
         return result;
 
     }
