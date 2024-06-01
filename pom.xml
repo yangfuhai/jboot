@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>jboot</name>
-    <url>http://jboot.io</url>
+    <url>http://www.jboot.com.cn</url>
     <description>Jboot is a similar SpringCloud project base on JFinal, Dubbo and Undertow.</description>
 
     <issueManagement>
