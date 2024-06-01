@@ -3,7 +3,7 @@ jboot v4.1.6 2024-06-01:
 优化：优化 SentinelUtil 工具类
 优化：修正异常信息的错别字问题
 优化：升级 JFinal 等相关依赖到最新版本
-优化：升级 jedis 到最新版本并做好相关适配的修改
+优化：升级并适配 Jedis 到最新版本
 修复：SentinelInterceptor 捕获异常后，渲染完页面要关闭输出流，感谢 @caoyuan
 
 
