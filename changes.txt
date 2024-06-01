@@ -1,3 +1,13 @@
+jboot v4.1.6 2024-06-01:
+新增：根据 configName 获取 ActiveRecordPlugin 的功能，方便扩展，感谢 @caoyuan
+优化：优化 SentinelUtil 工具类
+优化：修正异常信息的错别字问题
+优化：升级 JFinal 等相关依赖到最新版本
+优化：升级 jedis 到最新版本并做好相关适配的修改
+修复：SentinelInterceptor 捕获异常后，渲染完页面要关闭输出流，感谢 @caoyuan
+
+
+
 jboot v4.1.5 2023-09-08:
 优化：MockProxy 由 Java Proxy 替换 cblib
 优化：增加 Hikari 连接池配置参数 keepaliveTime 配置功能，感谢 @赵锋
