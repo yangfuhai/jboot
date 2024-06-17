@@ -80,7 +80,7 @@ public class JbootAopFactory extends AopFactory {
     private Map<String, Class<?>> beanNameClassesMapping = new ConcurrentHashMap<>();
 
 
-    private JbootAopFactory() {
+    protected JbootAopFactory() {
 
         if ("javassist".equalsIgnoreCase(JbootApplicationConfig.get().getProxy())) {
             ProxyManager.me().setProxyFactory(new JbootJavassistProxyFactory());
