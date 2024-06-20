@@ -153,10 +153,6 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             put(cacheName, key, data);
         }
 
-        if (config.isDevMode()) {
-            println("RedisCache GET: cacheName[" +buildCacheName(cacheName)+ "] cacheKey["+key+"] value:" + data);
-        }
-
         return (T) data;
     }
 
@@ -191,9 +187,6 @@ public class JbootRedisCacheImpl extends JbootCacheBase {
             put(cacheName, key, data, liveSeconds);
         }
 
-        if (config.isDevMode()) {
-            println("RedisCache GET: cacheName[" +buildCacheName(cacheName)+ "] cacheKey["+key+"] value:" + data);
-        }
         return (T) data;
     }
 
