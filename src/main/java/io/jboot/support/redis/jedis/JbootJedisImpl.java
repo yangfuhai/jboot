@@ -997,7 +997,7 @@ public class JbootJedisImpl extends JbootRedisBase {
         Jedis jedis = getJedis();
         try {
             List<byte[]> data = jedis.blpop(this.config.getTimeout(),keysToBytesArray(keys));
-            return valueListFromBytesList(data);
+            return keyValueListFromBytesList(data);
         } finally {
             returnResource(jedis);
         }
@@ -1016,16 +1016,7 @@ public class JbootJedisImpl extends JbootRedisBase {
 
             //这里注意：第一个为key，第二个为value
             List<byte[]> data = jedis.blpop(timeout, keysToBytesArray(keys));
-
-            if (data != null && data.size() == 2) {
-                List<Object> objects = new ArrayList<>();
-                objects.add(new String(data.get(0)));
-                objects.add(valueFromBytes(data.get(1)));
-                return objects;
-            }
-
-            //其他情况
-            return null;
+            return keyValueListFromBytesList(data);
         } finally {
             returnResource(jedis);
         }
@@ -1043,7 +1034,7 @@ public class JbootJedisImpl extends JbootRedisBase {
         Jedis jedis = getJedis();
         try {
             List<byte[]> data = jedis.brpop(this.config.getTimeout(),keysToBytesArray(keys));
-            return valueListFromBytesList(data);
+            return keyValueListFromBytesList(data);
         } finally {
             returnResource(jedis);
         }
@@ -1061,7 +1052,7 @@ public class JbootJedisImpl extends JbootRedisBase {
         Jedis jedis = getJedis();
         try {
             List<byte[]> data = jedis.brpop(timeout, keysToBytesArray(keys));
-            return valueListFromBytesList(data);
+            return keyValueListFromBytesList(data);
         } finally {
             returnResource(jedis);
         }
