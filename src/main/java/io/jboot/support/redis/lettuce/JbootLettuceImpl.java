@@ -487,6 +487,11 @@ public class JbootLettuceImpl implements JbootRedis {
     }
 
     @Override
+    public Object keyFromBytes(byte[] bytes) {
+        return null;
+    }
+
+    @Override
     public String bytesToKey(byte[] bytes) {
         return null;
     }
@@ -523,6 +528,11 @@ public class JbootLettuceImpl implements JbootRedis {
 
     @Override
     public List valueListFromBytesList(Collection<byte[]> data) {
+        return null;
+    }
+
+    @Override
+    public List keyValueListFromBytesList(List<byte[]> data) {
         return null;
     }
 

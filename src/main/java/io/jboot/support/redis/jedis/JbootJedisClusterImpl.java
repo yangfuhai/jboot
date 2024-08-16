@@ -852,15 +852,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
 //        }
 
         List<byte[]> data = jedisCluster.blpop(timeout, keysToBytesArray(keys));
-
-        if (data != null && data.size() == 2) {
-            List<Object> objects = new ArrayList<>();
-            objects.add(new String(data.get(0)));
-            objects.add(valueFromBytes(data.get(1)));
-            return objects;
-        }
-
-        return valueListFromBytesList(data);
+        return keyValueListFromBytesList(data);
 
     }
 
@@ -874,7 +866,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
     public List blpop(Integer timeout, Object... keys) {
 
         List<byte[]> data = jedisCluster.blpop(timeout, keysToBytesArray(keys));
-        return valueListFromBytesList(data);
+        return keyValueListFromBytesList(data);
 
     }
 
@@ -889,7 +881,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
     public List brpop(Object... keys) {
 
         List<byte[]> data = jedisCluster.brpop(timeout, keysToBytesArray(keys));
-        return valueListFromBytesList(data);
+        return keyValueListFromBytesList(data);
 
     }
 
@@ -904,7 +896,7 @@ public class JbootJedisClusterImpl extends JbootRedisBase {
     public List brpop(Integer timeout, Object... keys) {
 
         List<byte[]> data = jedisCluster.brpop(timeout, keysToBytesArray(keys));
-        return valueListFromBytesList(data);
+        return keyValueListFromBytesList(data);
 
     }
 

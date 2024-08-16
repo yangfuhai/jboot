@@ -20,6 +20,7 @@ import io.jboot.Jboot;
 import io.jboot.components.serializer.JbootSerializer;
 import io.jboot.components.serializer.JbootSerializerManager;
 import io.jboot.utils.StrUtil;
+import redis.clients.jedis.util.SafeEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,7 +57,11 @@ public abstract class JbootRedisBase implements JbootRedis {
 
     @Override
     public byte[] keyToBytes(Object key) {
-        return key.toString().getBytes();
+        return SafeEncoder.encode(key.toString());
+    }
+
+    public Object keyFromBytes(byte[] bytes) {
+        return SafeEncoder.encode(bytes);
     }
 
     @Override
@@ -125,6 +130,13 @@ public abstract class JbootRedisBase implements JbootRedis {
             }
             result.add(object);
         }
+        return result;
+    }
+
+    public List keyValueListFromBytesList(List<byte[]> data) {
+        List<Object> result = new ArrayList<Object>();
+        result.add(keyFromBytes(data.get(0)));
+        result.add(valueFromBytes(data.get(1)));
         return result;
     }
 

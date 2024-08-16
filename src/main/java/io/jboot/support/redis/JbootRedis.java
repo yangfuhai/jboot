@@ -640,6 +640,8 @@ public interface JbootRedis {
 
     byte[] keyToBytes(Object key);
 
+    Object keyFromBytes(byte[] bytes);
+
     String bytesToKey(byte[] bytes);
 
     byte[][] keysToBytesArray(Object... keys);
@@ -657,7 +659,10 @@ public interface JbootRedis {
 
     List valueListFromBytesList(Collection<byte[]> data);
 
+    List keyValueListFromBytesList(List<byte[]> data);
+
     Object eval(String script, int keyCount, String... params);
+
 }
 
 
