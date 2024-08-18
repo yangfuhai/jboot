@@ -1,3 +1,11 @@
+jboot v4.1.7 2024-08-18:
+优化：JbootAopFactory.java 构造方法访问权限修改为 protected 方便继承扩展，感谢 @macaque
+优化：cache 带有dataLoader的方法中日志会打印多次问题，感谢 @macaque
+优化：findListByColumns 增加从 start 开始取 count 条方法 即 limit ?,?，感谢 @464455798@qq.com
+修复：修复 brpop blpop 无法取出 key 的问题，感谢 @macaque
+
+
+
 jboot v4.1.6 2024-06-01:
 新增：根据 configName 获取 ActiveRecordPlugin 的功能，方便扩展，感谢 @caoyuan
 优化：优化 SentinelUtil 工具类
