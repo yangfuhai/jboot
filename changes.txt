@@ -1,3 +1,8 @@
+jboot v4.1.8 2024-08-20:
+修复：紧急修复上个版本合并的 JbootModel 造成的问题
+
+
+
 jboot v4.1.7 2024-08-18:
 优化：JbootAopFactory.java 构造方法访问权限修改为 protected 方便继承扩展，感谢 @macaque
 优化：cache 带有dataLoader的方法中日志会打印多次问题，感谢 @macaque

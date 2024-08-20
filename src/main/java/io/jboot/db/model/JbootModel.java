@@ -765,23 +765,11 @@ public class JbootModel<M extends JbootModel<M>> extends Model<M> {
     }
 
     public List<M> findListByColumns(Columns columns, String orderBy, Integer count, String loadColumns) {
-        return findListByColumns(columns, orderBy,0, count, loadColumns);
-    }
-
-    public List<M> findListByColumns(Columns columns, String orderBy,Integer start, Integer count, String loadColumns) {
         processColumns(columns, "findList");
         loadColumns = getLoadColumns(loadColumns);
-        String limitStr = buildLimitStr(start, count);
-        String sql = _getDialect().forFindByColumns(alias, joins, _getTableName(), loadColumns, columns.getList(), orderBy, limitStr);
+        String sql = _getDialect().forFindByColumns(alias, joins, _getTableName(), loadColumns, columns.getList(), orderBy, count);
         return columns.isEmpty() ? find(sql) : find(sql, columns.getValueArray());
     }
-
-    protected String buildLimitStr(Integer start, Integer count) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(start).append(",").append(count);
-        return sb.toString();
-    }
-
 
     //方便在某些场景下，对 columns 进行二次加工
     protected void processColumns(Columns columns, String action) {
