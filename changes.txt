@@ -1,3 +1,10 @@
+jboot v4.1.9 2024-08-30:
+优化：升级 JFinal 到最新版本 v5.2.2
+优化：调整 fastjson 以适配 redis 序列化的问题
+优化：优化 JbootResourceLoader 的异常捕获
+
+
+
 jboot v4.1.8 2024-08-20:
 修复：紧急修复上个版本合并的 JbootModel 造成的问题
 
