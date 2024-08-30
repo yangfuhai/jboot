@@ -61,7 +61,7 @@ public class JbootResourceLoader {
             findResourcesPath(srcRootPath, resourcesDirs);
 
             String targetPath = classPath.endsWith("/config")
-                    ? new File(classPath,"..").getCanonicalPath() : classPath;
+                    ? new File(classPath, "..").getCanonicalPath() : classPath;
             for (File resourcesDir : resourcesDirs) {
                 startNewScanner(resourcesDir.getCanonicalFile(), targetPath);
             }
@@ -112,7 +112,7 @@ public class JbootResourceLoader {
                 }
 
                 //忽略掉 windows 和 mac 下的临时文件
-                if(file.endsWith("~") || file.endsWith(".DS_Store")){
+                if (file.endsWith("~") || file.endsWith(".DS_Store")) {
                     return;
                 }
 
@@ -123,7 +123,7 @@ public class JbootResourceLoader {
 
                 //文件删除
                 if (FileScanner.ACTION_DELETE.equals(action)) {
-                    if (!target.delete()){
+                    if (!target.delete()) {
                         System.err.println("JbootResourceLoader can not delete file: " + target);
                     }
                 }
@@ -131,7 +131,7 @@ public class JbootResourceLoader {
                 else {
                     try {
                         FileUtils.copyFile(new File(file), target);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         System.err.println("JbootResourceLoader copy file error: " + e.getMessage());
                     }
                 }
