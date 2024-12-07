@@ -31,6 +31,8 @@ public class JbootResourceLoader {
 
     private String resourcePathName;
     private List<FileScanner> scanners = new ArrayList<>();
+    // 资源递归查找最大深度
+    private static final int MAX_RECURSION_DEPTH = 3 ;
 
     public JbootResourceLoader() {
         String pathName = JbootConfigManager.me().getConfigValue("jboot.app.resourcePathName");
@@ -44,24 +46,19 @@ public class JbootResourceLoader {
 
     public void start() {
         try {
-
-            URL url = JbootResourceLoader.class.getClassLoader().getResource("");
-            if (url == null || url.toString().endsWith(".jar!/")) {
-                return;
-            }
-
-            String classPath = url.toURI().getPath();
-            File srcRootPath = new File(classPath, "../..").getCanonicalFile();
+            String classPath = System.getProperty("user.dir");
+            File srcRootPath = new File(classPath).getCanonicalFile();
 
             while (new File(srcRootPath.getParent(), "pom.xml").exists()) {
                 srcRootPath = srcRootPath.getParentFile();
             }
 
             List<File> resourcesDirs = new ArrayList<>();
-            findResourcesPath(srcRootPath, resourcesDirs);
+            findResourcesPath(srcRootPath, resourcesDirs, 0);
 
             String targetPath = classPath.endsWith("/config")
                     ? new File(classPath,"..").getCanonicalPath() : classPath;
+
             for (File resourcesDir : resourcesDirs) {
                 startNewScanner(resourcesDir.getCanonicalFile(), targetPath);
             }
@@ -79,7 +76,11 @@ public class JbootResourceLoader {
         System.out.println("JbootResourceLoader has stopped.");
     }
 
-    private void findResourcesPath(File root, List<File> resourcesDirs) {
+    private void findResourcesPath(File root, List<File> resourcesDirs, int depth) {
+        if (depth > MAX_RECURSION_DEPTH){
+            return;
+        }
+
         File[] dirs = root.listFiles(File::isDirectory);
         if (dirs == null || dirs.length == 0) {
             return;
@@ -95,7 +96,7 @@ public class JbootResourceLoader {
                     && "main".equals(parentFile.getName())) {
                 resourcesDirs.add(dir);
             } else {
-                findResourcesPath(dir, resourcesDirs);
+                findResourcesPath(dir, resourcesDirs, depth+1);
             }
         }
     }
@@ -140,5 +141,8 @@ public class JbootResourceLoader {
 
         scanner.start();
         scanners.add(scanner);
+    }
+    public static void main(String[] args) {
+        new JbootResourceLoader().start();
     }
 }
