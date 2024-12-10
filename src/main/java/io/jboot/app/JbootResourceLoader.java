@@ -61,7 +61,7 @@ public class JbootResourceLoader {
             findResourcesPath(srcRootPath, resourcesDirs);
 
             String targetPath = classPath.endsWith("/config")
-                    ? new File(classPath, "..").getCanonicalPath() : classPath;
+                    ? new File(classPath,"..").getCanonicalPath() : classPath;
             for (File resourcesDir : resourcesDirs) {
                 startNewScanner(resourcesDir.getCanonicalFile(), targetPath);
             }
