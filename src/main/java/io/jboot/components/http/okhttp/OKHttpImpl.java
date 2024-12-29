@@ -26,6 +26,7 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
