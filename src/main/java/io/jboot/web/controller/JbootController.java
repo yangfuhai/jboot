@@ -568,7 +568,7 @@ public class JbootController extends Controller {
 
     @NotAction
     public String getOriginalPara(String name) {
-        String value = getOrginalRequest().getParameter(name);
+        String value = getOriginalRequest().getParameter(name);
         if (value == null || value.length() == 0) {
             return null;
         }
@@ -577,19 +577,19 @@ public class JbootController extends Controller {
 
 
     @NotAction
-    public HttpServletRequest getOrginalRequest() {
+    public HttpServletRequest getOriginalRequest() {
         HttpServletRequest req = getRequest();
         if (req instanceof HttpServletRequestWrapper) {
-            req = getOrginalRequest((HttpServletRequestWrapper) req);
+            req = getOriginalRequest((HttpServletRequestWrapper) req);
         }
         return req;
     }
 
 
-    private HttpServletRequest getOrginalRequest(HttpServletRequestWrapper wrapper) {
+    private HttpServletRequest getOriginalRequest(HttpServletRequestWrapper wrapper) {
         HttpServletRequest req = (HttpServletRequest) wrapper.getRequest();
         if (req instanceof HttpServletRequestWrapper) {
-            return getOrginalRequest((HttpServletRequestWrapper) req);
+            return getOriginalRequest((HttpServletRequestWrapper) req);
         }
         return req;
     }

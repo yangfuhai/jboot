@@ -8,18 +8,18 @@ import io.jboot.components.mq.Jbootmq;
 
 public class AliyunmqMessageContext extends MessageContext {
 
-    final Message orginalMessage;
+    final Message originalMessage;
     final ConsumeContext context;
     private Action returnAction = Action.CommitMessage;
 
-    public AliyunmqMessageContext(Jbootmq mq, Message orginalMessage, ConsumeContext context) {
+    public AliyunmqMessageContext(Jbootmq mq, Message originalMessage, ConsumeContext context) {
         super(mq);
-        this.orginalMessage = orginalMessage;
+        this.originalMessage = originalMessage;
         this.context = context;
     }
 
-    public Message getOrginalMessage() {
-        return orginalMessage;
+    public Message getOriginalMessage() {
+        return originalMessage;
     }
 
     public ConsumeContext getContext() {

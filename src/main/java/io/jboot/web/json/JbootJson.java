@@ -195,14 +195,14 @@ public class JbootJson extends JFinalJson {
         }
 
 
-        private String getDefineName(Method method, String orginalName) {
+        private String getDefineName(Method method, String originalName) {
             if (hasFastJson) {
                 JSONField jsonField = method.getAnnotation(JSONField.class);
                 if (jsonField != null && StrUtil.isNotBlank(jsonField.name())) {
                     return jsonField.name();
                 }
             }
-            return orginalName;
+            return originalName;
         }
 
         private boolean isIgnoreFiled(Method method) {

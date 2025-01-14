@@ -767,7 +767,7 @@ jboot v3.9.8:
 
 jboot v3.9.7:
 新增：@Lazy 懒加载注入的功能
-新增：JbootController.getOrginalRequest() 方法，用于获取进过 Xss 处理后的原始 Request
+新增：JbootController.getOriginalRequest() 方法，用于获取进过 Xss 处理后的原始 Request
 新增：JbootDirectiveBase.getParaToBigDecimal() 的系列方法
 新增：Interceptors.addIfNotExist() 方法，用于对某些注解进行单次添加
 新增：JbootController.getParaToBigDecimal() 和 getParaToBigInteger() 方法

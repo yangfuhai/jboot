@@ -99,7 +99,7 @@ class MockMethodInterceptor extends JbootCglibCallback implements MethodHandler 
     }
 
 
-    private static final JbootJavassistHandler orginalHandler = new JbootJavassistHandler();
+    private static final JbootJavassistHandler originalHandler = new JbootJavassistHandler();
 
     @Override
     public Object invoke(Object target, Method thisMethod, Method method, Object[] args) throws Throwable {
@@ -126,7 +126,7 @@ class MockMethodInterceptor extends JbootCglibCallback implements MethodHandler 
         }
 
         try {
-            return orginalHandler.invoke(target, thisMethod, method, args);
+            return originalHandler.invoke(target, thisMethod, method, args);
         } catch (Exception ex) {
             if ("initDao".equals(method.getName()) && JbootServiceBase.class == method.getDeclaringClass()) {
                 return null;
