@@ -26,6 +26,7 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -129,7 +130,9 @@ public class OKHttpImpl implements JbootHttp {
         }
 
 
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .readTimeout(request.getReadTimeOut(), TimeUnit.MILLISECONDS)
+				.connectTimeout(request.getConnectTimeOut(), TimeUnit.MILLISECONDS);
         if (request.getProxy() != null) {
             builder.proxy(request.getProxy());
         }
@@ -138,7 +141,9 @@ public class OKHttpImpl implements JbootHttp {
     }
 
     public OkHttpClient getHttpsClient(JbootHttpRequest request) throws Exception {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .readTimeout(request.getReadTimeOut(), TimeUnit.MILLISECONDS)
+				.connectTimeout(request.getConnectTimeOut(), TimeUnit.MILLISECONDS);
         //自定义 sslContext
         if (request.getSslContext() != null) {
             SSLSocketFactory ssf = request.getSslContext().getSocketFactory();
