@@ -147,7 +147,7 @@ user.mapping = /user
 其作用是等效于：
 
 ```java
-@RequestMapping("/use/abcr")
+@RequestMapping("/user/abc")
 public class UserController extends Controller{
     //....
 }
