@@ -193,13 +193,17 @@ public class GatewayHttpProxy {
                 if (StrUtil.isBlank(headerName) || "Content-Encoding".equalsIgnoreCase(headerName)) {
                     continue;
                 }
-
-                String headerFieldValue = conn.getHeaderField(headerName);
-                if (StrUtil.isNotBlank(headerFieldValue)) {
-                    resp.setHeader(headerName, headerFieldValue);
-                    if ("Content-Type".equalsIgnoreCase(headerName)) {
-                        isContentTypeSetted = true;
+                //出现了部分软件会返回同一个Name多个Value情况 例如gogs就是这样的
+                //所以不应该预设Name和Value都是一一对应的
+                List<String> headerFieldValues = headerFields.get(headerName);
+                if(headerFieldValues != null && !headerFieldValues.isEmpty()){
+                    for(String headerFieldValue : headerFieldValues){
+                        resp.addHeader(headerName, headerFieldValue);
+                        if ("Content-Type".equalsIgnoreCase(headerName)) {
+                            isContentTypeSetted = true;
+                        }
                     }
+
                 }
             }
         }
