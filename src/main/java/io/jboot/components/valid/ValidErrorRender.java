@@ -32,7 +32,7 @@ public class ValidErrorRender extends Render {
             "<body bgcolor='white'><center><h1>Invalid parameter</h1></center>" +
             "<hr>";
 
-    protected static final String poweredBy = "<center><a href='http://jboot.io' target='_blank'><b>Powered by Jboot</b></a></center>";
+    protected static final String poweredBy = "<center><b>Powered by Jboot</b></center>";
     protected static final String html_footer = "<hr>" + poweredBy + "</body></html>";
 
     protected int errorCode = ValidUtil.getErrorCode();

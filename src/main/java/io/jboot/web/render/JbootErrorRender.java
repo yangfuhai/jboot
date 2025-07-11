@@ -36,7 +36,7 @@ public class JbootErrorRender extends Render {
     protected static final String htmlContentType = "text/html;charset=" + getEncoding();
     protected static final String jsonContentType = "application/json;charset=" + getEncoding();
 
-    protected static final String poweredBy = "<center><a href='http://jboot.io' target='_blank'><b>Powered by Jboot</b></a></center>";
+    protected static final String poweredBy = "<center><b>Powered by Jboot</b></center>";
 
     protected static final String html404 = "<html><head><title>404 Not Found</title></head><body bgcolor='white'><center><h1>404 Not Found</h1></center><hr>" + poweredBy + "</body></html>";
     protected static final String html401 = "<html><head><title>401 Unauthorized</title></head><body bgcolor='white'><center><h1>401 Unauthorized</h1></center><hr>" + poweredBy + "</body></html>";
